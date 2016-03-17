@@ -112,6 +112,10 @@ package tibia.container.containerViewWidgetClasses
          {
             _loc2_.sendCUPCONTAINER(this.container.ID);
          }
+         if(this.m_UIUpButton != null)
+         {
+            this.m_UIUpButton.enabled = false;
+         }
       }
       
       override protected function commitProperties() : void
@@ -128,13 +132,13 @@ package tibia.container.containerViewWidgetClasses
                _loc1_.size = 19;
                titleIcon = _loc1_;
                titleText = StringHelper.s_Capitalise(this.container.name);
-               this.m_UIUpButton.visible = this.container.isSubContainer;
+               this.m_UIUpButton.enabled = this.m_UIUpButton.visible = this.container.isSubContainer;
             }
             else
             {
                titleIcon = null;
                titleText = resourceManager.getString(BUNDLE,"TITLE");
-               this.m_UIUpButton.visible = false;
+               this.m_UIUpButton.enabled = this.m_UIUpButton.visible = false;
             }
             this.m_UISlotHolder.verticalScrollPosition = 0;
             this.m_UncommittedContainer = false;
