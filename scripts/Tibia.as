@@ -116,7 +116,7 @@ package
       
       protected static const CONNECTION_STATE_PENDING:int = 3;
       
-      public static const PROTOCOL_VERSION:int = 1090;
+      public static const PROTOCOL_VERSION:int = 1091;
       
       public static var s_FrameTibiaTimestamp:Number = 0;
       
@@ -138,7 +138,7 @@ package
       
       protected static const CHECKSUM_POS:int = PACKETLENGTH_POS + PACKETLENGTH_SIZE;
       
-      public static const CLIENT_VERSION:uint = 2191;
+      public static const CLIENT_VERSION:uint = 2203;
       
       public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
       

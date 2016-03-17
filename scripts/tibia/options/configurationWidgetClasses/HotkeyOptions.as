@@ -935,7 +935,7 @@ package tibia.options.configurationWidgetClasses
                else
                {
                   _loc6_.newID = _loc5_++;
-                  if(_loc6_.oldID == this.m_Options.generalInputSetID)
+                  if(_loc2_ == this.m_Index)
                   {
                      _loc4_ = _loc6_.newID;
                   }

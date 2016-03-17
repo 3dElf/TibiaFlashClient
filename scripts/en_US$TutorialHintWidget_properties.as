@@ -5,7 +5,7 @@ package
    public class en_US$TutorialHintWidget_properties extends ResourceBundle
    {
       
-      private static var _embed_properties_______images_help_hint_02_welcometodawnport_png_806168169:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_02_welcometodawnport_png_806168169;
+      private static var _embed_properties_______images_help_hint_03_vocationknight_png_1372104523:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_03_vocationknight_png_1372104523;
       
       private static var _embed_properties_______images_help_hint_06_vocationdruid_png_1655526407:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_06_vocationdruid_png_1655526407;
       
@@ -15,7 +15,7 @@ package
       
       private static var _embed_properties_______images_help_hint_01_alternativecontrols_png_1480433879:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_01_alternativecontrols_png_1480433879;
       
-      private static var _embed_properties_______images_help_hint_03_vocationknight_png_1372104523:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_03_vocationknight_png_1372104523;
+      private static var _embed_properties_______images_help_hint_02_welcometodawnport_png_806168169:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_02_welcometodawnport_png_806168169;
        
       public function en_US$TutorialHintWidget_properties()
       {
