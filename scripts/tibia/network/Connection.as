@@ -31,7 +31,7 @@ package tibia.network
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 1050;
+      public static const PROTOCOL_VERSION:int = 1053;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -83,7 +83,7 @@ package tibia.network
       
       protected static const CBUYOBJECT:int = 122;
       
-      public static const CLIENT_VERSION:uint = 1769;
+      public static const CLIENT_VERSION:uint = 1831;
       
       protected static const SPING:int = 29;
       
@@ -159,8 +159,6 @@ package tibia.network
       
       protected static const CREMOVEBUDDY:int = 221;
       
-      protected static const SFIELDDATA:int = 105;
-      
       protected static const CPASSLEADERSHIP:int = 166;
       
       protected static const CINVITETOCHANNEL:int = 171;
@@ -173,7 +171,7 @@ package tibia.network
       
       protected static const SMISSILEEFFECT:int = 133;
       
-      protected static const CGOWEST:int = 104;
+      protected static const SFIELDDATA:int = 105;
       
       protected static const CCANCEL:int = 190;
       
@@ -183,7 +181,7 @@ package tibia.network
       
       protected static const RECONNECT_DELAY:int = 3000;
       
-      protected static const ERR_INVALID_MESSAGE:int = 3;
+      protected static const CGOWEST:int = 104;
       
       protected static const SCREATURELIGHT:int = 141;
       
@@ -196,6 +194,8 @@ package tibia.network
       protected static const SSPELLGROUPDELAY:int = 165;
       
       protected static const SBOTTOMROW:int = 103;
+      
+      protected static const ERR_INVALID_MESSAGE:int = 3;
       
       protected static const CSEEKINCONTAINER:int = 204;
       
@@ -235,13 +235,15 @@ package tibia.network
       
       protected static const SCREATURESKULL:int = 144;
       
-      protected static const STRAPPERS:int = 135;
+      protected static const SUNJUSTIFIEDPOINTS:int = 183;
       
       protected static const CJOINPARTY:int = 164;
       
       protected static const CEDITLIST:int = 138;
       
       protected static const SPLAYERDATACURRENT:int = 160;
+      
+      protected static const STRAPPERS:int = 135;
       
       protected static const SCLOSETRADE:int = 127;
       
@@ -308,6 +310,8 @@ package tibia.network
       protected static const SLOGINWAIT:int = 22;
       
       protected static const SLOGINADVICE:int = 21;
+      
+      protected static const SPVPSITUATIONS:int = 184;
       
       protected static const SCREATEONMAP:int = 106;
       

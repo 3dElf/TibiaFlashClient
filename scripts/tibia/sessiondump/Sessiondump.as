@@ -31,7 +31,7 @@ package tibia.sessiondump
       
       protected static const CQUITGAME:int = 20;
       
-      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
       
       protected static const CMARKETACCEPT:int = 248;
       
@@ -68,6 +68,8 @@ package tibia.sessiondump
       protected static const NPC_SPEECH_TRAVEL:uint = 5;
       
       protected static const CGOSOUTH:int = 103;
+      
+      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       protected static const SSETTACTICS:int = 167;
       
@@ -225,11 +227,13 @@ package tibia.sessiondump
       
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
       
-      protected static const STRAPPERS:int = 135;
+      protected static const SUNJUSTIFIEDPOINTS:int = 183;
       
       protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
       
       protected static const SPLAYERDATACURRENT:int = 160;
+      
+      protected static const STRAPPERS:int = 135;
       
       protected static const SOBJECTINFO:int = 244;
       
@@ -361,7 +365,7 @@ package tibia.sessiondump
       
       protected static const CROTATEWEST:int = 114;
       
-      public static const PROTOCOL_VERSION:int = 1050;
+      public static const PROTOCOL_VERSION:int = 1053;
       
       protected static const SCREATUREOUTFIT:int = 142;
       
@@ -531,9 +535,11 @@ package tibia.sessiondump
       
       protected static const SCHANNELEVENT:int = 243;
       
-      protected static const SKILL_FIGHTAXE:int = 12;
+      protected static const SPVPSITUATIONS:int = 184;
       
       protected static const SLOGINADVICE:int = 21;
+      
+      protected static const SKILL_FIGHTAXE:int = 12;
       
       public static const STATE_LOADING:int = 1;
       
@@ -585,11 +591,11 @@ package tibia.sessiondump
       
       protected static const CMARKETLEAVE:int = 244;
       
+      protected static const CSHAREEXPERIENCE:int = 168;
+      
       protected static const SCLEARTARGET:int = 163;
       
       protected static const SCREATURETYPE:int = 149;
-      
-      protected static const SBUDDYSTATUSCHANGE:int = 211;
       
       protected static const CGETOUTFIT:int = 210;
       
@@ -601,6 +607,8 @@ package tibia.sessiondump
       
       protected static const STATE_HUNGRY:int = 31;
       
+      protected static const SBUDDYSTATUSCHANGE:int = 211;
+      
       protected static const SKILL_LEVEL:int = 1;
       
       protected static const SCLOSECHANNEL:int = 179;
@@ -609,17 +617,13 @@ package tibia.sessiondump
       
       protected static const CSETOUTFIT:int = 211;
       
-      protected static const PACKETLENGTH_POS:int = HEADER_POS;
-      
       protected static const SUMMON_NONE:int = 0;
       
       protected static const SAUTOMAPFLAG:int = 221;
       
-      protected static const CSHAREEXPERIENCE:int = 168;
-      
       protected static const SOWNOFFER:int = 125;
       
-      protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
+      protected static const PACKETLENGTH_POS:int = HEADER_POS;
       
       protected static const SKILL_GOSTRENGTH:int = 6;
       

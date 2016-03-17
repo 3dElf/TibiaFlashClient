@@ -1073,7 +1073,14 @@ package tibia.creatures
          {
             throw new ArgumentError("Creature.set pkFlag: Invalid flag.");
          }
+         var _loc2_:int = this.m_PKFlag;
          this.m_PKFlag = param1;
+         var _loc3_:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+         _loc3_.kind = PropertyChangeEventKind.UPDATE;
+         _loc3_.property = "pkFlag";
+         _loc3_.oldValue = _loc2_;
+         _loc3_.newValue = this.m_PKFlag;
+         dispatchEvent(_loc3_);
       }
       
       public function setReportTypeAllowed(param1:uint, param2:Boolean = true) : void

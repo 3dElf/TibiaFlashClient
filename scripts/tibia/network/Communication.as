@@ -28,6 +28,7 @@ package tibia.network
    import tibia.options.OptionsStorage;
    import tibia.creatures.BuddySet;
    import tibia.container.ContainerView;
+   import tibia.options.configurationWidgetClasses.StatusOptions;
    import mx.resources.ResourceManager;
    import tibia.trade.NPCTradeWidget;
    import tibia.trade.TradeObjectRef;
@@ -49,6 +50,7 @@ package tibia.network
    import shared.utility.BrowserHelper;
    import flash.system.Capabilities;
    import flash.events.ErrorEvent;
+   import tibia.creatures.UnjustPointsInfo;
    import tibia.creatures.CreatureStorage;
    import shared.utility.Colour;
    import tibia.minimap.MiniMapStorage;
@@ -212,7 +214,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1769;
+      public static const CLIENT_VERSION:uint = 1831;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -297,6 +299,8 @@ package tibia.network
       protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
       
       protected static const GUILD_WAR_ALLY:int = 1;
+      
+      protected static const SUNJUSTIFIEDPOINTS:int = 183;
       
       protected static const CCLOSECONTAINER:int = 135;
       
@@ -458,7 +462,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1050;
+      public static const PROTOCOL_VERSION:int = 1053;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -635,6 +639,8 @@ package tibia.network
       protected static const SLOGINADVICE:int = 21;
       
       protected static const SCHANNELEVENT:int = 243;
+      
+      protected static const SPVPSITUATIONS:int = 184;
       
       protected static const CONNECTION_STATE_GAME:int = 4;
       
@@ -1757,6 +1763,11 @@ package tibia.network
          }
       }
       
+      protected function readSPVPSITUATIONS(param1:ByteArray) : void
+      {
+         this.m_Player.openPvpSituations = param1.readUnsignedByte();
+      }
+      
       public function sendCEDITLIST(param1:int, param2:int, param3:String) : void
       {
          var b:ByteArray = null;
@@ -1864,6 +1875,7 @@ package tibia.network
          Creature.speedB = this.readDouble(param1);
          Creature.speedC = this.readDouble(param1);
          this.m_BugreportsAllowed = param1.readUnsignedByte() == 1;
+         StatusOptions.canChangePvpFraming = param1.readUnsignedByte() == 1;
       }
       
       public function sendBotCRULEVIOLATIONREPORT(param1:int, param2:String, param3:String) : void
@@ -3048,6 +3060,25 @@ package tibia.network
          }
       }
       
+      protected function readSUNJUSTIFIEDPOINTS(param1:ByteArray) : void
+      {
+         var _loc2_:uint = 0;
+         var _loc3_:uint = 0;
+         var _loc4_:uint = 0;
+         var _loc5_:uint = 0;
+         var _loc6_:uint = 0;
+         var _loc7_:uint = 0;
+         var _loc8_:uint = 0;
+         _loc2_ = param1.readUnsignedByte();
+         _loc3_ = param1.readUnsignedByte();
+         _loc4_ = param1.readUnsignedByte();
+         _loc5_ = param1.readUnsignedByte();
+         _loc6_ = param1.readUnsignedByte();
+         _loc7_ = param1.readUnsignedByte();
+         _loc8_ = param1.readUnsignedByte();
+         this.m_Player.unjustPoints = new UnjustPointsInfo(_loc2_,_loc3_,_loc4_,_loc5_,_loc6_,_loc7_,_loc8_);
+      }
+      
       protected function readSSETINVENTORY(param1:ByteArray) : void
       {
          var _loc2_:int = param1.readUnsignedByte();
@@ -3815,6 +3846,14 @@ package tibia.network
                   break;
                case SWAIT:
                   this.readSWAIT(CommunicationData);
+                  a_MessageReader.finishMessage();
+                  break;
+               case SUNJUSTIFIEDPOINTS:
+                  this.readSUNJUSTIFIEDPOINTS(CommunicationData);
+                  a_MessageReader.finishMessage();
+                  break;
+               case SPVPSITUATIONS:
+                  this.readSPVPSITUATIONS(CommunicationData);
                   a_MessageReader.finishMessage();
                   break;
                case STOPFLOOR:

@@ -575,6 +575,7 @@ package tibia.actionbar.widgetClasses
             _loc4_ = this.m_ActionObject.type;
             if(Boolean(this.m_ActionIconCacheMiss) || _loc4_ != null && (Boolean(_loc4_.isAnimateAlways) || Boolean(_loc4_.isAnimation)))
             {
+               this.m_ActionObject.animate(Tibia.s_FrameTibiaTimestamp);
                this.drawActionIcon();
             }
             _loc5_ = _loc1_.getAvailableInventory(this.m_ActionObject.ID,this.m_ActionObject.data);

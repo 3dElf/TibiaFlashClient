@@ -221,6 +221,10 @@ package tibia.creatures.battlelistWidgetClasses
       {
          super.commitOptions();
          this.invalidateFilter();
+         if(m_Options != null && BattlelistItemRenderer.s_BattlelistMarksView != null)
+         {
+            BattlelistItemRenderer.s_InitialiseMarksView(m_Options.statusCreaturePvpFrames);
+         }
       }
       
       public function getUseObjectUnderPoint(param1:Point) : Object

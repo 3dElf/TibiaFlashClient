@@ -6,10 +6,11 @@ package tibia.input.staticaction
    public class CombatPVPMode extends StaticAction
    {
        
-      private var m_PVPMode:uint = 0;
+      private var m_PVPMode:uint;
       
       public function CombatPVPMode(param1:int, param2:String, param3:uint, param4:uint)
       {
+         this.m_PVPMode = OptionsStorage.COMBAT_PVP_MODE_DOVE;
          super(param1,param2,param3,false);
          if(param4 != OptionsStorage.COMBAT_PVP_MODE_DOVE && param4 != OptionsStorage.COMBAT_PVP_MODE_WHITE_HAND && param4 != OptionsStorage.COMBAT_PVP_MODE_YELLOW_HAND && param4 != OptionsStorage.COMBAT_PVP_MODE_RED_FIST)
          {

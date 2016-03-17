@@ -22,7 +22,9 @@ package tibia.sessiondump.controller
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 1050;
+      protected static const CSHAREEXPERIENCE:int = 168;
+      
+      public static const PROTOCOL_VERSION:int = 1053;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -208,11 +210,13 @@ package tibia.sessiondump.controller
       
       protected static const ERR_CONNECTION_LOST:int = 6;
       
-      protected static const STRAPPERS:int = 135;
+      protected static const SUNJUSTIFIEDPOINTS:int = 183;
       
       protected static const CJOINPARTY:int = 164;
       
       protected static const SPLAYERDATACURRENT:int = 160;
+      
+      protected static const STRAPPERS:int = 135;
       
       protected static const SCLOSETRADE:int = 127;
       
@@ -277,6 +281,8 @@ package tibia.sessiondump.controller
       protected static const SCHANNELEVENT:int = 243;
       
       protected static const SLOGINWAIT:int = 22;
+      
+      protected static const SPVPSITUATIONS:int = 184;
       
       protected static const SLOGINADVICE:int = 21;
       
@@ -381,8 +387,6 @@ package tibia.sessiondump.controller
       protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
       
       protected static const SSPELLDELAY:int = 164;
-      
-      protected static const CSHAREEXPERIENCE:int = 168;
       
       protected static const CMARKETCREATE:int = 246;
       

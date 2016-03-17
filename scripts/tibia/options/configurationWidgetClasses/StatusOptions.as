@@ -52,6 +52,8 @@ package tibia.options.configurationWidgetClasses
       
       protected static const WIDGET_STATUS_STYLES:Array = [{"value":StatusWidget.STATUS_STYLE_DEFAULT},{"value":StatusWidget.STATUS_STYLE_COMPACT},{"value":StatusWidget.STATUS_STYLE_PARALLEL},{"value":StatusWidget.STATUS_STYLE_FAT},{"value":StatusWidget.STATUS_STYLE_OFF}];
       
+      public static var canChangePvpFraming:Boolean = true;
+      
       protected static const RISKINESS_NONE:int = 0;
       
       protected static const GUILD_NONE:int = 0;
@@ -253,17 +255,19 @@ package tibia.options.configurationWidgetClasses
       
       protected var m_UICreatureStyle:ComboBox = null;
       
-      protected var m_UIOtherIcons:CheckBox = null;
-      
-      protected var m_UIOtherName:CheckBox = null;
-      
       private var m_UIConstructed:Boolean = false;
       
       protected var m_Options:OptionsStorage = null;
       
+      protected var m_UIOtherName:CheckBox = null;
+      
+      protected var m_UIOtherIcons:CheckBox = null;
+      
       protected var m_OtherStyle:int;
       
       protected var m_UIWidgetStyle:ComboBox = null;
+      
+      protected var m_UIBothPvPFrames:CheckBox = null;
       
       private var m_UncommittedOptions:Boolean = false;
       
@@ -306,6 +310,7 @@ package tibia.options.configurationWidgetClasses
             this.m_Options.statusCreatureHealth = this.m_UIOtherHealth.selected;
             this.m_Options.statusCreatureFlags = this.m_UIOtherFlags.selected;
             this.m_Options.statusCreatureIcons = this.m_UIOtherIcons.selected;
+            this.m_Options.statusCreaturePvpFrames = this.m_UIBothPvPFrames.selected;
             if(this.m_WidgetStyle == StatusWidget.STATUS_STYLE_OFF)
             {
                this.m_Options.statusWidgetVisible = false;
@@ -454,6 +459,20 @@ package tibia.options.configurationWidgetClasses
             Item.addChild(this.m_UIOtherIcons);
             Frm.addChild(Item);
             Heading = new FormHeading();
+            Heading.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_BOTH_HEADING");
+            Heading.percentHeight = NaN;
+            Heading.percentWidth = 100;
+            Frm.addChild(Heading);
+            Item = new FormItem();
+            Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_CREATURE_PVPFRAMES");
+            Item.percentHeight = NaN;
+            Item.percentWidth = 100;
+            this.m_UIBothPvPFrames = new CheckBox();
+            this.m_UIBothPvPFrames.addEventListener(Event.CHANGE,this.onValueChange);
+            this.m_UIBothPvPFrames.enabled = canChangePvpFraming;
+            Item.addChild(this.m_UIBothPvPFrames);
+            Frm.addChild(Item);
+            Heading = new FormHeading();
             Heading.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_WIDGET_HEADING");
             Heading.percentHeight = NaN;
             Heading.percentWidth = 100;
@@ -506,13 +525,6 @@ package tibia.options.configurationWidgetClasses
          }
       }
       
-      public function set options(param1:OptionsStorage) : void
-      {
-         this.m_Options = param1;
-         this.m_UncommittedOptions = true;
-         invalidateProperties();
-      }
-      
       protected function onComboBoxChange(param1:Event) : void
       {
          var _loc2_:int = 0;
@@ -562,6 +574,13 @@ package tibia.options.configurationWidgetClasses
          }
       }
       
+      public function set options(param1:OptionsStorage) : void
+      {
+         this.m_Options = param1;
+         this.m_UncommittedOptions = true;
+         invalidateProperties();
+      }
+      
       override protected function commitProperties() : void
       {
          super.commitProperties();
@@ -579,6 +598,7 @@ package tibia.options.configurationWidgetClasses
                this.m_UIOtherHealth.selected = this.m_Options.statusCreatureHealth;
                this.m_UIOtherFlags.selected = this.m_Options.statusCreatureFlags;
                this.m_UIOtherIcons.selected = this.m_Options.statusCreatureIcons;
+               this.m_UIBothPvPFrames.selected = this.m_Options.statusCreaturePvpFrames;
                this.m_WidgetStyle = !!this.m_Options.statusWidgetVisible?int(this.m_Options.statusWidgetStyle):int(StatusWidget.STATUS_STYLE_OFF);
                this.m_WidgetSkill = this.m_Options.statusWidgetSkill;
             }
@@ -594,6 +614,7 @@ package tibia.options.configurationWidgetClasses
                this.m_UIOtherHealth.selected = false;
                this.m_UIOtherFlags.selected = false;
                this.m_UIOtherIcons.selected = false;
+               this.m_UIBothPvPFrames.selected = false;
                this.m_WidgetStyle = StatusWidget.STATUS_STYLE_OFF;
                this.m_WidgetSkill = SKILL_EXPERIENCE;
             }

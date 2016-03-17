@@ -20,68 +20,81 @@ package tibia.sidebar.sideBarWidgetClasses
       
       private static const BUNDLE:String = "CombatControlWidget";
       
-      private static const WIDGET_VIEW_HEIGHT:Number = 47;
-      
       private static const WIDGET_VIEW_WIDTH:Number = 176;
       
       private static const WIDGET_COMPONENT_POSITIONS:Array = [{
-         "left":4,
-         "top":2,
-         "width":NaN,
-         "height":NaN
-      },{
-         "left":27,
-         "top":2,
-         "width":NaN,
-         "height":NaN
-      },{
-         "left":50,
-         "top":2,
-         "width":NaN,
-         "height":NaN
-      },{
-         "left":4,
-         "top":26,
-         "width":NaN,
-         "height":NaN
-      },{
-         "left":27,
-         "top":26,
-         "width":NaN,
-         "height":NaN
-      },{
-         "left":50,
-         "top":26,
-         "width":NaN,
-         "height":NaN
-      },{
-         "left":77,
-         "top":2,
-         "width":NaN,
-         "height":NaN
-      },{
-         "left":100,
-         "top":2,
-         "width":NaN,
-         "height":NaN
-      },{
-         "left":77,
-         "top":26,
-         "width":NaN,
-         "height":NaN
-      },{
-         "left":100,
-         "top":26,
-         "width":NaN,
-         "height":NaN
-      },{
-         "left":132,
+         "left":8,
          "top":6,
          "width":NaN,
          "height":NaN
+      },{
+         "left":31,
+         "top":6,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":54,
+         "top":6,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":8,
+         "top":29,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":31,
+         "top":29,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":54,
+         "top":29,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":82,
+         "top":11,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":18,
+         "top":53,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":41,
+         "top":53,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":64,
+         "top":53,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":87,
+         "top":53,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":134,
+         "top":10,
+         "width":NaN,
+         "height":NaN
       }];
+      
+      private static const WIDGET_STYLE_EXPANDED:String = "expandedView";
+      
+      private static const WIDGET_VIEW_HEIGHT_EXPANDED:Number = 78;
+      
+      private static const WIDGET_EXPANDED_OFFSET_TOP:Number = 12;
+      
+      private static const WIDGET_VIEW_HEIGHT_COLLAPSED:Number = 55;
        
       protected var m_UIButtonMount:Button = null;
+      
+      protected var m_UIButtonExpertMode:Button = null;
       
       protected var m_UIButtonDove:Button = null;
       
@@ -93,6 +106,8 @@ package tibia.sidebar.sideBarWidgetClasses
       
       private var m_UncommittedPVPMode:Boolean = false;
       
+      protected var m_ExpertMode:Boolean = false;
+      
       private var m_UncommittedChaseMode:Boolean = true;
       
       protected var m_UIButtonBalanced:Button = null;
@@ -101,9 +116,9 @@ package tibia.sidebar.sideBarWidgetClasses
       
       private var m_UncommittedSecureMode:Boolean = true;
       
-      protected var m_ChaseMode:int = 0;
+      protected var m_ChaseMode:int;
       
-      protected var m_AttackMode:int = 1;
+      protected var m_AttackMode:int;
       
       protected var m_UIButtonOffensive:Button = null;
       
@@ -119,9 +134,9 @@ package tibia.sidebar.sideBarWidgetClasses
       
       protected var m_MountMode:Boolean = false;
       
-      protected var m_SecureMode:int = 0;
+      protected var m_SecureMode:int;
       
-      protected var m_PVPMode:uint = 0;
+      protected var m_PVPMode:uint;
       
       private var m_UncommittedAttackMode:Boolean = true;
       
@@ -129,6 +144,10 @@ package tibia.sidebar.sideBarWidgetClasses
       
       public function CombatControlWidgetView()
       {
+         this.m_AttackMode = OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
+         this.m_ChaseMode = OptionsStorage.COMBAT_CHASE_OFF;
+         this.m_PVPMode = OptionsStorage.COMBAT_PVP_MODE_WHITE_HAND;
+         this.m_SecureMode = OptionsStorage.COMBAT_SECURE_OFF;
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          direction = BoxDirection.HORIZONTAL;
@@ -203,6 +222,20 @@ package tibia.sidebar.sideBarWidgetClasses
             {
                StaticActionList.PLAYER_CANCEL.perform();
             }
+            else if(param1.currentTarget == this.m_UIButtonExpertMode)
+            {
+               this.m_UIButtonExpertMode.selected = !this.m_UIButtonExpertMode.selected;
+               this.m_ExpertMode = this.m_UIButtonExpertMode.selected;
+               if(!this.m_ExpertMode)
+               {
+                  options.combatPVPMode = OptionsStorage.COMBAT_PVP_MODE_DOVE;
+                  _loc2_ = true;
+               }
+               styleName = !!this.m_ExpertMode?WIDGET_STYLE_EXPANDED:"";
+               this.measure();
+               setActualSize(getExplicitOrMeasuredWidth(),measuredMinHeight);
+               m_WidgetInstance.height = measuredMinHeight;
+            }
             _loc3_ = null;
             if(Boolean(_loc2_) && (_loc3_ = Tibia.s_GetCommunication()) != null && Boolean(_loc3_.isGameRunning))
             {
@@ -238,13 +271,12 @@ package tibia.sidebar.sideBarWidgetClasses
          this.m_UIButtonMount.toolTip = resourceManager.getString(BUNDLE,"TIP_MOUNT");
          this.m_UIButtonMount.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
          addChild(this.m_UIButtonMount);
-         this.m_UIButtonSecureMode = new CustomButton();
-         this.m_UIButtonSecureMode.selected = this.secureMode == OptionsStorage.COMBAT_SECURE_ON;
-         this.m_UIButtonSecureMode.styleName = getStyle("buttonSecureStyle");
-         this.m_UIButtonSecureMode.toggle = true;
-         this.m_UIButtonSecureMode.toolTip = resourceManager.getString(BUNDLE,"TIP_SECURE");
-         this.m_UIButtonSecureMode.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
-         addChild(this.m_UIButtonSecureMode);
+         this.m_UIButtonExpertMode = new CustomButton();
+         this.m_UIButtonExpertMode.styleName = getStyle("buttonExpertModeStyle");
+         this.m_UIButtonExpertMode.toggle = true;
+         this.m_UIButtonExpertMode.toolTip = resourceManager.getString(BUNDLE,"TIP_EXPERT_MODE");
+         this.m_UIButtonExpertMode.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
+         addChild(this.m_UIButtonExpertMode);
          this.m_UIButtonOffensive = new CustomButton();
          this.m_UIButtonOffensive.selected = this.attackMode == OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
          this.m_UIButtonOffensive.styleName = getStyle("buttonOffensiveStyle");
@@ -266,6 +298,13 @@ package tibia.sidebar.sideBarWidgetClasses
          this.m_UIButtonDefensive.toolTip = resourceManager.getString(BUNDLE,"TIP_ATTACK_DEFENSIVE");
          this.m_UIButtonDefensive.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
          addChild(this.m_UIButtonDefensive);
+         this.m_UIButtonSecureMode = new CustomButton();
+         this.m_UIButtonSecureMode.selected = this.secureMode == OptionsStorage.COMBAT_SECURE_ON;
+         this.m_UIButtonSecureMode.styleName = getStyle("buttonSecureStyle");
+         this.m_UIButtonSecureMode.toggle = true;
+         this.m_UIButtonSecureMode.toolTip = resourceManager.getString(BUNDLE,"TIP_SECURE");
+         this.m_UIButtonSecureMode.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
+         addChild(this.m_UIButtonSecureMode);
          this.m_UIButtonDove = new CustomButton();
          this.m_UIButtonDove.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_DOVE;
          this.m_UIButtonDove.styleName = getStyle("buttonDoveStyle");
@@ -343,6 +382,7 @@ package tibia.sidebar.sideBarWidgetClasses
          this.m_UIButtonWhiteHand.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
          this.m_UIButtonYellowHand.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
          this.m_UIButtonRedFist.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonExpertMode.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
       }
       
       override protected function commitProperties() : void
@@ -415,7 +455,7 @@ package tibia.sidebar.sideBarWidgetClasses
          super.measure();
          var _loc1_:EdgeMetrics = viewMetricsAndPadding;
          measuredMinWidth = measuredWidth = _loc1_.left + WIDGET_VIEW_WIDTH + _loc1_.right;
-         measuredMinHeight = measuredHeight = _loc1_.top + WIDGET_VIEW_HEIGHT + _loc1_.bottom;
+         measuredMinHeight = measuredHeight = _loc1_.top + (!!this.m_ExpertMode?WIDGET_VIEW_HEIGHT_EXPANDED:WIDGET_VIEW_HEIGHT_COLLAPSED) + _loc1_.bottom;
       }
       
       function get player() : Player
@@ -447,7 +487,7 @@ package tibia.sidebar.sideBarWidgetClasses
          {
             this.attackMode = OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
             this.chaseMode = OptionsStorage.COMBAT_CHASE_OFF;
-            this.secureMode = OptionsStorage.COMBAT_SECURE_OFF;
+            this.secureMode = OptionsStorage.COMBAT_SECURE_ON;
             this.pvpMode = OptionsStorage.COMBAT_PVP_MODE_DOVE;
          }
       }
@@ -501,6 +541,7 @@ package tibia.sidebar.sideBarWidgetClasses
          var _loc4_:UIComponent = null;
          var _loc5_:Number = NaN;
          var _loc6_:Number = NaN;
+         var _loc7_:Number = NaN;
          super.updateDisplayList(param1,param2);
          var _loc3_:int = 0;
          while(_loc3_ < WIDGET_COMPONENT_POSITIONS.length)
@@ -508,7 +549,16 @@ package tibia.sidebar.sideBarWidgetClasses
             _loc4_ = UIComponent(getChildAt(_loc3_));
             _loc5_ = !isNaN(WIDGET_COMPONENT_POSITIONS[_loc3_].height)?Number(WIDGET_COMPONENT_POSITIONS[_loc3_].height):Number(_loc4_.getExplicitOrMeasuredHeight());
             _loc6_ = !isNaN(WIDGET_COMPONENT_POSITIONS[_loc3_].width)?Number(WIDGET_COMPONENT_POSITIONS[_loc3_].width):Number(_loc4_.getExplicitOrMeasuredWidth());
-            _loc4_.move(WIDGET_COMPONENT_POSITIONS[_loc3_].left,WIDGET_COMPONENT_POSITIONS[_loc3_].top);
+            _loc7_ = WIDGET_COMPONENT_POSITIONS[_loc3_].top;
+            if(Boolean(this.m_ExpertMode) && _loc4_ == this.m_UIButtonStop)
+            {
+               _loc7_ = _loc7_ + WIDGET_EXPANDED_OFFSET_TOP;
+            }
+            else if(!this.m_ExpertMode && (_loc4_ == this.m_UIButtonDove || _loc4_ == this.m_UIButtonWhiteHand || _loc4_ == this.m_UIButtonYellowHand || _loc4_ == this.m_UIButtonRedFist))
+            {
+               _loc7_ = _loc7_ + WIDGET_EXPANDED_OFFSET_TOP;
+            }
+            _loc4_.move(WIDGET_COMPONENT_POSITIONS[_loc3_].left,_loc7_);
             _loc4_.setActualSize(_loc6_,_loc5_);
             _loc3_++;
          }

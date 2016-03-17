@@ -2,14 +2,14 @@ package tibia.creatures
 {
    import shared.utility.Vector3D;
    import tibia.§creatures:ns_creature_internal§.m_Position;
+   import tibia.network.Communication;
+   import tibia.worldmap.WorldMapStorage;
+   import tibia.chat.MessageMode;
    import mx.events.PropertyChangeEvent;
    import mx.events.PropertyChangeEventKind;
    import tibia.magic.Rune;
    import tibia.magic.Spell;
-   import tibia.network.Communication;
    import tibia.minimap.MiniMapStorage;
-   import tibia.worldmap.WorldMapStorage;
-   import tibia.chat.MessageMode;
    import tibia.appearances.ObjectInstance;
    
    public class Player extends Creature
@@ -77,6 +77,8 @@ package tibia.creatures
       
       protected var m_AutowalkPathAborting:Boolean = false;
       
+      private var m_OpenPvPSituations:uint = 0;
+      
       protected var m_AutowalkTarget:Vector3D;
       
       protected var m_AutowalkTargetExact:Boolean = false;
@@ -84,6 +86,8 @@ package tibia.creatures
       private var m_Premium:Boolean = false;
       
       private var m_PremiumUntil:uint = 0;
+      
+      private var m_UnjustPoints:tibia.creatures.UnjustPointsInfo;
       
       protected var m_AutowalkPathSteps:Array;
       
@@ -94,6 +98,7 @@ package tibia.creatures
          this.m_AutowalkPathSteps = [];
          this.m_AutowalkTarget = new Vector3D(-1,-1,-1);
          this.m_KnownSpells = [];
+         this.m_UnjustPoints = new tibia.creatures.UnjustPointsInfo(0,0,0,0,0,0,0);
          super(0,TYPE_PLAYER,null);
       }
       
@@ -104,6 +109,57 @@ package tibia.creatures
             return NaN;
          }
          return (((param1 - 6) * param1 + 17) * param1 - 12) / 6 * 100;
+      }
+      
+      public function startAutowalk(param1:int, param2:int, param3:int, param4:Boolean, param5:Boolean) : void
+      {
+         if(param1 == this.m_AutowalkTarget.x && param2 == this.m_AutowalkTarget.y && param3 == this.m_AutowalkTarget.z)
+         {
+            return;
+         }
+         if(param1 == m_Position.x + 2 * this.m_AutowalkPathDelta.x && param2 == m_Position.y + 2 * this.m_AutowalkPathDelta.y && param3 == m_Position.z + 2 * this.m_AutowalkPathDelta.z)
+         {
+            return;
+         }
+         var _loc6_:Communication = Tibia.s_GetCommunication();
+         var _loc7_:WorldMapStorage = Tibia.s_GetWorldMapStorage();
+         if(_loc6_ == null || !_loc6_.isGameRunning || _loc7_ == null)
+         {
+            return;
+         }
+         this.m_AutowalkTarget.setComponents(-1,-1,-1);
+         this.m_AutowalkTargetDiagonal = false;
+         this.m_AutowalkTargetExact = false;
+         if(_loc7_.isVisible(param1,param2,param3,true))
+         {
+            s_v1.setComponents(param1,param2,param3);
+            _loc7_.toMap(s_v1,s_v1);
+            if((s_v1.x != PLAYER_OFFSET_X || s_v1.y != PLAYER_OFFSET_Y) && _loc7_.getEnterPossibleFlag(s_v1.x,s_v1.y,s_v1.z,true) == FIELD_ENTER_NOT_POSSIBLE)
+            {
+               _loc7_.addOnscreenMessage(MessageMode.MESSAGE_FAILURE,WorldMapStorage.MSG_SORRY_NOT_POSSIBLE);
+               return;
+            }
+         }
+         this.m_AutowalkTarget.setComponents(param1,param2,param3);
+         this.m_AutowalkTargetDiagonal = param4;
+         this.m_AutowalkTargetExact = param5;
+         if(this.m_AutowalkPathAborting)
+         {
+            return;
+         }
+         if(this.m_AutowalkPathSteps.length == 1)
+         {
+            return;
+         }
+         if(this.m_AutowalkPathSteps.length == 0)
+         {
+            this.startAutowalkInternal();
+         }
+         else
+         {
+            _loc6_.sendCSTOP();
+            this.m_AutowalkPathAborting = true;
+         }
       }
       
       public function get anticipatedPosition() : Vector3D
@@ -158,6 +214,19 @@ package tibia.creatures
          }
       }
       
+      public function set unjustPoints(param1:tibia.creatures.UnjustPointsInfo) : void
+      {
+         var _loc2_:PropertyChangeEvent = null;
+         if(!this.m_UnjustPoints.equals(param1))
+         {
+            this.m_UnjustPoints = param1;
+            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc2_.kind = PropertyChangeEventKind.UPDATE;
+            _loc2_.property = "unjustPoints";
+            dispatchEvent(_loc2_);
+         }
+      }
+      
       public function resetFlags() : void
       {
          setPartyFlag(PARTY_NONE);
@@ -166,31 +235,9 @@ package tibia.creatures
          guildFlag = GUILD_NONE;
       }
       
-      public function stopAutowalk(param1:Boolean) : void
+      public function get isFighting() : Boolean
       {
-         if(param1)
-         {
-            stopMovementAnimation();
-         }
-         this.m_AutowalkPathAborting = false;
-         this.m_AutowalkPathDelta.setZero();
-         this.m_AutowalkPathSteps.length = 0;
-         this.m_AutowalkTarget.setComponents(-1,-1,-1);
-         this.m_AutowalkTargetDiagonal = false;
-         this.m_AutowalkTargetExact = false;
-      }
-      
-      public function getRuneUses(param1:Rune) : int
-      {
-         if(param1 == null || param1.restrictLevel > getSkillValue(SKILL_LEVEL) || param1.restrictMagicLevel > getSkillValue(SKILL_MAGLEVEL) || (param1.restrictProfession & 1 << this.profession) == 0)
-         {
-            return -1;
-         }
-         if(param1.castMana <= this.mana)
-         {
-            return param1.castMana > 0?int(int(this.mana / param1.castMana)):int(int.MAX_VALUE);
-         }
-         return 0;
+         return (this.m_StateFlags & 1 << STATE_FIGHTING) > 0;
       }
       
       public function get manaMax() : Number
@@ -254,17 +301,52 @@ package tibia.creatures
          }
       }
       
-      public function get isFighting() : Boolean
+      public function getRuneUses(param1:Rune) : int
       {
-         return (this.m_StateFlags & 1 << STATE_FIGHTING) > 0;
+         if(param1 == null || param1.restrictLevel > getSkillValue(SKILL_LEVEL) || param1.restrictMagicLevel > getSkillValue(SKILL_MAGLEVEL) || (param1.restrictProfession & 1 << this.profession) == 0)
+         {
+            return -1;
+         }
+         if(param1.castMana <= this.mana)
+         {
+            return param1.castMana > 0?int(int(this.mana / param1.castMana)):int(int.MAX_VALUE);
+         }
+         return 0;
       }
       
-      public function get soulPointPercent() : Number
+      public function stopAutowalk(param1:Boolean) : void
       {
-         var _loc1_:Number = getSkillBase(SKILL_SOULPOINTS);
+         if(param1)
+         {
+            stopMovementAnimation();
+         }
+         this.m_AutowalkPathAborting = false;
+         this.m_AutowalkPathDelta.setZero();
+         this.m_AutowalkPathSteps.length = 0;
+         this.m_AutowalkTarget.setComponents(-1,-1,-1);
+         this.m_AutowalkTargetDiagonal = false;
+         this.m_AutowalkTargetExact = false;
+      }
+      
+      public function set openPvpSituations(param1:uint) : void
+      {
+         var _loc2_:PropertyChangeEvent = null;
+         if(this.m_OpenPvPSituations != param1)
+         {
+            this.m_OpenPvPSituations = param1;
+            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc2_.kind = PropertyChangeEventKind.UPDATE;
+            _loc2_.property = "openPvpSituations";
+            dispatchEvent(_loc2_);
+         }
+      }
+      
+      override public function get hitpointsPercent() : Number
+      {
+         var _loc1_:Number = getSkillBase(SKILL_HITPOINTS);
          if(_loc1_ > 0)
          {
-            return getSkillValue(SKILL_SOULPOINTS) * 100 / _loc1_;
+            return getSkillValue(SKILL_HITPOINTS) * 100 / _loc1_;
          }
          return 100;
       }
@@ -283,6 +365,27 @@ package tibia.creatures
          return getSkillValue(SKILL_SOULPOINTS);
       }
       
+      public function get soulPointPercent() : Number
+      {
+         var _loc1_:Number = getSkillBase(SKILL_SOULPOINTS);
+         if(_loc1_ > 0)
+         {
+            return getSkillValue(SKILL_SOULPOINTS) * 100 / _loc1_;
+         }
+         return 100;
+      }
+      
+      public function getSkillGain(param1:int) : Number
+      {
+         switch(param1)
+         {
+            case SKILL_EXPERIENCE:
+               return this.m_ExperienceCounter.getAverageGain();
+            default:
+               return NaN;
+         }
+      }
+      
       override function animateMovement(param1:Number) : void
       {
          super.animateMovement(param1);
@@ -299,27 +402,6 @@ package tibia.creatures
                this.startAutowalkInternal();
             }
          }
-      }
-      
-      public function getSkillGain(param1:int) : Number
-      {
-         switch(param1)
-         {
-            case SKILL_EXPERIENCE:
-               return this.m_ExperienceCounter.getAverageGain();
-            default:
-               return NaN;
-         }
-      }
-      
-      override public function get hitpointsPercent() : Number
-      {
-         var _loc1_:Number = getSkillBase(SKILL_HITPOINTS);
-         if(_loc1_ > 0)
-         {
-            return getSkillValue(SKILL_HITPOINTS) * 100 / _loc1_;
-         }
-         return 100;
       }
       
       public function getSpellCasts(param1:Spell) : int
@@ -372,17 +454,9 @@ package tibia.creatures
          return getSkillBase(SKILL_HITPOINTS);
       }
       
-      public function abortAutowalk(param1:int) : void
+      public function get unjustPoints() : tibia.creatures.UnjustPointsInfo
       {
-         m_Direction = param1;
-         this.m_AutowalkPathAborting = false;
-         this.m_AutowalkPathSteps.length = 0;
-         if(!m_MovementRunning || !this.m_AutowalkPathDelta.isZero())
-         {
-            this.m_AutowalkPathDelta.setZero();
-            stopMovementAnimation();
-            this.startAutowalkInternal();
-         }
+         return this.m_UnjustPoints;
       }
       
       override public function startMovementAnimation(param1:int, param2:int, param3:int) : void
@@ -398,9 +472,9 @@ package tibia.creatures
          }
       }
       
-      public function get soulPointsMax() : Number
+      public function get openPvpSituations() : uint
       {
-         return getSkillBase(SKILL_SOULPOINTS);
+         return this.m_OpenPvPSituations;
       }
       
       public function get premiumUntil() : uint
@@ -415,6 +489,11 @@ package tibia.creatures
       public function get premium() : Boolean
       {
          return this.m_Premium;
+      }
+      
+      public function get soulPointsMax() : Number
+      {
+         return getSkillBase(SKILL_SOULPOINTS);
       }
       
       override public function reset() : void
@@ -509,6 +588,19 @@ package tibia.creatures
          this.abortAutowalk(2);
       }
       
+      public function abortAutowalk(param1:int) : void
+      {
+         m_Direction = param1;
+         this.m_AutowalkPathAborting = false;
+         this.m_AutowalkPathSteps.length = 0;
+         if(!m_MovementRunning || !this.m_AutowalkPathDelta.isZero())
+         {
+            this.m_AutowalkPathDelta.setZero();
+            stopMovementAnimation();
+            this.startAutowalkInternal();
+         }
+      }
+      
       public function set stateFlags(param1:uint) : void
       {
          this.updateStateFlags(param1);
@@ -531,10 +623,6 @@ package tibia.creatures
             _loc1_ = _loc1_ + 3;
          }
          this.m_ExperienceCounter.reset();
-      }
-      
-      override public function set type(param1:int) : void
-      {
       }
       
       public function get stateFlags() : uint
@@ -685,55 +773,8 @@ package tibia.creatures
          }
       }
       
-      public function startAutowalk(param1:int, param2:int, param3:int, param4:Boolean, param5:Boolean) : void
+      override public function set type(param1:int) : void
       {
-         if(param1 == this.m_AutowalkTarget.x && param2 == this.m_AutowalkTarget.y && param3 == this.m_AutowalkTarget.z)
-         {
-            return;
-         }
-         if(param1 == m_Position.x + 2 * this.m_AutowalkPathDelta.x && param2 == m_Position.y + 2 * this.m_AutowalkPathDelta.y && param3 == m_Position.z + 2 * this.m_AutowalkPathDelta.z)
-         {
-            return;
-         }
-         var _loc6_:Communication = Tibia.s_GetCommunication();
-         var _loc7_:WorldMapStorage = Tibia.s_GetWorldMapStorage();
-         if(_loc6_ == null || !_loc6_.isGameRunning || _loc7_ == null)
-         {
-            return;
-         }
-         this.m_AutowalkTarget.setComponents(-1,-1,-1);
-         this.m_AutowalkTargetDiagonal = false;
-         this.m_AutowalkTargetExact = false;
-         if(_loc7_.isVisible(param1,param2,param3,true))
-         {
-            s_v1.setComponents(param1,param2,param3);
-            _loc7_.toMap(s_v1,s_v1);
-            if((s_v1.x != PLAYER_OFFSET_X || s_v1.y != PLAYER_OFFSET_Y) && _loc7_.getEnterPossibleFlag(s_v1.x,s_v1.y,s_v1.z,true) == FIELD_ENTER_NOT_POSSIBLE)
-            {
-               _loc7_.addOnscreenMessage(MessageMode.MESSAGE_FAILURE,WorldMapStorage.MSG_SORRY_NOT_POSSIBLE);
-               return;
-            }
-         }
-         this.m_AutowalkTarget.setComponents(param1,param2,param3);
-         this.m_AutowalkTargetDiagonal = param4;
-         this.m_AutowalkTargetExact = param5;
-         if(this.m_AutowalkPathAborting)
-         {
-            return;
-         }
-         if(this.m_AutowalkPathSteps.length == 1)
-         {
-            return;
-         }
-         if(this.m_AutowalkPathSteps.length == 0)
-         {
-            this.startAutowalkInternal();
-         }
-         else
-         {
-            _loc6_.sendCSTOP();
-            this.m_AutowalkPathAborting = true;
-         }
       }
       
       public function get profession() : int

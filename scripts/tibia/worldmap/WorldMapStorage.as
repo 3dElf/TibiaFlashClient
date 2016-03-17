@@ -674,7 +674,7 @@ package tibia.worldmap
                _loc6_ = Tibia.s_GetCreatureStorage().getCreature(_loc8_.data);
                if(!_loc6_.isTrapper && Boolean(_loc6_.isUnpassable))
                {
-                  return FIELD_ENTER_NOT_POSSIBLE;
+                  return !!_loc6_.isHuman?uint(FIELD_ENTER_POSSIBLE_NO_ANIMATION):uint(FIELD_ENTER_NOT_POSSIBLE);
                }
             }
             else

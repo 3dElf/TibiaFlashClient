@@ -57,7 +57,7 @@ package tibia.options
          super();
          title = resourceManager.getString(BUNDLE,"TITLE");
          width = 512;
-         height = 512;
+         height = 532;
          this.m_UIOptionsEditor = new Vector.<IOptionsEditor>();
          this.m_UIOptionsEditor[GENERAL] = new GeneralOptions();
          this.m_UIOptionsEditor[RENDERER] = new RendererOptions();

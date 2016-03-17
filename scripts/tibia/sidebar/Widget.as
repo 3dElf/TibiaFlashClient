@@ -10,6 +10,7 @@ package tibia.sidebar
    import tibia.trade.SafeTradeWidget;
    import tibia.magic.SpellListWidget;
    import tibia.premium.PremiumWidget;
+   import tibia.creatures.UnjustPointsWidget;
    import tibia.creatures.battlelistWidgetClasses.BattlelistWidgetView;
    import tibia.creatures.buddylistWidgetClasses.BuddylistWidgetView;
    import tibia.container.containerViewWidgetClasses.ContainerViewWidgetView;
@@ -21,6 +22,7 @@ package tibia.sidebar
    import tibia.trade.safeTradeWidgetClasses.SafeTradeWidgetView;
    import tibia.magic.spellListWidgetClasses.SpellListWidgetView;
    import tibia.premium.premiumWidgetClasses.PremiumWidgetView;
+   import tibia.creatures.unjustPointsWidgetClasses.UnjustPointsWidgetView;
    import tibia.options.OptionsStorage;
    import tibia.sidebar.sideBarWidgetClasses.WidgetView;
    import mx.events.PropertyChangeEvent;
@@ -39,7 +41,9 @@ package tibia.sidebar
       
       protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
-      public static const TYPES_BEYONDLAST:int = 11;
+      public static const TYPES_BEYONDLAST:int = 12;
+      
+      public static const TYPE_UNJUSTPOINTS:int = 11;
       
       public static const EVENT_CLOSE:String = "close";
       
@@ -141,6 +145,14 @@ package tibia.sidebar
          "collapsible":false,
          "resizable":false,
          "viewClass":PremiumWidgetView
+      },{
+         "type":TYPE_UNJUSTPOINTS,
+         "unique":true,
+         "restorable":true,
+         "closable":true,
+         "collapsible":true,
+         "resizable":false,
+         "viewClass":UnjustPointsWidgetView
       }];
       
       public static const TYPE_SPELLLIST:int = 9;
@@ -168,32 +180,6 @@ package tibia.sidebar
       public function Widget()
       {
          super();
-      }
-      
-      public static function s_Unmarshall(param1:XML, param2:int) : Widget
-      {
-         if(param1 == null || param1.localName() != "widget" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
-         {
-            throw new Error("Widget.s_Unmarshall: Invalid input.");
-         }
-         var _loc3_:XMLList = null;
-         if((_loc3_ = param1.@type) == null || _loc3_.length() != 1)
-         {
-            throw new Error("Widget.s_Unmarshall: Missing attribute \"type\".");
-         }
-         var _loc4_:int = parseInt(_loc3_[0].toString());
-         if(!s_CheckType(_loc4_))
-         {
-            throw new Error("Widget.s_Unmarshall: Invalid type: " + _loc4_);
-         }
-         if((_loc3_ = param1.@id) == null || _loc3_.length() != 1)
-         {
-            throw new Error("Widget.s_Unmarshall: Missing attribute \"id\".");
-         }
-         var _loc5_:int = parseInt(_loc3_[0].toString());
-         var _loc6_:Widget = s_CreateInstance(_loc4_,_loc5_);
-         _loc6_.unmarshall(param1,param2);
-         return _loc6_;
       }
       
       static function s_CreateInstance(param1:int, param2:int) : Widget
@@ -237,6 +223,9 @@ package tibia.sidebar
                break;
             case TYPE_PREMIUM:
                _loc3_ = new PremiumWidget();
+               break;
+            case TYPE_UNJUSTPOINTS:
+               _loc3_ = new UnjustPointsWidget();
          }
          _loc3_.initialise(param1,param2);
          return _loc3_;
@@ -272,6 +261,32 @@ package tibia.sidebar
             throw new ArgumentError("Widget.s_GetLimit: Invalid type.");
          }
          return TYPE_DATA[param1].restorable;
+      }
+      
+      public static function s_Unmarshall(param1:XML, param2:int) : Widget
+      {
+         if(param1 == null || param1.localName() != "widget" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
+         {
+            throw new Error("Widget.s_Unmarshall: Invalid input.");
+         }
+         var _loc3_:XMLList = null;
+         if((_loc3_ = param1.@type) == null || _loc3_.length() != 1)
+         {
+            throw new Error("Widget.s_Unmarshall: Missing attribute \"type\".");
+         }
+         var _loc4_:int = parseInt(_loc3_[0].toString());
+         if(!s_CheckType(_loc4_))
+         {
+            throw new Error("Widget.s_Unmarshall: Invalid type: " + _loc4_);
+         }
+         if((_loc3_ = param1.@id) == null || _loc3_.length() != 1)
+         {
+            throw new Error("Widget.s_Unmarshall: Missing attribute \"id\".");
+         }
+         var _loc5_:int = parseInt(_loc3_[0].toString());
+         var _loc6_:Widget = s_CreateInstance(_loc4_,_loc5_);
+         _loc6_.unmarshall(param1,param2);
+         return _loc6_;
       }
       
       public function get options() : OptionsStorage

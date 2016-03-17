@@ -27,49 +27,55 @@ package tibia.sidebar.sideBarWidgetClasses
          "toolTip":"TIP_GENERAL",
          "type":Widget.TYPE_GENERALBUTTONS,
          "styleName":"buttonGeneralStyle",
-         "left":8,
+         "left":6,
          "top":19
       },{
          "toolTip":"TIP_COMBAT",
          "type":Widget.TYPE_COMBATCONTROL,
          "styleName":"buttonCombatStyle",
-         "left":20,
+         "left":18,
          "top":4
       },{
          "toolTip":"TIP_MINIMAP",
          "type":Widget.TYPE_MINIMAP,
          "styleName":"buttonMinimapStyle",
-         "left":44,
+         "left":42,
          "top":19
       },{
          "toolTip":"TIP_CONTAINER",
          "type":Widget.TYPE_CONTAINER,
          "styleName":"buttonContainerStyle",
-         "left":128,
+         "left":126,
          "top":4
       },{
          "toolTip":"TIP_BODY",
          "type":Widget.TYPE_BODY,
          "styleName":"buttonBodyStyle",
-         "left":56,
+         "left":54,
          "top":4
       },{
          "toolTip":"TIP_BATTLELIST",
          "type":Widget.TYPE_BATTLELIST,
          "styleName":"buttonBattlelistStyle",
-         "left":92,
+         "left":90,
          "top":4
       },{
          "toolTip":"TIP_BUDDYLIST",
          "type":Widget.TYPE_BUDDYLIST,
          "styleName":"buttonBuddylistStyle",
-         "left":80,
+         "left":78,
          "top":19
       },{
          "toolTip":"TIP_TRADE",
          "type":Widget.TYPE_NPCTRADE,
          "styleName":"buttonTradeStyle",
-         "left":116,
+         "left":114,
+         "top":19
+      },{
+         "toolTip":"TIP_UNJUSTPOINTS",
+         "type":Widget.TYPE_UNJUSTPOINTS,
+         "styleName":"buttonUnjustPointsStyle",
+         "left":148,
          "top":19
       }];
        

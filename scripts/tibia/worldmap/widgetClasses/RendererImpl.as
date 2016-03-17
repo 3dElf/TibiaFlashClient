@@ -392,7 +392,7 @@ package tibia.worldmap.widgetClasses
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       {
-         s_InitialiseMarksViews();
+         s_InitialiseMarksViews(true);
       }
       
       protected var m_ClipRect:Rectangle = null;
@@ -583,11 +583,14 @@ package tibia.worldmap.widgetClasses
          addEventListener(Event.ENTER_FRAME,this.onEnterFrame);
       }
       
-      private static function s_InitialiseMarksViews() : void
+      private static function s_InitialiseMarksViews(param1:Boolean) : void
       {
          s_CreatureMarksView = new MarksView(0);
          s_CreatureMarksView.addMarkToView(Marks.MARK_TYPE_CLIENT_MAPWINDOW,MarksView.MARK_THICKNESS_BOLD);
-         s_CreatureMarksView.addMarkToView(Marks.MARK_TYPE_PERMANENT,MarksView.MARK_THICKNESS_BOLD);
+         if(param1)
+         {
+            s_CreatureMarksView.addMarkToView(Marks.MARK_TYPE_PERMANENT,MarksView.MARK_THICKNESS_BOLD);
+         }
          s_CreatureMarksView.addMarkToView(Marks.MARK_TYPE_ONE_SECOND_TEMP,MarksView.MARK_THICKNESS_BOLD);
       }
       
@@ -1410,6 +1413,7 @@ package tibia.worldmap.widgetClasses
             this.m_OptionsLightEnabled = this.options.rendererLightEnabled;
             this.m_OptionsScaleMap = this.options.rendererScaleMap;
             this.m_OptionsAntialiasing = this.options.rendererAntialiasing;
+            s_InitialiseMarksViews(this.options.statusCreaturePvpFrames);
          }
          else
          {
@@ -1420,6 +1424,7 @@ package tibia.worldmap.widgetClasses
             this.m_OptionsLightEnabled = false;
             this.m_OptionsScaleMap = true;
             this.m_OptionsAntialiasing = false;
+            s_InitialiseMarksViews(true);
          }
          if(stage != null && !isNaN(this.m_OptionsFrameRate))
          {

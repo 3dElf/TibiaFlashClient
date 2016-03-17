@@ -4,6 +4,7 @@ package tibia.creatures.battlelistWidgetClasses
    import mx.controls.listClasses.IListItemRenderer;
    import mx.core.IDataRenderer;
    import shared.utility.Colour;
+   import tibia.§creatures:ns_creature_internal§.s_BattlelistMarksView;
    import tibia.appearances.widgetClasses.MarksView;
    import tibia.appearances.Marks;
    import flash.geom.Rectangle;
@@ -16,6 +17,7 @@ package tibia.creatures.battlelistWidgetClasses
    import tibia.§creatures:ns_creature_internal§.s_Rect;
    import tibia.§creatures:ns_creature_internal§.s_Point;
    import tibia.§creatures:ns_creature_internal§.s_NameCache;
+   import tibia.§creatures:ns_creature_internal§.s_InitialiseMarksView;
    import flash.events.TimerEvent;
    import flash.display.BitmapData;
    import mx.events.PropertyChangeEvent;
@@ -121,7 +123,7 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const SKILL_NONE:int = -1;
       
-      private static var s_BattlelistMarksView:MarksView = null;
+      static var s_BattlelistMarksView:MarksView = null;
       
       protected static const NPC_SPEECH_TRADER:uint = 2;
       
@@ -305,7 +307,7 @@ package tibia.creatures.battlelistWidgetClasses
       
       {
          s_InitialiseStyle();
-         s_InitialiseMarksView();
+         s_InitialiseMarksView(true);
       }
       
       private var m_InvalidHaveTimer:Boolean = false;
@@ -323,11 +325,14 @@ package tibia.creatures.battlelistWidgetClasses
          super();
       }
       
-      private static function s_InitialiseMarksView() : void
+      static function s_InitialiseMarksView(param1:Boolean) : void
       {
          s_BattlelistMarksView = new MarksView(4);
          s_BattlelistMarksView.addMarkToView(Marks.MARK_TYPE_CLIENT_BATTLELIST,MarksView.MARK_THICKNESS_THIN);
-         s_BattlelistMarksView.addMarkToView(Marks.MARK_TYPE_PERMANENT,MarksView.MARK_THICKNESS_THIN);
+         if(param1)
+         {
+            s_BattlelistMarksView.addMarkToView(Marks.MARK_TYPE_PERMANENT,MarksView.MARK_THICKNESS_THIN);
+         }
       }
       
       private static function s_InitialiseStyle() : void
