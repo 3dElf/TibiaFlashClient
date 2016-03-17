@@ -192,10 +192,11 @@ package tibia.actionbar.widgetClasses
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
+         var _loc5_:Number = NaN;
          layoutChrome(param1,param2);
          var _loc3_:Number = 0;
          var _loc4_:Number = 0;
-         var _loc5_:Number = 0;
+         _loc5_ = 0;
          var _loc6_:Number = 0;
          var _loc7_:int = 0;
          var _loc8_:int = 0;

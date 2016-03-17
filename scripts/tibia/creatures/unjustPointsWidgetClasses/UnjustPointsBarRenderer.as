@@ -17,6 +17,8 @@ package tibia.creatures.unjustPointsWidgetClasses
    public class UnjustPointsBarRenderer extends UIComponent implements IDataRenderer
    {
       
+      protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
+      
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
@@ -50,6 +52,8 @@ package tibia.creatures.unjustPointsWidgetClasses
       protected static const SKILL_EXPERIENCE:int = 0;
       
       protected static const TYPE_SUMMON_OTHERS:int = 4;
+      
+      protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
       
       protected static const SKILL_STAMINA:int = 17;
       
@@ -123,9 +127,9 @@ package tibia.creatures.unjustPointsWidgetClasses
       
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
       
-      public static const SCALE_DAY:uint = 0;
-      
       private static const UNJUST_BAR_RED:Class = UnjustPointsBarRenderer_UNJUST_BAR_RED;
+      
+      public static const SCALE_DAY:uint = 0;
       
       protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
       
@@ -159,6 +163,8 @@ package tibia.creatures.unjustPointsWidgetClasses
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
+      protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+      
       protected static const PROFESSION_PALADIN:int = 2;
       
       protected static const SKILL_FIGHTAXE:int = 12;
@@ -168,6 +174,12 @@ package tibia.creatures.unjustPointsWidgetClasses
       private static const UNJUST_BAR_YELLOW_BITMAP:BitmapData = (new UNJUST_BAR_YELLOW() as BitmapAsset).bitmapData;
       
       protected static const SKILL_SOULPOINTS:int = 16;
+      
+      protected static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+      
+      protected static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+      
+      protected static const BLESSING_NONE:int = 0;
       
       protected static const STATE_FAST:int = 6;
       
@@ -186,6 +198,8 @@ package tibia.creatures.unjustPointsWidgetClasses
       protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
       
       protected static const STATE_CURSED:int = 11;
+      
+      protected static const BLESSING_ADVENTURER:int = 1;
       
       protected static const STATE_FREEZING:int = 9;
       
@@ -226,6 +240,8 @@ package tibia.creatures.unjustPointsWidgetClasses
       protected static const NPC_SPEECH_NORMAL:uint = 1;
       
       public static const SCALE_WEEK:uint = 1;
+      
+      protected static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
       
       protected static const NPC_SPEECH_NONE:uint = 0;
       

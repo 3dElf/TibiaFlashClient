@@ -747,13 +747,15 @@ package tibia.worldmap
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
+         var _loc6_:Number = NaN;
+         var _loc8_:Number = NaN;
          var _loc10_:Number = NaN;
          var _loc11_:Number = NaN;
          super.updateDisplayList(param1,param2);
          var _loc3_:Number = Math.max(0,param2 - 2);
          var _loc4_:Number = Math.max(0,param1 - 2);
          var _loc5_:Number = MAP_HEIGHT * FIELD_SIZE;
-         var _loc6_:Number = MAP_WIDTH * FIELD_SIZE;
+         _loc6_ = MAP_WIDTH * FIELD_SIZE;
          if(this.m_Options != null && Boolean(this.m_Options.rendererScaleMap) || _loc3_ < _loc5_ || _loc4_ < _loc6_)
          {
             _loc10_ = Math.min(_loc3_ / _loc5_,_loc4_ / _loc6_);
@@ -761,7 +763,7 @@ package tibia.worldmap
             _loc6_ = Math.floor(_loc6_ * _loc10_);
          }
          var _loc7_:Number = Math.floor((param1 - _loc6_) / 2);
-         var _loc8_:Number = Math.floor((param2 - _loc5_) / 2);
+         _loc8_ = Math.floor((param2 - _loc5_) / 2);
          this.m_UIBackdrop.x = _loc7_ - 1;
          this.m_UIBackdrop.y = _loc8_ - 1;
          var _loc9_:Graphics = this.m_UIBackdrop.graphics;

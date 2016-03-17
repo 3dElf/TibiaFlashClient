@@ -14,6 +14,7 @@ package tibia.container.bodyContainerViewWigdetClasses
    import flash.text.TextFieldAutoSize;
    import flash.filters.GlowFilter;
    import flash.filters.BitmapFilterQuality;
+   import mx.containers.HBox;
    import shared.controls.CustomButton;
    import flash.geom.Point;
    import tibia.container.containerViewWidgetClasses.ContainerSlot;
@@ -30,6 +31,7 @@ package tibia.container.bodyContainerViewWigdetClasses
    import tibia.input.gameaction.UseActionImpl;
    import tibia.input.gameaction.LookActionImpl;
    import tibia.game.ObjectContextMenu;
+   import mx.containers.Box;
    import tibia.§sidebar:ns_sidebar_internal§.widgetClosed;
    import tibia.§sidebar:ns_sidebar_internal§.widgetCollapsed;
    import build.ObjectDragImplFactory;
@@ -38,6 +40,136 @@ package tibia.container.bodyContainerViewWigdetClasses
    
    public class BodyContainerViewWidgetView extends WidgetView implements IUseWidget, IMoveWidget
    {
+      
+      private static const WIDGET_COMPONENTS:Array = [{
+         "slot":-1,
+         "left":123,
+         "top":140,
+         "width":28,
+         "height":11,
+         "style":null,
+         "blessedStyle":null,
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.HEAD,
+         "left":70,
+         "top":2,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotHeadStyle",
+         "blessedStyle":"bodySlotHeadBlessedStyle",
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.NECK,
+         "left":26,
+         "top":8,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotNeckStyle",
+         "blessedStyle":"bodySlotNeckBlessedStyle",
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.BACK,
+         "left":114,
+         "top":8,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotBackStyle",
+         "blessedStyle":"bodySlotBackBlessedStyle",
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.TORSO,
+         "left":70,
+         "top":39,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotTorsoStyle",
+         "blessedStyle":"bodySlotTorsoBlessedStyle",
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.RIGHT_HAND,
+         "left":120,
+         "top":53,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotRightHandStyle",
+         "blessedStyle":"bodySlotRightHandBlessedStyle",
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.LEFT_HAND,
+         "left":19,
+         "top":54,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotLeftHandStyle",
+         "blessedStyle":"bodySlotLeftHandBlessedStyle",
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.LEGS,
+         "left":70,
+         "top":77,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotLegsStyle",
+         "blessedStyle":"bodySlotLegsBlessedStyle",
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.FEET,
+         "left":70,
+         "top":115,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotFeetStyle",
+         "blessedStyle":"bodySlotFeetBlessedStyle",
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.FINGER,
+         "left":26,
+         "top":99,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotFingerStyle",
+         "blessedStyle":"bodySlotFingerBlessedStyle",
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.HIP,
+         "left":114,
+         "top":98,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotHipStyle",
+         "blessedStyle":"bodySlotHipBlessedStyle",
+         "tooltip":null
+      },{
+         "slot":BodyContainerView.PURSE,
+         "left":2,
+         "top":1,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotPurseStyle",
+         "blessedStyle":null,
+         "tooltip":"TOOLTIP_PURSE"
+      },{
+         "slot":BodyContainerView.PREMIUM,
+         "left":156,
+         "top":1,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotPremiumStyle",
+         "blessedStyle":null,
+         "tooltip":"TOOLTIP_PREMIUM"
+      },{
+         "slot":BodyContainerView.BLESSINGS,
+         "left":1,
+         "top":134,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotBlessingStyle",
+         "blessedStyle":null,
+         "tooltip":null
+      }];
+      
+      protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
@@ -76,6 +208,8 @@ package tibia.container.bodyContainerViewWigdetClasses
       private static const MOUSE_BUTTON_LEFT:int = 1;
       
       protected static const TYPE_SUMMON_OTHERS:int = 4;
+      
+      protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
       
       protected static const SKILL_STAMINA:int = 17;
       
@@ -183,6 +317,8 @@ package tibia.container.bodyContainerViewWigdetClasses
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
+      protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+      
       private static const ACTION_SMARTCLICK:int = 100;
       
       protected static const PROFESSION_PALADIN:int = 2;
@@ -194,6 +330,12 @@ package tibia.container.bodyContainerViewWigdetClasses
       protected static const PARTY_LEADER_SEXP_OFF:int = 4;
       
       protected static const SKILL_SOULPOINTS:int = 16;
+      
+      protected static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+      
+      protected static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+      
+      protected static const BLESSING_NONE:int = 0;
       
       private static const ACTION_CONTEXT_MENU:int = 5;
       
@@ -217,9 +359,11 @@ package tibia.container.bodyContainerViewWigdetClasses
       
       protected static const STATE_CURSED:int = 11;
       
-      private static const ACTION_NONE:int = 0;
+      protected static const BLESSING_ADVENTURER:int = 1;
       
       protected static const STATE_FREEZING:int = 9;
+      
+      private static const ACTION_NONE:int = 0;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
       
@@ -267,111 +411,7 @@ package tibia.container.bodyContainerViewWigdetClasses
       
       private static const ACTION_USE_OR_OPEN:int = 101;
       
-      private static const WIDGET_COMPONENTS:Array = [{
-         "slot":-1,
-         "left":123,
-         "top":140,
-         "width":28,
-         "height":11,
-         "style":null,
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.HEAD,
-         "left":70,
-         "top":2,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotHeadStyle",
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.NECK,
-         "left":26,
-         "top":8,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotNeckStyle",
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.BACK,
-         "left":114,
-         "top":8,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotBackStyle",
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.TORSO,
-         "left":70,
-         "top":39,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotTorsoStyle",
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.RIGHT_HAND,
-         "left":120,
-         "top":53,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotRightHandStyle",
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.LEFT_HAND,
-         "left":19,
-         "top":54,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotLeftHandStyle",
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.LEGS,
-         "left":70,
-         "top":77,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotLegsStyle",
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.FEET,
-         "left":70,
-         "top":115,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotFeetStyle",
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.FINGER,
-         "left":26,
-         "top":99,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotFingerStyle",
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.HIP,
-         "left":114,
-         "top":98,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotHipStyle",
-         "tooltip":null
-      },{
-         "slot":BodyContainerView.PURSE,
-         "left":2,
-         "top":1,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotPurseStyle",
-         "tooltip":"TOOLTIP_PURSE"
-      },{
-         "slot":BodyContainerView.PREMIUM,
-         "left":156,
-         "top":1,
-         "width":NaN,
-         "height":NaN,
-         "style":"bodySlotPremiumStyle",
-         "tooltip":"TOOLTIP_PREMIUM"
-      }];
+      protected static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
       
       protected static const NPC_SPEECH_NONE:uint = 0;
       
@@ -391,13 +431,17 @@ package tibia.container.bodyContainerViewWigdetClasses
       
       private var m_RolloverSlot:ContainerSlot = null;
       
+      private var m_UIBlessings:Button = null;
+      
+      private var m_UIPremium:Button = null;
+      
       private var m_UncommittedPlayer:Boolean = false;
       
       private var m_CursorHelper:CursorHelper;
       
       private var m_TempPurseSlot:ContainerSlot;
       
-      private var m_UIPremium:Button = null;
+      private var m_UICapacityTooltipOverlay:Box = null;
       
       private var m_UncommittedBodyContainer:Boolean = false;
       
@@ -489,6 +533,9 @@ package tibia.container.bodyContainerViewWigdetClasses
          this.m_UICapacity.selectable = false;
          this.m_UICapacity.text = this.getCapacityLabel();
          rawChildren.addChild(this.m_UICapacity);
+         this.m_UICapacityTooltipOverlay = new HBox();
+         this.m_UICapacityTooltipOverlay.toolTip = resourceManager.getString(BUNDLE,"TOOLTIP_CAPACITY");
+         rawChildren.addChild(this.m_UICapacityTooltipOverlay);
          this.m_UIPurse = new CustomButton();
          if(WIDGET_COMPONENTS[BodyContainerView.PURSE].style != null)
          {
@@ -515,10 +562,16 @@ package tibia.container.bodyContainerViewWigdetClasses
          }
          this.m_UIPremium.addEventListener(MouseEvent.CLICK,this.onPremiumClick);
          rawChildren.addChild(this.m_UIPremium);
+         this.m_UIBlessings = new CustomButton();
+         if(WIDGET_COMPONENTS[BodyContainerView.BLESSINGS].style != null)
+         {
+            this.m_UIBlessings.styleName = getStyle(WIDGET_COMPONENTS[BodyContainerView.BLESSINGS].style);
+         }
+         rawChildren.addChild(this.m_UIBlessings);
          var _loc1_:int = BodyContainerView.FIRST_SLOT;
          while(_loc1_ <= BodyContainerView.LAST_SLOT)
          {
-            if(!(_loc1_ == BodyContainerView.PURSE || _loc1_ == BodyContainerView.PREMIUM))
+            if(!(_loc1_ == BodyContainerView.PURSE || _loc1_ == BodyContainerView.PREMIUM || _loc1_ == BodyContainerView.BLESSINGS))
             {
                _loc2_ = new BodySlot();
                _loc2_.appearance = null;
@@ -548,17 +601,6 @@ package tibia.container.bodyContainerViewWigdetClasses
          return this.getUseObjectUnderPoint(param1);
       }
       
-      private function getCapacityLabel() : String
-      {
-         var _loc1_:Number = NaN;
-         if(this.m_Player != null)
-         {
-            _loc1_ = this.m_Player.getSkillValue(SKILL_CARRYSTRENGTH);
-            return resourceManager.getString(BUNDLE,"LBL_CAPACITY_FORMAT",[Math.round(_loc1_ / 100)]);
-         }
-         return null;
-      }
-      
       public function getUseObjectUnderPoint(param1:Point) : Object
       {
          var _loc2_:BodySlot = null;
@@ -569,6 +611,17 @@ package tibia.container.bodyContainerViewWigdetClasses
                "absolute":new Vector3D(65535,_loc2_.position,0),
                "position":0
             };
+         }
+         return null;
+      }
+      
+      private function getCapacityLabel() : String
+      {
+         var _loc1_:Number = NaN;
+         if(this.m_Player != null)
+         {
+            _loc1_ = this.m_Player.getSkillValue(SKILL_CARRYSTRENGTH);
+            return resourceManager.getString(BUNDLE,"LBL_CAPACITY_FORMAT",[Math.round(_loc1_ / 100)]);
          }
          return null;
       }
@@ -630,24 +683,6 @@ package tibia.container.bodyContainerViewWigdetClasses
          }
       }
       
-      function set player(param1:Player) : void
-      {
-         if(this.m_Player != param1)
-         {
-            if(this.m_Player != null)
-            {
-               this.m_Player.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onPlayerChange);
-            }
-            this.m_Player = param1;
-            this.m_UncommittedPlayer = true;
-            invalidateProperties();
-            if(this.m_Player != null)
-            {
-               this.m_Player.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onPlayerChange);
-            }
-         }
-      }
-      
       public function pointToAbsolute(param1:Point) : Vector3D
       {
          var _loc2_:BodySlot = null;
@@ -656,6 +691,23 @@ package tibia.container.bodyContainerViewWigdetClasses
             return new Vector3D(65535,_loc2_.position,0);
          }
          return null;
+      }
+      
+      private function getBlessingTooltip() : String
+      {
+         var _loc1_:Vector.<String> = new Vector.<String>();
+         if(this.m_Player != null)
+         {
+            if(this.m_Player.hasBlessing(BLESSING_ADVENTURER))
+            {
+               _loc1_.push(resourceManager.getString(BUNDLE,"TOOLTIP_BLESSING_ADVENTURER"));
+            }
+         }
+         if(_loc1_.length == 0)
+         {
+            _loc1_.push(resourceManager.getString(BUNDLE,"TOOLTIP_NO_BLESSINGS"));
+         }
+         return _loc1_.join("\n");
       }
       
       private function getCapacityTextFormat() : TextFormat
@@ -678,6 +730,24 @@ package tibia.container.bodyContainerViewWigdetClasses
          super.commitProperties();
       }
       
+      function set player(param1:Player) : void
+      {
+         if(this.m_Player != param1)
+         {
+            if(this.m_Player != null)
+            {
+               this.m_Player.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onPlayerChange);
+            }
+            this.m_Player = param1;
+            this.m_UncommittedPlayer = true;
+            invalidateProperties();
+            if(this.m_Player != null)
+            {
+               this.m_Player.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onPlayerChange);
+            }
+         }
+      }
+      
       public function getMultiUseObjectUnderPoint(param1:Point) : Object
       {
          return this.getUseObjectUnderPoint(param1);
@@ -691,20 +761,15 @@ package tibia.container.bodyContainerViewWigdetClasses
          measuredMinHeight = measuredHeight = _loc1_.top + WIDGET_VIEW_HEIGHT + _loc1_.bottom;
       }
       
-      function get player() : Player
-      {
-         return this.m_Player;
-      }
-      
       protected function onSlotRollOut(param1:MouseEvent) : void
       {
          this.m_RolloverSlot = null;
          this.m_CursorHelper.resetCursor();
       }
       
-      private function onPurseClick(param1:MouseEvent) : void
+      function get player() : Player
       {
-         this.determineAction(param1,true,false);
+         return this.m_Player;
       }
       
       protected function determineAction(param1:MouseEvent, param2:Boolean = false, param3:Boolean = false) : void
@@ -812,11 +877,20 @@ package tibia.container.bodyContainerViewWigdetClasses
          }
       }
       
+      private function onPurseClick(param1:MouseEvent) : void
+      {
+         this.determineAction(param1,true,false);
+      }
+      
       private function onPlayerChange(param1:PropertyChangeEvent) : void
       {
          if(param1.property == "skill" || param1.property == "*")
          {
             this.m_UICapacity.text = this.getCapacityLabel();
+            invalidateDisplayList();
+         }
+         else if(param1.property == "blessings")
+         {
             invalidateDisplayList();
          }
       }
@@ -828,41 +902,55 @@ package tibia.container.bodyContainerViewWigdetClasses
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
-         var _loc6_:BodySlot = null;
-         var _loc7_:Number = NaN;
+         var _loc7_:BodySlot = null;
          var _loc8_:Number = NaN;
+         var _loc9_:Number = NaN;
          super.updateDisplayList(param1,param2);
          var _loc3_:* = !(Boolean(widgetClosed) || Boolean(widgetCollapsed));
          var _loc4_:EdgeMetrics = viewMetricsAndPadding;
-         this.m_UICapacity.visible = _loc3_;
-         this.m_UICapacity.x = _loc4_.left + WIDGET_COMPONENTS[0].left;
-         this.m_UICapacity.y = _loc4_.top + WIDGET_COMPONENTS[0].top - 2;
-         this.m_UICapacity.width = WIDGET_COMPONENTS[0].width;
-         this.m_UICapacity.height = WIDGET_COMPONENTS[0].height;
+         this.m_UICapacity.visible = this.m_UICapacityTooltipOverlay.visible = _loc3_;
+         this.m_UICapacity.x = this.m_UICapacityTooltipOverlay.x = _loc4_.left + WIDGET_COMPONENTS[0].left;
+         this.m_UICapacity.y = this.m_UICapacityTooltipOverlay.y = _loc4_.top + WIDGET_COMPONENTS[0].top - 2;
+         this.m_UICapacity.width = this.m_UICapacityTooltipOverlay.width = WIDGET_COMPONENTS[0].width;
+         this.m_UICapacity.height = this.m_UICapacityTooltipOverlay.height = WIDGET_COMPONENTS[0].height;
          this.m_UIPurse.visible = _loc3_;
          this.m_UIPurse.move(_loc4_.left + WIDGET_COMPONENTS[BodyContainerView.PURSE].left,_loc4_.top + WIDGET_COMPONENTS[BodyContainerView.PURSE].top);
          this.m_UIPurse.setActualSize(this.m_UIPurse.getExplicitOrMeasuredWidth(),this.m_UIPurse.getExplicitOrMeasuredHeight());
          this.m_UIPremium.visible = _loc3_;
          this.m_UIPremium.move(_loc4_.left + WIDGET_COMPONENTS[BodyContainerView.PREMIUM].left,_loc4_.top + WIDGET_COMPONENTS[BodyContainerView.PREMIUM].top);
          this.m_UIPremium.setActualSize(this.m_UIPremium.getExplicitOrMeasuredWidth(),this.m_UIPremium.getExplicitOrMeasuredHeight());
-         var _loc5_:int = numChildren - 1;
-         while(_loc5_ >= 0)
+         var _loc5_:Boolean = this.m_Player != null && !this.m_Player.hasBlessing(BLESSING_NONE);
+         this.m_UIBlessings.visible = _loc3_;
+         this.m_UIBlessings.enabled = _loc5_;
+         this.m_UIBlessings.toolTip = this.getBlessingTooltip();
+         this.m_UIBlessings.move(_loc4_.left + WIDGET_COMPONENTS[BodyContainerView.BLESSINGS].left,_loc4_.top + WIDGET_COMPONENTS[BodyContainerView.BLESSINGS].top);
+         this.m_UIBlessings.setActualSize(this.m_UIBlessings.getExplicitOrMeasuredWidth(),this.m_UIBlessings.getExplicitOrMeasuredHeight());
+         var _loc6_:int = numChildren - 1;
+         while(_loc6_ >= 0)
          {
-            _loc6_ = BodySlot(getChildAt(_loc5_));
-            _loc7_ = WIDGET_COMPONENTS[_loc6_.position].width;
-            if(isNaN(_loc7_))
+            _loc7_ = BodySlot(getChildAt(_loc6_));
+            if(Boolean(_loc5_) && WIDGET_COMPONENTS[_loc7_.position].blessedStyle != null)
             {
-               _loc7_ = _loc6_.getExplicitOrMeasuredWidth();
+               _loc7_.styleName = getStyle(WIDGET_COMPONENTS[_loc7_.position].blessedStyle);
             }
-            _loc8_ = WIDGET_COMPONENTS[_loc6_.position].height;
+            else
+            {
+               _loc7_.styleName = getStyle(WIDGET_COMPONENTS[_loc7_.position].style);
+            }
+            _loc8_ = WIDGET_COMPONENTS[_loc7_.position].width;
             if(isNaN(_loc8_))
             {
-               _loc8_ = _loc6_.getExplicitOrMeasuredHeight();
+               _loc8_ = _loc7_.getExplicitOrMeasuredWidth();
             }
-            _loc6_.visible = _loc3_;
-            _loc6_.move(WIDGET_COMPONENTS[_loc6_.position].left,WIDGET_COMPONENTS[_loc6_.position].top);
-            _loc6_.setActualSize(_loc7_,_loc8_);
-            _loc5_--;
+            _loc9_ = WIDGET_COMPONENTS[_loc7_.position].height;
+            if(isNaN(_loc9_))
+            {
+               _loc9_ = _loc7_.getExplicitOrMeasuredHeight();
+            }
+            _loc7_.visible = _loc3_;
+            _loc7_.move(WIDGET_COMPONENTS[_loc7_.position].left,WIDGET_COMPONENTS[_loc7_.position].top);
+            _loc7_.setActualSize(_loc8_,_loc9_);
+            _loc6_--;
          }
       }
       

@@ -33,13 +33,15 @@ package tibia.creatures.battlelistWidgetClasses
    public class BattlelistItemRenderer extends UIComponent implements IListItemRenderer, IDataRenderer
    {
       
-      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       public static const CREATURE_ICON_SIZE:int = 24;
+      
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const STATE_PZ_BLOCK:int = 13;
       
@@ -76,6 +78,8 @@ package tibia.creatures.battlelistWidgetClasses
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
       protected static const TYPE_SUMMON_OTHERS:int = 4;
+      
+      protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
       
       protected static const SKILL_STAMINA:int = 17;
       
@@ -161,9 +165,9 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const MAP_MIN_X:int = 24576;
       
-      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
-      
       protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
+      
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
       protected static const MAP_WIDTH:int = 15;
       
@@ -209,6 +213,8 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const UNDERGROUND_LAYER:int = 2;
       
+      protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+      
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const PROFESSION_PALADIN:int = 2;
@@ -231,6 +237,12 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
       
+      protected static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+      
+      protected static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+      
+      protected static const BLESSING_NONE:int = 0;
+      
       protected static const STATE_FAST:int = 6;
       
       protected static const GUILD_OTHER:int = 5;
@@ -252,6 +264,8 @@ package tibia.creatures.battlelistWidgetClasses
       protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const STATE_CURSED:int = 11;
+      
+      protected static const BLESSING_ADVENTURER:int = 1;
       
       protected static const STATE_FREEZING:int = 9;
       
@@ -298,6 +312,8 @@ package tibia.creatures.battlelistWidgetClasses
       protected static const NPC_SPEECH_NORMAL:uint = 1;
       
       protected static const MAPSIZE_W:int = 10;
+      
+      protected static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
       
       protected static const NPC_SPEECH_NONE:uint = 0;
       
@@ -424,10 +440,9 @@ package tibia.creatures.battlelistWidgetClasses
       
       override protected function measure() : void
       {
-         var _loc1_:EdgeMetrics = null;
          var _loc3_:Number = NaN;
          super.measure();
-         _loc1_ = this.viewMetricsAndPadding;
+         var _loc1_:EdgeMetrics = this.viewMetricsAndPadding;
          var _loc2_:Number = CREATURE_ICON_SIZE + getStyle("horizontalGap") + Math.max(CreatureStorage.STATE_FLAG_SIZE,s_NameCache.slotWidth,getStyle("healthbarWidth"));
          _loc3_ = Math.max(CREATURE_ICON_SIZE,Math.max(CreatureStorage.STATE_FLAG_SIZE,s_NameCache.slotHeight) + getStyle("verticalGap") + getStyle("healthbarHeight"));
          measuredMinWidth = measuredWidth = _loc1_.left + _loc2_ + _loc1_.right;

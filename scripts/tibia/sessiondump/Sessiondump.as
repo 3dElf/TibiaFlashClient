@@ -133,6 +133,8 @@ package tibia.sessiondump
       
       protected static const TYPE_SUMMON_OTHERS:int = 4;
       
+      protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
+      
       protected static const CBROWSEFIELD:int = 203;
       
       protected static const SCREATUREPARTY:int = 145;
@@ -243,9 +245,9 @@ package tibia.sessiondump
       
       protected static const SSNAPBACK:int = 181;
       
-      protected static const CGETCHANNELS:int = 151;
-      
       protected static const CROTATESOUTH:int = 113;
+      
+      protected static const CGETCHANNELS:int = 151;
       
       protected static const PARTY_NONE:int = 0;
       
@@ -271,6 +273,10 @@ package tibia.sessiondump
       
       protected static const SPRIVATECHANNEL:int = 173;
       
+      protected static const SBLESSINGS:int = 156;
+      
+      protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+      
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
       protected static const PAYLOADLENGTH_POS:int = PAYLOAD_POS;
@@ -290,6 +296,8 @@ package tibia.sessiondump
       protected static const ERR_INVALID_CHECKSUM:int = 2;
       
       public static const SKEYFRAMEBEGIN:int = 1;
+      
+      protected static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
       
       protected static const SNPCOFFER:int = 122;
       
@@ -316,6 +324,8 @@ package tibia.sessiondump
       protected static const CMARKETBROWSE:int = 245;
       
       protected static const SMARKETBROWSE:int = 249;
+      
+      protected static const BLESSING_ADVENTURER:int = 1;
       
       protected static const CCLOSENPCTRADE:int = 124;
       
@@ -347,15 +357,17 @@ package tibia.sessiondump
       
       protected static const SCREATURESPEED:int = 143;
       
-      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
-      
       protected static const SKILL_FIGHTFIST:int = 13;
       
       protected static const STATE_FIGHTING:int = 7;
       
+      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
+      
       protected static const NPC_SPEECH_NORMAL:uint = 1;
       
       protected static const SSPELLDELAY:int = 164;
+      
+      protected static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
       
       protected static const CEDITBUDDY:int = 222;
       
@@ -365,9 +377,11 @@ package tibia.sessiondump
       
       protected static const CROTATEWEST:int = 114;
       
-      public static const PROTOCOL_VERSION:int = 1054;
+      public static const PROTOCOL_VERSION:int = 1055;
       
       protected static const SCREATUREOUTFIT:int = 142;
+      
+      protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
       
       protected static const SAMBIENTE:int = 130;
       
@@ -431,13 +445,13 @@ package tibia.sessiondump
       
       protected static const STOPROW:int = 101;
       
-      private static const ERROR_SESSIONDUMP_CONNECTION_ERROR:uint = 1;
-      
       protected static const CHECKSUM_SIZE:int = 4;
       
       protected static const CTURNOBJECT:int = 133;
       
       protected static const STATE_DAZZLED:int = 10;
+      
+      private static const ERROR_SESSIONDUMP_CONNECTION_ERROR:uint = 1;
       
       protected static const CUSEOBJECT:int = 130;
       
@@ -484,6 +498,8 @@ package tibia.sessiondump
       protected static const CJOINAGGRESSION:int = 142;
       
       protected static const SMOVECREATURE:int = 109;
+      
+      protected static const SSWITCHPRESET:int = 157;
       
       protected static const CGOEAST:int = 102;
       
@@ -550,6 +566,8 @@ package tibia.sessiondump
       protected static const SMARKETDETAIL:int = 248;
       
       protected static const SKILL_SOULPOINTS:int = 16;
+      
+      protected static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
       
       protected static const CTALK:int = 150;
       
@@ -624,6 +642,8 @@ package tibia.sessiondump
       protected static const SOWNOFFER:int = 125;
       
       protected static const PACKETLENGTH_POS:int = HEADER_POS;
+      
+      protected static const BLESSING_NONE:int = 0;
       
       protected static const SKILL_GOSTRENGTH:int = 6;
       

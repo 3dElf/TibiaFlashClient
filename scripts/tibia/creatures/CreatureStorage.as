@@ -17,19 +17,21 @@ package tibia.creatures
    public class CreatureStorage
    {
       
-      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
-      public static const SORT_DISTANCE_ASC:int = 2;
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const STATE_PZ_BLOCK:int = 13;
       
       protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
       
       protected static const PK_REVENGE:int = 6;
+      
+      public static const SORT_DISTANCE_ASC:int = 2;
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
@@ -64,6 +66,8 @@ package tibia.creatures
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
       protected static const TYPE_SUMMON_OTHERS:int = 4;
+      
+      protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
       
       protected static const SKILL_STAMINA:int = 17;
       
@@ -157,9 +161,9 @@ package tibia.creatures
       
       protected static const MAP_MIN_X:int = 24576;
       
-      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
-      
       protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
+      
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
       protected static const MAP_WIDTH:int = 15;
       
@@ -207,6 +211,8 @@ package tibia.creatures
       
       protected static const UNDERGROUND_LAYER:int = 2;
       
+      protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+      
       public static const FILTER_PARTY:int = 16;
       
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
@@ -237,7 +243,13 @@ package tibia.creatures
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
       
+      protected static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+      
+      protected static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+      
       public static const MARK_AIM_ATTACK:uint = MARK_NUM_COLOURS + 2;
+      
+      protected static const BLESSING_NONE:int = 0;
       
       public static const STATE_FLAG_GAP:int = 2;
       
@@ -270,6 +282,8 @@ package tibia.creatures
       public static const FILTER_NONE:int = 0;
       
       protected static const STATE_CURSED:int = 11;
+      
+      protected static const BLESSING_ADVENTURER:int = 1;
       
       protected static const STATE_FREEZING:int = 9;
       
@@ -315,17 +329,19 @@ package tibia.creatures
       
       protected static const STATE_FIGHTING:int = 7;
       
-      public static const SORT_HITPOINTS_DESC:int = 5;
-      
       protected static const NPC_SPEECH_QUEST:uint = 3;
       
       protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
       
       protected static const NPC_SPEECH_NORMAL:uint = 1;
       
+      public static const SORT_HITPOINTS_DESC:int = 5;
+      
       protected static const MAPSIZE_W:int = 10;
       
       public static const SPEECH_FLAG_SIZE:int = 18;
+      
+      protected static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
       
       public static const FILTER_MONSTER:int = 4;
       
@@ -375,6 +391,19 @@ package tibia.creatures
          this.m_Opponents.sort = this.m_OpponentsSort;
          this.options = Tibia.s_GetOptions();
          this.m_Trappers = null;
+      }
+      
+      public static function s_GetPKFlag(param1:int, param2:Rectangle) : BitmapData
+      {
+         if(param1 < PK_NONE || param1 > PK_REVENGE)
+         {
+            throw new ArgumentError("CreatureStorage.s_GetPKFlag: Invalid flag.");
+         }
+         param2.x = param1 * STATE_FLAG_SIZE;
+         param2.y = STATE_FLAG_SIZE;
+         param2.width = STATE_FLAG_SIZE;
+         param2.height = STATE_FLAG_SIZE;
+         return STATE_FLAG_BITMAP;
       }
       
       public static function s_GetRiskinessFlag(param1:int, param2:Rectangle) : BitmapData
@@ -470,19 +499,6 @@ package tibia.creatures
          param2.width = SPEECH_FLAG_SIZE;
          param2.height = SPEECH_FLAG_SIZE;
          return SPEECH_FLAG_BITMAP;
-      }
-      
-      public static function s_GetPKFlag(param1:int, param2:Rectangle) : BitmapData
-      {
-         if(param1 < PK_NONE || param1 > PK_REVENGE)
-         {
-            throw new ArgumentError("CreatureStorage.s_GetPKFlag: Invalid flag.");
-         }
-         param2.x = param1 * STATE_FLAG_SIZE;
-         param2.y = STATE_FLAG_SIZE;
-         param2.width = STATE_FLAG_SIZE;
-         param2.height = STATE_FLAG_SIZE;
-         return STATE_FLAG_BITMAP;
       }
       
       public function setAim(param1:tibia.creatures.Creature) : void

@@ -22,19 +22,22 @@ package tibia.options
    import tibia.appearances.AppearanceType;
    import flash.events.Event;
    import tibia.sidebar.SideBarSet;
+   import mx.utils.StringUtil;
    import tibia.worldmap.widgetClasses.RendererImpl;
    import tibia.creatures.CreatureStorage;
    
    public class OptionsStorage extends EventDispatcher
    {
       
-      public static const COMBAT_PVP_MODE_WHITE_HAND:uint = 1;
+      protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
       
       public static const COMBAT_PVP_MODE_YELLOW_HAND:uint = 2;
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
+      
+      public static const COMBAT_PVP_MODE_WHITE_HAND:uint = 1;
       
       protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
@@ -69,6 +72,8 @@ package tibia.options
       protected static const SKILL_EXPERIENCE:int = 0;
       
       protected static const TYPE_NPC:int = 2;
+      
+      protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
       
       protected static const SKILL_STAMINA:int = 17;
       
@@ -221,6 +226,8 @@ package tibia.options
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
+      protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+      
       protected static const PROFESSION_PALADIN:int = 2;
       
       protected static const SKILL_FIGHTAXE:int = 12;
@@ -228,6 +235,12 @@ package tibia.options
       protected static const PARTY_LEADER_SEXP_OFF:int = 4;
       
       protected static const SKILL_SOULPOINTS:int = 16;
+      
+      protected static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+      
+      protected static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+      
+      protected static const BLESSING_NONE:int = 0;
       
       protected static const STATE_FAST:int = 6;
       
@@ -249,6 +262,8 @@ package tibia.options
       
       protected static const STATE_CURSED:int = 11;
       
+      protected static const BLESSING_ADVENTURER:int = 1;
+      
       protected static const STATE_FREEZING:int = 9;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
@@ -261,21 +276,21 @@ package tibia.options
       
       protected static const SKILL_FIGHTFIST:int = 13;
       
-      public static const COMBAT_CHASE_OFF:int = 0;
+      protected static const PK_AGGRESSOR:int = 3;
       
-      public static const COMBAT_ATTACK_BALANCED:int = 2;
+      protected static const GUILD_WAR_ENEMY:int = 2;
       
       protected static const SKILL_LEVEL:int = 1;
       
       protected static const STATE_STRENGTHENED:int = 12;
       
-      protected static const PK_AGGRESSOR:int = 3;
+      public static const COMBAT_CHASE_OFF:int = 0;
       
       protected static const STATE_HUNGRY:int = 31;
       
       protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
       
-      protected static const GUILD_WAR_ENEMY:int = 2;
+      protected static const SUMMON_NONE:int = 0;
       
       protected static const PROFESSION_DRUID:int = 4;
       
@@ -283,9 +298,11 @@ package tibia.options
       
       protected static const NPC_SPEECH_QUEST:uint = 3;
       
-      protected static const SUMMON_NONE:int = 0;
-      
       protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      public static const COMBAT_ATTACK_BALANCED:int = 2;
+      
+      protected static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
       
       protected static const NPC_SPEECH_NONE:uint = 0;
       
@@ -417,10 +434,11 @@ package tibia.options
       
       private var m_MarketBrowserCategory:int = -1;
       
-      public function OptionsStorage(param1:XML, param2:XML)
+      public function OptionsStorage(param1:XML, param2:XML, param3:Boolean = false)
       {
          var a_DefaultOptions:XML = param1;
          var a_CurrentOptions:XML = param2;
+         var a_IgnoreAdditionalMappingSets:Boolean = param3;
          this.m_KnownTutorialHint = new Vector.<int>();
          this.m_SideBarSet = new Vector.<SideBarSet>();
          this.m_ActionBarSet = new Vector.<ActionBarSet>();
@@ -442,7 +460,7 @@ package tibia.options
          this.m_DefaultOptionsXml = a_DefaultOptions;
          try
          {
-            this.unmarshall(this.m_DefaultOptionsXml);
+            this.unmarshall(this.m_DefaultOptionsXml,a_IgnoreAdditionalMappingSets);
          }
          catch(e:Error)
          {
@@ -515,42 +533,42 @@ package tibia.options
          }
       }
       
-      private function unmarshallCombat(param1:XML, param2:Number) : void
+      private function unmarshallCombat(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:XML = null;
-         var _loc4_:int = 0;
+         var _loc4_:XML = null;
          var _loc5_:int = 0;
          var _loc6_:int = 0;
+         var _loc7_:int = 0;
          if(param1 == null || param1.localName() != "combat" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
          {
             throw new Error("OptionsStorage.unmarshallCombat: Invalid input.");
          }
-         for each(_loc3_ in param1.elements())
+         for each(_loc4_ in param1.elements())
          {
-            switch(_loc3_.localName())
+            switch(_loc4_.localName())
             {
                case "attackMode":
-                  _loc4_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc4_ == COMBAT_ATTACK_OFFENSIVE || _loc4_ == COMBAT_ATTACK_BALANCED || _loc4_ == COMBAT_ATTACK_DEFENSIVE)
+                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(_loc5_ == COMBAT_ATTACK_OFFENSIVE || _loc5_ == COMBAT_ATTACK_BALANCED || _loc5_ == COMBAT_ATTACK_DEFENSIVE)
                   {
-                     this.m_CombatAttackMode = _loc4_;
+                     this.m_CombatAttackMode = _loc5_;
                   }
                   continue;
                case "chaseMode":
-                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc5_ == COMBAT_CHASE_OFF || _loc5_ == COMBAT_CHASE_ON)
+                  _loc6_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(_loc6_ == COMBAT_CHASE_OFF || _loc6_ == COMBAT_CHASE_ON)
                   {
-                     this.m_CombatChaseMode = _loc5_;
+                     this.m_CombatChaseMode = _loc6_;
                   }
                   continue;
                case "autoChaseOff":
-                  this.m_CombatAutoChaseOff = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_CombatAutoChaseOff = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "secureMode":
-                  _loc6_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc6_ == COMBAT_SECURE_OFF || _loc6_ == COMBAT_SECURE_ON)
+                  _loc7_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(_loc7_ == COMBAT_SECURE_OFF || _loc7_ == COMBAT_SECURE_ON)
                   {
-                     this.m_CombatSecureMode = _loc6_;
+                     this.m_CombatSecureMode = _loc7_;
                   }
                   continue;
                default:
@@ -656,28 +674,28 @@ package tibia.options
          }
       }
       
-      private function unmarshallHelp(param1:XML, param2:Number) : void
+      private function unmarshallHelp(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:XML = null;
          var _loc4_:XML = null;
-         var _loc5_:int = 0;
+         var _loc5_:XML = null;
          var _loc6_:int = 0;
+         var _loc7_:int = 0;
          if(param1 == null || param1.localName() != "help" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
          {
             throw new Error("OptionsStorage.unmarshallHelp: Invalid input.");
          }
-         for each(_loc3_ in param1.elements())
+         for each(_loc4_ in param1.elements())
          {
-            switch(_loc3_.localName())
+            switch(_loc4_.localName())
             {
                case "knownTutorialHints":
-                  for each(_loc4_ in _loc3_.elements("hint"))
+                  for each(_loc5_ in _loc4_.elements("hint"))
                   {
-                     _loc5_ = XMLHelper.s_UnmarshallInteger(_loc4_);
-                     _loc6_ = this.getKnownTutorialHintIndex(_loc5_);
-                     if(Boolean(TutorialHint.checkHint(_loc5_)) && _loc6_ < 0)
+                     _loc6_ = XMLHelper.s_UnmarshallInteger(_loc5_);
+                     _loc7_ = this.getKnownTutorialHintIndex(_loc6_);
+                     if(Boolean(TutorialHint.checkHint(_loc6_)) && _loc7_ < 0)
                      {
-                        this.m_KnownTutorialHint.splice(-_loc6_ - 1,0,_loc5_);
+                        this.m_KnownTutorialHint.splice(-_loc7_ - 1,0,_loc6_);
                      }
                   }
                   continue;
@@ -687,40 +705,40 @@ package tibia.options
          }
       }
       
-      private function unmarshallRenderer(param1:XML, param2:Number) : void
+      private function unmarshallRenderer(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:XML = null;
+         var _loc4_:XML = null;
          if(param1 == null || param1.localName() != "renderer" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
          {
             throw new Error("OptionsStorage.unmarshallRenderer: Invalid input.");
          }
-         for each(_loc3_ in param1.elements())
+         for each(_loc4_ in param1.elements())
          {
-            switch(_loc3_.localName())
+            switch(_loc4_.localName())
             {
                case "lightEnabled":
-                  this.m_RendererLightEnabled = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_RendererLightEnabled = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "ambientBrightness":
-                  this.m_RendererAmbientBrightness = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc3_),1));
+                  this.m_RendererAmbientBrightness = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc4_),1));
                   continue;
                case "highlight":
-                  this.m_RendererHighlight = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc3_),1));
+                  this.m_RendererHighlight = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc4_),1));
                   continue;
                case "levelSeparator":
-                  this.m_RendererLevelSeparator = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc3_),1));
+                  this.m_RendererLevelSeparator = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc4_),1));
                   continue;
                case "scaleMap":
-                  this.m_RendererScaleMap = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_RendererScaleMap = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "antialiasing":
-                  this.m_RendererAntialiasing = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_RendererAntialiasing = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "maxFrameRate":
-                  this.m_RendererMaxFrameRate = Math.max(10,Math.min(XMLHelper.s_UnmarshallInteger(_loc3_),60));
+                  this.m_RendererMaxFrameRate = Math.max(10,Math.min(XMLHelper.s_UnmarshallInteger(_loc4_),60));
                   continue;
                case "showFrameRate":
-                  this.m_RendererShowFrameRate = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_RendererShowFrameRate = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                default:
                   continue;
@@ -728,13 +746,14 @@ package tibia.options
          }
       }
       
-      public function unmarshall(param1:*) : void
+      public function unmarshall(param1:*, param2:Boolean = false) : void
       {
          var XMLNode:XML = null;
          var _Event:PropertyChangeEvent = null;
          var UnmarshallFunctionName:String = null;
          var InitialiseFunctioName:String = null;
          var a_Input:* = param1;
+         var a_IsDefault:Boolean = param2;
          var _XML:XML = null;
          if(a_Input is String)
          {
@@ -772,7 +791,7 @@ package tibia.options
                   {
                      try
                      {
-                        this[UnmarshallFunctionName](XMLNode,this.m_Version);
+                        this[UnmarshallFunctionName](XMLNode,this.m_Version,a_IsDefault);
                         UnmarshalledElements.push(Group.localName);
                      }
                      catch(_Error:*)
@@ -821,7 +840,7 @@ package tibia.options
                         </status>);
       }
       
-      private function unmarshallMouseMapping(param1:XML, param2:Number) : void
+      private function unmarshallMouseMapping(param1:XML, param2:Number, param3:Boolean = false) : void
       {
          MouseMapping.s_Unmarshall(param1,param2,this.m_MouseMapping);
       }
@@ -878,14 +897,17 @@ package tibia.options
          this.m_RendererScaleMap = param1;
       }
       
-      private function unmarshallMappingSet(param1:XML, param2:Number) : void
+      private function unmarshallMappingSet(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:MappingSet = MappingSet.s_Unmarshall(param1,param2);
-         if(this.m_MappingSet.length >= MappingSet.NUM_SETS && this.getListItem(this.m_MappingSet,_loc3_.ID) == null)
+         var _loc4_:MappingSet = MappingSet.s_Unmarshall(param1,param2);
+         if(this.m_MappingSet.length >= MappingSet.NUM_SETS && this.getListItem(this.m_MappingSet,_loc4_.ID) == null)
          {
             throw new Error("OptionsStorage.unmarshallMappingSet: Too many sets.");
          }
-         this.addListItem(this.m_MappingSet,_loc3_,null);
+         if(_loc4_.ID == 0 || !param3)
+         {
+            this.addListItem(this.m_MappingSet,_loc4_,null);
+         }
       }
       
       private function set _1893979327npcTradeSort(param1:int) : void
@@ -1006,40 +1028,40 @@ package tibia.options
          return this.m_MarketBrowserDepot;
       }
       
-      private function unmarshallNPCTrade(param1:XML, param2:Number) : void
+      private function unmarshallNPCTrade(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:XML = null;
-         var _loc4_:int = 0;
+         var _loc4_:XML = null;
          var _loc5_:int = 0;
+         var _loc6_:int = 0;
          if(param1 == null || param1.localName() != "npctrade" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
          {
             throw new Error("OptionsStorage.unmarshallNPCTrade: Invalid input.");
          }
-         for each(_loc3_ in param1.elements())
+         for each(_loc4_ in param1.elements())
          {
-            switch(_loc3_.localName())
+            switch(_loc4_.localName())
             {
                case "buyIgnoreCapacity":
-                  this.m_NPCTradeBuyIgnoreCapacity = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_NPCTradeBuyIgnoreCapacity = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "buyWithBackpacks":
-                  this.m_NPCTradeBuyWithBackpacks = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_NPCTradeBuyWithBackpacks = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "sellKeepEquipped":
-                  this.m_NPCTradeSellKeepEquipped = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_NPCTradeSellKeepEquipped = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "sort":
-                  _loc4_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc4_ == ObjectRefSelectorBase.SORT_NAME || _loc4_ == ObjectRefSelectorBase.SORT_PRICE || _loc4_ == ObjectRefSelectorBase.SORT_WEIGHT)
+                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(_loc5_ == ObjectRefSelectorBase.SORT_NAME || _loc5_ == ObjectRefSelectorBase.SORT_PRICE || _loc5_ == ObjectRefSelectorBase.SORT_WEIGHT)
                   {
-                     this.m_NPCTradeSort = _loc4_;
+                     this.m_NPCTradeSort = _loc5_;
                   }
                   continue;
                case "layout":
-                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc5_ == ObjectRefSelectorBase.LAYOUT_GRID || _loc5_ == ObjectRefSelectorBase.LAYOUT_LIST)
+                  _loc6_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(_loc6_ == ObjectRefSelectorBase.LAYOUT_GRID || _loc6_ == ObjectRefSelectorBase.LAYOUT_LIST)
                   {
-                     this.m_NPCTradeLayout = _loc5_;
+                     this.m_NPCTradeLayout = _loc6_;
                   }
                   continue;
                default:
@@ -1410,14 +1432,14 @@ package tibia.options
          return this.m_StatusPlayerName;
       }
       
-      private function unmarshallNameFilterSet(param1:XML, param2:Number) : void
+      private function unmarshallNameFilterSet(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:NameFilterSet = NameFilterSet.s_Unmarshall(param1,param2);
-         if(this.m_NameFilterSet.length >= NameFilterSet.NUM_SETS && this.getListItem(this.m_NameFilterSet,_loc3_.ID) == null)
+         var _loc4_:NameFilterSet = NameFilterSet.s_Unmarshall(param1,param2);
+         if(this.m_NameFilterSet.length >= NameFilterSet.NUM_SETS && this.getListItem(this.m_NameFilterSet,_loc4_.ID) == null)
          {
             throw new Error("OptionsStorage.unmarshallNameFilterSet: Too many sets.");
          }
-         this.addListItem(this.m_NameFilterSet,_loc3_,null);
+         this.addListItem(this.m_NameFilterSet,_loc4_,null);
       }
       
       private function initialiseRenderer() : void
@@ -1492,22 +1514,22 @@ package tibia.options
          }
       }
       
-      private function unmarshallOpponent(param1:XML, param2:Number) : void
+      private function unmarshallOpponent(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:XML = null;
+         var _loc4_:XML = null;
          if(param1 == null || param1.localName() != "opponent" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
          {
             throw new Error("OptionsStorage.unmarshallOpponent: Invalid input.");
          }
-         for each(_loc3_ in param1.elements())
+         for each(_loc4_ in param1.elements())
          {
-            switch(_loc3_.localName())
+            switch(_loc4_.localName())
             {
                case "sort":
-                  this.m_OpponentSort = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  this.m_OpponentSort = XMLHelper.s_UnmarshallInteger(_loc4_);
                   continue;
                case "filter":
-                  this.m_OpponentFilter = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  this.m_OpponentFilter = XMLHelper.s_UnmarshallInteger(_loc4_);
                   continue;
                default:
                   continue;
@@ -1564,25 +1586,25 @@ package tibia.options
          }
       }
       
-      private function unmarshallGeneral(param1:XML, param2:Number) : void
+      private function unmarshallGeneral(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:XML = null;
-         var _loc4_:Boolean = false;
-         var _loc5_:int = 0;
+         var _loc4_:XML = null;
+         var _loc5_:Boolean = false;
+         var _loc6_:int = 0;
          if(param1 == null || param1.localName() != "general" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
          {
             throw new Error("OptionsStorage.unmarshallGeneral: Invalid input.");
          }
-         for each(_loc3_ in param1.elements())
+         for each(_loc4_ in param1.elements())
          {
-            switch(_loc3_.localName())
+            switch(_loc4_.localName())
             {
                case "actionBarsLock":
-                  this.m_GeneralActionBarsLock = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_GeneralActionBarsLock = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "inputClassicControls":
-                  _loc4_ = XMLHelper.s_UnmarshallBoolean(_loc3_);
-                  if(_loc4_)
+                  _loc5_ = XMLHelper.s_UnmarshallBoolean(_loc4_);
+                  if(_loc5_)
                   {
                      this.m_MouseMapping.replaceAll(MouseMapping.PRESET_SMART_RIGHT_CLICK.mouseBindings);
                   }
@@ -1592,22 +1614,22 @@ package tibia.options
                   }
                   continue;
                case "inputMouseControls":
-                  this.m_GeneralInputMouseControls = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  this.m_GeneralInputMouseControls = XMLHelper.s_UnmarshallInteger(_loc4_);
                case "inputSetID":
-                  this.m_GeneralInputSetID = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  this.m_GeneralInputSetID = XMLHelper.s_UnmarshallInteger(_loc4_);
                   continue;
                case "inputSetMode":
-                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc5_ == MappingSet.CHAT_MODE_OFF || _loc5_ == MappingSet.CHAT_MODE_ON)
+                  _loc6_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(_loc6_ == MappingSet.CHAT_MODE_OFF || _loc6_ == MappingSet.CHAT_MODE_ON)
                   {
-                     this.m_GeneralInputSetMode = _loc5_;
+                     this.m_GeneralInputSetMode = _loc6_;
                   }
                   continue;
                case "uiGameWindowHeight":
-                  this.m_GeneralUIGameWindowHeight = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc3_),10000));
+                  this.m_GeneralUIGameWindowHeight = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc4_),10000));
                   continue;
                case "uiChatLeftViewWidth":
-                  this.m_GeneralUIChatLeftViewWidth = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc3_),100));
+                  this.m_GeneralUIChatLeftViewWidth = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc4_),100));
                   continue;
                default:
                   continue;
@@ -1665,23 +1687,23 @@ package tibia.options
          }
       }
       
-      public function getDefaultActionBarSet() : ActionBarSet
+      public function getDefaultActionBarSet(param1:int = 0) : ActionBarSet
       {
-         var _loc2_:XML = null;
-         var _loc3_:ActionBarSet = null;
-         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("ActionBarSet");
-         if(_loc1_.length() > 0)
+         var _loc3_:XML = null;
+         var _loc4_:ActionBarSet = null;
+         var _loc2_:XMLList = this.searchDefaultXmlFirstLevelElements("ActionBarSet");
+         if(_loc2_.length() > 0)
          {
-            for each(_loc2_ in _loc1_)
+            for each(_loc3_ in _loc2_)
             {
-               _loc3_ = ActionBarSet.s_Unmarshall(_loc2_,this.m_Version);
-               if(_loc3_.ID == 0)
+               _loc4_ = ActionBarSet.s_Unmarshall(_loc3_,this.m_Version);
+               if(_loc4_.ID == param1)
                {
-                  return _loc3_;
+                  return _loc4_;
                }
             }
          }
-         throw new Error("OptionsStorage.getDefaultActionBarSet: No actionbar set width ID 0 found in default options");
+         throw new Error(StringUtil.substitute("OptionsStorage.getDefaultActionBarSet: No actionbar set width ID {0} found in default options",param1));
       }
       
       private function set _456993208marketBrowserDepot(param1:Boolean) : void
@@ -1881,14 +1903,17 @@ package tibia.options
          return this.m_GeneralInputSetMode;
       }
       
-      private function unmarshallActionBarSet(param1:XML, param2:Number) : void
+      private function unmarshallActionBarSet(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:ActionBarSet = ActionBarSet.s_Unmarshall(param1,param2);
-         if(this.m_ActionBarSet.length >= ActionBarSet.NUM_SETS && this.getListItem(this.m_ActionBarSet,_loc3_.ID) == null)
+         var _loc4_:ActionBarSet = ActionBarSet.s_Unmarshall(param1,param2);
+         if(this.m_ActionBarSet.length >= ActionBarSet.NUM_SETS && this.getListItem(this.m_ActionBarSet,_loc4_.ID) == null)
          {
             throw new Error("OptionsStorage.unmarshallActionBarSet: Too many sets.");
          }
-         this.addListItem(this.m_ActionBarSet,_loc3_,null);
+         if(_loc4_.ID == 0 || !param3)
+         {
+            this.addListItem(this.m_ActionBarSet,_loc4_,null);
+         }
       }
       
       private function set _999334091opponentFilter(param1:int) : void
@@ -1901,90 +1926,90 @@ package tibia.options
          return SideBarSet(this.addListItem(this.m_SideBarSet,param1,"sideBarSet"));
       }
       
-      private function unmarshallStatus(param1:XML, param2:Number) : void
+      private function unmarshallStatus(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:XML = null;
-         var _loc4_:int = 0;
+         var _loc4_:XML = null;
          var _loc5_:int = 0;
          var _loc6_:int = 0;
          var _loc7_:int = 0;
          var _loc8_:int = 0;
+         var _loc9_:int = 0;
          if(param1 == null || param1.localName() != "status" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
          {
             throw new Error("OptionsStorage.unmarshallStatus: Invalid input.");
          }
-         for each(_loc3_ in param1.elements())
+         for each(_loc4_ in param1.elements())
          {
-            switch(_loc3_.localName())
+            switch(_loc4_.localName())
             {
                case "widgetLocation":
-                  _loc4_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc4_ == StatusWidget.LOCATION_TOP || _loc4_ == StatusWidget.LOCATION_BOTTOM || _loc4_ == StatusWidget.LOCATION_LEFT || _loc4_ == StatusWidget.LOCATION_RIGHT)
+                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(_loc5_ == StatusWidget.LOCATION_TOP || _loc5_ == StatusWidget.LOCATION_BOTTOM || _loc5_ == StatusWidget.LOCATION_LEFT || _loc5_ == StatusWidget.LOCATION_RIGHT)
                   {
-                     this.m_StatusWidgetLocation = _loc4_;
+                     this.m_StatusWidgetLocation = _loc5_;
                   }
                   continue;
                case "widgetStyle":
-                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc5_ == StatusWidget.STATUS_STYLE_OFF)
+                  _loc6_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(_loc6_ == StatusWidget.STATUS_STYLE_OFF)
                   {
                      this.m_StatusWidgetVisible = false;
                   }
-                  else if(_loc5_ == StatusWidget.STATUS_STYLE_COMPACT || _loc5_ == StatusWidget.STATUS_STYLE_DEFAULT || _loc5_ == StatusWidget.STATUS_STYLE_FAT || _loc5_ == StatusWidget.STATUS_STYLE_PARALLEL)
+                  else if(_loc6_ == StatusWidget.STATUS_STYLE_COMPACT || _loc6_ == StatusWidget.STATUS_STYLE_DEFAULT || _loc6_ == StatusWidget.STATUS_STYLE_FAT || _loc6_ == StatusWidget.STATUS_STYLE_PARALLEL)
                   {
-                     this.m_StatusWidgetStyle = _loc5_;
+                     this.m_StatusWidgetStyle = _loc6_;
                   }
                   continue;
                case "widgetSkill":
-                  _loc6_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(StatusWidget.s_GetSkillName(_loc6_) != null)
+                  _loc7_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(StatusWidget.s_GetSkillName(_loc7_) != null)
                   {
-                     this.m_StatusWidgetSkill = _loc6_;
+                     this.m_StatusWidgetSkill = _loc7_;
                   }
                   continue;
                case "widgetVisible":
-                  this.m_StatusWidgetVisible = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_StatusWidgetVisible = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "playerStyle":
-                  _loc7_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc7_ == RendererImpl.STATUS_STYLE_OFF || _loc7_ == RendererImpl.STATUS_STYLE_CLASSIC || _loc7_ == RendererImpl.STATUS_STYLE_HUD)
+                  _loc8_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(_loc8_ == RendererImpl.STATUS_STYLE_OFF || _loc8_ == RendererImpl.STATUS_STYLE_CLASSIC || _loc8_ == RendererImpl.STATUS_STYLE_HUD)
                   {
-                     this.m_StatusPlayerStyle = _loc7_;
+                     this.m_StatusPlayerStyle = _loc8_;
                   }
                   continue;
                case "playerName":
-                  this.m_StatusPlayerName = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_StatusPlayerName = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "playerFlags":
-                  this.m_StatusPlayerFlags = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_StatusPlayerFlags = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "playerHealth":
-                  this.m_StatusPlayerHealth = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_StatusPlayerHealth = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "playerMana":
-                  this.m_StatusPlayerMana = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_StatusPlayerMana = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "creatureStyle":
-                  _loc8_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc8_ == RendererImpl.STATUS_STYLE_OFF || _loc8_ == RendererImpl.STATUS_STYLE_CLASSIC || _loc8_ == RendererImpl.STATUS_STYLE_HUD)
+                  _loc9_ = XMLHelper.s_UnmarshallInteger(_loc4_);
+                  if(_loc9_ == RendererImpl.STATUS_STYLE_OFF || _loc9_ == RendererImpl.STATUS_STYLE_CLASSIC || _loc9_ == RendererImpl.STATUS_STYLE_HUD)
                   {
-                     this.m_StatusCreatureStyle = _loc8_;
+                     this.m_StatusCreatureStyle = _loc9_;
                   }
                   continue;
                case "creatureName":
-                  this.m_StatusCreatureName = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_StatusCreatureName = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "creatureFlags":
-                  this.m_StatusCreatureFlags = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_StatusCreatureFlags = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "creatureIcons":
-                  this.m_StatusCreatureIcons = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_StatusCreatureIcons = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "creatureHealth":
-                  this.m_StatusCreatureHealth = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_StatusCreatureHealth = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "creaturePvpFrames":
-                  this.m_StatusCreaturePvpFrames = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_StatusCreaturePvpFrames = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                default:
                   continue;
@@ -2069,14 +2094,14 @@ package tibia.options
          return _loc2_;
       }
       
-      private function unmarshallSideBarSet(param1:XML, param2:Number) : void
+      private function unmarshallSideBarSet(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:SideBarSet = SideBarSet.s_Unmarshall(param1,param2);
-         if(this.m_SideBarSet.length >= SideBarSet.NUM_SETS && this.getListItem(this.m_SideBarSet,_loc3_.ID) == null)
+         var _loc4_:SideBarSet = SideBarSet.s_Unmarshall(param1,param2);
+         if(this.m_SideBarSet.length >= SideBarSet.NUM_SETS && this.getListItem(this.m_SideBarSet,_loc4_.ID) == null)
          {
             throw new Error("OptionsStorage.unmarshallSideBarSet: Too many sets.");
          }
-         this.addListItem(this.m_SideBarSet,_loc3_,null);
+         this.addListItem(this.m_SideBarSet,_loc4_,null);
       }
       
       public function get statusCreaturePvpFrames() : Boolean
@@ -2205,66 +2230,66 @@ package tibia.options
          this.m_GeneralInputSetMode = param1;
       }
       
-      private function unmarshallMarket(param1:XML, param2:Number) : void
+      private function unmarshallMarket(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:XML = null;
+         var _loc4_:XML = null;
          if(param1 == null || param1.localName() != "market" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
          {
             throw new Error("OptionsStorage.unmarshallMarket: Invalid input.");
          }
-         for each(_loc3_ in param1.elements())
+         for each(_loc4_ in param1.elements())
          {
-            switch(_loc3_.localName())
+            switch(_loc4_.localName())
             {
                case "browserLayout":
-                  this.m_MarketBrowserLayout = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  this.m_MarketBrowserLayout = XMLHelper.s_UnmarshallInteger(_loc4_);
                   if(this.m_MarketBrowserLayout != AppearanceTypeBrowser.LAYOUT_LIST && this.m_MarketBrowserLayout != AppearanceTypeBrowser.LAYOUT_TILE)
                   {
                      this.m_MarketBrowserLayout = AppearanceTypeBrowser.LAYOUT_TILE;
                   }
                   continue;
                case "browserEditor":
-                  this.m_MarketBrowserEditor = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  this.m_MarketBrowserEditor = XMLHelper.s_UnmarshallInteger(_loc4_);
                   if(this.m_MarketBrowserEditor != AppearanceTypeBrowser.EDITOR_CATEGORY && this.m_MarketBrowserEditor != AppearanceTypeBrowser.EDITOR_NAME)
                   {
                      this.m_MarketBrowserEditor = AppearanceTypeBrowser.EDITOR_CATEGORY;
                   }
                   continue;
                case "browserDepot":
-                  this.m_MarketBrowserDepot = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_MarketBrowserDepot = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "browserCategory":
-                  this.m_MarketBrowserCategory = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  this.m_MarketBrowserCategory = XMLHelper.s_UnmarshallInteger(_loc4_);
                   if(!MarketWidget.isValidCategoryID(this.m_MarketBrowserCategory))
                   {
                      this.m_MarketBrowserCategory = MarketWidget.CATEGORY_AMULETS;
                   }
                   continue;
                case "browserLevel":
-                  this.m_MarketBrowserLevel = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_MarketBrowserLevel = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "browserProfession":
-                  this.m_MarketBrowserProfession = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  this.m_MarketBrowserProfession = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                case "browserBodyPosition":
-                  this.m_MarketBrowserBodyPosition = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  this.m_MarketBrowserBodyPosition = XMLHelper.s_UnmarshallInteger(_loc4_);
                   if(this.m_MarketBrowserBodyPosition != BodyContainerView.BOTH_HANDS && this.m_MarketBrowserBodyPosition != BodyContainerView.LEFT_HAND)
                   {
                      this.m_MarketBrowserBodyPosition = -1;
                   }
                   continue;
                case "browserName":
-                  this.m_MarketBrowserName = XMLHelper.s_UnmarshallString(_loc3_);
+                  this.m_MarketBrowserName = XMLHelper.s_UnmarshallString(_loc4_);
                   continue;
                case "selectedView":
-                  this.m_MarketSelectedView = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  this.m_MarketSelectedView = XMLHelper.s_UnmarshallInteger(_loc4_);
                   if(this.m_MarketSelectedView != MarketWidget.VIEW_MARKET_DETAILS && this.m_MarketSelectedView != MarketWidget.VIEW_MARKET_OFFERS && this.m_MarketSelectedView != MarketWidget.VIEW_MARKET_STATISTICS && this.m_MarketSelectedView != MarketWidget.VIEW_OWN_HISTORY && this.m_MarketSelectedView != MarketWidget.VIEW_OWN_OFFERS)
                   {
                      this.m_MarketSelectedView = MarketWidget.VIEW_MARKET_OFFERS;
                   }
                   continue;
                case "selectedType":
-                  this.m_MarketSelectedType = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  this.m_MarketSelectedType = XMLHelper.s_UnmarshallInteger(_loc4_);
                   continue;
                default:
                   continue;
@@ -2462,7 +2487,7 @@ package tibia.options
       {
          var _loc1_:XML = null;
          _loc1_ = this.marshall();
-         var _loc2_:OptionsStorage = new OptionsStorage(this.m_DefaultOptionsXml,_loc1_);
+         var _loc2_:OptionsStorage = new OptionsStorage(this.m_DefaultOptionsXml,_loc1_,true);
          var _loc3_:BuddySet = null;
          if((_loc3_ = this.getBuddySet(BuddySet.DEFAULT_SET)) != null)
          {
@@ -2481,12 +2506,48 @@ package tibia.options
          this.m_GeneralUIChatLeftViewWidth = Math.max(0,Math.min(param1,100));
       }
       
-      private function initialiseActionBarSet() : void
+      public function setMappingAndActionBarSets(param1:String, param2:Boolean = false) : void
       {
-         this.removeAllListItems(this.m_ActionBarSet,null);
-         var _loc1_:ActionBarSet = new ActionBarSet(ActionBarSet.DEFAULT_SET);
-         _loc1_.initialiseDefaultActionBars();
-         this.addListItem(this.m_ActionBarSet,_loc1_,null);
+         var _loc5_:int = 0;
+         var _loc6_:MappingSet = null;
+         var _loc7_:XMLList = null;
+         var _loc8_:XML = null;
+         var _loc3_:Array = this.getMappingSetIDs();
+         var _loc4_:int = 0;
+         while(_loc4_ < _loc3_.length)
+         {
+            _loc5_ = _loc3_[_loc4_];
+            _loc6_ = this.getMappingSet(_loc5_);
+            if(_loc6_ != null && _loc6_.name == param1)
+            {
+               this.generalInputSetID = _loc6_.ID;
+               break;
+            }
+            _loc6_ = null;
+            _loc4_++;
+         }
+         if(_loc6_ == null && Boolean(param2))
+         {
+            _loc7_ = this.searchDefaultXmlFirstLevelElements("MappingSet");
+            if(_loc7_.length() > 0)
+            {
+               for each(_loc8_ in _loc7_)
+               {
+                  _loc6_ = MappingSet.s_Unmarshall(_loc8_,this.m_Version);
+                  if(_loc6_.name == param1)
+                  {
+                     this.addMappingSet(_loc6_);
+                     this.addActionBarSet(this.getDefaultActionBarSet(_loc6_.ID));
+                     break;
+                  }
+                  _loc6_ = null;
+               }
+            }
+         }
+         if(_loc6_ != null)
+         {
+            this.generalInputSetID = _loc6_.ID;
+         }
       }
       
       public function addBuddySet(param1:BuddySet) : BuddySet
@@ -2520,6 +2581,14 @@ package tibia.options
          this.m_StatusWidgetSkill = SKILL_LEVEL;
          this.m_StatusWidgetStyle = StatusWidget.STATUS_STYLE_DEFAULT;
          this.m_StatusWidgetVisible = true;
+      }
+      
+      private function initialiseActionBarSet() : void
+      {
+         this.removeAllListItems(this.m_ActionBarSet,null);
+         var _loc1_:ActionBarSet = new ActionBarSet(ActionBarSet.DEFAULT_SET);
+         _loc1_.initialiseDefaultActionBars();
+         this.addListItem(this.m_ActionBarSet,_loc1_,null);
       }
       
       private function marshallChannelSet(param1:XML) : void
@@ -2887,14 +2956,14 @@ package tibia.options
          return this.m_MarketBrowserEditor;
       }
       
-      private function unmarshallMessageFilterSet(param1:XML, param2:Number) : void
+      private function unmarshallMessageFilterSet(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:MessageFilterSet = MessageFilterSet.s_Unmarshall(param1,param2);
-         if(this.m_MessageFilterSet.length >= MessageFilterSet.NUM_SETS && this.getListItem(this.m_MessageFilterSet,_loc3_.ID) == null)
+         var _loc4_:MessageFilterSet = MessageFilterSet.s_Unmarshall(param1,param2);
+         if(this.m_MessageFilterSet.length >= MessageFilterSet.NUM_SETS && this.getListItem(this.m_MessageFilterSet,_loc4_.ID) == null)
          {
             throw new Error("OptionsStorage.unmarshallMessageFilterSet: Too many sets.");
          }
-         this.addListItem(this.m_MessageFilterSet,_loc3_,null);
+         this.addListItem(this.m_MessageFilterSet,_loc4_,null);
       }
       
       public function addChannelSet(param1:ChannelSet) : ChannelSet
@@ -2902,14 +2971,14 @@ package tibia.options
          return ChannelSet(this.addListItem(this.m_ChannelSet,param1,"channelSet"));
       }
       
-      private function unmarshallChannelSet(param1:XML, param2:Number) : void
+      private function unmarshallChannelSet(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc3_:ChannelSet = ChannelSet.s_Unmarshall(param1,param2);
-         if(this.m_ChannelSet.length >= ChannelSet.NUM_SETS && this.getListItem(this.m_ChannelSet,_loc3_.ID) == null)
+         var _loc4_:ChannelSet = ChannelSet.s_Unmarshall(param1,param2);
+         if(this.m_ChannelSet.length >= ChannelSet.NUM_SETS && this.getListItem(this.m_ChannelSet,_loc4_.ID) == null)
          {
             throw new Error("OptionsStorage.unmarshallChannelSet: Too many sets.");
          }
-         this.addListItem(this.m_ChannelSet,_loc3_,null);
+         this.addListItem(this.m_ChannelSet,_loc4_,null);
       }
       
       public function get marketBrowserName() : String

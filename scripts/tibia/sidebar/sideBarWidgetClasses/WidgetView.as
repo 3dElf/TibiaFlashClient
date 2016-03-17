@@ -599,7 +599,7 @@ package tibia.sidebar.sideBarWidgetClasses
             }
             else
             {
-               explicitHeight = this.m_WidgetHeight;
+               height = explicitHeight = this.m_WidgetHeight;
             }
             this.m_UICollapseButton.selected = this.m_WidgetCollapsed;
             this.m_UIFooter.visible = !this.m_WidgetCollapsed;

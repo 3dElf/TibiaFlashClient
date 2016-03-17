@@ -10,9 +10,9 @@ package tibia.chat
       
       private static const BUNDLE:String = "MessageMode";
       
-      public static const MESSAGE_DAMAGE_DEALED:int = 22;
+      public static const MESSAGE_DAMAGE_DEALED:int = 23;
       
-      public static const MESSAGE_BARK_LOW:int = 35;
+      public static const MESSAGE_BARK_LOW:int = 36;
       
       protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
@@ -20,9 +20,9 @@ package tibia.chat
       
       public static const MESSAGE_CHANNEL:int = 7;
       
-      public static const MESSAGE_REPORT:int = 37;
+      public static const MESSAGE_REPORT:int = 38;
       
-      public static const MESSAGE_LOOT:int = 30;
+      public static const MESSAGE_LOOT:int = 31;
       
       public static const MESSAGE_NONE:int = 0;
       
@@ -269,6 +269,18 @@ package tibia.chat
          "onscreenHeader":null,
          "onscreenPrefix":null
       },{
+         "mode":MESSAGE_GAME_HIGHLIGHT,
+         "label":"MESSAGE_GAME_HIGHLIGHT",
+         "showOnscreen":true,
+         "showChannel":true,
+         "textColour":0,
+         "highlightColour":0,
+         "editable":false,
+         "ignoreNameFilter":true,
+         "onscreenTarget":WorldMapStorage.ONSCREEN_TARGET_BOX_LOW,
+         "onscreenHeader":null,
+         "onscreenPrefix":null
+      },{
          "mode":MESSAGE_FAILURE,
          "label":"MESSAGE_FAILURE",
          "showOnscreen":true,
@@ -285,8 +297,8 @@ package tibia.chat
          "label":"MESSAGE_LOOK",
          "showOnscreen":true,
          "showChannel":true,
-         "textColour":3,
-         "highlightColour":3,
+         "textColour":11,
+         "highlightColour":11,
          "editable":true,
          "ignoreNameFilter":true,
          "onscreenTarget":WorldMapStorage.ONSCREEN_TARGET_BOX_HIGH,
@@ -534,15 +546,15 @@ package tibia.chat
          "onscreenPrefix":null
       }];
       
-      public static const MESSAGE_BEYOND_LAST:int = 42;
+      public static const MESSAGE_BEYOND_LAST:int = 43;
       
-      public static const MESSAGE_FAILURE:int = 20;
+      public static const MESSAGE_FAILURE:int = 21;
       
-      public static const MESSAGE_STATUS:int = 29;
+      public static const MESSAGE_STATUS:int = 30;
       
-      public static const MESSAGE_BARK_LOUD:int = 36;
+      public static const MESSAGE_BARK_LOUD:int = 37;
       
-      public static const MESSAGE_EXP:int = 25;
+      public static const MESSAGE_EXP:int = 26;
       
       public static const MESSAGE_PRIVATE_TO:int = 5;
       
@@ -550,25 +562,25 @@ package tibia.chat
       
       public static const MESSAGE_NPC_FROM_START_BLOCK:int = 10;
       
-      public static const MESSAGE_PARTY_MANAGEMENT:int = 33;
+      public static const MESSAGE_PARTY_MANAGEMENT:int = 34;
       
       public static const MESSAGE_GAMEMASTER_PRIVATE_FROM:int = 15;
       
-      public static const MESSAGE_HEAL_OTHERS:int = 27;
+      public static const MESSAGE_HEAL_OTHERS:int = 28;
       
       public static const MESSAGE_MODE_COLOURS:Array = [4291310080,4291590707,4290750256,4286044524,4281505330,4281774297,4283007474,4288380927,4290732223,4289943924,4286743170,4290690750];
       
-      public static const MESSAGE_EXP_OTHERS:int = 28;
+      public static const MESSAGE_EXP_OTHERS:int = 29;
       
       public static const MESSAGE_NPC_FROM:int = 11;
       
       public static const MESSAGE_GAME:int = 19;
       
-      public static const MESSAGE_THANKYOU:int = 40;
+      public static const MESSAGE_THANKYOU:int = 41;
       
       public static const MESSAGE_GAMEMASTER_BROADCAST:int = 13;
       
-      public static const MESSAGE_HEAL:int = 24;
+      public static const MESSAGE_HEAL:int = 25;
       
       public static const MESSAGE_GAMEMASTER_CHANNEL:int = 14;
       
@@ -576,23 +588,25 @@ package tibia.chat
       
       public static const MESSAGE_ADMIN:int = 18;
       
-      public static const MESSAGE_DAMAGE_RECEIVED:int = 23;
+      public static const MESSAGE_DAMAGE_RECEIVED:int = 24;
       
-      public static const MESSAGE_MARKET:int = 41;
+      public static const MESSAGE_MARKET:int = 42;
       
       protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
       
+      public static const MESSAGE_GAME_HIGHLIGHT:int = 20;
+      
       public static const MESSAGE_CHANNEL_HIGHLIGHT:int = 8;
       
-      public static const MESSAGE_PARTY:int = 34;
+      public static const MESSAGE_PARTY:int = 35;
       
       public static const MESSAGE_YELL:int = 3;
       
       public static const MESSAGE_PRIVATE_FROM:int = 4;
       
-      public static const MESSAGE_DAMAGE_OTHERS:int = 26;
+      public static const MESSAGE_DAMAGE_OTHERS:int = 27;
       
-      public static const MESSAGE_TUTORIAL_HINT:int = 39;
+      public static const MESSAGE_TUTORIAL_HINT:int = 40;
       
       public static const MESSAGE_LOGIN:int = 17;
       
@@ -600,13 +614,13 @@ package tibia.chat
       
       public static const MESSAGE_CHANNEL_MANAGEMENT:int = 6;
       
-      public static const MESSAGE_HOTKEY_USE:int = 38;
+      public static const MESSAGE_HOTKEY_USE:int = 39;
       
-      public static const MESSAGE_GUILD:int = 32;
+      public static const MESSAGE_GUILD:int = 33;
       
-      public static const MESSAGE_TRADE_NPC:int = 31;
+      public static const MESSAGE_TRADE_NPC:int = 32;
       
-      public static const MESSAGE_LOOK:int = 21;
+      public static const MESSAGE_LOOK:int = 22;
        
       protected var m_TextColour:uint = 0;
       
@@ -627,6 +641,11 @@ package tibia.chat
          }
          this.m_ID = param1;
          this.initialiseDefaultValues();
+      }
+      
+      public static function s_CheckMode(param1:int) : Boolean
+      {
+         return param1 >= 0 && param1 < MessageMode.MESSAGE_BEYOND_LAST;
       }
       
       public static function s_Unmarshall(param1:XML, param2:Number) : MessageMode
@@ -656,11 +675,6 @@ package tibia.chat
             _loc5_.textColour = parseInt(_loc3_[0].toString());
          }
          return _loc5_;
-      }
-      
-      public static function s_CheckMode(param1:int) : Boolean
-      {
-         return param1 >= 0 && param1 < MessageMode.MESSAGE_BEYOND_LAST;
       }
       
       public function get highlightARGB() : uint

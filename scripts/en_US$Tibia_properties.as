@@ -29,6 +29,7 @@ package
             "DLG_LOGINERROR_TITLE":"Sorry",
             "DLG_LOGINADVICE_TEXT":"{0}",
             "DLG_DEAD_TEXT_UNFAIR":"Alas! Brave adventurer, you have met a sad fate. <br>But do not despair, for the gods will bring you back into the world in exchange for a small sacrifice.<br><br>This death penalty has been reduced by {0}% because it was an unfair fight.<br><br>Simply click on \'<b>Okay</b>\' to resume your journeys in Tibia!",
+            "DLG_DEAD_TEXT_BLESSED":"Alas! Brave adventurer, you have met a sad fate. <br>But do not despair, for the gods will bring you back into the world. <br><br>The death penalty has been reduced by 100% because <br>you are blessed with the Adventurer\'s Blessing. <br><br>Simply click on \'<b>Okay</b>\' to resume your journeys in Tibia!",
             "DLG_CLIENT_CHANGE_TITLE":"Different client needed",
             "TEXT_SECONDS":"{0} seconds",
             "DLG_LOGOUT_TEXT":"Are you sure you want to leave Tibia?",

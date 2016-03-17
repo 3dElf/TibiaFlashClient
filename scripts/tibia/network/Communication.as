@@ -80,13 +80,13 @@ package tibia.network
       
       protected static const SAUTOMAPFLAG:int = 221;
       
-      protected static const CGONORTHWEST:int = 109;
-      
       protected static const PK_REVENGE:int = 6;
       
       protected static const SBUDDYSTATUSCHANGE:int = 211;
       
       protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
+      
+      protected static const CGONORTHWEST:int = 109;
       
       protected static const SOUTFIT:int = 200;
       
@@ -134,7 +134,7 @@ package tibia.network
       
       protected static const SKILL_GOSTRENGTH:int = 6;
       
-      protected static const CCLOSENPCCHANNEL:int = 158;
+      protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
       
       protected static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
       
@@ -156,7 +156,7 @@ package tibia.network
       
       protected static const SWAIT:int = 182;
       
-      protected static const SPLAYERDATABASIC:int = 159;
+      protected static const PATH_NORTH:int = 3;
       
       protected static const CLOOKATCREATURE:int = 141;
       
@@ -164,17 +164,21 @@ package tibia.network
       
       protected static const SKILL_FED:int = 15;
       
+      protected static const CCLOSENPCCHANNEL:int = 158;
+      
       protected static const CROTATEEAST:int = 112;
       
       protected static const NUM_TRAPPERS:int = 8;
       
-      protected static const SBUDDYDATA:int = 210;
+      protected static const SPLAYERDATABASIC:int = 159;
       
       protected static const SKILL_MAGLEVEL:int = 2;
       
       protected static const CUSEONCREATURE:int = 132;
       
-      protected static const PATH_NORTH:int = 3;
+      protected static const CATTACK:int = 161;
+      
+      protected static const SBUDDYDATA:int = 210;
       
       protected static const CHECKSUM_POS:int = PACKETLENGTH_POS + PACKETLENGTH_SIZE;
       
@@ -190,13 +194,13 @@ package tibia.network
       
       protected static const CGETQUESTLOG:int = 240;
       
-      protected static const SQUESTLOG:int = 240;
-      
       protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
       
       protected static const ERR_INTERNAL:int = 0;
       
       protected static const SUMMON_OTHERS:int = 2;
+      
+      protected static const SQUESTLOG:int = 240;
       
       protected static const CBROWSEFIELD:int = 203;
       
@@ -214,7 +218,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1847;
+      public static const CLIENT_VERSION:uint = 1864;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -265,8 +269,6 @@ package tibia.network
       protected static const MAP_MIN_Y:int = 24576;
       
       protected static const MAP_MIN_Z:int = 0;
-      
-      protected static const CATTACK:int = 161;
       
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
@@ -350,11 +352,15 @@ package tibia.network
       
       protected static const SOPENCHANNEL:int = 172;
       
-      protected static const STOPFLOOR:int = 190;
+      protected static const SBLESSINGS:int = 156;
+      
+      protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
       
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const SPLAYERDATACURRENT:int = 160;
+      
+      protected static const STOPFLOOR:int = 190;
       
       protected static const PATH_ERROR_UNREACHABLE:int = -4;
       
@@ -375,6 +381,8 @@ package tibia.network
       protected static const ERR_INVALID_CHECKSUM:int = 2;
       
       protected static const CTRADEOBJECT:int = 125;
+      
+      protected static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
       
       protected static const SCONTAINER:int = 110;
       
@@ -402,6 +410,8 @@ package tibia.network
       
       protected static const SMARKETBROWSE:int = 249;
       
+      protected static const BLESSING_ADVENTURER:int = 1;
+      
       protected static const CSELLOBJECT:int = 123;
       
       protected static const CMARKETBROWSE:int = 245;
@@ -426,8 +436,6 @@ package tibia.network
       
       protected static const CMARKETCANCEL:int = 247;
       
-      protected static const CANSWERMODALDIALOG:int = 249;
-      
       protected static const STATE_BURNING:int = 1;
       
       protected static const HEADER_POS:int = 0;
@@ -442,17 +450,21 @@ package tibia.network
       
       protected static const SCREATURESPEED:int = 143;
       
-      protected static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
-      
       protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
       
       protected static const STATE_FIGHTING:int = 7;
+      
+      protected static const CANSWERMODALDIALOG:int = 249;
       
       protected static const NPC_SPEECH_NORMAL:uint = 1;
       
       protected static const SSPELLDELAY:int = 164;
       
+      protected static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
+      
       protected static const SDELETEONMAP:int = 108;
+      
+      protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
       
       protected static const STATE_PZ_BLOCK:int = 13;
       
@@ -462,7 +474,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1054;
+      public static const PROTOCOL_VERSION:int = 1055;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -483,6 +495,8 @@ package tibia.network
       protected static const CTHANKYOU:int = 231;
       
       protected static const SCREATUREUNPASS:int = 146;
+      
+      protected static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
       
       protected static const SKILL_STAMINA:int = 17;
       
@@ -570,15 +584,17 @@ package tibia.network
       
       protected static const CSTOP:int = 105;
       
-      protected static const SPLAYERINVENTORY:int = 245;
-      
       protected static const CMOVEOBJECT:int = 120;
+      
+      protected static const SPLAYERINVENTORY:int = 245;
       
       protected static const CRULEVIOLATIONREPORT:int = 242;
       
       protected static const CJOINAGGRESSION:int = 142;
       
       protected static const SMOVECREATURE:int = 109;
+      
+      protected static const SSWITCHPRESET:int = 157;
       
       protected static const CGOEAST:int = 102;
       
@@ -616,13 +632,13 @@ package tibia.network
       
       protected static const UNDERGROUND_LAYER:int = 2;
       
-      protected static const SCREATUREPVPHELPERS:int = 148;
-      
       protected static const COPENCHANNEL:int = 170;
       
       protected static const SDEAD:int = 40;
       
       protected static const SCHANGEINCONTAINER:int = 113;
+      
+      protected static const SCREATUREPVPHELPERS:int = 148;
       
       public static const CLIENT_TYPE:uint = 3;
       
@@ -664,7 +680,11 @@ package tibia.network
       
       protected static const CTALK:int = 150;
       
+      protected static const BLESSING_NONE:int = 0;
+      
       protected static const PATH_NORTH_EAST:int = 2;
+      
+      protected static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
       
       protected static const CEDITTEXT:int = 137;
       
@@ -734,8 +754,6 @@ package tibia.network
       
       protected static const PROFESSION_DRUID:int = 4;
       
-      protected static const CSETOUTFIT:int = 211;
-      
       protected static const NPC_SPEECH_QUEST:uint = 3;
       
       protected static const SUMMON_NONE:int = 0;
@@ -747,6 +765,8 @@ package tibia.network
       protected static const PACKETLENGTH_POS:int = HEADER_POS;
       
       protected static const SCLOSECHANNEL:int = 179;
+      
+      protected static const CSETOUTFIT:int = 211;
       
       protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
       
@@ -922,7 +942,8 @@ package tibia.network
       
       protected function readSCLOSECHANNEL(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedShort();
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedShort();
          this.m_ChatStorage.closeChannel(_loc2_);
       }
       
@@ -2663,6 +2684,32 @@ package tibia.network
          return this.m_ServerConnection.isPending;
       }
       
+      protected function readSSWITCHPRESET(param1:ByteArray) : void
+      {
+         var _loc2_:int = param1.readUnsignedInt();
+         var _loc3_:OptionsStorage = Tibia.s_GetOptions();
+         if(_loc3_ != null)
+         {
+            switch(_loc2_)
+            {
+               case PROFESSION_KNIGHT:
+                  _loc3_.setMappingAndActionBarSets("Knight");
+                  break;
+               case PROFESSION_PALADIN:
+                  _loc3_.setMappingAndActionBarSets("Paladin");
+                  break;
+               case PROFESSION_SORCERER:
+                  _loc3_.setMappingAndActionBarSets("Sorcerer");
+                  break;
+               case PROFESSION_DRUID:
+                  _loc3_.setMappingAndActionBarSets("Druid");
+                  break;
+               default:
+                  throw new ArgumentError("readSSWITCHPRESET: Invalid preset id");
+            }
+         }
+      }
+      
       protected function readSigned64BitValue(param1:ByteArray) : Number
       {
          var _loc2_:uint = param1.readUnsignedInt();
@@ -3192,22 +3239,27 @@ package tibia.network
       
       protected function readSOPENOWNCHANNEL(param1:ByteArray) : void
       {
+         var _loc4_:Channel = null;
+         var _loc5_:int = 0;
+         var _loc6_:int = 0;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
          var _loc9_:String = null;
          var _loc10_:String = null;
          var _loc2_:int = param1.readUnsignedShort();
          var _loc3_:String = StringHelper.s_ReadLongStringFromByteArray(param1,Channel.MAX_NAME_LENGTH);
-         var _loc4_:Channel = this.m_ChatStorage.addChannel(_loc2_,_loc3_,MessageMode.MESSAGE_CHANNEL);
+         _loc4_ = this.m_ChatStorage.addChannel(_loc2_,_loc3_,MessageMode.MESSAGE_CHANNEL);
          this.m_ChatStorage.ownPrivateChannelID = _loc2_;
-         var _loc5_:int = param1.readUnsignedShort();
-         var _loc6_:int = 0;
+         _loc5_ = param1.readUnsignedShort();
+         _loc6_ = 0;
          while(_loc6_ < _loc5_)
          {
             _loc9_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
             _loc4_.playerJoined(_loc9_);
             _loc6_++;
          }
-         var _loc7_:int = param1.readUnsignedShort();
-         var _loc8_:int = 0;
+         _loc7_ = param1.readUnsignedShort();
+         _loc8_ = 0;
          while(_loc8_ < _loc7_)
          {
             _loc10_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
@@ -3255,6 +3307,15 @@ package tibia.network
          this.m_WorldMapStorage.setAmbientLight(_loc3_,_loc2_);
       }
       
+      protected function readSBLESSINGS(param1:ByteArray) : void
+      {
+         var _loc2_:uint = param1.readUnsignedShort();
+         if(this.m_Player != null)
+         {
+            this.m_Player.blessings = _loc2_;
+         }
+      }
+      
       protected function readSPLAYERGOODS(param1:ByteArray) : void
       {
          var _loc5_:int = 0;
@@ -3292,11 +3353,40 @@ package tibia.network
       
       protected function readSDEAD(param1:ByteArray) : void
       {
-         var _loc2_:Number = param1.readUnsignedByte();
-         var _loc3_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.DEAD);
-         _loc3_.message = null;
-         _loc3_.data = _loc2_;
-         this.m_ServerConnection.dispatchEvent(_loc3_);
+         var _loc4_:Number = NaN;
+         var _loc2_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.DEAD);
+         _loc2_.message = null;
+         var _loc3_:int = param1.readUnsignedByte();
+         if(_loc3_ == 0)
+         {
+            _loc4_ = param1.readUnsignedByte();
+            if(_loc4_ < 100)
+            {
+               _loc2_.data = {
+                  "type":ConnectionEvent.DEATH_UNFAIR,
+                  "fairFightFactor":_loc4_
+               };
+            }
+            else
+            {
+               _loc2_.data = {
+                  "type":ConnectionEvent.DEATH_REGULAR,
+                  "fairFightFactor":0
+               };
+            }
+         }
+         else if(_loc3_ == 1)
+         {
+            _loc2_.data = {
+               "type":ConnectionEvent.DEATH_BLESSED,
+               "fairFightFactor":0
+            };
+         }
+         else
+         {
+            throw new Error("Connection.readSDEAD: Invalid death type " + _loc3_);
+         }
+         this.m_ServerConnection.dispatchEvent(_loc2_);
       }
       
       public function sendCSETOUTFIT(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int, param7:int) : void
@@ -3771,6 +3861,14 @@ package tibia.network
                   break;
                case SEDITLIST:
                   this.readSEDITLIST(CommunicationData);
+                  a_MessageReader.finishMessage();
+                  break;
+               case SBLESSINGS:
+                  this.readSBLESSINGS(CommunicationData);
+                  a_MessageReader.finishMessage();
+                  break;
+               case SSWITCHPRESET:
+                  this.readSSWITCHPRESET(CommunicationData);
                   a_MessageReader.finishMessage();
                   break;
                case SPREMIUMTRIGGER:
@@ -4814,6 +4912,7 @@ package tibia.network
                case MessageMode.MESSAGE_LOGIN:
                case MessageMode.MESSAGE_ADMIN:
                case MessageMode.MESSAGE_GAME:
+               case MessageMode.MESSAGE_GAME_HIGHLIGHT:
                case MessageMode.MESSAGE_FAILURE:
                case MessageMode.MESSAGE_LOOK:
                case MessageMode.MESSAGE_STATUS:

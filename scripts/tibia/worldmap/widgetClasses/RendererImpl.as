@@ -49,6 +49,8 @@ package tibia.worldmap.widgetClasses
       
       private static const TILE_CURSOR:BitmapData = Bitmap(new TILE_CURSOR_CLASS()).bitmapData;
       
+      protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
+      
       protected static const HUD_ARC_ORIENTATION_LEFT:int = 0;
       
       protected static const STATE_PZ_BLOCK:int = 13;
@@ -91,7 +93,7 @@ package tibia.worldmap.widgetClasses
       
       protected static const PK_PARTYMODE:int = 2;
       
-      public static const STATUS_STYLE_CLASSIC:int = 1;
+      protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
       
       protected static const SKILL_STAMINA:int = 17;
       
@@ -110,6 +112,8 @@ package tibia.worldmap.widgetClasses
       protected static const STATE_NONE:int = -1;
       
       protected static const SKILL_FIGHTDISTANCE:int = 9;
+      
+      public static const STATUS_STYLE_CLASSIC:int = 1;
       
       protected static const NUM_CREATURES:int = 1300;
       
@@ -203,8 +207,6 @@ package tibia.worldmap.widgetClasses
       
       protected static const HUD_ARC_TOTAL_WIDTH:Number = 10;
       
-      protected static const HUD_ARC_LOWER_LIMIT:Number = 45;
-      
       protected static const STATE_DROWNING:int = 8;
       
       protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
@@ -212,6 +214,8 @@ package tibia.worldmap.widgetClasses
       protected static const MAP_WIDTH:int = 15;
       
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
+      
+      protected static const HUD_ARC_LOWER_LIMIT:Number = 45;
       
       protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
       
@@ -265,6 +269,8 @@ package tibia.worldmap.widgetClasses
       
       protected static const ONSCREEN_MESSAGE_GAP:Number = 10;
       
+      protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+      
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const PATH_ERROR_UNREACHABLE:int = -4;
@@ -291,13 +297,19 @@ package tibia.worldmap.widgetClasses
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
       
+      protected static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+      
       protected static const STATE_FAST:int = 6;
       
       protected static const PATH_NORTH_EAST:int = 2;
       
       protected static const SKILL_SOULPOINTS:int = 16;
       
+      protected static const BLESSING_NONE:int = 0;
+      
       protected static const PATH_ERROR_TOO_FAR:int = -3;
+      
+      protected static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
       
       protected static const GUILD_OTHER:int = 5;
       
@@ -320,6 +332,8 @@ package tibia.worldmap.widgetClasses
       protected static const STATE_MANA_SHIELD:int = 4;
       
       public static const STATUS_STYLE_OFF:int = 0;
+      
+      protected static const BLESSING_ADVENTURER:int = 1;
       
       protected static const STATE_FREEZING:int = 9;
       
@@ -373,15 +387,17 @@ package tibia.worldmap.widgetClasses
       
       protected static const STATE_FIGHTING:int = 7;
       
-      protected static const HUD_ARC_STYLE_RADIAL:int = 2;
-      
       protected static const NPC_SPEECH_QUEST:uint = 3;
       
       protected static const SUMMON_NONE:int = 0;
       
       protected static const STATE_STRENGTHENED:int = 12;
       
+      protected static const HUD_ARC_STYLE_RADIAL:int = 2;
+      
       protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      protected static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
       
       protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
       

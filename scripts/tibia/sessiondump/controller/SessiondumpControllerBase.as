@@ -24,7 +24,7 @@ package tibia.sessiondump.controller
       
       protected static const CSHAREEXPERIENCE:int = 168;
       
-      public static const PROTOCOL_VERSION:int = 1054;
+      public static const PROTOCOL_VERSION:int = 1055;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -202,13 +202,17 @@ package tibia.sessiondump.controller
       
       protected static const CREVOKEINVITATION:int = 165;
       
+      protected static const SMOVECREATURE:int = 109;
+      
       protected static const SCREATURESKULL:int = 144;
       
-      protected static const CLOGIN:int = 10;
+      protected static const SSWITCHPRESET:int = 157;
       
       protected static const CGOEAST:int = 102;
       
       protected static const ERR_CONNECTION_LOST:int = 6;
+      
+      protected static const CLOGIN:int = 10;
       
       protected static const SUNJUSTIFIEDPOINTS:int = 183;
       
@@ -225,8 +229,6 @@ package tibia.sessiondump.controller
       protected static const CONNECTION_STATE_GAME:int = 4;
       
       protected static const SMULTIUSEDELAY:int = 166;
-      
-      protected static const SMOVECREATURE:int = 109;
       
       protected static const CRULEVIOLATIONREPORT:int = 242;
       
@@ -285,6 +287,8 @@ package tibia.sessiondump.controller
       protected static const SPVPSITUATIONS:int = 184;
       
       protected static const SLOGINADVICE:int = 21;
+      
+      protected static const SBLESSINGS:int = 156;
       
       protected static const SCREATEONMAP:int = 106;
       

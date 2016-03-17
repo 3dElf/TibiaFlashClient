@@ -28,6 +28,8 @@ package tibia.game
    public class ObjectContextMenu extends ContextMenuBase
    {
       
+      protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
+      
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
@@ -65,6 +67,8 @@ package tibia.game
       private static const MOUSE_BUTTON_LEFT:int = 1;
       
       protected static const TYPE_SUMMON_OTHERS:int = 4;
+      
+      protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
       
       protected static const SKILL_STAMINA:int = 17;
       
@@ -168,6 +172,8 @@ package tibia.game
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
+      protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+      
       private static const ACTION_SMARTCLICK:int = 100;
       
       protected static const PROFESSION_PALADIN:int = 2;
@@ -179,6 +185,12 @@ package tibia.game
       protected static const PARTY_LEADER_SEXP_OFF:int = 4;
       
       protected static const SKILL_SOULPOINTS:int = 16;
+      
+      protected static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+      
+      protected static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+      
+      protected static const BLESSING_NONE:int = 0;
       
       private static const ACTION_CONTEXT_MENU:int = 5;
       
@@ -200,9 +212,11 @@ package tibia.game
       
       protected static const STATE_CURSED:int = 11;
       
-      private static const ACTION_NONE:int = 0;
+      protected static const BLESSING_ADVENTURER:int = 1;
       
       protected static const STATE_FREEZING:int = 9;
+      
+      private static const ACTION_NONE:int = 0;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
       
@@ -249,6 +263,8 @@ package tibia.game
       protected static const NPC_SPEECH_NORMAL:uint = 1;
       
       private static const ACTION_USE_OR_OPEN:int = 101;
+      
+      protected static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
       
       protected static const NPC_SPEECH_NONE:uint = 0;
       

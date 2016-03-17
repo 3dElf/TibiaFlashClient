@@ -36,6 +36,7 @@ package
             "MESSAGE_YELL_HEADER":"{0} yells:",
             "MESSAGE_MARKET":"Market Message",
             "MESSAGE_HOTKEY_USE":"Hotkey/ Action Bar Use",
+            "MESSAGE_GAME_HIGHLIGHT":"Highlighted Game Event",
             "MESSAGE_TUTORIAL_HINT":"Tutorial Hint",
             "MESSAGE_LOOT":"Loot",
             "MESSAGE_DAMAGE_DEALED":"Damage Dealt",

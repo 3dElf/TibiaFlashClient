@@ -65,8 +65,6 @@ package tibia.creatures
        
       protected var m_AutowalkPathDelta:Vector3D;
       
-      private var m_KnownSpells:Array;
-      
       private var m_StateFlags:uint = 4.294967295E9;
       
       private var m_Profession:int = 0;
@@ -78,6 +76,8 @@ package tibia.creatures
       protected var m_AutowalkPathAborting:Boolean = false;
       
       private var m_OpenPvPSituations:uint = 0;
+      
+      private var m_Blessings:uint = 0;
       
       protected var m_AutowalkTarget:Vector3D;
       
@@ -92,6 +92,8 @@ package tibia.creatures
       private var m_PremiumUntil:uint = 0;
       
       private var m_UnjustPoints:tibia.creatures.UnjustPointsInfo;
+      
+      private var m_KnownSpells:Array;
       
       public function Player()
       {
@@ -191,6 +193,11 @@ package tibia.creatures
          }
       }
       
+      public function get profession() : int
+      {
+         return this.m_Profession;
+      }
+      
       public function set premiumUntil(param1:uint) : void
       {
          var _loc2_:PropertyChangeEvent = null;
@@ -242,6 +249,19 @@ package tibia.creatures
             _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
             _loc2_.kind = PropertyChangeEventKind.UPDATE;
             _loc2_.property = "unjustPoints";
+            dispatchEvent(_loc2_);
+         }
+      }
+      
+      public function set blessings(param1:uint) : void
+      {
+         var _loc2_:PropertyChangeEvent = null;
+         if(this.m_Blessings != param1)
+         {
+            this.m_Blessings = param1;
+            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc2_.kind = PropertyChangeEventKind.UPDATE;
+            _loc2_.property = "blessings";
             dispatchEvent(_loc2_);
          }
       }
@@ -473,6 +493,11 @@ package tibia.creatures
          return getSkillValue(SKILL_MANA);
       }
       
+      public function get blessings() : uint
+      {
+         return this.m_Blessings;
+      }
+      
       public function get hitpointsMax() : Number
       {
          return getSkillBase(SKILL_HITPOINTS);
@@ -515,6 +540,15 @@ package tibia.creatures
          return this.m_Premium;
       }
       
+      public function hasBlessing(param1:uint) : Boolean
+      {
+         if(param1 == BLESSING_NONE)
+         {
+            return this.blessings == param1;
+         }
+         return (this.blessings & param1) == param1;
+      }
+      
       public function get soulPointsMax() : Number
       {
          return getSkillBase(SKILL_SOULPOINTS);
@@ -530,6 +564,8 @@ package tibia.creatures
          m_ID = _loc1_;
          this.m_KnownSpells.length = 0;
          this.m_Premium = false;
+         this.m_PremiumUntil = 0;
+         this.m_Blessings = BLESSING_NONE;
          this.m_Profession = PROFESSION_NONE;
          m_Type = TYPE_PLAYER;
          var _loc2_:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
@@ -787,11 +823,6 @@ package tibia.creatures
       
       override public function set type(param1:int) : void
       {
-      }
-      
-      public function get profession() : int
-      {
-         return this.m_Profession;
       }
       
       override public function get manaPercent() : Number

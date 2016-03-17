@@ -180,6 +180,7 @@ package tibia.chat
                case MessageMode.MESSAGE_LOGIN:
                case MessageMode.MESSAGE_ADMIN:
                case MessageMode.MESSAGE_GAME:
+               case MessageMode.MESSAGE_GAME_HIGHLIGHT:
                case MessageMode.MESSAGE_LOOK:
                case MessageMode.MESSAGE_DAMAGE_DEALED:
                case MessageMode.MESSAGE_DAMAGE_RECEIVED:

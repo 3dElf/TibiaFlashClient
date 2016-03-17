@@ -12,7 +12,7 @@ package tibia.container
       
       public static const BOTH_HANDS:int = 0;
       
-      public static const LAST_SLOT:int = PREMIUM;
+      public static const LAST_SLOT:int = BLESSINGS;
       
       public static const FIRST_SLOT:int = HEAD;
       
@@ -29,6 +29,8 @@ package tibia.container
       public static const LEFT_HAND:int = 6;
       
       public static const FINGER:int = 9;
+      
+      public static const BLESSINGS:int = 13;
       
       public static const BACK:int = 3;
       

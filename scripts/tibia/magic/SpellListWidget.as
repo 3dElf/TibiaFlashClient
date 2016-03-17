@@ -8,6 +8,8 @@ package tibia.magic
    public class SpellListWidget extends Widget
    {
       
+      protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
+      
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
@@ -45,6 +47,8 @@ package tibia.magic
       protected static const TYPE_SUMMON_OTHERS:int = 4;
       
       public static const SORT_PROFESSION:int = 7;
+      
+      protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
       
       protected static const SKILL_STAMINA:int = 17;
       
@@ -126,11 +130,11 @@ package tibia.magic
       
       protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
       
-      protected static const GROUP_HEALING:int = 2;
-      
       protected static const GUILD_WAR_ALLY:int = 1;
       
       protected static const PK_NONE:int = 0;
+      
+      protected static const GROUP_HEALING:int = 2;
       
       protected static const PROFESSION_SORCERER:int = 3;
       
@@ -158,6 +162,8 @@ package tibia.magic
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
+      protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+      
       protected static const PROFESSION_PALADIN:int = 2;
       
       protected static const SKILL_FIGHTAXE:int = 12;
@@ -167,6 +173,12 @@ package tibia.magic
       protected static const PARTY_LEADER_SEXP_OFF:int = 4;
       
       protected static const SKILL_SOULPOINTS:int = 16;
+      
+      protected static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+      
+      protected static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+      
+      protected static const BLESSING_NONE:int = 0;
       
       protected static const STATE_FAST:int = 6;
       
@@ -187,6 +199,8 @@ package tibia.magic
       protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
       
       protected static const STATE_CURSED:int = 11;
+      
+      protected static const BLESSING_ADVENTURER:int = 1;
       
       protected static const STATE_FREEZING:int = 9;
       
@@ -227,6 +241,8 @@ package tibia.magic
       protected static const NPC_SPEECH_QUEST:uint = 3;
       
       protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      protected static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
       
       protected static const NPC_SPEECH_NONE:uint = 0;
       
