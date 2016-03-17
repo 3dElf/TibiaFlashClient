@@ -269,15 +269,18 @@ package tibia.appearances.widgetClasses
    }
 }
 
+import tibia.appearances.Marks;
+
 class MarksViewInformation
 {
     
-   public var m_MarkType:uint = 255;
+   public var m_MarkType:uint;
    
    public var m_MarkThickness:uint = 1;
    
    function MarksViewInformation()
    {
+      this.m_MarkType = Marks.MARK_UNMARKED;
       super();
    }
 }
