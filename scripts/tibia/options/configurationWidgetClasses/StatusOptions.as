@@ -277,7 +277,7 @@ package tibia.options.configurationWidgetClasses
       
       protected var m_UIOtherIcons:CheckBox = null;
       
-      protected var m_OtherStyle:int = 1;
+      protected var m_OtherStyle:int;
       
       protected var m_UIWidgetStyle:ComboBox = null;
       
@@ -299,10 +299,12 @@ package tibia.options.configurationWidgetClasses
       
       private var m_UncommittedOwnStyle:Boolean = false;
       
-      protected var m_OwnStyle:int = 1;
+      protected var m_OwnStyle:int;
       
       public function StatusOptions()
       {
+         this.m_OwnStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+         this.m_OtherStyle = RendererImpl.STATUS_STYLE_CLASSIC;
          super();
          label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_LABEL");
       }

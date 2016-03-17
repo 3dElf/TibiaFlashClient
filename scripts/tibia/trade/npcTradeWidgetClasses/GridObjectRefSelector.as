@@ -233,6 +233,7 @@ package tibia.trade.npcTradeWidgetClasses
       override protected function measure() : void
       {
          var _loc3_:Number = NaN;
+         var _loc4_:Number = NaN;
          var _loc8_:IUIComponent = null;
          var _loc9_:Number = NaN;
          var _loc10_:Number = NaN;
@@ -240,7 +241,7 @@ package tibia.trade.npcTradeWidgetClasses
          var _loc1_:Number = 0;
          var _loc2_:Number = 0;
          _loc3_ = 0;
-         var _loc4_:Number = 0;
+         _loc4_ = 0;
          var _loc5_:int = numChildren - 1;
          while(_loc5_ >= 0)
          {
