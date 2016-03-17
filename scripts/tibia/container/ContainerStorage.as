@@ -27,6 +27,8 @@ package tibia.container
       
       public static const BODY_RIGHT_HAND:int = 5;
       
+      public static const NUM_BODY_SLOTS:int = 11;
+      
       public static const MIN_MULTI_USE_DELAY:int = 1000;
       
       public static const BODY_HIP:int = 10;
@@ -45,7 +47,7 @@ package tibia.container
       
       public static const BODY_FEET:int = 8;
       
-      public static const NUM_BODY_SLOTS:int = 10;
+      public static const BODY_PURSE:int = 11;
       
       public static const BODY_TORSO:int = 4;
       

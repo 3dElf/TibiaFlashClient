@@ -32,7 +32,7 @@ package
             "CTX_PARTY_JOIN":"Join {0}\'s Party",
             "CTX_STOP_FOLLOW":"Stop Follow",
             "CTX_IGNORE":"Ignore {0}",
-            "CTX_REPORT_NAME":"Report Character Name",
+            "CTX_REPORT_NAME":"Report Name",
             "CTX_PARTY_PASS_LEADERSHIP":"Pass Leadership to {0} ",
             "TITLE":"Battle List",
             "CTX_PARTY_EXCLUDE":"Revoke {0}\'s Invitation",

@@ -128,20 +128,20 @@ package tibia.chat.chatWidgetClasses
             NeedSeparator = true;
          }
          var ReportEnabled:Boolean = false;
-         if(this.m_Message != null && Boolean(this.m_Message.isReportTypeAllowed(Type.REPORT_NAME)))
-         {
-            createItem(resourceManager.getString(BUNDLE,"CTX_VIEW_REPORT_NAME"),function(param1:ContextMenuEvent):void
-            {
-               new ReportWidget(Type.REPORT_NAME,m_Message).show();
-            },NeedSeparator);
-            NeedSeparator = false;
-            ReportEnabled = true;
-         }
          if(this.m_Message != null && Boolean(this.m_Message.isReportTypeAllowed(Type.REPORT_STATEMENT)))
          {
             createItem(resourceManager.getString(BUNDLE,"CTX_VIEW_REPORT_STATEMENT"),function(param1:ContextMenuEvent):void
             {
                new ReportWidget(Type.REPORT_STATEMENT,m_Message).show();
+            },NeedSeparator);
+            NeedSeparator = false;
+            ReportEnabled = true;
+         }
+         if(this.m_Message != null && Boolean(this.m_Message.isReportTypeAllowed(Type.REPORT_NAME)))
+         {
+            createItem(resourceManager.getString(BUNDLE,"CTX_VIEW_REPORT_NAME"),function(param1:ContextMenuEvent):void
+            {
+               new ReportWidget(Type.REPORT_NAME,m_Message).show();
             },NeedSeparator);
             NeedSeparator = false;
             ReportEnabled = true;

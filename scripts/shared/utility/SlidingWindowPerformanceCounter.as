@@ -41,10 +41,6 @@ package shared.utility
             this.m_Data[this.m_Position] = _loc2_;
             this.m_Position = (this.m_Position + 1) % _loc1_;
             this.m_Length++;
-            if(this.m_Length > _loc1_)
-            {
-               this.m_Length = _loc1_;
-            }
             this.m_Max = NaN;
             this.m_Min = NaN;
             this.m_Start = NaN;
@@ -62,7 +58,7 @@ package shared.utility
          if(isNaN(this.m_Min))
          {
             this.m_Min = Number.POSITIVE_INFINITY;
-            _loc1_ = this.m_Length - 1;
+            _loc1_ = Math.min(this.m_Length,this.m_Data.length) - 1;
             while(_loc1_ >= 0)
             {
                if(this.m_Data[_loc1_] < this.m_Min)
@@ -77,7 +73,7 @@ package shared.utility
       
       public function reset() : void
       {
-         var _loc1_:int = this.m_Length - 1;
+         var _loc1_:int = Math.min(this.m_Length,this.m_Data.length) - 1;
          while(_loc1_ >= 0)
          {
             this.m_Data[_loc1_] = 0;
@@ -107,7 +103,7 @@ package shared.utility
          if(isNaN(this.m_Max))
          {
             this.m_Max = Number.NEGATIVE_INFINITY;
-            _loc1_ = this.m_Length - 1;
+            _loc1_ = Math.min(this.m_Length,this.m_Data.length) - 1;
             while(_loc1_ >= 0)
             {
                if(this.m_Data[_loc1_] > this.m_Max)
@@ -124,7 +120,7 @@ package shared.utility
       {
          if(this.m_Length > 0)
          {
-            return this.m_Total / this.m_Length;
+            return this.m_Total / Math.min(this.m_Length,this.m_Data.length);
          }
          return 0;
       }

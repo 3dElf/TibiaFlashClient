@@ -167,7 +167,7 @@ package tibia.input.gameaction
             if(this.m_Type.isContainer)
             {
                _loc6_ = 0;
-               if(this.m_Target == TARGET_NEW_WINDOW || this.m_Absolute.x < 65535 || this.m_Absolute.y >= ContainerStorage.BODY_HEAD && this.m_Absolute.y <= ContainerStorage.BODY_HIP)
+               if(this.m_Target == TARGET_NEW_WINDOW || this.m_Absolute.x < 65535 || this.m_Absolute.y >= ContainerStorage.BODY_HEAD && this.m_Absolute.y <= ContainerStorage.BODY_PURSE)
                {
                   _loc6_ = _loc4_.getFreeContainer();
                }

@@ -152,7 +152,7 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const UNDERGROUND_LAYER:int = 2;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const PROFESSION_PALADIN:int = 2;
       

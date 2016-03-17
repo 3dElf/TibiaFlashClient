@@ -41,7 +41,7 @@ package tibia.minimap
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const MM_SIDEBAR_ZOOM_MAX:int = 2;
       

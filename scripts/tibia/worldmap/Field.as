@@ -42,7 +42,7 @@ package tibia.worldmap
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const MM_SIDEBAR_ZOOM_MAX:int = 2;
       
@@ -160,8 +160,6 @@ package tibia.worldmap
       
       var m_CacheObjectsDirty:Boolean = false;
       
-      var m_CacheFirstCreature:int = 0;
-      
       var m_EffectsCount:int = 0;
       
       var m_CacheUnsight:Boolean = false;
@@ -252,11 +250,11 @@ package tibia.worldmap
          this.m_CacheObjectsHeight = 0;
          this.m_CacheLyingObject = false;
          s_CacheBitmap.fillRect(this.m_CacheRectangle,0);
-         while(this.m_CacheObjectsCount < this.m_CacheFirstCreature)
+         while(this.m_CacheObjectsCount < this.m_ObjectsCount)
          {
             _loc4_ = this.m_ObjectsRenderer[this.m_CacheObjectsCount];
             _loc5_ = _loc4_.type;
-            if(!_loc5_.isCachable)
+            if(!_loc5_.isCachable || _loc5_.exactSize + Math.max(_loc5_.displacementX,_loc5_.displacementY) + this.m_CacheObjectsHeight > FIELD_CACHESIZE)
             {
                break;
             }
@@ -383,17 +381,12 @@ package tibia.worldmap
          }
          var _loc4_:ObjectInstance = null;
          var _loc5_:AppearanceType = null;
-         this.m_CacheFirstCreature = this.m_ObjectsCount;
          this.m_CacheTranslucent = false;
          this.m_CacheUnsight = false;
          _loc1_ = 0;
          while(_loc1_ < this.m_ObjectsCount)
          {
             _loc3_ = this.m_ObjectsNetwork[_loc1_].type;
-            if(_loc1_ < this.m_CacheFirstCreature && _loc3_.ID != AppearanceInstance.CREATURE)
-            {
-               this.m_CacheFirstCreature = _loc1_;
-            }
             this.m_CacheTranslucent = Boolean(this.m_CacheTranslucent) || Boolean(_loc3_.isTranslucent);
             this.m_CacheUnsight = Boolean(this.m_CacheUnsight) || Boolean(_loc3_.isUnsight);
             if(_loc3_.isHangable)
@@ -449,6 +442,28 @@ package tibia.worldmap
             param1.object = _loc3_;
          }
          return _loc2_;
+      }
+      
+      function resetObjects() : void
+      {
+         var _loc1_:int = 0;
+         while(_loc1_ < MAPSIZE_W)
+         {
+            this.m_ObjectsNetwork[_loc1_] = null;
+            this.m_ObjectsRenderer[_loc1_] = null;
+            _loc1_++;
+         }
+         this.m_ObjectsCount = 0;
+         this.m_CacheObjectsCount = 0;
+         this.m_CacheObjectsHeight = 0;
+         this.m_CacheLyingObject = false;
+         this.m_CacheTranslucent = false;
+         this.m_CacheUnsight = false;
+         this.m_CacheObjectsDirty = false;
+         this.m_CacheBitmapDirty = false;
+         this.m_MiniMapColour = MM_COLOUR_DEFAULT;
+         this.m_MiniMapCost = PATH_COST_OBSTACLE;
+         this.m_MiniMapDirty = false;
       }
       
       public function getTopUseObject(param1:Object = null) : int
@@ -516,29 +531,6 @@ package tibia.worldmap
          this.m_Effects[this.m_EffectsCount] = param1;
          this.m_Effects[this.m_EffectsCount].mapData = this.m_EffectsCount;
          this.m_EffectsCount++;
-      }
-      
-      function resetObjects() : void
-      {
-         var _loc1_:int = 0;
-         while(_loc1_ < MAPSIZE_W)
-         {
-            this.m_ObjectsNetwork[_loc1_] = null;
-            this.m_ObjectsRenderer[_loc1_] = null;
-            _loc1_++;
-         }
-         this.m_ObjectsCount = 0;
-         this.m_CacheObjectsCount = 0;
-         this.m_CacheFirstCreature = 0;
-         this.m_CacheObjectsHeight = 0;
-         this.m_CacheLyingObject = false;
-         this.m_CacheTranslucent = false;
-         this.m_CacheUnsight = false;
-         this.m_CacheObjectsDirty = false;
-         this.m_CacheBitmapDirty = false;
-         this.m_MiniMapColour = MM_COLOUR_DEFAULT;
-         this.m_MiniMapCost = PATH_COST_OBSTACLE;
-         this.m_MiniMapDirty = false;
       }
       
       public function reset() : void

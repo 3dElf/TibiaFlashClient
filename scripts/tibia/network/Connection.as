@@ -66,6 +66,7 @@ package tibia.network
    import tibia.appearances.AppearanceType;
    import tibia.creatures.SelectOutfitWidget;
    import tibia.appearances.MissileInstance;
+   import tibia.game.ServerModalDialog;
    
    public class Connection extends EventDispatcher
    {
@@ -184,8 +185,6 @@ package tibia.network
       
       protected static const CREMOVEBUDDY:int = 221;
       
-      protected static const CPASSLEADERSHIP:int = 166;
-      
       protected static const SFULLMAP:int = 100;
       
       protected static const SCLOSECONTAINER:int = 111;
@@ -201,6 +200,8 @@ package tibia.network
       protected static const SMISSILEEFFECT:int = 133;
       
       protected static const PATH_MATRIX_SIZE:int = 2 * PATH_MAX_DISTANCE + 1;
+      
+      protected static const CPASSLEADERSHIP:int = 166;
       
       protected static const PROFESSION_NONE:int = 0;
       
@@ -302,7 +303,7 @@ package tibia.network
       
       protected static const SPRIVATECHANNEL:int = 173;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const PATH_ERROR_UNREACHABLE:int = -4;
       
@@ -374,6 +375,8 @@ package tibia.network
       
       protected static const CMARKETCANCEL:int = 247;
       
+      protected static const CANSWERMODALDIALOG:int = 249;
+      
       protected static const STATE_BURNING:int = 1;
       
       protected static const CENTERGAME:int = 10;
@@ -392,7 +395,7 @@ package tibia.network
       
       protected static const SSPELLDELAY:int = 164;
       
-      protected static const TERMINAL_VERSION:int = 953;
+      protected static const TERMINAL_VERSION:int = 954;
       
       protected static const SDELETEONMAP:int = 108;
       
@@ -423,6 +426,8 @@ package tibia.network
       protected static const SKILL_STAMINA:int = 16;
       
       private static const PING_LATENCY_INTERVAL:uint = 15;
+      
+      protected static const SSHOWMODALDIALOG:int = 250;
       
       protected static const CREFRESHCONTAINER:int = 202;
       
@@ -598,8 +603,6 @@ package tibia.network
       
       protected static const PATH_NORTH_EAST:int = 2;
       
-      protected static const PAYLOADDATA_POSITION:int = PAYLOADLENGTH_POS + PAYLOADLENGTH_SIZE;
-      
       protected static const CEDITTEXT:int = 137;
       
       protected static const PATH_ERROR_TOO_FAR:int = -3;
@@ -623,6 +626,8 @@ package tibia.network
       protected static const SEDITTEXT:int = 150;
       
       protected static const SOPENOWNCHANNEL:int = 178;
+      
+      protected static const PAYLOADDATA_POSITION:int = PAYLOADLENGTH_POS + PAYLOADLENGTH_SIZE;
       
       protected static const CINSPECTTRADE:int = 126;
       
@@ -3156,7 +3161,7 @@ package tibia.network
             {
                Message = Message + a_UserMessage.substr(0,BugReportWidget.MAX_USER_MESSAGE_LENGTH);
             }
-            Message = Message + ("\nBuild=" + "release;vanilla;2012-05-02;14:52:13;branches/bugfixes;749;not-modified");
+            Message = Message + ("\nBuild=" + "release;vanilla;2012-06-12;14:09:11;branches/bugfixes;768");
             Message = Message + ("\nBrowser=" + BrowserHelper.s_GetBrowserString());
             Message = Message + ("\nFlash=" + Capabilities.serverString);
             SystemMessage = null;
@@ -3193,6 +3198,27 @@ package tibia.network
          if(_loc4_ != null)
          {
             _loc4_.setItemAt(_loc2_ - ContainerStorage.BODY_HEAD,_loc3_);
+         }
+      }
+      
+      public function sendCANSWERMODALDIALOG(param1:uint, param2:uint) : void
+      {
+         var b:ByteArray = null;
+         var a_ID:uint = param1;
+         var a_Answer:uint = param2;
+         try
+         {
+            b = this.createPacket();
+            b.writeByte(CANSWERMODALDIALOG);
+            b.writeUnsignedInt(a_ID);
+            b.writeByte(a_Answer);
+            this.sendPacket(true);
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CANSWERMODALDIALOG,e);
+            return;
          }
       }
       
@@ -4691,6 +4717,44 @@ package tibia.network
          }
       }
       
+      protected function readSSHOWMODALDIALOG(param1:ByteArray) : void
+      {
+         var _loc2_:uint = 0;
+         var _loc3_:String = null;
+         var _loc4_:String = null;
+         var _loc5_:Array = null;
+         var _loc6_:int = 0;
+         var _loc7_:uint = 0;
+         var _loc8_:uint = 0;
+         var _loc9_:ServerModalDialog = null;
+         var _loc10_:String = null;
+         var _loc11_:uint = 0;
+         _loc2_ = param1.readUnsignedInt();
+         _loc3_ = StringHelper.s_ReadFromByteArray(param1);
+         _loc4_ = StringHelper.s_ReadFromByteArray(param1);
+         _loc5_ = [];
+         _loc6_ = param1.readUnsignedByte();
+         while(_loc6_ > 0)
+         {
+            _loc10_ = StringHelper.s_ReadFromByteArray(param1);
+            _loc11_ = param1.readUnsignedByte();
+            _loc5_.push({
+               "label":_loc10_,
+               "value":_loc11_
+            });
+            _loc6_--;
+         }
+         _loc7_ = param1.readUnsignedByte();
+         _loc8_ = param1.readUnsignedByte();
+         _loc9_ = new ServerModalDialog(_loc2_);
+         _loc9_.title = _loc3_;
+         _loc9_.message = _loc4_;
+         _loc9_.buttons = _loc5_;
+         _loc9_.defaultEscapeButton = _loc7_;
+         _loc9_.defaultEnterButton = _loc8_;
+         _loc9_.show();
+      }
+      
       protected function readSPINGBACK(param1:ByteArray) : void
       {
       }
@@ -5239,6 +5303,9 @@ package tibia.network
                         break;
                      case SMARKETBROWSE:
                         this.readSMARKETBROWSE(this.m_InBuffer);
+                        break;
+                     case SSHOWMODALDIALOG:
+                        this.readSSHOWMODALDIALOG(this.m_InBuffer);
                         break;
                      default:
                         break loop1;

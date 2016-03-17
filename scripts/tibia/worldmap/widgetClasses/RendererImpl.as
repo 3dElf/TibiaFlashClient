@@ -2,11 +2,11 @@ package tibia.worldmap.widgetClasses
 {
    import mx.core.UIComponent;
    import shared.utility.Colour;
-   import shared.utility.IPerformanceCounter;
    import flash.geom.Rectangle;
    import tibia.creatures.CreatureStorage;
    import tibia.creatures.Creature;
    import shared.utility.Vector3D;
+   import shared.utility.IPerformanceCounter;
    import tibia.worldmap.Field;
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.AppearanceInstance;
@@ -17,15 +17,15 @@ package tibia.worldmap.widgetClasses
    import flash.geom.Point;
    import tibia.creatures.Player;
    import tibia.options.OptionsStorage;
-   import flash.geom.Matrix;
    import tibia.worldmap.WorldMapStorage;
    import flash.events.Event;
    import flash.utils.getTimer;
    import tibia.appearances.AppearanceType;
+   import flash.geom.Matrix;
    import shared.utility.TextFieldCache;
+   import flash.display.GraphicsPathCommand;
    import tibia.worldmap.OnscreenMessageBox;
    import mx.events.PropertyChangeEvent;
-   import flash.display.GraphicsPathCommand;
    import shared.utility.SlidingWindowPerformanceCounter;
    
    public class RendererImpl extends UIComponent
@@ -201,7 +201,7 @@ package tibia.worldmap.widgetClasses
       
       public static const CREATURE_MARK_SIZE_INNER:int = FIELD_SIZE - 4;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const PROFESSION_KNIGHT:int = 1;
       
@@ -313,7 +313,7 @@ package tibia.worldmap.widgetClasses
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
        
-      private var m_FrameRateCounter:IPerformanceCounter;
+      protected var m_MinZPlane:Vector.<int> = null;
       
       protected var m_ClipRect:Rectangle = null;
       
@@ -323,13 +323,13 @@ package tibia.worldmap.widgetClasses
       
       protected var m_HangPatternY:int = 0;
       
-      protected var m_MinZPlane:Vector.<int> = null;
-      
       protected var m_HangPatternX:int = 0;
       
-      protected var m_HangPatternZ:int = 0;
+      private var m_StopwatchShowFrame:IPerformanceCounter;
       
       protected var m_HelperPoint:Point = null;
+      
+      protected var m_HangPatternZ:int = 0;
       
       protected var m_CreatureCount:Vector.<int> = null;
       
@@ -340,8 +340,6 @@ package tibia.worldmap.widgetClasses
       protected var m_MaxZPlane:int = 0;
       
       protected var m_HUDArcStyle:int = 2;
-      
-      protected var m_Transform:Matrix = null;
       
       protected var m_MainLayer:BitmapData = null;
       
@@ -355,11 +353,11 @@ package tibia.worldmap.widgetClasses
       
       protected var m_DrawnCreatures:Vector.<tibia.worldmap.widgetClasses.RenderAtom> = null;
       
-      private var m_OptionsAmbientBrightness:Number = NaN;
+      protected var m_HUDArcScale:Number = NaN;
       
       protected var m_WorldMapStorage:WorldMapStorage = null;
       
-      protected var m_HUDArcScale:Number = NaN;
+      private var m_OptionsAmbientBrightness:Number = NaN;
       
       protected var m_CreatureNameCache:TextFieldCache = null;
       
@@ -375,11 +373,13 @@ package tibia.worldmap.widgetClasses
       
       protected var m_AtmosphereLayer:BitmapData = null;
       
-      private var m_PerformanceCounter:IPerformanceCounter;
-      
       protected var m_HelperRect:Rectangle = null;
       
+      private var m_StopwatchEnterFrame:IPerformanceCounter;
+      
       protected var m_PlayerZPlane:int = 0;
+      
+      protected var m_Transform:Matrix = null;
       
       protected var m_Rectangle:Rectangle = null;
       
@@ -389,8 +389,8 @@ package tibia.worldmap.widgetClasses
       
       public function RendererImpl()
       {
-         this.m_PerformanceCounter = new SlidingWindowPerformanceCounter(COUNTER_WINDOW_SIZE);
-         this.m_FrameRateCounter = new SlidingWindowPerformanceCounter(COUNTER_WINDOW_SIZE);
+         this.m_StopwatchEnterFrame = new SlidingWindowPerformanceCounter(COUNTER_WINDOW_SIZE);
+         this.m_StopwatchShowFrame = new SlidingWindowPerformanceCounter(COUNTER_WINDOW_SIZE);
          super();
          var _loc1_:int = 0;
          var _loc2_:int = 0;
@@ -497,16 +497,6 @@ package tibia.worldmap.widgetClasses
             }
          }
          return null;
-      }
-      
-      public function get fps() : Number
-      {
-         var _loc1_:Number = this.m_FrameRateCounter.average;
-         if(_loc1_ > 0)
-         {
-            return Math.round(1000 / _loc1_);
-         }
-         return 0;
       }
       
       private function drawField(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int, param7:int, param8:int, param9:Boolean) : void
@@ -729,28 +719,31 @@ package tibia.worldmap.widgetClasses
       private function onEnterFrame(param1:Event) : void
       {
          var _loc2_:Number = NaN;
-         var _loc10_:Number = NaN;
-         var _loc11_:int = 0;
+         var _loc11_:Number = NaN;
          var _loc12_:int = 0;
-         var _loc13_:Field = null;
-         var _loc14_:Creature = null;
-         var _loc15_:int = 0;
+         var _loc13_:int = 0;
+         var _loc14_:Field = null;
+         var _loc15_:Creature = null;
          var _loc16_:int = 0;
          var _loc17_:int = 0;
          var _loc18_:int = 0;
          var _loc19_:int = 0;
          var _loc20_:int = 0;
          var _loc21_:int = 0;
-         var _loc22_:Vector.<tibia.worldmap.widgetClasses.RenderAtom> = null;
-         var _loc23_:int = 0;
-         var _loc24_:tibia.worldmap.widgetClasses.RenderAtom = null;
+         var _loc22_:int = 0;
+         var _loc23_:Vector.<tibia.worldmap.widgetClasses.RenderAtom> = null;
+         var _loc24_:int = 0;
+         var _loc25_:tibia.worldmap.widgetClasses.RenderAtom = null;
+         this.m_StopwatchEnterFrame.stop();
+         this.m_StopwatchEnterFrame.start();
          _loc2_ = getTimer();
          var _loc3_:Number = _loc2_ - Tibia.s_FrameTimestamp;
-         if(this.m_PerformanceCounter.length >= COUNTER_WINDOW_SIZE && _loc3_ < this.m_PerformanceCounter.average * 3 || this.m_CreatureStorage == null || this.m_Options == null || this.m_Player == null || this.m_WorldMapStorage == null || !this.m_WorldMapStorage.valid)
+         if(Math.floor(this.m_StopwatchEnterFrame.average) > Math.max(Math.ceil(1000 / this.m_OptionsFrameRate),_loc3_) || this.m_CreatureStorage == null || this.m_Options == null || this.m_Player == null || this.m_WorldMapStorage == null || !this.m_WorldMapStorage.valid)
          {
             return;
          }
-         this.m_PerformanceCounter.start();
+         this.m_StopwatchShowFrame.stop();
+         this.m_StopwatchShowFrame.start();
          this.m_MainLayer.lock();
          this.m_AtmosphereLayer.lock();
          this.m_MainLayer.fillRect(this.m_Rectangle,4278190080);
@@ -773,6 +766,7 @@ package tibia.worldmap.widgetClasses
             this.m_MaxZPlane--;
          }
          var _loc9_:ObjectInstance = null;
+         var _loc10_:AppearanceType = null;
          _loc6_ = PLAYER_OFFSET_X - 1;
          while(_loc6_ <= PLAYER_OFFSET_X + 1)
          {
@@ -784,18 +778,13 @@ package tibia.worldmap.widgetClasses
                   _loc8_ = this.m_PlayerZPlane + 1;
                   while(_loc8_ - 1 < this.m_MaxZPlane && _loc6_ + this.m_PlayerZPlane - _loc8_ >= 0 && _loc7_ + this.m_PlayerZPlane - _loc8_ >= 0)
                   {
-                     _loc9_ = this.m_WorldMapStorage.getObject(_loc6_ + this.m_PlayerZPlane - _loc8_,_loc7_ + this.m_PlayerZPlane - _loc8_,_loc8_,0);
-                     if(_loc9_ != null && Boolean(_loc9_.m_Type.isBank) && !_loc9_.m_Type.isDonthide)
+                     if((_loc9_ = this.m_WorldMapStorage.getObject(_loc6_ + this.m_PlayerZPlane - _loc8_,_loc7_ + this.m_PlayerZPlane - _loc8_,_loc8_,0)) != null && (_loc10_ = _loc9_.type) != null && Boolean(_loc10_.isBank) && !_loc10_.isDonthide)
                      {
                         this.m_MaxZPlane = _loc8_ - 1;
                      }
-                     else
+                     else if((_loc9_ = this.m_WorldMapStorage.getObject(_loc6_,_loc7_,_loc8_,0)) != null && (_loc10_ = _loc9_.type) != null && (Boolean(_loc10_.isBank) || Boolean(_loc10_.isBottom)) && !_loc10_.isDonthide)
                      {
-                        _loc9_ = this.m_WorldMapStorage.getObject(_loc6_,_loc7_,_loc8_,0);
-                        if(_loc9_ != null && (Boolean(_loc9_.m_Type.isBank) || Boolean(_loc9_.m_Type.isBottom)) && !_loc9_.m_Type.isDonthide)
-                        {
-                           this.m_MaxZPlane = _loc8_ - 1;
-                        }
+                        this.m_MaxZPlane = _loc8_ - 1;
                      }
                      _loc8_++;
                   }
@@ -817,7 +806,7 @@ package tibia.worldmap.widgetClasses
                   _loc8_ = this.m_MaxZPlane;
                   while(_loc8_ >= 0)
                   {
-                     if((_loc9_ = this.m_WorldMapStorage.getObject(_loc6_,_loc7_,_loc8_,0)) != null && Boolean(_loc9_.m_Type.isFullBank))
+                     if((_loc9_ = this.m_WorldMapStorage.getObject(_loc6_,_loc7_,_loc8_,0)) != null && (_loc10_ = _loc9_.type) != null && Boolean(_loc10_.isFullBank))
                      {
                         this.m_MinZPlane[_loc4_] = _loc8_;
                         break;
@@ -833,7 +822,7 @@ package tibia.worldmap.widgetClasses
          _loc8_ = 0;
          while(_loc8_ <= this.m_MaxZPlane)
          {
-            _loc10_ = this.m_WorldMapStorage.m_Position.z <= 7?Number(this.m_WorldMapStorage.getAmbientBrightness()):Number(0);
+            _loc11_ = this.m_WorldMapStorage.m_Position.z <= 7?Number(this.m_WorldMapStorage.getAmbientBrightness()):Number(0);
             _loc4_ = this.m_CreatureCount.length - 1;
             while(_loc4_ >= 0)
             {
@@ -846,53 +835,53 @@ package tibia.worldmap.widgetClasses
                _loc7_ = 0;
                while(_loc7_ < MAPSIZE_Y)
                {
-                  _loc13_ = this.m_WorldMapStorage.getField(_loc6_,_loc7_,_loc8_);
-                  _loc14_ = null;
-                  _loc4_ = _loc13_.m_ObjectsCount - 1;
-                  while(_loc4_ >= _loc13_.m_CacheFirstCreature)
+                  _loc14_ = this.m_WorldMapStorage.getField(_loc6_,_loc7_,_loc8_);
+                  _loc15_ = null;
+                  _loc4_ = _loc14_.m_ObjectsCount - 1;
+                  while(_loc4_ >= _loc14_.m_CacheObjectsCount)
                   {
-                     if(!((_loc9_ = _loc13_.m_ObjectsRenderer[_loc4_]) == null || _loc9_.ID != AppearanceInstance.CREATURE || (_loc14_ = this.m_CreatureStorage.getCreature(_loc9_.data)) == null))
+                     if(!((_loc9_ = _loc14_.m_ObjectsRenderer[_loc4_]) == null || _loc9_.ID != AppearanceInstance.CREATURE || (_loc15_ = this.m_CreatureStorage.getCreature(_loc9_.data)) == null))
                      {
-                        _loc15_ = 0;
                         _loc16_ = 0;
-                        if(_loc14_.mountOutfit != null)
+                        _loc17_ = 0;
+                        if(_loc15_.mountOutfit != null)
                         {
-                           _loc15_ = _loc14_.mountOutfit.m_Type.displacementX;
-                           _loc16_ = _loc14_.mountOutfit.m_Type.displacementY;
+                           _loc16_ = _loc15_.mountOutfit.type.displacementX;
+                           _loc17_ = _loc15_.mountOutfit.type.displacementY;
                         }
-                        else if(_loc14_.outfit != null)
+                        else if(_loc15_.outfit != null)
                         {
-                           _loc15_ = _loc14_.outfit.m_Type.displacementX;
-                           _loc16_ = _loc14_.outfit.m_Type.displacementY;
+                           _loc16_ = _loc15_.outfit.type.displacementX;
+                           _loc17_ = _loc15_.outfit.type.displacementY;
                         }
-                        _loc17_ = (_loc6_ + 1) * FIELD_SIZE + _loc14_.animationDelta.x - _loc15_;
-                        _loc18_ = (_loc7_ + 1) * FIELD_SIZE + _loc14_.animationDelta.y - _loc16_;
-                        _loc19_ = int((_loc17_ - 1) / FIELD_SIZE);
+                        _loc18_ = (_loc6_ + 1) * FIELD_SIZE + _loc15_.animationDelta.x - _loc16_;
+                        _loc19_ = (_loc7_ + 1) * FIELD_SIZE + _loc15_.animationDelta.y - _loc17_;
                         _loc20_ = int((_loc18_ - 1) / FIELD_SIZE);
-                        _loc21_ = _loc20_ * MAPSIZE_X + _loc19_;
-                        if(!(_loc21_ < 0 || _loc21_ >= MAPSIZE_X * MAPSIZE_Y))
+                        _loc21_ = int((_loc19_ - 1) / FIELD_SIZE);
+                        _loc22_ = _loc21_ * MAPSIZE_X + _loc20_;
+                        if(!(_loc22_ < 0 || _loc22_ >= MAPSIZE_X * MAPSIZE_Y))
                         {
-                           _loc22_ = this.m_CreatureField[_loc21_];
-                           _loc23_ = 0;
-                           while(_loc23_ < this.m_CreatureCount[_loc21_] && (_loc24_ = _loc22_[_loc23_]) != null && (_loc24_.y < _loc18_ || _loc24_.y == _loc18_ && _loc24_.x <= _loc17_))
+                           _loc23_ = this.m_CreatureField[_loc22_];
+                           _loc24_ = 0;
+                           while(_loc24_ < this.m_CreatureCount[_loc22_] && (_loc25_ = _loc23_[_loc24_]) != null && (_loc25_.y < _loc19_ || _loc25_.y == _loc19_ && _loc25_.x <= _loc18_))
                            {
-                              _loc23_++;
+                              _loc24_++;
                            }
-                           if(_loc23_ < MAPSIZE_W)
+                           if(_loc24_ < MAPSIZE_W)
                            {
-                              if(this.m_CreatureCount[_loc21_] < MAPSIZE_W)
+                              if(this.m_CreatureCount[_loc22_] < MAPSIZE_W)
                               {
-                                 this.m_CreatureCount[_loc21_]++;
+                                 this.m_CreatureCount[_loc22_]++;
                               }
-                              _loc24_ = _loc22_[this.m_CreatureCount[_loc21_] - 1];
-                              _loc5_ = this.m_CreatureCount[_loc21_] - 1;
-                              while(_loc5_ > _loc23_)
+                              _loc25_ = _loc23_[this.m_CreatureCount[_loc22_] - 1];
+                              _loc5_ = this.m_CreatureCount[_loc22_] - 1;
+                              while(_loc5_ > _loc24_)
                               {
-                                 _loc22_[_loc5_] = _loc22_[_loc5_ - 1];
+                                 _loc23_[_loc5_] = _loc23_[_loc5_ - 1];
                                  _loc5_--;
                               }
-                              _loc22_[_loc23_] = _loc24_;
-                              _loc24_.update(_loc14_,_loc17_,_loc18_,_loc8_);
+                              _loc23_[_loc24_] = _loc25_;
+                              _loc25_.update(_loc15_,_loc18_,_loc19_,_loc8_);
                            }
                         }
                      }
@@ -904,20 +893,20 @@ package tibia.worldmap.widgetClasses
             }
             this.m_HelperCoordinate.setComponents(0,0,_loc8_);
             this.m_WorldMapStorage.toAbsolute(this.m_HelperCoordinate,this.m_HelperCoordinate);
-            _loc11_ = 0;
-            _loc12_ = MAPSIZE_X + MAPSIZE_Y;
-            _loc11_ = 0;
-            while(_loc11_ < _loc12_)
+            _loc12_ = 0;
+            _loc13_ = MAPSIZE_X + MAPSIZE_Y;
+            _loc12_ = 0;
+            while(_loc12_ < _loc13_)
             {
-               _loc7_ = Math.max(_loc11_ - MAPSIZE_X + 1,0);
-               _loc6_ = Math.min(_loc11_,MAPSIZE_X - 1);
+               _loc7_ = Math.max(_loc12_ - MAPSIZE_X + 1,0);
+               _loc6_ = Math.min(_loc12_,MAPSIZE_X - 1);
                while(_loc6_ >= 0 && _loc7_ < MAPSIZE_Y)
                {
                   this.drawField((_loc6_ + 1) * FIELD_SIZE,(_loc7_ + 1) * FIELD_SIZE,this.m_HelperCoordinate.x + _loc6_,this.m_HelperCoordinate.y + _loc7_,this.m_HelperCoordinate.z,_loc6_,_loc7_,_loc8_,true);
                   _loc6_--;
                   _loc7_++;
                }
-               _loc11_++;
+               _loc12_++;
             }
             _loc8_++;
          }
@@ -954,9 +943,6 @@ package tibia.worldmap.widgetClasses
          this.drawCreatureStatus();
          this.drawTextualEffects();
          this.drawOnscreenMessages();
-         this.m_PerformanceCounter.stop();
-         this.m_FrameRateCounter.stop();
-         this.m_FrameRateCounter.start();
       }
       
       function pointToMap(param1:Number, param2:Number, param3:Boolean, param4:Vector3D = null) : Vector3D
@@ -1036,6 +1022,151 @@ package tibia.worldmap.widgetClasses
          {
             this.m_Player = param1;
          }
+      }
+      
+      private function drawHUDArc(param1:Number, param2:Number, param3:int, param4:int, param5:uint) : void
+      {
+         var _loc12_:Number = NaN;
+         var _loc13_:Point = null;
+         param3 = Math.max(HUD_ARC_ORIENTATION_LEFT,Math.min(param3,HUD_ARC_ORIENTATION_RIGHT));
+         param4 = Math.max(0,Math.min(param4,100));
+         var _loc6_:int = 0;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
+         var _loc9_:int = 0;
+         if(this.m_HUDArcPoints == null || this.m_HUDArcScale != this.m_Transform.a)
+         {
+            this.m_HUDArcPoints = new Vector.<Number>(2 * 202,true);
+            this.m_HUDArcScale = this.m_Transform.a;
+            _loc6_ = 0;
+            _loc7_ = 201;
+            while(_loc6_ <= 100)
+            {
+               _loc12_ = (HUD_ARC_LOWER_LIMIT - _loc6_ / 100 * (HUD_ARC_LOWER_LIMIT - HUD_ARC_UPPER_LIMIT)) * (Math.PI / 180);
+               _loc13_ = Point.polar(this.m_HUDArcScale * HUD_ARC_RADIUS,_loc12_);
+               this.m_HUDArcPoints[2 * _loc6_ + 0] = _loc13_.x;
+               this.m_HUDArcPoints[2 * _loc6_ + 1] = _loc13_.y;
+               switch(this.m_HUDArcStyle)
+               {
+                  case HUD_ARC_STYLE_POINTY:
+                     this.m_HUDArcPoints[2 * _loc7_ + 0] = _loc13_.x + (-0.0004 * _loc6_ * _loc6_ + 0.04 * _loc6_) * this.m_HUDArcScale * HUD_ARC_TOTAL_WIDTH;
+                     this.m_HUDArcPoints[2 * _loc7_ + 1] = _loc13_.y;
+                     break;
+                  case HUD_ARC_STYLE_HORIZONTAL:
+                     this.m_HUDArcPoints[2 * _loc7_ + 0] = _loc13_.x + this.m_HUDArcScale * HUD_ARC_TOTAL_WIDTH;
+                     this.m_HUDArcPoints[2 * _loc7_ + 1] = _loc13_.y;
+                     break;
+                  case HUD_ARC_STYLE_RADIAL:
+                     _loc13_ = Point.polar(this.m_Transform.a * HUD_ARC_RADIUS + this.m_HUDArcScale * HUD_ARC_TOTAL_WIDTH,_loc12_);
+                     this.m_HUDArcPoints[2 * _loc7_ + 0] = _loc13_.x;
+                     this.m_HUDArcPoints[2 * _loc7_ + 1] = _loc13_.y;
+               }
+               _loc6_++;
+               _loc7_--;
+            }
+         }
+         var _loc10_:Vector.<Number> = null;
+         var _loc11_:Vector.<int> = null;
+         if(param3 == HUD_ARC_ORIENTATION_LEFT)
+         {
+            _loc9_ = -1;
+            param1 = param1 + Math.sin(HUD_ARC_LOWER_LIMIT * (Math.PI / 180)) * this.m_HUDArcScale * HUD_ARC_RADIUS;
+         }
+         else
+         {
+            _loc9_ = 1;
+            param1 = param1 - Math.sin(HUD_ARC_LOWER_LIMIT * (Math.PI / 180)) * this.m_HUDArcScale * HUD_ARC_RADIUS;
+         }
+         if(param4 < 100)
+         {
+            _loc8_ = 2 * (100 - param4 + 1);
+            _loc10_ = new Vector.<Number>(2 * (_loc8_ + 1),true);
+            _loc6_ = 0;
+            _loc7_ = param4;
+            while(_loc6_ < _loc8_)
+            {
+               _loc10_[2 * _loc6_ + 0] = param1 + _loc9_ * this.m_HUDArcPoints[2 * _loc7_ + 0];
+               _loc10_[2 * _loc6_ + 1] = param2 + this.m_HUDArcPoints[2 * _loc7_ + 1];
+               _loc6_++;
+               _loc7_++;
+            }
+            _loc10_[2 * _loc6_ + 0] = _loc10_[0];
+            _loc10_[2 * _loc6_ + 1] = _loc10_[1];
+            _loc11_ = new Vector.<int>(_loc8_ + 1,true);
+            _loc11_[0] = GraphicsPathCommand.MOVE_TO;
+            _loc6_ = 0;
+            while(_loc6_ < _loc8_)
+            {
+               _loc11_[_loc6_ + 1] = GraphicsPathCommand.LINE_TO;
+               _loc6_++;
+            }
+            graphics.lineStyle(NaN,0,NaN);
+            graphics.beginFill(0,0.33 * HUD_ARC_ALPHA);
+            graphics.drawPath(_loc11_,_loc10_);
+         }
+         if(param4 > 0)
+         {
+            _loc8_ = 2 * (param4 + 1);
+            _loc10_ = new Vector.<Number>(2 * (_loc8_ + 1),true);
+            _loc6_ = 0;
+            _loc7_ = 0;
+            while(_loc6_ < param4 + 1)
+            {
+               _loc10_[2 * _loc6_ + 0] = param1 + _loc9_ * this.m_HUDArcPoints[2 * _loc7_ + 0];
+               _loc10_[2 * _loc6_ + 1] = param2 + this.m_HUDArcPoints[2 * _loc7_ + 1];
+               _loc6_++;
+               _loc7_++;
+            }
+            _loc6_ = param4 + 1;
+            _loc7_ = 202 - _loc6_;
+            while(_loc6_ < _loc8_)
+            {
+               _loc10_[2 * _loc6_ + 0] = param1 + _loc9_ * this.m_HUDArcPoints[2 * _loc7_ + 0];
+               _loc10_[2 * _loc6_ + 1] = param2 + this.m_HUDArcPoints[2 * _loc7_ + 1];
+               _loc6_++;
+               _loc7_++;
+            }
+            _loc10_[2 * _loc6_ + 0] = _loc10_[0];
+            _loc10_[2 * _loc6_ + 1] = _loc10_[1];
+            _loc11_ = new Vector.<int>(_loc8_ + 1,true);
+            _loc11_[0] = GraphicsPathCommand.MOVE_TO;
+            _loc6_ = 0;
+            while(_loc6_ < _loc8_)
+            {
+               _loc11_[_loc6_ + 1] = GraphicsPathCommand.LINE_TO;
+               _loc6_++;
+            }
+            graphics.lineStyle(NaN,0,NaN);
+            graphics.beginFill(param5,HUD_ARC_ALPHA);
+            graphics.drawPath(_loc11_,_loc10_);
+         }
+         _loc8_ = 2 * (100 + 1);
+         _loc10_ = new Vector.<Number>(2 * (_loc8_ + 1),true);
+         _loc6_ = 0;
+         _loc7_ = 0;
+         while(_loc6_ < _loc8_)
+         {
+            _loc10_[2 * _loc6_ + 0] = param1 + _loc9_ * this.m_HUDArcPoints[2 * _loc7_ + 0];
+            _loc10_[2 * _loc6_ + 1] = param2 + this.m_HUDArcPoints[2 * _loc7_ + 1];
+            _loc6_++;
+            _loc7_++;
+         }
+         _loc10_[2 * _loc6_ + 0] = _loc10_[0];
+         _loc10_[2 * _loc6_ + 1] = _loc10_[1];
+         _loc11_ = new Vector.<int>(_loc8_ + 1,true);
+         _loc11_[0] = GraphicsPathCommand.MOVE_TO;
+         _loc6_ = 0;
+         while(_loc6_ < _loc8_)
+         {
+            _loc11_[_loc6_ + 1] = GraphicsPathCommand.LINE_TO;
+            _loc6_++;
+         }
+         graphics.lineStyle(HUD_ARC_BORDER_WIDTH,0,1);
+         graphics.beginFill(0,NaN);
+         graphics.drawPath(_loc11_,_loc10_);
+         graphics.lineStyle(NaN,0,NaN);
+         graphics.beginFill(0,NaN);
+         graphics.endFill();
       }
       
       function pointToAbsolute(param1:Number, param2:Number, param3:Boolean, param4:Vector3D = null) : Vector3D
@@ -1380,6 +1511,23 @@ package tibia.worldmap.widgetClasses
          }
       }
       
+      public function set options(param1:OptionsStorage) : void
+      {
+         if(this.m_Options != param1)
+         {
+            if(this.m_Options != null)
+            {
+               this.m_Options.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
+            }
+            this.m_Options = param1;
+            if(this.m_Options != null)
+            {
+               this.m_Options.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
+            }
+            this.updateOptions();
+         }
+      }
+      
       public function get player() : Player
       {
          return this.m_Player;
@@ -1472,7 +1620,8 @@ package tibia.worldmap.widgetClasses
       
       public function reset() : void
       {
-         this.m_FrameRateCounter.reset();
+         this.m_StopwatchEnterFrame.reset();
+         this.m_StopwatchShowFrame.reset();
       }
       
       private function drawCreatureStatus() : void
@@ -1530,183 +1679,14 @@ package tibia.worldmap.widgetClasses
          }
       }
       
-      public function set options(param1:OptionsStorage) : void
+      public function get fps() : Number
       {
-         if(this.m_Options != param1)
+         var _loc1_:Number = this.m_StopwatchShowFrame.average;
+         if(_loc1_ > 0)
          {
-            if(this.m_Options != null)
-            {
-               this.m_Options.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
-            }
-            this.m_Options = param1;
-            if(this.m_Options != null)
-            {
-               this.m_Options.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
-            }
-            this.updateOptions();
+            return Math.round(1000 / _loc1_);
          }
-      }
-      
-      private function drawHUDArc(param1:Number, param2:Number, param3:int, param4:int, param5:uint) : void
-      {
-         var _loc12_:Number = NaN;
-         var _loc13_:Point = null;
-         param3 = Math.max(HUD_ARC_ORIENTATION_LEFT,Math.min(param3,HUD_ARC_ORIENTATION_RIGHT));
-         param4 = Math.max(0,Math.min(param4,100));
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc8_:int = 0;
-         var _loc9_:int = 0;
-         if(this.m_HUDArcPoints == null || this.m_HUDArcScale != this.m_Transform.a)
-         {
-            this.m_HUDArcPoints = new Vector.<Number>(2 * 202,true);
-            this.m_HUDArcScale = this.m_Transform.a;
-            _loc6_ = 0;
-            _loc7_ = 201;
-            while(_loc6_ <= 100)
-            {
-               _loc12_ = (HUD_ARC_LOWER_LIMIT - _loc6_ / 100 * (HUD_ARC_LOWER_LIMIT - HUD_ARC_UPPER_LIMIT)) * (Math.PI / 180);
-               _loc13_ = Point.polar(this.m_HUDArcScale * HUD_ARC_RADIUS,_loc12_);
-               this.m_HUDArcPoints[2 * _loc6_ + 0] = _loc13_.x;
-               this.m_HUDArcPoints[2 * _loc6_ + 1] = _loc13_.y;
-               switch(this.m_HUDArcStyle)
-               {
-                  case HUD_ARC_STYLE_POINTY:
-                     this.m_HUDArcPoints[2 * _loc7_ + 0] = _loc13_.x + (-0.0004 * _loc6_ * _loc6_ + 0.04 * _loc6_) * this.m_HUDArcScale * HUD_ARC_TOTAL_WIDTH;
-                     this.m_HUDArcPoints[2 * _loc7_ + 1] = _loc13_.y;
-                     break;
-                  case HUD_ARC_STYLE_HORIZONTAL:
-                     this.m_HUDArcPoints[2 * _loc7_ + 0] = _loc13_.x + this.m_HUDArcScale * HUD_ARC_TOTAL_WIDTH;
-                     this.m_HUDArcPoints[2 * _loc7_ + 1] = _loc13_.y;
-                     break;
-                  case HUD_ARC_STYLE_RADIAL:
-                     _loc13_ = Point.polar(this.m_Transform.a * HUD_ARC_RADIUS + this.m_HUDArcScale * HUD_ARC_TOTAL_WIDTH,_loc12_);
-                     this.m_HUDArcPoints[2 * _loc7_ + 0] = _loc13_.x;
-                     this.m_HUDArcPoints[2 * _loc7_ + 1] = _loc13_.y;
-               }
-               _loc6_++;
-               _loc7_--;
-            }
-         }
-         var _loc10_:Vector.<Number> = null;
-         var _loc11_:Vector.<int> = null;
-         if(param3 == HUD_ARC_ORIENTATION_LEFT)
-         {
-            _loc9_ = -1;
-            param1 = param1 + Math.sin(HUD_ARC_LOWER_LIMIT * (Math.PI / 180)) * this.m_HUDArcScale * HUD_ARC_RADIUS;
-         }
-         else
-         {
-            _loc9_ = 1;
-            param1 = param1 - Math.sin(HUD_ARC_LOWER_LIMIT * (Math.PI / 180)) * this.m_HUDArcScale * HUD_ARC_RADIUS;
-         }
-         if(param4 < 100)
-         {
-            _loc8_ = 2 * (100 - param4 + 1);
-            _loc10_ = new Vector.<Number>(2 * (_loc8_ + 1),true);
-            _loc6_ = 0;
-            _loc7_ = param4;
-            while(_loc6_ < _loc8_)
-            {
-               _loc10_[2 * _loc6_ + 0] = param1 + _loc9_ * this.m_HUDArcPoints[2 * _loc7_ + 0];
-               _loc10_[2 * _loc6_ + 1] = param2 + this.m_HUDArcPoints[2 * _loc7_ + 1];
-               _loc6_++;
-               _loc7_++;
-            }
-            _loc10_[2 * _loc6_ + 0] = _loc10_[0];
-            _loc10_[2 * _loc6_ + 1] = _loc10_[1];
-            _loc11_ = new Vector.<int>(_loc8_ + 1,true);
-            _loc11_[0] = GraphicsPathCommand.MOVE_TO;
-            _loc6_ = 0;
-            while(_loc6_ < _loc8_)
-            {
-               _loc11_[_loc6_ + 1] = GraphicsPathCommand.LINE_TO;
-               _loc6_++;
-            }
-            graphics.lineStyle(NaN,0,NaN);
-            graphics.beginFill(0,0.33 * HUD_ARC_ALPHA);
-            graphics.drawPath(_loc11_,_loc10_);
-         }
-         if(param4 > 0)
-         {
-            _loc8_ = 2 * (param4 + 1);
-            _loc10_ = new Vector.<Number>(2 * (_loc8_ + 1),true);
-            _loc6_ = 0;
-            _loc7_ = 0;
-            while(_loc6_ < param4 + 1)
-            {
-               _loc10_[2 * _loc6_ + 0] = param1 + _loc9_ * this.m_HUDArcPoints[2 * _loc7_ + 0];
-               _loc10_[2 * _loc6_ + 1] = param2 + this.m_HUDArcPoints[2 * _loc7_ + 1];
-               _loc6_++;
-               _loc7_++;
-            }
-            _loc6_ = param4 + 1;
-            _loc7_ = 202 - _loc6_;
-            while(_loc6_ < _loc8_)
-            {
-               _loc10_[2 * _loc6_ + 0] = param1 + _loc9_ * this.m_HUDArcPoints[2 * _loc7_ + 0];
-               _loc10_[2 * _loc6_ + 1] = param2 + this.m_HUDArcPoints[2 * _loc7_ + 1];
-               _loc6_++;
-               _loc7_++;
-            }
-            _loc10_[2 * _loc6_ + 0] = _loc10_[0];
-            _loc10_[2 * _loc6_ + 1] = _loc10_[1];
-            _loc11_ = new Vector.<int>(_loc8_ + 1,true);
-            _loc11_[0] = GraphicsPathCommand.MOVE_TO;
-            _loc6_ = 0;
-            while(_loc6_ < _loc8_)
-            {
-               _loc11_[_loc6_ + 1] = GraphicsPathCommand.LINE_TO;
-               _loc6_++;
-            }
-            graphics.lineStyle(NaN,0,NaN);
-            graphics.beginFill(param5,HUD_ARC_ALPHA);
-            graphics.drawPath(_loc11_,_loc10_);
-         }
-         _loc8_ = 2 * (100 + 1);
-         _loc10_ = new Vector.<Number>(2 * (_loc8_ + 1),true);
-         _loc6_ = 0;
-         _loc7_ = 0;
-         while(_loc6_ < _loc8_)
-         {
-            _loc10_[2 * _loc6_ + 0] = param1 + _loc9_ * this.m_HUDArcPoints[2 * _loc7_ + 0];
-            _loc10_[2 * _loc6_ + 1] = param2 + this.m_HUDArcPoints[2 * _loc7_ + 1];
-            _loc6_++;
-            _loc7_++;
-         }
-         _loc10_[2 * _loc6_ + 0] = _loc10_[0];
-         _loc10_[2 * _loc6_ + 1] = _loc10_[1];
-         _loc11_ = new Vector.<int>(_loc8_ + 1,true);
-         _loc11_[0] = GraphicsPathCommand.MOVE_TO;
-         _loc6_ = 0;
-         while(_loc6_ < _loc8_)
-         {
-            _loc11_[_loc6_ + 1] = GraphicsPathCommand.LINE_TO;
-            _loc6_++;
-         }
-         graphics.lineStyle(HUD_ARC_BORDER_WIDTH,0,1);
-         graphics.beginFill(0,NaN);
-         graphics.drawPath(_loc11_,_loc10_);
-         graphics.lineStyle(NaN,0,NaN);
-         graphics.beginFill(0,NaN);
-         graphics.endFill();
-      }
-      
-      private function onOptionsChange(param1:PropertyChangeEvent) : void
-      {
-         if(param1 != null)
-         {
-            switch(param1.property)
-            {
-               case "rendererAmbientBrightness":
-               case "rendererMaxFrameRate":
-               case "rendererLevelSeparator":
-               case "rendererLightEnabled":
-               case "rendererScaleMap":
-               case "*":
-                  this.updateOptions();
-            }
-         }
+         return 0;
       }
       
       private function drawCreatureStatusClassic(param1:Creature, param2:int, param3:int, param4:Boolean, param5:Boolean, param6:Boolean, param7:Boolean, param8:Boolean) : void
@@ -1779,6 +1759,23 @@ package tibia.worldmap.widgetClasses
             this.drawCreatureMarks(param1,param2 - FIELD_SIZE / 2,param3 - FIELD_SIZE,param4);
          }
          graphics.endFill();
+      }
+      
+      private function onOptionsChange(param1:PropertyChangeEvent) : void
+      {
+         if(param1 != null)
+         {
+            switch(param1.property)
+            {
+               case "rendererAmbientBrightness":
+               case "rendererMaxFrameRate":
+               case "rendererLevelSeparator":
+               case "rendererLightEnabled":
+               case "rendererScaleMap":
+               case "*":
+                  this.updateOptions();
+            }
+         }
       }
    }
 }

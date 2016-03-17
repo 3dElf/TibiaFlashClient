@@ -104,6 +104,7 @@ package
             "OFFERS_VIEW_COLUMN_TERMINATIONTREASON":"Termination Trigger",
             "CATEGORY_FILTER_EDITOR_LABEL":"Browse",
             "DETAIL_FIELD_ATTACK":"Attack",
+            "CATEGORY_PREMIUM_SCROLLS":"Premium Scrolls",
             "CATEGORY_WANDS_RODS_LABEL":"Wands and Rods",
             "MARKET_OFFERS_VIEW_BUYOFFERS":"Buy Offers",
             "REASON_UNKNOWN":"Unknown",

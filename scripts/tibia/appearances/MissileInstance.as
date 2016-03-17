@@ -55,7 +55,7 @@ package tibia.appearances
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
        
       protected var m_PatternX:int = 0;
       

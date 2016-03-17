@@ -26,7 +26,7 @@ package tibia.worldmap
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       public static const FIXING_Y:int = 2;
       

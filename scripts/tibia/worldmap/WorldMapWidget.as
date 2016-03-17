@@ -65,7 +65,7 @@ package tibia.worldmap
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       private static const EMBED_LATENCY_ICON_MEDIUM:Class = WorldMapWidget_EMBED_LATENCY_ICON_MEDIUM;
       
@@ -334,8 +334,9 @@ package tibia.worldmap
       protected function onEnterFrame(param1:Event) : void
       {
          var _loc2_:Connection = null;
-         if(this.m_UIRendererImpl != null && Tibia.s_FrameTimestamp - this.m_InfoTimestamp > 500)
+         if(this.m_UIRendererImpl != null && Tibia.s_FrameTimestamp > this.m_InfoTimestamp + 500)
          {
+            this.m_InfoTimestamp = Tibia.s_FrameTimestamp;
             _loc2_ = Tibia.s_GetConnection();
             if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
             {
@@ -361,7 +362,6 @@ package tibia.worldmap
                this.m_UIInfoLatency.toolTip = resourceManager.getString(BUNDLE,"LATENCY_TOOTLIP_NO_CONNECTION");
             }
             this.m_UIInfoFramerate.text = this.m_UIRendererImpl.fps + " FPS";
-            this.m_InfoTimestamp = Tibia.s_FrameTimestamp;
          }
       }
       

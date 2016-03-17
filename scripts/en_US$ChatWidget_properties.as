@@ -48,7 +48,7 @@ package
             "BTN_CHANNEL_VOLUME_SAY_LABEL":"Say",
             "BTN_CHANNEL_VOLUME_YELL_LABEL":"Yell",
             "CHANNELVIEW_LBL_INVITED":"{0} Invited:",
-            "CTX_VIEW_REPORT_NAME":"Report Character Name",
+            "CTX_VIEW_REPORT_NAME":"Report Name",
             "ACTION_INVITE_TITLE":"Invite player to private chat channel",
             "CTX_VIEW_SELECT_ALL":"Select All",
             "TIP_CHANNEL_OPEN":"Open Channel",

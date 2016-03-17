@@ -41,7 +41,7 @@ package tibia.minimap
       
       protected static const MM_CACHE_SIZE:int = 48;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const MAP_MIN_X:int = 24576;
       

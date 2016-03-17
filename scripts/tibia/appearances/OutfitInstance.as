@@ -42,7 +42,7 @@ package tibia.appearances
       
       private static const s_ColourRect:Rectangle = new Rectangle(0,0,s_ColourBitmap.width,s_ColourBitmap.height);
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       private static const s_ColourTransform:ColorTransform = new ColorTransform();
       

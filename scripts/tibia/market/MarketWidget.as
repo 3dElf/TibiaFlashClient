@@ -34,7 +34,7 @@ package tibia.market
       
       public static const VIEW_OWN_HISTORY:uint = 4;
       
-      public static const CATEGORY_META_WEAPONS:int = 22;
+      public static const CATEGORY_META_WEAPONS:int = 255;
       
       public static const CATEGORY_BOOTS:int = 3;
       
@@ -122,6 +122,8 @@ package tibia.market
       
       public static const CATEGORY_CLUBS:int = 18;
       
+      public static const CATEGORY_PREMIUM_SCROLLS:int = 22;
+      
       public static const ACTIVE_OFFERS_CHANGE:String = "activeOffersChange";
       
       public static const VIEW_MARKET_OFFERS:uint = 0;
@@ -204,7 +206,7 @@ package tibia.market
       
       public static function isValidCategoryID(param1:int) : Boolean
       {
-         return param1 > 0 && param1 < 22;
+         return param1 > 0 && param1 <= CATEGORY_PREMIUM_SCROLLS;
       }
       
       public static function isValidTypeID(param1:int) : Boolean

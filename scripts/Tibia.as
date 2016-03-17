@@ -190,7 +190,7 @@ package
       
       private var _embed_css_images_Arrow_ScrollHotkeys_disabled_png_56557209:Class;
       
-      private var _embed_css_images_Scrollbar_Arrow_up_idle_png_392284041:Class;
+      private var _embed_css_images_Icons_PremmyPurse_active_over_png_1191514000:Class;
       
       private var _embed_css_images_Minimap_ZoomIn_over_png_1813625055:Class;
       
@@ -211,6 +211,8 @@ package
       protected var m_Options:OptionsStorage = null;
       
       private var _embed_css_images_BarsHealth_default_Mana_png_2023417226:Class;
+      
+      private var _embed_css_images_Scrollbar_Arrow_up_idle_png_392284041:Class;
       
       private var _embed_css_images_Icons_CombatControls_AutochaseOn_over_png_420173491:Class;
       
@@ -263,6 +265,8 @@ package
       private var _embed_css_images_Slot_InventoryHead_png_291820759:Class;
       
       private var _embed_css_images_Icons_CombatControls_OffensiveOn_over_png_1701183413:Class;
+      
+      private var _embed_css_images_Icons_PremmyPurse_active_png_1058827501:Class;
       
       private var _embed_css_images_Icons_WidgetMenu_GeneralControls_active_over_png_576851969:Class;
       
@@ -1037,6 +1041,8 @@ package
          this._embed_css_images_Icons_Conditions_Poisoned_png_1880265705 = Tibia__embed_css_images_Icons_Conditions_Poisoned_png_1880265705;
          this._embed_css_images_Icons_Conditions_Slowed_png_471764192 = Tibia__embed_css_images_Icons_Conditions_Slowed_png_471764192;
          this._embed_css_images_Icons_Conditions_Strenghtened_png_625984097 = Tibia__embed_css_images_Icons_Conditions_Strenghtened_png_625984097;
+         this._embed_css_images_Icons_PremmyPurse_active_over_png_1191514000 = Tibia__embed_css_images_Icons_PremmyPurse_active_over_png_1191514000;
+         this._embed_css_images_Icons_PremmyPurse_active_png_1058827501 = Tibia__embed_css_images_Icons_PremmyPurse_active_png_1058827501;
          this._embed_css_images_Icons_TradeLists_ContainerDisplay_idle_png_1797135675 = Tibia__embed_css_images_Icons_TradeLists_ContainerDisplay_idle_png_1797135675;
          this._embed_css_images_Icons_TradeLists_ContainerDisplay_over_png_1591601723 = Tibia__embed_css_images_Icons_TradeLists_ContainerDisplay_over_png_1591601723;
          this._embed_css_images_Icons_TradeLists_ContainerDisplay_pressed_png_1419676331 = Tibia__embed_css_images_Icons_TradeLists_ContainerDisplay_pressed_png_1419676331;

@@ -279,6 +279,9 @@ package tibia.market.marketWidgetClasses
             },{
                "value":MarketWidget.CATEGORY_META_WEAPONS,
                "label":resourceManager.getString(BUNDLE,"CATEGORY_META_WEAPONS_LABEL")
+            },{
+               "value":MarketWidget.CATEGORY_PREMIUM_SCROLLS,
+               "label":resourceManager.getString(BUNDLE,"CATEGORY_PREMIUM_SCROLLS")
             }];
             this.m_UIPrimaryCategory.dropdownFactory = new ClassFactory(CustomList);
             this.m_UIPrimaryCategory.labelField = "label";

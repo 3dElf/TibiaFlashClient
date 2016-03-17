@@ -46,7 +46,7 @@ package tibia.worldmap
       
       protected static const FIELD_HEIGHT:int = 24;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       public static const MSG_PATH_UNREACHABLE:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_PATH_UNREACHABLE");
       

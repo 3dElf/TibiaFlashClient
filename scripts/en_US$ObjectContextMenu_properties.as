@@ -15,7 +15,7 @@ package
          var _loc1_:Object = {
             "CTX_PLAYER_DISMOUNT":"Dismount",
             "CTX_CREATURE_COPY_NAME":"Copy Name",
-            "CTX_PLAYER_REPORT_NAME":"Report Character Name",
+            "CTX_PLAYER_REPORT_NAME":"Report Name",
             "CTX_PLAYER_SET_OUTFIT":"Select Outfit",
             "CTX_OBJECT_TRADE":"Trade with ...",
             "CTX_PARTY_ENABLE_SHARED_EXPERIENCE":"Enable Shared Experience",

@@ -14,6 +14,7 @@ package
       {
          var _loc1_:Object = {
             "LBL_CAPACITY_FORMAT":"{0}",
+            "TOOLTIP_PURSE":"Open the Purse",
             "TITLE":"Inventory"
          };
          return _loc1_;

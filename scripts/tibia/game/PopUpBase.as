@@ -177,11 +177,11 @@ package tibia.game
             i = 0;
             while(i < BUTTON_FLAGS.length)
             {
-               if((this.m_ButtonFlags & BUTTON_FLAGS[i].data) != 0)
+               if((this.buttonFlags & BUTTON_FLAGS[i].data) != 0)
                {
                   _Button = new Button();
                   _Button.data = BUTTON_FLAGS[i].data;
-                  _Button.enabled = (this.m_ButtonFlags & DISABLE_BUTTONS) == 0;
+                  _Button.enabled = (this.buttonFlags & DISABLE_BUTTONS) == 0;
                   _Button.label = resourceManager.getString(BUNDLE,BUTTON_FLAGS[i].label);
                   _Button.addEventListener(MouseEvent.CLICK,this.onClose);
                   this.m_UIFooter.addChild(_Button);
@@ -411,7 +411,7 @@ package tibia.game
             if(_loc3_ != null)
             {
                _loc2_ = new CloseEvent(CloseEvent.CLOSE,false,true);
-               _loc2_.detail = int(_loc3_.data);
+               _loc2_.detail = uint(_loc3_.data);
                dispatchEvent(_loc2_);
             }
          }

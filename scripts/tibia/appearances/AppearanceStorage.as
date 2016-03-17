@@ -47,7 +47,7 @@ package tibia.appearances
       
       public static const FLAG_FORCEUSE:int = 6;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       public static const FLAG_LYINGOBJECT:int = 26;
       
@@ -816,7 +816,7 @@ package tibia.appearances
                   _loc5_.sprite[_loc7_] = new Rectangle(-1,param1.readUnsignedInt(),0,0);
                   _loc7_++;
                }
-               _loc5_.isCachable = !_loc5_.isAnimation && !_loc5_.isHangable && !_loc5_.isLight && FIELD_CACHESIZE >= _loc5_.exactSize + Math.max(_loc5_.displacementX,_loc5_.displacementY) + FIELD_HEIGHT;
+               _loc5_.isCachable = !_loc5_.isAnimation && !_loc5_.isHangable && !_loc5_.isLight && _loc5_.exactSize + Math.max(_loc5_.displacementX,_loc5_.displacementY) <= FIELD_CACHESIZE;
                param2[param3] = _loc5_;
                if(_loc5_.isMarket)
                {

@@ -66,7 +66,7 @@ package tibia.creatures
       
       protected static const SKILL_STAMINA:int = 16;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const STATE_NONE:int = -1;
       

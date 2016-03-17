@@ -201,37 +201,50 @@ package tibia.container.containerWidgetClasses
       
       protected function updateSlots() : void
       {
+         var _loc3_:IContainerSlot = null;
          var _loc1_:int = 0;
          var _loc2_:int = 0;
-         _loc1_ = this.slotHolder.numChildren - 1;
-         _loc2_ = this.container != null && !this.m_UncommittedSlotFactory?int(this.container.capacity):0;
-         while(_loc1_ >= _loc2_)
+         if(this.container == null)
          {
-            this.destroySlot(_loc1_);
-            _loc1_--;
+            _loc1_ = this.slotHolder.numChildren - 1;
+            while(_loc1_ >= 0)
+            {
+               this.destroySlot(_loc1_);
+               _loc1_--;
+            }
          }
-         _loc1_ = this.slotHolder.numChildren;
-         _loc2_ = this.container != null?int(this.container.capacity):0;
-         while(_loc1_ < _loc2_)
+         else
          {
-            this.createSlot(null,_loc1_);
-            _loc1_++;
-         }
-         var _loc3_:IContainerSlot = null;
-         _loc1_ = 0;
-         _loc2_ = this.container != null?int(Math.min(this.container.capacity,this.container.length)):0;
-         while(_loc1_ < _loc2_)
-         {
-            _loc3_ = IContainerSlot(this.slotHolder.getChildAt(_loc1_));
-            _loc3_.appearance = this.container.getItemAt(_loc1_);
-            _loc1_++;
-         }
-         _loc2_ = this.container != null?int(this.container.capacity):0;
-         while(_loc1_ < _loc2_)
-         {
-            _loc3_ = IContainerSlot(this.slotHolder.getChildAt(_loc1_));
-            _loc3_.appearance = null;
-            _loc1_++;
+            _loc1_ = this.slotHolder.numChildren - 1;
+            while(_loc1_ >= this.container.capacity)
+            {
+               this.destroySlot(_loc1_);
+               _loc1_--;
+            }
+            _loc1_ = this.slotHolder.numChildren;
+            while(_loc1_ < this.container.capacity)
+            {
+               this.createSlot(null,_loc1_);
+               _loc1_++;
+            }
+            _loc3_ = null;
+            _loc1_ = 0;
+            _loc2_ = Math.min(this.container.capacity,this.slotHolder.numChildren);
+            while(_loc1_ < _loc2_)
+            {
+               if((_loc3_ = this.slotHolder.getChildAt(_loc1_) as IContainerSlot) != null)
+               {
+                  if(_loc1_ < this.container.length)
+                  {
+                     _loc3_.appearance = this.container.getItemAt(_loc1_);
+                  }
+                  else
+                  {
+                     _loc3_.appearance = null;
+                  }
+               }
+               _loc1_++;
+            }
          }
       }
       

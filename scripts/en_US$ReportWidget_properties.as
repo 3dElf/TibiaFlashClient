@@ -115,7 +115,7 @@ package
             "STATEMENT_REASON_VIOLATION_NAME":"supporting a rule violation",
             "NAME_REASON_INSULTING_NAME":"insulting",
             "STATEMENT_REASON_INSULTING_TEXT":"Statements can be reported if they are insulting or contain very offensive vocabulary. Keep in mind that harmless words like \"noob\" might annoy you, but are tolerated and should not be reported.",
-            "NAME_TITLE":"Report Character Name",
+            "NAME_TITLE":"Report Name",
             "STATEMENT_REASON_DRUGS_TEXT":"Statements can be reported if they refer to drugs in any way.",
             "STATEMENT_REASON_ADVERTISING1_NAME":"advertising brand, product or service of a third party",
             "BOT_REASON_BOTTING_TEXT":"The player has used unofficial software e.g. a macro program or a so-called tasker or bot, or manipulated the client program.",

@@ -169,7 +169,7 @@ package tibia.creatures
       
       public static const FILTER_PARTY:int = 16;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE + FIELD_HEIGHT;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       public static const MARK_UNMARKED:uint = 0;
       
