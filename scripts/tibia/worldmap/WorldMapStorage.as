@@ -667,39 +667,6 @@ package tibia.worldmap
          this.resetOnscreenMessages();
       }
       
-      function consistencyCheck() : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:tibia.worldmap.Field = null;
-         var _loc1_:int = 0;
-         while(_loc1_ < MAPSIZE_Z)
-         {
-            _loc2_ = this.m_CacheObjectsCount[(this.m_Origin.z + _loc1_) % MAPSIZE_Z];
-            _loc3_ = 0;
-            _loc4_ = 0;
-            while(_loc4_ < MAPSIZE_Y)
-            {
-               _loc5_ = 0;
-               while(_loc5_ < MAPSIZE_X)
-               {
-                  _loc6_ = this.m_Field[this.toIndexInternal(_loc5_,_loc4_,_loc1_)];
-                  _loc6_.consistencyCheck();
-                  _loc3_ = _loc3_ + _loc6_.m_ObjectsCount;
-                  _loc5_++;
-               }
-               _loc4_++;
-            }
-            if(_loc3_ != _loc2_)
-            {
-               throw new Error("WorldMapStorage.consistencyCheck: " + "Object count of layer " + _loc1_ + " is invalid. " + "Expeced " + _loc3_ + " but cached value is " + _loc2_ + ".");
-            }
-            _loc1_++;
-         }
-      }
-      
       public function invalidateOnscreenMessages() : void
       {
          this.m_LayoutOnscreenMessages = true;

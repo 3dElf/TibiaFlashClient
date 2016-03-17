@@ -213,7 +213,7 @@ package tibia.options.configurationWidgetClasses
       
       protected var m_UICreatureName:CheckBox = null;
       
-      protected var m_CreatureStyle:int;
+      protected var m_CreatureStyle:int = 1;
       
       protected var m_UICreatureHealth:CheckBox = null;
       
@@ -227,7 +227,7 @@ package tibia.options.configurationWidgetClasses
       
       protected var m_WidgetStyle:int = 1;
       
-      protected var m_PlayerStyle:int;
+      protected var m_PlayerStyle:int = 1;
       
       protected var m_UIPlayerHealth:CheckBox = null;
       
@@ -241,8 +241,6 @@ package tibia.options.configurationWidgetClasses
       
       public function StatusOptions()
       {
-         this.m_PlayerStyle = RendererImpl.STATUS_STYLE_CLASSIC;
-         this.m_CreatureStyle = RendererImpl.STATUS_STYLE_CLASSIC;
          super();
          label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_LABEL");
       }

@@ -328,7 +328,7 @@ package tibia.creatures
          {
             throw new ArgumentError("CreatureStorage.s_GetCreatureMark: Invalid mark ID: " + param1 + ".");
          }
-         if(param2 != RendererImpl.CREATURE_MARK_SIZE_NORMAL && param2 != RendererImpl.CREATURE_MARK_SIZE_INNER && param2 != BattlelistItemRenderer.CREATURE_MARK_SIZE_NORMAL)
+         if(param2 != RendererImpl.CREATURE_MARK_SIZE_NORMAL && param2 != RendererImpl.CREATURE_MARK_SIZE_INNER && param2 != BattlelistItemRenderer.CREATURE_ICON_SIZE)
          {
             throw new ArgumentError("CreatureStorage.s_GetCreatureMark: Invalid size: " + param2 + ".");
          }
@@ -340,7 +340,7 @@ package tibia.creatures
          {
             param1 = param1 + 1 * MARK_NUM_TOTAL;
          }
-         else if(param2 == BattlelistItemRenderer.CREATURE_MARK_SIZE_NORMAL)
+         else if(param2 == BattlelistItemRenderer.CREATURE_ICON_SIZE)
          {
             param1 = param1 + 2 * MARK_NUM_TOTAL;
          }
@@ -394,8 +394,8 @@ package tibia.creatures
             _loc5_.drawRect(_loc6_ * FIELD_SIZE + _loc8_ + 1,_loc7_ * FIELD_SIZE + _loc8_ + 1,RendererImpl.CREATURE_MARK_SIZE_INNER - 3,RendererImpl.CREATURE_MARK_SIZE_INNER - 3);
             _loc6_ = (2 * MARK_NUM_TOTAL + _loc2_) % s_MarksPerRow;
             _loc7_ = int((2 * MARK_NUM_TOTAL + _loc2_) / s_MarksPerRow);
-            _loc8_ = Math.floor((FIELD_SIZE - BattlelistItemRenderer.CREATURE_MARK_SIZE_NORMAL) / 2);
-            _loc5_.drawRect(_loc6_ * FIELD_SIZE + _loc8_,_loc7_ * FIELD_SIZE + _loc8_,BattlelistItemRenderer.CREATURE_MARK_SIZE_NORMAL - 1,BattlelistItemRenderer.CREATURE_MARK_SIZE_NORMAL - 1);
+            _loc8_ = Math.floor((FIELD_SIZE - BattlelistItemRenderer.CREATURE_ICON_SIZE) / 2);
+            _loc5_.drawRect(_loc6_ * FIELD_SIZE + _loc8_,_loc7_ * FIELD_SIZE + _loc8_,BattlelistItemRenderer.CREATURE_ICON_SIZE - 1,BattlelistItemRenderer.CREATURE_ICON_SIZE - 1);
             _loc2_++;
          }
          s_CreatureMarks = new BitmapData(s_MarksPerRow * FIELD_SIZE,_loc1_ * FIELD_SIZE,true,0);

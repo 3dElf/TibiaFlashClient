@@ -24,6 +24,7 @@ package tibia.magic.spellListWidgetClasses
    import mx.controls.RadioButtonGroup;
    import mx.events.ItemClickEvent;
    import mx.containers.ViewStack;
+   import mx.events.IndexChangedEvent;
    import shared.controls.SimpleTabBar;
    import tibia.§sidebar:ns_sidebar_internal§.widgetInstance;
    import tibia.magic.Spell;
@@ -257,7 +258,7 @@ package tibia.magic.spellListWidgetClasses
       
       private var m_UncommittedSortMode:Boolean = false;
       
-      private var m_UncommittedSpell:Boolean = false;
+      private var m_UncommittedSpell:int = 0;
       
       private var m_UIViewToggle:Button = null;
       
@@ -304,9 +305,10 @@ package tibia.magic.spellListWidgetClasses
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          var _loc1_:Sort = new Sort();
          _loc1_.compareFunction = this.compareSpell;
-         this.m_SpellsView = new ArrayCollection(SpellStorage.SPELLS);
+         this.m_SpellsView = new ArrayCollection();
          this.m_SpellsView.filterFunction = this.filterSpell;
          this.m_SpellsView.sort = _loc1_;
+         this.m_SpellsView.source = SpellStorage.SPELLS;
          this.m_SpellsView.refresh();
       }
       
@@ -537,6 +539,7 @@ package tibia.magic.spellListWidgetClasses
             this.m_UIRootStack.styleName = "spellListWidgetTabContent";
             this.m_UIRootStack.addChild(ViewMode);
             this.m_UIRootStack.addChild(FilterMode);
+            this.m_UIRootStack.addEventListener(IndexChangedEvent.CHANGE,this.onRootStackChange);
             this.m_UIRootBar = new SimpleTabBar();
             this.m_UIRootBar.dataProvider = this.m_UIRootStack;
             this.m_UIRootBar.percentWidth = 100;
@@ -567,6 +570,11 @@ package tibia.magic.spellListWidgetClasses
          }
       }
       
+      private function get _spell() : Spell
+      {
+         return this.m_Spell;
+      }
+      
       private function compareSpellProfessionMask(param1:int, param2:int) : int
       {
          var _loc3_:Array = [PROFESSION_MASK_DRUID,PROFESSION_MASK_KNIGHT,PROFESSION_MASK_PALADIN,PROFESSION_MASK_SORCERER];
@@ -592,29 +600,24 @@ package tibia.magic.spellListWidgetClasses
       
       function get spell() : Spell
       {
-         return this.m_Spell;
+         return this._spell;
+      }
+      
+      private function onRootStackChange(param1:IndexChangedEvent) : void
+      {
+         invalidateProperties();
       }
       
       function set spell(param1:Spell) : void
       {
-         var _loc2_:Array = this.m_SpellsView.source;
-         var _loc3_:int = _loc2_ != null?int(_loc2_.length - 1):-1;
-         while(_loc3_ >= 0)
-         {
-            if(_loc2_[_loc3_] == param1)
-            {
-               break;
-            }
-            _loc3_--;
-         }
-         if(_loc3_ == -1)
+         if(param1 != null && this.m_SpellsView.getItemIndex(param1) < 0)
          {
             param1 = null;
          }
-         if(this.m_Spell != param1)
+         if(this._spell != param1)
          {
-            this.m_Spell = param1;
-            this.m_UncommittedSpell = true;
+            this._spell = param1;
+            this.m_UncommittedSpell = 2;
             invalidateProperties();
          }
       }
@@ -758,6 +761,16 @@ package tibia.magic.spellListWidgetClasses
          }
       }
       
+      private function set _spell(param1:Spell) : void
+      {
+         if(this.m_Spell != param1)
+         {
+            this.m_Spell = param1;
+            this.m_UncommittedSpell = 1;
+            invalidateProperties();
+         }
+      }
+      
       private function onPlayerChange(param1:PropertyChangeEvent) : void
       {
          if(param1.property == "knownSpells" || param1.property == "premium" || param1.property == "profession" || param1.property == "skill" || param1.property == "*")
@@ -836,7 +849,7 @@ package tibia.magic.spellListWidgetClasses
       
       private function onViewSelectionChange(param1:ListEvent) : void
       {
-         this.spell = param1.itemRenderer.data as Spell;
+         this._spell = param1.itemRenderer.data as Spell;
       }
       
       protected function filterSpell(param1:Spell) : Boolean
@@ -883,23 +896,16 @@ package tibia.magic.spellListWidgetClasses
       
       override protected function commitProperties() : void
       {
-         var _loc1_:String = null;
-         var _loc2_:Number = NaN;
+         var _loc2_:Array = null;
+         var _loc3_:int = 0;
+         var _loc4_:int = 0;
+         var _loc5_:int = 0;
+         var _loc6_:String = null;
          super.commitProperties();
          if(this.m_UncommittedFilterGroup)
          {
             this.m_UIFilterGroup.selectedValue = this.filterGroup;
             this.m_UncommittedFilterGroup = false;
-         }
-         if(this.m_UncommittedFilterKnown)
-         {
-            this.m_UIQuickKnown.selected = this.filterKnown == -2;
-            this.m_UncommittedFilterKnown = false;
-         }
-         if(this.m_UncommittedFilterLevel)
-         {
-            this.m_UIQuickLevel.selected = this.filterLevel == -2;
-            this.m_UncommittedFilterLevel = false;
          }
          if(this.m_UncommittedFilterPremium)
          {
@@ -920,10 +926,26 @@ package tibia.magic.spellListWidgetClasses
             this.m_UIQuickProfession.selected = this.filterProfession == -2;
             this.m_UncommittedFilterProfession = false;
          }
+         if(this.m_UIRootStack.selectedIndex != 0)
+         {
+            return;
+         }
+         var _loc1_:int = -2;
+         if(this.m_UncommittedFilterKnown)
+         {
+            this.m_UIQuickKnown.selected = this.filterKnown == -2;
+            this.m_UncommittedFilterKnown = false;
+         }
+         if(this.m_UncommittedFilterLevel)
+         {
+            this.m_UIQuickLevel.selected = this.filterLevel == -2;
+            this.m_UncommittedFilterLevel = false;
+         }
          if(this.m_UncommittedLayoutMode)
          {
             this.m_UIView = this.updateView(this.m_UIView);
-            this.m_UIView.selectedItem = this.spell;
+            this.m_UIView.selectedItem = this._spell;
+            _loc1_ = -1;
             this.m_UncommittedLayoutMode = false;
          }
          if(this.m_UncommittedPlayer)
@@ -934,38 +956,85 @@ package tibia.magic.spellListWidgetClasses
          {
             this.m_UncommittedSortMode = false;
          }
-         if(this.m_UncommittedSpell)
+         if(Boolean(this.m_InvalidatedFilter) || Boolean(this.m_InvalidatedSort))
          {
-            this.m_UIView.selectedItem = this.spell;
-            if(this.spell != null)
+            _loc2_ = this.m_SpellsView.toArray();
+            _loc3_ = Math.max(0,Math.min(this.m_UIView.verticalScrollPosition,_loc2_.length - 1));
+            this.m_SpellsView.refresh();
+            if(this._spell != null && this.m_SpellsView.filterFunction != null && !this.m_SpellsView.filterFunction(this._spell))
             {
-               _loc1_ = null;
-               if(this.spell.castMana > 0)
+               this._spell = null;
+            }
+            _loc4_ = -1;
+            _loc5_ = 0;
+            _loc5_ = _loc3_;
+            while(_loc5_ < _loc2_.length)
+            {
+               if((_loc4_ = this.m_SpellsView.getItemIndex(_loc2_[_loc5_])) != -1)
                {
-                  _loc1_ = String(this.spell.castMana);
+                  break;
+               }
+               _loc5_++;
+            }
+            if(_loc4_ == -1)
+            {
+               _loc5_ = _loc3_ - 1;
+               while(_loc5_ >= 0)
+               {
+                  if((_loc4_ = this.m_SpellsView.getItemIndex(_loc2_[_loc5_])) != -1)
+                  {
+                     break;
+                  }
+                  _loc5_--;
+               }
+            }
+            if(_loc4_ == -1)
+            {
+               _loc4_ = 0;
+            }
+            if(_loc1_ == -2)
+            {
+               _loc1_ = _loc4_;
+            }
+            this.m_InvalidatedFilter = false;
+            this.m_InvalidatedSort = false;
+         }
+         if(this.m_UncommittedSpell > 0)
+         {
+            this.m_UIView.selectedItem = this._spell;
+            if(this.m_UncommittedSpell > 1)
+            {
+               _loc1_ = -1;
+            }
+            if(this._spell != null)
+            {
+               _loc6_ = null;
+               if(this._spell.castMana > 0)
+               {
+                  _loc6_ = String(this._spell.castMana);
                }
                else
                {
-                  _loc1_ = resourceManager.getString(BUNDLE,"FRM_LABEL_MANA_VARYING");
+                  _loc6_ = resourceManager.getString(BUNDLE,"FRM_LABEL_MANA_VARYING");
                }
-               this.m_UIInfoCast.text = _loc1_ + " / " + this.spell.castSoulPoints;
-               this.m_UIInfoDelay.text = this.spell.delaySelf / 1000 + "s / " + this.spell.delayPrimary / 1000 + "s";
-               if(this.spell.groupSecondary != GROUP_NONE)
+               this.m_UIInfoCast.text = _loc6_ + " / " + this._spell.castSoulPoints;
+               this.m_UIInfoDelay.text = this._spell.delaySelf / 1000 + "s / " + this._spell.delayPrimary / 1000 + "s";
+               if(this._spell.groupSecondary != GROUP_NONE)
                {
-                  this.m_UIInfoDelay.text = this.m_UIInfoDelay.text + (" / " + this.spell.delaySecondary / 1000 + "s");
+                  this.m_UIInfoDelay.text = this.m_UIInfoDelay.text + (" / " + this._spell.delaySecondary / 1000 + "s");
                }
-               this.m_UIInfoFormula.text = this.spell.formula;
-               this.m_UIInfoGroup.text = this.formatSpellGroup(this.spell.groupPrimary);
-               if(this.spell.groupSecondary != GROUP_NONE)
+               this.m_UIInfoFormula.text = this._spell.formula;
+               this.m_UIInfoGroup.text = this.formatSpellGroup(this._spell.groupPrimary);
+               if(this._spell.groupSecondary != GROUP_NONE)
                {
-                  this.m_UIInfoGroup.text = this.m_UIInfoGroup.text + (" / " + this.formatSpellGroup(this.spell.groupSecondary));
+                  this.m_UIInfoGroup.text = this.m_UIInfoGroup.text + (" / " + this.formatSpellGroup(this._spell.groupSecondary));
                }
-               this.m_UIInfoLevel.text = String(this.spell.restrictLevel);
-               this.m_UIInfoName.text = this.spell.name;
-               this.m_UIInfoPremium.text = !!this.spell.restrictPremium?resourceManager.getString(BUNDLE,"FRM_LABEL_PREMIUM_YES"):resourceManager.getString(BUNDLE,"FRM_LABEL_PREMIUM_NO");
-               this.m_UIInfoPrice.text = String(this.spell.price);
-               this.m_UIInfoProfession.text = this.formatSpellProfessionMask(this.spell.restrictProfession);
-               this.m_UIInfoType.text = this.formatSpellType(this.spell.type);
+               this.m_UIInfoLevel.text = String(this._spell.restrictLevel);
+               this.m_UIInfoName.text = this._spell.name;
+               this.m_UIInfoPremium.text = !!this._spell.restrictPremium?resourceManager.getString(BUNDLE,"FRM_LABEL_PREMIUM_YES"):resourceManager.getString(BUNDLE,"FRM_LABEL_PREMIUM_NO");
+               this.m_UIInfoPrice.text = String(this._spell.price);
+               this.m_UIInfoProfession.text = this.formatSpellProfessionMask(this._spell.restrictProfession);
+               this.m_UIInfoType.text = this.formatSpellType(this._spell.type);
             }
             else
             {
@@ -980,16 +1049,22 @@ package tibia.magic.spellListWidgetClasses
                this.m_UIInfoProfession.text = null;
                this.m_UIInfoType.text = null;
             }
-            this.m_UncommittedSpell = false;
+            this.m_UncommittedSpell = 0;
          }
-         if(Boolean(this.m_InvalidatedFilter) || Boolean(this.m_InvalidatedSort))
+         if(_loc1_ > -2)
          {
-            _loc2_ = this.m_UIView.verticalScrollPosition;
-            this.m_SpellsView.refresh();
+            this.m_UIView.verticalScrollPosition = 0;
+            this.m_UIView.invalidateList();
             this.m_UIView.validateNow();
-            this.m_UIView.verticalScrollPosition = _loc2_;
-            this.m_InvalidatedFilter = false;
-            this.m_InvalidatedSort = false;
+            if(_loc1_ > -1)
+            {
+               this.m_UIView.verticalScrollPosition = Math.max(0,Math.min(_loc1_,this.m_UIView.maxVerticalScrollPosition));
+            }
+            else if(this.m_UIView.selectedIndex > -1)
+            {
+               this.m_UIView.scrollToIndex(this.m_UIView.selectedIndex);
+            }
+            _loc1_ = -2;
          }
       }
       

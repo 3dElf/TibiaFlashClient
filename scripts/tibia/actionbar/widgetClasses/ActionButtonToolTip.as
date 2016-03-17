@@ -4,6 +4,9 @@ package tibia.actionbar.widgetClasses
    import mx.core.IToolTip;
    import mx.containers.Form;
    import tibia.actionbar.ActionBar;
+   import mx.core.IChildList;
+   import mx.controls.Label;
+   import mx.core.IRawChildrenContainer;
    import tibia.input.IAction;
    import tibia.container.ContainerStorage;
    import tibia.magic.Spell;
@@ -11,7 +14,6 @@ package tibia.actionbar.widgetClasses
    import tibia.input.gameaction.EquipAction;
    import tibia.input.gameaction.SpellAction;
    import mx.core.ClassFactory;
-   import mx.controls.Label;
    import mx.core.ScrollPolicy;
    import mx.controls.Text;
    import mx.containers.FormItem;
@@ -57,6 +59,34 @@ package tibia.actionbar.widgetClasses
       public function get actionButton() : tibia.actionbar.widgetClasses.IActionButton
       {
          return this.m_ActionButton;
+      }
+      
+      private function disableTruncateToFit(param1:IChildList) : void
+      {
+         var _loc3_:IChildList = null;
+         var _loc4_:int = 0;
+         var _loc2_:Array = [param1];
+         while(_loc2_.length > 0)
+         {
+            _loc3_ = _loc2_.shift() as IChildList;
+            if(_loc3_ != null)
+            {
+               if(_loc3_ is Label)
+               {
+                  Label(_loc3_).truncateToFit = false;
+               }
+               if(_loc3_ is IRawChildrenContainer)
+               {
+                  _loc3_ = IRawChildrenContainer(_loc3_).rawChildren;
+               }
+               _loc4_ = _loc3_.numChildren - 1;
+               while(_loc4_ >= 0)
+               {
+                  _loc2_.push(_loc3_.getChildAt(_loc4_));
+                  _loc4_--;
+               }
+            }
+         }
       }
       
       public function set actionButton(param1:tibia.actionbar.widgetClasses.IActionButton) : void
@@ -166,7 +196,7 @@ package tibia.actionbar.widgetClasses
       
       public function get text() : String
       {
-         return " ";
+         return "";
       }
       
       private function createFormLabel(param1:Form, param2:String, param3:String, param4:ClassFactory = null) : void
@@ -179,6 +209,7 @@ package tibia.actionbar.widgetClasses
          _loc6_.label = param2;
          _loc6_.addChild(_loc5_);
          param1.addChild(_loc6_);
+         this.disableTruncateToFit(_loc6_);
       }
       
       public function set actionBar(param1:ActionBar) : void

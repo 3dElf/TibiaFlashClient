@@ -87,10 +87,6 @@ package tibia.creatures.battlelistWidgetClasses
       
       public static function s_ClearCreatureCache(param1:String) : void
       {
-         if(BattlelistItemRenderer.s_IconCache != null)
-         {
-            BattlelistItemRenderer.s_IconCache.removeItem(param1);
-         }
          if(BattlelistItemRenderer.s_NameCache != null)
          {
             BattlelistItemRenderer.s_NameCache.removeItem(param1);

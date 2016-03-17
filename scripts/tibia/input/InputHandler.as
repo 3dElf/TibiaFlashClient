@@ -299,9 +299,8 @@ package tibia.input
          if(this.m_MouseEventState == 1)
          {
             this.m_MouseEventState = 2;
-            return;
          }
-         if(this.m_MouseEventState == 2)
+         else if(this.m_MouseEventState == 2)
          {
             _loc8_ = false;
             _loc9_ = false;

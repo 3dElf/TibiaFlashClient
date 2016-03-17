@@ -392,7 +392,7 @@ package tibia.network
       
       protected static const SSPELLDELAY:int = 164;
       
-      protected static const TERMINAL_VERSION:int = 950;
+      protected static const TERMINAL_VERSION:int = 952;
       
       protected static const SDELETEONMAP:int = 108;
       
@@ -3156,7 +3156,7 @@ package tibia.network
             {
                Message = Message + a_UserMessage.substr(0,BugReportWidget.MAX_USER_MESSAGE_LENGTH);
             }
-            Message = Message + ("\nBuild=" + "release;vanilla;2012-04-02;12:59:11;trunk;733;not-modified");
+            Message = Message + ("\nBuild=" + "release;vanilla;2012-04-12;14:09:11;branches/bugfixes;745;modified");
             Message = Message + ("\nBrowser=" + BrowserHelper.s_GetBrowserString());
             Message = Message + ("\nFlash=" + Capabilities.serverString);
             SystemMessage = null;

@@ -133,9 +133,8 @@ package tibia.sidebar.sideBarWidgetClasses
       
       override protected function measure() : void
       {
-         var _loc1_:EdgeMetrics = null;
          super.measure();
-         _loc1_ = this.borderMetrics;
+         var _loc1_:EdgeMetrics = this.borderMetrics;
          measuredMinHeight = measuredHeight = _loc1_.top + COMPONENT_HEIGHT + _loc1_.bottom;
          measuredMinWidth = measuredWidth = _loc1_.left + COMPONENT_WIDTH + _loc1_.right;
       }

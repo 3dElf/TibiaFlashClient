@@ -182,11 +182,10 @@ class ContainerSlotHolder extends Tile
    
    override protected function measure() : void
    {
-      var _loc1_:Number = NaN;
       var _loc2_:Number = NaN;
       var _loc12_:IContainerSlot = null;
       mx_internal::findCellSize();
-      _loc1_ = getStyle("horizontalGap");
+      var _loc1_:Number = getStyle("horizontalGap");
       _loc2_ = getStyle("verticalGap");
       var _loc3_:EdgeMetrics = viewMetricsAndPadding;
       var _loc4_:int = numChildren;
