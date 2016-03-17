@@ -4,7 +4,7 @@ package tibia.market
    import tibia.market.marketWidgetClasses.ITypeComponent;
    import tibia.market.marketWidgetClasses.IViewContainer;
    import tibia.appearances.AppearanceStorage;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import mx.containers.TabNavigator;
    import tibia.appearances.AppearanceType;
    import flash.events.Event;
@@ -221,7 +221,7 @@ package tibia.market
          {
             return;
          }
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
          {
             _loc2_.sendCMARKETCANCEL(param1);
@@ -406,7 +406,7 @@ package tibia.market
          {
             return;
          }
-         var _loc3_:Connection = Tibia.s_GetConnection();
+         var _loc3_:Communication = Tibia.s_GetCommunication();
          if(_loc3_ != null && Boolean(_loc3_.isGameRunning))
          {
             _loc3_.sendCMARKETACCEPT(param1,param2);
@@ -439,10 +439,10 @@ package tibia.market
       
       override public function hide(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          if(!param1)
          {
-            _loc2_ = Tibia.s_GetConnection();
+            _loc2_ = Tibia.s_GetCommunication();
             if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
             {
                _loc2_.sendCMARKETLEAVE();
@@ -470,10 +470,10 @@ package tibia.market
       
       public function createOffer(param1:int, param2:int, param3:int, param4:uint, param5:Boolean) : void
       {
-         var _loc6_:Connection = null;
+         var _loc6_:Communication = null;
          if(this.mayCreateOffer(param1,param2,param3,param4))
          {
-            _loc6_ = Tibia.s_GetConnection();
+            _loc6_ = Tibia.s_GetCommunication();
             if(_loc6_ != null && Boolean(_loc6_.isGameRunning))
             {
                _loc6_.sendCMARKETCREATE(param1,param2,param3,param4,param5);
@@ -630,19 +630,19 @@ package tibia.market
       
       private function onBrowseMarket(param1:TimerEvent) : void
       {
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          if(param1 != null)
          {
-            if(this.m_PendingTypeID == 0 || this.m_PendingTypeID != s_BrowseTypeID || Tibia.s_FrameTimestamp > s_BrowseTimeout)
+            if(this.m_PendingTypeID == 0 || this.m_PendingTypeID != s_BrowseTypeID || Tibia.s_FrameTibiaTimestamp > s_BrowseTimeout)
             {
                this.m_BrowseDetail = null;
                this.m_BrowseOffers = null;
                this.m_BrowsePriceAverage = 0;
                this.m_BrowseStatistics = null;
-               s_BrowseTimeout = Tibia.s_FrameTimestamp + REQUEST_VALIDITY;
+               s_BrowseTimeout = Tibia.s_FrameTibiaTimestamp + REQUEST_VALIDITY;
                s_BrowseTypeID = this.m_PendingTypeID;
                _loc2_ = null;
-               if(s_BrowseTypeID != 0 && (_loc2_ = Tibia.s_GetConnection()) != null && Boolean(_loc2_.isGameRunning))
+               if(s_BrowseTypeID != 0 && (_loc2_ = Tibia.s_GetCommunication()) != null && Boolean(_loc2_.isGameRunning))
                {
                   _loc2_.sendCMARKETBROWSE(s_BrowseTypeID);
                }

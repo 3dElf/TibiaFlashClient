@@ -1,7 +1,7 @@
 package tibia.input.staticaction
 {
    import tibia.options.ConfigurationWidget;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.creatures.CharacterProfileWidget;
    
    public class ShowDialog extends StaticAction
@@ -44,12 +44,12 @@ package tibia.input.staticaction
       override public function perform(param1:Boolean = false) : void
       {
          var OptionsWidget:ConfigurationWidget = null;
-         var _Connection:Connection = null;
+         var _Communication:Communication = null;
          var a_Repeat:Boolean = param1;
          try
          {
             OptionsWidget = null;
-            _Connection = Tibia.s_GetConnection();
+            _Communication = Tibia.s_GetCommunication();
             switch(this.m_Dialog)
             {
                case OPTIONS_GENERAL:
@@ -88,21 +88,21 @@ package tibia.input.staticaction
                   new CharacterProfileWidget().show();
                   break;
                case CHARACTER_OUTFIT:
-                  if(_Connection != null && Boolean(_Connection.isGameRunning))
+                  if(_Communication != null && Boolean(_Communication.isGameRunning))
                   {
-                     _Connection.sendCGETOUTFIT();
+                     _Communication.sendCGETOUTFIT();
                   }
                   break;
                case CHAT_CHANNEL_SELECTION:
-                  if(_Connection != null && Boolean(_Connection.isGameRunning))
+                  if(_Communication != null && Boolean(_Communication.isGameRunning))
                   {
-                     _Connection.sendCGETCHANNELS();
+                     _Communication.sendCGETCHANNELS();
                   }
                   break;
                case HELP_QUEST_LOG:
-                  if(_Connection != null && Boolean(_Connection.isGameRunning))
+                  if(_Communication != null && Boolean(_Communication.isGameRunning))
                   {
-                     _Connection.sendCGETQUESTLOG();
+                     _Communication.sendCGETQUESTLOG();
                   }
             }
             return;

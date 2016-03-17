@@ -3,7 +3,7 @@ package tibia.input.gameaction
    import tibia.input.IAction;
    import tibia.appearances.AppearanceStorage;
    import tibia.game.Delay;
-   import tibia.network.Connection;
+   import tibia.network.IServerConnection;
    import tibia.container.ContainerStorage;
    import tibia.magic.SpellStorage;
    import tibia.appearances.AppearanceType;
@@ -104,30 +104,30 @@ package tibia.input.gameaction
       public function perform(param1:Boolean = false) : void
       {
          var _loc5_:Delay = null;
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:IServerConnection = Tibia.s_GetConnection();
          var _loc3_:ContainerStorage = Tibia.s_GetContainerStorage();
          var _loc4_:SpellStorage = Tibia.s_GetSpellStorage();
          if(Boolean(param1) && _loc2_ != null && _loc3_ != null && _loc4_ != null)
          {
             if(this.m_Type.isMultiUse)
             {
-               if(this.m_LastPerform + ContainerStorage.MIN_MULTI_USE_DELAY / 2 > Tibia.s_FrameTimestamp)
+               if(this.m_LastPerform + ContainerStorage.MIN_MULTI_USE_DELAY / 2 > Tibia.s_FrameTibiaTimestamp)
                {
                   return;
                }
                _loc5_ = Delay.merge(_loc3_.getMultiUseDelay(),_loc4_.getRuneDelay(this.m_Type.ID));
-               if(_loc5_ != null && _loc5_.end - _loc2_.latency > Tibia.s_FrameTimestamp)
+               if(_loc5_ != null && _loc5_.end - _loc2_.latency > Tibia.s_FrameTibiaTimestamp)
                {
                   return;
                }
             }
-            else if(this.m_LastPerform + ContainerStorage.MIN_USE_DELAY > Tibia.s_FrameTimestamp)
+            else if(this.m_LastPerform + ContainerStorage.MIN_USE_DELAY > Tibia.s_FrameTibiaTimestamp)
             {
                return;
             }
          }
          new UseActionImpl(ContainerStorage.INVENTORY_ANY,this.m_Type,this.m_Data,this.m_Target).perform(param1);
-         this.m_LastPerform = Tibia.s_FrameTimestamp;
+         this.m_LastPerform = Tibia.s_FrameTibiaTimestamp;
       }
       
       public function get target() : int

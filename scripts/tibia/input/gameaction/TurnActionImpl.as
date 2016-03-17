@@ -1,7 +1,7 @@
 package tibia.input.gameaction
 {
    import tibia.input.IActionImpl;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import shared.utility.Vector3D;
    import tibia.appearances.AppearanceType;
    import tibia.appearances.ObjectInstance;
@@ -33,7 +33,7 @@ package tibia.input.gameaction
       
       public function perform(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
          {
             _loc2_.sendCTURNOBJECT(this.m_Absolute.x,this.m_Absolute.y,this.m_Absolute.z,this.m_Type.ID,this.m_Position);

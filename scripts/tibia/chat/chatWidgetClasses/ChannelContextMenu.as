@@ -10,7 +10,7 @@ package tibia.chat.chatWidgetClasses
    import tibia.reporting.reportType.Type;
    import tibia.reporting.ReportWidget;
    import tibia.chat.ChatStorage;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.worldmap.WorldMapStorage;
    import tibia.chat.MessageMode;
    import tibia.chat.ChannelMessage;
@@ -144,7 +144,7 @@ package tibia.chat.chatWidgetClasses
          {
             createTextItem(resourceManager.getString(BUNDLE,"CTX_VIEW_THANK_YOU"),function(param1:*):void
             {
-               var _loc2_:Connection = Tibia.s_GetConnection();
+               var _loc2_:Communication = Tibia.s_GetCommunication();
                if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
                {
                   _loc2_.sendCTHANKYOU(m_Message.ID);

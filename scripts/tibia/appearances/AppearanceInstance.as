@@ -73,7 +73,7 @@ package tibia.appearances
          if(param1 == PHASE_ASYNCHRONOUS)
          {
             this.m_Phase = 0;
-            this.m_LastPhaseChange = Tibia.s_FrameTimestamp;
+            this.m_LastPhaseChange = Tibia.s_FrameTibiaTimestamp;
          }
          else if(param1 == PHASE_RANDOM)
          {

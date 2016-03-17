@@ -2,7 +2,7 @@ package tibia.input.gameaction
 {
    import tibia.input.IAction;
    import tibia.chat.ChatWidget;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.chat.ns_chat_internal;
    import mx.resources.ResourceManager;
    import mx.resources.IResourceManager;
@@ -70,8 +70,8 @@ package tibia.input.gameaction
          {
             return;
          }
-         var _loc3_:Connection = Tibia.s_GetConnection();
-         if(_loc3_ != null && Boolean(param1) && Boolean(this.m_AutoSend) && this.m_PerformTimestamp + MIN_TALK_DELAY > Tibia.s_FrameTimestamp)
+         var _loc3_:Communication = Tibia.s_GetCommunication();
+         if(_loc3_ != null && Boolean(param1) && Boolean(this.m_AutoSend) && this.m_PerformTimestamp + MIN_TALK_DELAY > Tibia.s_FrameTibiaTimestamp)
          {
             return;
          }
@@ -79,7 +79,7 @@ package tibia.input.gameaction
          if(this.m_AutoSend)
          {
             _loc2_.ns_chat_internal::onChatSend();
-            this.m_PerformTimestamp = Tibia.s_FrameTimestamp;
+            this.m_PerformTimestamp = Tibia.s_FrameTibiaTimestamp;
          }
       }
       

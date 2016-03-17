@@ -285,7 +285,7 @@ package tibia.magic
       
       public function setSpellGroupDelay(param1:int, param2:Number) : void
       {
-         this.setDelay(this.m_SpellGroupDelay,param1,Tibia.s_FrameTimestamp,param2);
+         this.setDelay(this.m_SpellGroupDelay,param1,Tibia.s_FrameTibiaTimestamp,param2);
       }
       
       private function getDelay(param1:Vector.<SpellDelay>, param2:int) : SpellDelay
@@ -357,7 +357,7 @@ package tibia.magic
       
       public function setSpellDelay(param1:int, param2:Number) : void
       {
-         this.setDelay(this.m_SpellDelay,param1,Tibia.s_FrameTimestamp,param2);
+         this.setDelay(this.m_SpellDelay,param1,Tibia.s_FrameTibiaTimestamp,param2);
       }
    }
 }

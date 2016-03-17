@@ -12,7 +12,7 @@ package tibia.input.gameaction
    import tibia.creatures.CreatureStorage;
    import tibia.creatures.Player;
    import tibia.creatures.Creature;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.worldmap.WorldMapStorage;
    import flash.geom.Point;
    import tibia.appearances.AppearanceInstance;
@@ -255,7 +255,7 @@ package tibia.input.gameaction
          var _loc5_:Player = null;
          var _loc6_:Creature = null;
          var _loc7_:Object = null;
-         var _loc8_:Connection = null;
+         var _loc8_:Communication = null;
          var _loc9_:WorldMapStorage = null;
          if(param1 != null)
          {
@@ -293,7 +293,7 @@ package tibia.input.gameaction
                }
                return;
             }
-            _loc8_ = Tibia.s_GetConnection();
+            _loc8_ = Tibia.s_GetCommunication();
             if(_loc8_ != null && Boolean(_loc8_.isGameRunning))
             {
                _loc8_.sendCTRADEOBJECT(this.m_Absolute.x,this.m_Absolute.y,this.m_Absolute.z,this.m_Object.type.ID,this.m_Position,_loc6_.ID);

@@ -23,7 +23,7 @@ package tibia.actionbar.widgetClasses
    import tibia.input.gameaction.EquipAction;
    import tibia.container.ContainerStorage;
    import mx.events.FlexEvent;
-   import tibia.network.Connection;
+   import tibia.network.IServerConnection;
    import tibia.network.ConnectionEvent;
    import mx.core.EventPriority;
    import flash.display.DisplayObject;
@@ -33,6 +33,7 @@ package tibia.actionbar.widgetClasses
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.AppearanceType;
    import tibia.appearances.AppearanceStorage;
+   import tibia.network.Communication;
    import tibia.appearances.AppearanceTypeRef;
    import mx.core.EdgeMetrics;
    import mx.core.UIComponent;
@@ -701,7 +702,7 @@ package tibia.actionbar.widgetClasses
       
       private function onCreationComplete(param1:FlexEvent) : void
       {
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:IServerConnection = Tibia.s_GetConnection();
          if(_loc2_ != null)
          {
             _loc2_.addEventListener(ConnectionEvent.GAME,this.onConnectionEstablished,false,EventPriority.DEFAULT,true);
@@ -898,7 +899,7 @@ package tibia.actionbar.widgetClasses
             return;
          }
          var _loc1_:AppearanceStorage = Tibia.s_GetAppearanceStorage();
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          if(_loc1_ == null || _loc2_ == null || !_loc2_.isGameRunning)
          {
             return;
@@ -961,9 +962,10 @@ package tibia.actionbar.widgetClasses
       
       override protected function measure() : void
       {
+         var _loc1_:EdgeMetrics = null;
          var _loc2_:Number = NaN;
          super.measure();
-         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
+         _loc1_ = viewMetricsAndPadding;
          _loc2_ = this.m_Direction == DIRECTION_HORIZONTAL?Number(getStyle("horizontalGap")):Number(getStyle("verticalGap"));
          var _loc3_:Number = this.m_UIToggleButton.getExplicitOrMeasuredHeight();
          var _loc4_:Number = this.m_UIToggleButton.getExplicitOrMeasuredWidth();

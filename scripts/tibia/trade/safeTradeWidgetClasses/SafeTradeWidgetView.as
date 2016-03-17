@@ -13,7 +13,7 @@ package tibia.trade.safeTradeWidgetClasses
    import mx.core.ScrollPolicy;
    import shared.controls.CustomButton;
    import mx.containers.ViewStack;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import mx.controls.Label;
    import tibia.§sidebar:ns_sidebar_internal§.widgetInstance;
    
@@ -259,7 +259,7 @@ package tibia.trade.safeTradeWidgetClasses
          {
             _loc3_ = 1;
          }
-         var _loc5_:Connection = Tibia.s_GetConnection();
+         var _loc5_:Communication = Tibia.s_GetCommunication();
          if(_loc5_ != null && Boolean(_loc5_.isGameRunning))
          {
             _loc5_.sendCINSPECTTRADE(_loc3_,_loc4_);
@@ -351,10 +351,10 @@ package tibia.trade.safeTradeWidgetClasses
       
       protected function onAccept(param1:MouseEvent) : void
       {
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          if(this.m_State == STATE_TRADE)
          {
-            _loc2_ = Tibia.s_GetConnection();
+            _loc2_ = Tibia.s_GetCommunication();
             if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
             {
                _loc2_.sendCACCEPTTRADE();

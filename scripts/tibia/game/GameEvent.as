@@ -5,11 +5,11 @@ package tibia.game
    public class GameEvent extends Event
    {
       
-      public static const READY:String = "ready";
+      public static const READY:String = "GAME_READY";
       
-      public static const CLOSE:String = "close";
+      public static const CLOSE:String = "GAME_CLOSE";
       
-      public static const ERROR:String = "error";
+      public static const ERROR:String = "GAME_ERROR";
        
       public var message:String = null;
       

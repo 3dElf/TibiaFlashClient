@@ -2,7 +2,7 @@ package tibia.input.gameaction
 {
    import tibia.input.IAction;
    import tibia.appearances.AppearanceStorage;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.container.ContainerStorage;
    import tibia.appearances.AppearanceType;
    import mx.resources.ResourceManager;
@@ -97,7 +97,7 @@ package tibia.input.gameaction
       
       public function perform(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          var _loc3_:ContainerStorage = Tibia.s_GetContainerStorage();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning) && _loc3_ != null && _loc3_.getAvailableInventory(this.m_Type.ID,this.m_Data) > 0 && !param1)
          {

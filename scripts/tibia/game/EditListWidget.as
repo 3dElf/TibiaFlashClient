@@ -1,7 +1,7 @@
 package tibia.game
 {
    import flash.events.Event;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import shared.utility.StringHelper;
    import mx.controls.TextArea;
    import flash.events.KeyboardEvent;
@@ -65,10 +65,10 @@ package tibia.game
       
       override public function hide(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          if(param1)
          {
-            _loc2_ = Tibia.s_GetConnection();
+            _loc2_ = Tibia.s_GetCommunication();
             if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
             {
                _loc2_.sendCEDITLIST(this.m_Type,this.m_ID,StringHelper.s_CleanNewline(this.m_UIText.text));

@@ -1069,7 +1069,7 @@ package tibia.worldmap
          var _loc5_:Vector3D = null;
          var _loc6_:tibia.worldmap.Field = null;
          var _loc7_:int = 0;
-         var _loc1_:Number = Tibia.s_FrameTimestamp;
+         var _loc1_:Number = Tibia.s_FrameTibiaTimestamp;
          if(_loc1_ < this.m_ObjectNextUpdate)
          {
             return;

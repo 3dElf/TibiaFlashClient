@@ -182,7 +182,7 @@ package tibia.creatures.buddylistClasses
       
       public function get highlight() : Boolean
       {
-         return this.m_Status == STATUS_ONLINE && this.m_LastUpdate > Tibia.s_FrameTimestamp - LOGIN_HIGHLIGHT_TIME;
+         return this.m_Status == STATUS_ONLINE && this.m_LastUpdate > Tibia.s_FrameTibiaTimestamp - LOGIN_HIGHLIGHT_TIME;
       }
       
       public function setReportTypeAllowed(param1:uint, param2:Boolean = true) : void

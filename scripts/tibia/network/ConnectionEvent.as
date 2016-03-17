@@ -7,6 +7,8 @@ package tibia.network
       
       public static const LOGINADVICE:String = "LOGINADVICE";
       
+      public static const PACKET_RECEIVED:String = "PACKET_RECEIVED";
+      
       public static const DEAD:String = "DEAD";
       
       public static const CONNECTION_LOST:String = "CONNECTION_LOST";

@@ -3,7 +3,7 @@ package tibia.input.gameaction
    import tibia.input.IActionImpl;
    import flash.events.MouseEvent;
    import tibia.creatures.Creature;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.container.ContainerStorage;
    import tibia.creatures.CreatureStorage;
    import flash.display.DisplayObject;
@@ -105,7 +105,7 @@ package tibia.input.gameaction
          this.updateGlobalListeners(false);
          this.updateCursor(false);
          concurrentMultiUse = null;
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          var _loc3_:ContainerStorage = Tibia.s_GetContainerStorage();
          var _loc4_:CreatureStorage = Tibia.s_GetCreatureStorage();
          if(_loc2_ == null || !_loc2_.isGameRunning || _loc3_ == null || _loc4_ == null)
@@ -147,7 +147,7 @@ package tibia.input.gameaction
       public function perform(param1:Boolean = false) : void
       {
          var _loc6_:int = 0;
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          var _loc3_:CreatureStorage = Tibia.s_GetCreatureStorage();
          var _loc4_:ContainerStorage = Tibia.s_GetContainerStorage();
          var _loc5_:Player = Tibia.s_GetPlayer();

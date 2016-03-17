@@ -212,9 +212,9 @@ package tibia.actionbar.widgetClasses
          }
          if(this.m_UncommittedCooldownDelay)
          {
-            if(this.cooldownDelay != null && Boolean(this.cooldownDelay.contains(Tibia.s_FrameTimestamp)))
+            if(this.cooldownDelay != null && Boolean(this.cooldownDelay.contains(Tibia.s_FrameTibiaTimestamp)))
             {
-               _loc3_ = this.cooldownDelay.end - Tibia.s_FrameTimestamp;
+               _loc3_ = this.cooldownDelay.end - Tibia.s_FrameTibiaTimestamp;
                if(this.cooldownDelay.duration > 3000 && _loc3_ > 1000)
                {
                   _loc4_ = int(_loc3_ / 1000);

@@ -1,9 +1,11 @@
 package tibia.game
 {
-   public class AccountCharacter
+   import tibia.network.IConnectionData;
+   
+   public class AccountCharacter implements IConnectionData
    {
       
-      public static const CLIENT_VERSION:uint = 1068;
+      public static const CLIENT_VERSION:uint = 1134;
       
       public static const CLIENT_PREVIEW_STATE:uint = 0;
       
@@ -23,16 +25,19 @@ package tibia.game
       
       private var m_Port:int = 0;
       
+      private var m_SessionKey:String = null;
+      
       private var m_Name:String = null;
       
-      public function AccountCharacter(param1:String, param2:String, param3:String, param4:int, param5:uint)
+      public function AccountCharacter(param1:String, param2:String, param3:String, param4:String, param5:int, param6:uint)
       {
          super();
-         this.m_Name = param1;
-         this.m_World = param2;
-         this.m_Address = param3;
-         this.m_Port = param4;
-         this.m_WorldPreviewState = param5;
+         this.m_SessionKey = param1;
+         this.m_Name = param2;
+         this.m_World = param3;
+         this.m_Address = param4;
+         this.m_Port = param5;
+         this.m_WorldPreviewState = param6;
       }
       
       public function get port() : int
@@ -45,6 +50,16 @@ package tibia.game
          return this.m_Name;
       }
       
+      public function get worldPreviewState() : uint
+      {
+         return this.m_WorldPreviewState;
+      }
+      
+      public function get sessionKey() : String
+      {
+         return this.m_SessionKey;
+      }
+      
       public function get address() : String
       {
          return this.m_Address;
@@ -53,11 +68,6 @@ package tibia.game
       public function get world() : String
       {
          return this.m_World;
-      }
-      
-      public function get worldPreviewState() : uint
-      {
-         return this.m_WorldPreviewState;
       }
    }
 }

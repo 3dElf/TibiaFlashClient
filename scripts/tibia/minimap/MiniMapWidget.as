@@ -260,7 +260,7 @@ package tibia.minimap
       
       public function startHighlight() : void
       {
-         this.highlightEnd = Tibia.s_FrameTimestamp + MM_SIDEBAR_HIGHLIGHT_DURATION;
+         this.highlightEnd = Tibia.s_FrameTibiaTimestamp + MM_SIDEBAR_HIGHLIGHT_DURATION;
       }
       
       protected function onMiniMapStorageEvent(param1:Event) : void

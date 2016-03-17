@@ -219,13 +219,13 @@ package tibia.options.configurationWidgetClasses
       
       protected var m_Options:OptionsStorage = null;
       
-      protected var m_OtherStyle:int;
+      protected var m_OtherStyle:int = 1;
       
       protected var m_UIWidgetStyle:ComboBox = null;
       
       private var m_UncommittedOptions:Boolean = false;
       
-      protected var m_WidgetStyle:int;
+      protected var m_WidgetStyle:int = 1;
       
       protected var m_UIWidgetSkill:ComboBox = null;
       
@@ -239,13 +239,10 @@ package tibia.options.configurationWidgetClasses
       
       private var m_UncommittedOwnStyle:Boolean = false;
       
-      protected var m_OwnStyle:int;
+      protected var m_OwnStyle:int = 1;
       
       public function StatusOptions()
       {
-         this.m_OwnStyle = RendererImpl.STATUS_STYLE_CLASSIC;
-         this.m_OtherStyle = RendererImpl.STATUS_STYLE_CLASSIC;
-         this.m_WidgetStyle = StatusWidget.STATUS_STYLE_DEFAULT;
          super();
          label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_LABEL");
       }

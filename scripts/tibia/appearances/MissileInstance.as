@@ -181,7 +181,7 @@ package tibia.appearances
          this.m_AnimationDelta.y = this.m_AnimationDelta.y * -FIELD_SIZE;
          this.m_AnimationDelta.z = 0;
          this.m_AnimationSpeed = new Vector3D(this.m_AnimationDelta.x,this.m_AnimationDelta.y,int(_loc6_));
-         this.m_AnimationEnd = Tibia.s_FrameTimestamp + _loc6_;
+         this.m_AnimationEnd = Tibia.s_FrameTibiaTimestamp + _loc6_;
          this.m_Target = param4;
          this.m_Position = param3;
       }

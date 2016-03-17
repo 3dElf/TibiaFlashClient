@@ -23,7 +23,7 @@ package tibia.market.marketWidgetClasses
       
       private var m_UncommittedSelectedView:Boolean = true;
       
-      private var m_SelectedView:uint;
+      private var m_SelectedView:uint = 0;
       
       private var m_UIViewDetails:tibia.market.marketWidgetClasses.MarketDetailsView = null;
       
@@ -47,7 +47,6 @@ package tibia.market.marketWidgetClasses
       
       public function MarketTab(param1:MarketWidget)
       {
-         this.m_SelectedView = MarketWidget.VIEW_MARKET_OFFERS;
          super(param1);
          direction = BoxDirection.HORIZONTAL;
          label = resourceManager.getString(BUNDLE,"MARKET_OFFERS_LABEL");

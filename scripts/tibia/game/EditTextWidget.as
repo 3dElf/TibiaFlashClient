@@ -10,7 +10,7 @@ package tibia.game
    import flash.events.TextEvent;
    import shared.utility.StringHelper;
    import tibia.appearances.AppearanceTypeRef;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.appearances.AppearanceStorage;
    import tibia.appearances.AppearanceType;
    
@@ -174,11 +174,11 @@ package tibia.game
       
       override public function hide(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          if(param1)
          {
             _loc2_ = null;
-            if(!this.m_ReadOnly && (_loc2_ = Tibia.s_GetConnection()) != null && Boolean(_loc2_.isGameRunning))
+            if(!this.m_ReadOnly && (_loc2_ = Tibia.s_GetCommunication()) != null && Boolean(_loc2_.isGameRunning))
             {
                _loc2_.sendCEDITTEXT(this.m_ID,StringHelper.s_CleanNewline(this.m_UIText.text));
             }

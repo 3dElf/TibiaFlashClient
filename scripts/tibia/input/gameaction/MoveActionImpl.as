@@ -10,7 +10,7 @@ package tibia.input.gameaction
    import shared.utility.Vector3D;
    import tibia.game.PopUpBase;
    import tibia.appearances.AppearanceType;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.appearances.ObjectInstance;
    
    public class MoveActionImpl implements IActionImpl
@@ -121,7 +121,7 @@ package tibia.input.gameaction
          {
             _loc2_ = 1;
          }
-         var _loc3_:Connection = Tibia.s_GetConnection();
+         var _loc3_:Communication = Tibia.s_GetCommunication();
          if(_loc3_ != null && Boolean(_loc3_.isGameRunning))
          {
             _loc3_.sendCMOVEOBJECT(this.m_SourceAbsolute.x,this.m_SourceAbsolute.y,this.m_SourceAbsolute.z,this.m_ObjectType.ID,this.m_Position,this.m_DestAbsolute.x,this.m_DestAbsolute.y,this.m_DestAbsolute.z,_loc2_);

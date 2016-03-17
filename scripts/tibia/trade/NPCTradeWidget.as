@@ -7,7 +7,7 @@ package tibia.trade
    import tibia.appearances.AppearanceStorage;
    import tibia.sidebar.sideBarWidgetClasses.WidgetView;
    import tibia.container.ContainerStorage;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    
    public class NPCTradeWidget extends Widget
    {
@@ -197,11 +197,11 @@ package tibia.trade
       
       override public function close(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          super.close(param1);
          if(closed)
          {
-            _loc2_ = Tibia.s_GetConnection();
+            _loc2_ = Tibia.s_GetCommunication();
             if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
             {
                _loc2_.sendCCLOSENPCTRADE();

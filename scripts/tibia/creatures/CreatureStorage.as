@@ -9,7 +9,7 @@ package tibia.creatures
    import flash.display.Graphics;
    import mx.core.BitmapAsset;
    import mx.collections.Sort;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import shared.utility.Vector3D;
    import tibia.options.OptionsStorage;
    import mx.collections.IList;
@@ -584,8 +584,8 @@ package tibia.creatures
          {
             this.m_FollowTarget = null;
          }
-         var _loc4_:Connection = null;
-         if(Boolean(param2) && (_loc4_ = Tibia.s_GetConnection()) != null && Boolean(_loc4_.isGameRunning))
+         var _loc4_:Communication = null;
+         if(Boolean(param2) && (_loc4_ = Tibia.s_GetCommunication()) != null && Boolean(_loc4_.isGameRunning))
          {
             if(this.m_FollowTarget != null)
             {
@@ -725,7 +725,7 @@ package tibia.creatures
       
       public function setFollowTarget(param1:tibia.creatures.Creature, param2:Boolean) : void
       {
-         var _loc5_:Connection = null;
+         var _loc5_:Communication = null;
          if(param1 == this.m_Player)
          {
             throw new ArgumentError("CreatureStorage.setFollowTarget: Cannot follow player.");
@@ -735,7 +735,7 @@ package tibia.creatures
          {
             this.m_FollowTarget = param1;
             _loc5_ = null;
-            if(Boolean(param2) && (_loc5_ = Tibia.s_GetConnection()) != null && Boolean(_loc5_.isGameRunning))
+            if(Boolean(param2) && (_loc5_ = Tibia.s_GetCommunication()) != null && Boolean(_loc5_.isGameRunning))
             {
                if(this.m_FollowTarget != null)
                {
@@ -1068,8 +1068,8 @@ package tibia.creatures
          {
             this.m_AttackTarget = null;
          }
-         var _loc4_:Connection = null;
-         if(Boolean(param2) && (_loc4_ = Tibia.s_GetConnection()) != null && Boolean(_loc4_.isGameRunning))
+         var _loc4_:Communication = null;
+         if(Boolean(param2) && (_loc4_ = Tibia.s_GetCommunication()) != null && Boolean(_loc4_.isGameRunning))
          {
             if(this.m_AttackTarget != null)
             {
@@ -1097,7 +1097,7 @@ package tibia.creatures
       
       public function animate() : void
       {
-         var _loc1_:Number = Tibia.s_FrameTimestamp;
+         var _loc1_:Number = Tibia.s_FrameTibiaTimestamp;
          var _loc2_:int = 0;
          while(_loc2_ < this.m_CreatureCount)
          {
@@ -1112,11 +1112,11 @@ package tibia.creatures
       
       public function clearTargets() : void
       {
-         var _loc1_:Connection = null;
+         var _loc1_:Communication = null;
          if(this.m_AttackTarget != null && this.m_Options != null && Boolean(this.m_Options.combatAutoChaseOff) && this.m_Options.combatChaseMode != OptionsStorage.COMBAT_CHASE_OFF)
          {
             this.m_Options.combatChaseMode = OptionsStorage.COMBAT_CHASE_OFF;
-            _loc1_ = Tibia.s_GetConnection();
+            _loc1_ = Tibia.s_GetCommunication();
             if(_loc1_ != null && Boolean(_loc1_.isGameRunning))
             {
                _loc1_.sendCSETTACTICS(this.m_Options.combatAttackMode,this.m_Options.combatChaseMode,this.m_Options.combatSecureMode);
@@ -1130,7 +1130,7 @@ package tibia.creatures
       
       public function setAttackTarget(param1:tibia.creatures.Creature, param2:Boolean) : void
       {
-         var _loc5_:Connection = null;
+         var _loc5_:Communication = null;
          if(param1 == this.m_Player)
          {
             throw new ArgumentError("CreatureStorage.setAttackTarget: Cannot attack player.");
@@ -1140,7 +1140,7 @@ package tibia.creatures
          {
             this.m_AttackTarget = param1;
             _loc5_ = null;
-            if(Boolean(param2) && (_loc5_ = Tibia.s_GetConnection()) != null && Boolean(_loc5_.isGameRunning))
+            if(Boolean(param2) && (_loc5_ = Tibia.s_GetCommunication()) != null && Boolean(_loc5_.isGameRunning))
             {
                if(this.m_AttackTarget != null)
                {

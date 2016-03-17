@@ -4,7 +4,7 @@ package tibia.input.gameaction
    import tibia.game.BugReportWidget;
    import tibia.worldmap.WorldMapStorage;
    import tibia.chat.ChatStorage;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import mx.events.CloseEvent;
    import mx.resources.ResourceManager;
    import tibia.chat.MessageMode;
@@ -34,7 +34,7 @@ package tibia.input.gameaction
          var _loc4_:String = null;
          var _loc5_:WorldMapStorage = null;
          var _loc6_:ChatStorage = null;
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          if(_loc2_ != null && Boolean(_loc2_.allowBugreports) && Boolean(_loc2_.isGameRunning))
          {
             _loc3_ = new BugReportWidget();

@@ -5,11 +5,9 @@ package
    public class en_US$TutorialHintWidget_properties extends ResourceBundle
    {
       
-      private static var _embed_properties_______images_help_hint_13_npctradeupper_png_1864500060:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_13_npctradeupper_png_1864500060;
+      private static var _embed_properties_______images_help_hint_23_ladder_png_37710776:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_23_ladder_png_37710776;
       
       private static var _embed_properties_______images_help_hint_08_openbody_png_626091210:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_08_openbody_png_626091210;
-      
-      private static var _embed_properties_______images_help_hint_10_useshovel_png_2020226404:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_10_useshovel_png_2020226404;
       
       private static var _embed_properties_______images_help_hint_36_dragspellhealing_png_739916468:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_36_dragspellhealing_png_739916468;
       
@@ -49,19 +47,21 @@ package
       
       private static var _embed_properties_______images_help_hint_01_mouse_png_1162327674:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_01_mouse_png_1162327674;
       
-      private static var _embed_properties_______images_help_hint_26_distancefighting_png_308667724:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_26_distancefighting_png_308667724;
+      private static var _embed_properties_______images_help_hint_24_multiuse_png_297486250:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_24_multiuse_png_297486250;
+      
+      private static var _embed_properties_______images_help_hint_10_useshovel_png_2020226404:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_10_useshovel_png_2020226404;
+      
+      private static var _embed_properties_______images_help_hint_16_redskull_png_772130148:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_redskull_png_772130148;
       
       private static var _embed_properties_______images_help_hint_32_userunebattlelist_png_814417830:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_32_userunebattlelist_png_814417830;
       
-      private static var _embed_properties_______images_help_hint_23_ladder_png_37710776:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_23_ladder_png_37710776;
-      
-      private static var _embed_properties_______images_help_hint_24_multiuse_png_297486250:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_24_multiuse_png_297486250;
+      private static var _embed_properties_______images_help_hint_13_npctradeupper_png_1864500060:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_13_npctradeupper_png_1864500060;
       
       private static var _embed_properties_______images_help_hint_22_hi_png_1187000504:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_22_hi_png_1187000504;
       
       private static var _embed_properties_______images_help_hint_38_attackbattlelist_png_55493720:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_38_attackbattlelist_png_55493720;
       
-      private static var _embed_properties_______images_help_hint_16_redskull_png_772130148:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_redskull_png_772130148;
+      private static var _embed_properties_______images_help_hint_26_distancefighting_png_308667724:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_26_distancefighting_png_308667724;
        
       public function en_US$TutorialHintWidget_properties()
       {

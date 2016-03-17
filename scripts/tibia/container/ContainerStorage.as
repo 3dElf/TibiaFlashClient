@@ -6,7 +6,7 @@ package tibia.container
    import tibia.options.OptionsStorage;
    import tibia.sidebar.SideBarSet;
    import tibia.appearances.AppearanceTypeRef;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import mx.events.PropertyChangeEvent;
    import mx.events.PropertyChangeEventKind;
    import tibia.sidebar.Widget;
@@ -176,7 +176,7 @@ package tibia.container
          {
             return;
          }
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
          {
             _loc2_.sendCCLOSECONTAINER(param1.window);
@@ -261,8 +261,8 @@ package tibia.container
       
       public function setMultiUseDelay(param1:Number) : void
       {
-         this.m_MultiuseDelay.start = Tibia.s_FrameTimestamp;
-         this.m_MultiuseDelay.end = Tibia.s_FrameTimestamp + param1;
+         this.m_MultiuseDelay.start = Tibia.s_FrameTibiaTimestamp;
+         this.m_MultiuseDelay.end = Tibia.s_FrameTibiaTimestamp + param1;
       }
       
       public function setOpenContainer(param1:int, param2:tibia.container.Container) : void
@@ -375,7 +375,7 @@ package tibia.container
          {
             return;
          }
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
          {
             _loc2_.sendCUPCONTAINER(param1.window);

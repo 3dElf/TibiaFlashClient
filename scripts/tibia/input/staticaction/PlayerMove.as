@@ -1,7 +1,7 @@
 package tibia.input.staticaction
 {
    import shared.utility.Vector3D;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.creatures.Player;
    
    public class PlayerMove extends StaticAction
@@ -79,7 +79,7 @@ package tibia.input.staticaction
       {
          var _loc4_:Vector3D = null;
          var _loc5_:* = false;
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          var _loc3_:Player = Tibia.s_GetPlayer();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning) && _loc3_ != null)
          {

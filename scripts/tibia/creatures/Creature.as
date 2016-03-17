@@ -11,7 +11,8 @@ package tibia.creatures
    import tibia.reporting.reportType.Type;
    import shared.utility.Vector3D;
    import tibia.appearances.ns_appearance_internal;
-   import tibia.network.Connection;
+   import tibia.network.IServerConnection;
+   import tibia.network.Communication;
    
    public class Creature extends EventDispatcher implements IReportable
    {
@@ -648,7 +649,7 @@ package tibia.creatures
       {
          var _loc2_:int = this.markID;
          this.m_MarkID = this.m_MarkID & 4294967040 | param1 & 255;
-         this.m_MarkEnd = Tibia.s_FrameTimestamp + 1000;
+         this.m_MarkEnd = Tibia.s_FrameTibiaTimestamp + 1000;
          var _loc3_:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
          _loc3_.kind = PropertyChangeEventKind.UPDATE;
          _loc3_.property = "extendedMarkID";
@@ -664,10 +665,12 @@ package tibia.creatures
       
       public function startMovementAnimation(param1:int, param2:int, param3:int) : void
       {
-         var _loc4_:Connection = Tibia.s_GetConnection();
+         var _loc7_:IServerConnection = null;
+         var _loc4_:Communication = Tibia.s_GetCommunication();
          if(_loc4_ == null || !(Boolean(_loc4_.isGameRunning) || Boolean(_loc4_.isPending)))
          {
-            throw new Error("Creature.startMovementAnimation: Invalid state." + _loc4_ == null?"(connection is null)":"(State: " + _loc4_.connectionState + ")");
+            _loc7_ = Tibia.s_GetConnection();
+            throw new Error("Creature.startMovementAnimation: Invalid state." + _loc4_ == null || _loc7_ == null?"(connection or communication is null)":"(State: " + _loc7_.connectionState + ")");
          }
          if(param1 > 0)
          {
@@ -695,12 +698,12 @@ package tibia.creatures
          this.m_AnimationSpeed.x = -param1 * FIELD_SIZE;
          this.m_AnimationSpeed.y = -param2 * FIELD_SIZE;
          this.m_AnimationSpeed.z = _loc6_;
-         this.m_AnimationEnd = Tibia.s_FrameTimestamp + _loc6_;
+         this.m_AnimationEnd = Tibia.s_FrameTibiaTimestamp + _loc6_;
          if(param1 != 0 && param2 != 0)
          {
             _loc6_ = Math.floor(1000 * param3 * 3 / _loc5_);
          }
-         this.m_MovementEnd = Tibia.s_FrameTimestamp + _loc6_;
+         this.m_MovementEnd = Tibia.s_FrameTibiaTimestamp + _loc6_;
          this.m_MovementRunning = true;
       }
       

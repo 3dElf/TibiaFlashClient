@@ -123,7 +123,7 @@ package tibia.appearances.widgetClasses
          var _loc2_:AppearanceType = null;
          if(this.m_Appearance != null && (_loc2_ = this.m_Appearance.type) != null && Boolean(_loc2_.isAnimation))
          {
-            this.m_Appearance.animate(Tibia.s_FrameTimestamp);
+            this.m_Appearance.animate(Tibia.s_FrameTibiaTimestamp);
          }
          else
          {

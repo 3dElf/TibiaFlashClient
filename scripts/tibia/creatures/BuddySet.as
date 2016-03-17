@@ -1,7 +1,7 @@
 package tibia.creatures
 {
    import flash.events.EventDispatcher;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.creatures.buddylistClasses.BuddyIcon;
    import tibia.creatures.buddylistClasses.Buddy;
    import mx.collections.IList;
@@ -52,13 +52,13 @@ package tibia.creatures
       
       public function removeBuddy(param1:int, param2:Boolean = true) : void
       {
-         var _loc4_:Connection = null;
+         var _loc4_:Communication = null;
          var _loc3_:int = this.getBuddyIndex(param1);
          if(_loc3_ > -1)
          {
             this.m_Buddies.removeItemAt(_loc3_);
             _loc4_ = null;
-            if(Boolean(param2) && (_loc4_ = Tibia.s_GetConnection()) != null && Boolean(_loc4_.isGameRunning))
+            if(Boolean(param2) && (_loc4_ = Tibia.s_GetCommunication()) != null && Boolean(_loc4_.isGameRunning))
             {
                _loc4_.sendCREMOVEBUDDY(param1);
             }
@@ -67,8 +67,8 @@ package tibia.creatures
       
       public function addBuddy(param1:String, param2:Boolean = true) : void
       {
-         var _loc3_:Connection = null;
-         if(Boolean(param2) && (_loc3_ = Tibia.s_GetConnection()) != null && Boolean(_loc3_.isGameRunning))
+         var _loc3_:Communication = null;
+         if(Boolean(param2) && (_loc3_ = Tibia.s_GetCommunication()) != null && Boolean(_loc3_.isGameRunning))
          {
             _loc3_.sendCADDBUDDY(param1);
          }
@@ -136,7 +136,7 @@ package tibia.creatures
             {
                _loc3_ = Buddy(this.m_Buddies.getItemAt(_loc4_));
                _loc3_.status = uint(rest[0]);
-               _loc3_.lastUpdate = Tibia.s_FrameTimestamp;
+               _loc3_.lastUpdate = Tibia.s_FrameTibiaTimestamp;
                if(_loc3_.status == Buddy.STATUS_ONLINE && Boolean(_loc3_.notify))
                {
                   _loc5_ = ResourceManager.getInstance().getString(BUNDLE,"NOTIFICATION_MESSAGE",[_loc3_.name]);

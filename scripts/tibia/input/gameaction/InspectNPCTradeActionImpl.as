@@ -1,7 +1,7 @@
 package tibia.input.gameaction
 {
    import tibia.input.IActionImpl;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.appearances.AppearanceTypeRef;
    
    public class InspectNPCTradeActionImpl implements IActionImpl
@@ -21,7 +21,7 @@ package tibia.input.gameaction
       
       public function perform(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
          {
             _loc2_.sendCINSPECTNPCTRADE(this.m_Object.ID,this.m_Object.data);

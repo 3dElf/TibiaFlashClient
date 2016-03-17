@@ -313,7 +313,7 @@ package tibia.worldmap
                         this.m_VisibleMessages++;
                         this.m_Width = Math.max(this.m_Width,_loc2_.width);
                         this.m_Height = this.m_Height + _loc2_.height;
-                        _loc1_.visibleSince = Math.min(Tibia.s_FrameTimestamp,_loc1_.visibleSince);
+                        _loc1_.visibleSince = Math.min(Tibia.s_FrameTibiaTimestamp,_loc1_.visibleSince);
                         continue;
                      }
                      break;
@@ -327,7 +327,7 @@ package tibia.worldmap
                      this.m_VisibleMessages = 1;
                      this.m_Width = _loc2_.width;
                      this.m_Height = _loc2_.height;
-                     _loc1_.visibleSince = Math.min(Tibia.s_FrameTimestamp,_loc1_.visibleSince);
+                     _loc1_.visibleSince = Math.min(Tibia.s_FrameTibiaTimestamp,_loc1_.visibleSince);
                   }
             }
          }

@@ -1,6 +1,6 @@
 package tibia.input.staticaction
 {
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    
    public class PlayerTurn extends StaticAction
    {
@@ -27,7 +27,7 @@ package tibia.input.staticaction
       
       override public function perform(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
          {
             switch(this.m_Direction)

@@ -967,7 +967,7 @@ package tibia.appearances
                   }
                   _loc5_.marketTradeAs = param1.readUnsignedShort();
                   _loc5_.marketShowAs = param1.readUnsignedShort();
-                  _loc5_.marketName = StringHelper.s_ReadFromByteArray(param1,MarketWidget.DETAIL_NAME_LENGTH);
+                  _loc5_.marketName = StringHelper.s_ReadLongStringFromByteArray(param1,MarketWidget.DETAIL_NAME_LENGTH);
                   _loc5_.marketNameLowerCase = _loc5_.marketName.toLowerCase();
                   _loc5_.marketRestrictProfession = param1.readUnsignedShort();
                   _loc5_.marketRestrictLevel = param1.readUnsignedShort();

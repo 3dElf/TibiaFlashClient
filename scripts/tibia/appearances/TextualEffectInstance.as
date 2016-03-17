@@ -36,7 +36,7 @@ package tibia.appearances
          this.m_Value = param4;
          this.m_Text = null;
          m_Phase = 0;
-         m_LastPhaseChange = Tibia.s_FrameTimestamp;
+         m_LastPhaseChange = Tibia.s_FrameTibiaTimestamp;
          this.rebuildCache();
       }
       

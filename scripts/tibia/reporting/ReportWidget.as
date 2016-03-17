@@ -3,7 +3,7 @@ package tibia.reporting
    import tibia.game.PopUpBase;
    import flash.events.MouseEvent;
    import mx.controls.Button;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.chat.ChannelMessage;
    import tibia.reporting.reportType.Type;
    import shared.controls.CustomButton;
@@ -119,7 +119,7 @@ package tibia.reporting
       
       public static function s_ReportTimestampCheck() : Boolean
       {
-         return Boolean(isNaN(s_ReportTimestamp)) || Tibia.s_FrameTimestamp - s_ReportTimestamp > REPORT_ACKNOWLEDGEMENT_TIMEOUT;
+         return Boolean(isNaN(s_ReportTimestamp)) || Tibia.s_FrameTibiaTimestamp - s_ReportTimestamp > REPORT_ACKNOWLEDGEMENT_TIMEOUT;
       }
       
       protected function onExtraButton(param1:MouseEvent) : void
@@ -159,7 +159,7 @@ package tibia.reporting
       
       override public function hide(param1:Boolean = false) : void
       {
-         var _loc3_:Connection = null;
+         var _loc3_:Communication = null;
          var _loc4_:int = 0;
          var _loc2_:int = footer.numChildren - 1;
          while(_loc2_ >= 0)
@@ -169,7 +169,7 @@ package tibia.reporting
          }
          if(param1)
          {
-            _loc3_ = Tibia.s_GetConnection();
+            _loc3_ = Tibia.s_GetCommunication();
             if(_loc3_ != null && Boolean(_loc3_.isGameRunning))
             {
                switch(this.m_Type)
@@ -184,7 +184,7 @@ package tibia.reporting
                      _loc4_ = ChannelMessage(this.m_Reportable).ID;
                      _loc3_.sendStatementCRULEVIOLATIONREPORT(this.m_UIStepReason.selectedReason.value,this.m_Reportable.characterName,this.m_UIStepComment.comment,this.m_UIStepComment.translation,_loc4_);
                }
-               s_ReportTimestamp = Tibia.s_FrameTimestamp;
+               s_ReportTimestamp = Tibia.s_FrameTibiaTimestamp;
             }
          }
          super.hide(param1);

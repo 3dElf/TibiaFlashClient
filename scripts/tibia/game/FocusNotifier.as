@@ -1,6 +1,7 @@
 package tibia.game
 {
    import mx.core.UIComponent;
+   import flash.display.DisplayObject;
    import mx.managers.ISystemManager;
    import flash.utils.setTimeout;
    import flash.events.Event;
@@ -38,12 +39,13 @@ package tibia.game
       override protected function measure() : void
       {
          super.measure();
-         if(stage != null)
+         var _loc1_:DisplayObject = Tibia.s_GetInstance();
+         if(_loc1_ != null)
          {
-            measuredMinHeight = Math.max(measuredMinHeight,stage.stageHeight);
-            measuredHeight = Math.max(measuredHeight,stage.stageHeight);
-            measuredMinWidth = Math.max(measuredMinWidth,stage.stageWidth);
-            measuredWidth = Math.max(measuredWidth,stage.stageWidth);
+            measuredMinHeight = Math.max(measuredMinHeight,_loc1_.height);
+            measuredHeight = Math.max(measuredHeight,_loc1_.height);
+            measuredMinWidth = Math.max(measuredMinWidth,_loc1_.width);
+            measuredWidth = Math.max(measuredWidth,_loc1_.width);
          }
       }
       
@@ -103,12 +105,15 @@ package tibia.game
             graphics.drawRect(0,0,param1,param2);
             graphics.endFill();
          }
-         if(this.m_UILabel != null)
+         if(false == false)
          {
-            _loc5_ = this.m_UILabel.getExplicitOrMeasuredHeight();
-            _loc6_ = this.m_UILabel.getExplicitOrMeasuredWidth();
-            this.m_UILabel.move((param1 - _loc6_) / 2,(param2 - _loc5_) / 4);
-            this.m_UILabel.setActualSize(_loc6_,_loc5_);
+            if(this.m_UILabel != null)
+            {
+               _loc5_ = this.m_UILabel.getExplicitOrMeasuredHeight();
+               _loc6_ = this.m_UILabel.getExplicitOrMeasuredWidth();
+               this.m_UILabel.move((param1 - _loc6_) / 2,(param2 - _loc5_) / 4);
+               this.m_UILabel.setActualSize(_loc6_,_loc5_);
+            }
          }
       }
       

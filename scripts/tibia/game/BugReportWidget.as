@@ -1,6 +1,6 @@
 package tibia.game
 {
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import flash.events.Event;
    import shared.utility.StringHelper;
    import mx.controls.TextArea;
@@ -39,10 +39,10 @@ package tibia.game
       
       override public function hide(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          if(param1)
          {
-            _loc2_ = Tibia.s_GetConnection();
+            _loc2_ = Tibia.s_GetCommunication();
             if(_loc2_ != null && Boolean(_loc2_.allowBugreports) && Boolean(_loc2_.isGameRunning))
             {
                _loc2_.sendCBUGREPORT(this.m_UserMessage,this.m_SystemMessage);

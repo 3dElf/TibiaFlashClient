@@ -4,7 +4,7 @@ package tibia.input.gameaction
    import tibia.magic.SpellStorage;
    import tibia.game.Delay;
    import tibia.creatures.Player;
-   import tibia.network.Connection;
+   import tibia.network.IServerConnection;
    import tibia.magic.Spell;
    import mx.resources.ResourceManager;
    import mx.resources.IResourceManager;
@@ -87,22 +87,22 @@ package tibia.input.gameaction
          {
             return;
          }
-         var _loc3_:Connection = Tibia.s_GetConnection();
+         var _loc3_:IServerConnection = Tibia.s_GetConnection();
          var _loc4_:SpellStorage = Tibia.s_GetSpellStorage();
          if(Boolean(param1) && _loc3_ != null && _loc4_ != null)
          {
-            if(this.m_LastPerform + SpellStorage.MIN_SPELL_DELAY / 2 > Tibia.s_FrameTimestamp)
+            if(this.m_LastPerform + SpellStorage.MIN_SPELL_DELAY / 2 > Tibia.s_FrameTibiaTimestamp)
             {
                return;
             }
             _loc5_ = _loc4_.getSpellDelay(this.m_Spell.ID);
-            if(_loc5_ != null && _loc5_.end - _loc3_.latency > Tibia.s_FrameTimestamp)
+            if(_loc5_ != null && _loc5_.end - _loc3_.latency > Tibia.s_FrameTibiaTimestamp)
             {
                return;
             }
          }
          this.m_Spell.cast(null,this.m_Parameter);
-         this.m_LastPerform = Tibia.s_FrameTimestamp;
+         this.m_LastPerform = Tibia.s_FrameTibiaTimestamp;
       }
       
       public function clone() : IAction

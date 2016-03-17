@@ -1,7 +1,11 @@
 package tibia.game
 {
+   import mx.collections.Sort;
+   import mx.collections.ListCollectionView;
+   import mx.collections.ICollectionView;
    import flash.events.TimerEvent;
    import mx.events.CloseEvent;
+   import mx.collections.IList;
    import flash.events.MouseEvent;
    import mx.controls.listClasses.IListItemRenderer;
    import mx.core.mx_internal;
@@ -15,7 +19,7 @@ package tibia.game
    public class CharacterSelectionWidget extends PopUpBase
    {
       
-      public static const CLIENT_VERSION:uint = 1068;
+      public static const CLIENT_VERSION:uint = 1134;
       
       public static const CLIENT_PREVIEW_STATE:uint = 0;
       
@@ -33,13 +37,15 @@ package tibia.game
       
       private static const CLOSE_TIMEOUT:Number = 60 * 1000;
        
-      private var m_SelectedCharacter:int = -1;
+      private var m_SelectedCharacterIndex:int = -1;
+      
+      private var m_CharactersView:ListCollectionView = null;
       
       private var m_UncommittedCharacters:Boolean = false;
       
-      private var m_UIList:List = null;
+      private var m_Characters:IList = null;
       
-      private var m_Characters:Array = null;
+      private var m_UIList:List = null;
       
       private var m_Timeout:Timer = null;
       
@@ -63,6 +69,15 @@ package tibia.game
          }
       }
       
+      private function scrollToSelectedCharacter() : void
+      {
+         if(this.m_UIList != null)
+         {
+            this.m_UIList.validateNow();
+            this.m_UIList.scrollToIndex(this.selectedCharacterIndex);
+         }
+      }
+      
       override public function hide(param1:Boolean = false) : void
       {
          if(this.m_Timeout != null)
@@ -72,12 +87,51 @@ package tibia.game
          super.hide(param1);
       }
       
-      private function scrollToSelectedCharacter() : void
+      override protected function commitProperties() : void
       {
-         if(this.m_UIList != null)
+         var _loc1_:Sort = null;
+         super.commitProperties();
+         if(this.m_UncommittedCharacters)
          {
-            this.m_UIList.validateNow();
-            this.m_UIList.scrollToIndex(this.m_SelectedCharacter);
+            if(this.m_Characters != null)
+            {
+               this.m_CharactersView = new ListCollectionView(this.m_Characters);
+            }
+            _loc1_ = new Sort();
+            _loc1_.compareFunction = this.sortAccountCharacterByName;
+            ICollectionView(this.m_CharactersView).sort = _loc1_;
+            this.m_UIList.dataProvider = this.m_CharactersView;
+            this.m_UncommittedCharacters = false;
+         }
+         if(this.m_UncommittedSelectedCharacter)
+         {
+            this.m_UIList.selectedIndex = this.m_SelectedCharacterIndex;
+            if(this.m_Timeout != null)
+            {
+               this.m_Timeout.stop();
+               this.m_Timeout.reset();
+               this.m_Timeout.start();
+            }
+            callLater(this.scrollToSelectedCharacter,null);
+            this.m_UncommittedSelectedCharacter = false;
+         }
+      }
+      
+      public function set selectedCharacterIndex(param1:int) : void
+      {
+         if(this.m_Characters != null)
+         {
+            param1 = Math.max(-1,Math.min(param1,this.m_Characters.length - 1));
+         }
+         else
+         {
+            param1 = -1;
+         }
+         if(this.m_SelectedCharacterIndex != param1)
+         {
+            this.m_SelectedCharacterIndex = param1;
+            this.m_UncommittedSelectedCharacter = true;
+            invalidateProperties();
          }
       }
       
@@ -96,45 +150,14 @@ package tibia.game
          }
       }
       
-      override protected function commitProperties() : void
-      {
-         super.commitProperties();
-         if(this.m_UncommittedCharacters)
-         {
-            if(this.m_Characters != null)
-            {
-               this.m_Characters.sortOn("name");
-            }
-            this.m_UIList.dataProvider = this.m_Characters;
-            this.m_UncommittedCharacters = false;
-         }
-         if(this.m_UncommittedSelectedCharacter)
-         {
-            this.m_UIList.selectedIndex = this.m_SelectedCharacter;
-            if(this.m_Timeout != null)
-            {
-               this.m_Timeout.stop();
-               this.m_Timeout.reset();
-               this.m_Timeout.start();
-            }
-            callLater(this.scrollToSelectedCharacter,null);
-            this.m_UncommittedSelectedCharacter = false;
-         }
-      }
-      
-      public function get selectedCharacter() : int
-      {
-         return this.m_SelectedCharacter;
-      }
-      
-      public function set characters(param1:Array) : void
+      public function set characters(param1:IList) : void
       {
          if(this.m_Characters != param1)
          {
             this.m_Characters = param1;
             this.m_UncommittedCharacters = true;
             invalidateProperties();
-            this.selectedCharacter = -1;
+            this.m_SelectedCharacterIndex = -1;
          }
       }
       
@@ -187,22 +210,17 @@ package tibia.game
          }
       }
       
-      public function set selectedCharacter(param1:int) : void
+      private function sortAccountCharacterByName(param1:AccountCharacter, param2:AccountCharacter, param3:Array = null) : int
       {
-         if(this.m_Characters != null)
+         if(param1.name == param2.name)
          {
-            param1 = Math.max(-1,Math.min(param1,this.m_Characters.length - 1));
+            return 0;
          }
-         else
+         if(param1.name < param2.name)
          {
-            param1 = -1;
+            return 1;
          }
-         if(this.m_SelectedCharacter != param1)
-         {
-            this.m_SelectedCharacter = param1;
-            this.m_UncommittedSelectedCharacter = true;
-            invalidateProperties();
-         }
+         return -1;
       }
       
       private function onKeyboardDown(param1:KeyboardEvent) : void
@@ -212,24 +230,30 @@ package tibia.game
             switch(param1.keyCode)
             {
                case Keyboard.DOWN:
-                  this.selectedCharacter = this.selectedCharacter + 1;
+                  this.selectedCharacterIndex = this.selectedCharacterIndex + 1;
                   break;
                case Keyboard.UP:
-                  this.selectedCharacter = Math.max(0,this.selectedCharacter - 1);
+                  this.selectedCharacterIndex = Math.max(0,this.selectedCharacterIndex - 1);
             }
          }
       }
       
-      public function get characters() : Array
+      public function get characters() : IList
       {
          return this.m_Characters;
+      }
+      
+      public function get selectedCharacterIndex() : int
+      {
+         return this.m_SelectedCharacterIndex;
       }
       
       private function onListChange(param1:ListEvent) : void
       {
          if(param1 != null)
          {
-            this.selectedCharacter = this.m_UIList.selectedIndex;
+            this.selectedCharacterIndex = this.m_UIList.selectedIndex;
+            this.m_UncommittedSelectedCharacter = true;
          }
       }
    }

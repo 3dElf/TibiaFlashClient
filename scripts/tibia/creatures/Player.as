@@ -6,7 +6,7 @@ package tibia.creatures
    import mx.events.PropertyChangeEvent;
    import mx.events.PropertyChangeEventKind;
    import tibia.magic.Spell;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.minimap.MiniMapStorage;
    import tibia.worldmap.WorldMapStorage;
    import tibia.chat.MessageMode;
@@ -436,7 +436,7 @@ package tibia.creatures
          {
             return;
          }
-         var _loc1_:Connection = Tibia.s_GetConnection();
+         var _loc1_:Communication = Tibia.s_GetCommunication();
          var _loc2_:MiniMapStorage = Tibia.s_GetMiniMapStorage();
          var _loc3_:WorldMapStorage = Tibia.s_GetWorldMapStorage();
          if(_loc1_ == null || !_loc1_.isGameRunning || _loc2_ == null || _loc3_ == null)
@@ -545,7 +545,7 @@ package tibia.creatures
          {
             return;
          }
-         var _loc1_:Connection = Tibia.s_GetConnection();
+         var _loc1_:Communication = Tibia.s_GetCommunication();
          var _loc2_:WorldMapStorage = Tibia.s_GetWorldMapStorage();
          if(_loc1_ == null || !_loc1_.isGameRunning || _loc2_ == null)
          {
@@ -682,7 +682,7 @@ package tibia.creatures
          {
             return;
          }
-         var _loc6_:Connection = Tibia.s_GetConnection();
+         var _loc6_:Communication = Tibia.s_GetCommunication();
          var _loc7_:WorldMapStorage = Tibia.s_GetWorldMapStorage();
          if(_loc6_ == null || !_loc6_.isGameRunning || _loc7_ == null)
          {

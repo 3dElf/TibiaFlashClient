@@ -3,7 +3,7 @@ package tibia.trade
    import tibia.sidebar.Widget;
    import mx.collections.IList;
    import tibia.trade.safeTradeWidgetClasses.SafeTradeWidgetView;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    
    public class SafeTradeWidget extends Widget
    {
@@ -35,10 +35,10 @@ package tibia.trade
       
       override public function close(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          if(Boolean(param1) || Boolean(closable) && !closed)
          {
-            _loc2_ = Tibia.s_GetConnection();
+            _loc2_ = Tibia.s_GetCommunication();
             if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
             {
                _loc2_.sendCREJECTTRADE();

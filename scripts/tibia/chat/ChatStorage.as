@@ -4,7 +4,7 @@ package tibia.chat
    import mx.resources.ResourceManager;
    import mx.collections.IList;
    import tibia.reporting.reportType.Type;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.§chat:ns_chat_internal§.s_IsPrivateChannel;
    import tibia.creatures.Player;
    import shared.utility.StringHelper;
@@ -227,7 +227,7 @@ package tibia.chat
       {
          var _loc4_:Channel = null;
          var _loc2_:Object = Channel.s_NormaliseIdentifier(param1);
-         var _loc3_:Connection = Tibia.s_GetConnection();
+         var _loc3_:Communication = Tibia.s_GetCommunication();
          if(_loc3_ != null && Boolean(_loc3_.isGameRunning))
          {
             if(s_IsPrivateChannel(_loc2_))
@@ -277,7 +277,7 @@ package tibia.chat
       
       public function sendChannelMessage(param1:String, param2:Channel, param3:int) : String
       {
-         var _loc4_:Connection = Tibia.s_GetConnection();
+         var _loc4_:Communication = Tibia.s_GetCommunication();
          var _loc5_:Player = Tibia.s_GetPlayer();
          if(_loc4_ == null || !_loc4_.isGameRunning || _loc5_ == null)
          {
@@ -664,7 +664,7 @@ package tibia.chat
       {
          var _loc3_:Object = null;
          var _loc4_:Player = null;
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
          {
             _loc3_ = Channel.s_NormaliseIdentifier(param1);

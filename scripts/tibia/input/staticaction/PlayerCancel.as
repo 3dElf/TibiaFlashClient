@@ -1,6 +1,6 @@
 package tibia.input.staticaction
 {
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.creatures.CreatureStorage;
    import tibia.creatures.Player;
    
@@ -14,7 +14,7 @@ package tibia.input.staticaction
       
       override public function perform(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = Tibia.s_GetConnection();
+         var _loc2_:Communication = Tibia.s_GetCommunication();
          var _loc3_:CreatureStorage = Tibia.s_GetCreatureStorage();
          var _loc4_:Player = Tibia.s_GetPlayer();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning) && _loc3_ != null && _loc4_ != null)

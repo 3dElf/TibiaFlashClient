@@ -374,7 +374,7 @@ package tibia.options
          }
          if(a_CurrentOptions == null)
          {
-            throw new ArgumentError("OptionsStorage.OptionsStorage: Current options were not set.");
+            a_CurrentOptions = a_DefaultOptions;
          }
          this.m_DefaultOptionsXml = a_DefaultOptions;
          try

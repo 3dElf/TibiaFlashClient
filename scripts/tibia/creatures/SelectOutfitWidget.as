@@ -9,7 +9,7 @@ package tibia.creatures
    import mx.controls.CheckBox;
    import shared.controls.SimpleTabNavigator;
    import mx.collections.IList;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    
    public class SelectOutfitWidget extends PopUpBase
    {
@@ -294,8 +294,8 @@ package tibia.creatures
       
       override public function hide(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = null;
-         if(Boolean(param1) && (_loc2_ = Tibia.s_GetConnection()) != null)
+         var _loc2_:Communication = null;
+         if(Boolean(param1) && (_loc2_ = Tibia.s_GetCommunication()) != null)
          {
             _loc2_.sendCSETOUTFIT(this.m_PlayerType,this.m_PlayerColours[0],this.m_PlayerColours[1],this.m_PlayerColours[2],this.m_PlayerColours[3],this.m_PlayerAddons,this.m_MountType);
          }

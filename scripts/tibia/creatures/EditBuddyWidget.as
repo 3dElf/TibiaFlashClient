@@ -1,7 +1,7 @@
 package tibia.creatures
 {
    import tibia.game.PopUpBase;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import shared.utility.StringHelper;
    import tibia.creatures.buddylistClasses.Buddy;
    import mx.controls.CheckBox;
@@ -44,13 +44,13 @@ package tibia.creatures
       
       override public function hide(param1:Boolean = false) : void
       {
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          if(Boolean(param1) && this.m_Buddy != null)
          {
             this.m_Buddy.description = StringHelper.s_Trim(this.m_UIDescription.text);
             this.m_Buddy.icon = this.m_UIIcon.selectedID;
             this.m_Buddy.notify = this.m_UINotify.selected;
-            _loc2_ = Tibia.s_GetConnection();
+            _loc2_ = Tibia.s_GetCommunication();
             if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
             {
                _loc2_.sendCEDITBUDDY(this.m_Buddy.ID,this.m_Buddy.description,this.m_Buddy.icon,this.m_Buddy.notify);

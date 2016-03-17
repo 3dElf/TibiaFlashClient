@@ -15,7 +15,7 @@ package tibia.creatures.battlelistWidgetClasses
    import shared.controls.CustomButton;
    import mx.controls.listClasses.IListItemRenderer;
    import tibia.creatures.Creature;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.appearances.AppearanceStorage;
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.AppearanceInstance;
@@ -246,7 +246,7 @@ package tibia.creatures.battlelistWidgetClasses
          var _loc2_:IListItemRenderer = null;
          var _loc3_:Creature = null;
          var _loc4_:int = 0;
-         var _loc5_:Connection = null;
+         var _loc5_:Communication = null;
          if(param1 != null && !widgetCollapsed && this.m_CreatureStorage != null)
          {
             _loc2_ = this.m_UIList.mouseEventToItemRenderer(param1);
@@ -284,7 +284,7 @@ package tibia.creatures.battlelistWidgetClasses
                   break;
                case ACTION_LOOK:
                   _loc5_ = null;
-                  if(_loc3_ != null && (_loc5_ = Tibia.s_GetConnection()) != null && Boolean(_loc5_.isGameRunning))
+                  if(_loc3_ != null && (_loc5_ = Tibia.s_GetCommunication()) != null && Boolean(_loc5_.isGameRunning))
                   {
                      _loc5_.sendCLOOKATCREATURE(_loc3_.ID);
                   }

@@ -6,7 +6,7 @@ package tibia.questlog
    import mx.events.CloseEvent;
    import tibia.questlog.questLogWidgetClasses.QuestLogView;
    import flash.events.Event;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import shared.controls.CustomButton;
    import mx.events.ListEvent;
    import tibia.questlog.questLogWidgetClasses.QuestLineView;
@@ -154,10 +154,10 @@ package tibia.questlog
       
       protected function onQuestLineSelected(param1:Event) : void
       {
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          if(param1 != null && this.m_UIQuestLogView.selectedQuestLine != null && this.state == STATE_QUEST_LOG)
          {
-            _loc2_ = Tibia.s_GetConnection();
+            _loc2_ = Tibia.s_GetCommunication();
             if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
             {
                _loc2_.sendCGETQUESTLINE(this.m_UIQuestLogView.selectedQuestLine.ID);

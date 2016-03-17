@@ -554,7 +554,7 @@ package tibia.worldmap.widgetClasses
                _loc14_.drawTo(this.m_MainLayer,param1 - _loc17_,param2 - _loc17_,param3,param4,param5);
                if(_loc14_ == this.m_HighlightObject)
                {
-                  this.m_ObjectCursor.drawTo(this.m_MainLayer,param1 - _loc17_,param2 - _loc17_,Tibia.s_FrameTimestamp);
+                  this.m_ObjectCursor.drawTo(this.m_MainLayer,param1 - _loc17_,param2 - _loc17_,Tibia.s_FrameTibiaTimestamp);
                }
                _loc16_ = Boolean(_loc16_) || Boolean(_loc14_.m_Type.isLyingObject);
                if(Boolean(_loc14_.m_Type.isHangable) && _loc14_.hang == AppearanceStorage.FLAG_HOOKSOUTH)
@@ -588,7 +588,7 @@ package tibia.worldmap.widgetClasses
                this.m_PreviousHang.drawTo(this.m_MainLayer,this.m_HangPixelX,this.m_HangPixelY,this.m_HangPatternX,this.m_HangPatternY,this.m_HangPatternZ);
                if(this.m_PreviousHang == this.m_HighlightObject)
                {
-                  this.m_ObjectCursor.drawTo(this.m_MainLayer,this.m_HangPixelX,this.m_HangPixelY,Tibia.s_FrameTimestamp);
+                  this.m_ObjectCursor.drawTo(this.m_MainLayer,this.m_HangPixelX,this.m_HangPixelY,Tibia.s_FrameTibiaTimestamp);
                }
                this.m_PreviousHang = null;
             }
@@ -638,7 +638,7 @@ package tibia.worldmap.widgetClasses
                   _loc25_ = CreatureStorage.s_GetCreatureMark(CreatureStorage.MARK_TRAPPER,_loc32_,this.m_HelperRect);
                   this.m_MainLayer.copyPixels(_loc25_,this.m_HelperRect,this.m_HelperPoint,null,null,true);
                }
-               else if(_loc26_.markEnd > Tibia.s_FrameTimestamp)
+               else if(_loc26_.markEnd > Tibia.s_FrameTibiaTimestamp)
                {
                   _loc25_ = CreatureStorage.s_GetCreatureMark(_loc26_.markID,_loc32_,this.m_HelperRect);
                   this.m_MainLayer.copyPixels(_loc25_,this.m_HelperRect,this.m_HelperPoint,null,null,true);
@@ -664,7 +664,7 @@ package tibia.worldmap.widgetClasses
                }
                if(Boolean(_loc13_) && _loc26_ == this.m_HighlightObject)
                {
-                  this.m_ObjectCursor.drawTo(this.m_MainLayer,_loc22_.x + _loc18_,_loc22_.y + _loc19_,Tibia.s_FrameTimestamp);
+                  this.m_ObjectCursor.drawTo(this.m_MainLayer,_loc22_.x + _loc18_,_loc22_.y + _loc19_,Tibia.s_FrameTibiaTimestamp);
                }
                if(param8 == this.m_PlayerZPlane && (Boolean(this.m_CreatureStorage.isOpponent(_loc26_)) || _loc26_.ID == this.m_Player.ID))
                {
@@ -766,7 +766,7 @@ package tibia.worldmap.widgetClasses
             _loc14_.drawTo(this.m_MainLayer,param1,param2,param3,param4,param5);
             if(_loc14_ == this.m_HighlightObject)
             {
-               this.m_ObjectCursor.drawTo(this.m_MainLayer,param1,param2,Tibia.s_FrameTimestamp);
+               this.m_ObjectCursor.drawTo(this.m_MainLayer,param1,param2,Tibia.s_FrameTibiaTimestamp);
             }
          }
       }
@@ -1821,8 +1821,9 @@ package tibia.worldmap.widgetClasses
          this.m_StopwatchEnterFrame.stop();
          this.m_StopwatchEnterFrame.start();
          var _loc3_:Colour = null;
-         _loc4_ = getTimer();
-         var _loc5_:Number = _loc4_ - Tibia.s_FrameTimestamp;
+         _loc4_ = Tibia.s_GetTibiaTimer();
+         var _loc5_:Number = _loc4_ - Tibia.s_FrameTibiaTimestamp;
+         Tibia.s_FrameRealTimestamp = getTimer();
          if(Math.floor(this.m_StopwatchEnterFrame.average) > Math.max(Math.ceil(1000 / this.m_OptionsFrameRate),_loc5_) || this.m_CreatureStorage == null || this.m_Options == null || this.m_Player == null || this.m_WorldMapStorage == null || !this.m_WorldMapStorage.valid)
          {
             return;
@@ -1835,7 +1836,7 @@ package tibia.worldmap.widgetClasses
          this.m_AtmosphereLayer.fillRect(this.m_Rectangle,0);
          this.m_DrawnCreaturesCount = 0;
          this.m_DrawnTextualEffectsCount = 0;
-         Tibia.s_FrameTimestamp = _loc4_;
+         Tibia.s_FrameTibiaTimestamp = _loc4_;
          this.m_WorldMapStorage.animate();
          this.m_CreatureStorage.animate();
          this.m_MaxZPlane = MAPSIZE_Z - 1;
@@ -2101,7 +2102,7 @@ package tibia.worldmap.widgetClasses
             }
             if(this.m_OptionsHighlight > 0 && this.m_HighlightTile != null && this.m_HighlightTile.z == _loc10_)
             {
-               this.m_TileCursor.drawTo(this.m_MainLayer,(this.m_HighlightTile.x + 1) * FIELD_SIZE,(this.m_HighlightTile.y + 1) * FIELD_SIZE,Tibia.s_FrameTimestamp);
+               this.m_TileCursor.drawTo(this.m_MainLayer,(this.m_HighlightTile.x + 1) * FIELD_SIZE,(this.m_HighlightTile.y + 1) * FIELD_SIZE,Tibia.s_FrameTibiaTimestamp);
             }
             _loc10_++;
          }

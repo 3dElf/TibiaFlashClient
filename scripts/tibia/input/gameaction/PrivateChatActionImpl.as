@@ -9,7 +9,7 @@ package tibia.input.gameaction
    import tibia.chat.Channel;
    import tibia.chat.ChatStorage;
    import tibia.chat.ChatWidget;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    
    public class PrivateChatActionImpl implements IActionImpl
    {
@@ -85,7 +85,7 @@ package tibia.input.gameaction
          var _loc6_:Channel = null;
          var _loc3_:ChatStorage = Tibia.s_GetChatStorage();
          var _loc4_:ChatWidget = Tibia.s_GetChatWidget();
-         var _loc5_:Connection = Tibia.s_GetConnection();
+         var _loc5_:Communication = Tibia.s_GetCommunication();
          if(_loc3_ != null && _loc4_ != null && _loc5_ != null && Boolean(_loc5_.isGameRunning))
          {
             _loc6_ = null;

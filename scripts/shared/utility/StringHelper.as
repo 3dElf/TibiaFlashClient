@@ -40,19 +40,20 @@ package shared.utility
          return param1;
       }
       
-      public static function s_ReadFromByteArray(param1:ByteArray, param2:int = 2147483647) : String
+      public static function s_MillisecondsToTimeString(param1:uint, param2:Boolean = true) : String
       {
-         if(param1.bytesAvailable < 2)
+         var _loc3_:uint = 0;
+         var _loc4_:uint = 0;
+         _loc3_ = param1 / 1000;
+         _loc4_ = _loc3_ / 60;
+         var _loc5_:uint = _loc4_ / 60;
+         var _loc6_:String = "";
+         _loc6_ = _loc5_ + ":" + s_PadWithChars(String(_loc4_ % 60),"00") + ":" + s_PadWithChars(String(_loc3_ % 60),"00");
+         if(param2)
          {
-            throw new Error("StringHelper.s_ReadFromByteArray: Not enough data(1).");
+            _loc6_ = _loc6_ + ("." + s_PadWithChars(String(param1 % 1000),"000"));
          }
-         var _loc3_:int = param1.readUnsignedShort();
-         if(param1.bytesAvailable < _loc3_)
-         {
-            throw new Error("StringHelper.s_ReadFromByteArray: Not enough data(2).");
-         }
-         var _loc4_:String = param1.readMultiByte(_loc3_,STRING_SERIALISATION_CHARSET);
-         return _loc4_.substr(0,param2);
+         return _loc6_;
       }
       
       public static function s_StripNewline(param1:String) : String
@@ -106,6 +107,15 @@ package shared.utility
          return null;
       }
       
+      public static function s_PadWithChars(param1:String, param2:String) : String
+      {
+         if(param1.length < param2.length)
+         {
+            param1 = param2.substring(0,param2.length - param1.length) + param1;
+         }
+         return param1;
+      }
+      
       public static function s_ReadPositiveInt(param1:String, param2:int = -1, param3:int = -1) : int
       {
          var _loc4_:int = 0;
@@ -134,6 +144,21 @@ package shared.utility
          return param1.match(/^\s+$/) != null;
       }
       
+      public static function s_ReadLongStringFromByteArray(param1:ByteArray, param2:int = 2147483647) : String
+      {
+         if(param1.bytesAvailable < 2)
+         {
+            throw new Error("StringHelper.s_ReadLongStringFromByteArray: Not enough data(1).");
+         }
+         var _loc3_:int = param1.readUnsignedShort();
+         if(param1.bytesAvailable < _loc3_)
+         {
+            throw new Error("StringHelper.s_ReadLongStringFromByteArray: Not enough data(2).");
+         }
+         var _loc4_:String = param1.readMultiByte(_loc3_,STRING_SERIALISATION_CHARSET);
+         return _loc4_.substr(0,param2);
+      }
+      
       public static function s_TrimFront(param1:String) : String
       {
          if(param1 != null)
@@ -141,6 +166,21 @@ package shared.utility
             param1 = param1.replace(/^\s+/,"");
          }
          return param1;
+      }
+      
+      public static function s_ReadShortStringFromByteArray(param1:ByteArray, param2:uint = 255) : String
+      {
+         if(param1.bytesAvailable < 1)
+         {
+            throw new Error("StringHelper.s_ReadShortStringFromByteArray: Not enough data(1).");
+         }
+         var _loc3_:int = param1.readUnsignedByte();
+         if(param1.bytesAvailable < _loc3_)
+         {
+            throw new Error("StringHelper.s_ReadShortStringFromByteArray: Not enough data(2).");
+         }
+         var _loc4_:String = param1.readMultiByte(_loc3_,STRING_SERIALISATION_CHARSET);
+         return _loc4_.substr(0,param2);
       }
       
       public static function s_RemoveHilight(param1:String) : String

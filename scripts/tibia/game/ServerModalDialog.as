@@ -14,7 +14,7 @@ package tibia.game
    import mx.events.CloseEvent;
    import mx.core.IDataRenderer;
    import flash.errors.IllegalOperationError;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import mx.controls.List;
    import flash.events.KeyboardEvent;
    import flash.ui.Keyboard;
@@ -205,7 +205,7 @@ package tibia.game
          {
             _loc3_ = this.choices[this.selectedChoice].value;
          }
-         var _loc4_:Connection = Tibia.s_GetConnection();
+         var _loc4_:Communication = Tibia.s_GetCommunication();
          if(_loc4_ != null && Boolean(_loc4_.isGameRunning))
          {
             _loc4_.sendCANSWERMODALDIALOG(this.ID,_loc2_,_loc3_);

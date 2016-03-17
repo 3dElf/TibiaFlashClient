@@ -5,7 +5,7 @@ package tibia.trade.npcTradeWidgetClasses
    import mx.styles.StyleManager;
    import mx.events.CollectionEvent;
    import flash.events.MouseEvent;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.appearances.widgetClasses.SkinnedAppearanceRenderer;
    import mx.collections.Sort;
    import mx.collections.ICollectionView;
@@ -85,12 +85,12 @@ package tibia.trade.npcTradeWidgetClasses
       {
          var _loc2_:int = 0;
          var _loc3_:int = 0;
-         var _loc4_:Connection = null;
+         var _loc4_:Communication = null;
          if(param1 != null && this.m_DataProvider != null)
          {
             _loc2_ = getChildIndex(SkinnedAppearanceRenderer(param1.currentTarget));
             _loc3_ = this.dataProvider.getItemAt(_loc2_).id;
-            _loc4_ = Tibia.s_GetConnection();
+            _loc4_ = Tibia.s_GetCommunication();
             if(_loc4_ != null && Boolean(_loc4_.isGameRunning))
             {
             }

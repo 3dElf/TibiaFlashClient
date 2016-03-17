@@ -1,7 +1,7 @@
 package tibia.input.staticaction
 {
    import tibia.options.OptionsStorage;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    
    public class CombatChaseMode extends StaticAction
    {
@@ -25,7 +25,7 @@ package tibia.input.staticaction
                _loc2_.combatChaseMode = OptionsStorage.COMBAT_CHASE_OFF;
             }
          }
-         var _loc3_:Connection = Tibia.s_GetConnection();
+         var _loc3_:Communication = Tibia.s_GetCommunication();
          if(_loc3_ != null && Boolean(_loc3_.isGameRunning))
          {
             _loc3_.sendCSETTACTICS(_loc2_.combatAttackMode,_loc2_.combatChaseMode,_loc2_.combatSecureMode);

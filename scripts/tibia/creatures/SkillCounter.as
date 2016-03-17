@@ -1,7 +1,5 @@
 package tibia.creatures
 {
-   import flash.utils.getTimer;
-   
    public class SkillCounter
    {
       
@@ -25,7 +23,7 @@ package tibia.creatures
          {
             throw new ArgumentError("SkillCounter.addSkillGain: Gain is negative.");
          }
-         var _loc2_:uint = uint(getTimer() / 60000);
+         var _loc2_:uint = uint(Tibia.s_GetTibiaTimer() / 60000);
          var _loc3_:int = _loc2_ % NUM_DATA_POINTS;
          if(this.m_DataTimestamps[_loc3_] != _loc2_)
          {
@@ -41,7 +39,7 @@ package tibia.creatures
       public function getAverageGain() : Number
       {
          var _loc1_:Number = 0;
-         var _loc2_:uint = uint(getTimer() / 60000);
+         var _loc2_:uint = uint(Tibia.s_GetTibiaTimer() / 60000);
          var _loc3_:int = NUM_DATA_POINTS - 1;
          while(_loc3_ >= 0)
          {

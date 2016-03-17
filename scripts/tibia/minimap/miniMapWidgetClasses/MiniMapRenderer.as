@@ -263,7 +263,7 @@ package tibia.minimap.miniMapWidgetClasses
       {
          if(param1 != null)
          {
-            if(Tibia.s_FrameTimestamp >= this.m_HighlightEnd)
+            if(Tibia.s_FrameTibiaTimestamp >= this.m_HighlightEnd)
             {
                this.m_HighlightEnd = 0;
                this.m_UncommittedHighlightEnd = true;
@@ -368,7 +368,7 @@ package tibia.minimap.miniMapWidgetClasses
          if(this.m_UncommittedHighlightEnd)
          {
             _loc1_ = Tibia.s_GetSecondaryTimer();
-            if(Tibia.s_FrameTimestamp < this.m_HighlightEnd)
+            if(Tibia.s_FrameTibiaTimestamp < this.m_HighlightEnd)
             {
                if(!this.m_HighlightListenerRegistered)
                {

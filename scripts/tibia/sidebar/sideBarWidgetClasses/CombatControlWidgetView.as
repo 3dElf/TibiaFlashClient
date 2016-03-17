@@ -3,7 +3,7 @@ package tibia.sidebar.sideBarWidgetClasses
    import mx.controls.Button;
    import tibia.creatures.Player;
    import flash.events.MouseEvent;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.§sidebar:ns_sidebar_internal§.options;
    import tibia.options.OptionsStorage;
    import tibia.input.staticaction.StaticActionList;
@@ -73,9 +73,9 @@ package tibia.sidebar.sideBarWidgetClasses
       
       private var m_UncommittedSecureMode:Boolean = true;
       
-      protected var m_AttackMode:int = 1;
+      protected var m_AttackMode:int;
       
-      protected var m_ChaseMode:int = 0;
+      protected var m_ChaseMode:int;
       
       protected var m_UIButtonOffensive:Button = null;
       
@@ -91,12 +91,15 @@ package tibia.sidebar.sideBarWidgetClasses
       
       protected var m_MountMode:Boolean = false;
       
-      protected var m_SecureMode:int = 0;
+      protected var m_SecureMode:int;
       
       private var m_UncommittedAttackMode:Boolean = true;
       
       public function CombatControlWidgetView()
       {
+         this.m_AttackMode = OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
+         this.m_ChaseMode = OptionsStorage.COMBAT_CHASE_OFF;
+         this.m_SecureMode = OptionsStorage.COMBAT_SECURE_OFF;
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          direction = BoxDirection.HORIZONTAL;
@@ -112,7 +115,7 @@ package tibia.sidebar.sideBarWidgetClasses
       private function onButtonClick(param1:MouseEvent) : void
       {
          var _loc2_:Boolean = false;
-         var _loc3_:Connection = null;
+         var _loc3_:Communication = null;
          if(options != null)
          {
             param1.preventDefault();
@@ -152,7 +155,7 @@ package tibia.sidebar.sideBarWidgetClasses
                StaticActionList.PLAYER_CANCEL.perform();
             }
             _loc3_ = null;
-            if(Boolean(_loc2_) && (_loc3_ = Tibia.s_GetConnection()) != null && Boolean(_loc3_.isGameRunning))
+            if(Boolean(_loc2_) && (_loc3_ = Tibia.s_GetCommunication()) != null && Boolean(_loc3_.isGameRunning))
             {
                _loc3_.sendCSETTACTICS(options.combatAttackMode,options.combatChaseMode,options.combatSecureMode);
             }

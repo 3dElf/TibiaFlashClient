@@ -24,7 +24,7 @@ package tibia.trade.npcTradeWidgetClasses
    import flash.events.Event;
    import mx.events.PropertyChangeEvent;
    import tibia.container.ContainerStorage;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import mx.collections.ICollectionView;
    import mx.core.ScrollPolicy;
    
@@ -720,8 +720,8 @@ package tibia.trade.npcTradeWidgetClasses
       
       protected function onButtonCommit(param1:MouseEvent) : void
       {
-         var _loc2_:Connection = null;
-         if(options != null && this.tradeObject != null && this.tradeAmount >= 1 && this.tradeAmount <= this.tradeObject.amount && (_loc2_ = Tibia.s_GetConnection()) != null && Boolean(_loc2_.isGameRunning))
+         var _loc2_:Communication = null;
+         if(options != null && this.tradeObject != null && this.tradeAmount >= 1 && this.tradeAmount <= this.tradeObject.amount && (_loc2_ = Tibia.s_GetCommunication()) != null && Boolean(_loc2_.isGameRunning))
          {
             if(this.m_TradeMode == MODE_BUY)
             {

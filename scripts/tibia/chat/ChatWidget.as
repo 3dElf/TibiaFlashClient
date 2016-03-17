@@ -35,7 +35,7 @@ package tibia.chat
    import mx.core.EdgeMetrics;
    import mx.core.Container;
    import mx.collections.IList;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import mx.events.CollectionEventKind;
    import flash.display.InteractiveObject;
    import tibia.chat.chatWidgetClasses.ChannelContextMenu;
@@ -766,7 +766,7 @@ package tibia.chat
          var i:int = 0;
          var n:int = 0;
          var c:tibia.chat.Channel = null;
-         var _Connection:Connection = null;
+         var _Communication:Communication = null;
          var AutoSwitch:Boolean = false;
          var a_Event:CollectionEvent = param1;
          if(a_Event != null)
@@ -774,8 +774,8 @@ package tibia.chat
             i = 0;
             n = 0;
             c = null;
-            _Connection = Tibia.s_GetConnection();
-            AutoSwitch = _Connection != null && Boolean(_Connection.isGameRunning);
+            _Communication = Tibia.s_GetCommunication();
+            AutoSwitch = _Communication != null && Boolean(_Communication.isGameRunning);
             switch(a_Event.kind)
             {
                case CollectionEventKind.ADD:

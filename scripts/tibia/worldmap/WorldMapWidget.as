@@ -16,12 +16,15 @@ package tibia.worldmap
    import tibia.options.OptionsStorage;
    import tibia.creatures.Creature;
    import shared.utility.Vector3D;
-   import tibia.network.Connection;
+   import tibia.network.Communication;
    import tibia.input.gameaction.UseActionImpl;
    import tibia.input.gameaction.LookActionImpl;
    import tibia.game.ObjectContextMenu;
    import flash.geom.Point;
    import flash.events.Event;
+   import tibia.network.IServerConnection;
+   import flash.utils.getTimer;
+   import tibia.network.Connection;
    import mx.events.PropertyChangeEvent;
    import tibia.creatures.CreatureStorage;
    import flash.geom.Rectangle;
@@ -220,9 +223,9 @@ package tibia.worldmap
          var _loc6_:Object = null;
          var _loc7_:Vector3D = null;
          var _loc8_:int = 0;
-         var _loc2_:Connection = null;
+         var _loc2_:Communication = null;
          var _loc3_:Vector3D = null;
-         if(this.m_WorldMapStorage != null && this.m_Player != null && (_loc2_ = Tibia.s_GetConnection()) != null && Boolean(_loc2_.isGameRunning) && this.m_UIRendererImpl != null && (_loc3_ = this.m_UIRendererImpl.pointToMap(param1.localX,param1.localY,false)) != null)
+         if(this.m_WorldMapStorage != null && this.m_Player != null && (_loc2_ = Tibia.s_GetCommunication()) != null && Boolean(_loc2_.isGameRunning) && this.m_UIRendererImpl != null && (_loc3_ = this.m_UIRendererImpl.pointToMap(param1.localX,param1.localY,false)) != null)
          {
             _loc4_ = this.m_UIRendererImpl.pointToCreature(param1.localX,param1.localY,false);
             _loc5_ = new Object();
@@ -349,33 +352,34 @@ package tibia.worldmap
       
       private function onEnterFrame(param1:Event) : void
       {
-         var _loc2_:Vector3D = null;
          var _loc3_:Vector3D = null;
-         var _loc4_:Connection = null;
+         var _loc4_:Vector3D = null;
+         var _loc5_:IServerConnection = null;
          if(this.m_UIRendererImpl != null && this.m_Options != null && this.m_Options.rendererHighlight > 0 && ContextMenuBase.getCurrent() == null && PopUpBase.getCurrent() == null)
          {
-            _loc2_ = this.m_UIRendererImpl.highlightTile;
-            _loc3_ = this.m_UIRendererImpl.pointToMap(this.m_UIRendererImpl.mouseX,this.m_UIRendererImpl.mouseY,false);
-            if(_loc3_ != null && _loc2_ != null)
+            _loc3_ = this.m_UIRendererImpl.highlightTile;
+            _loc4_ = this.m_UIRendererImpl.pointToMap(this.m_UIRendererImpl.mouseX,this.m_UIRendererImpl.mouseY,false);
+            if(_loc4_ != null && _loc3_ != null)
             {
-               _loc3_.x = _loc2_.x;
-               _loc3_.y = _loc2_.y;
+               _loc4_.x = _loc3_.x;
+               _loc4_.y = _loc3_.y;
             }
-            this.m_UIRendererImpl.highlightTile = _loc3_;
+            this.m_UIRendererImpl.highlightTile = _loc4_;
          }
-         if(this.m_UIRendererImpl != null && this.m_WorldMapStorage != null && Tibia.s_FrameTimestamp > this.m_InfoTimestamp + 500)
+         var _loc2_:uint = getTimer();
+         if(this.m_UIRendererImpl != null && this.m_WorldMapStorage != null && _loc2_ > this.m_InfoTimestamp + 500)
          {
-            this.m_InfoTimestamp = Tibia.s_FrameTimestamp;
-            _loc4_ = Tibia.s_GetConnection();
+            this.m_InfoTimestamp = _loc2_;
+            _loc5_ = Tibia.s_GetConnection();
             this.m_UIInfoLatency.removeChildren();
-            if(_loc4_ != null && Boolean(_loc4_.isGameRunning))
+            if(_loc5_ != null && Boolean(_loc5_.isGameRunning))
             {
-               if(_loc4_.latency < Connection.LATENCY_LOW)
+               if(_loc5_.latency < Connection.LATENCY_LOW)
                {
                   this.m_UIInfoLatency.toolTip = resourceManager.getString(BUNDLE,"LATENCY_TOOTLIP_LOW");
                   this.m_UIInfoLatency.addChild(LATENCY_ICON_LOW);
                }
-               else if(_loc4_.latency < Connection.LATENCY_MEDIUM)
+               else if(_loc5_.latency < Connection.LATENCY_MEDIUM)
                {
                   this.m_UIInfoLatency.toolTip = resourceManager.getString(BUNDLE,"LATENCY_TOOTLIP_MEDIUM");
                   this.m_UIInfoLatency.addChild(LATENCY_ICON_MEDIUM);
