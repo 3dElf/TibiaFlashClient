@@ -20,6 +20,7 @@ package
             "CTX_OBJECT_TRADE":"Trade with ...",
             "CTX_PARTY_ENABLE_SHARED_EXPERIENCE":"Enable Shared Experience",
             "CTX_OBJECT_LOOK":"Look",
+            "CTX_CREATURE_TALK":"Talk",
             "CTX_PLAYER_IGNORE":"Ignore {0}",
             "CTX_PARTY_JOIN_AGGRESSION":"Join Aggression of {0}",
             "CTX_PARTY_DISABLE_SHARED_EXPERIENCE":"Disable Shared Experience",

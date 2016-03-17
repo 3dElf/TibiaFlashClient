@@ -38,7 +38,7 @@ package tibia.worldmap
       
       protected static const FIELD_ENTER_POSSIBLE:uint = 0;
       
-      public static const ONSCREEN_TARGET_NONE:int = -1;
+      public static const MSG_NPC_TOO_FAR:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_NPC_TOO_FAR");
       
       public static const ONSCREEN_TARGET_BOX_LOW:int = 1;
       
@@ -47,6 +47,8 @@ package tibia.worldmap
       protected static const OBJECT_UPDATE_INTERVAL:int = 40;
       
       protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
+      
+      public static const ONSCREEN_TARGET_NONE:int = -1;
       
       public static const MSG_PATH_GO_UPSTAIRS:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_PATH_GO_UPSTAIRS");
       
@@ -550,6 +552,17 @@ package tibia.worldmap
          this.m_PlayerZPlane = param3 <= GROUND_LAYER?int(MAPSIZE_Z - 1 - param3):int(UNDERGROUND_LAYER);
       }
       
+      public function getCreatureObjectForCreature(param1:Creature, param2:Object = null) : int
+      {
+         var _loc3_:Vector3D = null;
+         if(param1 != null)
+         {
+            _loc3_ = this.toMap(param1.position);
+            return this.m_Field[this.toIndexInternal(_loc3_.x,_loc3_.y,_loc3_.z)].getCreatureObjectForCreatureID(param1.ID,param2);
+         }
+         return -1;
+      }
+      
       public function getObject(param1:int, param2:int, param3:int, param4:int) : ObjectInstance
       {
          return this.m_Field[this.toIndexInternal(param1,param2,param3)].getObject(param4);
@@ -921,6 +934,11 @@ package tibia.worldmap
                }
             }
          }
+      }
+      
+      public function getTopCreatureObject(param1:int, param2:int, param3:int, param4:Object = null) : int
+      {
+         return this.m_Field[this.toIndexInternal(param1,param2,param3)].getTopCreatureObject(param4);
       }
       
       public function isTranslucent(param1:int, param2:int, param3:int) : Boolean

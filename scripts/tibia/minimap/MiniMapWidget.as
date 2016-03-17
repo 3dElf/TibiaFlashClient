@@ -288,10 +288,12 @@ package tibia.minimap
       
       override public function acquireViewInstance(param1:Boolean = true) : WidgetView
       {
+         options = Tibia.s_GetOptions();
          this.miniMapStorage = Tibia.s_GetMiniMapStorage();
          var _loc2_:MiniMapWidgetView = super.acquireViewInstance(param1) as MiniMapWidgetView;
          if(_loc2_ != null)
          {
+            _loc2_.options = options;
             _loc2_.highlightEnd = this.m_HighlightEnd;
             _loc2_.miniMapStorage = this.m_MiniMapStorage;
             _loc2_.zoom = this.m_Zoom;

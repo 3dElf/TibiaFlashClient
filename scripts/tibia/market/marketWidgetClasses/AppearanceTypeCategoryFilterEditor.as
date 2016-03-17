@@ -46,7 +46,7 @@ package tibia.market.marketWidgetClasses
       
       private var m_UncommittedCategory:Boolean = true;
       
-      private var m_Category:int = 2;
+      private var m_Category:int;
       
       private var m_UIBodyPosition:ComboBox = null;
       
@@ -58,6 +58,7 @@ package tibia.market.marketWidgetClasses
       
       function AppearanceTypeCategoryFilterEditor()
       {
+         this.m_Category = MarketWidget.CATEGORY_AMULETS;
          super();
          label = resourceManager.getString(BUNDLE,"CATEGORY_FILTER_EDITOR_LABEL");
          var _loc1_:OptionsStorage = Tibia.s_GetOptions();

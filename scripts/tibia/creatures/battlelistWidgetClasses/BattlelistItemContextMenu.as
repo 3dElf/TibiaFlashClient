@@ -2,8 +2,10 @@ package tibia.creatures.battlelistWidgetClasses
 {
    import tibia.game.ContextMenuBase;
    import tibia.creatures.CreatureStorage;
+   import flash.events.MouseEvent;
    import tibia.creatures.Creature;
    import mx.core.IUIComponent;
+   import tibia.input.gameaction.GreetAction;
    import tibia.input.gameaction.PartyActionImpl;
    import tibia.input.gameaction.PrivateChatActionImpl;
    import tibia.input.gameaction.BuddylistActionImpl;
@@ -247,17 +249,35 @@ package tibia.creatures.battlelistWidgetClasses
          this.m_Creature = param3;
       }
       
+      private function onRollOver(param1:MouseEvent) : void
+      {
+         this.m_CreatureStorage.setAim(this.m_Creature);
+      }
+      
       override public function display(param1:IUIComponent, param2:Number, param3:Number) : void
       {
          var a_Owner:IUIComponent = param1;
          var a_StageX:Number = param2;
          var a_StageY:Number = param3;
+         addEventListener(MouseEvent.ROLL_OVER,this.onRollOver);
+         addEventListener(MouseEvent.ROLL_OUT,this.onRollOut);
+         this.m_CreatureStorage.setAim(this.m_Creature);
          if(this.m_Creature != null)
          {
-            createTextItem(resourceManager.getString(BUNDLE,this.m_CreatureStorage.getAttackTarget() == this.m_Creature?"CTX_STOP_ATTACK":"CTX_START_ATTACK"),function(param1:*):void
+            if(this.m_Creature.isNPC)
             {
-               m_CreatureStorage.toggleAttackTarget(m_Creature,true);
-            });
+               createTextItem(resourceManager.getString(BUNDLE,"CTX_CREATURE_TALK"),function(param1:*):void
+               {
+                  new GreetAction(m_Creature).perform();
+               });
+            }
+            else
+            {
+               createTextItem(resourceManager.getString(BUNDLE,this.m_CreatureStorage.getAttackTarget() == this.m_Creature?"CTX_STOP_ATTACK":"CTX_START_ATTACK"),function(param1:*):void
+               {
+                  m_CreatureStorage.toggleAttackTarget(m_Creature,true);
+               });
+            }
             createTextItem(resourceManager.getString(BUNDLE,this.m_CreatureStorage.getFollowTarget() == this.m_Creature?"CTX_STOP_FOLLOW":"CTX_START_FOLLOW"),function(param1:*):void
             {
                m_CreatureStorage.toggleFollowTarget(m_Creature,true);
@@ -408,6 +428,19 @@ package tibia.creatures.battlelistWidgetClasses
             i++;
          }
          super.display(a_Owner,a_StageX,a_StageY);
+      }
+      
+      private function onRollOut(param1:MouseEvent) : void
+      {
+         this.m_CreatureStorage.setAim(null);
+      }
+      
+      override public function hide() : void
+      {
+         this.m_CreatureStorage.setAim(null);
+         removeEventListener(MouseEvent.ROLL_OVER,this.onRollOver);
+         removeEventListener(MouseEvent.ROLL_OUT,this.onRollOut);
+         super.hide();
       }
    }
 }

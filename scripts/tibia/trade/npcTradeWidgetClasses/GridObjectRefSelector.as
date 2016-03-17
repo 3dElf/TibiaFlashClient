@@ -234,7 +234,6 @@ package tibia.trade.npcTradeWidgetClasses
       {
          var _loc3_:Number = NaN;
          var _loc4_:Number = NaN;
-         var _loc6_:Number = NaN;
          var _loc8_:IUIComponent = null;
          var _loc9_:Number = NaN;
          var _loc10_:Number = NaN;
@@ -255,7 +254,7 @@ package tibia.trade.npcTradeWidgetClasses
             _loc3_ = _loc3_ + (!isNaN(_loc8_.minHeight)?_loc8_.minHeight:_loc10_);
             _loc5_--;
          }
-         _loc6_ = getStyle("paddingTop") + Math.max(numChildren - 1,0) * getStyle("verticalGap") + getStyle("paddingBottom");
+         var _loc6_:Number = getStyle("paddingTop") + Math.max(numChildren - 1,0) * getStyle("verticalGap") + getStyle("paddingBottom");
          var _loc7_:Number = getStyle("paddingLeft") + getStyle("paddingRight");
          measuredWidth = _loc2_ + _loc7_;
          measuredMinWidth = _loc1_ + _loc7_;

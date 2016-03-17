@@ -17,25 +17,49 @@ package tibia.trade.npcTradeWidgetClasses
    public class ObjectRefSelectorBase extends UIComponent
    {
       
-      protected static const ACTION_UNSET:int = -1;
+      private static const ACTION_UNSET:int = -1;
       
-      protected static const ACTION_NONE:int = 0;
+      private static const MOUSE_BUTTON_LEFT:int = 1;
       
-      protected static const ACTION_SELECT:int = 1;
+      private static const MOUSE_BUTTON_BOTH:int = 4;
       
-      public static const SORT_PRICE:int = 2;
+      private static const ACTION_USE_OR_OPEN:int = 101;
+      
+      private static const ACTION_SMARTCLICK:int = 100;
+      
+      private static const MOUSE_BUTTON_RIGHT:int = 2;
       
       public static const SORT_NAME:int = 0;
       
-      protected static const ACTION_INSPECT_NPC:int = 2;
+      private static const ACTION_LOOK:int = 6;
       
       public static const LAYOUT_LIST:int = 0;
       
-      public static const SORT_WEIGHT:int = 1;
+      private static const ACTION_TALK:int = 9;
       
       public static const LAYOUT_GRID:int = 1;
       
-      protected static const ACTION_CONTEXT_MENU:int = 3;
+      private static const ACTION_USE:int = 7;
+      
+      private static const MOUSE_BUTTON_MIDDLE:int = 3;
+      
+      private static const ACTION_NONE:int = 0;
+      
+      private static const ACTION_AUTOWALK:int = 3;
+      
+      private static const ACTION_ATTACK:int = 1;
+      
+      private static const ACTION_OPEN:int = 8;
+      
+      public static const SORT_PRICE:int = 2;
+      
+      private static const ACTION_AUTOWALK_HIGHLIGHT:int = 4;
+      
+      private static const ACTION_CONTEXT_MENU:int = 5;
+      
+      public static const SORT_WEIGHT:int = 1;
+      
+      private static const ACTION_ATTACK_OR_TALK:int = 102;
        
       protected var m_SelectedIndex:int = -1;
       
@@ -49,14 +73,16 @@ package tibia.trade.npcTradeWidgetClasses
       
       protected var m_DataProvider:IList = null;
       
-      protected var m_TradeMode:int = 0;
+      protected var m_TradeMode:int;
       
       private var m_UncommittedSortOrder:Boolean = true;
       
       public function ObjectRefSelectorBase()
       {
+         this.m_TradeMode = NPCTradeWidgetView.MODE_BUY;
          super();
          addEventListener(MouseEvent.CLICK,this.onMouseClick);
+         addEventListener(MouseEvent.MIDDLE_CLICK,this.onMouseClick);
          addEventListener(MouseEvent.RIGHT_CLICK,this.onMouseClick);
       }
       
@@ -171,7 +197,11 @@ package tibia.trade.npcTradeWidgetClasses
             _loc3_ = ACTION_UNSET;
             if(param1.type == MouseEvent.CLICK && !param1.altKey && !param1.ctrlKey && !param1.shiftKey)
             {
-               _loc3_ = ACTION_SELECT;
+               if(_loc2_ != null)
+               {
+                  this.selectedObject = _loc2_;
+               }
+               _loc3_ = ACTION_NONE;
             }
             else if(param1.altKey)
             {
@@ -183,7 +213,7 @@ package tibia.trade.npcTradeWidgetClasses
             }
             else if(param1.shiftKey)
             {
-               _loc3_ = ACTION_INSPECT_NPC;
+               _loc3_ = ACTION_LOOK;
             }
             else
             {
@@ -193,13 +223,7 @@ package tibia.trade.npcTradeWidgetClasses
             {
                case ACTION_NONE:
                   break;
-               case ACTION_SELECT:
-                  if(_loc2_ != null)
-                  {
-                     this.selectedObject = _loc2_;
-                  }
-                  break;
-               case ACTION_INSPECT_NPC:
+               case ACTION_LOOK:
                   if(_loc2_ != null)
                   {
                      new InspectNPCTradeActionImpl(_loc2_).perform();

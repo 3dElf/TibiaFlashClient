@@ -4,7 +4,6 @@ package tibia.input.gameaction
    import flash.events.Event;
    import shared.utility.Vector3D;
    import tibia.appearances.ObjectInstance;
-   import mx.managers.CursorManager;
    import tibia.cursors.CrosshairCursor;
    import flash.events.MouseEvent;
    import tibia.game.IUseWidget;
@@ -21,6 +20,8 @@ package tibia.input.gameaction
    import flash.events.EventDispatcher;
    import mx.core.EventPriority;
    import mx.events.SandboxMouseEvent;
+   import tibia.cursors.CursorHelper;
+   import mx.managers.CursorManagerPriority;
    
    public class SafeTradeActionImpl implements IActionImpl
    {
@@ -207,8 +208,6 @@ package tibia.input.gameaction
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
        
-      private var m_CursorID:int = 0;
-      
       protected var m_Absolute:Vector3D = null;
       
       private var m_ListenersRegistered:Boolean = false;
@@ -217,8 +216,11 @@ package tibia.input.gameaction
       
       protected var m_Position:int = -1;
       
+      private var m_CursorHelper:CursorHelper;
+      
       public function SafeTradeActionImpl(param1:Vector3D, param2:ObjectInstance, param3:int)
       {
+         this.m_CursorHelper = new CursorHelper(CursorManagerPriority.HIGH);
          super();
          if(param1 == null || param1.x == 65535 && param1.y == 0)
          {
@@ -264,14 +266,13 @@ package tibia.input.gameaction
       
       private function registerCursor(param1:Boolean) : void
       {
-         if(Boolean(param1) && this.m_CursorID == 0)
+         if(param1)
          {
-            this.m_CursorID = CursorManager.getInstance().setCursor(CrosshairCursor);
+            this.m_CursorHelper.setCursor(CrosshairCursor);
          }
-         else if(!param1 && this.m_CursorID != 0)
+         else
          {
-            CursorManager.getInstance().removeCursor(this.m_CursorID);
-            this.m_CursorID = 0;
+            this.m_CursorHelper.setCursor(null);
          }
       }
       

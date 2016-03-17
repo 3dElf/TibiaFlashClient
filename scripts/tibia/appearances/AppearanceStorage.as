@@ -26,11 +26,19 @@ package tibia.appearances
       
       public static const FLAG_LIQUIDPOOL:int = 11;
       
+      private static const ACTION_LOOK:int = 6;
+      
       public static const FLAG_HOOKEAST:int = 20;
+      
+      private static const ACTION_TALK:int = 9;
+      
+      private static const ACTION_SMARTCLICK:int = 100;
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
       public static const FLAG_UNMOVE:int = 13;
+      
+      private static const MOUSE_BUTTON_MIDDLE:int = 3;
       
       public static const FLAG_MULTIUSE:int = 7;
       
@@ -45,6 +53,8 @@ package tibia.appearances
       public static const FLAG_WRITE:int = 8;
       
       public static const FLAG_BANK:int = 0;
+      
+      private static const MOUSE_BUTTON_RIGHT:int = 2;
       
       protected static const UNDERGROUND_LAYER:int = 2;
       
@@ -104,11 +114,15 @@ package tibia.appearances
       
       public static const FLAG_AUTOMAP:int = 29;
       
+      private static const ACTION_ATTACK:int = 1;
+      
       protected static const GROUND_LAYER:int = 7;
       
       public static const FLAG_TAKE:int = 17;
       
       public static const FLAG_ANIMATEALWAYS:int = 28;
+      
+      private static const ACTION_CONTEXT_MENU:int = 5;
       
       public static const SPRITE_CACHE_PAGE_COUNT:uint = 5 * 5;
       
@@ -116,9 +130,13 @@ package tibia.appearances
       
       public static const FLAG_ROTATE:int = 21;
       
+      private static const MOUSE_BUTTON_LEFT:int = 1;
+      
       public static const FLAG_NOMOVEMENTANIMATION:int = 16;
       
       public static const FLAG_CUMULATIVE:int = 5;
+      
+      private static const ACTION_NONE:int = 0;
       
       public static const FLAG_WRITEONCE:int = 9;
       
@@ -126,7 +144,13 @@ package tibia.appearances
       
       public static const FLAG_LENSHELP:int = 30;
       
+      private static const ACTION_OPEN:int = 8;
+      
+      private static const ACTION_AUTOWALK_HIGHLIGHT:int = 4;
+      
       public static const FLAG_FULLBANK:int = 31;
+      
+      private static const ACTION_UNSET:int = -1;
       
       protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
       
@@ -148,6 +172,8 @@ package tibia.appearances
       
       public static const FLAG_LIQUIDCONTAINER:int = 10;
       
+      private static const ACTION_USE_OR_OPEN:int = 101;
+      
       protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
       
       protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
@@ -158,11 +184,19 @@ package tibia.appearances
       
       protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
+      private static const ACTION_AUTOWALK:int = 3;
+      
       public static const FLAG_TOP:int = 3;
       
       protected static const MAP_WIDTH:int = 15;
       
+      private static const ACTION_USE:int = 7;
+      
       public static const FLAG_TRANSLUCENT:int = 24;
+      
+      private static const MOUSE_BUTTON_BOTH:int = 4;
+      
+      private static const ACTION_ATTACK_OR_TALK:int = 102;
        
       private var m_OutfitTypes:Vector.<tibia.appearances.AppearanceType>;
       
@@ -548,6 +582,7 @@ package tibia.appearances
       private function readAppearanceType(param1:ByteArray, param2:Vector.<tibia.appearances.AppearanceType>, param3:int, param4:int = 0) : Boolean
       {
          var _loc8_:int = 0;
+         var _loc9_:int = 0;
          if(param1 == null || param1.bytesAvailable < 11)
          {
             return false;
@@ -598,17 +633,17 @@ package tibia.appearances
                param2[param3] = _loc5_;
                if(_loc5_.isMarket)
                {
-                  _loc8_ = -1;
-                  _loc8_ = this.m_MarketObjectTypes.length - 1;
-                  while(_loc8_ >= 0)
+                  _loc9_ = -1;
+                  _loc9_ = this.m_MarketObjectTypes.length - 1;
+                  while(_loc9_ >= 0)
                   {
-                     if(_loc5_.marketTradeAs == AppearanceType(this.m_MarketObjectTypes[_loc8_]).marketTradeAs)
+                     if(_loc5_.marketTradeAs == AppearanceType(this.m_MarketObjectTypes[_loc9_]).marketTradeAs)
                      {
                         break;
                      }
-                     _loc8_--;
+                     _loc9_--;
                   }
-                  if(_loc8_ < 0)
+                  if(_loc9_ < 0)
                   {
                      this.m_MarketObjectTypes.push(_loc5_);
                   }
@@ -638,6 +673,7 @@ package tibia.appearances
                   _loc5_.isCumulative = true;
                   continue;
                case FLAG_USABLE:
+                  _loc5_.isUsable = true;
                   continue;
                case FLAG_FORCEUSE:
                   _loc5_.isForceUse = true;
@@ -734,7 +770,25 @@ package tibia.appearances
                   _loc5_.clothSlot = param1.readUnsignedShort();
                   continue;
                case FLAG_DEFAULT_ACTION:
-                  param1.readUnsignedShort();
+                  _loc5_.isDefaultAction = true;
+                  _loc8_ = param1.readUnsignedShort();
+                  switch(_loc8_)
+                  {
+                     case 0:
+                        _loc5_.defaultAction = ACTION_NONE;
+                        break;
+                     case 1:
+                        _loc5_.defaultAction = ACTION_LOOK;
+                        break;
+                     case 2:
+                        _loc5_.defaultAction = ACTION_USE;
+                        break;
+                     case 3:
+                        _loc5_.defaultAction = ACTION_OPEN;
+                        break;
+                     case 4:
+                        _loc5_.defaultAction = ACTION_AUTOWALK_HIGHLIGHT;
+                  }
                   continue;
                case FLAG_MARKET:
                   _loc5_.isMarket = true;

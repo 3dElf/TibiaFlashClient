@@ -1,23 +1,23 @@
 package tibia.network
 {
    import flash.events.EventDispatcher;
-   import flash.utils.Timer;
    import flash.utils.ByteArray;
-   import shared.utility.StringHelper;
    import flash.utils.Endian;
-   import shared.cryptography.RSAPublicKey;
-   import flash.utils.getTimer;
-   import mx.resources.ResourceManager;
-   import flash.events.TimerEvent;
    import flash.net.Socket;
    import flash.events.ProgressEvent;
    import flash.events.Event;
    import flash.events.IOErrorEvent;
    import flash.events.SecurityErrorEvent;
    import shared.cryptography.XTEA;
+   import flash.events.TimerEvent;
+   import flash.utils.getTimer;
+   import flash.utils.Timer;
+   import shared.utility.StringHelper;
+   import tibia.creatures.Creature;
+   import shared.cryptography.RSAPublicKey;
+   import mx.resources.ResourceManager;
    import tibia.game.AccountCharacter;
    import flash.system.Security;
-   import tibia.creatures.Creature;
    import flash.events.ErrorEvent;
    
    public class Connection extends EventDispatcher implements IServerConnection
@@ -31,7 +31,7 @@ package tibia.network
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 1021;
+      public static const PROTOCOL_VERSION:int = 1022;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -83,7 +83,7 @@ package tibia.network
       
       protected static const CBUYOBJECT:int = 122;
       
-      public static const CLIENT_VERSION:uint = 1404;
+      public static const CLIENT_VERSION:uint = 1429;
       
       protected static const SPING:int = 29;
       
@@ -425,21 +425,15 @@ package tibia.network
       
       protected static const SDELETEONMAP:int = 108;
        
-      private var m_PingTimer:Timer = null;
-      
       private var m_Address:String = null;
       
-      private var m_RSAPublicKey:RSAPublicKey = null;
-      
       private var m_PingEarliestTime:uint = 0;
+      
+      private var m_CurrentConnectionData:tibia.network.IConnectionData = null;
       
       private var m_SessionKey:String = null;
       
       private var m_PacketReader:tibia.network.NetworkPacketReader = null;
-      
-      private var m_PingTimeout:uint = 0;
-      
-      private var m_Socket:Socket = null;
       
       private var m_XTEA:XTEA = null;
       
@@ -449,29 +443,37 @@ package tibia.network
       
       private var m_PingLatency:uint = 0;
       
-      private var m_InputBuffer:ByteArray = null;
+      private var m_MessageReader:tibia.network.NetworkMessageReader = null;
+      
+      private var m_Port:int = 2.147483647E9;
       
       private var m_PingCount:int = 0;
       
       private var m_ConnectionDelay:Timer = null;
       
-      private var m_Port:int = 2.147483647E9;
+      private var m_ConnectionState:int = 0;
       
-      private var m_MessageReader:tibia.network.NetworkMessageReader = null;
+      private var m_Communication:tibia.network.IServerCommunication = null;
+      
+      private var m_ConnectionWasLost:Boolean = false;
+      
+      private var m_PingTimer:Timer = null;
+      
+      private var m_RSAPublicKey:RSAPublicKey = null;
+      
+      private var m_PingTimeout:uint = 0;
+      
+      private var m_Socket:Socket = null;
+      
+      private var m_InputBuffer:ByteArray = null;
       
       private var m_PingSent:uint = 0;
       
-      private var m_ConnectionState:int = 0;
-      
       private var m_CharacterName:String = null;
-      
-      private var m_ConnectedSince:int = 0;
       
       private var m_MessageWriter:tibia.network.NetworkMessageWriter = null;
       
-      private var m_Communication:tibia.network.Communication = null;
-      
-      private var m_ConnectionWasLost:Boolean = false;
+      private var m_ConnectedSince:int = 0;
       
       public function Connection()
       {
@@ -484,13 +486,9 @@ package tibia.network
          this.m_XTEA = new XTEA();
       }
       
-      protected function readSLOGINERROR(param1:ByteArray) : void
+      public function get latency() : uint
       {
-         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
-         this.disconnect();
-         var _loc3_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.LOGINERROR);
-         _loc3_.message = _loc2_;
-         dispatchEvent(_loc3_);
+         return this.m_PingLatency;
       }
       
       private function createNewInputBuffer() : void
@@ -499,6 +497,11 @@ package tibia.network
          this.m_InputBuffer.endian = Endian.LITTLE_ENDIAN;
          this.m_PacketReader = new tibia.network.NetworkPacketReader(this.m_InputBuffer);
          this.m_MessageReader = new tibia.network.NetworkMessageReader(this.m_InputBuffer);
+      }
+      
+      public function get isPending() : Boolean
+      {
+         return this.m_ConnectionState == CONNECTION_STATE_PENDING;
       }
       
       protected function sendCPINGBACK() : void
@@ -518,14 +521,155 @@ package tibia.network
          }
       }
       
-      public function get isPending() : Boolean
+      private function handleSendError(param1:int, param2:Error) : void
       {
-         return this.m_ConnectionState == CONNECTION_STATE_PENDING;
+         var _loc3_:int = param2 != null?int(param2.errorID):-1;
+         this.handleConnectionError(512 + param1,_loc3_,param2);
       }
       
-      public function get isConnected() : Boolean
+      public function dispose() : void
       {
-         return this.m_ConnectionState == CONNECTION_STATE_CONNECTING_STAGE1 || this.m_ConnectionState == CONNECTION_STATE_CONNECTING_STAGE2 || this.m_ConnectionState == CONNECTION_STATE_PENDING || this.m_ConnectionState == CONNECTION_STATE_GAME;
+         this.m_Communication = null;
+      }
+      
+      protected function removeListeners(param1:Socket) : void
+      {
+         if(param1 != null)
+         {
+            param1.removeEventListener(ProgressEvent.SOCKET_DATA,this.onSocketData);
+            param1.removeEventListener(Event.CLOSE,this.onSocketClose);
+            param1.removeEventListener(Event.CONNECT,this.onSocketConnect);
+            param1.removeEventListener(IOErrorEvent.IO_ERROR,this.onSocketError);
+            param1.removeEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onSocketError);
+         }
+      }
+      
+      protected function onDelayComplete(param1:TimerEvent) : void
+      {
+         var a_Event:TimerEvent = param1;
+         if(a_Event != null)
+         {
+            try
+            {
+               this.m_ConnectionDelay.removeEventListener(TimerEvent.TIMER_COMPLETE,this.onDelayComplete);
+               this.m_ConnectionDelay.stop();
+               this.m_ConnectionDelay = null;
+               this.m_LastEvent = getTimer();
+               this.m_Socket.connect(this.m_Address,this.m_Port);
+               return;
+            }
+            catch(e:Error)
+            {
+               handleConnectionError(ERR_COULD_NOT_CONNECT,0,e);
+               return;
+            }
+         }
+      }
+      
+      private function onMessageWriterFinished() : void
+      {
+         var _loc1_:ByteArray = this.m_MessageWriter.outputPacketBuffer;
+         this.m_Socket.writeBytes(_loc1_,0,_loc1_.length);
+         this.m_Socket.flush();
+      }
+      
+      protected function onSocketConnect(param1:Event) : void
+      {
+         this.m_LastEvent = this.m_ConnectedSince = getTimer();
+         if(this.m_ConnectionState != CONNECTION_STATE_CONNECTING_STAGE1)
+         {
+            this.handleConnectionError(ERR_INVALID_STATE,1,param1);
+         }
+      }
+      
+      public function get connectionState() : uint
+      {
+         return this.m_ConnectionState;
+      }
+      
+      protected function readSLOGINWAIT(param1:ByteArray) : void
+      {
+         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
+         var _loc3_:int = param1.readUnsignedByte() * 1000;
+         this.disconnect();
+         var _loc4_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.LOGINWAIT);
+         _loc4_.message = _loc2_;
+         _loc4_.data = _loc3_;
+         dispatchEvent(_loc4_);
+      }
+      
+      public function get messageWriter() : IMessageWriter
+      {
+         return this.m_MessageWriter;
+      }
+      
+      protected function sendCLOGIN(param1:int, param2:int) : void
+      {
+         var b:ByteArray = null;
+         var PayloadStart:int = 0;
+         var a_ChallengeTimeStamp:int = param1;
+         var a_ChallengeRandom:int = param2;
+         try
+         {
+            b = this.m_MessageWriter.createMessage();
+            b.writeByte(CLOGIN);
+            b.writeShort(CLIENT_TYPE);
+            b.writeShort(Communication.PROTOCOL_VERSION);
+            b.writeUnsignedInt(CLIENT_VERSION);
+            b.writeByte(CLIENT_PREVIEW_STATE);
+            PayloadStart = b.position;
+            b.writeByte(0);
+            this.m_XTEA.writeKey(b);
+            b.writeByte(0);
+            StringHelper.s_WriteToByteArray(b,this.m_SessionKey,Tibia.MAX_SESSION_KEY_LENGTH);
+            StringHelper.s_WriteToByteArray(b,this.m_CharacterName,Creature.MAX_NAME_LENGHT);
+            b.writeUnsignedInt(a_ChallengeTimeStamp);
+            b.writeByte(a_ChallengeRandom);
+            this.m_RSAPublicKey.encrypt(b,PayloadStart,RSAPublicKey.BLOCKSIZE);
+            this.m_MessageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CLOGIN,e);
+            return;
+         }
+      }
+      
+      protected function readSPING(param1:ByteArray) : void
+      {
+         this.sendCPINGBACK();
+      }
+      
+      protected function readSLOGINERROR(param1:ByteArray) : void
+      {
+         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
+         this.disconnect();
+         var _loc3_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.LOGINERROR);
+         _loc3_.message = _loc2_;
+         dispatchEvent(_loc3_);
+      }
+      
+      private function handleConnectionError(param1:int, param2:int = 0, param3:Object = null) : void
+      {
+         this.disconnect();
+         var _loc4_:String = null;
+         switch(param1)
+         {
+            case ERR_COULD_NOT_CONNECT:
+               _loc4_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_COULD_NOT_CONNECT");
+               break;
+            case ERR_CONNECTION_LOST:
+               _loc4_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_LOST_CONNECTION");
+               break;
+            case ERR_INTERNAL:
+            default:
+               _loc4_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_INTERNAL_ERROR",[param1,param2]);
+         }
+         var _loc5_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.ERROR);
+         _loc5_.message = _loc4_;
+         _loc5_.data = null;
+         dispatchEvent(_loc5_);
       }
       
       public function setConnectionState(param1:uint, param2:Boolean = true) : void
@@ -582,28 +726,6 @@ package tibia.network
          return 0;
       }
       
-      private function handleConnectionError(param1:int, param2:int = 0, param3:Object = null) : void
-      {
-         this.disconnect();
-         var _loc4_:String = null;
-         switch(param1)
-         {
-            case ERR_COULD_NOT_CONNECT:
-               _loc4_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_COULD_NOT_CONNECT");
-               break;
-            case ERR_CONNECTION_LOST:
-               _loc4_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_LOST_CONNECTION");
-               break;
-            case ERR_INTERNAL:
-            default:
-               _loc4_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_INTERNAL_ERROR",[param1,param2]);
-         }
-         var _loc5_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.ERROR);
-         _loc5_.message = _loc4_;
-         _loc5_.data = null;
-         dispatchEvent(_loc5_);
-      }
-      
       public function disconnect() : void
       {
          if(this.m_Socket != null)
@@ -648,6 +770,7 @@ package tibia.network
          }
          this.m_PingSent = 0;
          this.m_PingLatency = 0;
+         this.m_CurrentConnectionData = null;
          this.setConnectionState(CONNECTION_STATE_DISCONNECTED);
       }
       
@@ -663,38 +786,17 @@ package tibia.network
          }
       }
       
-      public function dispose() : void
+      public function get connectionData() : tibia.network.IConnectionData
       {
-         this.m_Communication = null;
+         return this.m_CurrentConnectionData;
       }
       
-      protected function readSLOGINADVICE(param1:ByteArray) : void
+      public function get messageReader() : IMessageReader
       {
-         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
-         var _loc3_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.LOGINADVICE);
-         _loc3_.message = _loc2_;
-         dispatchEvent(_loc3_);
+         return this.m_MessageReader;
       }
       
-      protected function removeListeners(param1:Socket) : void
-      {
-         if(param1 != null)
-         {
-            param1.removeEventListener(ProgressEvent.SOCKET_DATA,this.onSocketData);
-            param1.removeEventListener(Event.CLOSE,this.onSocketClose);
-            param1.removeEventListener(Event.CONNECT,this.onSocketConnect);
-            param1.removeEventListener(IOErrorEvent.IO_ERROR,this.onSocketError);
-            param1.removeEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onSocketError);
-         }
-      }
-      
-      private function handleSendError(param1:int, param2:Error) : void
-      {
-         var _loc3_:int = param2 != null?int(param2.errorID):-1;
-         this.handleConnectionError(512 + param1,_loc3_,param2);
-      }
-      
-      public function set communication(param1:tibia.network.Communication) : void
+      public function set communication(param1:tibia.network.IServerCommunication) : void
       {
          this.m_Communication = param1;
       }
@@ -713,33 +815,6 @@ package tibia.network
          {
             handleSendError(CPING,e);
             return;
-         }
-      }
-      
-      public function get messageReader() : IMessageReader
-      {
-         return this.m_MessageReader;
-      }
-      
-      protected function onDelayComplete(param1:TimerEvent) : void
-      {
-         var a_Event:TimerEvent = param1;
-         if(a_Event != null)
-         {
-            try
-            {
-               this.m_ConnectionDelay.removeEventListener(TimerEvent.TIMER_COMPLETE,this.onDelayComplete);
-               this.m_ConnectionDelay.stop();
-               this.m_ConnectionDelay = null;
-               this.m_LastEvent = getTimer();
-               this.m_Socket.connect(this.m_Address,this.m_Port);
-               return;
-            }
-            catch(e:Error)
-            {
-               handleConnectionError(ERR_COULD_NOT_CONNECT,0,e);
-               return;
-            }
          }
       }
       
@@ -858,31 +933,15 @@ package tibia.network
          }
       }
       
-      private function onMessageWriterFinished() : void
-      {
-         var _loc1_:ByteArray = this.m_MessageWriter.outputPacketBuffer;
-         this.m_Socket.writeBytes(_loc1_,0,_loc1_.length);
-         this.m_Socket.flush();
-      }
-      
       private function handleReadError(param1:int, param2:Error) : void
       {
          var _loc3_:int = param2 != null?int(param2.errorID):-1;
          this.handleConnectionError(256 + param1,_loc3_,param2);
       }
       
-      public function get communication() : tibia.network.Communication
+      public function get communication() : tibia.network.IServerCommunication
       {
          return this.m_Communication;
-      }
-      
-      protected function onSocketConnect(param1:Event) : void
-      {
-         this.m_LastEvent = this.m_ConnectedSince = getTimer();
-         if(this.m_ConnectionState != CONNECTION_STATE_CONNECTING_STAGE1)
-         {
-            this.handleConnectionError(ERR_INVALID_STATE,1,param1);
-         }
       }
       
       protected function readSLOGINCHALLENGE(param1:ByteArray) : void
@@ -894,16 +953,72 @@ package tibia.network
          this.setConnectionState(CONNECTION_STATE_CONNECTING_STAGE2,false);
       }
       
+      protected function readSLOGINADVICE(param1:ByteArray) : void
+      {
+         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
+         var _loc3_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.LOGINADVICE);
+         _loc3_.message = _loc2_;
+         dispatchEvent(_loc3_);
+      }
+      
       protected function readSPINGBACK(param1:ByteArray) : void
       {
       }
       
-      public function get messageWriter() : IMessageWriter
+      protected function onSocketClose(param1:Event) : void
       {
-         return this.m_MessageWriter;
+         this.m_LastEvent = getTimer();
+         if(this.m_ConnectionState != CONNECTION_STATE_GAME && this.m_ConnectionState != CONNECTION_STATE_PENDING)
+         {
+            switch(this.m_ConnectionState)
+            {
+               case CONNECTION_STATE_DISCONNECTED:
+                  this.handleConnectionError(ERR_INVALID_STATE,2,param1);
+                  break;
+               case CONNECTION_STATE_CONNECTING_STAGE1:
+                  this.handleConnectionError(ERR_COULD_NOT_CONNECT,0,param1);
+                  break;
+               case CONNECTION_STATE_CONNECTING_STAGE2:
+                  this.handleConnectionError(ERR_CONNECTION_LOST,0,param1);
+            }
+         }
+         else
+         {
+            this.disconnect();
+         }
       }
       
-      public function connect(param1:IConnectionData) : void
+      private function onCheckAlive(param1:TimerEvent) : void
+      {
+         var _loc2_:int = 0;
+         var _loc3_:ConnectionEvent = null;
+         if(Boolean(this.isGameRunning) || Boolean(this.isPending))
+         {
+            _loc2_ = this.m_PingTimer.currentCount;
+            if(this.m_PingEarliestTime == 0)
+            {
+               this.m_PingEarliestTime = _loc2_;
+            }
+            if(_loc2_ >= this.m_PingEarliestTime && (_loc2_ - this.m_PingEarliestTime) % PING_RETRY_INTERVAL == 0 && uint((_loc2_ - this.m_PingEarliestTime) / PING_RETRY_INTERVAL) < PING_RETRY_COUNT)
+            {
+               this.m_PingTimeout = this.m_PingEarliestTime + PING_RETRY_COUNT * PING_RETRY_INTERVAL;
+               this.m_PingCount++;
+               this.m_PingSent = getTimer();
+               this.sendCPING();
+            }
+            if(_loc2_ >= this.m_PingTimeout && !(false || false))
+            {
+               if(this.m_ConnectionWasLost == false)
+               {
+                  this.m_ConnectionWasLost = true;
+                  _loc3_ = new ConnectionEvent(ConnectionEvent.CONNECTION_LOST);
+                  dispatchEvent(_loc3_);
+               }
+            }
+         }
+      }
+      
+      public function connect(param1:tibia.network.IConnectionData) : void
       {
          var _loc4_:* = null;
          if(!(param1 is AccountCharacter))
@@ -911,6 +1026,7 @@ package tibia.network
             throw new Error("Connection.connect: Invalid connection data.",2147483639);
          }
          var _loc2_:AccountCharacter = param1 as AccountCharacter;
+         this.m_CurrentConnectionData = _loc2_;
          if(_loc2_.sessionKey == null || _loc2_.sessionKey.length < 1)
          {
             throw new Error("Connection.connect: Invalid session key.",2147483638);
@@ -978,100 +1094,9 @@ package tibia.network
          this.m_ConnectionDelay.start();
       }
       
-      protected function onSocketClose(param1:Event) : void
+      public function get isGameRunning() : Boolean
       {
-         this.m_LastEvent = getTimer();
-         if(this.m_ConnectionState != CONNECTION_STATE_GAME && this.m_ConnectionState != CONNECTION_STATE_PENDING)
-         {
-            switch(this.m_ConnectionState)
-            {
-               case CONNECTION_STATE_DISCONNECTED:
-                  this.handleConnectionError(ERR_INVALID_STATE,2,param1);
-                  break;
-               case CONNECTION_STATE_CONNECTING_STAGE1:
-                  this.handleConnectionError(ERR_COULD_NOT_CONNECT,0,param1);
-                  break;
-               case CONNECTION_STATE_CONNECTING_STAGE2:
-                  this.handleConnectionError(ERR_CONNECTION_LOST,0,param1);
-            }
-         }
-         else
-         {
-            this.disconnect();
-         }
-      }
-      
-      protected function sendCLOGIN(param1:int, param2:int) : void
-      {
-         var b:ByteArray = null;
-         var PayloadStart:int = 0;
-         var a_ChallengeTimeStamp:int = param1;
-         var a_ChallengeRandom:int = param2;
-         try
-         {
-            b = this.m_MessageWriter.createMessage();
-            b.writeByte(CLOGIN);
-            b.writeShort(CLIENT_TYPE);
-            b.writeShort(tibia.network.Communication.PROTOCOL_VERSION);
-            b.writeUnsignedInt(CLIENT_VERSION);
-            b.writeByte(CLIENT_PREVIEW_STATE);
-            PayloadStart = b.position;
-            b.writeByte(0);
-            this.m_XTEA.writeKey(b);
-            b.writeByte(0);
-            StringHelper.s_WriteToByteArray(b,this.m_SessionKey,Tibia.MAX_SESSION_KEY_LENGTH);
-            StringHelper.s_WriteToByteArray(b,this.m_CharacterName,Creature.MAX_NAME_LENGHT);
-            b.writeUnsignedInt(a_ChallengeTimeStamp);
-            b.writeByte(a_ChallengeRandom);
-            this.m_RSAPublicKey.encrypt(b,PayloadStart,RSAPublicKey.BLOCKSIZE);
-            this.m_MessageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CLOGIN,e);
-            return;
-         }
-      }
-      
-      protected function readSPING(param1:ByteArray) : void
-      {
-         this.sendCPINGBACK();
-      }
-      
-      private function onCheckAlive(param1:TimerEvent) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:ConnectionEvent = null;
-         if(Boolean(this.isGameRunning) || Boolean(this.isPending))
-         {
-            _loc2_ = this.m_PingTimer.currentCount;
-            if(this.m_PingEarliestTime == 0)
-            {
-               this.m_PingEarliestTime = _loc2_;
-            }
-            if(_loc2_ >= this.m_PingEarliestTime && (_loc2_ - this.m_PingEarliestTime) % PING_RETRY_INTERVAL == 0 && uint((_loc2_ - this.m_PingEarliestTime) / PING_RETRY_INTERVAL) < PING_RETRY_COUNT)
-            {
-               this.m_PingTimeout = this.m_PingEarliestTime + PING_RETRY_COUNT * PING_RETRY_INTERVAL;
-               this.m_PingCount++;
-               this.m_PingSent = getTimer();
-               this.sendCPING();
-            }
-            if(_loc2_ >= this.m_PingTimeout && !(false || false))
-            {
-               if(this.m_ConnectionWasLost == false)
-               {
-                  this.m_ConnectionWasLost = true;
-                  _loc3_ = new ConnectionEvent(ConnectionEvent.CONNECTION_LOST);
-                  dispatchEvent(_loc3_);
-               }
-            }
-         }
-      }
-      
-      public function get connectionState() : uint
-      {
-         return this.m_ConnectionState;
+         return this.m_ConnectionState == CONNECTION_STATE_GAME;
       }
       
       protected function onSocketError(param1:ErrorEvent) : void
@@ -1092,22 +1117,6 @@ package tibia.network
          }
       }
       
-      protected function readSLOGINWAIT(param1:ByteArray) : void
-      {
-         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
-         var _loc3_:int = param1.readUnsignedByte() * 1000;
-         this.disconnect();
-         var _loc4_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.LOGINWAIT);
-         _loc4_.message = _loc2_;
-         _loc4_.data = _loc3_;
-         dispatchEvent(_loc4_);
-      }
-      
-      public function get isGameRunning() : Boolean
-      {
-         return this.m_ConnectionState == CONNECTION_STATE_GAME;
-      }
-      
       protected function onSocketData(param1:ProgressEvent) : void
       {
          this.m_LastEvent = getTimer();
@@ -1121,9 +1130,9 @@ package tibia.network
          }
       }
       
-      public function get latency() : uint
+      public function get isConnected() : Boolean
       {
-         return this.m_PingLatency;
+         return this.m_ConnectionState == CONNECTION_STATE_CONNECTING_STAGE1 || this.m_ConnectionState == CONNECTION_STATE_CONNECTING_STAGE2 || this.m_ConnectionState == CONNECTION_STATE_PENDING || this.m_ConnectionState == CONNECTION_STATE_GAME;
       }
    }
 }

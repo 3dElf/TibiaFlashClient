@@ -5,20 +5,30 @@ package tibia.creatures.battlelistWidgetClasses
    import tibia.creatures.CreatureStorage;
    import mx.controls.Button;
    import flash.events.MouseEvent;
+   import tibia.input.ModifierKeyEvent;
    import mx.events.ListEvent;
    import mx.collections.IList;
-   import mx.events.PropertyChangeEvent;
-   import tibia.§sidebar:ns_sidebar_internal§.widgetCollapsed;
+   import tibia.cursors.CursorHelper;
    import flash.geom.Point;
-   import shared.controls.SmoothList;
-   import mx.containers.HBox;
-   import shared.controls.CustomButton;
-   import mx.controls.listClasses.IListItemRenderer;
+   import mx.events.PropertyChangeEvent;
    import tibia.creatures.Creature;
-   import tibia.network.Communication;
+   import shared.controls.SmoothList;
    import tibia.appearances.AppearanceStorage;
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.AppearanceInstance;
+   import mx.controls.listClasses.IListItemRenderer;
+   import tibia.input.mapping.MouseBinding;
+   import tibia.input.InputHandler;
+   import tibia.network.Communication;
+   import tibia.§sidebar:ns_sidebar_internal§.widgetCollapsed;
+   import tibia.container.containerViewWidgetClasses.ContainerSlot;
+   import shared.utility.Vector3D;
+   import tibia.options.OptionsStorage;
+   import tibia.input.MouseClickBothEvent;
+   import tibia.input.MouseActionHelper;
+   import tibia.input.gameaction.GreetAction;
+   import mx.containers.HBox;
+   import shared.controls.CustomButton;
    import mx.core.ScrollPolicy;
    
    public class BattlelistWidgetView extends WidgetView implements IUseWidget
@@ -26,11 +36,31 @@ package tibia.creatures.battlelistWidgetClasses
       
       private static const ACTION_UNSET:int = -1;
       
-      private static const ACTION_NONE:int = 0;
+      private static const MOUSE_BUTTON_LEFT:int = 1;
+      
+      private static const MOUSE_BUTTON_BOTH:int = 4;
+      
+      private static const ACTION_USE_OR_OPEN:int = 101;
+      
+      private static const ACTION_SMARTCLICK:int = 100;
+      
+      private static const MOUSE_BUTTON_RIGHT:int = 2;
+      
+      private static const ACTION_LOOK:int = 6;
       
       private static const BUNDLE:String = "BattlelistWidget";
       
-      private static const ACTION_LOOK:int = 2;
+      private static const ACTION_TALK:int = 9;
+      
+      private static const VALID_ACTIONS:Vector.<uint> = Vector.<uint>([ACTION_ATTACK,ACTION_TALK,ACTION_LOOK,ACTION_CONTEXT_MENU]);
+      
+      private static const ACTION_USE:int = 7;
+      
+      private static const MOUSE_BUTTON_MIDDLE:int = 3;
+      
+      private static const ACTION_NONE:int = 0;
+      
+      private static const ACTION_AUTOWALK:int = 3;
       
       private static const OPPONENT_FILTER_MODES:Array = [{
          "value":CreatureStorage.FILTER_PLAYER,
@@ -54,15 +84,25 @@ package tibia.creatures.battlelistWidgetClasses
          "tip":"TIP_HIDE_PARTY"
       }];
       
-      private static const ACTION_CONTEX_MENU:int = 3;
-      
       private static const ACTION_ATTACK:int = 1;
+      
+      private static const ACTION_OPEN:int = 8;
+      
+      private static const ACTION_AUTOWALK_HIGHLIGHT:int = 4;
+      
+      private static const ACTION_CONTEXT_MENU:int = 5;
+      
+      private static const ACTION_ATTACK_OR_TALK:int = 102;
        
+      private var m_MouseCursorOverWidget:Boolean = false;
+      
       protected var m_Opponents:IList = null;
       
       protected var m_CreatureStorage:CreatureStorage = null;
       
-      private var m_InvalidFilter:Boolean = false;
+      private var m_CursorHelper:CursorHelper;
+      
+      private var m_RolloverCreature:Creature = null;
       
       protected var m_UIFilterButtons:Vector.<Button>;
       
@@ -74,9 +114,12 @@ package tibia.creatures.battlelistWidgetClasses
       
       private var m_UIConstructed:Boolean = false;
       
+      private var m_InvalidFilter:Boolean = false;
+      
       public function BattlelistWidgetView()
       {
          this.m_UIFilterButtons = new Vector.<Button>();
+         this.m_CursorHelper = new CursorHelper();
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          verticalScrollPolicy = ScrollPolicy.OFF;
@@ -84,6 +127,8 @@ package tibia.creatures.battlelistWidgetClasses
          maxHeight = int.MAX_VALUE;
          addEventListener(MouseEvent.CLICK,this.onItemClick);
          addEventListener(MouseEvent.RIGHT_CLICK,this.onItemClick);
+         addEventListener(MouseEvent.MIDDLE_CLICK,this.onItemClick);
+         Tibia.s_GetInputHandler().addEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
       }
       
       public static function s_ClearCreatureCache(param1:String) : void
@@ -100,6 +145,8 @@ package tibia.creatures.battlelistWidgetClasses
          super.releaseInstance();
          removeEventListener(MouseEvent.CLICK,this.onItemClick);
          removeEventListener(MouseEvent.RIGHT_CLICK,this.onItemClick);
+         removeEventListener(MouseEvent.MIDDLE_CLICK,this.onItemClick);
+         Tibia.s_GetInputHandler().removeEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
          for each(_loc1_ in this.m_UIFilterButtons)
          {
             _loc1_.removeEventListener(MouseEvent.CLICK,this.onFilterModeChange);
@@ -135,6 +182,15 @@ package tibia.creatures.battlelistWidgetClasses
             }
             this.m_InvalidFilter = false;
          }
+         if(this.m_RolloverCreature != null)
+         {
+            this.determineAction(null,false,true);
+         }
+      }
+      
+      public function getMultiUseObjectUnderPoint(param1:Point) : Object
+      {
+         return this.getUseObjectUnderPoint(param1);
       }
       
       override protected function onOptionsChange(param1:PropertyChangeEvent) : void
@@ -153,21 +209,218 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected function onItemRollOut(param1:ListEvent) : void
       {
-         if(param1 != null && !widgetCollapsed && this.m_CreatureStorage != null)
-         {
-            this.m_CreatureStorage.setAim(null);
-         }
-      }
-      
-      public function getMultiUseObjectUnderPoint(param1:Point) : Object
-      {
-         return this.getUseObjectUnderPoint(param1);
+         this.m_MouseCursorOverWidget = false;
+         this.m_CursorHelper.resetCursor();
+         this.m_CreatureStorage.setAim(null);
+         this.m_RolloverCreature = null;
       }
       
       override protected function commitOptions() : void
       {
          super.commitOptions();
          this.invalidateFilter();
+      }
+      
+      public function getUseObjectUnderPoint(param1:Point) : Object
+      {
+         var _loc2_:IList = null;
+         var _loc3_:int = 0;
+         var _loc4_:AppearanceStorage = null;
+         var _loc5_:Creature = null;
+         var _loc6_:ObjectInstance = null;
+         if(this.m_CreatureStorage != null)
+         {
+            _loc2_ = this.m_CreatureStorage.opponents;
+            _loc3_ = this.m_UIList.pointToItemIndex(param1.x,param1.y);
+            _loc4_ = Tibia.s_GetAppearanceStorage();
+            if(_loc3_ > -1 && _loc3_ < _loc2_.length)
+            {
+               _loc5_ = Creature(_loc2_.getItemAt(_loc3_));
+               _loc6_ = _loc4_.createObjectInstance(AppearanceInstance.CREATURE,_loc5_.ID);
+               return {
+                  "object":_loc6_,
+                  "absolute":null,
+                  "position":-1
+               };
+            }
+         }
+         return null;
+      }
+      
+      protected function determineAction(param1:MouseEvent, param2:Boolean = false, param3:Boolean = false) : void
+      {
+         var _loc11_:IListItemRenderer = null;
+         var _loc12_:MouseBinding = null;
+         var _loc13_:InputHandler = null;
+         var _loc14_:Communication = null;
+         if(this.m_MouseCursorOverWidget == false)
+         {
+            return;
+         }
+         var _loc4_:Creature = null;
+         if(param1 == null)
+         {
+            _loc4_ = this.m_RolloverCreature;
+         }
+         else if(!widgetCollapsed && this.m_CreatureStorage != null)
+         {
+            _loc11_ = this.m_UIList.mouseEventToItemRenderer(param1);
+            _loc4_ = _loc11_ != null?Creature(_loc11_.data):null;
+         }
+         if(_loc4_ == null)
+         {
+            return;
+         }
+         var _loc5_:ContainerSlot = null;
+         var _loc6_:AppearanceInstance = null;
+         var _loc7_:Vector3D = new Vector3D(0,0,0);
+         var _loc8_:AppearanceInstance = null;
+         var _loc9_:OptionsStorage = Tibia.s_GetOptions();
+         var _loc10_:int = ACTION_NONE;
+         if(_loc4_ != null)
+         {
+            _loc12_ = null;
+            if(param1 != null)
+            {
+               if(param1 is MouseClickBothEvent)
+               {
+                  _loc12_ = _loc9_.mouseMapping.findBindingByMouseEvent(param1);
+               }
+               else if(param1.type == MouseEvent.CLICK && !param1.altKey && !param1.ctrlKey && !param1.shiftKey)
+               {
+                  _loc10_ = ACTION_ATTACK_OR_TALK;
+               }
+               else if(param1.type == MouseEvent.RIGHT_CLICK && !param1.altKey && !param1.ctrlKey && !param1.shiftKey)
+               {
+                  _loc10_ = ACTION_CONTEXT_MENU;
+               }
+               else
+               {
+                  _loc12_ = _loc9_.mouseMapping.findBindingByMouseEvent(param1);
+               }
+            }
+            else
+            {
+               _loc13_ = Tibia.s_GetInputHandler();
+               if(_loc13_.isModifierKeyPressed())
+               {
+                  _loc12_ = _loc9_.mouseMapping.findBindingForLeftMouseButtonAndPressedModifierKey();
+               }
+               else
+               {
+                  _loc10_ = ACTION_ATTACK_OR_TALK;
+               }
+            }
+            if(_loc12_ != null)
+            {
+               _loc10_ = _loc12_.action;
+            }
+            _loc10_ = MouseActionHelper.resolveActionForAppearanceOrCreature(_loc10_,_loc4_,VALID_ACTIONS);
+         }
+         if(Boolean(param3) && m_Options != null && m_Options.mouseMapping != null && Boolean(m_Options.mouseMapping.showMouseCursorForAction))
+         {
+            this.m_CursorHelper.setCursor(MouseActionHelper.actionToMouseCursor(_loc10_));
+         }
+         if(param2)
+         {
+            switch(_loc10_)
+            {
+               case ACTION_NONE:
+                  break;
+               case ACTION_ATTACK:
+                  if(_loc4_ != null)
+                  {
+                     this.m_CreatureStorage.toggleAttackTarget(_loc4_,true);
+                  }
+                  break;
+               case ACTION_TALK:
+                  if(_loc4_ != null)
+                  {
+                     new GreetAction(_loc4_).perform();
+                  }
+                  break;
+               case ACTION_LOOK:
+                  _loc14_ = null;
+                  if(_loc4_ != null && (_loc14_ = Tibia.s_GetCommunication()) != null && Boolean(_loc14_.isGameRunning))
+                  {
+                     _loc14_.sendCLOOKATCREATURE(_loc4_.ID);
+                  }
+                  break;
+               case ACTION_CONTEXT_MENU:
+                  if(param1 != null)
+                  {
+                     new BattlelistItemContextMenu(m_Options,this.m_CreatureStorage,_loc4_).display(this,param1.stageX,param1.stageY);
+                  }
+            }
+         }
+      }
+      
+      protected function onItemClick(param1:MouseEvent) : void
+      {
+         this.determineAction(param1,true,false);
+      }
+      
+      private function onModifierKeyEvent(param1:ModifierKeyEvent) : void
+      {
+         this.determineAction(null,false,true);
+      }
+      
+      protected function onItemRollOver(param1:ListEvent) : void
+      {
+         var _loc2_:BattlelistItemRenderer = null;
+         var _loc3_:Creature = null;
+         this.m_MouseCursorOverWidget = true;
+         if(param1 != null && !widgetCollapsed && this.m_CreatureStorage != null)
+         {
+            _loc2_ = BattlelistItemRenderer(param1.itemRenderer);
+            _loc3_ = _loc2_.data as Creature;
+            this.m_CreatureStorage.setAim(_loc3_);
+            this.m_RolloverCreature = _loc3_;
+            this.determineAction(null,false,true);
+         }
+      }
+      
+      protected function onFilterModeChange(param1:MouseEvent) : void
+      {
+         var _loc2_:Button = null;
+         var _loc3_:int = 0;
+         if(param1 != null && !widgetCollapsed && param1.currentTarget is Button && m_Options != null)
+         {
+            _loc2_ = Button(param1.currentTarget);
+            _loc3_ = int(_loc2_.data);
+            if(_loc2_.selected)
+            {
+               m_Options.opponentFilter = m_Options.opponentFilter | _loc3_;
+            }
+            else
+            {
+               m_Options.opponentFilter = m_Options.opponentFilter & ~_loc3_;
+            }
+         }
+      }
+      
+      function set creatureStorage(param1:CreatureStorage) : void
+      {
+         if(this.m_CreatureStorage != param1)
+         {
+            this.m_CreatureStorage = param1;
+            this.m_UncommittedCreatureStorage = true;
+            if(this.m_CreatureStorage != null)
+            {
+               this.m_Opponents = this.m_CreatureStorage.opponents;
+            }
+            else
+            {
+               this.m_Opponents = null;
+            }
+            this.m_UncommittedOpponents = true;
+            invalidateProperties();
+         }
+      }
+      
+      function get creatureStorage() : CreatureStorage
+      {
+         return this.m_CreatureStorage;
       }
       
       override protected function createChildren() : void
@@ -220,139 +473,6 @@ package tibia.creatures.battlelistWidgetClasses
             addChild(_loc1_);
             this.m_UIConstructed = true;
          }
-      }
-      
-      protected function onFilterModeChange(param1:MouseEvent) : void
-      {
-         var _loc2_:Button = null;
-         var _loc3_:int = 0;
-         if(param1 != null && !widgetCollapsed && param1.currentTarget is Button && m_Options != null)
-         {
-            _loc2_ = Button(param1.currentTarget);
-            _loc3_ = int(_loc2_.data);
-            if(_loc2_.selected)
-            {
-               m_Options.opponentFilter = m_Options.opponentFilter | _loc3_;
-            }
-            else
-            {
-               m_Options.opponentFilter = m_Options.opponentFilter & ~_loc3_;
-            }
-         }
-      }
-      
-      protected function onItemClick(param1:MouseEvent) : void
-      {
-         var _loc2_:IListItemRenderer = null;
-         var _loc3_:Creature = null;
-         var _loc4_:int = 0;
-         var _loc5_:Communication = null;
-         if(param1 != null && !widgetCollapsed && this.m_CreatureStorage != null)
-         {
-            _loc2_ = this.m_UIList.mouseEventToItemRenderer(param1);
-            _loc3_ = _loc2_ != null?Creature(_loc2_.data):null;
-            _loc4_ = ACTION_UNSET;
-            if(param1.type == MouseEvent.CLICK && !param1.altKey && !param1.ctrlKey && !param1.shiftKey)
-            {
-               _loc4_ = ACTION_ATTACK;
-            }
-            else if(param1.altKey)
-            {
-               _loc4_ = ACTION_ATTACK;
-            }
-            else if(param1.ctrlKey)
-            {
-               _loc4_ = ACTION_CONTEX_MENU;
-            }
-            else if(param1.shiftKey)
-            {
-               _loc4_ = ACTION_LOOK;
-            }
-            else
-            {
-               _loc4_ = ACTION_CONTEX_MENU;
-            }
-            switch(_loc4_)
-            {
-               case ACTION_NONE:
-                  break;
-               case ACTION_ATTACK:
-                  if(_loc3_ != null)
-                  {
-                     this.m_CreatureStorage.toggleAttackTarget(_loc3_,true);
-                  }
-                  break;
-               case ACTION_LOOK:
-                  _loc5_ = null;
-                  if(_loc3_ != null && (_loc5_ = Tibia.s_GetCommunication()) != null && Boolean(_loc5_.isGameRunning))
-                  {
-                     _loc5_.sendCLOOKATCREATURE(_loc3_.ID);
-                  }
-                  break;
-               case ACTION_CONTEX_MENU:
-                  new BattlelistItemContextMenu(m_Options,this.m_CreatureStorage,_loc3_).display(this,param1.stageX,param1.stageY);
-            }
-         }
-      }
-      
-      public function getUseObjectUnderPoint(param1:Point) : Object
-      {
-         var _loc2_:IList = null;
-         var _loc3_:int = 0;
-         var _loc4_:AppearanceStorage = null;
-         var _loc5_:Creature = null;
-         var _loc6_:ObjectInstance = null;
-         if(this.m_CreatureStorage != null)
-         {
-            _loc2_ = this.m_CreatureStorage.opponents;
-            _loc3_ = this.m_UIList.pointToItemIndex(param1.x,param1.y);
-            _loc4_ = Tibia.s_GetAppearanceStorage();
-            if(_loc3_ > -1 && _loc3_ < _loc2_.length)
-            {
-               _loc5_ = Creature(_loc2_.getItemAt(_loc3_));
-               _loc6_ = _loc4_.createObjectInstance(AppearanceInstance.CREATURE,_loc5_.ID);
-               return {
-                  "object":_loc6_,
-                  "absolute":null,
-                  "position":-1
-               };
-            }
-         }
-         return null;
-      }
-      
-      protected function onItemRollOver(param1:ListEvent) : void
-      {
-         var _loc2_:BattlelistItemRenderer = null;
-         if(param1 != null && !widgetCollapsed && this.m_CreatureStorage != null)
-         {
-            _loc2_ = BattlelistItemRenderer(param1.itemRenderer);
-            this.m_CreatureStorage.setAim(Creature(_loc2_.data));
-         }
-      }
-      
-      function set creatureStorage(param1:CreatureStorage) : void
-      {
-         if(this.m_CreatureStorage != param1)
-         {
-            this.m_CreatureStorage = param1;
-            this.m_UncommittedCreatureStorage = true;
-            if(this.m_CreatureStorage != null)
-            {
-               this.m_Opponents = this.m_CreatureStorage.opponents;
-            }
-            else
-            {
-               this.m_Opponents = null;
-            }
-            this.m_UncommittedOpponents = true;
-            invalidateProperties();
-         }
-      }
-      
-      function get creatureStorage() : CreatureStorage
-      {
-         return this.m_CreatureStorage;
       }
    }
 }

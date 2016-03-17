@@ -7,11 +7,11 @@ package
       
       private static var _embed_properties_______images_help_hint_37_spellactionbarhealing_png_1837077039:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_37_spellactionbarhealing_png_1837077039;
       
-      private static var _embed_properties_______images_help_hint_06_usetorch_png_460526675:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_06_usetorch_png_460526675;
+      private static var _embed_properties_______images_help_hint_36_dragspellhealing_png_34579771:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_36_dragspellhealing_png_34579771;
       
       private static var _embed_properties_______images_help_hint_39_lootcorpse_png_60494195:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_39_lootcorpse_png_60494195;
       
-      private static var _embed_properties_______images_help_hint_36_dragspellhealing_png_34579771:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_36_dragspellhealing_png_34579771;
+      private static var _embed_properties_______images_help_hint_06_usetorch_png_460526675:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_06_usetorch_png_460526675;
       
       private static var _embed_properties_______images_help_hint_05_dragcoat_png_1219482221:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_05_dragcoat_png_1219482221;
       
@@ -27,15 +27,15 @@ package
       
       private static var _embed_properties_______images_help_hint_32_userunebattlelist_png_1647774901:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_32_userunebattlelist_png_1647774901;
       
-      private static var _embed_properties_______images_help_hint_04_openchest_png_182332747:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_04_openchest_png_182332747;
-      
       private static var _embed_properties_______images_help_hint_23_ladder_png_1834556147:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_23_ladder_png_1834556147;
       
       private static var _embed_properties_______images_help_hint_10_useshovel_png_1882499503:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_10_useshovel_png_1882499503;
       
-      private static var _embed_properties_______images_help_hint_01_arrowkeys_png_595354315:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_01_arrowkeys_png_595354315;
+      private static var _embed_properties_______images_help_hint_04_openchest_png_182332747:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_04_openchest_png_182332747;
       
       private static var _embed_properties_______images_help_hint_02_automap_png_1321208085:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_02_automap_png_1321208085;
+      
+      private static var _embed_properties_______images_help_hint_01_arrowkeys_png_595354315:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_01_arrowkeys_png_595354315;
       
       private static var _embed_properties_______images_help_hint_16_redskull_png_1284502413:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_redskull_png_1284502413;
       
@@ -57,9 +57,9 @@ package
       
       private static var _embed_properties_______images_help_hint_22_hi_png_540258419:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_22_hi_png_540258419;
       
-      private static var _embed_properties_______images_help_hint_28_spelllist_png_870280359:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_28_spelllist_png_870280359;
-      
       private static var _embed_properties_______images_help_hint_08_openbody_png_425251899:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_08_openbody_png_425251899;
+      
+      private static var _embed_properties_______images_help_hint_28_spelllist_png_870280359:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_28_spelllist_png_870280359;
       
       private static var _embed_properties_______images_help_hint_13_npctradelower_png_1993401551:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_13_npctradelower_png_1993401551;
        

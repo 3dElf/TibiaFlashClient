@@ -1,11 +1,15 @@
 package tibia.trade.npcTradeWidgetClasses
 {
    import mx.controls.List;
-   import mx.events.ListEvent;
    import mx.collections.IList;
+   import mx.events.CollectionEvent;
+   import mx.events.ListEvent;
+   import flash.events.Event;
+   import mx.events.ScrollEvent;
    import shared.controls.CustomList;
    import mx.core.ClassFactory;
    import mx.core.ScrollPolicy;
+   import mx.events.FlexEvent;
    
    public class ListObjectRefSelector extends ObjectRefSelectorBase
    {
@@ -18,6 +22,8 @@ package tibia.trade.npcTradeWidgetClasses
       
       private var m_UncommittedDataProvider:Boolean = false;
       
+      private var m_LastVerticalScrollPosition:Number = -1;
+      
       public function ListObjectRefSelector()
       {
          super();
@@ -28,8 +34,14 @@ package tibia.trade.npcTradeWidgetClasses
          super.commitProperties();
          if(this.m_UncommittedDataProvider)
          {
+            if(this.m_UIList.dataProvider != null)
+            {
+               (this.m_UIList.dataProvider as IList).removeEventListener(CollectionEvent.COLLECTION_CHANGE,this.onCollectionChange);
+            }
             this.m_UIList.dataProvider = dataProvider;
+            (this.m_UIList.dataProvider as IList).addEventListener(CollectionEvent.COLLECTION_CHANGE,this.onCollectionChange);
             this.m_UIList.verticalScrollPosition = 0;
+            this.m_LastVerticalScrollPosition = this.m_UIList.verticalScrollPosition;
             this.m_UncommittedDataProvider = false;
          }
          if(this.m_UncommittedSelectedIndex)
@@ -46,6 +58,7 @@ package tibia.trade.npcTradeWidgetClasses
       private function onListChange(param1:ListEvent) : void
       {
          this.selectedIndex = param1.rowIndex;
+         this.m_LastVerticalScrollPosition = this.m_UIList.verticalScrollPosition;
       }
       
       override public function set selectedIndex(param1:int) : void
@@ -81,6 +94,18 @@ package tibia.trade.npcTradeWidgetClasses
          this.m_UIList.visible = true;
       }
       
+      private function onListScroll(param1:Event) : void
+      {
+         if(param1 is ScrollEvent)
+         {
+            this.m_LastVerticalScrollPosition = (param1 as ScrollEvent).position;
+         }
+         else
+         {
+            this.m_LastVerticalScrollPosition = this.m_UIList.verticalScrollPosition;
+         }
+      }
+      
       override protected function createChildren() : void
       {
          super.createChildren();
@@ -92,7 +117,14 @@ package tibia.trade.npcTradeWidgetClasses
          this.m_UIList.styleName = this;
          this.m_UIList.verticalScrollPolicy = ScrollPolicy.ON;
          this.m_UIList.addEventListener(ListEvent.CHANGE,this.onListChange);
+         this.m_UIList.addEventListener(ScrollEvent.SCROLL,this.onListScroll);
+         this.m_UIList.addEventListener(FlexEvent.UPDATE_COMPLETE,this.onListScroll);
          addChild(this.m_UIList);
+      }
+      
+      private function onCollectionChange(param1:CollectionEvent) : void
+      {
+         this.m_UIList.verticalScrollPosition = Math.min(Math.max(0,this.m_LastVerticalScrollPosition),this.m_UIList.maxVerticalScrollPosition);
       }
       
       override protected function measure() : void

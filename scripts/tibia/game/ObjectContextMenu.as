@@ -16,6 +16,7 @@ package tibia.game
    import tibia.appearances.AppearanceInstance;
    import tibia.input.gameaction.SafeTradeActionImpl;
    import tibia.input.gameaction.MoveActionImpl;
+   import tibia.input.gameaction.GreetAction;
    import shared.utility.closure;
    import tibia.input.gameaction.PrivateChatActionImpl;
    import tibia.input.gameaction.BuddylistActionImpl;
@@ -28,25 +29,13 @@ package tibia.game
    public class ObjectContextMenu extends ContextMenuBase
    {
       
-      protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
-      
-      protected static const GUILD_WAR_ALLY:int = 1;
-      
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
-      
-      protected static const PROFESSION_SORCERER:int = 3;
       
       protected static const STATE_PZ_BLOCK:int = 13;
       
-      protected static const STATE_SLOW:int = 5;
-      
-      protected static const PARTY_NONE:int = 0;
-      
-      protected static const PK_REVENGE:int = 6;
-      
       protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
       
-      protected static const SUMMON_OWN:int = 1;
+      protected static const PK_REVENGE:int = 6;
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
@@ -54,27 +43,25 @@ package tibia.game
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
       
-      protected static const RISKINESS_NONE:int = 0;
-      
       protected static const GUILD_NONE:int = 0;
       
       protected static const PK_PARTYMODE:int = 2;
       
-      protected static const TYPE_SUMMON_OWN:int = 3;
+      protected static const RISKINESS_NONE:int = 0;
       
-      protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
-      
-      protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
+      private static const MOUSE_BUTTON_RIGHT:int = 2;
       
       protected static const PARTY_MEMBER:int = 2;
+      
+      protected static const STATE_DRUNK:int = 3;
       
       protected static const PARTY_OTHER:int = 11;
       
       protected static const SKILL_EXPERIENCE:int = 0;
       
-      protected static const TYPE_SUMMON_OTHERS:int = 4;
+      private static const MOUSE_BUTTON_LEFT:int = 1;
       
-      protected static const STATE_DRUNK:int = 3;
+      protected static const TYPE_SUMMON_OTHERS:int = 4;
       
       protected static const SKILL_STAMINA:int = 17;
       
@@ -82,15 +69,9 @@ package tibia.game
       
       protected static const STATE_NONE:int = -1;
       
-      protected static const PROFESSION_PALADIN:int = 2;
-      
       protected static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
       
       protected static const SKILL_FIGHTSHIELD:int = 8;
-      
-      protected static const SKILL_FIGHTAXE:int = 12;
-      
-      protected static const PROFESSION_KNIGHT:int = 1;
       
       protected static const SKILL_FIGHTDISTANCE:int = 9;
       
@@ -100,61 +81,41 @@ package tibia.game
       
       protected static const NUM_TRAPPERS:int = 8;
       
-      protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
-      
       protected static const SKILL_FED:int = 15;
       
       protected static const SKILL_MAGLEVEL:int = 2;
-      
-      protected static const SKILL_SOULPOINTS:int = 16;
       
       protected static const SKILL_FISHING:int = 14;
       
       protected static const SKILL_HITPOINTS_PERCENT:int = 3;
       
-      protected static const PARTY_LEADER_SEXP_OFF:int = 4;
+      private static const ACTION_ATTACK:int = 1;
       
       protected static const STATE_BLEEDING:int = 15;
       
-      protected static const STATE_FAST:int = 6;
+      protected static const PK_PLAYERKILLER:int = 4;
+      
+      protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
       
       protected static const STATE_DAZZLED:int = 10;
       
-      protected static const GUILD_OTHER:int = 5;
+      protected static const SUMMON_OTHERS:int = 2;
       
       protected static const SKILL_NONE:int = -1;
       
-      protected static const SKILL_HITPOINTS:int = 4;
-      
-      protected static const TYPE_PLAYER:int = 0;
-      
-      protected static const SKILL_OFFLINETRAINING:int = 18;
-      
-      protected static const SUMMON_OTHERS:int = 2;
-      
-      protected static const PK_PLAYERKILLER:int = 4;
-      
-      protected static const STATE_MANA_SHIELD:int = 4;
-      
-      protected static const SKILL_MANA:int = 5;
-      
       protected static const GUILD_MEMBER:int = 4;
-      
-      protected static const MAX_NAME_LENGTH:int = 29;
-      
-      protected static const STATE_CURSED:int = 11;
-      
-      protected static const STATE_FREEZING:int = 9;
       
       private static const BUNDLE:String = "ObjectContextMenu";
       
+      protected static const PROFESSION_NONE:int = 0;
+      
+      protected static const MAX_NAME_LENGTH:int = 29;
+      
       protected static const PARTY_LEADER:int = 1;
       
-      protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
-      
-      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
-      
       protected static const STATE_PZ_ENTERED:int = 14;
+      
+      private static const ACTION_OPEN:int = 8;
       
       protected static const SKILL_CARRYSTRENGTH:int = 7;
       
@@ -164,49 +125,123 @@ package tibia.game
       
       protected static const SKILL_FIGHTSWORD:int = 11;
       
-      protected static const TYPE_MONSTER:int = 1;
-      
-      protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
-      
-      protected static const STATE_POISONED:int = 0;
-      
-      protected static const STATE_BURNING:int = 1;
-      
-      protected static const SKILL_FIGHTFIST:int = 13;
+      protected static const GUILD_WAR_NEUTRAL:int = 3;
       
       protected static const STATE_DROWNING:int = 8;
       
-      protected static const GUILD_WAR_NEUTRAL:int = 3;
+      protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
       
-      protected static const PK_AGGRESSOR:int = 3;
+      protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
+      
+      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
+      
+      protected static const GUILD_WAR_ALLY:int = 1;
+      
+      protected static const PK_NONE:int = 0;
+      
+      protected static const PROFESSION_SORCERER:int = 3;
+      
+      protected static const STATE_SLOW:int = 5;
+      
+      protected static const PARTY_NONE:int = 0;
+      
+      private static const ACTION_TALK:int = 9;
+      
+      protected static const SUMMON_OWN:int = 1;
+      
+      private static const ACTION_LOOK:int = 6;
+      
+      protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const TYPE_SUMMON_OWN:int = 3;
+      
+      protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
+      
+      protected static const PROFESSION_KNIGHT:int = 1;
+      
+      protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
+      
+      private static const ACTION_SMARTCLICK:int = 100;
+      
+      protected static const PROFESSION_PALADIN:int = 2;
+      
+      protected static const SKILL_FIGHTAXE:int = 12;
+      
+      private static const MOUSE_BUTTON_MIDDLE:int = 3;
+      
+      protected static const PARTY_LEADER_SEXP_OFF:int = 4;
+      
+      protected static const SKILL_SOULPOINTS:int = 16;
+      
+      private static const ACTION_CONTEXT_MENU:int = 5;
+      
+      protected static const STATE_FAST:int = 6;
+      
+      protected static const GUILD_OTHER:int = 5;
+      
+      protected static const TYPE_PLAYER:int = 0;
+      
+      protected static const SKILL_HITPOINTS:int = 4;
+      
+      protected static const SKILL_OFFLINETRAINING:int = 18;
+      
+      protected static const STATE_MANA_SHIELD:int = 4;
+      
+      protected static const SKILL_MANA:int = 5;
+      
+      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
+      
+      protected static const STATE_CURSED:int = 11;
+      
+      private static const ACTION_NONE:int = 0;
+      
+      protected static const STATE_FREEZING:int = 9;
+      
+      protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
+      
+      private static const MOUSE_BUTTON_BOTH:int = 4;
+      
+      protected static const TYPE_MONSTER:int = 1;
+      
+      private static const ACTION_ATTACK_OR_TALK:int = 102;
+      
+      protected static const STATE_POISONED:int = 0;
+      
+      private static const ACTION_AUTOWALK_HIGHLIGHT:int = 4;
+      
+      private static const ACTION_USE_OR_OPEN:int = 101;
+      
+      protected static const SKILL_FIGHTFIST:int = 13;
+      
+      private static const ACTION_UNSET:int = -1;
+      
+      protected static const STATE_BURNING:int = 1;
+      
+      protected static const GUILD_WAR_ENEMY:int = 2;
       
       protected static const SKILL_LEVEL:int = 1;
       
       protected static const STATE_STRENGTHENED:int = 12;
       
+      protected static const PK_AGGRESSOR:int = 3;
+      
       protected static const STATE_HUNGRY:int = 31;
-      
-      protected static const GUILD_WAR_ENEMY:int = 2;
-      
-      protected static const PROFESSION_DRUID:int = 4;
-      
-      protected static const STATE_FIGHTING:int = 7;
-      
-      protected static const PROFESSION_NONE:int = 0;
       
       protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
       
       protected static const SUMMON_NONE:int = 0;
       
-      protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
+      private static const ACTION_USE:int = 7;
+      
+      protected static const PROFESSION_DRUID:int = 4;
+      
+      protected static const STATE_FIGHTING:int = 7;
+      
+      private static const ACTION_AUTOWALK:int = 3;
       
       protected static const SKILL_GOSTRENGTH:int = 6;
       
-      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
-      
       protected static const PK_MAX_FLASHING_TIME:uint = 5000;
-      
-      protected static const PK_NONE:int = 0;
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
        
@@ -261,7 +296,7 @@ package tibia.game
                }
             });
          }
-         if(UseObj != null && Boolean(UseObj.type.isContainer))
+         if(UseObj != null && (Boolean(UseObj.type.isContainer) || UseObj.type.defaultAction == ACTION_OPEN))
          {
             if(this.m_Absolute.x == 65535 && this.m_Absolute.y >= 64)
             {
@@ -350,10 +385,20 @@ package tibia.game
          if(_CreatureStorage != null && _Player != null && this.m_CreatureTarget != null && this.m_CreatureTarget.ID != _Player.ID)
          {
             _Creature = _CreatureStorage.getAttackTarget();
-            createTextItem(resourceManager.getString(BUNDLE,_Creature != null && _Creature.ID == this.m_CreatureTarget.ID?"CTX_CREATURE_ATTACK_STOP":"CTX_CREATURE_ATTACK_START"),closure(null,function(param1:CreatureStorage, param2:Creature, param3:*):void
+            if(this.m_CreatureTarget.isNPC)
             {
-               param1.toggleAttackTarget(param2,true);
-            },_CreatureStorage,this.m_CreatureTarget));
+               createTextItem(resourceManager.getString(BUNDLE,"CTX_CREATURE_TALK"),function(param1:*):void
+               {
+                  new GreetAction(m_CreatureTarget).perform();
+               });
+            }
+            else
+            {
+               createTextItem(resourceManager.getString(BUNDLE,_Creature != null && _Creature.ID == this.m_CreatureTarget.ID?"CTX_CREATURE_ATTACK_STOP":"CTX_CREATURE_ATTACK_START"),closure(null,function(param1:CreatureStorage, param2:Creature, param3:*):void
+               {
+                  param1.toggleAttackTarget(param2,true);
+               },_CreatureStorage,this.m_CreatureTarget));
+            }
             _Creature = _CreatureStorage.getFollowTarget();
             createTextItem(resourceManager.getString(BUNDLE,_Creature != null && _Creature.ID == this.m_CreatureTarget.ID?"CTX_CREATURE_FOLLOW_STOP":"CTX_CREATURE_FOLLOW_START"),closure(null,function(param1:CreatureStorage, param2:Creature, param3:*):void
             {

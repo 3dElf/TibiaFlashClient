@@ -12,29 +12,47 @@ package tibia.cursors
    public class DragCursorBase
    {
       
-      private static const CROSSHAIR_MOVE_CLASS:Class = DragCursorBase_CROSSHAIR_MOVE_CLASS;
+      public static const CURSOR_LOOK_NAME:String = "look";
       
-      private static const DEFAULT_MOVE_CLASS:Class = DragCursorBase_DEFAULT_MOVE_CLASS;
+      public static const CURSOR_RESIZE_HORIZONTAL_NAME:String = "resizeHorizontal";
+      
+      private static const CROSSHAIR_MOVE_CLASS:Class = DragCursorBase_CROSSHAIR_MOVE_CLASS;
       
       protected static const DRAG_TYPE_CHANNEL:String = "channel";
       
-      protected static const DRAG_TYPE_STATUSWIDGET:String = "statusWidget";
-      
-      private static const CROSSHAIR_REJECT_CLASS:Class = DragCursorBase_CROSSHAIR_REJECT_CLASS;
-      
-      private static const DEFAULT_REJECT_CLASS:Class = DragCursorBase_DEFAULT_REJECT_CLASS;
+      private static const DEFAULT_MOVE_CLASS:Class = DragCursorBase_DEFAULT_MOVE_CLASS;
       
       protected static const DRAG_TYPE_ACTION:String = "action";
       
+      public static const CURSOR_ATTACK_NAME:String = "attack";
+      
+      public static const CURSOR_TALK_NAME:String = "talk";
+      
+      private static const DEFAULT_REJECT_CLASS:Class = DragCursorBase_DEFAULT_REJECT_CLASS;
+      
+      protected static const DRAG_TYPE_STATUSWIDGET:String = "statusWidget";
+      
       protected static const DRAG_TYPE_OBJECT:String = "object";
+      
+      public static const CURSOR_WALK_NAME:String = "walk";
       
       protected static const DRAG_OPACITY:Number = 0.75;
       
-      public static const CURSOR_ID:int = -3;
+      public static const CURSOR_USE_NAME:String = "use";
+      
+      private static const CROSSHAIR_REJECT_CLASS:Class = DragCursorBase_CROSSHAIR_REJECT_CLASS;
+      
+      public static const CURSOR_CROSSHAIR_NAME:String = "crosshair";
+      
+      public static const CURSOR_DEFAULT_NAME:String = "default";
       
       protected static const DRAG_TYPE_SPELL:String = "spell";
       
       protected static const DRAG_TYPE_WIDGETBASE:String = "widgetBase";
+      
+      public static const CURSOR_OPEN_NAME:String = "open";
+      
+      public static const CURSOR_RESIZE_VERTICAL_NAME:String = "resizeVertical";
       
       {
          s_RegisterNative();
@@ -103,6 +121,9 @@ package tibia.cursors
                   _loc4_ = "Move";
                   break;
                case DragManager.NONE:
+                  _loc4_ = "Reject";
+                  break;
+               default:
                   _loc4_ = "Reject";
             }
             return "drag" + _loc2_ + _loc4_;

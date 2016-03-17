@@ -247,6 +247,8 @@ package tibia.trade.npcTradeWidgetClasses
       
       protected var m_UITradeMode:TabBar = null;
       
+      private var m_CachedPlayerCapacity:Number = 0;
+      
       private var m_UIConstructed:Boolean = false;
       
       private var m_UncommittedPlayer:Boolean = false;
@@ -739,10 +741,16 @@ package tibia.trade.npcTradeWidgetClasses
       
       protected function onPlayerChange(param1:PropertyChangeEvent) : void
       {
+         var _loc2_:Number = NaN;
          if(param1.property == "skill" || param1.property == "*")
          {
-            this.invalidateObjectAmounts();
-            this.invalidateObjectSummary();
+            _loc2_ = this.m_Player.getSkillValue(SKILL_CARRYSTRENGTH);
+            if(this.m_CachedPlayerCapacity != _loc2_)
+            {
+               this.m_CachedPlayerCapacity = _loc2_;
+               this.invalidateObjectAmounts();
+               this.invalidateObjectSummary();
+            }
          }
       }
       
@@ -759,8 +767,8 @@ package tibia.trade.npcTradeWidgetClasses
             {
                _loc2_.sendCSELLOBJECT(this.tradeObject.ID,this.tradeObject.data,this.tradeAmount,options.npcTradeSellKeepEquipped);
             }
-            this.tradeAmount = 0;
-            this.tradeObject = null;
+            this.m_UncommittedTradeObject = true;
+            this.m_UncommittedTradeAmount = true;
          }
       }
       
@@ -799,6 +807,7 @@ package tibia.trade.npcTradeWidgetClasses
          var _loc2_:int = 0;
          var _loc3_:TradeObjectRef = null;
          var _loc4_:Boolean = false;
+         var _loc5_:TradeObjectRef = null;
          if(this.buyObjects != null)
          {
             _loc4_ = false;
@@ -813,7 +822,12 @@ package tibia.trade.npcTradeWidgetClasses
             }
             if(Boolean(_loc4_) && this.buyObjects is ICollectionView)
             {
+               _loc5_ = this.m_UIObjectSelector.selectedObject;
                ICollectionView(this.buyObjects).refresh();
+               if(_loc5_ != null)
+               {
+                  this.m_UIObjectSelector.selectedObject = _loc5_;
+               }
             }
          }
          if(this.sellObjects != null)
@@ -830,7 +844,13 @@ package tibia.trade.npcTradeWidgetClasses
             }
             if(Boolean(_loc4_) && this.sellObjects is ICollectionView)
             {
+               _loc5_ = this.m_UIObjectSelector.selectedObject;
                ICollectionView(this.sellObjects).refresh();
+               if(_loc5_ != null && _loc5_.amount == 0)
+               {
+                  this.tradeObject = null;
+                  this.tradeAmount = 0;
+               }
             }
          }
       }

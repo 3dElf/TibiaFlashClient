@@ -742,6 +742,11 @@ package tibia.creatures
          this.m_MovementRunning = true;
       }
       
+      public function get isNPC() : Boolean
+      {
+         return this.m_Type == TYPE_NPC;
+      }
+      
       [Bindable(event="propertyChange")]
       public function set ID(param1:int) : void
       {

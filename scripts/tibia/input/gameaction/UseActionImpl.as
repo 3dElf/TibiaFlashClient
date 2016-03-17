@@ -15,14 +15,14 @@ package tibia.input.gameaction
    import tibia.creatures.Player;
    import tibia.magic.SpellStorage;
    import tibia.container.BodyContainerView;
-   import tibia.appearances.AppearanceType;
    import flash.events.Event;
+   import tibia.cursors.CursorHelper;
    import mx.core.EventPriority;
    import mx.events.SandboxMouseEvent;
-   import mx.managers.CursorManager;
-   import mx.managers.ICursorManager;
+   import tibia.appearances.AppearanceType;
    import tibia.cursors.CrosshairCursor;
    import tibia.appearances.AppearanceStorage;
+   import mx.managers.CursorManagerPriority;
    
    public class UseActionImpl implements IActionImpl
    {
@@ -45,13 +45,14 @@ package tibia.input.gameaction
       
       private var m_Absolute:Vector3D = null;
       
-      private var m_CursorID:int = 0;
+      private var m_CursorHelper:CursorHelper;
       
       private var m_Type:AppearanceType = null;
       
       public function UseActionImpl(param1:Vector3D, param2:*, param3:int, param4:int = 0)
       {
          var _loc5_:AppearanceStorage = null;
+         this.m_CursorHelper = new CursorHelper(CursorManagerPriority.HIGH);
          super();
          if(param1 == null)
          {
@@ -192,6 +193,10 @@ package tibia.input.gameaction
             }
             else
             {
+               if(this.m_Absolute.x < 65535)
+               {
+                  Tibia.s_GetPlayer().startAutowalk(this.m_Absolute.x,this.m_Absolute.y,this.m_Absolute.z,false,false);
+               }
                if(concurrentMultiUse != null)
                {
                   concurrentMultiUse.updateGlobalListeners(false);
@@ -257,17 +262,13 @@ package tibia.input.gameaction
       
       private function updateCursor(param1:Boolean) : void
       {
-         var _loc2_:ICursorManager = CursorManager.getInstance();
-         if(_loc2_ != null)
+         if(param1)
          {
-            if(param1)
-            {
-               this.m_CursorID = _loc2_.setCursor(CrosshairCursor);
-            }
-            else
-            {
-               _loc2_.removeCursor(this.m_CursorID);
-            }
+            this.m_CursorHelper.setCursor(CrosshairCursor);
+         }
+         else
+         {
+            this.m_CursorHelper.resetCursor();
          }
       }
    }

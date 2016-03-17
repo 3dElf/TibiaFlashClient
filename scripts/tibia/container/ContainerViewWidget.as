@@ -17,9 +17,11 @@ package tibia.container
       
       override public function acquireViewInstance(param1:Boolean = true) : WidgetView
       {
+         options = Tibia.s_GetOptions();
          var _loc2_:WidgetView = super.acquireViewInstance(param1);
          if(_loc2_ is ContainerViewWidgetView)
          {
+            _loc2_.options = options;
             ContainerViewWidgetView(_loc2_).container = this.m_Container;
          }
          return _loc2_;

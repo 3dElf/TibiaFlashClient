@@ -139,31 +139,9 @@ package tibia.worldmap.widgetClasses
          return _loc10_;
       }
       
-      public function copyMaskFromBitmap(param1:BitmapData, param2:Rectangle) : void
-      {
-         this.m_MaskRect.setTo(0,0,param2.width,param2.height);
-         if(this.m_MaskBitmapData == null || this.m_MaskBitmapData.width < this.m_MaskRect.width || this.m_MaskBitmapData.height < this.m_MaskRect.height)
-         {
-            this.m_MaskBitmapData = new BitmapData(this.m_MaskRect.width,this.m_MaskRect.height,true,0);
-         }
-         else
-         {
-            this.m_MaskBitmapData.fillRect(this.m_MaskRect,0);
-         }
-         this.m_MaskBitmapData.copyPixels(param1,this.m_MaskRect,s_TempPoint2);
-      }
-      
       public function get maskBitmapData() : BitmapData
       {
          return this.m_MaskBitmapData;
-      }
-      
-      override public function drawTo(param1:BitmapData, param2:Number, param3:Number, param4:Number = NaN) : void
-      {
-         commitProperties();
-         s_TempRect.setTo((getFrameIndex(param4) + 1) * m_CachedFrameSize.width - this.m_MaskRect.width,m_CachedFrameSize.height - this.m_MaskRect.height,this.m_MaskRect.width,this.m_MaskRect.height);
-         s_TempPoint.setTo(param2 - this.m_MaskRect.width,param3 - this.m_MaskRect.height);
-         param1.copyPixels(m_CachedBitmapData,s_TempRect,s_TempPoint,this.m_MaskBitmapData,s_TempPoint2,true);
       }
       
       public function copyMaskFromCreature(param1:Creature) : void
@@ -200,6 +178,21 @@ package tibia.worldmap.widgetClasses
          }
       }
       
+      public function copyMaskFromAppearance(param1:AppearanceInstance, param2:int = -1, param3:int = -1, param4:int = -1) : void
+      {
+         var _loc5_:AppearanceType = param1.type;
+         this.m_MaskRect.setTo(0,0,_loc5_.width * FIELD_SIZE + _loc5_.displacementX,_loc5_.height * FIELD_SIZE + _loc5_.displacementY);
+         if(this.m_MaskBitmapData == null || this.m_MaskBitmapData.width < this.m_MaskRect.width || this.m_MaskBitmapData.height < this.m_MaskRect.height)
+         {
+            this.m_MaskBitmapData = new BitmapData(this.m_MaskRect.width,this.m_MaskRect.height,true,0);
+         }
+         else
+         {
+            this.m_MaskBitmapData.fillRect(this.m_MaskRect,0);
+         }
+         param1.drawTo(this.m_MaskBitmapData,this.m_MaskRect.width,this.m_MaskRect.height,param2,param3,param4);
+      }
+      
       public function set maskBitmapData(param1:BitmapData) : void
       {
          if(this.m_MaskBitmapData != param1)
@@ -216,10 +209,17 @@ package tibia.worldmap.widgetClasses
          }
       }
       
-      public function copyMaskFromAppearance(param1:AppearanceInstance, param2:int = -1, param3:int = -1, param4:int = -1) : void
+      public function clearMask() : void
       {
-         var _loc5_:AppearanceType = param1.type;
-         this.m_MaskRect.setTo(0,0,_loc5_.width * FIELD_SIZE + _loc5_.displacementX,_loc5_.height * FIELD_SIZE + _loc5_.displacementY);
+         if(this.m_MaskBitmapData != null)
+         {
+            this.m_MaskBitmapData.fillRect(this.m_MaskRect,0);
+         }
+      }
+      
+      public function copyMaskFromBitmap(param1:BitmapData, param2:Rectangle) : void
+      {
+         this.m_MaskRect.setTo(0,0,param2.width,param2.height);
          if(this.m_MaskBitmapData == null || this.m_MaskBitmapData.width < this.m_MaskRect.width || this.m_MaskBitmapData.height < this.m_MaskRect.height)
          {
             this.m_MaskBitmapData = new BitmapData(this.m_MaskRect.width,this.m_MaskRect.height,true,0);
@@ -228,7 +228,15 @@ package tibia.worldmap.widgetClasses
          {
             this.m_MaskBitmapData.fillRect(this.m_MaskRect,0);
          }
-         param1.drawTo(this.m_MaskBitmapData,this.m_MaskRect.width,this.m_MaskRect.height,param2,param3,param4);
+         this.m_MaskBitmapData.copyPixels(param1,this.m_MaskRect,s_TempPoint2);
+      }
+      
+      override public function drawTo(param1:BitmapData, param2:Number, param3:Number, param4:Number = NaN) : void
+      {
+         commitProperties();
+         s_TempRect.setTo((getFrameIndex(param4) + 1) * m_CachedFrameSize.width - this.m_MaskRect.width,m_CachedFrameSize.height - this.m_MaskRect.height,this.m_MaskRect.width,this.m_MaskRect.height);
+         s_TempPoint.setTo(param2 - this.m_MaskRect.width,param3 - this.m_MaskRect.height);
+         param1.copyPixels(m_CachedBitmapData,s_TempRect,s_TempPoint,this.m_MaskBitmapData,s_TempPoint2,true);
       }
    }
 }

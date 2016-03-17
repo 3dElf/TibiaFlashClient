@@ -7,25 +7,27 @@ package tibia.input.staticaction
    public class ShowDialog extends StaticAction
    {
       
-      public static const CHARACTER_PROFILE:int = 7;
+      public static const CHARACTER_PROFILE:int = 8;
       
-      public static const CHARACTER_SPELLS:int = 6;
+      public static const CHARACTER_SPELLS:int = 7;
       
       public static const OPTIONS_RENDERER:int = 1;
       
       public static const OPTIONS_GENERAL:int = 0;
       
+      public static const OPTIONS_MOUSE_CONTROL:int = 6;
+      
       public static const OPTIONS_NAME_FILTER:int = 5;
       
-      public static const CHAT_CHANNEL_SELECTION:int = 9;
+      public static const CHAT_CHANNEL_SELECTION:int = 10;
       
       public static const OPTIONS_STATUS:int = 2;
       
       public static const OPTIONS_MESSAGE:int = 3;
       
-      public static const HELP_QUEST_LOG:int = 10;
+      public static const HELP_QUEST_LOG:int = 11;
       
-      public static const CHARACTER_OUTFIT:int = 8;
+      public static const CHARACTER_OUTFIT:int = 9;
       
       public static const OPTIONS_HOTKEY:int = 4;
        
@@ -80,6 +82,11 @@ package tibia.input.staticaction
                case OPTIONS_NAME_FILTER:
                   OptionsWidget = new ConfigurationWidget();
                   OptionsWidget.selectedIndex = ConfigurationWidget.NAME_FILTER;
+                  OptionsWidget.show();
+                  break;
+               case OPTIONS_MOUSE_CONTROL:
+                  OptionsWidget = new ConfigurationWidget();
+                  OptionsWidget.selectedIndex = ConfigurationWidget.MOUSE;
                   OptionsWidget.show();
                   break;
                case CHARACTER_SPELLS:

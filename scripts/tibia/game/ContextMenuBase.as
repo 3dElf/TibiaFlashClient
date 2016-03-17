@@ -8,15 +8,16 @@ package tibia.game
    import flash.events.MouseEvent;
    import tibia.input.InputHandler;
    import mx.managers.ToolTipManager;
-   import flash.ui.Keyboard;
+   import tibia.game.contextMenuClasses.SeparatorItem;
+   import flash.display.Sprite;
    import flash.display.DisplayObjectContainer;
    import mx.core.IToolTip;
-   import tibia.game.contextMenuClasses.TextItem;
-   import flash.events.ContextMenuEvent;
-   import tibia.game.contextMenuClasses.SeparatorItem;
-   import flash.display.DisplayObject;
+   import flash.ui.Keyboard;
    import mx.events.ChildExistenceChangedEvent;
    import tibia.game.contextMenuClasses.IContextMenuItem;
+   import flash.events.ContextMenuEvent;
+   import flash.display.DisplayObject;
+   import tibia.game.contextMenuClasses.TextItem;
    import mx.core.ScrollPolicy;
    
    public class ContextMenuBase extends VBox
@@ -24,8 +25,11 @@ package tibia.game
       
       protected static var s_Current:tibia.game.ContextMenuBase = null;
        
+      private var m_UIEmbeddedMouseShield:Sprite;
+      
       public function ContextMenuBase()
       {
+         this.m_UIEmbeddedMouseShield = new Sprite();
          super();
          horizontalScrollPolicy = ScrollPolicy.OFF;
          verticalScrollPolicy = ScrollPolicy.OFF;
@@ -46,6 +50,11 @@ package tibia.game
          if(owner is IUIComponent && (_loc1_ = (owner as IUIComponent).systemManager) != null)
          {
             _loc1_.popUpChildren.removeChild(this);
+            if(_loc1_.popUpChildren.contains(this.m_UIEmbeddedMouseShield))
+            {
+               _loc1_.popUpChildren.removeChild(this.m_UIEmbeddedMouseShield);
+               _loc1_.removeEventListener(Event.RESIZE,this.onResize);
+            }
             _loc1_.deployMouseShields(false);
             _loc1_.removeEventListener(Event.ACTIVATE,this.onEventHide);
             _loc1_.removeEventListener(Event.DEACTIVATE,this.onEventHide);
@@ -69,6 +78,15 @@ package tibia.game
          s_Current = null;
       }
       
+      protected function createSeparatorItem() : SeparatorItem
+      {
+         var _loc1_:SeparatorItem = new SeparatorItem();
+         _loc1_.owner = owner;
+         _loc1_.percentWidth = 100;
+         addChild(_loc1_);
+         return _loc1_;
+      }
+      
       private function onMouseHide(param1:MouseEvent) : void
       {
          if(!hitTestPoint(param1.stageX,param1.stageY))
@@ -82,19 +100,17 @@ package tibia.game
          }
       }
       
-      private function onKeyboardHide(param1:KeyboardEvent) : void
-      {
-         if(param1.keyCode == Keyboard.ESCAPE)
-         {
-            this.hide();
-         }
-      }
-      
       public function display(param1:IUIComponent, param2:Number, param3:Number) : void
       {
          var _loc4_:ISystemManager = null;
          if(param1 != null && (_loc4_ = param1.systemManager) != null && _loc4_.stage != null)
          {
+            if(_loc4_.popUpChildren.contains(this.m_UIEmbeddedMouseShield))
+            {
+               _loc4_.popUpChildren.removeChild(this.m_UIEmbeddedMouseShield);
+            }
+            _loc4_.popUpChildren.addChild(this.m_UIEmbeddedMouseShield);
+            _loc4_.addEventListener(Event.RESIZE,this.onResize);
             _loc4_.popUpChildren.addChild(this);
             _loc4_.deployMouseShields(true);
             _loc4_.addEventListener(Event.ACTIVATE,this.onEventHide);
@@ -131,6 +147,60 @@ package tibia.game
          s_Current = this;
       }
       
+      private function onKeyboardHide(param1:KeyboardEvent) : void
+      {
+         if(param1.keyCode == Keyboard.ESCAPE)
+         {
+            this.hide();
+         }
+      }
+      
+      private function onChildExistenceChanged(param1:ChildExistenceChangedEvent) : void
+      {
+         var _loc2_:IContextMenuItem = param1.relatedObject as IContextMenuItem;
+         if(_loc2_ != null)
+         {
+            if(param1.type == ChildExistenceChangedEvent.CHILD_ADD)
+            {
+               _loc2_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onEventHide,false,int.MAX_VALUE,false);
+            }
+            else
+            {
+               _loc2_.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onEventHide);
+            }
+         }
+      }
+      
+      override protected function updateDisplayList(param1:Number, param2:Number) : void
+      {
+         var a_UnscaledWidth:Number = param1;
+         var a_UnscaledHeight:Number = param2;
+         super.updateDisplayList(a_UnscaledWidth,a_UnscaledHeight);
+         var OuterContainer:DisplayObject = Tibia.s_GetInstance();
+         if(OuterContainer != null)
+         {
+            if(this.m_UIEmbeddedMouseShield != null)
+            {
+               this.m_UIEmbeddedMouseShield.x = 0;
+               this.m_UIEmbeddedMouseShield.y = 0;
+               with(this.m_UIEmbeddedMouseShield.graphics)
+               {
+                  
+                  clear();
+                  beginFill(65280,0);
+                  drawRect(0,0,OuterContainer.width,OuterContainer.height);
+                  endFill();
+               }
+            }
+         }
+      }
+      
+      private function onResize(param1:Event) : void
+      {
+         invalidateDisplayList();
+         invalidateSize();
+      }
+      
       protected function createTextItem(param1:String, param2:Function) : TextItem
       {
          var _loc3_:TextItem = new TextItem();
@@ -140,15 +210,6 @@ package tibia.game
          _loc3_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,param2);
          addChild(_loc3_);
          return _loc3_;
-      }
-      
-      protected function createSeparatorItem() : SeparatorItem
-      {
-         var _loc1_:SeparatorItem = new SeparatorItem();
-         _loc1_.owner = owner;
-         _loc1_.percentWidth = 100;
-         addChild(_loc1_);
-         return _loc1_;
       }
       
       private function onEventHide(param1:Event) : void
@@ -190,22 +251,6 @@ package tibia.game
             _loc4_++;
          }
          super.measure();
-      }
-      
-      private function onChildExistenceChanged(param1:ChildExistenceChangedEvent) : void
-      {
-         var _loc2_:IContextMenuItem = param1.relatedObject as IContextMenuItem;
-         if(_loc2_ != null)
-         {
-            if(param1.type == ChildExistenceChangedEvent.CHILD_ADD)
-            {
-               _loc2_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onEventHide,false,int.MAX_VALUE,false);
-            }
-            else
-            {
-               _loc2_.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onEventHide);
-            }
-         }
       }
    }
 }

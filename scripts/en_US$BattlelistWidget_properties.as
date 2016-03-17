@@ -25,6 +25,7 @@ package
             "CTX_SORT_KNOWN_SINCE_ASC":"Sort Ascending by Age",
             "CTX_SORT_HITPOINTS_DESC":"Sort Descending by Hitpoints",
             "TIP_HIDE_NPC":"Hide NPCs",
+            "CTX_CREATURE_TALK":"Talk",
             "CTX_START_FOLLOW":"Follow",
             "CTX_SORT_NAME_ASC":"Sort Ascending by Name",
             "CTX_SORT_NAME_DESC":"Sort Descending by Name",

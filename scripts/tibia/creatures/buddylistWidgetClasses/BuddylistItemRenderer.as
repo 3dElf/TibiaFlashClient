@@ -181,10 +181,9 @@ package tibia.creatures.buddylistWidgetClasses
       
       override protected function measure() : void
       {
-         var _loc1_:EdgeMetrics = null;
          var _loc3_:Number = NaN;
          super.measure();
-         _loc1_ = this.viewMetricsAndPadding;
+         var _loc1_:EdgeMetrics = this.viewMetricsAndPadding;
          var _loc2_:Number = tibia.creatures.buddylistWidgetClasses.BuddyIconRenderer.ICON_WIDTH + getStyle("horizontalGap") + s_NameCache.slotWidth;
          _loc3_ = Math.max(tibia.creatures.buddylistWidgetClasses.BuddyIconRenderer.ICON_HEIGHT,s_NameCache.slotHeight);
          measuredMinWidth = measuredWidth = _loc1_.left + _loc2_ + _loc1_.right;

@@ -2,7 +2,6 @@ package tibia.options.configurationWidgetClasses
 {
    import mx.containers.VBox;
    import tibia.options.OptionsStorage;
-   import mx.controls.CheckBox;
    import shared.controls.EmbeddedDialog;
    import tibia.game.PopUpBase;
    import mx.events.CloseEvent;
@@ -10,8 +9,9 @@ package tibia.options.configurationWidgetClasses
    import tibia.options.ConfigurationWidget;
    import flash.events.MouseEvent;
    import mx.containers.Form;
-   import mx.containers.FormHeading;
    import mx.containers.FormItem;
+   import mx.containers.FormHeading;
+   import mx.controls.CheckBox;
    import flash.events.Event;
    import mx.containers.FormItemDirection;
    import mx.controls.Button;
@@ -23,19 +23,17 @@ package tibia.options.configurationWidgetClasses
       
       private static const DIALOG_NONE:int = 0;
        
-      protected var m_UIInputClassicControls:CheckBox = null;
-      
       private var m_UncommittedOptions:Boolean = false;
       
       private var m_UncommittedValues:Boolean = true;
+      
+      protected var m_Options:OptionsStorage = null;
       
       protected var m_UIResetAllOptions:Button = null;
       
       private var m_UIConstructed:Boolean = false;
       
       protected var m_UIAutoChaseOff:CheckBox = null;
-      
-      protected var m_Options:OptionsStorage = null;
       
       public function GeneralOptions()
       {
@@ -57,12 +55,10 @@ package tibia.options.configurationWidgetClasses
          {
             if(this.m_Options != null)
             {
-               this.m_UIInputClassicControls.selected = this.m_Options.generalInputClassicControls;
                this.m_UIAutoChaseOff.selected = this.m_Options.combatAutoChaseOff;
             }
             else
             {
-               this.m_UIInputClassicControls.selected = false;
                this.m_UIAutoChaseOff.selected = false;
             }
             this.m_UncommittedOptions = false;
@@ -101,55 +97,53 @@ package tibia.options.configurationWidgetClasses
       
       override protected function createChildren() : void
       {
-         var _loc1_:Form = null;
-         var _loc2_:FormHeading = null;
-         var _loc3_:FormItem = null;
+         var LocalisedLabelFunction:Function = null;
+         var Frm:Form = null;
+         var Heading:FormHeading = null;
+         var Item:FormItem = null;
          if(!this.m_UIConstructed)
          {
             super.createChildren();
-            _loc1_ = new Form();
-            _loc1_.styleName = "optionsConfigurationWidgetRootContainer";
-            _loc2_ = new FormHeading();
-            _loc2_.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_GENERAL_HEADING");
-            _loc2_.percentHeight = NaN;
-            _loc2_.percentWidth = 100;
-            _loc1_.addChild(_loc2_);
-            _loc3_ = new FormItem();
-            _loc3_.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_GENERAL_CLASSIC_CONTROLS");
-            _loc3_.percentHeight = NaN;
-            _loc3_.percentWidth = 100;
-            this.m_UIInputClassicControls = new CheckBox();
-            this.m_UIInputClassicControls.addEventListener(Event.CHANGE,this.onValueChange);
-            _loc3_.addChild(this.m_UIInputClassicControls);
-            _loc1_.addChild(_loc3_);
-            _loc2_ = new FormHeading();
-            _loc2_.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_COMBAT_HEADING");
-            _loc2_.percentHeight = NaN;
-            _loc2_.percentWidth = 100;
-            _loc1_.addChild(_loc2_);
-            _loc3_ = new FormItem();
-            _loc3_.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_COMBAT_AUTOCHASEOFF");
-            _loc3_.percentHeight = NaN;
-            _loc3_.percentWidth = 100;
+            LocalisedLabelFunction = function(param1:Object):String
+            {
+               if(param1.hasOwnProperty("label"))
+               {
+                  return resourceManager.getString(ConfigurationWidget.BUNDLE,param1.label);
+               }
+               return String(param1);
+            };
+            Frm = new Form();
+            Frm.styleName = "optionsConfigurationWidgetRootContainer";
+            Heading = null;
+            Item = null;
+            Heading = new FormHeading();
+            Heading.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_COMBAT_HEADING");
+            Heading.percentHeight = NaN;
+            Heading.percentWidth = 100;
+            Frm.addChild(Heading);
+            Item = new FormItem();
+            Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_COMBAT_AUTOCHASEOFF");
+            Item.percentHeight = NaN;
+            Item.percentWidth = 100;
             this.m_UIAutoChaseOff = new CheckBox();
             this.m_UIAutoChaseOff.addEventListener(Event.CHANGE,this.onValueChange);
-            _loc3_.addChild(this.m_UIAutoChaseOff);
-            _loc1_.addChild(_loc3_);
-            addChild(_loc1_);
-            _loc2_ = new FormHeading();
-            _loc2_.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_OPTIONS_RESET_HEADING");
-            _loc2_.percentHeight = NaN;
-            _loc2_.percentWidth = 100;
-            _loc1_.addChild(_loc2_);
-            _loc3_ = new FormItem();
-            _loc3_.direction = FormItemDirection.VERTICAL;
-            _loc3_.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_OPTIONS_RESET_LABEL");
+            Item.addChild(this.m_UIAutoChaseOff);
+            Frm.addChild(Item);
+            addChild(Frm);
+            Heading = new FormHeading();
+            Heading.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_OPTIONS_RESET_HEADING");
+            Heading.percentHeight = NaN;
+            Heading.percentWidth = 100;
+            Frm.addChild(Heading);
+            Item = new FormItem();
+            Item.direction = FormItemDirection.VERTICAL;
+            Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_OPTIONS_RESET_LABEL");
             this.m_UIResetAllOptions = new Button();
             this.m_UIResetAllOptions.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_OPTIONS_RESET");
             this.m_UIResetAllOptions.addEventListener(MouseEvent.CLICK,this.onButtonClick);
-            _loc3_.addChild(this.m_UIResetAllOptions);
-            _loc1_.addChild(_loc3_);
-            addChild(_loc1_);
+            Item.addChild(this.m_UIResetAllOptions);
+            Frm.addChild(Item);
+            addChild(Frm);
             this.m_UIConstructed = true;
          }
       }
@@ -194,7 +188,6 @@ package tibia.options.configurationWidgetClasses
       {
          if(this.m_Options != null && Boolean(param1) && Boolean(this.m_UncommittedValues))
          {
-            this.m_Options.generalInputClassicControls = this.m_UIInputClassicControls.selected;
             this.m_Options.combatAutoChaseOff = this.m_UIAutoChaseOff.selected;
             this.m_UncommittedValues = false;
          }

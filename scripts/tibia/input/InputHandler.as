@@ -14,6 +14,7 @@ package tibia.input
    import flash.utils.getTimer;
    import tibia.options.OptionsStorage;
    import flash.geom.Point;
+   import tibia.input.mapping.MouseBinding;
    import mx.events.PropertyChangeEvent;
    import flash.utils.Timer;
    import flash.events.Event;
@@ -28,13 +29,47 @@ package tibia.input
    public class InputHandler extends UIComponent
    {
       
-      private static const MOUSE_LEFT:uint = 0;
+      private static const ACTION_UNSET:int = -1;
       
-      private static const MOUSE_REPEAT_TIMEOUT:int = 500;
+      private static const MOUSE_BUTTON_LEFT:int = 1;
+      
+      private static const MOUSE_BUTTON_BOTH:int = 4;
+      
+      private static const ACTION_USE_OR_OPEN:int = 101;
+      
+      private static const ACTION_SMARTCLICK:int = 100;
+      
+      private static const MOUSE_BUTTON_RIGHT:int = 2;
+      
+      private static const ACTION_LOOK:int = 6;
       
       private static const MOUSE_CLICK_MOVE:Number = 8;
       
+      private static const ACTION_TALK:int = 9;
+      
+      private static const MOUSE_LEFT:uint = 0;
+      
+      private static const ACTION_USE:int = 7;
+      
+      private static const MOUSE_BUTTON_MIDDLE:int = 3;
+      
+      private static const ACTION_NONE:int = 0;
+      
       private static const MOUSE_RIGHT:uint = 1;
+      
+      private static const ACTION_AUTOWALK:int = 3;
+      
+      private static const ACTION_ATTACK:int = 1;
+      
+      private static const ACTION_OPEN:int = 8;
+      
+      private static const ACTION_AUTOWALK_HIGHLIGHT:int = 4;
+      
+      private static const ACTION_CONTEXT_MENU:int = 5;
+      
+      private static const MOUSE_REPEAT_TIMEOUT:int = 500;
+      
+      private static const ACTION_ATTACK_OR_TALK:int = 102;
       
       private static const MOUSE_DOUBLECLICK_TIMEOUT:int = 250;
        
@@ -198,6 +233,11 @@ package tibia.input
          }
       }
       
+      public function isKeyPressed(param1:uint) : Boolean
+      {
+         return this.m_KeyPressed[param1];
+      }
+      
       protected function onSandboxMouse(param1:MouseEvent) : void
       {
          if(this.m_MouseHandlerActive)
@@ -263,7 +303,7 @@ package tibia.input
       {
          var _loc3_:Number = NaN;
          var _loc4_:Number = NaN;
-         var _loc12_:MouseEvent = null;
+         var _loc13_:MouseEvent = null;
          Random.s_PoolPutUnsignedInt(param1.stageX << 16 | param1.stageY);
          var _loc2_:uint = param1.type == MouseEvent.MOUSE_UP?uint(MOUSE_LEFT):uint(MOUSE_RIGHT);
          this.m_MouseDown[_loc2_] = false;
@@ -276,15 +316,14 @@ package tibia.input
          var _loc9_:Boolean = param1.ctrlKey;
          var _loc10_:Boolean = param1.shiftKey;
          var _loc11_:String = null;
+         var _loc12_:Boolean = false;
          if(this.m_MouseEventState == 1)
          {
             this.m_MouseEventState = 2;
          }
          else if(this.m_MouseEventState == 2)
          {
-            _loc8_ = false;
-            _loc9_ = false;
-            _loc10_ = true;
+            _loc12_ = true;
             _loc11_ = MouseEvent.CLICK;
             this.m_MouseEventState = 0;
          }
@@ -318,28 +357,35 @@ package tibia.input
          }
          if(_loc7_ != null)
          {
-            _loc12_ = new MouseEvent(param1.type,true,true);
-            _loc12_.localX = _loc7_.mouseX;
-            _loc12_.localY = _loc7_.mouseY;
-            _loc12_.relatedObject = param1.relatedObject;
-            _loc12_.altKey = _loc8_;
-            _loc12_.ctrlKey = _loc9_;
-            _loc12_.shiftKey = _loc10_;
-            _loc12_.buttonDown = false;
-            _loc12_.delta = _loc5_;
-            _loc7_.dispatchEvent(_loc12_);
-            if((!_loc12_.cancelable || !_loc12_.isDefaultPrevented()) && _loc11_ != null)
+            _loc13_ = new MouseEvent(param1.type,true,true);
+            _loc13_.localX = _loc7_.mouseX;
+            _loc13_.localY = _loc7_.mouseY;
+            _loc13_.relatedObject = param1.relatedObject;
+            _loc13_.altKey = _loc8_;
+            _loc13_.ctrlKey = _loc9_;
+            _loc13_.shiftKey = _loc10_;
+            _loc13_.buttonDown = false;
+            _loc13_.delta = _loc5_;
+            _loc7_.dispatchEvent(_loc13_);
+            if((!_loc13_.cancelable || !_loc13_.isDefaultPrevented()) && _loc11_ != null)
             {
-               _loc12_ = new MouseEvent(_loc11_,true,true);
-               _loc12_.localX = _loc7_.mouseX;
-               _loc12_.localY = _loc7_.mouseY;
-               _loc12_.relatedObject = param1.relatedObject;
-               _loc12_.altKey = _loc8_;
-               _loc12_.ctrlKey = _loc9_;
-               _loc12_.shiftKey = _loc10_;
-               _loc12_.buttonDown = false;
-               _loc12_.delta = _loc5_;
-               _loc7_.dispatchEvent(_loc12_);
+               if(_loc12_)
+               {
+                  _loc13_ = new MouseClickBothEvent(_loc11_,true,true);
+               }
+               else
+               {
+                  _loc13_ = new MouseEvent(_loc11_,true,true);
+               }
+               _loc13_.localX = _loc7_.mouseX;
+               _loc13_.localY = _loc7_.mouseY;
+               _loc13_.relatedObject = param1.relatedObject;
+               _loc13_.altKey = _loc8_;
+               _loc13_.ctrlKey = _loc9_;
+               _loc13_.shiftKey = _loc10_;
+               _loc13_.buttonDown = false;
+               _loc13_.delta = _loc5_;
+               _loc7_.dispatchEvent(_loc13_);
             }
          }
       }
@@ -351,13 +397,14 @@ package tibia.input
       
       private function internalMouseDown(param1:MouseEvent) : void
       {
-         var _loc4_:tibia.input.MouseRepeatEvent = null;
+         var _loc5_:tibia.input.MouseRepeatEvent = null;
          Random.s_PoolPutUnsignedInt(param1.stageX << 16 | param1.stageY);
          var _loc2_:uint = param1.type == MouseEvent.MOUSE_DOWN?uint(MOUSE_LEFT):uint(MOUSE_RIGHT);
          this.m_MouseDown[_loc2_] = true;
          this.m_MouseEventCode = _loc2_;
          this.m_MouseEventPoint.setTo(param1.stageX,param1.stageY);
-         if(this.m_Options != null && Boolean(this.m_Options.generalInputClassicControls) && (Boolean(this.m_MouseDown[MOUSE_LEFT]) && Boolean(this.m_MouseDown[MOUSE_RIGHT])) && this.m_MouseRepeatTarget.value == null)
+         var _loc3_:MouseBinding = null;
+         if(this.m_Options != null && this.m_Options.mouseMapping != null && (_loc3_ = this.m_Options.mouseMapping.findBinding(MOUSE_BUTTON_BOTH,0)) != null && _loc3_.action != 0 && (Boolean(this.m_MouseDown[MOUSE_LEFT]) && Boolean(this.m_MouseDown[MOUSE_RIGHT])) && this.m_MouseRepeatTarget.value == null)
          {
             this.m_MouseEventState = 1;
          }
@@ -365,31 +412,31 @@ package tibia.input
          {
             this.m_MouseEventState = 0;
          }
-         var _loc3_:InteractiveObject = this.getMouseTarget(param1.stageX,param1.stageY);
-         if(_loc3_ != this.m_MouseEventTarget.value)
+         var _loc4_:InteractiveObject = this.getMouseTarget(param1.stageX,param1.stageY);
+         if(_loc4_ != this.m_MouseEventTarget.value)
          {
-            this.m_MouseEventTarget.value = _loc3_;
+            this.m_MouseEventTarget.value = _loc4_;
             this.m_MouseEventTime = 0;
          }
-         if(_loc3_ != null)
+         if(_loc4_ != null)
          {
-            _loc4_ = new tibia.input.MouseRepeatEvent(param1.type,true,true);
-            _loc4_.localX = _loc3_.mouseX;
-            _loc4_.localY = _loc3_.mouseY;
-            _loc4_.relatedObject = param1.relatedObject;
-            _loc4_.ctrlKey = param1.ctrlKey;
-            _loc4_.altKey = param1.altKey;
-            _loc4_.shiftKey = param1.shiftKey;
-            _loc4_.buttonDown = true;
-            _loc4_.delta = 0;
-            _loc3_.dispatchEvent(_loc4_);
-            if(Boolean(_loc4_.cancelable) && Boolean(_loc4_.isDefaultPrevented()))
+            _loc5_ = new tibia.input.MouseRepeatEvent(param1.type,true,true);
+            _loc5_.localX = _loc4_.mouseX;
+            _loc5_.localY = _loc4_.mouseY;
+            _loc5_.relatedObject = param1.relatedObject;
+            _loc5_.ctrlKey = param1.ctrlKey;
+            _loc5_.altKey = param1.altKey;
+            _loc5_.shiftKey = param1.shiftKey;
+            _loc5_.buttonDown = true;
+            _loc5_.delta = 0;
+            _loc4_.dispatchEvent(_loc5_);
+            if(Boolean(_loc5_.cancelable) && Boolean(_loc5_.isDefaultPrevented()))
             {
                this.m_MouseEventState = 3;
             }
-            else if((!_loc4_.cancelable || !_loc4_.isDefaultPrevented()) && Boolean(_loc4_.repeatEnabled) && this.m_MouseDown[MOUSE_LEFT] != this.m_MouseDown[MOUSE_RIGHT] && this.m_MouseRepeatTarget.value == null)
+            else if((!_loc5_.cancelable || !_loc5_.isDefaultPrevented()) && Boolean(_loc5_.repeatEnabled) && this.m_MouseDown[MOUSE_LEFT] != this.m_MouseDown[MOUSE_RIGHT] && this.m_MouseRepeatTarget.value == null)
             {
-               this.initMouseRepeat(_loc3_,_loc4_);
+               this.initMouseRepeat(_loc4_,_loc5_);
             }
          }
       }
@@ -519,6 +566,15 @@ package tibia.input
          }
       }
       
+      public function isModifierKeyPressed(param1:MouseEvent = null) : Boolean
+      {
+         if(param1 != null)
+         {
+            return Boolean(param1.ctrlKey) || Boolean(param1.shiftKey) || Boolean(param1.altKey);
+         }
+         return Boolean(this.isKeyPressed(Keyboard.CONTROL)) || Boolean(this.isKeyPressed(Keyboard.SHIFT)) || Boolean(this.isKeyPressed(Keyboard.ALTERNATE));
+      }
+      
       private function updateMapping() : void
       {
          var _loc1_:MappingSet = null;
@@ -635,7 +691,9 @@ package tibia.input
       
       protected function onSandboxKeyboard(param1:KeyboardEvent) : void
       {
-         var _loc2_:uint = 0;
+         var _loc3_:uint = 0;
+         var _loc4_:ModifierKeyEvent = null;
+         var _loc2_:* = false;
          if(this.m_KeyboardHandlerActive)
          {
             return;
@@ -643,6 +701,7 @@ package tibia.input
          this.m_KeyboardHandlerActive = true;
          if(param1.type == KeyboardEvent.KEY_UP)
          {
+            _loc2_ = this.m_KeyPressed[param1.keyCode] != false;
             this.m_KeyPressed[param1.keyCode] = false;
          }
          if(Boolean(this.m_CaptureKeyboard) && this.m_Mapping != null && !(Boolean(param1.altKey) && Boolean(param1.ctrlKey)))
@@ -650,8 +709,8 @@ package tibia.input
             this.cancelEvent(param1);
             if(param1.type == KeyboardEvent.KEY_DOWN || Boolean(this.isInternetExplorer) && Boolean(param1.ctrlKey))
             {
-               _loc2_ = !!this.m_KeyPressed[param1.keyCode]?uint(InputEvent.KEY_REPEAT):uint(InputEvent.KEY_DOWN);
-               this.m_Mapping.onKeyInput(_loc2_,param1.charCode,param1.keyCode,param1.altKey,param1.ctrlKey,param1.shiftKey);
+               _loc3_ = !!this.m_KeyPressed[param1.keyCode]?uint(InputEvent.KEY_REPEAT):uint(InputEvent.KEY_DOWN);
+               this.m_Mapping.onKeyInput(_loc3_,param1.charCode,param1.keyCode,param1.altKey,param1.ctrlKey,param1.shiftKey);
             }
             if(param1.type == KeyboardEvent.KEY_UP)
             {
@@ -661,7 +720,13 @@ package tibia.input
          if(param1.type == KeyboardEvent.KEY_DOWN)
          {
             this.m_KeyCode = param1.keyCode;
+            _loc2_ = this.m_KeyPressed[param1.keyCode] != (!this.isInternetExplorer || param1.keyCode != Keyboard.TAB);
             this.m_KeyPressed[param1.keyCode] = !this.isInternetExplorer || param1.keyCode != Keyboard.TAB;
+         }
+         if(_loc2_)
+         {
+            _loc4_ = new ModifierKeyEvent(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,param1.bubbles,param1.cancelable,param1.charCode,param1.keyCode,param1.keyLocation,param1.ctrlKey,param1.altKey,param1.shiftKey);
+            this.dispatchEvent(_loc4_);
          }
          this.m_KeyboardHandlerActive = false;
       }

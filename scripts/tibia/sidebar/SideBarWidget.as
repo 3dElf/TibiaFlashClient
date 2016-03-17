@@ -8,19 +8,20 @@ package tibia.sidebar
    import flash.events.Event;
    import flash.events.MouseEvent;
    import mx.events.SandboxMouseEvent;
-   import mx.core.EdgeMetrics;
-   import mx.core.mx_internal;
-   import mx.core.IBorder;
    import mx.events.PropertyChangeEvent;
    import mx.events.CollectionEvent;
+   import mx.core.EdgeMetrics;
    import flash.display.DisplayObject;
    import mx.events.CollectionEventKind;
    import tibia.options.OptionsStorage;
    import tibia.sidebar.sideBarWidgetClasses.SideBarHeader;
-   import mx.managers.CursorManager;
+   import tibia.cursors.CursorHelper;
    import flash.geom.Point;
    import mx.core.UIComponent;
    import mx.core.IUIComponent;
+   import mx.core.mx_internal;
+   import mx.core.IBorder;
+   import mx.managers.CursorManagerPriority;
    import mx.core.ScrollPolicy;
    
    public class SideBarWidget extends Container
@@ -50,8 +51,6 @@ package tibia.sidebar
       
       private var m_UncommittedVisible:Boolean = false;
       
-      private var m_DropOffset:Number = NaN;
-      
       private var m_UIConstructed:Boolean = false;
       
       protected var m_StyleWithBorder:String = null;
@@ -59,6 +58,8 @@ package tibia.sidebar
       protected var m_LayoutProtected:Object = null;
       
       protected var m_Options:OptionsStorage = null;
+      
+      private var m_DropOffset:Number = NaN;
       
       protected var m_SideBarSet:tibia.sidebar.SideBarSet = null;
       
@@ -76,6 +77,8 @@ package tibia.sidebar
       
       private var m_UncommittedStyleWithoutBorder:Boolean = false;
       
+      private var m_CursorHelper:CursorHelper;
+      
       private var m_ResizeUsedHeight:Number = NaN;
       
       private var m_UIDropIndicator:DisplayObject = null;
@@ -92,14 +95,13 @@ package tibia.sidebar
       
       protected var m_DropAvailableHeight:Number = NaN;
       
-      private var m_ResizeCursorID:int = 0;
-      
       private var m_UncommittedSideBarSet:Boolean = false;
       
       public function SideBarWidget()
       {
          this.m_DropOffsetList = [];
          this.m_ResizeStartPoint = new Point(NaN,NaN);
+         this.m_CursorHelper = new CursorHelper(CursorManagerPriority.HIGH);
          super();
          horizontalScrollPolicy = ScrollPolicy.OFF;
          verticalScrollPolicy = ScrollPolicy.OFF;
@@ -163,13 +165,9 @@ package tibia.sidebar
          }
       }
       
-      override public function get borderMetrics() : EdgeMetrics
+      function get sideBarSet() : tibia.sidebar.SideBarSet
       {
-         if(mx_internal::border is IBorder)
-         {
-            return IBorder(mx_internal::border).borderMetrics;
-         }
-         return super.borderMetrics;
+         return this.m_SideBarSet;
       }
       
       private function onWidgetDragInit(param1:MouseEvent) : void
@@ -203,41 +201,6 @@ package tibia.sidebar
          }
       }
       
-      private function onWidgetMouseResizeInit(param1:MouseEvent) : void
-      {
-         var _loc3_:Boolean = false;
-         var _loc2_:WidgetView = null;
-         if(param1 != null && this.m_ResizeWidget == null && (_loc2_ = param1.currentTarget as WidgetView) != null)
-         {
-            _loc3_ = !DragManager.isDragging && !_loc2_.widgetClosed && Boolean(_loc2_.widgetResizable) && Boolean(_loc2_.hitTestResizeHandle(param1.stageX,param1.stageY));
-            switch(param1.type)
-            {
-               case MouseEvent.MOUSE_DOWN:
-                  if(_loc3_)
-                  {
-                     this.m_ResizeWidget = _loc2_;
-                     this.m_ResizeStartHeight = _loc2_.widgetSuggestedHeight;
-                     this.m_ResizeStartPoint.x = param1.stageX;
-                     this.m_ResizeStartPoint.y = param1.stageY;
-                     this.m_ResizeWidget.removeEventListener(MouseEvent.MOUSE_MOVE,this.onWidgetMouseResizeInit);
-                     this.m_ResizeWidget.removeEventListener(MouseEvent.MOUSE_OVER,this.onWidgetMouseResizeInit);
-                     this.m_ResizeWidget.removeEventListener(MouseEvent.MOUSE_OUT,this.onWidgetMouseResizeInit);
-                     systemManager.addEventListener(MouseEvent.MOUSE_MOVE,this.onWidgetMouseResizeEvent);
-                     systemManager.addEventListener(MouseEvent.MOUSE_UP,this.onWidgetMouseResizeEvent);
-                     systemManager.addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onWidgetMouseResizeEvent);
-                     this.updateMouseResizeCursor(true);
-                  }
-                  break;
-               case MouseEvent.MOUSE_MOVE:
-               case MouseEvent.MOUSE_OVER:
-                  this.updateMouseResizeCursor(_loc3_);
-                  break;
-               case MouseEvent.MOUSE_OUT:
-                  this.updateMouseResizeCursor(false);
-            }
-         }
-      }
-      
       function set sideBarSet(param1:tibia.sidebar.SideBarSet) : void
       {
          if(this.m_SideBarSet != param1)
@@ -256,11 +219,6 @@ package tibia.sidebar
             this.m_UncommittedSideBarSet = true;
             invalidateProperties();
          }
-      }
-      
-      function get sideBarSet() : tibia.sidebar.SideBarSet
-      {
-         return this.m_SideBarSet;
       }
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
@@ -549,18 +507,6 @@ package tibia.sidebar
          return this.m_Location;
       }
       
-      private function updateSideBarSet() : void
-      {
-         if(this.m_Options != null)
-         {
-            this.sideBarSet = this.m_Options.getSideBarSet(tibia.sidebar.SideBarSet.DEFAULT_SET);
-         }
-         else
-         {
-            this.sideBarSet = null;
-         }
-      }
-      
       public function get styleWithBorder() : String
       {
          return this.m_StyleWithBorder;
@@ -633,21 +579,32 @@ package tibia.sidebar
          rawChildren.addChild(this.m_UIHeader as DisplayObject);
       }
       
+      private function updateSideBarSet() : void
+      {
+         if(this.m_Options != null)
+         {
+            this.sideBarSet = this.m_Options.getSideBarSet(tibia.sidebar.SideBarSet.DEFAULT_SET);
+         }
+         else
+         {
+            this.sideBarSet = null;
+         }
+      }
+      
       private function updateMouseResizeCursor(param1:Boolean) : void
       {
          var _loc2_:Class = null;
          if(param1)
          {
             _loc2_ = getStyle("resizeCursorSkin");
-            if(this.m_ResizeCursorID == 0 && !DragManager.isDragging)
+            if(!DragManager.isDragging)
             {
-               this.m_ResizeCursorID = CursorManager.getInstance().setCursor(_loc2_);
+               this.m_CursorHelper.setCursor(_loc2_);
             }
          }
-         else if(this.m_ResizeCursorID != 0)
+         else
          {
-            CursorManager.getInstance().removeCursor(this.m_ResizeCursorID);
-            this.m_ResizeCursorID = 0;
+            this.m_CursorHelper.resetCursor();
          }
       }
       
@@ -876,6 +833,41 @@ package tibia.sidebar
          return this.m_StyleWithoutBorder;
       }
       
+      private function onWidgetMouseResizeInit(param1:MouseEvent) : void
+      {
+         var _loc3_:Boolean = false;
+         var _loc2_:WidgetView = null;
+         if(param1 != null && this.m_ResizeWidget == null && (_loc2_ = param1.currentTarget as WidgetView) != null)
+         {
+            _loc3_ = !DragManager.isDragging && !_loc2_.widgetClosed && Boolean(_loc2_.widgetResizable) && Boolean(_loc2_.hitTestResizeHandle(param1.stageX,param1.stageY));
+            switch(param1.type)
+            {
+               case MouseEvent.MOUSE_DOWN:
+                  if(_loc3_)
+                  {
+                     this.m_ResizeWidget = _loc2_;
+                     this.m_ResizeStartHeight = _loc2_.widgetSuggestedHeight;
+                     this.m_ResizeStartPoint.x = param1.stageX;
+                     this.m_ResizeStartPoint.y = param1.stageY;
+                     this.m_ResizeWidget.removeEventListener(MouseEvent.MOUSE_MOVE,this.onWidgetMouseResizeInit);
+                     this.m_ResizeWidget.removeEventListener(MouseEvent.MOUSE_OVER,this.onWidgetMouseResizeInit);
+                     this.m_ResizeWidget.removeEventListener(MouseEvent.MOUSE_OUT,this.onWidgetMouseResizeInit);
+                     systemManager.addEventListener(MouseEvent.MOUSE_MOVE,this.onWidgetMouseResizeEvent);
+                     systemManager.addEventListener(MouseEvent.MOUSE_UP,this.onWidgetMouseResizeEvent);
+                     systemManager.addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onWidgetMouseResizeEvent);
+                     this.updateMouseResizeCursor(true);
+                  }
+                  break;
+               case MouseEvent.MOUSE_MOVE:
+               case MouseEvent.MOUSE_OVER:
+                  this.updateMouseResizeCursor(_loc3_);
+                  break;
+               case MouseEvent.MOUSE_OUT:
+                  this.updateMouseResizeCursor(false);
+            }
+         }
+      }
+      
       public function resetWidgets() : void
       {
          var _loc4_:SideBar = null;
@@ -932,6 +924,15 @@ package tibia.sidebar
          }
          var _loc2_:Number = param1.measuredMinHeight;
          return Boolean(contains(param1 as DisplayObject)) || !isNaN(this.m_DropAvailableHeight) && !isNaN(_loc2_) && _loc2_ <= this.m_DropAvailableHeight;
+      }
+      
+      override public function get borderMetrics() : EdgeMetrics
+      {
+         if(mx_internal::border is IBorder)
+         {
+            return IBorder(mx_internal::border).borderMetrics;
+         }
+         return super.borderMetrics;
       }
    }
 }

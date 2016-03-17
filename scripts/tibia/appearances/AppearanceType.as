@@ -5,6 +5,40 @@ package tibia.appearances
    
    public class AppearanceType
    {
+      
+      private static const ACTION_UNSET:int = -1;
+      
+      private static const MOUSE_BUTTON_LEFT:int = 1;
+      
+      private static const MOUSE_BUTTON_BOTH:int = 4;
+      
+      private static const ACTION_USE_OR_OPEN:int = 101;
+      
+      private static const ACTION_SMARTCLICK:int = 100;
+      
+      private static const MOUSE_BUTTON_RIGHT:int = 2;
+      
+      private static const ACTION_LOOK:int = 6;
+      
+      private static const ACTION_TALK:int = 9;
+      
+      private static const ACTION_USE:int = 7;
+      
+      private static const MOUSE_BUTTON_MIDDLE:int = 3;
+      
+      private static const ACTION_NONE:int = 0;
+      
+      private static const ACTION_AUTOWALK:int = 3;
+      
+      private static const ACTION_ATTACK:int = 1;
+      
+      private static const ACTION_OPEN:int = 8;
+      
+      private static const ACTION_AUTOWALK_HIGHLIGHT:int = 4;
+      
+      private static const ACTION_CONTEXT_MENU:int = 5;
+      
+      private static const ACTION_ATTACK_OR_TALK:int = 102;
        
       public var isHookEast:Boolean = false;
       
@@ -108,11 +142,15 @@ package tibia.appearances
       
       public var spritesheetIDs:Vector.<uint>;
       
+      public var isUsable:Boolean = false;
+      
       public var isAutomap:Boolean = false;
       
       public var width:int = 0;
       
       public var isTop:Boolean = false;
+      
+      public var isDefaultAction:Boolean = false;
       
       public var isTranslucent:Boolean = false;
       
@@ -134,6 +172,8 @@ package tibia.appearances
       
       public var numSprites:int = 0;
       
+      public var defaultAction:int = -1;
+      
       public var isHeight:Boolean = false;
       
       public var isBottom:Boolean = false;
@@ -154,6 +194,11 @@ package tibia.appearances
          this.cachedSpriteInformations = new Vector.<CachedSpriteInformation>();
          super();
          this.ID = param1;
+      }
+      
+      public function get isCreature() : Boolean
+      {
+         return this.ID == AppearanceInstance.CREATURE || this.ID == AppearanceInstance.OUTDATEDCREATURE || this.ID == AppearanceInstance.UNKNOWNCREATURE;
       }
    }
 }

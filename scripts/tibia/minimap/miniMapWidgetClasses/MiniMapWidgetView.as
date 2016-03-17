@@ -1,28 +1,64 @@
 package tibia.minimap.miniMapWidgetClasses
 {
    import tibia.sidebar.sideBarWidgetClasses.WidgetView;
+   import flash.geom.Point;
    import mx.controls.Button;
    import flash.events.MouseEvent;
    import tibia.minimap.MiniMapWidget;
    import tibia.§sidebar:ns_sidebar_internal§.widgetInstance;
    import shared.controls.CustomButton;
    import tibia.minimap.MiniMapStorage;
+   import tibia.game.ContextMenuBase;
+   import tibia.game.PopUpBase;
+   import tibia.input.ModifierKeyEvent;
    import shared.utility.Vector3D;
    import tibia.creatures.Player;
    import tibia.network.Communication;
-   import tibia.chat.MessageMode;
+   import tibia.cursors.CursorHelper;
    import mx.core.EdgeMetrics;
+   import tibia.options.OptionsStorage;
+   import tibia.input.InputHandler;
+   import tibia.input.mapping.MouseBinding;
+   import tibia.input.MouseClickBothEvent;
+   import tibia.input.MouseActionHelper;
    import mx.core.UIComponent;
+   import mx.managers.CursorManagerPriority;
    import mx.core.ScrollPolicy;
    
    public class MiniMapWidgetView extends WidgetView
    {
       
-      public static const BUNDLE:String = "MiniMapWidget";
+      private static const ACTION_UNSET:int = -1;
+      
+      private static const MOUSE_BUTTON_LEFT:int = 1;
+      
+      private static const MOUSE_BUTTON_BOTH:int = 4;
+      
+      private static const ACTION_USE_OR_OPEN:int = 101;
       
       private static const WIDGET_VIEW_HEIGHT:Number = 108;
       
+      private static const ACTION_SMARTCLICK:int = 100;
+      
+      private static const MOUSE_BUTTON_RIGHT:int = 2;
+      
+      private static const ACTION_LOOK:int = 6;
+      
+      public static const BUNDLE:String = "MiniMapWidget";
+      
+      private static const ACTION_TALK:int = 9;
+      
+      private static const VALID_ACTIONS:Vector.<uint> = Vector.<uint>([ACTION_AUTOWALK,ACTION_CONTEXT_MENU]);
+      
+      private static const ACTION_USE:int = 7;
+      
+      private static const MOUSE_BUTTON_MIDDLE:int = 3;
+      
+      private static const ACTION_NONE:int = 0;
+      
       private static const WIDGET_VIEW_WIDTH:Number = 176;
+      
+      private static const ACTION_AUTOWALK:int = 3;
       
       private static const WIDGET_COMPONENT_POSITIONS:Array = [{
          "left":1,
@@ -75,7 +111,21 @@ package tibia.minimap.miniMapWidgetClasses
          "width":NaN,
          "height":NaN
       }];
+      
+      private static const ACTION_ATTACK:int = 1;
+      
+      private static const ACTION_OPEN:int = 8;
+      
+      private static const ACTION_AUTOWALK_HIGHLIGHT:int = 4;
+      
+      private static const ACTION_CONTEXT_MENU:int = 5;
+      
+      private static var m_TempPoint:Point = new Point();
+      
+      private static const ACTION_ATTACK_OR_TALK:int = 102;
        
+      private var m_MouseCursorOverWidget:Boolean = false;
+      
       private var m_UncommittedZoom:Boolean = false;
       
       protected var m_Zoom:int = 0;
@@ -108,6 +158,8 @@ package tibia.minimap.miniMapWidgetClasses
       
       protected var m_UIButtonZoomOut:Button = null;
       
+      private var m_CursorHelper:CursorHelper;
+      
       protected var m_MiniMapStorage:MiniMapStorage = null;
       
       protected var m_UIView:tibia.minimap.miniMapWidgetClasses.MiniMapRenderer = null;
@@ -120,10 +172,12 @@ package tibia.minimap.miniMapWidgetClasses
       
       public function MiniMapWidgetView()
       {
+         this.m_CursorHelper = new CursorHelper(CursorManagerPriority.MEDIUM);
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          horizontalScrollPolicy = ScrollPolicy.OFF;
          verticalScrollPolicy = ScrollPolicy.OFF;
+         Tibia.s_GetInputHandler().addEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
       }
       
       function get highlightEnd() : Number
@@ -184,6 +238,8 @@ package tibia.minimap.miniMapWidgetClasses
             this.m_UIView.addEventListener(MouseEvent.CLICK,this.onViewClick);
             this.m_UIView.addEventListener(MouseEvent.RIGHT_CLICK,this.onViewClick);
             this.m_UIView.addEventListener(MouseEvent.MOUSE_WHEEL,this.onMouseWheel);
+            this.m_UIView.addEventListener(MouseEvent.ROLL_OUT,this.onRollOut);
+            this.m_UIView.addEventListener(MouseEvent.ROLL_OVER,this.onRollOver);
             addChild(this.m_UIView);
             this.m_UIButtonEast = new CustomButton();
             this.m_UIButtonEast.styleName = getStyle("buttonEastStyle");
@@ -266,9 +322,27 @@ package tibia.minimap.miniMapWidgetClasses
          }
       }
       
+      protected function onRollOut(param1:MouseEvent) : void
+      {
+         this.m_MouseCursorOverWidget = false;
+         this.m_CursorHelper.resetCursor();
+      }
+      
       function get miniMapStorage() : MiniMapStorage
       {
          return this.m_MiniMapStorage;
+      }
+      
+      protected function onViewMouseEvent(param1:MouseEvent) : void
+      {
+         if(param1 != null && widgetInstance is MiniMapWidget && m_Options != null && m_Options.mouseMapping != null && Boolean(m_Options.mouseMapping.showMouseCursorForAction) && ContextMenuBase.getCurrent() == null && PopUpBase.getCurrent() == null)
+         {
+            this.determineAction(param1,false,true);
+         }
+         else
+         {
+            this.m_CursorHelper.resetCursor();
+         }
       }
       
       override function releaseInstance() : void
@@ -286,6 +360,7 @@ package tibia.minimap.miniMapWidgetClasses
          this.m_UIView.removeEventListener(MouseEvent.CLICK,this.onViewClick);
          this.m_UIView.removeEventListener(MouseEvent.RIGHT_CLICK,this.onViewClick);
          this.m_UIView.removeEventListener(MouseEvent.MOUSE_WHEEL,this.onMouseWheel);
+         Tibia.s_GetInputHandler().removeEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
       }
       
       protected function onViewClick(param1:MouseEvent) : void
@@ -295,46 +370,7 @@ package tibia.minimap.miniMapWidgetClasses
          var _loc4_:Player = null;
          var _loc5_:MiniMapStorage = null;
          var _loc6_:Communication = null;
-         if(param1 != null && widgetInstance is MiniMapWidget)
-         {
-            _loc2_ = this.m_UIView.pointToMark(param1.localX,param1.localY);
-            _loc3_ = null;
-            if(_loc2_ != null)
-            {
-               _loc3_ = new Vector3D(_loc2_.x,_loc2_.y,_loc2_.z);
-            }
-            else
-            {
-               _loc3_ = this.m_UIView.pointToAbsolute(param1.localX,param1.localY);
-            }
-            if(_loc3_ != null)
-            {
-               switch(param1.type)
-               {
-                  case MouseEvent.CLICK:
-                     _loc4_ = Tibia.s_GetPlayer();
-                     if(_loc4_ != null)
-                     {
-                        if(false && Boolean(param1.ctrlKey) && Boolean(param1.shiftKey))
-                        {
-                           _loc6_ = Tibia.s_GetCommunication();
-                           _loc6_.sendCTALK(MessageMode.MESSAGE_SAY,"alani " + _loc3_.x + "," + _loc3_.y + "," + _loc3_.z);
-                        }
-                        else
-                        {
-                           _loc4_.startAutowalk(_loc3_.x,_loc3_.y,_loc3_.z,false,false);
-                        }
-                     }
-                     break;
-                  case MouseEvent.RIGHT_CLICK:
-                     _loc5_ = MiniMapWidget(widgetInstance).miniMapStorage;
-                     if(_loc5_ != null)
-                     {
-                        new MiniMapWidgetContextMenu(_loc5_,_loc3_.x,_loc3_.y,_loc3_.z).display(this,param1.stageX,param1.stageY);
-                     }
-               }
-            }
-         }
+         this.determineAction(param1,true,false);
       }
       
       override protected function commitProperties() : void
@@ -382,15 +418,6 @@ package tibia.minimap.miniMapWidgetClasses
          return this.m_PositionY;
       }
       
-      override protected function measure() : void
-      {
-         var _loc1_:EdgeMetrics = null;
-         super.measure();
-         _loc1_ = viewMetricsAndPadding;
-         measuredMinWidth = measuredWidth = _loc1_.left + WIDGET_VIEW_WIDTH + _loc1_.right;
-         measuredMinHeight = measuredHeight = _loc1_.top + WIDGET_VIEW_HEIGHT + _loc1_.bottom;
-      }
-      
       function set miniMapStorage(param1:MiniMapStorage) : void
       {
          if(this.m_MiniMapStorage != param1)
@@ -399,6 +426,11 @@ package tibia.minimap.miniMapWidgetClasses
             this.m_UncommittedMiniMapStorage = true;
             invalidateProperties();
          }
+      }
+      
+      private function onModifierKeyEvent(param1:ModifierKeyEvent) : void
+      {
+         this.determineAction(null,false,true);
       }
       
       protected function onMouseWheel(param1:MouseEvent) : void
@@ -414,6 +446,111 @@ package tibia.minimap.miniMapWidgetClasses
             else if(param1.delta < 0)
             {
                _loc2_.zoom = _loc2_.zoom - 1;
+            }
+         }
+      }
+      
+      override protected function measure() : void
+      {
+         super.measure();
+         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
+         measuredMinWidth = measuredWidth = _loc1_.left + WIDGET_VIEW_WIDTH + _loc1_.right;
+         measuredMinHeight = measuredHeight = _loc1_.top + WIDGET_VIEW_HEIGHT + _loc1_.bottom;
+      }
+      
+      protected function determineAction(param1:MouseEvent, param2:Boolean = false, param3:Boolean = false) : void
+      {
+         var _loc10_:Player = null;
+         var _loc11_:MiniMapStorage = null;
+         if(this.m_MouseCursorOverWidget == false)
+         {
+            return;
+         }
+         var _loc4_:OptionsStorage = Tibia.s_GetOptions();
+         var _loc5_:InputHandler = Tibia.s_GetInputHandler();
+         var _loc6_:Vector3D = null;
+         var _loc7_:int = ACTION_NONE;
+         if(!(widgetInstance is MiniMapWidget))
+         {
+            return;
+         }
+         if(param1 != null)
+         {
+            m_TempPoint.setTo(param1.localX,param1.localY);
+         }
+         else
+         {
+            m_TempPoint.setTo(this.mouseX,this.mouseY);
+         }
+         var _loc8_:Object = this.m_UIView.pointToMark(m_TempPoint.x,m_TempPoint.y);
+         if(_loc8_ != null)
+         {
+            _loc6_ = new Vector3D(_loc8_.x,_loc8_.y,_loc8_.z);
+         }
+         else
+         {
+            _loc6_ = this.m_UIView.pointToAbsolute(m_TempPoint.x,m_TempPoint.y);
+         }
+         var _loc9_:MouseBinding = null;
+         if(param1 != null)
+         {
+            if(param1 is MouseClickBothEvent)
+            {
+               _loc9_ = _loc4_.mouseMapping.findBindingByMouseEvent(param1);
+            }
+            else if(_loc5_.isModifierKeyPressed(param1) == false && (param1.type == MouseEvent.CLICK || param1.type == MouseEvent.ROLL_OVER))
+            {
+               _loc7_ = ACTION_AUTOWALK;
+            }
+            else if(param1.type == MouseEvent.RIGHT_CLICK && _loc5_.isModifierKeyPressed(param1) == false)
+            {
+               _loc7_ = ACTION_CONTEXT_MENU;
+            }
+            else
+            {
+               _loc9_ = _loc4_.mouseMapping.findBindingByMouseEvent(param1);
+            }
+         }
+         else if(_loc5_.isModifierKeyPressed())
+         {
+            _loc9_ = _loc4_.mouseMapping.findBindingForLeftMouseButtonAndPressedModifierKey();
+         }
+         else
+         {
+            _loc7_ = ACTION_AUTOWALK;
+         }
+         if(_loc9_ != null)
+         {
+            _loc7_ = _loc9_.action;
+         }
+         if(VALID_ACTIONS.indexOf(_loc7_) == -1)
+         {
+            _loc7_ = ACTION_NONE;
+         }
+         if(Boolean(param3) && m_Options != null && m_Options.mouseMapping != null && Boolean(m_Options.mouseMapping.showMouseCursorForAction))
+         {
+            this.m_CursorHelper.setCursor(MouseActionHelper.actionToMouseCursor(_loc7_));
+         }
+         if(Boolean(param2) && _loc6_ != null)
+         {
+            switch(_loc7_)
+            {
+               case ACTION_AUTOWALK:
+                  _loc10_ = Tibia.s_GetPlayer();
+                  if(_loc10_ != null)
+                  {
+                     _loc10_.startAutowalk(_loc6_.x,_loc6_.y,_loc6_.z,false,false);
+                  }
+                  break;
+               case ACTION_CONTEXT_MENU:
+                  _loc11_ = MiniMapWidget(widgetInstance).miniMapStorage;
+                  if(_loc11_ != null)
+                  {
+                     this.m_CursorHelper.resetCursor();
+                     new MiniMapWidgetContextMenu(_loc11_,_loc6_.x,_loc6_.y,_loc6_.z).display(this,param1.stageX,param1.stageY);
+                  }
+                  break;
+               case ACTION_NONE:
             }
          }
       }
@@ -441,6 +578,15 @@ package tibia.minimap.miniMapWidgetClasses
             }
             _loc4_.setActualSize(_loc6_,_loc5_);
             _loc3_++;
+         }
+      }
+      
+      protected function onRollOver(param1:MouseEvent) : void
+      {
+         this.m_MouseCursorOverWidget = true;
+         if(param1 != null && widgetInstance is MiniMapWidget && m_Options != null && m_Options.mouseMapping != null && Boolean(m_Options.mouseMapping.showMouseCursorForAction))
+         {
+            this.determineAction(param1,false,true);
          }
       }
    }

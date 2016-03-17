@@ -19,6 +19,7 @@ package tibia.container
       
       override public function acquireViewInstance(param1:Boolean = true) : WidgetView
       {
+         options = Tibia.s_GetOptions();
          if(type == Widget.TYPE_BODY)
          {
             this.bodyContainer = Tibia.s_GetContainerStorage().getBodyContainerView();
@@ -27,10 +28,8 @@ package tibia.container
          var _loc2_:WidgetView = super.acquireViewInstance(param1);
          if(_loc2_ is BodyContainerViewWidgetView)
          {
+            _loc2_.options = options;
             BodyContainerViewWidgetView(_loc2_).bodyContainer = this.m_BodyContainer;
-         }
-         if(_loc2_ is BodyContainerViewWidgetView)
-         {
             BodyContainerViewWidgetView(_loc2_).player = this.m_Player;
          }
          return _loc2_;

@@ -190,9 +190,9 @@ package tibia.appearances
          }
       }
       
-      public function get hasMark() : Boolean
+      public function get isCreature() : Boolean
       {
-         return this.marks.isMarkSet(tibia.appearances.Marks.MARK_TYPE_PERMANENT);
+         return m_Type.isCreature;
       }
       
       public function get data() : int
@@ -207,6 +207,11 @@ package tibia.appearances
             this.m_Hang = param1;
             this.updateSpecialPattern();
          }
+      }
+      
+      public function get hasMark() : Boolean
+      {
+         return this.marks.isMarkSet(tibia.appearances.Marks.MARK_TYPE_PERMANENT);
       }
       
       override public function drawTo(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void

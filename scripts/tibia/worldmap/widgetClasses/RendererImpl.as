@@ -3,6 +3,7 @@ package tibia.worldmap.widgetClasses
    import mx.core.UIComponent;
    import flash.display.BitmapData;
    import shared.utility.Colour;
+   import flash.events.MouseEvent;
    import tibia.appearances.widgetClasses.MarksView;
    import tibia.appearances.Marks;
    import flash.display.Bitmap;
@@ -137,6 +138,8 @@ package tibia.worldmap.widgetClasses
       protected static const SUMMON_OTHERS:int = 2;
       
       protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
+      
+      private static const s_TempMouseMoveEvent:MouseEvent = new MouseEvent(MouseEvent.MOUSE_MOVE);
       
       protected static const SKILL_NONE:int = -1;
       
@@ -422,6 +425,8 @@ package tibia.worldmap.widgetClasses
       
       protected var m_AtmosphereLayer:BitmapData = null;
       
+      private var m_CursorOverRenderer:Boolean = false;
+      
       private var m_UncommittedWorldMapStorage:Boolean = false;
       
       private var m_OptionsHighlight:Number = NaN;
@@ -698,7 +703,7 @@ package tibia.worldmap.widgetClasses
                   _loc19_ = _loc19_ + _loc26_.outfit.m_Type.displacementY;
                   _loc26_.outfit.drawTo(this.m_MainLayer,_loc22_.x + _loc18_,_loc22_.y + _loc19_,_loc26_.direction,0,_loc26_.mountOutfit != null?1:0);
                }
-               if(Boolean(_loc13_) && _loc26_ == this.m_HighlightObject)
+               if(Boolean(_loc13_) && this.m_HighlightObject != null && (this.m_HighlightObject is ObjectInstance && _loc26_.ID == ObjectInstance(this.m_HighlightObject).data || this.m_HighlightObject is Creature && _loc26_ == this.m_HighlightObject))
                {
                   this.m_ObjectCursor.drawTo(this.m_MainLayer,_loc22_.x + _loc18_,_loc22_.y + _loc19_,Tibia.s_FrameTibiaTimestamp);
                }
@@ -805,6 +810,17 @@ package tibia.worldmap.widgetClasses
                this.m_ObjectCursor.drawTo(this.m_MainLayer,param1,param2,Tibia.s_FrameTibiaTimestamp);
             }
          }
+      }
+      
+      public function get highlightObject() : *
+      {
+         return this.m_HighlightObject;
+      }
+      
+      public function set highlightObject(param1:*) : void
+      {
+         this.m_HighlightObject = param1;
+         invalidateDisplayList();
       }
       
       public function set highlightTile(param1:Vector3D) : void
@@ -1890,7 +1906,7 @@ package tibia.worldmap.widgetClasses
          var _loc15_:Number = NaN;
          var _loc16_:* = false;
          var _loc17_:Number = NaN;
-         var _loc18_:Object = null;
+         var _loc18_:Creature = null;
          var _loc19_:int = 0;
          var _loc20_:int = 0;
          var _loc21_:Field = null;
@@ -1908,8 +1924,7 @@ package tibia.worldmap.widgetClasses
          var _loc33_:Vector.<tibia.worldmap.widgetClasses.RenderAtom> = null;
          var _loc34_:int = 0;
          var _loc35_:tibia.worldmap.widgetClasses.RenderAtom = null;
-         var _loc36_:* = false;
-         var _loc37_:ObjectInstance = null;
+         var _loc36_:ObjectInstance = null;
          this.m_StopwatchEnterFrame.stop();
          this.m_StopwatchEnterFrame.start();
          var _loc3_:Colour = null;
@@ -2132,46 +2147,36 @@ package tibia.worldmap.widgetClasses
                }
                _loc8_++;
             }
-            _loc18_ = {};
-            if(this.m_OptionsHighlight > 0 && this.m_HighlightTile != null && this.m_HighlightTile.z == _loc10_ && this.m_WorldMapStorage.getTopLookObject(this.m_HighlightTile.x,this.m_HighlightTile.y,this.m_HighlightTile.z,_loc18_) > -1)
+            _loc18_ = null;
+            if(this.m_HighlightObject is Creature)
             {
-               _loc36_ = this.m_HighlightObject !== _loc18_.object;
-               _loc37_ = ObjectInstance(_loc18_.object);
-               if(Boolean(_loc37_.type.isBank) || Boolean(_loc37_.type.isClip))
+               _loc18_ = this.m_HighlightObject as Creature;
+               this.m_ObjectCursor.copyMaskFromCreature(_loc18_);
+            }
+            else if(this.m_OptionsHighlight > 0 && this.m_HighlightTile != null && this.m_HighlightTile.z == _loc10_)
+            {
+               if(this.m_HighlightObject != null && this.m_HighlightObject is ObjectInstance)
                {
-                  this.m_HighlightObject = null;
-               }
-               else if(Boolean(_loc36_) || Boolean(_loc37_.type.isAnimation) || _loc37_.ID == AppearanceInstance.CREATURE)
-               {
-                  if(_loc37_.ID == AppearanceInstance.CREATURE)
+                  _loc36_ = this.m_HighlightObject as ObjectInstance;
+                  if(_loc36_.isCreature)
                   {
-                     _loc22_ = this.m_CreatureStorage.getCreature(_loc37_.data);
-                     if(_loc22_ != null)
-                     {
-                        this.m_ObjectCursor.copyMaskFromCreature(_loc22_);
-                        this.m_HighlightObject = _loc22_;
-                     }
-                     else
-                     {
-                        this.m_HighlightObject = null;
-                     }
+                     this.m_ObjectCursor.copyMaskFromCreature(this.m_CreatureStorage.getCreature(_loc36_.data));
                   }
                   else
                   {
                      this.m_WorldMapStorage.toAbsolute(this.m_HighlightTile,this.m_HelperCoordinate);
-                     this.m_ObjectCursor.copyMaskFromAppearance(_loc37_,this.m_HelperCoordinate.x,this.m_HelperCoordinate.y,this.m_HelperCoordinate.z);
-                     this.m_HighlightObject = _loc37_;
+                     this.m_ObjectCursor.copyMaskFromAppearance(_loc36_,this.m_HelperCoordinate.x,this.m_HelperCoordinate.y,this.m_HelperCoordinate.z);
                   }
                }
-            }
-            else if((_loc22_ = this.m_CreatureStorage.getAim()) != null)
-            {
-               this.m_ObjectCursor.copyMaskFromCreature(_loc22_);
-               this.m_HighlightObject = _loc22_;
+               else if(this.m_HighlightObject is Creature)
+               {
+                  _loc18_ = this.m_HighlightObject as Creature;
+                  this.m_ObjectCursor.copyMaskFromCreature(_loc18_);
+               }
             }
             else
             {
-               this.m_HighlightObject = null;
+               this.m_ObjectCursor.clearMask();
             }
             this.m_HelperCoordinate.setComponents(0,0,_loc10_);
             this.m_WorldMapStorage.toAbsolute(this.m_HelperCoordinate,this.m_HelperCoordinate);

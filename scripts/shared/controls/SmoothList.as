@@ -61,6 +61,8 @@ package shared.controls
       
       protected var m_FirstVisibleItem:int = -1;
       
+      private var m_MouseCursorOverList:Boolean = false;
+      
       protected var m_AlignBottom:Boolean = false;
       
       protected var m_ForceUpdate:Boolean = false;
@@ -452,6 +454,45 @@ package shared.controls
          return _loc1_;
       }
       
+      public function set selectedItem(param1:Object) : void
+      {
+         if(Boolean(this.m_Selectable) && param1 != null && this.m_DataProvider != null)
+         {
+            this.m_SelectedIndex = this.m_DataProvider.getItemIndex(param1);
+            this.m_UncommittedSelectedIndex = true;
+            invalidateProperties();
+         }
+      }
+      
+      protected function onRollOver(param1:MouseEvent) : void
+      {
+         this.m_MouseCursorOverList = true;
+         if(param1 != null)
+         {
+            this.updateRollOverItem(param1.stageX,param1.stageY,true);
+            this.m_DragScrollClick = null;
+         }
+      }
+      
+      public function mouseEventToItemRenderer(param1:MouseEvent) : IListItemRenderer
+      {
+         var _loc3_:DisplayObject = null;
+         var _loc2_:Class = this.m_ItemRendererFactory.generator;
+         if(param1 != null)
+         {
+            _loc3_ = param1.target as DisplayObject;
+            while(_loc3_ != null && !(_loc3_ is Stage))
+            {
+               if(_loc3_ is _loc2_)
+               {
+                  return _loc3_ as IListItemRenderer;
+               }
+               _loc3_ = _loc3_.parent;
+            }
+         }
+         return null;
+      }
+      
       public function pointToItemIndex(param1:Number, param2:Number) : int
       {
          var _loc11_:Point = null;
@@ -509,44 +550,6 @@ package shared.controls
          return -1;
       }
       
-      public function set selectedItem(param1:Object) : void
-      {
-         if(Boolean(this.m_Selectable) && param1 != null && this.m_DataProvider != null)
-         {
-            this.m_SelectedIndex = this.m_DataProvider.getItemIndex(param1);
-            this.m_UncommittedSelectedIndex = true;
-            invalidateProperties();
-         }
-      }
-      
-      protected function onRollOver(param1:MouseEvent) : void
-      {
-         if(param1 != null)
-         {
-            this.updateRollOverItem(param1.stageX,param1.stageY,true);
-            this.m_DragScrollClick = null;
-         }
-      }
-      
-      public function mouseEventToItemRenderer(param1:MouseEvent) : IListItemRenderer
-      {
-         var _loc3_:DisplayObject = null;
-         var _loc2_:Class = this.m_ItemRendererFactory.generator;
-         if(param1 != null)
-         {
-            _loc3_ = param1.target as DisplayObject;
-            while(_loc3_ != null && !(_loc3_ is Stage))
-            {
-               if(_loc3_ is _loc2_)
-               {
-                  return _loc3_ as IListItemRenderer;
-               }
-               _loc3_ = _loc3_.parent;
-            }
-         }
-         return null;
-      }
-      
       protected function resetExtentCache() : void
       {
          if(this.m_ExtentChache == null)
@@ -579,7 +582,7 @@ package shared.controls
       protected function updateRollOverItem(param1:Number, param2:Number, param3:Boolean = false) : void
       {
          var _loc4_:int = -1;
-         if(!isNaN(param1) && !isNaN(param2))
+         if(Boolean(this.m_MouseCursorOverList) && !isNaN(param1) && !isNaN(param2))
          {
             _loc4_ = this.pointToItemIndex(param1,param2);
          }
@@ -774,6 +777,7 @@ package shared.controls
       
       protected function onRollOut(param1:MouseEvent) : void
       {
+         this.m_MouseCursorOverList = false;
          if(param1 != null)
          {
             if(Boolean(param1.buttonDown) && this.m_DragScrollClick != null && this.m_DragScrollTimer == null)

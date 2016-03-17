@@ -5,13 +5,15 @@ package tibia.network
    public interface IServerConnection extends IEventDispatcher
    {
        
-      function readCommunicationData() : void;
+      function get messageReader() : IMessageReader;
       
       function get isGameRunning() : Boolean;
       
+      function get connectionData() : IConnectionData;
+      
       function connect(param1:IConnectionData) : void;
       
-      function set communication(param1:Communication) : void;
+      function set communication(param1:IServerCommunication) : void;
       
       function get isPending() : Boolean;
       
@@ -19,9 +21,9 @@ package tibia.network
       
       function get connectionState() : uint;
       
-      function get communication() : Communication;
+      function get communication() : IServerCommunication;
       
-      function get messageReader() : IMessageReader;
+      function readCommunicationData() : void;
       
       function get messageWriter() : IMessageWriter;
       

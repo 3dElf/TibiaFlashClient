@@ -334,7 +334,7 @@ package tibia.actionbar.widgetClasses
             this.m_UIActionIcon.name = "action";
             addChild(this.m_UIActionIcon);
             this.m_UICooldownMask = new FlexShape();
-            this.m_UICooldownMask.cacheAsBitmap = true;
+            this.m_UICooldownMask.cacheAsBitmap = false;
             this.m_UICooldownMask.name = "cooldownMask";
             addChild(this.m_UICooldownMask);
             this.drawCooldownMask();

@@ -13,6 +13,7 @@ package tibia.options
    import tibia.options.configurationWidgetClasses.RendererOptions;
    import tibia.options.configurationWidgetClasses.StatusOptions;
    import tibia.options.configurationWidgetClasses.MessageOptions;
+   import tibia.options.configurationWidgetClasses.MouseControlOptions;
    import tibia.options.configurationWidgetClasses.HotkeyOptions;
    import tibia.options.configurationWidgetClasses.NameFilterOptions;
    
@@ -21,15 +22,17 @@ package tibia.options
       
       public static const RENDERER:int = 1;
       
+      public static const MOUSE:int = 4;
+      
       public static const MESSAGE:int = 3;
       
       public static const GENERAL:int = 0;
       
       static const BUNDLE:String = "OptionsConfigurationWidget";
       
-      public static const NAME_FILTER:int = 5;
+      public static const NAME_FILTER:int = 6;
       
-      public static const HOTKEY:int = 4;
+      public static const HOTKEY:int = 5;
       
       public static const STATUS:int = 2;
        
@@ -60,6 +63,7 @@ package tibia.options
          this.m_UIOptionsEditor[RENDERER] = new RendererOptions();
          this.m_UIOptionsEditor[STATUS] = new StatusOptions();
          this.m_UIOptionsEditor[MESSAGE] = new MessageOptions();
+         this.m_UIOptionsEditor[MOUSE] = new MouseControlOptions();
          this.m_UIOptionsEditor[HOTKEY] = new HotkeyOptions();
          this.m_UIOptionsEditor[NAME_FILTER] = new NameFilterOptions();
       }

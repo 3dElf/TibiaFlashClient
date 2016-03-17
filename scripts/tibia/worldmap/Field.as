@@ -14,9 +14,15 @@ package tibia.worldmap
       
       protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
+      private static const ACTION_LOOK:int = 6;
+      
       protected static const NUM_EFFECTS:int = 200;
       
+      private static const ACTION_SMARTCLICK:int = 100;
+      
       protected static const PATH_SOUTH:int = 7;
+      
+      private static const ACTION_TALK:int = 9;
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
@@ -26,7 +32,7 @@ package tibia.worldmap
       
       protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
       
-      private static var s_CacheCount:int = 0;
+      private static const MOUSE_BUTTON_MIDDLE:int = 3;
       
       protected static const PATH_NORTH_WEST:int = 4;
       
@@ -48,7 +54,11 @@ package tibia.worldmap
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
+      private static const MOUSE_BUTTON_RIGHT:int = 2;
+      
       protected static const MM_SIDEBAR_ZOOM_MAX:int = 2;
+      
+      private static var s_CacheCount:int = 0;
       
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
@@ -84,7 +94,11 @@ package tibia.worldmap
       
       protected static const MM_SIDEBAR_VIEW_HEIGHT:int = 106;
       
+      private static const ACTION_ATTACK:int = 1;
+      
       protected static const GROUND_LAYER:int = 7;
+      
+      private static const ACTION_CONTEXT_MENU:int = 5;
       
       protected static const PATH_WEST:int = 5;
       
@@ -100,6 +114,8 @@ package tibia.worldmap
       
       protected static const PATH_ERROR_TOO_FAR:int = -3;
       
+      private static const ACTION_NONE:int = 0;
+      
       protected static const PATH_MATRIX_SIZE:int = 2 * PATH_MAX_DISTANCE + 1;
       
       protected static const MM_STORAGE_MIN_VERSION:int = 1;
@@ -107,6 +123,8 @@ package tibia.worldmap
       protected static const PATH_SOUTH_EAST:int = 8;
       
       protected static const PATH_ERROR_GO_UPSTAIRS:int = -2;
+      
+      private static const MOUSE_BUTTON_LEFT:int = 1;
       
       protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
       
@@ -116,7 +134,11 @@ package tibia.worldmap
       
       protected static const MM_STORAGE_MAX_VERSION:int = 1;
       
+      private static const MOUSE_BUTTON_BOTH:int = 4;
+      
       protected static const MM_CACHE_SIZE:int = 48;
+      
+      private static const ACTION_UNSET:int = -1;
       
       protected static const PATH_EXISTS:int = 1;
       
@@ -126,7 +148,13 @@ package tibia.worldmap
       
       protected static const MAP_MIN_Z:int = 0;
       
+      private static const ACTION_OPEN:int = 8;
+      
+      private static const ACTION_USE_OR_OPEN:int = 101;
+      
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
+      private static const ACTION_ATTACK_OR_TALK:int = 102;
       
       protected static const MAPSIZE_W:int = 10;
       
@@ -142,9 +170,15 @@ package tibia.worldmap
       
       protected static const PATH_EAST:int = 1;
       
+      private static const ACTION_AUTOWALK:int = 3;
+      
       protected static const MAP_WIDTH:int = 15;
       
+      private static const ACTION_USE:int = 7;
+      
       protected static const PATH_MATRIX_CENTER:int = PATH_MAX_DISTANCE;
+      
+      private static const ACTION_AUTOWALK_HIGHLIGHT:int = 4;
       
       {
          s_CacheBitmap.lock();
@@ -595,6 +629,58 @@ package tibia.worldmap
          this.m_Effects.length = 0;
          this.m_EffectsCount = 0;
          this.m_Environment = null;
+      }
+      
+      public function getTopCreatureObject(param1:Object = null) : int
+      {
+         var _loc3_:ObjectInstance = null;
+         var _loc2_:int = this.getTopLookObject(param1);
+         if(param1.object != null)
+         {
+            _loc3_ = param1.object as ObjectInstance;
+            if(_loc3_ != null && Boolean(_loc3_.isCreature))
+            {
+               return _loc2_;
+            }
+            param1.object = undefined;
+            return -1;
+         }
+         return -1;
+      }
+      
+      public function getCreatureObjectForCreatureID(param1:int, param2:Object = null) : int
+      {
+         var _loc4_:AppearanceType = null;
+         var _loc3_:int = -1;
+         if(param2 != null && param1 != 0)
+         {
+            param2.position = -1;
+            param2.object = null;
+            if(this.m_ObjectsCount > 0)
+            {
+               _loc4_ = null;
+               _loc3_ = 1;
+               while(_loc3_ < this.m_ObjectsCount)
+               {
+                  _loc4_ = this.m_ObjectsNetwork[_loc3_].type;
+                  if(_loc4_.isCreature)
+                  {
+                     if(this.m_ObjectsNetwork[_loc3_].data == param1)
+                     {
+                        if(param2 != null)
+                        {
+                           param2.position = _loc3_;
+                           param2.object = this.m_ObjectsNetwork[_loc3_];
+                        }
+                        break;
+                     }
+                  }
+                  _loc3_++;
+               }
+            }
+            return -1;
+         }
+         return -1;
       }
       
       public function getTopMultiUseObject(param1:Object = null) : int

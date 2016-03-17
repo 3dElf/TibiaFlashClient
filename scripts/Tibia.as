@@ -27,10 +27,10 @@ package
    import tibia.game.PopUpBase;
    import tibia.worldmap.WorldMapWidget;
    import flash.events.Event;
-   import tibia.game.FocusNotifier;
    import tibia.network.IConnectionData;
    import tibia.network.ConnectionEvent;
    import tibia.game.MessageWidget;
+   import build.BuildConstants;
    import tibia.actionbar.HActionBarWidget;
    import tibia.game.TimeoutWaitWidget;
    import tibia.sidebar.ToggleBar;
@@ -40,6 +40,7 @@ package
    import tibia.actionbar.ActionBarSet;
    import flash.events.ErrorEvent;
    import tibia.game.GameEvent;
+   import tibia.game.FocusNotifier;
    import tibia.game.AccountCharacter;
    import flash.net.URLVariables;
    import flash.net.URLRequest;
@@ -66,7 +67,8 @@ package
    import tibia.controls.GridContainer;
    import mx.events.FlexEvent;
    import flash.utils.*;
-   import tibia.network.ConnectionFactory;
+   import build.CreatureStorageFactory;
+   import build.ConnectionFactory;
    import flash.events.TimerEvent;
    import tibia.sidebar.SideBarWidget;
    import mx.managers.ToolTipManager;
@@ -117,7 +119,7 @@ package
       
       public static const CLIENT_TYPE:uint = 3;
       
-      public static const CLIENT_VERSION:uint = 1404;
+      public static const CLIENT_VERSION:uint = 1429;
       
       private static const OPTIONS_SAVE_INTERVAL:int = 30 * 60 * 1000;
       
@@ -1455,10 +1457,6 @@ package
       {
          if(param1.type == Event.ACTIVATE)
          {
-            if(false == false)
-            {
-               FocusNotifier.getInstance().hide();
-            }
             this.isActive = true;
          }
          else
@@ -1531,7 +1529,7 @@ package
       
       public function saveLocalData() : void
       {
-         if(false == false)
+         if(BuildConstants.MINI_MAP_STORAGE_SAVE_SECTORS)
          {
             this.m_MiniMapStorage.saveSectors(true);
          }
@@ -1809,16 +1807,13 @@ package
          if(this.m_IsActive != param1)
          {
             this.m_IsActive = param1;
-            if(false == false)
+            if(!BuildConstants.FOCUS_NOTIFIER_SHOW_ALWAYS && this.m_IsActive == true)
             {
-               if(this.m_IsActive == true)
-               {
-                  FocusNotifier.getInstance().hide();
-               }
-               else
-               {
-                  FocusNotifier.getInstance().show();
-               }
+               FocusNotifier.getInstance().hide();
+            }
+            else
+            {
+               FocusNotifier.getInstance().show();
             }
          }
       }
@@ -1940,7 +1935,7 @@ package
          this.m_ChatStorage = new ChatStorage();
          this.m_ChannelsPending = new Vector.<int>();
          this.m_ContainerStorage = new ContainerStorage();
-         this.m_CreatureStorage = new CreatureStorage();
+         this.m_CreatureStorage = CreatureStorageFactory.s_CreateCreatureStorage();
          this.m_MiniMapStorage = new MiniMapStorage();
          this.m_Player = this.m_CreatureStorage.player;
          this.m_SpellStorage = new SpellStorage();
@@ -1982,7 +1977,7 @@ package
          stage.frameRate = 100;
          stage.scaleMode = StageScaleMode.NO_SCALE;
          stage.showDefaultContextMenu = false;
-         if(this.isActive == false || false)
+         if(this.isActive == false || Boolean(BuildConstants.FOCUS_NOTIFIER_SHOW_ALWAYS))
          {
             FocusNotifier.getInstance().captureMouse = true;
             FocusNotifier.getInstance().show();
@@ -2411,6 +2406,11 @@ package
          return this.m_Connection != null && Boolean(this.m_Connection.isGameRunning) || Boolean(this.m_CurrentOptionsUploading);
       }
       
+      public function get currentConnection() : Object
+      {
+         return this.m_Connection;
+      }
+      
       public function set options(param1:OptionsStorage) : void
       {
          if(this.m_Options != param1)
@@ -2535,17 +2535,22 @@ package
       
       public function changeCharacter() : void
       {
+         var _loc1_:CharacterSelectionWidget = null;
+         var _loc2_:ArrayCollection = null;
          var _loc3_:AccountCharacter = null;
-         var _loc1_:CharacterSelectionWidget = new CharacterSelectionWidget();
-         var _loc2_:ArrayCollection = new ArrayCollection();
-         for each(_loc3_ in this.m_ConnectionDataList)
+         if(BuildConstants.ENABLE_CHARACTER_CHANGE_DIALOG)
          {
-            _loc2_.addItem(_loc3_);
+            _loc1_ = new CharacterSelectionWidget();
+            _loc2_ = new ArrayCollection();
+            for each(_loc3_ in this.m_ConnectionDataList)
+            {
+               _loc2_.addItem(_loc3_);
+            }
+            _loc1_.characters = _loc2_;
+            _loc1_.selectedCharacterIndex = this.m_ConnectionDataCurrent;
+            _loc1_.addEventListener(CloseEvent.CLOSE,this.onCloseChangeCharacter);
+            _loc1_.show();
          }
-         _loc1_.characters = _loc2_;
-         _loc1_.selectedCharacterIndex = this.m_ConnectionDataCurrent;
-         _loc1_.addEventListener(CloseEvent.CLOSE,this.onCloseChangeCharacter);
-         _loc1_.show();
       }
       
       public function set m_UIGameWindow(param1:GridContainer) : void
