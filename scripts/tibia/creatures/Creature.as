@@ -601,7 +601,7 @@ package tibia.creatures
             {
                this.m_Outfit.ns_appearance_internal::m_Phase = 0;
             }
-            else if(this.m_Outfit.m_Type.phases == 3 || this.m_MountOutfit != null && this.m_MountOutfit.m_Type != null)
+            else if(this.m_Outfit.m_Type.phases == 3)
             {
                this.m_Outfit.ns_appearance_internal::m_Phase = 1 + Math.floor(_loc2_ / 8) % 2;
             }

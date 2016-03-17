@@ -148,7 +148,14 @@ package tibia.input
             }
             else if(_loc6_ != null && Boolean(_loc6_.type.isDefaultAction))
             {
-               _loc4_ = _loc6_.type.defaultAction;
+               if(_loc6_.type.defaultAction != ACTION_NONE)
+               {
+                  _loc4_ = _loc6_.type.defaultAction;
+               }
+               else
+               {
+                  _loc4_ = ACTION_LOOK;
+               }
             }
             else if(_loc6_ != null && Boolean(_loc6_.type.isCreature) || _loc5_ != null)
             {

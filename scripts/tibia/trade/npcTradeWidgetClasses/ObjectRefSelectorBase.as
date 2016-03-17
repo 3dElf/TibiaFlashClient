@@ -73,13 +73,12 @@ package tibia.trade.npcTradeWidgetClasses
       
       protected var m_DataProvider:IList = null;
       
-      protected var m_TradeMode:int;
+      protected var m_TradeMode:int = 0;
       
       private var m_UncommittedSortOrder:Boolean = true;
       
       public function ObjectRefSelectorBase()
       {
-         this.m_TradeMode = NPCTradeWidgetView.MODE_BUY;
          super();
          addEventListener(MouseEvent.CLICK,this.onMouseClick);
          addEventListener(MouseEvent.MIDDLE_CLICK,this.onMouseClick);
@@ -273,7 +272,7 @@ package tibia.trade.npcTradeWidgetClasses
       public function set selectedObject(param1:TradeObjectRef) : void
       {
          var _loc2_:int = 0;
-         if(this.dataProvider != null)
+         if(this.dataProvider != null && param1 != null)
          {
             _loc2_ = this.dataProvider.length - 1;
             while(_loc2_ >= 0)
@@ -307,7 +306,7 @@ package tibia.trade.npcTradeWidgetClasses
       
       public function get selectedObject() : TradeObjectRef
       {
-         if(this.dataProvider != null && this.selectedIndex > -1)
+         if(this.dataProvider != null && this.selectedIndex > -1 && this.selectedIndex < this.dataProvider.length)
          {
             return TradeObjectRef(this.dataProvider.getItemAt(this.selectedIndex));
          }

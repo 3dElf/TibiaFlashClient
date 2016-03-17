@@ -8,7 +8,7 @@ package
    public class _CursorManagerStyle
    {
       
-      private static var _embed_css_Assets_swf_mx_skins_cursor_BusyCursor_1272652271:Class = _CursorManagerStyle__embed_css_Assets_swf_mx_skins_cursor_BusyCursor_1272652271;
+      private static var _embed_css_Assets_swf_mx_skins_cursor_BusyCursor_502657655:Class = _CursorManagerStyle__embed_css_Assets_swf_mx_skins_cursor_BusyCursor_502657655;
        
       public function _CursorManagerStyle()
       {
@@ -29,7 +29,7 @@ package
             style.defaultFactory = function():void
             {
                _CursorManagerStyle.busyCursor = BusyCursor;
-               _CursorManagerStyle.busyCursorBackground = _embed_css_Assets_swf_mx_skins_cursor_BusyCursor_1272652271;
+               _CursorManagerStyle.busyCursorBackground = _embed_css_Assets_swf_mx_skins_cursor_BusyCursor_502657655;
             };
          }
       }

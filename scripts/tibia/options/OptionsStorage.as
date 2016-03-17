@@ -897,13 +897,13 @@ package tibia.options
       }
       
       [Bindable(event="propertyChange")]
-      public function set combatChaseMode(param1:int) : void
+      public function set rendererScaleMap(param1:Boolean) : void
       {
-         var _loc2_:Object = this.combatChaseMode;
+         var _loc2_:Object = this.rendererScaleMap;
          if(_loc2_ !== param1)
          {
-            this._558862877combatChaseMode = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"combatChaseMode",_loc2_,param1));
+            this._1408018027rendererScaleMap = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererScaleMap",_loc2_,param1));
          }
       }
       
@@ -1011,6 +1011,17 @@ package tibia.options
                default:
                   continue;
             }
+         }
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set combatChaseMode(param1:int) : void
+      {
+         var _loc2_:Object = this.combatChaseMode;
+         if(_loc2_ !== param1)
+         {
+            this._558862877combatChaseMode = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"combatChaseMode",_loc2_,param1));
          }
       }
       
@@ -1131,17 +1142,6 @@ package tibia.options
       private function set _789326636statusPlayerFlags(param1:Boolean) : void
       {
          this.m_StatusPlayerFlags = param1;
-      }
-      
-      [Bindable(event="propertyChange")]
-      public function set rendererScaleMap(param1:Boolean) : void
-      {
-         var _loc2_:Object = this.rendererScaleMap;
-         if(_loc2_ !== param1)
-         {
-            this._1408018027rendererScaleMap = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererScaleMap",_loc2_,param1));
-         }
       }
       
       private function marshallMarket(param1:XML) : void

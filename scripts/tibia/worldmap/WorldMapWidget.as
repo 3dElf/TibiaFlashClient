@@ -606,7 +606,7 @@ package tibia.worldmap
             {
                _loc6_ = ACTION_AUTOWALK;
             }
-            if(_loc16_ != null && !_loc16_.type.isDefaultAction && _loc15_ != _loc6_ && _loc6_ == ACTION_LOOK && this.m_WorldMapStorage.getEnterPossibleFlag(_loc8_.x,_loc8_.y,this.m_WorldMapStorage.m_PlayerZPlane,true) != FIELD_ENTER_NOT_POSSIBLE)
+            if(_loc16_ != null && (!_loc16_.type.isDefaultAction || Boolean(_loc16_.type.isDefaultAction) && _loc16_.type.defaultAction == ACTION_NONE) && _loc15_ != _loc6_ && _loc6_ == ACTION_LOOK && this.m_WorldMapStorage.getEnterPossibleFlag(_loc8_.x,_loc8_.y,this.m_WorldMapStorage.m_PlayerZPlane,true) != FIELD_ENTER_NOT_POSSIBLE)
             {
                _loc6_ = ACTION_AUTOWALK;
             }
@@ -710,8 +710,6 @@ package tibia.worldmap
          var _loc2_:Point = null;
          var _loc3_:Vector3D = null;
          var _loc4_:Object = null;
-         var _loc5_:Creature = null;
-         var _loc6_:Object = null;
          if(this.m_UIRendererImpl != null && this.m_WorldMapStorage != null)
          {
             _loc2_ = this.m_UIRendererImpl.globalToLocal(param1);
@@ -719,18 +717,6 @@ package tibia.worldmap
             if(_loc3_ != null)
             {
                _loc4_ = {"absolute":this.m_WorldMapStorage.toAbsolute(_loc3_)};
-               _loc5_ = this.m_UIRendererImpl.pointToCreature(_loc2_.x,_loc2_.y,true);
-               _loc6_ = new Object();
-               if(_loc5_ != null)
-               {
-                  this.m_WorldMapStorage.getCreatureObjectForCreature(_loc5_,_loc6_);
-               }
-               if(_loc6_.object != null)
-               {
-                  _loc4_.object = _loc6_.object;
-                  _loc4_.position = _loc6_.position;
-                  return _loc4_;
-               }
                this.m_WorldMapStorage.getTopMultiUseObject(_loc3_.x,_loc3_.y,_loc3_.z,_loc4_);
                return _loc4_;
             }
