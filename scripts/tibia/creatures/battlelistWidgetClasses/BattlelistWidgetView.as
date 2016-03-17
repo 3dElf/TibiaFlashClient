@@ -372,13 +372,16 @@ package tibia.creatures.battlelistWidgetClasses
          var _loc2_:BattlelistItemRenderer = null;
          var _loc3_:Creature = null;
          this.m_MouseCursorOverWidget = true;
-         if(param1 != null && !widgetCollapsed && this.m_CreatureStorage != null)
+         if(param1 != null && param1.itemRenderer != null && !widgetCollapsed && this.m_CreatureStorage != null)
          {
             _loc2_ = BattlelistItemRenderer(param1.itemRenderer);
-            _loc3_ = _loc2_.data as Creature;
-            this.m_CreatureStorage.setAim(_loc3_);
-            this.m_RolloverCreature = _loc3_;
-            this.determineAction(null,false,true);
+            if(_loc2_ != null)
+            {
+               _loc3_ = _loc2_.data as Creature;
+               this.m_CreatureStorage.setAim(_loc3_);
+               this.m_RolloverCreature = _loc3_;
+               this.determineAction(null,false,true);
+            }
          }
       }
       

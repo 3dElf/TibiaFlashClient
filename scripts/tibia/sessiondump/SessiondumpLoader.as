@@ -54,6 +54,7 @@ package tibia.sessiondump
             }
          }
          this.m_State = STATE_LOADED;
+         dispatchEvent(param1);
       }
       
       public function load(param1:String) : void

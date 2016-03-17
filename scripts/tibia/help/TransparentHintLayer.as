@@ -35,7 +35,10 @@ package tibia.help
       public function hide() : void
       {
          var _loc1_:ISystemManager = Tibia.s_GetInstance().systemManager;
-         _loc1_.popUpChildren.removeChild(this);
+         if(_loc1_.popUpChildren.contains(this))
+         {
+            _loc1_.popUpChildren.removeChild(this);
+         }
          var _loc2_:Box = Tibia.s_GetInstance().m_UITibiaRootContainer;
          if(_loc2_ != null)
          {

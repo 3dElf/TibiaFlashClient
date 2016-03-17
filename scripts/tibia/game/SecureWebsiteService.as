@@ -36,7 +36,7 @@ package tibia.game
          dispatchEvent(param1);
       }
       
-      public function startServiceCall() : void
+      public function startServiceCall(param1:String) : void
       {
          this.unloadLoader();
          this.m_UploadToken = null;
@@ -44,11 +44,11 @@ package tibia.game
          this.m_Loader.addEventListener(Event.COMPLETE,this.onUploadComplete);
          this.m_Loader.addEventListener(IOErrorEvent.IO_ERROR,this.onUploadError);
          this.m_Loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onUploadError);
-         var _loc1_:URLRequest = new URLRequest(this.m_ServiceURL);
-         _loc1_.contentType = "application/json";
-         _loc1_.method = URLRequestMethod.POST;
-         _loc1_.data = JSON.stringify({});
-         this.m_Loader.load(_loc1_);
+         var _loc2_:URLRequest = new URLRequest(this.m_ServiceURL);
+         _loc2_.contentType = "application/json";
+         _loc2_.method = URLRequestMethod.POST;
+         _loc2_.data = JSON.stringify({"sid":param1});
+         this.m_Loader.load(_loc2_);
       }
       
       private function unloadLoader() : void

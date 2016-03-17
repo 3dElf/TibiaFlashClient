@@ -26,8 +26,6 @@ package tibia.sessiondump.controller
       
       private static const BUNDLE:String = "Global";
        
-      private var m_ShowHintLabel:Boolean = true;
-      
       private var m_UIEmbeddedMouseShield:UIComponent = null;
       
       private var m_FadeSequence:Sequence;
@@ -38,20 +36,19 @@ package tibia.sessiondump.controller
       
       private var m_CursorHelper:CursorHelper;
       
-      private var m_MouseShieldHoles:Vector.<GUIRectangle>;
-      
       private var m_FadeAnimationRequested:Boolean = false;
       
       private var m_FullyTransparent:Boolean = false;
       
-      private var m_UIEmbeddedMouseShieldHole:UIComponent;
+      private var m_MouseShieldHoles:Vector.<GUIRectangle>;
       
       private var m_CaptureMouse:Boolean = true;
+      
+      private var m_ShowHintLabel:Boolean = true;
       
       public function SessiondumpMouseShield()
       {
          this.m_MouseShieldRegion = new Rectangle();
-         this.m_UIEmbeddedMouseShieldHole = new UIComponent();
          this.m_MouseShieldHoles = new Vector.<GUIRectangle>();
          this.m_FadeSequence = new Sequence();
          this.m_CursorHelper = new CursorHelper(CursorManagerPriority.MEDIUM);
@@ -98,6 +95,11 @@ package tibia.sessiondump.controller
                PopUpBase.getCurrent().drawFocus(false);
             }
          }
+      }
+      
+      public function set captureMouse(param1:Boolean) : void
+      {
+         this.m_CaptureMouse = param1;
       }
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
@@ -179,6 +181,15 @@ package tibia.sessiondump.controller
          }
       }
       
+      public function set fullyTransparent(param1:Boolean) : void
+      {
+         if(this.m_FullyTransparent != param1)
+         {
+            this.m_FullyTransparent = param1;
+            invalidateDisplayList();
+         }
+      }
+      
       override protected function createChildren() : void
       {
          super.createChildren();
@@ -197,15 +208,6 @@ package tibia.sessiondump.controller
             this.addEventListener(MouseEvent.ROLL_OUT,this.onMouseEvent);
          }
          this.m_CursorHelper.setCursor(DefaultRejectCursor);
-      }
-      
-      public function set fullyTransparent(param1:Boolean) : void
-      {
-         if(this.m_FullyTransparent != param1)
-         {
-            this.m_FullyTransparent = param1;
-            invalidateDisplayList();
-         }
       }
       
       private function setMouseCapture(param1:Boolean) : void
@@ -235,10 +237,20 @@ package tibia.sessiondump.controller
          invalidateDisplayList();
       }
       
-      private function onTimer(param1:Event) : void
+      override protected function measure() : void
       {
-         this.refreshMouseHoles();
-         invalidateDisplayList();
+         var _loc1_:Box = null;
+         super.measure();
+         _loc1_ = Tibia.s_GetInstance().m_UITibiaRootContainer;
+         if(_loc1_ != null)
+         {
+            measuredMinHeight = _loc1_.height;
+            measuredHeight = _loc1_.height;
+            measuredMinWidth = Math.max(measuredMinWidth,_loc1_.width);
+            measuredWidth = Math.max(measuredWidth,_loc1_.width);
+            this.m_MouseShieldRegion.setTo(0,0,measuredWidth,measuredHeight);
+            this.refreshMouseHoles();
+         }
       }
       
       public function set showHintLabel(param1:Boolean) : void
@@ -255,20 +267,10 @@ package tibia.sessiondump.controller
          return this.m_FullyTransparent;
       }
       
-      override protected function measure() : void
+      private function onTimer(param1:Event) : void
       {
-         var _loc1_:Box = null;
-         super.measure();
-         _loc1_ = Tibia.s_GetInstance().m_UITibiaRootContainer;
-         if(_loc1_ != null)
-         {
-            measuredMinHeight = _loc1_.height;
-            measuredHeight = _loc1_.height;
-            measuredMinWidth = Math.max(measuredMinWidth,_loc1_.width);
-            measuredWidth = Math.max(measuredWidth,_loc1_.width);
-            this.m_MouseShieldRegion.setTo(0,0,measuredWidth,measuredHeight);
-            this.refreshMouseHoles();
-         }
+         this.refreshMouseHoles();
+         invalidateDisplayList();
       }
       
       private function onActiveChanged(param1:Event) : void
@@ -320,11 +322,6 @@ package tibia.sessiondump.controller
          this.m_FadeSequence.play();
       }
       
-      public function get rectangle() : Rectangle
-      {
-         return this.m_MouseShieldRegion;
-      }
-      
       public function get showHintLabel() : Boolean
       {
          return this.m_ShowHintLabel;
@@ -361,11 +358,6 @@ package tibia.sessiondump.controller
             Tibia.s_GetSecondaryTimer().addEventListener(TimerEvent.TIMER,this.onTimer);
             this.m_IsShown = true;
          }
-      }
-      
-      public function set captureMouse(param1:Boolean) : void
-      {
-         this.m_CaptureMouse = param1;
       }
       
       public function get captureMouse() : Boolean

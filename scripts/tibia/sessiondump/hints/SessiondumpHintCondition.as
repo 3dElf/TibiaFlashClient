@@ -1,10 +1,9 @@
 package tibia.sessiondump.hints
 {
    import tibia.sessiondump.hints.condition.HintConditionBase;
-   import tibia.sessiondump.controller.SessiondumpMouseShield;
    import tibia.worldmap.WorldMapStorage;
+   import tibia.sessiondump.controller.SessiondumpMouseShield;
    import tibia.sessiondump.controller.SessiondumpHintActionsController;
-   import shared.utility.Vector3D;
    import tibia.sessiondump.hints.condition.HintConditionAutowalk;
    import tibia.sessiondump.hints.condition.HintConditionMove;
    import tibia.sessiondump.hints.condition.HintConditionTalk;
@@ -135,19 +134,7 @@ package tibia.sessiondump.hints
       
       private static var FIELD_COORDINATE:String = "coordinate";
        
-      private var m_Conditiontype:String = null;
-      
-      private var m_ObjecttypeIndex:uint = 0;
-      
       private var m_Condition:HintConditionBase = null;
-      
-      private var m_Amount:uint = 0;
-      
-      private var m_ObjecttypeID:uint = 0;
-      
-      private var m_Coordinate:Vector3D = null;
-      
-      private var m_DestinationCoordinate:Vector3D = null;
       
       private var m_Running:Boolean = false;
       
@@ -165,14 +152,6 @@ package tibia.sessiondump.hints
             _loc2_.m_Condition = HintConditionBase.s_Unmarshall(param1);
          }
          return _loc2_;
-      }
-      
-      override public function cancel() : void
-      {
-         SessiondumpMouseShield.getInstance().reset();
-         this.m_Running = false;
-         this.continueSessiondump();
-         super.cancel();
       }
       
       override public function perform() : void
@@ -194,20 +173,6 @@ package tibia.sessiondump.hints
          {
             throw new Error("SessiondumpHintCondition.perform: Failed to perform condition at " + timestamp + ":\n" + e.message);
          }
-      }
-      
-      private function continueSessiondump() : void
-      {
-         SessiondumpMouseShield.getInstance().reset();
-         this.m_Running = false;
-         Tibia.s_GetUIEffectsManager().clearEffects();
-         m_Processed = true;
-      }
-      
-      override public function reset() : void
-      {
-         this.m_Running = false;
-         super.reset();
       }
       
       private function showGraphicalHint() : void
@@ -279,6 +244,28 @@ package tibia.sessiondump.hints
                SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromUIComponent(ActionBarWidget,_loc10_));
             }
          }
+      }
+      
+      private function continueSessiondump() : void
+      {
+         SessiondumpMouseShield.getInstance().reset();
+         this.m_Running = false;
+         Tibia.s_GetUIEffectsManager().clearEffects();
+         m_Processed = true;
+      }
+      
+      override public function cancel() : void
+      {
+         SessiondumpMouseShield.getInstance().reset();
+         this.m_Running = false;
+         this.continueSessiondump();
+         super.cancel();
+      }
+      
+      override public function reset() : void
+      {
+         this.m_Running = false;
+         super.reset();
       }
    }
 }

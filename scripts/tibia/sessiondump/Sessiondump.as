@@ -349,7 +349,7 @@ package tibia.sessiondump
       
       protected static const CROTATEWEST:int = 114;
       
-      public static const PROTOCOL_VERSION:int = 1032;
+      public static const PROTOCOL_VERSION:int = 1035;
       
       protected static const SCREATUREOUTFIT:int = 142;
       
@@ -911,6 +911,11 @@ package tibia.sessiondump
       public function get sessiondumpDone() : Boolean
       {
          return Boolean(this.m_SessiondumpLoader.isLoadingFinished) && this.m_InputStream.position == this.m_InputStream.length;
+      }
+      
+      public function get sessiondumpLoader() : tibia.sessiondump.SessiondumpLoader
+      {
+         return this.m_SessiondumpLoader;
       }
       
       public function get sessiondumpDuration() : uint

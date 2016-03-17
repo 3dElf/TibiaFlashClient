@@ -103,15 +103,6 @@ package tibia.sessiondump.hints
             _loc4_ = param2[FIELD_TYPE] as String;
             switch(_loc4_)
             {
-               case SessiondumpHintShowText.TYPE:
-                  _loc3_ = SessiondumpHintShowText.s_Unmarshall(param2);
-                  break;
-               case SessiondumpHintHighlightObject.TYPE:
-                  _loc3_ = SessiondumpHintHighlightObject.s_Unmarshall(param2);
-                  break;
-               case SessiondumpHintHighlightUI.TYPE:
-                  _loc3_ = SessiondumpHintHighlightUI.s_Unmarshall(param2);
-                  break;
                case SessiondumpHintCondition.TYPE:
                   _loc3_ = SessiondumpHintCondition.s_Unmarshall(param2);
                   break;

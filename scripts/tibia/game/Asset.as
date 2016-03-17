@@ -37,7 +37,7 @@ package tibia.game
          var _loc11_:int = 0;
          var _loc2_:String = param1 != null?param1.localName():null;
          var _loc3_:XMLList = null;
-         if(_loc2_ == "appearances" || _loc2_ == "binary" || _loc2_ == "currentOptions" || _loc2_ == "defaultOptions" || _loc2_ == "tutorialProgressService" || _loc2_ == "sprites" || _loc2_ == "tutorialSessiondump" || _loc2_ == "tutorialSessiondumpHints" || _loc2_ == "tutorialProgressService")
+         if(_loc2_ == "appearances" || _loc2_ == "binary" || _loc2_ == "currentOptions" || _loc2_ == "defaultOptions" || _loc2_ == "defaultOptionsTutorial" || _loc2_ == "tutorialProgressService" || _loc2_ == "sprites" || _loc2_ == "tutorialSessiondump" || _loc2_ == "tutorialSessiondumpHints" || _loc2_ == "tutorialProgressService")
          {
             if((_loc3_ = param1.url) == null || _loc3_.length() != 1)
             {
@@ -49,7 +49,7 @@ package tibia.game
             {
                _loc5_ = int(_loc3_[0].toString());
             }
-            if(_loc2_ != "currentOptions" && _loc2_ != "defaultOptions" && _loc2_ != "tutorialProgressService" && _loc5_ < 1)
+            if(_loc2_ != "currentOptions" && _loc2_ != "defaultOptions" && _loc2_ != "defaultOptionsTutorial" && _loc2_ != "tutorialProgressService" && _loc5_ < 1)
             {
                return null;
             }
@@ -63,11 +63,15 @@ package tibia.game
             }
             if(_loc2_ == "currentOptions")
             {
-               return new OptionsAsset(_loc4_,_loc5_,"application/json",false);
+               return new OptionsAsset(_loc4_,_loc5_,"application/json",false,false);
             }
             if(_loc2_ == "defaultOptions")
             {
-               return new OptionsAsset(_loc4_,_loc5_,"text/xml",true);
+               return new OptionsAsset(_loc4_,_loc5_,"text/xml",true,false);
+            }
+            if(_loc2_ == "defaultOptionsTutorial")
+            {
+               return new OptionsAsset(_loc4_,_loc5_,"text/xml",true,true);
             }
             if(_loc2_ == "sprites")
             {
@@ -149,11 +153,7 @@ package tibia.game
                {
                }
             }
-            if(this.optional)
-            {
-               setTimeout(dispatchEvent,0,new Event(Event.COMPLETE,false,false));
-            }
-            else if(this.m_RawBytes != null && (size == 0 || this.m_RawBytes.length == size))
+            if(this.m_RawBytes != null && (size == 0 || this.m_RawBytes.length == size))
             {
                setTimeout(dispatchEvent,0,new Event(Event.COMPLETE,false,false));
             }

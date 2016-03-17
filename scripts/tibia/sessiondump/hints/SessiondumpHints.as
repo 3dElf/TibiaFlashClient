@@ -163,9 +163,9 @@ package tibia.sessiondump.hints
          return _loc2_;
       }
       
-      public function get playerName() : String
+      public function get playerOutfit() : OutfitInstance
       {
-         return this.m_PlayerName;
+         return this.m_PlayerOutfit;
       }
       
       public function get sessiondumpDuration() : uint
@@ -173,9 +173,9 @@ package tibia.sessiondump.hints
          return this.m_SessiondumpDuration;
       }
       
-      public function get playerOutfit() : OutfitInstance
+      public function get playerName() : String
       {
-         return this.m_PlayerOutfit;
+         return this.m_PlayerName;
       }
       
       public function getNextSessiondumpHintToProcess(param1:uint) : tibia.sessiondump.hints.SessiondumpHintBase

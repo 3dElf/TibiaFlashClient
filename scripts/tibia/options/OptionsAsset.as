@@ -8,8 +8,8 @@ package tibia.options
    import mx.utils.Base64Decoder;
    import flash.errors.IOError;
    import tibia.game.SecureWebsiteService;
-   import flash.events.ErrorEvent;
    import flash.events.Event;
+   import flash.events.ErrorEvent;
    
    public class OptionsAsset extends AssetBase
    {
@@ -20,12 +20,15 @@ package tibia.options
       
       private var m_XML:XML = null;
       
+      private var m_IsTutorialOptions:Boolean = false;
+      
       private var m_IsDefaultOptions:Boolean = false;
       
-      public function OptionsAsset(param1:String, param2:int = 0, param3:String = "application/json", param4:Boolean = false)
+      public function OptionsAsset(param1:String, param2:int = 0, param3:String = "application/json", param4:Boolean = false, param5:Boolean = false)
       {
          super(param1,param2,param3);
          this.m_IsDefaultOptions = param4;
+         this.m_IsTutorialOptions = param5;
          m_NoCacheEnabled = true;
          if(param4 == false)
          {
@@ -58,14 +61,14 @@ package tibia.options
          }
       }
       
-      public function upload(param1:XML) : void
+      public function upload(param1:XML, param2:String) : void
       {
          if(param1 == null)
          {
             throw new Error("OptionsAsset.upload: Invalid data.");
          }
          this.m_UploadXML = param1;
-         this.m_SecureWebsiteService.startServiceCall();
+         this.m_SecureWebsiteService.startServiceCall(param2);
       }
       
       override protected function processDownloadedData(param1:URLLoader) : Boolean
@@ -127,16 +130,15 @@ package tibia.options
          return this.m_XML != null;
       }
       
-      private function onWebsiteServiceError(param1:ErrorEvent) : void
-      {
-         this.m_UploadXML = null;
-         dispatchEvent(param1);
-      }
-      
       private function onWebsiteServiceComplete(param1:SecureWebsiteServiceEvent) : void
       {
          this.m_UploadXML = null;
          dispatchEvent(new Event(Event.COMPLETE));
+      }
+      
+      public function get isTutorialOptions() : Boolean
+      {
+         return this.m_IsTutorialOptions;
       }
       
       public function get xml() : XML
@@ -147,6 +149,12 @@ package tibia.options
       override protected function resetDownloadedData() : void
       {
          this.m_XML = null;
+      }
+      
+      private function onWebsiteServiceError(param1:ErrorEvent) : void
+      {
+         this.m_UploadXML = null;
+         dispatchEvent(param1);
       }
    }
 }

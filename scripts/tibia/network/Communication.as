@@ -202,7 +202,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1551;
+      public static const CLIENT_VERSION:uint = 1620;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -442,7 +442,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1032;
+      public static const PROTOCOL_VERSION:int = 1035;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -2380,8 +2380,8 @@ package tibia.network
          var _loc2_:Array = [SKILL_FIGHTFIST,SKILL_FIGHTCLUB,SKILL_FIGHTSWORD,SKILL_FIGHTAXE,SKILL_FIGHTDISTANCE,SKILL_FIGHTSHIELD,SKILL_FISHING];
          for each(_loc3_ in _loc2_)
          {
-            _loc4_ = param1.readUnsignedByte();
-            _loc5_ = param1.readUnsignedByte();
+            _loc4_ = param1.readUnsignedShort();
+            _loc5_ = param1.readUnsignedShort();
             _loc6_ = param1.readUnsignedByte();
             this.m_Player.setSkill(_loc3_,_loc4_,_loc5_,_loc6_);
          }
@@ -5042,30 +5042,21 @@ package tibia.network
       
       protected function readSCREATUREMARKS(param1:ByteArray) : void
       {
-         var _loc4_:int = 0;
-         var _loc5_:uint = 0;
-         var _loc6_:uint = 0;
-         var _loc7_:Creature = null;
-         var _loc2_:uint = param1.readUnsignedByte();
-         var _loc3_:uint = 0;
-         while(_loc3_ < _loc2_)
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
+         var _loc3_:uint = param1.readUnsignedByte();
+         var _loc4_:uint = param1.readUnsignedByte();
+         var _loc5_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
+         if(_loc5_ != null)
          {
-            _loc4_ = param1.readUnsignedInt();
-            _loc5_ = param1.readUnsignedByte();
-            _loc6_ = param1.readUnsignedByte();
-            _loc7_ = this.m_CreatureStorage.getCreature(_loc4_);
-            if(_loc7_ != null)
+            if(_loc3_ == 1)
             {
-               if(_loc5_ == 1)
-               {
-                  _loc7_.marks.setMark(Marks.MARK_TYPE_ONE_SECOND_TEMP,_loc6_);
-               }
-               else
-               {
-                  _loc7_.marks.setMark(Marks.MARK_TYPE_PERMANENT,_loc6_);
-               }
+               _loc5_.marks.setMark(Marks.MARK_TYPE_ONE_SECOND_TEMP,_loc4_);
             }
-            _loc3_++;
+            else
+            {
+               _loc5_.marks.setMark(Marks.MARK_TYPE_PERMANENT,_loc4_);
+            }
          }
          this.m_CreatureStorage.invalidateOpponents();
       }

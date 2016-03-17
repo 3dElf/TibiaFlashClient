@@ -22,7 +22,7 @@ package tibia.sessiondump.controller
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 1032;
+      public static const PROTOCOL_VERSION:int = 1035;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -633,6 +633,7 @@ package tibia.sessiondump.controller
          this.m_SessiondumpReader = param2;
          this.m_CalculatedPlayspeedLastProcessedSessiondumpPacketTimestamp = 0;
          this.m_LastProcessedSessiondumpPacketTimestamp = 0;
+         this.m_TargetSessiondumpLabel = null;
          this.m_LastRealTimestamp = 0;
          this.m_CalculatedPlayspeedFactorCurrentIndex = 0;
          this.synchronizeSessiondumpTimeWithTibiaTime(Tibia.s_GetTibiaTimer());

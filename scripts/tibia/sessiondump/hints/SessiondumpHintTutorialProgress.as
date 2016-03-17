@@ -115,7 +115,7 @@ package tibia.sessiondump.hints
          {
             _loc1_ = _loc3_.tutorialProgressServiceAsset;
          }
-         _loc1_.sendProgress(this.m_TutorialProgressIdentifier,Tibia.s_GetPlayer().name);
+         _loc1_.sendProgress(this.m_TutorialProgressIdentifier,Tibia.s_GetPlayer().name,Tibia.s_GetSessionKey());
       }
    }
 }

@@ -87,6 +87,9 @@ package
    import tibia.game.LoginWaitWidget;
    import tibia.game.ConnectionLostWidget;
    import mx.containers.DividedBox;
+   import flash.events.IOErrorEvent;
+   import flash.events.SecurityErrorEvent;
+   import flash.errors.IllegalOperationError;
    import mx.core.IUIComponent;
    import tibia.controls.GameWindowContainer;
    import shared.controls.EmbeddedDialog;
@@ -98,8 +101,6 @@ package
    import shared.controls.CustomDividedBox;
    import tibia.sessiondump.controller.SessiondumpMouseShield;
    import tibia.sessiondump.SessiondumpCreatureStorage;
-   import flash.events.IOErrorEvent;
-   import flash.events.SecurityErrorEvent;
    import mx.core.UIComponentDescriptor;
    
    use namespace mx_internal;
@@ -131,7 +132,7 @@ package
       
       public static const CLIENT_TYPE:uint = 3;
       
-      public static const CLIENT_VERSION:uint = 1551;
+      public static const CLIENT_VERSION:uint = 1620;
       
       private static const OPTIONS_SAVE_INTERVAL:int = 30 * 60 * 1000;
       
@@ -267,11 +268,11 @@ package
       
       private var _embed_css_images_Icons_ProgressBars_AxeFighting_png_592465439:Class;
       
-      private var _embed_css_images_Arrow_HotkeyToggle_BG_png_294345622:Class;
-      
       private var _embed_css_images_Icons_ProgressBars_ClubFighting_png_926224707:Class;
       
       private var _embed_css_images_Icons_CombatControls_OffensiveOn_over_png_1645069429:Class;
+      
+      private var _embed_css_images_Arrow_HotkeyToggle_BG_png_294345622:Class;
       
       private var _embed_css_images_slot_container_png_1920748212:Class;
       
@@ -487,8 +488,6 @@ package
       
       private var _embed_css_images_Minimap_png_141278061:Class;
       
-      private var _embed_css_images_BG_Bars_compact_tileable_png_1647151653:Class;
-      
       private var _embed_css_images_Icons_WidgetMenu_Combat_idle_over_png_1269517607:Class;
       
       private var _embed_css_images_BG_Widget_Menu_png_1331540812:Class;
@@ -504,6 +503,8 @@ package
       private var _embed_css_images_Button_ChatTab_Close_idle_png_1463235912:Class;
       
       private var _embed_css_images_Icons_ProgressBars_SwordFighting_png_790692398:Class;
+      
+      private var _embed_css_images_BG_Bars_compact_tileable_png_1647151653:Class;
       
       private var _embed_css_images_Icons_CombatControls_RedFistOff_idle_png_1943889605:Class;
       
@@ -1496,6 +1497,11 @@ package
          }
       }
       
+      public static function s_GetSessionKey() : String
+      {
+         return (application as Tibia).m_SessionKey;
+      }
+      
       [Bindable(event="propertyChange")]
       public function get m_UIChatWidget() : ChatWidget
       {
@@ -1548,6 +1554,10 @@ package
          else
          {
             this.isActive = false;
+            if(this.m_UIInputHandler != null)
+            {
+               this.m_UIInputHandler.clearPressedKeys();
+            }
          }
       }
       
@@ -2055,6 +2065,11 @@ package
          return _loc1_;
       }
       
+      public function setSessionKey(param1:String) : void
+      {
+         this.m_SessionKey = param1;
+      }
+      
       protected function onPreinitialise(param1:FlexEvent) : void
       {
          this.m_AppearanceStorage = ApperanceStorageFactory.s_CreateAppearanceStorage();
@@ -2096,6 +2111,7 @@ package
          {
             this.m_GameActionFactory = new GameActionFactory();
          }
+         s_InternalTibiaTimerFactor = 1;
       }
       
       public function __m_UIGameWindow_resize(param1:ResizeEvent) : void
@@ -2221,6 +2237,29 @@ package
          this.autofitGameWindow();
       }
       
+      private function setCurrentOptionsFromAssets(param1:IAssetProvider) : void
+      {
+         if(this.m_CurrentOptionsAsset != null)
+         {
+            this.m_CurrentOptionsAsset.removeEventListener(Event.COMPLETE,this.onUploadOptionsComplete);
+            this.m_CurrentOptionsAsset.removeEventListener(ErrorEvent.ERROR,this.onUploadOptionsError);
+            this.m_CurrentOptionsAsset.removeEventListener(IOErrorEvent.IO_ERROR,this.onUploadOptionsError);
+            this.m_CurrentOptionsAsset.removeEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onUploadOptionsError);
+         }
+         this.m_CurrentOptionsAsset = this.m_AssetProvider.getCurrentOptions();
+         this.m_CurrentOptionsDirty = false;
+         this.m_CurrentOptionsLastUpload = 0;
+         this.m_CurrentOptionsUploading = false;
+         if(this.m_CurrentOptionsAsset != null)
+         {
+            this.m_CurrentOptionsAsset.addEventListener(Event.COMPLETE,this.onUploadOptionsComplete);
+            this.m_CurrentOptionsAsset.addEventListener(ErrorEvent.ERROR,this.onUploadOptionsError);
+            this.m_CurrentOptionsAsset.addEventListener(IOErrorEvent.IO_ERROR,this.onUploadOptionsError);
+            this.m_CurrentOptionsAsset.addEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onUploadOptionsError);
+            param1.removeAsset(this.m_CurrentOptionsAsset);
+         }
+      }
+      
       public function set m_UIActionBarLeft(param1:VActionBarWidget) : void
       {
          var _loc2_:Object = null;
@@ -2312,6 +2351,43 @@ package
          mx_internal::_bindings = mx_internal::_bindings.concat(bindings);
          mx_internal::_watchers = mx_internal::_watchers.concat(watchers);
          super.initialize();
+      }
+      
+      protected function transferToLiveServer(param1:String) : void
+      {
+         var _loc4_:AccountCharacter = null;
+         if(!this.m_TutorialMode)
+         {
+            throw new IllegalOperationError("Tibia.transferToLiveServer: Must be in tutorial mode");
+         }
+         var _loc2_:int = -1;
+         var _loc3_:int = 0;
+         while(_loc3_ < this.m_ConnectionDataList.length - 1)
+         {
+            _loc4_ = this.m_ConnectionDataList[_loc3_] as AccountCharacter;
+            if(_loc4_ != null && _loc4_.name == param1)
+            {
+               _loc2_ = _loc3_;
+               break;
+            }
+            _loc3_++;
+         }
+         if(_loc2_ > -1)
+         {
+            this.initializeGameClient(false);
+            this.setCurrentOptionsFromAssets(this.m_AssetProvider);
+            this.m_DefaultOptionsAsset = this.m_AssetProvider.getDefaultOptions();
+            if(this.m_DefaultOptionsAsset != null)
+            {
+               this.m_AssetProvider.removeAsset(this.m_DefaultOptionsAsset);
+            }
+            this.options = null;
+            this.loadOptions();
+            this.setConnectionDataList(this.m_ConnectionDataList,_loc2_);
+            this.loginCharacter();
+            return;
+         }
+         throw new ArgumentError("No ConnectionData found for character " + param1);
       }
       
       private function _Tibia_VActionBarWidget2_i() : VActionBarWidget
@@ -2579,18 +2655,12 @@ package
       
       private function onConnectionDisconnected(param1:ConnectionEvent) : void
       {
-         var _loc2_:String = null;
          visible = false;
          this.saveLocalData();
          this.saveOptions();
          if(this.m_TutorialMode)
          {
-            _loc2_ = null;
-            if(this.m_TutorialData != null && "finish-tutorial-url" in this.m_TutorialData)
-            {
-               _loc2_ = this.m_TutorialData["finish-tutorial-url"] as String;
-            }
-            this.reloadClient(null,_loc2_);
+            this.transferToLiveServer(this.m_TutorialData["player-name"]);
          }
          else if(this.m_ConnectionDataPending == -1)
          {
@@ -2985,7 +3055,7 @@ package
             this.m_ChatStorage.saveChannels();
             if(this.m_CurrentOptionsAsset != null && !this.m_CurrentOptionsUploading && Boolean(this.m_CurrentOptionsDirty))
             {
-               this.m_CurrentOptionsAsset.upload(this.options.marshall());
+               this.m_CurrentOptionsAsset.upload(this.options.marshall(),this.m_SessionKey);
                this.m_CurrentOptionsUploading = true;
             }
          }
@@ -3237,34 +3307,15 @@ package
             throw new Error("Tibia.setAssetProvider: asset provider must not be null.");
          }
          this.m_AssetProvider = param1;
-         var _loc2_:OptionsAsset = this.m_AssetProvider.getCurrentOptions();
-         var _loc3_:OptionsAsset = this.m_AssetProvider.getDefaultOptions();
-         if(this.m_CurrentOptionsAsset != null)
-         {
-            this.m_CurrentOptionsAsset.removeEventListener(Event.COMPLETE,this.onUploadOptionsComplete);
-            this.m_CurrentOptionsAsset.removeEventListener(ErrorEvent.ERROR,this.onUploadOptionsError);
-            this.m_CurrentOptionsAsset.removeEventListener(IOErrorEvent.IO_ERROR,this.onUploadOptionsError);
-            this.m_CurrentOptionsAsset.removeEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onUploadOptionsError);
-         }
-         this.m_CurrentOptionsAsset = _loc2_;
-         this.m_CurrentOptionsDirty = false;
-         this.m_CurrentOptionsLastUpload = 0;
-         this.m_CurrentOptionsUploading = false;
-         if(this.m_CurrentOptionsAsset != null)
-         {
-            this.m_CurrentOptionsAsset.addEventListener(Event.COMPLETE,this.onUploadOptionsComplete);
-            this.m_CurrentOptionsAsset.addEventListener(ErrorEvent.ERROR,this.onUploadOptionsError);
-            this.m_CurrentOptionsAsset.addEventListener(IOErrorEvent.IO_ERROR,this.onUploadOptionsError);
-            this.m_CurrentOptionsAsset.addEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onUploadOptionsError);
-         }
-         this.m_DefaultOptionsAsset = _loc3_;
+         var _loc2_:OptionsAsset = !!this.m_TutorialMode?this.m_AssetProvider.getDefaultOptionsTutorial():this.m_AssetProvider.getDefaultOptions();
+         this.m_DefaultOptionsAsset = _loc2_;
          if(_loc2_ != null)
          {
             param1.removeAsset(_loc2_);
          }
-         if(_loc3_ != null)
+         if(!this.m_TutorialMode)
          {
-            param1.removeAsset(_loc3_);
+            this.setCurrentOptionsFromAssets(param1);
          }
          this.m_AppearanceStorage.setAssetProvider(param1);
       }

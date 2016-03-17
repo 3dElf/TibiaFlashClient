@@ -63,7 +63,7 @@ package tibia.input
       
       private static const ACTION_ATTACK:int = 1;
       
-      private static const KEY_REPEAT_MIN_DELAY:uint = 150;
+      private static const KEY_REPEAT_MIN_DELAY:uint = 250;
       
       private static const ACTION_OPEN:int = 8;
       
@@ -408,14 +408,13 @@ package tibia.input
       {
          var _loc3_:Binding = null;
          var _loc2_:int = Tibia.s_GetTibiaTimer();
-         if(this.m_MovementBindings != null)
+         if(Boolean(this.m_CaptureKeyboard) && this.m_MovementBindings != null)
          {
             for each(_loc3_ in this.m_MovementBindings)
             {
                if(Boolean(this.isKeyPressed(_loc3_.keyCode)) && this.m_KeyPressed[_loc3_.keyCode] + KEY_REPEAT_MIN_DELAY < _loc2_ && Boolean(_loc3_.appliesTo((_loc3_.action as PlayerMove).eventMask,_loc3_.keyCode,this.isKeyPressed(Keyboard.ALTERNATE),this.isKeyPressed(Keyboard.CONTROL),this.isKeyPressed(Keyboard.SHIFT))))
                {
                   _loc3_.action.perform(true);
-                  this.m_KeyPressed[_loc3_.keyCode] = _loc2_;
                }
             }
          }
@@ -504,25 +503,17 @@ package tibia.input
          }
       }
       
-      private function unregisterSandboxListeners() : void
+      public function clearPressedKeys() : void
       {
-         var _loc1_:EventDispatcher = systemManager.getSandboxRoot();
-         if(_loc1_ != null)
+         var _loc1_:int = 0;
+         if(this.m_KeyPressed != null)
          {
-            _loc1_.removeEventListener(FocusEvent.FOCUS_IN,this.onSandboxFocus,true);
-            _loc1_.removeEventListener(FocusEvent.FOCUS_OUT,this.onSandboxFocus,true);
-            _loc1_.removeEventListener(FocusEvent.KEY_FOCUS_CHANGE,this.onSandboxFocus,true);
-            _loc1_.removeEventListener(FocusEvent.MOUSE_FOCUS_CHANGE,this.onSandboxFocus,true);
-            _loc1_.removeEventListener(KeyboardEvent.KEY_DOWN,this.onSandboxKeyboard,true);
-            _loc1_.removeEventListener(KeyboardEvent.KEY_UP,this.onSandboxKeyboard,true);
-            _loc1_.removeEventListener(MouseEvent.CLICK,this.onSandboxMouse,true);
-            _loc1_.removeEventListener(MouseEvent.DOUBLE_CLICK,this.onSandboxMouse,true);
-            _loc1_.removeEventListener(MouseEvent.MOUSE_DOWN,this.onSandboxMouse,true);
-            _loc1_.removeEventListener(MouseEvent.MOUSE_UP,this.onSandboxMouse,true);
-            _loc1_.removeEventListener(MouseEvent.RIGHT_CLICK,this.onSandboxMouse,true);
-            _loc1_.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN,this.onSandboxMouse,true);
-            _loc1_.removeEventListener(MouseEvent.RIGHT_MOUSE_UP,this.onSandboxMouse,true);
-            _loc1_.removeEventListener(TextEvent.TEXT_INPUT,this.onSandboxText,true);
+            _loc1_ = this.m_KeyPressed.length - 1;
+            while(_loc1_ >= 0)
+            {
+               this.m_KeyPressed[_loc1_] = 0;
+               _loc1_--;
+            }
          }
       }
       
@@ -658,6 +649,29 @@ package tibia.input
                this.m_UITextInput.setFocus();
                this.m_UITextInput.drawFocus(false);
             }
+         }
+         this.clearPressedKeys();
+      }
+      
+      private function unregisterSandboxListeners() : void
+      {
+         var _loc1_:EventDispatcher = systemManager.getSandboxRoot();
+         if(_loc1_ != null)
+         {
+            _loc1_.removeEventListener(FocusEvent.FOCUS_IN,this.onSandboxFocus,true);
+            _loc1_.removeEventListener(FocusEvent.FOCUS_OUT,this.onSandboxFocus,true);
+            _loc1_.removeEventListener(FocusEvent.KEY_FOCUS_CHANGE,this.onSandboxFocus,true);
+            _loc1_.removeEventListener(FocusEvent.MOUSE_FOCUS_CHANGE,this.onSandboxFocus,true);
+            _loc1_.removeEventListener(KeyboardEvent.KEY_DOWN,this.onSandboxKeyboard,true);
+            _loc1_.removeEventListener(KeyboardEvent.KEY_UP,this.onSandboxKeyboard,true);
+            _loc1_.removeEventListener(MouseEvent.CLICK,this.onSandboxMouse,true);
+            _loc1_.removeEventListener(MouseEvent.DOUBLE_CLICK,this.onSandboxMouse,true);
+            _loc1_.removeEventListener(MouseEvent.MOUSE_DOWN,this.onSandboxMouse,true);
+            _loc1_.removeEventListener(MouseEvent.MOUSE_UP,this.onSandboxMouse,true);
+            _loc1_.removeEventListener(MouseEvent.RIGHT_CLICK,this.onSandboxMouse,true);
+            _loc1_.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN,this.onSandboxMouse,true);
+            _loc1_.removeEventListener(MouseEvent.RIGHT_MOUSE_UP,this.onSandboxMouse,true);
+            _loc1_.removeEventListener(TextEvent.TEXT_INPUT,this.onSandboxText,true);
          }
       }
       

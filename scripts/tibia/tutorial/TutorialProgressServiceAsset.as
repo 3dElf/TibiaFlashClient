@@ -82,11 +82,11 @@ package tibia.tutorial
          dispatchEvent(new Event(Event.COMPLETE));
       }
       
-      public function sendProgress(param1:String, param2:String) : void
+      public function sendProgress(param1:String, param2:String, param3:String) : void
       {
          this.m_ProgressIdentifierToUpload = param1;
          this.m_CharacterName = param2;
-         this.m_SecureWebsiteService.startServiceCall();
+         this.m_SecureWebsiteService.startServiceCall(param3);
       }
    }
 }

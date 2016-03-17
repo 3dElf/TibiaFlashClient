@@ -1800,7 +1800,7 @@ package tibia.options
       
       public function resetMessageFilterSet() : void
       {
-         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("messagefilterset");
+         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("MessageFilterSet");
          if(_loc1_.length() > 0)
          {
             this.unmarshallMessageFilterSet(_loc1_[0],this.m_Version);
@@ -2247,7 +2247,7 @@ package tibia.options
       
       public function resetMouseBindings() : void
       {
-         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("mousemapping");
+         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("MouseMapping");
          if(_loc1_.length() > 0)
          {
             this.unmarshallMouseMapping(_loc1_[0],this.m_Version);

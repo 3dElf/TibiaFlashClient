@@ -152,12 +152,13 @@ package tibia.minimap.editMarkWidgetClasses
       
       override protected function measure() : void
       {
+         var _loc2_:Number = NaN;
          var _loc3_:int = 0;
          var _loc4_:int = 0;
          var _loc5_:tibia.minimap.editMarkWidgetClasses.MarkIconRenderer = null;
          super.measure();
          var _loc1_:Number = 0;
-         var _loc2_:Number = 0;
+         _loc2_ = 0;
          if(this.m_UIRenderer.length > 1)
          {
             _loc3_ = this.m_UIRenderer.length - 1;

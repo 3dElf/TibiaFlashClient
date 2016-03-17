@@ -529,6 +529,8 @@ package tibia.chat
          }
          else
          {
+            _loc4_.name = param2;
+            _loc4_.sendAllowed = true;
             _loc7_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
             _loc7_.kind = CollectionEventKind.UPDATE;
             _loc7_.items = [_loc4_];

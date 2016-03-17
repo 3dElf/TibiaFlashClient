@@ -139,12 +139,9 @@ package tibia.chat
          }
       }
       
-      protected function onMessagesEvent(param1:CollectionEvent) : void
+      public function set name(param1:String) : void
       {
-         if(param1 != null && (!param1.cancelable || !param1.isDefaultPrevented()))
-         {
-            dispatchEvent(param1);
-         }
+         this.m_Name = param1;
       }
       
       private function getNicklistItemIndex(param1:String) : int
@@ -254,6 +251,14 @@ package tibia.chat
       private function isNicklistItemExisting(param1:String) : Boolean
       {
          return this.getNicklistItem(param1) != null;
+      }
+      
+      protected function onMessagesEvent(param1:CollectionEvent) : void
+      {
+         if(param1 != null && (!param1.cancelable || !param1.isDefaultPrevented()))
+         {
+            dispatchEvent(param1);
+         }
       }
       
       public function playerPending(param1:String) : void
