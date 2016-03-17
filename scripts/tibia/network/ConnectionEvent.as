@@ -37,25 +37,28 @@ package tibia.network
       
       public static const LOGINERROR:String = "LOGINERROR";
        
+      protected var m_ErrorType:int = -1;
+      
       protected var m_Message:String = null;
       
       protected var m_Data = null;
       
-      public function ConnectionEvent(param1:String, param2:Boolean = false, param3:Boolean = false, param4:String = null, param5:* = null)
+      public function ConnectionEvent(param1:String, param2:Boolean = false, param3:Boolean = false, param4:String = null, param5:* = null, param6:int = -1)
       {
          super(param1,param2,param3);
          this.m_Message = param4;
          this.m_Data = param5;
+         this.m_ErrorType = param6;
       }
       
-      public function get data() : *
+      public function get errorType() : int
       {
-         return this.m_Data;
+         return this.m_ErrorType;
       }
       
-      public function set data(param1:*) : void
+      public function set errorType(param1:int) : void
       {
-         this.m_Data = param1;
+         this.m_ErrorType = param1;
       }
       
       public function get message() : String
@@ -63,14 +66,24 @@ package tibia.network
          return this.m_Message;
       }
       
-      override public function clone() : Event
+      public function get data() : *
       {
-         return new ConnectionEvent(type,bubbles,cancelable,this.message,this.data);
+         return this.m_Data;
       }
       
       public function set message(param1:String) : void
       {
          this.m_Message = param1;
+      }
+      
+      public function set data(param1:*) : void
+      {
+         this.m_Data = param1;
+      }
+      
+      override public function clone() : Event
+      {
+         return new ConnectionEvent(type,bubbles,cancelable,this.message,this.data,this.errorType);
       }
    }
 }

@@ -3,26 +3,26 @@ package
    import mx.core.Application;
    import mx.binding.IBindingClient;
    import tibia.game.IGameClient;
-   import mx.binding.IWatcherSetupUtil;
-   import tibia.network.Communication;
-   import tibia.input.InputHandler;
    import tibia.appearances.AppearanceStorage;
-   import loader.asset.IAssetProvider;
+   import mx.binding.IWatcherSetupUtil;
    import tibia.chat.ChatStorage;
+   import tibia.input.gameaction.GameActionFactory;
    import tibia.minimap.MiniMapStorage;
    import tibia.options.OptionsStorage;
    import tibia.container.ContainerStorage;
-   import tibia.chat.ChatWidget;
-   import tibia.input.gameaction.GameActionFactory;
-   import tibia.magic.SpellStorage;
    import tibia.creatures.StatusWidget;
+   import tibia.premium.PremiumManager;
+   import tibia.help.UIEffectsManager;
+   import tibia.creatures.CreatureStorage;
+   import tibia.network.Communication;
+   import tibia.input.InputHandler;
+   import mx.core.mx_internal;
+   import loader.asset.IAssetProvider;
+   import tibia.magic.SpellStorage;
+   import tibia.chat.ChatWidget;
    import tibia.worldmap.WorldMapStorage;
    import tibia.network.IServerConnection;
-   import tibia.help.UIEffectsManager;
    import tibia.creatures.Player;
-   import tibia.premium.PremiumManager;
-   import tibia.creatures.CreatureStorage;
-   import mx.core.mx_internal;
    import mx.events.PropertyChangeEvent;
    import tibia.actionbar.VActionBarWidget;
    import mx.binding.BindingManager;
@@ -42,6 +42,7 @@ package
    import tibia.network.Connection;
    import tibia.sessiondump.SessiondumpConnectionData;
    import tibia.sessiondump.controller.SessiondumpControllerHints;
+   import tibia.network.FailedConnectionRescheduler;
    import tibia.sidebar.ToggleBar;
    import tibia.game.TimeoutWaitWidget;
    import mx.binding.Binding;
@@ -109,43 +110,89 @@ package
    public class Tibia extends Application implements IBindingClient, IGameClient
    {
       
-      private static const BUNDLE:String = "Tibia";
+      protected static const CONNECTION_STATE_GAME:int = 4;
       
       private static const SHAREDOBJECT_NAME:String = "options";
       
-      public static var s_TibiaLoginTimestamp:Number = 0;
+      protected static const CONNECTION_STATE_PENDING:int = 3;
+      
+      public static const PROTOCOL_VERSION:int = 1079;
       
       public static var s_FrameTibiaTimestamp:Number = 0;
       
-      public static const PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:uint = 2;
-      
       public static var s_FrameRealTimestamp:Number = 0;
       
-      public static const CLIENT_PREVIEW_STATE:uint = 0;
+      protected static const ERR_INVALID_SIZE:int = 1;
       
-      private static var s_InternalTibiaTimerFactor:Number = 1;
-      
-      private static var _watcherSetupUtil:IWatcherSetupUtil;
+      protected static const ERR_COULD_NOT_CONNECT:int = 5;
       
       public static const MAX_SESSION_KEY_LENGTH:int = 30;
       
-      private static var s_LastTibiaFactorChangeRealTimestamp:int = 0;
-      
       public static const CLIENT_TYPE:uint = 3;
       
-      public static const CLIENT_VERSION:uint = 2067;
+      private static var _watcherSetupUtil:IWatcherSetupUtil;
       
-      private static const OPTIONS_SAVE_INTERVAL:int = 30 * 60 * 1000;
+      protected static const PACKETLENGTH_SIZE:int = 2;
+      
+      private static var s_LastTibiaFactorChangeRealTimestamp:int = 0;
+      
+      protected static const CHECKSUM_POS:int = PACKETLENGTH_POS + PACKETLENGTH_SIZE;
+      
+      public static const CLIENT_VERSION:uint = 2120;
       
       public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
       
-      private static var s_LastTibiaFactorChangeTibiaTimestamp:uint = 0;
+      protected static const PAYLOADLENGTH_POS:int = PAYLOAD_POS;
+      
+      protected static const CONNECTION_STATE_DISCONNECTED:int = 0;
+      
+      private static const OPTIONS_SAVE_INTERVAL:int = 30 * 60 * 1000;
       
       public static const PREVIEW_STATE_REGULAR:uint = 0;
       
-      private static var s_LastTibiaTimestamp:int = 0;
+      protected static const ERR_INVALID_CHECKSUM:int = 2;
+      
+      protected static const HEADER_SIZE:int = PACKETLENGTH_SIZE + CHECKSUM_SIZE;
+      
+      protected static const ERR_INTERNAL:int = 0;
+      
+      protected static const CHECKSUM_SIZE:int = 4;
+      
+      protected static const PAYLOADDATA_POSITION:int = PAYLOADLENGTH_POS + PAYLOADLENGTH_SIZE;
+      
+      protected static const HEADER_POS:int = 0;
+      
+      protected static const ERR_INVALID_MESSAGE:int = 3;
+      
+      public static var s_TibiaLoginTimestamp:Number = 0;
+      
+      private static const BUNDLE:String = "Tibia";
+      
+      public static const PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:uint = 2;
+      
+      protected static const ERR_INVALID_STATE:int = 4;
+      
+      protected static const PAYLOADLENGTH_SIZE:int = 2;
+      
+      private static var s_InternalTibiaTimerFactor:Number = 1;
+      
+      public static const CLIENT_PREVIEW_STATE:uint = 0;
       
       mx_internal static var _Tibia_StylesInit_done:Boolean = false;
+      
+      protected static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
+      
+      protected static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
+      
+      private static var s_LastTibiaFactorChangeTibiaTimestamp:uint = 0;
+      
+      private static var s_LastTibiaTimestamp:int = 0;
+      
+      protected static const PACKETLENGTH_POS:int = HEADER_POS;
+      
+      protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
+      
+      protected static const ERR_CONNECTION_LOST:int = 6;
        
       private var _embed_css_images_Arrow_WidgetToggle_BG_png_2034998620:Class;
       
@@ -257,9 +304,11 @@ package
       
       private var _embed_css_images_Icons_BattleList_PartyMembers_active_png_1866221190:Class;
       
-      protected var m_CurrentOptionsDirty:Boolean = false;
+      private var m_FailedConnectionRescheduler:FailedConnectionRescheduler;
       
       private var _embed_css_images_Button_ContainerUp_over_png_468164146:Class;
+      
+      protected var m_CurrentOptionsDirty:Boolean = false;
       
       private var _embed_css_images_Slot_InventoryBoots_png_1929894964:Class;
       
@@ -1109,6 +1158,7 @@ package
          });
          this.m_ConnectionLostDialog = new ConnectionLostWidget();
          this.m_TutorialData = new Object();
+         this.m_FailedConnectionRescheduler = new FailedConnectionRescheduler();
          this._embed_css_images_Arrow_HotkeyToggle_BG_png_294345622 = Tibia__embed_css_images_Arrow_HotkeyToggle_BG_png_294345622;
          this._embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_60957134 = Tibia__embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_60957134;
          this._embed_css_images_Arrow_Minimap_LevelUpDown_over_png_806862642 = Tibia__embed_css_images_Arrow_Minimap_LevelUpDown_over_png_806862642;
@@ -1464,6 +1514,85 @@ package
          this.addEventListener("preinitialize",this.___Tibia_Application1_preinitialize);
       }
       
+      public static function s_GetAppearanceStorage() : AppearanceStorage
+      {
+         return (application as Tibia).m_AppearanceStorage;
+      }
+      
+      public static function s_GetInstance() : Tibia
+      {
+         return application as Tibia;
+      }
+      
+      public static function s_GetChatStorage() : ChatStorage
+      {
+         return (application as Tibia).m_ChatStorage;
+      }
+      
+      public static function s_GetSecondaryTimer() : Timer
+      {
+         return (application as Tibia).m_SeconaryTimer;
+      }
+      
+      public static function get s_GameActionFactory() : GameActionFactory
+      {
+         return (application as Tibia).m_GameActionFactory;
+      }
+      
+      public static function s_GetMiniMapStorage() : MiniMapStorage
+      {
+         return (application as Tibia).m_MiniMapStorage;
+      }
+      
+      public static function s_SetOptions(param1:OptionsStorage) : void
+      {
+         var _loc2_:Tibia = application as Tibia;
+         if(_loc2_ != null)
+         {
+            _loc2_.options = param1;
+         }
+      }
+      
+      public static function s_GetContainerStorage() : ContainerStorage
+      {
+         return (application as Tibia).m_ContainerStorage;
+      }
+      
+      public static function s_GetStatusWidget() : StatusWidget
+      {
+         return (application as Tibia).m_UIStatusWidget;
+      }
+      
+      public static function s_GetPremiumManager() : PremiumManager
+      {
+         return (application as Tibia).m_PremiumManager;
+      }
+      
+      public static function s_GetUIEffectsManager() : UIEffectsManager
+      {
+         return (application as Tibia).m_UIEffectsManager;
+      }
+      
+      public static function s_GetCreatureStorage() : CreatureStorage
+      {
+         return (application as Tibia).m_CreatureStorage;
+      }
+      
+      public static function set s_TibiaTimerFactor(param1:Number) : void
+      {
+         if(!isNaN(param1))
+         {
+            s_LastTibiaFactorChangeTibiaTimestamp = s_GetTibiaTimer();
+            s_LastTibiaFactorChangeRealTimestamp = getTimer();
+            s_InternalTibiaTimerFactor = param1;
+         }
+      }
+      
+      public static function set s_GameActionFactory(param1:GameActionFactory) : void
+      {
+         (application as Tibia).m_GameActionFactory = param1;
+      }
+      
       public static function s_GetFrameFlash() : Boolean
       {
          return (int(Tibia.s_FrameTibiaTimestamp / 300) & 1) != 0;
@@ -1477,11 +1606,6 @@ package
       public static function get s_TutorialMode() : Boolean
       {
          return (application as Tibia).m_TutorialMode;
-      }
-      
-      public static function s_GetInstance() : Tibia
-      {
-         return application as Tibia;
       }
       
       public static function get s_TutorialData() : Object
@@ -1499,29 +1623,9 @@ package
          return (application as Tibia).m_UIInputHandler;
       }
       
-      public static function s_GetAppearanceStorage() : AppearanceStorage
-      {
-         return (application as Tibia).m_AppearanceStorage;
-      }
-      
       public static function s_GetAssetProvider() : IAssetProvider
       {
          return (application as Tibia).m_AssetProvider;
-      }
-      
-      public static function s_GetChatStorage() : ChatStorage
-      {
-         return (application as Tibia).m_ChatStorage;
-      }
-      
-      public static function s_GetSecondaryTimer() : Timer
-      {
-         return (application as Tibia).m_SeconaryTimer;
-      }
-      
-      public static function s_GetMiniMapStorage() : MiniMapStorage
-      {
-         return (application as Tibia).m_MiniMapStorage;
       }
       
       public static function get s_TibiaTimerFactor() : Number
@@ -1529,28 +1633,9 @@ package
          return s_InternalTibiaTimerFactor;
       }
       
-      public static function s_SetOptions(param1:OptionsStorage) : void
+      public static function s_GetSpellStorage() : SpellStorage
       {
-         var _loc2_:Tibia = application as Tibia;
-         if(_loc2_ != null)
-         {
-            _loc2_.options = param1;
-         }
-      }
-      
-      public static function s_GetContainerStorage() : ContainerStorage
-      {
-         return (application as Tibia).m_ContainerStorage;
-      }
-      
-      public static function s_GetChatWidget() : ChatWidget
-      {
-         return (application as Tibia).m_UIChatWidget;
-      }
-      
-      public static function get s_GameActionFactory() : GameActionFactory
-      {
-         return (application as Tibia).m_GameActionFactory;
+         return (application as Tibia).m_SpellStorage;
       }
       
       public static function s_GetOptions() : OptionsStorage
@@ -1558,14 +1643,9 @@ package
          return (application as Tibia).m_Options;
       }
       
-      public static function s_GetSpellStorage() : SpellStorage
+      public static function s_GetChatWidget() : ChatWidget
       {
-         return (application as Tibia).m_SpellStorage;
-      }
-      
-      public static function s_GetStatusWidget() : StatusWidget
-      {
-         return (application as Tibia).m_UIStatusWidget;
+         return (application as Tibia).m_UIChatWidget;
       }
       
       public static function s_GetWorldMapStorage() : WorldMapStorage
@@ -1578,9 +1658,9 @@ package
          return (application as Tibia).m_Connection;
       }
       
-      public static function s_GetUIEffectsManager() : UIEffectsManager
+      public static function s_GetPlayer() : Player
       {
-         return (application as Tibia).m_UIEffectsManager;
+         return (application as Tibia).m_Player;
       }
       
       public static function s_GetTibiaTimer() : int
@@ -1593,36 +1673,6 @@ package
          var _loc1_:uint = getTimer() - s_LastTibiaFactorChangeRealTimestamp;
          s_LastTibiaTimestamp = s_LastTibiaFactorChangeTibiaTimestamp + _loc1_ * s_InternalTibiaTimerFactor;
          return s_LastTibiaTimestamp;
-      }
-      
-      public static function s_GetPlayer() : Player
-      {
-         return (application as Tibia).m_Player;
-      }
-      
-      public static function s_GetPremiumManager() : PremiumManager
-      {
-         return (application as Tibia).m_PremiumManager;
-      }
-      
-      public static function s_GetCreatureStorage() : CreatureStorage
-      {
-         return (application as Tibia).m_CreatureStorage;
-      }
-      
-      public static function set s_GameActionFactory(param1:GameActionFactory) : void
-      {
-         (application as Tibia).m_GameActionFactory = param1;
-      }
-      
-      public static function set s_TibiaTimerFactor(param1:Number) : void
-      {
-         if(!isNaN(param1))
-         {
-            s_LastTibiaFactorChangeTibiaTimestamp = s_GetTibiaTimer();
-            s_LastTibiaFactorChangeRealTimestamp = getTimer();
-            s_InternalTibiaTimerFactor = param1;
-         }
       }
       
       public static function s_GetSessionKey() : String
@@ -1801,6 +1851,7 @@ package
          {
             throw new Error("Tibia.logoutCharacter: Not connected.");
          }
+         this.m_FailedConnectionRescheduler.reset();
          var _loc1_:MessageWidget = new MessageWidget();
          _loc1_.buttonFlags = PopUpBase.BUTTON_YES | PopUpBase.BUTTON_NO;
          _loc1_.message = resourceManager.getString(BUNDLE,"DLG_LOGOUT_TEXT");
@@ -1894,6 +1945,7 @@ package
          else
          {
             this.m_ConnectionDataPending = -1;
+            this.m_FailedConnectionRescheduler.reset();
          }
          if(this.m_Communication != null)
          {
@@ -2952,6 +3004,7 @@ package
                _loc1_.addItem(_loc2_);
             }
          }
+         this.m_FailedConnectionRescheduler.reset();
          if(_loc1_.length > 0)
          {
             _loc3_ = new CharacterSelectionWidget();
@@ -3021,6 +3074,12 @@ package
       
       private function onConnectionError(param1:ConnectionEvent) : void
       {
+         if(param1.errorType == ERR_COULD_NOT_CONNECT && Boolean(this.m_FailedConnectionRescheduler.shouldAttemptReconnect()))
+         {
+            this.onConnectionLoginWait(this.m_FailedConnectionRescheduler.buildEventForReconnectionAndIncreaseRetries());
+            return;
+         }
+         this.m_FailedConnectionRescheduler.reset();
          visible = false;
          this.saveLocalData();
          this.saveOptions();

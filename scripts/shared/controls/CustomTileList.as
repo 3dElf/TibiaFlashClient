@@ -8,6 +8,8 @@ package shared.controls
    import mx.core.FlexSprite;
    import mx.styles.StyleManager;
    import mx.core.FlexShape;
+   import flash.events.KeyboardEvent;
+   import flash.ui.Keyboard;
    
    public class CustomTileList extends TileList
    {
@@ -100,6 +102,31 @@ package shared.controls
       override protected function drawSelectionIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
       {
          this.drawIndicator(param1,param7.x,param7.y,param4,param5,getStyle("backgroundAlpha"),param6,param7,true);
+      }
+      
+      override protected function keyDownHandler(param1:KeyboardEvent) : void
+      {
+         var _loc2_:int = 0;
+         var _loc3_:int = 0;
+         var _loc4_:Boolean = false;
+         var _loc5_:Boolean = false;
+         var _loc6_:IListItemRenderer = null;
+         if(param1.keyCode == Keyboard.SPACE)
+         {
+            _loc2_ = indexToRow(caretIndex);
+            _loc3_ = indexToColumn(caretIndex);
+            _loc4_ = _loc2_ - verticalScrollPosition >= 0 && _loc2_ - verticalScrollPosition < listItems.length;
+            _loc5_ = Boolean(_loc4_) && _loc3_ - horizontalScrollPosition >= 0 && _loc3_ - horizontalScrollPosition < listItems[_loc2_ - verticalScrollPosition].length;
+            if(Boolean(_loc4_) && Boolean(_loc5_))
+            {
+               _loc6_ = listItems[_loc2_ - verticalScrollPosition][_loc3_ - horizontalScrollPosition];
+               selectItem(_loc6_,param1.shiftKey,param1.ctrlKey);
+            }
+         }
+         else
+         {
+            super.keyDownHandler(param1);
+         }
       }
       
       private function drawIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:uint, param8:IListItemRenderer, param9:Boolean) : void

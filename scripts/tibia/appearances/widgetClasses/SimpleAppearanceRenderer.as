@@ -10,6 +10,7 @@ package tibia.appearances.widgetClasses
    import tibia.appearances.AppearanceInstance;
    import tibia.appearances.AppearanceType;
    import tibia.appearances.FrameGroup;
+   import tibia.appearances.OutfitInstance;
    import tibia.appearances.ObjectInstance;
    import flash.events.TimerEvent;
    import flash.utils.Timer;
@@ -105,8 +106,10 @@ package tibia.appearances.widgetClasses
          var _loc3_:Number = NaN;
          var _loc4_:CachedSpriteInformation = null;
          var _loc5_:BitmapData = null;
-         var _loc6_:Rectangle = null;
+         var _loc6_:int = 0;
          var _loc7_:int = 0;
+         var _loc8_:Rectangle = null;
+         var _loc9_:int = 0;
          graphics.clear();
          var _loc1_:AppearanceType = null;
          if(this.m_Appearance != null && (_loc1_ = this.m_Appearance.type) != null)
@@ -134,31 +137,33 @@ package tibia.appearances.widgetClasses
             s_Rect.setTo(0,0,_loc4_.rectangle.width,_loc4_.rectangle.height);
             if(_loc5_ != null)
             {
+               _loc6_ = this.m_Appearance is OutfitInstance?int(_loc1_.displacementX):0;
+               _loc7_ = this.m_Appearance is OutfitInstance?int(_loc1_.displacementY):0;
                s_Trans.a = _loc2_;
                s_Trans.d = _loc2_;
-               s_Trans.tx = (-s_Rect.right + _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize - _loc1_.displacementX) * _loc2_;
-               s_Trans.ty = (-s_Rect.bottom + _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize - _loc1_.displacementY) * _loc2_;
+               s_Trans.tx = (-s_Rect.right + _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize - _loc6_) * _loc2_;
+               s_Trans.ty = (-s_Rect.bottom + _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize - _loc7_) * _loc2_;
                s_Rect.width = Math.min(_loc3_,s_Rect.width * _loc2_);
                s_Rect.height = Math.min(_loc3_,s_Rect.height * _loc2_);
-               s_Rect.x = _loc3_ - s_Rect.width - _loc1_.displacementX * _loc2_;
-               s_Rect.y = _loc3_ - s_Rect.height - _loc1_.displacementY * _loc2_;
+               s_Rect.x = _loc3_ - s_Rect.width - _loc6_ * _loc2_;
+               s_Rect.y = _loc3_ - s_Rect.height - _loc7_ * _loc2_;
                graphics.beginBitmapFill(_loc5_,s_Trans,true,this.m_Smooth);
                graphics.drawRect(s_Rect.x,s_Rect.y,s_Rect.width,s_Rect.height);
             }
             if(Boolean(this.m_Overlay) && this.m_Appearance is ObjectInstance && Boolean(_loc1_.isCumulative))
             {
-               _loc6_ = null;
-               _loc7_ = ObjectInstance(this.m_Appearance).data;
-               if((_loc6_ = s_TextCache.getItem(_loc7_,String(_loc7_),4294967295)) != null)
+               _loc8_ = null;
+               _loc9_ = ObjectInstance(this.m_Appearance).data;
+               if((_loc8_ = s_TextCache.getItem(_loc9_,String(_loc9_),4294967295)) != null)
                {
-                  s_Rect.x = _loc3_ - _loc6_.width;
-                  s_Rect.y = _loc3_ - _loc6_.height;
+                  s_Rect.x = _loc3_ - _loc8_.width;
+                  s_Rect.y = _loc3_ - _loc8_.height;
                   s_Trans.a = 1;
                   s_Trans.d = 1;
-                  s_Trans.tx = -_loc6_.x + s_Rect.x;
-                  s_Trans.ty = -_loc6_.y + s_Rect.y;
+                  s_Trans.tx = -_loc8_.x + s_Rect.x;
+                  s_Trans.ty = -_loc8_.y + s_Rect.y;
                   graphics.beginBitmapFill(s_TextCache,s_Trans,false,false);
-                  graphics.drawRect(s_Rect.x,s_Rect.y,_loc6_.width,_loc6_.height);
+                  graphics.drawRect(s_Rect.x,s_Rect.y,_loc8_.width,_loc8_.height);
                }
             }
             graphics.endFill();

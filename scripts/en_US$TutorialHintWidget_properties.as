@@ -5,7 +5,7 @@ package
    public class en_US$TutorialHintWidget_properties extends ResourceBundle
    {
       
-      private static var _embed_properties_______images_help_hint_30_dragspell_png_1972764414:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_30_dragspell_png_1972764414;
+      private static var _embed_properties_______images_help_hint_22_hi_png_258528882:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_22_hi_png_258528882;
       
       private static var _embed_properties_______images_help_hint_29_knownspells_png_1723803954:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_29_knownspells_png_1723803954;
       
@@ -31,13 +31,13 @@ package
       
       private static var _embed_properties_______images_help_hint_35_knownspellshealing_png_405893088:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_35_knownspellshealing_png_405893088;
       
-      private static var _embed_properties_______images_help_hint_37_spellactionbarhealing_png_1371692306:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_37_spellactionbarhealing_png_1371692306;
+      private static var _embed_properties_______images_help_hint_26_distancefighting_png_1119686670:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_26_distancefighting_png_1119686670;
       
       private static var _embed_properties_______images_help_hint_36_dragspellhealing_png_1778212878:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_36_dragspellhealing_png_1778212878;
       
       private static var _embed_properties_______images_help_hint_13_npctradelower_png_572543516:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_13_npctradelower_png_572543516;
       
-      private static var _embed_properties_______images_help_hint_26_distancefighting_png_1119686670:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_26_distancefighting_png_1119686670;
+      private static var _embed_properties_______images_help_hint_37_spellactionbarhealing_png_1371692306:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_37_spellactionbarhealing_png_1371692306;
       
       private static var _embed_properties_______images_help_hint_25_closecombat_png_1475351042:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_25_closecombat_png_1475351042;
       
@@ -49,17 +49,17 @@ package
       
       private static var _embed_properties_______images_help_hint_10_useshovel_png_1778771438:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_10_useshovel_png_1778771438;
       
-      private static var _embed_properties_______images_help_hint_02_automap_png_843363586:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_02_automap_png_843363586;
-      
       private static var _embed_properties_______images_help_hint_20_premium_png_777507378:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_20_premium_png_777507378;
+      
+      private static var _embed_properties_______images_help_hint_30_dragspell_png_1972764414:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_30_dragspell_png_1972764414;
+      
+      private static var _embed_properties_______images_help_hint_02_automap_png_843363586:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_02_automap_png_843363586;
       
       private static var _embed_properties_______images_help_hint_11_userope_png_303779502:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_11_userope_png_303779502;
       
       private static var _embed_properties_______images_help_hint_38_attackbattlelist_png_1142792066:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_38_attackbattlelist_png_1142792066;
       
       private static var _embed_properties_______images_help_hint_16_whiteskull_png_1861856430:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_whiteskull_png_1861856430;
-      
-      private static var _embed_properties_______images_help_hint_22_hi_png_258528882:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_22_hi_png_258528882;
       
       private static var _embed_properties_______images_help_hint_06_usetorch_png_1063386542:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_06_usetorch_png_1063386542;
        
