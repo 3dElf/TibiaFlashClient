@@ -36,69 +36,41 @@ package tibia.worldmap
       
       protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
-      protected static const ACTION_ATTACK_FALLTHROUGH:int = 2;
-      
-      private static const LATENCY_ICON_HIGH:Bitmap = new EMBED_LATENCY_ICON_HIGH();
-      
       protected static const ACTION_LOOK:int = 5;
       
       protected static const NUM_EFFECTS:int = 200;
       
-      protected static const MAP_HEIGHT:int = 11;
-      
-      private static const BUNDLE:String = "WorldMapStorage";
-      
-      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
-      
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
+      
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
       
       protected static const DRAG_TYPE_CHANNEL:String = "channel";
       
-      protected static const ACTION_NONE:int = 0;
-      
-      private static const LATENCY_ICON_MEDIUM:Bitmap = new EMBED_LATENCY_ICON_MEDIUM();
-      
-      protected static const UNDERGROUND_LAYER:int = 2;
-      
-      protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
       
       protected static const FIELD_HEIGHT:int = 24;
       
-      protected static const DRAG_TYPE_SPELL:String = "spell";
+      protected static const DRAG_TYPE_WIDGETBASE:String = "widgetBase";
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
+      protected static const UNDERGROUND_LAYER:int = 2;
       
-      private static const EMBED_LATENCY_ICON_MEDIUM:Class = WorldMapWidget_EMBED_LATENCY_ICON_MEDIUM;
+      private static const LATENCY_ICON_MEDIUM:Bitmap = new EMBED_LATENCY_ICON_MEDIUM();
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      private static const LATENCY_ICON_LOW:Bitmap = new EMBED_LATENCY_ICON_LOW();
-      
-      protected static const DRAG_TYPE_WIDGETBASE:String = "widgetBase";
-      
-      protected static const MAP_MIN_X:int = 24576;
-      
-      protected static const MAP_MIN_Y:int = 24576;
-      
-      protected static const MAP_MIN_Z:int = 0;
-      
-      protected static const PLAYER_OFFSET_Y:int = 6;
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const FIELD_SIZE:int = 32;
       
-      protected static const ACTION_UNSET:int = -1;
-      
-      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
       
       protected static const PLAYER_OFFSET_X:int = 8;
       
-      protected static const MAPSIZE_W:int = 10;
+      protected static const PLAYER_OFFSET_Y:int = 6;
       
-      protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
+      protected static const DRAG_TYPE_ACTION:String = "action";
       
-      protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
-      
-      protected static const MAPSIZE_Z:int = 8;
+      protected static const DRAG_TYPE_STATUSWIDGET:String = "statusWidget";
       
       protected static const DRAG_TYPE_OBJECT:String = "object";
       
@@ -108,7 +80,57 @@ package tibia.worldmap
       
       protected static const MAP_MAX_Z:int = 15;
       
+      protected static const NUM_ONSCREEN_MESSAGES:int = 16;
+      
+      protected static const ACTION_ATTACK:int = 1;
+      
+      private static const EMBED_LATENCY_ICON_LOW:Class = WorldMapWidget_EMBED_LATENCY_ICON_LOW;
+      
+      protected static const ACTION_CONTEXT_MENU:int = 4;
+      
+      protected static const GROUND_LAYER:int = 7;
+      
+      private static const EMBED_LATENCY_ICON_HIGH:Class = WorldMapWidget_EMBED_LATENCY_ICON_HIGH;
+      
+      private static const BUNDLE:String = "WorldMapStorage";
+      
+      private static const LATENCY_ICON_HIGH:Bitmap = new EMBED_LATENCY_ICON_HIGH();
+      
+      protected static const MAP_HEIGHT:int = 11;
+      
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
+      
+      protected static const ACTION_NONE:int = 0;
+      
+      private static const EMBED_LATENCY_ICON_MEDIUM:Class = WorldMapWidget_EMBED_LATENCY_ICON_MEDIUM;
+      
+      protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
+      
+      protected static const DRAG_TYPE_SPELL:String = "spell";
+      
+      private static const LATENCY_ICON_LOW:Bitmap = new EMBED_LATENCY_ICON_LOW();
+      
+      protected static const ACTION_UNSET:int = -1;
+      
+      protected static const MAP_MIN_X:int = 24576;
+      
+      protected static const MAP_MIN_Y:int = 24576;
+      
+      protected static const MAP_MIN_Z:int = 0;
+      
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
+      protected static const MAPSIZE_W:int = 10;
+      
+      protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
+      
+      protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
+      
+      protected static const MAPSIZE_Z:int = 8;
+      
       protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
+      
+      protected static const ACTION_USE:int = 6;
       
       protected static const DRAG_OPACITY:Number = 0.75;
       
@@ -116,23 +138,7 @@ package tibia.worldmap
       
       protected static const MAP_WIDTH:int = 15;
       
-      protected static const ACTION_USE:int = 6;
-      
-      protected static const NUM_ONSCREEN_MESSAGES:int = 16;
-      
-      protected static const DRAG_TYPE_ACTION:String = "action";
-      
-      protected static const ACTION_ATTACK:int = 1;
-      
-      private static const EMBED_LATENCY_ICON_HIGH:Class = WorldMapWidget_EMBED_LATENCY_ICON_HIGH;
-      
-      private static const EMBED_LATENCY_ICON_LOW:Class = WorldMapWidget_EMBED_LATENCY_ICON_LOW;
-      
-      protected static const GROUND_LAYER:int = 7;
-      
-      protected static const DRAG_TYPE_STATUSWIDGET:String = "statusWidget";
-      
-      protected static const ACTION_CONTEXT_MENU:int = 4;
+      protected static const ACTION_ATTACK_FALLTHROUGH:int = 2;
        
       private var m_DragHandler:ObjectDragImpl;
       
@@ -355,6 +361,7 @@ package tibia.worldmap
          var _loc3_:Vector3D = null;
          var _loc4_:Vector3D = null;
          var _loc5_:IServerConnection = null;
+         var _loc6_:* = null;
          if(this.m_UIRendererImpl != null && this.m_Options != null && this.m_Options.rendererHighlight > 0 && ContextMenuBase.getCurrent() == null && PopUpBase.getCurrent() == null)
          {
             _loc3_ = this.m_UIRendererImpl.highlightTile;
@@ -395,7 +402,8 @@ package tibia.worldmap
                this.m_UIInfoLatency.toolTip = resourceManager.getString(BUNDLE,"LATENCY_TOOTLIP_NO_CONNECTION");
                this.m_UIInfoLatency.addChild(LATENCY_ICON_HIGH);
             }
-            this.m_UIInfoFramerate.text = this.m_UIRendererImpl.fps + " FPS";
+            _loc6_ = this.m_UIRendererImpl.fps + " FPS";
+            this.m_UIInfoFramerate.text = _loc6_;
          }
       }
       
@@ -567,12 +575,13 @@ package tibia.worldmap
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
+         var _loc5_:Number = NaN;
          var _loc10_:Number = NaN;
          var _loc11_:Number = NaN;
          super.updateDisplayList(param1,param2);
          var _loc3_:Number = Math.max(0,param2 - 2);
          var _loc4_:Number = Math.max(0,param1 - 2);
-         var _loc5_:Number = MAP_HEIGHT * FIELD_SIZE;
+         _loc5_ = MAP_HEIGHT * FIELD_SIZE;
          var _loc6_:Number = MAP_WIDTH * FIELD_SIZE;
          if(this.m_Options != null && Boolean(this.m_Options.rendererScaleMap) || _loc3_ < _loc5_ || _loc4_ < _loc6_)
          {

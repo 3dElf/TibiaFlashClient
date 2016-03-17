@@ -2,27 +2,31 @@ package tibia.game
 {
    import flash.events.EventDispatcher;
    import flash.net.URLLoader;
-   import flash.net.URLRequest;
+   import flash.net.URLLoaderDataFormat;
    import flash.events.Event;
+   import flash.events.ErrorEvent;
+   import flash.net.URLRequest;
+   import shared.utility.URLHelper;
+   import flash.events.ProgressEvent;
    import flash.events.IOErrorEvent;
    import flash.events.SecurityErrorEvent;
-   import flash.events.ProgressEvent;
-   import flash.events.ErrorEvent;
-   import flash.net.URLLoaderDataFormat;
-   import shared.utility.URLHelper;
    
    public class AssetBase extends EventDispatcher
    {
        
-      private var m_ContentType:String = null;
-      
-      private var m_Name:String = null;
+      private var m_URL:String = null;
       
       private var m_Loader:URLLoader = null;
       
+      private var m_Priority:int = 0;
+      
+      private var m_ContentType:String = null;
+      
+      protected var m_NoCacheEnabled:Boolean = false;
+      
       private var m_Size:int = 0;
       
-      private var m_URL:String = null;
+      private var m_Name:String = null;
       
       public function AssetBase(param1:String, param2:int = 0, param3:String = "application/octet-stream")
       {
@@ -45,15 +49,6 @@ package tibia.game
          }
       }
       
-      protected function resetDownloadedData() : void
-      {
-      }
-      
-      public function get name() : String
-      {
-         return this.m_Name;
-      }
-      
       protected function processDownloadedData(param1:URLLoader) : Boolean
       {
          return false;
@@ -64,28 +59,28 @@ package tibia.game
          return this.m_Size;
       }
       
-      public function load() : void
+      protected function get dataFormatForContentType() : String
       {
-         this.resetDownloadedData();
-         this.unloadLoader();
-         var _loc1_:URLRequest = this.makeDownloadRequest();
-         this.m_Loader = new URLLoader();
-         this.m_Loader.dataFormat = this.dataFormatForContentType;
-         this.m_Loader.addEventListener(Event.COMPLETE,this.onLoaderComplete);
-         this.m_Loader.addEventListener(IOErrorEvent.IO_ERROR,this.onLoaderError);
-         this.m_Loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onLoaderError);
-         this.m_Loader.addEventListener(ProgressEvent.PROGRESS,this.onLoaderProgress);
-         this.m_Loader.load(_loc1_);
+         if(this.contentType.indexOf("text/") == 0)
+         {
+            return URLLoaderDataFormat.TEXT;
+         }
+         return URLLoaderDataFormat.BINARY;
       }
       
-      private function onLoaderProgress(param1:ProgressEvent) : void
+      public function set priority(param1:int) : void
       {
-         dispatchEvent(param1);
+         this.m_Priority = param1;
       }
       
-      public function get url() : String
+      public function get name() : String
       {
-         return this.m_URL;
+         return this.m_Name;
+      }
+      
+      public function get loaded() : Boolean
+      {
+         return false;
       }
       
       private function onLoaderComplete(param1:Event) : void
@@ -103,9 +98,60 @@ package tibia.game
          }
       }
       
+      public function get uniqueKey() : Object
+      {
+         return this.url;
+      }
+      
       public function get contentType() : String
       {
          return this.m_ContentType;
+      }
+      
+      protected function makeDownloadRequest() : URLRequest
+      {
+         var _loc1_:URLRequest = new URLRequest(!!this.m_NoCacheEnabled?URLHelper.s_NoCache(this.url):this.url);
+         return _loc1_;
+      }
+      
+      private function onLoaderError(param1:ErrorEvent) : void
+      {
+         this.unload();
+         this.unloadLoader();
+         dispatchEvent(param1);
+      }
+      
+      private function onLoaderProgress(param1:ProgressEvent) : void
+      {
+         dispatchEvent(param1);
+      }
+      
+      protected function resetDownloadedData() : void
+      {
+      }
+      
+      public function get priority() : int
+      {
+         return this.m_Priority;
+      }
+      
+      public function load() : void
+      {
+         this.resetDownloadedData();
+         this.unloadLoader();
+         var _loc1_:URLRequest = this.makeDownloadRequest();
+         this.m_Loader = new URLLoader();
+         this.m_Loader.dataFormat = this.dataFormatForContentType;
+         this.m_Loader.addEventListener(Event.COMPLETE,this.onLoaderComplete);
+         this.m_Loader.addEventListener(IOErrorEvent.IO_ERROR,this.onLoaderError);
+         this.m_Loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onLoaderError);
+         this.m_Loader.addEventListener(ProgressEvent.PROGRESS,this.onLoaderProgress);
+         this.m_Loader.load(_loc1_);
+      }
+      
+      public function get url() : String
+      {
+         return this.m_URL;
       }
       
       private function unloadLoader() : void
@@ -125,28 +171,6 @@ package tibia.game
             this.m_Loader.removeEventListener(ProgressEvent.PROGRESS,this.onLoaderProgress);
             this.m_Loader = null;
          }
-      }
-      
-      private function onLoaderError(param1:ErrorEvent) : void
-      {
-         this.unload();
-         this.unloadLoader();
-         dispatchEvent(param1);
-      }
-      
-      protected function get dataFormatForContentType() : String
-      {
-         if(this.contentType.indexOf("text/") == 0)
-         {
-            return URLLoaderDataFormat.TEXT;
-         }
-         return URLLoaderDataFormat.BINARY;
-      }
-      
-      protected function makeDownloadRequest() : URLRequest
-      {
-         var _loc1_:URLRequest = new URLRequest(URLHelper.s_NoCache(this.url));
-         return _loc1_;
       }
       
       public function unload() : void

@@ -22,6 +22,10 @@ package tibia.worldmap.widgetClasses
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
+      
       protected static const UNDERGROUND_LAYER:int = 2;
       
       protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
@@ -41,6 +45,8 @@ package tibia.worldmap.widgetClasses
       protected static const PLAYER_OFFSET_Y:int = 6;
       
       protected static const FIELD_SIZE:int = 32;
+      
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
       
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       

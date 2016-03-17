@@ -10,11 +10,11 @@ package tibia.market.marketWidgetClasses
    import mx.controls.listClasses.ListBase;
    import tibia.appearances.widgetClasses.SkinnedAppearanceRenderer;
    import flash.events.Event;
-   import mx.events.FlexEvent;
-   import tibia.game.PopUpBase;
    import tibia.market.MarketWidget;
    import flash.display.Graphics;
    import mx.core.EventPriority;
+   import mx.events.FlexEvent;
+   import tibia.game.PopUpBase;
    
    public class AppearanceTypeTileRenderer extends HBox
    {
@@ -46,7 +46,7 @@ package tibia.market.marketWidgetClasses
       public function AppearanceTypeTileRenderer()
       {
          super();
-         addEventListener(FlexEvent.CREATION_COMPLETE,this.onCrationComplete);
+         addEventListener(FlexEvent.CREATION_COMPLETE,this.onCreationComplete);
       }
       
       protected function set appearance(param1:AppearanceType) : void
@@ -135,12 +135,6 @@ package tibia.market.marketWidgetClasses
          }
       }
       
-      private function onCrationComplete(param1:Event) : void
-      {
-         removeEventListener(FlexEvent.CREATION_COMPLETE,this.onCrationComplete);
-         this.market = PopUpBase.getParentPopUp(this) as MarketWidget;
-      }
-      
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
          var _loc3_:Graphics = null;
@@ -207,6 +201,12 @@ package tibia.market.marketWidgetClasses
          {
             this.invalidateSelection();
          }
+      }
+      
+      private function onCreationComplete(param1:Event) : void
+      {
+         removeEventListener(FlexEvent.CREATION_COMPLETE,this.onCreationComplete);
+         this.market = PopUpBase.getParentPopUp(this) as MarketWidget;
       }
    }
 }

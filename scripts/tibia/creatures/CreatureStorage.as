@@ -2,16 +2,12 @@ package tibia.creatures
 {
    import flash.display.BitmapData;
    import flash.geom.Rectangle;
-   import tibia.worldmap.widgetClasses.RendererImpl;
-   import tibia.creatures.battlelistWidgetClasses.BattlelistItemRenderer;
-   import shared.utility.Colour;
-   import mx.core.FlexShape;
-   import flash.display.Graphics;
    import mx.core.BitmapAsset;
    import mx.collections.Sort;
    import tibia.network.Communication;
    import shared.utility.Vector3D;
    import tibia.options.OptionsStorage;
+   import tibia.appearances.Marks;
    import mx.collections.IList;
    import mx.events.PropertyChangeEvent;
    import mx.collections.ArrayCollection;
@@ -23,23 +19,31 @@ package tibia.creatures
       
       protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
-      protected static const STATE_PZ_BLOCK:int = 13;
+      protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       public static const SORT_DISTANCE_ASC:int = 2;
       
-      protected static const PK_REVENGE:int = 6;
+      protected static const STATE_PZ_BLOCK:int = 13;
       
       protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
       
-      protected static const WAR_ALLY:int = 1;
+      protected static const PK_REVENGE:int = 6;
       
-      protected static const SKILL_FIGHTCLUB:int = 9;
+      protected static const SKILL_FIGHTCLUB:int = 10;
       
       private static const MARK_NUM_TOTAL:uint = MARK_TRAPPER + 1;
       
+      protected static const RISKINESS_DANGEROUS:int = 1;
+      
+      protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
+      
       private static const OPPONENTS_REFRESH:int = 1;
       
+      protected static const GUILD_NONE:int = 0;
+      
       protected static const PK_PARTYMODE:int = 2;
+      
+      protected static const RISKINESS_NONE:int = 0;
       
       protected static const FIELD_HEIGHT:int = 24;
       
@@ -47,25 +51,27 @@ package tibia.creatures
       
       protected static const STATE_DRUNK:int = 3;
       
+      protected static const PARTY_OTHER:int = 11;
+      
       protected static const SKILL_EXPERIENCE:int = 0;
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      protected static const TYPE_NPC:int = 2;
+      protected static const TYPE_SUMMON_OTHERS:int = 4;
       
-      protected static const SKILL_STAMINA:int = 16;
+      protected static const SKILL_STAMINA:int = 17;
+      
+      protected static const TYPE_NPC:int = 2;
       
       protected static const STATE_NONE:int = -1;
       
       protected static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
       
-      protected static const SKILL_FIGHTSHIELD:int = 7;
+      protected static const SKILL_FIGHTSHIELD:int = 8;
       
       protected static const FIELD_SIZE:int = 32;
       
-      protected static const WAR_NONE:int = 0;
-      
-      protected static const SKILL_FIGHTDISTANCE:int = 8;
+      protected static const SKILL_FIGHTDISTANCE:int = 9;
       
       protected static const PK_EXCPLAYERKILLER:int = 5;
       
@@ -73,19 +79,23 @@ package tibia.creatures
       
       protected static const NUM_TRAPPERS:int = 8;
       
-      protected static const SKILL_FED:int = 14;
+      protected static const SKILL_FED:int = 15;
       
       protected static const SKILL_MAGLEVEL:int = 2;
       
-      protected static const SKILL_FISHING:int = 13;
+      protected static const SKILL_FISHING:int = 14;
+      
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
       
       public static const SORT_NAME_DESC:int = 7;
       
-      protected static const PK_PLAYERKILLER:int = 4;
+      protected static const SKILL_HITPOINTS_PERCENT:int = 3;
       
       public static const SORT_NAME_ASC:int = 6;
       
       protected static const STATE_BLEEDING:int = 15;
+      
+      protected static const PK_PLAYERKILLER:int = 4;
       
       protected static const GROUND_LAYER:int = 7;
       
@@ -93,9 +103,11 @@ package tibia.creatures
       
       protected static const STATE_DAZZLED:int = 10;
       
+      protected static const SUMMON_OTHERS:int = 2;
+      
       protected static const SKILL_NONE:int = -1;
       
-      private static var s_MarksPerRow:int = -1;
+      protected static const GUILD_MEMBER:int = 4;
       
       protected static const PROFESSION_NONE:int = 0;
       
@@ -111,25 +123,27 @@ package tibia.creatures
       
       public static const MARK_AIM:uint = MARK_NUM_COLOURS + 1;
       
+      protected static const SKILL_CARRYSTRENGTH:int = 7;
+      
       protected static const PK_ATTACKER:int = 1;
       
       protected static const STATE_ELECTRIFIED:int = 2;
       
-      protected static const SKILL_FIGHTSWORD:int = 10;
-      
-      protected static const SKILL_CARRYSTRENGTH:int = 6;
+      protected static const SKILL_FIGHTSWORD:int = 11;
       
       private static const OPPONENTS_NOACTION:int = 0;
       
       public static const FILTER_NON_SKULLED:int = 8;
       
-      public static const MARK_AIM_FOLLOW:uint = MARK_NUM_COLOURS + 3;
+      protected static const GUILD_WAR_NEUTRAL:int = 3;
       
       protected static const STATE_DROWNING:int = 8;
       
       protected static const MAP_MIN_Y:int = 24576;
       
       protected static const MAP_MIN_Z:int = 0;
+      
+      public static const MARK_AIM_FOLLOW:uint = MARK_NUM_COLOURS + 3;
       
       protected static const MAP_MIN_X:int = 24576;
       
@@ -145,9 +159,9 @@ package tibia.creatures
       
       protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
       
-      protected static const PK_NONE:int = 0;
+      protected static const GUILD_WAR_ALLY:int = 1;
       
-      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
+      protected static const PK_NONE:int = 0;
       
       protected static const NUM_EFFECTS:int = 200;
       
@@ -157,41 +171,47 @@ package tibia.creatures
       
       protected static const PARTY_NONE:int = 0;
       
-      protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
+      protected static const SUMMON_OWN:int = 1;
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
       
-      protected static const WAR_NEUTRAL:int = 3;
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
       
-      protected static const WAR_ENEMY:int = 2;
+      protected static const TYPE_SUMMON_OWN:int = 3;
       
-      protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
+      protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
       
       protected static const PROFESSION_KNIGHT:int = 1;
       
       protected static const UNDERGROUND_LAYER:int = 2;
       
-      public static const FILTER_PARTY:int = 16;
+      protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
+      
+      public static const MARK_UNMARKED:uint = 0;
+      
+      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
       
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
-      public static const MARK_UNMARKED:uint = 0;
+      public static const FILTER_PARTY:int = 16;
       
       protected static const PROFESSION_PALADIN:int = 2;
       
       protected static const PLAYER_OFFSET_X:int = 8;
       
-      protected static const PLAYER_OFFSET_Y:int = 6;
-      
-      protected static const SKILL_FIGHTAXE:int = 11;
+      protected static const SKILL_FIGHTAXE:int = 12;
       
       public static const MARK_TRAPPER:uint = MARK_NUM_COLOURS + 6;
       
-      private static const OPPONENTS_REBUILD:int = 2;
+      protected static const PLAYER_OFFSET_Y:int = 6;
       
       protected static const PARTY_LEADER_SEXP_OFF:int = 4;
+      
+      private static const OPPONENTS_REBUILD:int = 2;
       
       protected static const MAP_MAX_X:int = MAP_MIN_X + (1 << 14 - 1);
       
@@ -201,13 +221,13 @@ package tibia.creatures
       
       protected static const MAP_MAX_Z:int = 15;
       
-      protected static const SKILL_SOULPOINTS:int = 15;
+      protected static const SKILL_SOULPOINTS:int = 16;
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
       
       public static const MARK_AIM_ATTACK:uint = MARK_NUM_COLOURS + 2;
       
-      private static var s_CreatureMarks:BitmapData = null;
+      public static const STATE_FLAG_GAP:int = 2;
       
       protected static const STATE_FAST:int = 6;
       
@@ -215,19 +235,19 @@ package tibia.creatures
       
       public static const FILTER_NPC:int = 2;
       
+      protected static const GUILD_OTHER:int = 5;
+      
       protected static const TYPE_PLAYER:int = 0;
       
-      protected static const SKILL_HITPOINTS:int = 3;
+      protected static const SKILL_HITPOINTS:int = 4;
       
-      protected static const SKILL_OFFLINETRAINING:int = 17;
-      
-      protected static const MAP_HEIGHT:int = 11;
+      protected static const SKILL_OFFLINETRAINING:int = 18;
       
       protected static const STATE_MANA_SHIELD:int = 4;
       
-      protected static const SKILL_MANA:int = 4;
+      protected static const SKILL_MANA:int = 5;
       
-      public static const FILTER_PLAYER:int = 1;
+      protected static const MAP_HEIGHT:int = 11;
       
       protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
       
@@ -255,15 +275,17 @@ package tibia.creatures
       
       protected static const STATE_BURNING:int = 1;
       
-      protected static const SKILL_FIGHTFIST:int = 12;
+      protected static const SKILL_FIGHTFIST:int = 13;
       
       public static const SORT_HITPOINTS_ASC:int = 4;
       
       protected static const PK_AGGRESSOR:int = 3;
       
+      protected static const GUILD_WAR_ENEMY:int = 2;
+      
       protected static const MAPSIZE_W:int = 10;
       
-      protected static const SKILL_LEVEL:int = 1;
+      protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
       
       protected static const STATE_STRENGTHENED:int = 12;
       
@@ -273,7 +295,7 @@ package tibia.creatures
       
       protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
       
-      protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
+      protected static const SKILL_LEVEL:int = 1;
       
       protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
       
@@ -283,18 +305,20 @@ package tibia.creatures
       
       public static const SORT_HITPOINTS_DESC:int = 5;
       
+      protected static const SUMMON_NONE:int = 0;
+      
+      public static const FILTER_PLAYER:int = 1;
+      
       public static const FILTER_MONSTER:int = 4;
       
-      protected static const SKILL_GOSTRENGTH:int = 5;
+      protected static const SKILL_GOSTRENGTH:int = 6;
       
       public static const MARK_ATTACK:uint = MARK_NUM_COLOURS + 4;
       
+      protected static const PK_MAX_FLASHING_TIME:uint = 5000;
+      
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
-      
-      {
-         s_InitialiseCreatureMarks();
-      }
-      
+       
       protected var m_OpponentsSort:Sort = null;
       
       protected var m_Player:tibia.creatures.Player = null;
@@ -332,89 +356,35 @@ package tibia.creatures
          this.m_Trappers = null;
       }
       
-      public static function s_GetCreatureMark(param1:uint, param2:int, param3:Rectangle) : BitmapData
+      public static function s_GetRiskinessFlag(param1:int, param2:Rectangle) : BitmapData
       {
-         if(param1 >= MARK_NUM_TOTAL)
+         if(param1 < RISKINESS_NONE || param1 > RISKINESS_DANGEROUS)
          {
-            throw new ArgumentError("CreatureStorage.s_GetCreatureMark: Invalid mark ID: " + param1 + ".");
+            throw new ArgumentError("CreatureStorage.s_GetRiskinessFlag: Invalid flag.");
          }
-         if(param2 != RendererImpl.CREATURE_MARK_SIZE_NORMAL && param2 != RendererImpl.CREATURE_MARK_SIZE_INNER && param2 != BattlelistItemRenderer.CREATURE_ICON_SIZE)
-         {
-            throw new ArgumentError("CreatureStorage.s_GetCreatureMark: Invalid size: " + param2 + ".");
-         }
-         if(param2 == RendererImpl.CREATURE_MARK_SIZE_NORMAL)
-         {
-            param1 = param1 + 0 * MARK_NUM_TOTAL;
-         }
-         else if(param2 == RendererImpl.CREATURE_MARK_SIZE_INNER)
-         {
-            param1 = param1 + 1 * MARK_NUM_TOTAL;
-         }
-         else if(param2 == BattlelistItemRenderer.CREATURE_ICON_SIZE)
-         {
-            param1 = param1 + 2 * MARK_NUM_TOTAL;
-         }
-         param3.x = param1 % s_MarksPerRow * FIELD_SIZE;
-         param3.y = int(param1 / s_MarksPerRow) * FIELD_SIZE;
-         param3.width = FIELD_SIZE;
-         param3.height = FIELD_SIZE;
-         return s_CreatureMarks;
+         param2.x = param1 * STATE_FLAG_SIZE;
+         param2.y = 4 * STATE_FLAG_SIZE;
+         param2.width = STATE_FLAG_SIZE;
+         param2.height = STATE_FLAG_SIZE;
+         return STATE_FLAG_BITMAP;
       }
       
-      private static function s_InitialiseCreatureMarks() : void
+      public static function s_GetSummonFlag(param1:int, param2:Rectangle) : BitmapData
       {
-         s_MarksPerRow = Math.min(Math.ceil(Math.sqrt(3 * MARK_NUM_TOTAL)),int(2080 / FIELD_SIZE));
-         var _loc1_:int = int((3 * MARK_NUM_TOTAL + s_MarksPerRow - 1) / s_MarksPerRow);
-         if(_loc1_ * FIELD_SIZE > 2080)
+         if(param1 < SUMMON_NONE || param1 > SUMMON_OTHERS)
          {
-            throw new Error("CreatureStorage.s_InitialiseCreatureMarks: Bitmap is too small to hold all marks.");
+            throw new ArgumentError("CreatureStorage.s_GetSummonFlag: Invalid flag.");
          }
-         var _loc2_:int = 0;
-         var _loc3_:Vector.<uint> = new Vector.<uint>(MARK_NUM_TOTAL,true);
-         _loc2_ = 0;
-         while(_loc2_ < MARK_NUM_COLOURS)
-         {
-            _loc3_[_loc2_] = Colour.s_RGBFromEightBit(_loc2_);
-            _loc2_++;
-         }
-         _loc3_[MARK_AIM] = 248 << 16 | 248 << 8 | 248;
-         _loc3_[MARK_AIM_ATTACK] = 248 << 16 | 164 << 8 | 164;
-         _loc3_[MARK_AIM_FOLLOW] = 180 << 16 | 248 << 8 | 180;
-         _loc3_[MARK_ATTACK] = 224 << 16 | 64 << 8 | 64;
-         _loc3_[MARK_FOLLOW] = 64 << 16 | 224 << 8 | 64;
-         _loc3_[MARK_TRAPPER] = 191 << 16 | 127 << 8 | 0;
-         var _loc4_:FlexShape = new FlexShape();
-         var _loc5_:Graphics = _loc4_.graphics;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc8_:int = 0;
-         _loc2_ = 0;
-         while(_loc2_ < MARK_NUM_TOTAL)
-         {
-            _loc5_.lineStyle(1,_loc3_[_loc2_],1,true);
-            _loc6_ = (0 * MARK_NUM_TOTAL + _loc2_) % s_MarksPerRow;
-            _loc7_ = int((0 * MARK_NUM_TOTAL + _loc2_) / s_MarksPerRow);
-            _loc8_ = Math.floor((FIELD_SIZE - RendererImpl.CREATURE_MARK_SIZE_NORMAL) / 2);
-            _loc5_.drawRect(_loc6_ * FIELD_SIZE + _loc8_,_loc7_ * FIELD_SIZE + _loc8_,RendererImpl.CREATURE_MARK_SIZE_NORMAL - 1,RendererImpl.CREATURE_MARK_SIZE_NORMAL - 1);
-            _loc5_.drawRect(_loc6_ * FIELD_SIZE + _loc8_ + 1,_loc7_ * FIELD_SIZE + _loc8_ + 1,RendererImpl.CREATURE_MARK_SIZE_NORMAL - 3,RendererImpl.CREATURE_MARK_SIZE_NORMAL - 3);
-            _loc6_ = (1 * MARK_NUM_TOTAL + _loc2_) % s_MarksPerRow;
-            _loc7_ = int((1 * MARK_NUM_TOTAL + _loc2_) / s_MarksPerRow);
-            _loc8_ = Math.floor((FIELD_SIZE - RendererImpl.CREATURE_MARK_SIZE_INNER) / 2);
-            _loc5_.drawRect(_loc6_ * FIELD_SIZE + _loc8_,_loc7_ * FIELD_SIZE + _loc8_,RendererImpl.CREATURE_MARK_SIZE_INNER - 1,RendererImpl.CREATURE_MARK_SIZE_INNER - 1);
-            _loc5_.drawRect(_loc6_ * FIELD_SIZE + _loc8_ + 1,_loc7_ * FIELD_SIZE + _loc8_ + 1,RendererImpl.CREATURE_MARK_SIZE_INNER - 3,RendererImpl.CREATURE_MARK_SIZE_INNER - 3);
-            _loc6_ = (2 * MARK_NUM_TOTAL + _loc2_) % s_MarksPerRow;
-            _loc7_ = int((2 * MARK_NUM_TOTAL + _loc2_) / s_MarksPerRow);
-            _loc8_ = Math.floor((FIELD_SIZE - BattlelistItemRenderer.CREATURE_ICON_SIZE) / 2);
-            _loc5_.drawRect(_loc6_ * FIELD_SIZE + _loc8_,_loc7_ * FIELD_SIZE + _loc8_,BattlelistItemRenderer.CREATURE_ICON_SIZE - 1,BattlelistItemRenderer.CREATURE_ICON_SIZE - 1);
-            _loc2_++;
-         }
-         s_CreatureMarks = new BitmapData(s_MarksPerRow * FIELD_SIZE,_loc1_ * FIELD_SIZE,true,0);
-         s_CreatureMarks.draw(_loc4_);
+         param2.x = param1 * STATE_FLAG_SIZE;
+         param2.y = 3 * STATE_FLAG_SIZE;
+         param2.width = STATE_FLAG_SIZE;
+         param2.height = STATE_FLAG_SIZE;
+         return STATE_FLAG_BITMAP;
       }
       
       public static function s_GetPartyFlag(param1:int, param2:Rectangle) : BitmapData
       {
-         if(param1 < PARTY_NONE || param1 > PARTY_LEADER_SEXP_INACTIVE_INNOCENT)
+         if(param1 < PARTY_NONE || param1 > PARTY_OTHER)
          {
             throw new ArgumentError("CreatureStorage.s_GetPartyFlag: Invalid flag.");
          }
@@ -426,6 +396,10 @@ package tibia.creatures
          {
             param1 = PARTY_LEADER_SEXP_INACTIVE_GUILTY;
          }
+         if(param1 == PARTY_OTHER)
+         {
+            param1 = 9;
+         }
          param2.x = param1 * STATE_FLAG_SIZE;
          param2.y = 0;
          param2.width = STATE_FLAG_SIZE;
@@ -433,11 +407,11 @@ package tibia.creatures
          return STATE_FLAG_BITMAP;
       }
       
-      public static function s_GetWarFlag(param1:int, param2:Rectangle) : BitmapData
+      public static function s_GetGuildFlag(param1:int, param2:Rectangle) : BitmapData
       {
-         if(param1 < WAR_NONE || param1 > WAR_NEUTRAL)
+         if(param1 < GUILD_NONE || param1 > GUILD_OTHER)
          {
-            throw new ArgumentError("CreatureStorage.s_GetWarFlag: Invalid flag.");
+            throw new ArgumentError("CreatureStorage.s_GetGuildFlag: Invalid flag.");
          }
          param2.x = param1 * STATE_FLAG_SIZE;
          param2.y = 2 * STATE_FLAG_SIZE;
@@ -679,11 +653,11 @@ package tibia.creatures
                case SORT_HITPOINTS_DESC:
                   _loc7_ = false;
                case SORT_HITPOINTS_ASC:
-                  if(_loc4_.hitpoints < _loc5_.hitpoints)
+                  if(_loc4_.hitpointsPercent < _loc5_.hitpointsPercent)
                   {
                      _loc6_ = -1;
                   }
-                  else if(_loc4_.hitpoints > _loc5_.hitpoints)
+                  else if(_loc4_.hitpointsPercent > _loc5_.hitpointsPercent)
                   {
                      _loc6_ = 1;
                   }
@@ -769,31 +743,38 @@ package tibia.creatures
       
       protected function updateExtendedMark(param1:tibia.creatures.Creature) : void
       {
-         var _loc2_:uint = 0;
+         var _loc2_:Marks = null;
+         var _loc3_:uint = 0;
          if(param1 != null)
          {
-            _loc2_ = MARK_UNMARKED;
+            _loc2_ = param1.marks;
+            _loc2_.setMark(Marks.MARK_TYPE_CLIENT_MAPWINDOW,Marks.MARK_UNMARKED);
+            _loc2_.setMark(Marks.MARK_TYPE_CLIENT_BATTLELIST,Marks.MARK_UNMARKED);
+            _loc3_ = Marks.MARK_UNMARKED;
             if(param1 == this.m_Aim && param1 == this.m_AttackTarget)
             {
-               _loc2_ = MARK_AIM_ATTACK;
+               _loc2_.setMark(Marks.MARK_TYPE_CLIENT_MAPWINDOW,Marks.MARK_AIM_ATTACK);
+               _loc2_.setMark(Marks.MARK_TYPE_CLIENT_BATTLELIST,Marks.MARK_AIM_ATTACK);
             }
             else if(param1 == this.m_Aim && param1 == this.m_FollowTarget)
             {
-               _loc2_ = MARK_AIM_FOLLOW;
+               _loc2_.setMark(Marks.MARK_TYPE_CLIENT_MAPWINDOW,Marks.MARK_AIM_FOLLOW);
+               _loc2_.setMark(Marks.MARK_TYPE_CLIENT_BATTLELIST,Marks.MARK_AIM_FOLLOW);
             }
             else if(param1 == this.m_Aim)
             {
-               _loc2_ = MARK_AIM;
+               _loc2_.setMark(Marks.MARK_TYPE_CLIENT_BATTLELIST,Marks.MARK_AIM);
             }
             else if(param1 == this.m_AttackTarget)
             {
-               _loc2_ = MARK_ATTACK;
+               _loc2_.setMark(Marks.MARK_TYPE_CLIENT_MAPWINDOW,Marks.MARK_ATTACK);
+               _loc2_.setMark(Marks.MARK_TYPE_CLIENT_BATTLELIST,Marks.MARK_ATTACK);
             }
             else if(param1 == this.m_FollowTarget)
             {
-               _loc2_ = MARK_FOLLOW;
+               _loc2_.setMark(Marks.MARK_TYPE_CLIENT_MAPWINDOW,Marks.MARK_FOLLOW);
+               _loc2_.setMark(Marks.MARK_TYPE_CLIENT_BATTLELIST,Marks.MARK_FOLLOW);
             }
-            param1.extendedMarkID = _loc2_;
          }
       }
       
@@ -911,7 +892,7 @@ package tibia.creatures
          {
             return false;
          }
-         if(!_loc3_.visible || _loc3_.hitpoints <= 0)
+         if(!_loc3_.visible || _loc3_.hitpointsPercent <= 0)
          {
             return false;
          }
@@ -948,22 +929,32 @@ package tibia.creatures
          return true;
       }
       
-      public function reset() : void
+      public function reset(param1:Boolean = true) : void
       {
-         this.m_Player.reset();
-         var _loc1_:int = this.m_Creature.length - 1;
-         while(_loc1_ >= 0)
+         if(param1)
          {
-            if(this.m_Creature[_loc1_] != null)
+            this.m_Player.reset();
+         }
+         var _loc2_:int = this.m_Creature.length - 1;
+         while(_loc2_ >= 0)
+         {
+            if(this.m_Creature[_loc2_] != null)
             {
-               this.m_Creature[_loc1_].reset();
-               this.m_Creature[_loc1_] = null;
+               if(this.m_Creature[_loc2_] != this.m_Player || this.m_Creature[_loc2_] == this.m_Player && param1 == true)
+               {
+                  this.m_Creature[_loc2_].reset();
+                  this.m_Creature[_loc2_] = null;
+               }
             }
-            _loc1_--;
+            _loc2_--;
          }
          this.m_Creature.length = 0;
          this.m_CreatureCount = 0;
          this.m_CreatureIndex = 0;
+         if(param1 == false)
+         {
+            this.replaceCreature(this.m_Player,0);
+         }
          this.m_Opponents.removeAll();
          this.m_OpponentsState = OPPONENTS_NOACTION;
          this.m_Aim = null;
@@ -1119,7 +1110,7 @@ package tibia.creatures
             _loc1_ = Tibia.s_GetCommunication();
             if(_loc1_ != null && Boolean(_loc1_.isGameRunning))
             {
-               _loc1_.sendCSETTACTICS(this.m_Options.combatAttackMode,this.m_Options.combatChaseMode,this.m_Options.combatSecureMode);
+               _loc1_.sendCSETTACTICS(this.m_Options.combatAttackMode,this.m_Options.combatChaseMode,this.m_Options.combatSecureMode,this.m_Options.combatPVPMode);
             }
          }
          if(this.m_FollowTarget != null)

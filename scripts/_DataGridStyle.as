@@ -12,7 +12,7 @@ package
    public class _DataGridStyle
    {
       
-      private static var _embed_css_Assets_swf_cursorStretch_1115520010:Class = _DataGridStyle__embed_css_Assets_swf_cursorStretch_1115520010;
+      private static var _embed_css_Assets_swf_cursorStretch_970976020:Class = _DataGridStyle__embed_css_Assets_swf_cursorStretch_970976020;
        
       public function _DataGridStyle()
       {
@@ -35,7 +35,7 @@ package
                _DataGridStyle.sortArrowSkin = DataGridSortArrow;
                _DataGridStyle.columnDropIndicatorSkin = DataGridColumnDropIndicator;
                _DataGridStyle.columnResizeSkin = DataGridColumnResizeSkin;
-               _DataGridStyle.stretchCursor = _embed_css_Assets_swf_cursorStretch_1115520010;
+               _DataGridStyle.stretchCursor = _embed_css_Assets_swf_cursorStretch_970976020;
                _DataGridStyle.alternatingItemColors = [16250871,16777215];
                _DataGridStyle.headerStyleName = "dataGridStyles";
                _DataGridStyle.headerSeparatorSkin = DataGridHeaderSeparator;

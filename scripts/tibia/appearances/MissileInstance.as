@@ -1,10 +1,8 @@
 package tibia.appearances
 {
    import shared.utility.Vector3D;
-   import flash.display.BitmapData;
-   import tibia.§appearances:ns_appearance_internal§.m_Phase;
    import tibia.§appearances:ns_appearance_internal§.m_Type;
-   import flash.geom.Rectangle;
+   import tibia.§appearances:ns_appearance_internal§.m_Phase;
    
    public class MissileInstance extends AppearanceInstance
    {
@@ -18,6 +16,10 @@ package tibia.appearances
       protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
+      
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
       
       protected static const UNDERGROUND_LAYER:int = 2;
       
@@ -38,6 +40,8 @@ package tibia.appearances
       protected static const PLAYER_OFFSET_Y:int = 6;
       
       protected static const FIELD_SIZE:int = 32;
+      
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
       
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
@@ -194,29 +198,6 @@ package tibia.appearances
          return _loc1_;
       }
       
-      override public function drawTo(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
-      {
-         var _loc7_:int = 0;
-         _loc7_ = ((m_Phase % m_Type.phases * m_Type.patternDepth + 0) * m_Type.patternHeight + this.m_PatternY) * m_Type.patternWidth + this.m_PatternX;
-         var _loc8_:Rectangle = m_Type.sprite[_loc7_];
-         s_TempPoint.x = param2 - m_Type.displacementX - _loc8_.width;
-         s_TempPoint.y = param3 - m_Type.displacementY - _loc8_.height;
-         param1.copyPixels(m_Type.bitmap,_loc8_,s_TempPoint,null,null,true);
-      }
-      
-      override public function getSprite(param1:int, param2:int, param3:int, param4:int, param5:Rectangle = null) : BitmapData
-      {
-         var _loc6_:int = param1 >= 0?int(param1 % m_Type.phases):int(m_Phase);
-         var _loc7_:int = param3 >= 0?int(param3 % m_Type.patternHeight):int(this.m_PatternY);
-         var _loc8_:int = param2 >= 0?int(param2 % m_Type.patternWidth):int(this.m_PatternX);
-         var _loc9_:int = ((_loc6_ * m_Type.patternDepth + 0) * m_Type.patternHeight + _loc7_) * m_Type.patternWidth + _loc8_;
-         if(param5 != null)
-         {
-            param5.copyFrom(m_Type.sprite[_loc9_]);
-         }
-         return m_Type.bitmap;
-      }
-      
       public function get position() : Vector3D
       {
          return this.m_Position;
@@ -225,6 +206,17 @@ package tibia.appearances
       public function get target() : Vector3D
       {
          return this.m_Target;
+      }
+      
+      override public function getSpriteIndex(param1:int, param2:int, param3:int, param4:int) : uint
+      {
+         var _loc6_:int = 0;
+         var _loc7_:int = 0;
+         var _loc5_:int = param1 >= 0?int(param1 % m_Type.phases):int(m_Phase);
+         _loc6_ = this.m_PatternY;
+         _loc7_ = this.m_PatternX;
+         var _loc8_:int = ((_loc5_ * m_Type.patternDepth + 0) * m_Type.patternHeight + _loc6_) * m_Type.patternWidth + _loc7_;
+         return _loc8_;
       }
       
       override public function animate(param1:Number) : Boolean

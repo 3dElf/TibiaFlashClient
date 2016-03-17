@@ -23,9 +23,13 @@ package tibia.minimap
       
       protected static const MM_IE_TIMEOUT:Number = 50;
       
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
       protected static const MM_IO_TIMEOUT:Number = 500;
       
       protected static const MM_SIDEBAR_ZOOM_MIN:int = -1;
+      
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
       
       protected static const MM_COLOUR_DEFAULT:uint = 0;
       
@@ -56,6 +60,8 @@ package tibia.minimap
       protected static const PLAYER_OFFSET_Y:int = 6;
       
       protected static const FIELD_SIZE:int = 32;
+      
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
       
       protected static const PLAYER_OFFSET_X:int = 8;
       

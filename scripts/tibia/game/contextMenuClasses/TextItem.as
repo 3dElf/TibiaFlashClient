@@ -147,7 +147,6 @@ package tibia.game.contextMenuClasses
       
       override protected function measure() : void
       {
-         var _loc5_:EdgeMetrics = null;
          super.measure();
          var _loc1_:Number = !isNaN(this.m_UICaption.explicitMinWidth)?Number(this.m_UICaption.explicitMinWidth):Number(this.m_UICaption.measuredMinWidth);
          var _loc2_:Number = this.m_UICaption.getExplicitOrMeasuredWidth();
@@ -165,7 +164,7 @@ package tibia.game.contextMenuClasses
          {
             this.measuredIconWidth = 0;
          }
-         _loc5_ = this.viewMetricsAndPadding;
+         var _loc5_:EdgeMetrics = this.viewMetricsAndPadding;
          measuredMinWidth = _loc5_.left + _loc1_ + _loc5_.right;
          measuredWidth = _loc5_.left + _loc2_ + _loc5_.right;
          measuredMinHeight = _loc5_.top + _loc3_ + _loc5_.bottom;

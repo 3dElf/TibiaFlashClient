@@ -12,8 +12,8 @@ package tibia.controls
    import mx.styles.StyleProxy;
    import mx.events.SliderEvent;
    import mx.controls.sliderClasses.Slider;
-   import mx.core.EdgeMetrics;
    import mx.core.UIComponent;
+   import mx.core.EdgeMetrics;
    import mx.controls.sliderClasses.SliderDirection;
    import mx.controls.sliderClasses.SliderThumb;
    import mx.core.mx_internal;
@@ -335,14 +335,13 @@ package tibia.controls
       
       override protected function measure() : void
       {
-         var _loc1_:EdgeMetrics = null;
          var _loc10_:UIComponent = null;
          var _loc11_:Number = NaN;
          var _loc12_:Number = NaN;
          var _loc13_:Number = NaN;
          var _loc14_:Number = NaN;
          super.measure();
-         _loc1_ = viewMetricsAndPadding;
+         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
          var _loc2_:Number = getStyle("horizontalGap");
          var _loc3_:Number = getStyle("verticalGap");
          var _loc4_:Number = 0;

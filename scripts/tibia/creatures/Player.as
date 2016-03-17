@@ -114,11 +114,6 @@ package tibia.creatures
          return uint(getSkillValue(SKILL_LEVEL));
       }
       
-      public function get isPartyLeader() : Boolean
-      {
-         return m_PartyFlag == PARTY_LEADER || m_PartyFlag == PARTY_LEADER_SEXP_ACTIVE || m_PartyFlag == PARTY_LEADER_SEXP_INACTIVE_GUILTY || m_PartyFlag == PARTY_LEADER_SEXP_INACTIVE_INNOCENT || m_PartyFlag == PARTY_LEADER_SEXP_OFF;
-      }
-      
       override public function setSkill(param1:int, param2:Number, param3:Number, param4:Number) : void
       {
          var _loc5_:Number = NaN;
@@ -150,20 +145,10 @@ package tibia.creatures
       
       public function resetFlags() : void
       {
-         partyFlag = PARTY_NONE;
-         pkFlag = PK_NONE;
+         setPartyFlag(PARTY_NONE);
+         setPKFlag(PK_NONE);
          this.stateFlags = 0;
-         warFlag = WAR_NONE;
-      }
-      
-      public function get isPartySharedExperienceActive() : Boolean
-      {
-         return m_PartyFlag == PARTY_LEADER_SEXP_ACTIVE || m_PartyFlag == PARTY_LEADER_SEXP_INACTIVE_GUILTY || m_PartyFlag == PARTY_LEADER_SEXP_INACTIVE_INNOCENT || m_PartyFlag == PARTY_MEMBER_SEXP_ACTIVE || m_PartyFlag == PARTY_MEMBER_SEXP_INACTIVE_GUILTY || m_PartyFlag == PARTY_MEMBER_SEXP_INACTIVE_INNOCENT;
-      }
-      
-      public function get isPartyMember() : Boolean
-      {
-         return m_PartyFlag == PARTY_LEADER || m_PartyFlag == PARTY_LEADER_SEXP_ACTIVE || m_PartyFlag == PARTY_LEADER_SEXP_INACTIVE_GUILTY || m_PartyFlag == PARTY_LEADER_SEXP_INACTIVE_INNOCENT || m_PartyFlag == PARTY_LEADER_SEXP_OFF || m_PartyFlag == PARTY_MEMBER_SEXP_ACTIVE || m_PartyFlag == PARTY_MEMBER_SEXP_INACTIVE_GUILTY || m_PartyFlag == PARTY_MEMBER_SEXP_INACTIVE_INNOCENT || m_PartyFlag == PARTY_MEMBER_SEXP_OFF;
+         guildFlag = GUILD_NONE;
       }
       
       public function stopAutowalk(param1:Boolean) : void
@@ -539,8 +524,8 @@ package tibia.creatures
       
       private function nextAutowalkStep() : void
       {
-         var _loc6_:* = 0;
-         var _loc7_:int = 0;
+         var _loc7_:* = 0;
+         var _loc8_:int = 0;
          if(Boolean(m_MovementRunning) || Boolean(this.m_AutowalkPathAborting) || !this.m_AutowalkPathDelta.isZero() || this.m_AutowalkPathSteps.length == 0)
          {
             return;
@@ -594,21 +579,29 @@ package tibia.creatures
             this.m_AutowalkPathDelta.setZero();
             return;
          }
-         if(!_loc2_.isEnterPossible(s_v2.x,s_v2.y,s_v2.z,false) || _loc2_.getFieldHeight(s_v1.x,s_v1.y,s_v1.z) + 1 < _loc2_.getFieldHeight(s_v2.x,s_v2.y,s_v2.z))
+         var _loc4_:uint = _loc2_.getEnterPossibleFlag(s_v2.x,s_v2.y,s_v2.z,false);
+         if(_loc4_ == FIELD_ENTER_NOT_POSSIBLE || _loc2_.getFieldHeight(s_v1.x,s_v1.y,s_v1.z) + 1 < _loc2_.getFieldHeight(s_v2.x,s_v2.y,s_v2.z))
          {
             this.m_AutowalkPathDelta.setZero();
             return;
          }
-         super.startMovementAnimation(this.m_AutowalkPathDelta.x,this.m_AutowalkPathDelta.y,_loc3_.type.waypoints);
-         m_AnimationDelta.x = m_AnimationDelta.x + this.m_AutowalkPathDelta.x * FIELD_SIZE;
-         m_AnimationDelta.y = m_AnimationDelta.y + this.m_AutowalkPathDelta.y * FIELD_SIZE;
-         var _loc4_:int = 1;
-         var _loc5_:int = this.m_AutowalkPathSteps.length;
-         while(_loc4_ < _loc5_)
+         if(_loc4_ == FIELD_ENTER_POSSIBLE)
          {
-            _loc6_ = this.m_AutowalkPathSteps[_loc4_] & 65535;
-            _loc7_ = (this.m_AutowalkPathSteps[_loc4_] & 4294901760) >>> 16;
-            switch(_loc6_)
+            super.startMovementAnimation(this.m_AutowalkPathDelta.x,this.m_AutowalkPathDelta.y,_loc3_.type.waypoints);
+            m_AnimationDelta.x = m_AnimationDelta.x + this.m_AutowalkPathDelta.x * FIELD_SIZE;
+            m_AnimationDelta.y = m_AnimationDelta.y + this.m_AutowalkPathDelta.y * FIELD_SIZE;
+         }
+         else if(_loc4_ == FIELD_ENTER_POSSIBLE_NO_ANIMATION)
+         {
+            this.m_AutowalkPathDelta.setZero();
+         }
+         var _loc5_:int = 1;
+         var _loc6_:int = this.m_AutowalkPathSteps.length;
+         while(_loc5_ < _loc6_)
+         {
+            _loc7_ = this.m_AutowalkPathSteps[_loc5_] & 65535;
+            _loc8_ = (this.m_AutowalkPathSteps[_loc5_] & 4294901760) >>> 16;
+            switch(_loc7_)
             {
                case PATH_EAST:
                   s_v2.x = s_v2.x + 1;
@@ -639,19 +632,19 @@ package tibia.creatures
                   s_v2.y = s_v2.y + 1;
                   break;
                default:
-                  throw new Error("Player.nextAutowalkStep: Invalid step(2): " + (this.m_AutowalkPathSteps[_loc4_] & 65535));
+                  throw new Error("Player.nextAutowalkStep: Invalid step(2): " + (this.m_AutowalkPathSteps[_loc5_] & 65535));
             }
             if(s_v2.x < 0 || s_v2.x >= MAPSIZE_X || s_v2.y < 0 || s_v2.y >= MAPSIZE_Y)
             {
                break;
             }
-            if(_loc2_.getMiniMapCost(s_v2.x,s_v2.y,s_v2.z) > _loc7_)
+            if(_loc2_.getMiniMapCost(s_v2.x,s_v2.y,s_v2.z) > _loc8_)
             {
                _loc1_.sendCSTOP();
                this.m_AutowalkPathAborting = true;
                break;
             }
-            _loc4_++;
+            _loc5_++;
          }
       }
       
@@ -695,7 +688,7 @@ package tibia.creatures
          {
             s_v1.setComponents(param1,param2,param3);
             _loc7_.toMap(s_v1,s_v1);
-            if((s_v1.x != PLAYER_OFFSET_X || s_v1.y != PLAYER_OFFSET_Y) && !_loc7_.isEnterPossible(s_v1.x,s_v1.y,s_v1.z,true))
+            if((s_v1.x != PLAYER_OFFSET_X || s_v1.y != PLAYER_OFFSET_Y) && _loc7_.getEnterPossibleFlag(s_v1.x,s_v1.y,s_v1.z,true) == FIELD_ENTER_NOT_POSSIBLE)
             {
                _loc7_.addOnscreenMessage(MessageMode.MESSAGE_FAILURE,WorldMapStorage.MSG_SORRY_NOT_POSSIBLE);
                return;

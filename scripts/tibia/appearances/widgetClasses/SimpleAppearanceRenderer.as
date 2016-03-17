@@ -3,19 +3,22 @@ package tibia.appearances.widgetClasses
    import mx.core.FlexShape;
    import mx.core.IFlexDisplayObject;
    import flash.geom.Rectangle;
+   import flash.geom.Point;
    import shared.utility.TextFieldCache;
    import flash.geom.Matrix;
+   import flash.display.BitmapData;
    import tibia.appearances.AppearanceInstance;
+   import tibia.appearances.AppearanceType;
+   import tibia.appearances.ObjectInstance;
    import flash.events.TimerEvent;
    import flash.utils.Timer;
-   import tibia.appearances.AppearanceType;
-   import flash.display.BitmapData;
-   import tibia.appearances.ObjectInstance;
    
    public class SimpleAppearanceRenderer extends FlexShape implements IFlexDisplayObject
    {
       
       private static var s_Rect:Rectangle = new Rectangle();
+      
+      private static var s_ZeroPoint:Point = new Point(0,0);
       
       public static const ICON_SIZE:int = 32;
       
@@ -23,53 +26,38 @@ package tibia.appearances.widgetClasses
       
       private static var s_Trans:Matrix = new Matrix();
        
-      private var m_PatternY:int = -1;
-      
-      private var m_PatternZ:int = -1;
-      
       private var m_Phase:int = -1;
       
-      private var m_Appearance:AppearanceInstance = null;
-      
-      private var m_Size:int = 32;
+      private var m_LocalAppearanceBitmapCache:BitmapData = null;
       
       private var m_HaveTimer:Boolean = false;
-      
-      private var m_Smooth:Boolean = false;
-      
-      private var m_Scale:Number = NaN;
       
       private var m_Overlay:Boolean = true;
       
       private var m_PatternX:int = -1;
+      
+      private var m_PatternY:int = -1;
+      
+      private var m_PatternZ:int = -1;
+      
+      private var m_Appearance:AppearanceInstance = null;
+      
+      private var m_CacheDirty:Boolean = false;
+      
+      private var m_Size:int = 32;
+      
+      private var m_Smooth:Boolean = false;
+      
+      private var m_Scale:Number = NaN;
       
       public function SimpleAppearanceRenderer()
       {
          super();
       }
       
-      public function get appearance() : AppearanceInstance
-      {
-         return this.m_Appearance;
-      }
-      
       public function get size() : int
       {
          return this.m_Size;
-      }
-      
-      public function get phase() : int
-      {
-         return this.m_Phase;
-      }
-      
-      public function set phase(param1:int) : void
-      {
-         if(this.m_Phase != param1)
-         {
-            this.m_Phase = param1;
-            this.draw();
-         }
       }
       
       public function set size(param1:int) : void
@@ -79,6 +67,106 @@ package tibia.appearances.widgetClasses
             this.m_Size = param1;
             this.draw();
          }
+      }
+      
+      public function get scale() : Number
+      {
+         return this.m_Scale;
+      }
+      
+      public function get overlay() : Boolean
+      {
+         return this.m_Overlay;
+      }
+      
+      public function set smooth(param1:Boolean) : void
+      {
+         if(this.m_Smooth != param1)
+         {
+            this.m_Smooth = param1;
+            this.draw();
+         }
+      }
+      
+      public function get appearance() : AppearanceInstance
+      {
+         return this.m_Appearance;
+      }
+      
+      public function get cacheDirty() : Boolean
+      {
+         return this.m_CacheDirty;
+      }
+      
+      public function draw() : void
+      {
+         var _loc2_:Number = NaN;
+         var _loc3_:Number = NaN;
+         var _loc4_:CachedSpriteInformation = null;
+         var _loc5_:BitmapData = null;
+         var _loc6_:Rectangle = null;
+         var _loc7_:int = 0;
+         graphics.clear();
+         var _loc1_:AppearanceType = null;
+         if(this.m_Appearance != null && (_loc1_ = this.m_Appearance.type) != null)
+         {
+            _loc2_ = NaN;
+            _loc3_ = NaN;
+            if(isNaN(this.m_Scale))
+            {
+               _loc2_ = this.m_Size / _loc1_.exactSize;
+               _loc3_ = this.m_Size;
+            }
+            else
+            {
+               _loc2_ = this.m_Scale;
+               _loc3_ = _loc1_.exactSize * this.m_Scale;
+            }
+            _loc4_ = this.m_Appearance.getSprite(this.m_Phase,this.m_PatternX,this.m_PatternY,this.m_PatternZ);
+            this.cacheDirty = _loc4_.cacheMiss;
+            if(this.m_LocalAppearanceBitmapCache == null || this.m_LocalAppearanceBitmapCache.width < _loc4_.rectangle.width || this.m_LocalAppearanceBitmapCache.height < _loc4_.rectangle.height)
+            {
+               this.m_LocalAppearanceBitmapCache = new BitmapData(_loc4_.rectangle.width,_loc4_.rectangle.height);
+            }
+            this.m_LocalAppearanceBitmapCache.copyPixels(_loc4_.bitmapData,_loc4_.rectangle,s_ZeroPoint);
+            _loc5_ = this.m_LocalAppearanceBitmapCache;
+            s_Rect.setTo(0,0,_loc4_.rectangle.width,_loc4_.rectangle.height);
+            if(_loc5_ != null)
+            {
+               s_Trans.a = _loc2_;
+               s_Trans.d = _loc2_;
+               s_Trans.tx = (-s_Rect.right + _loc1_.exactSize) * _loc2_;
+               s_Trans.ty = (-s_Rect.bottom + _loc1_.exactSize) * _loc2_;
+               s_Rect.width = Math.min(_loc3_,s_Rect.width * _loc2_);
+               s_Rect.height = Math.min(_loc3_,s_Rect.height * _loc2_);
+               s_Rect.x = _loc3_ - s_Rect.width;
+               s_Rect.y = _loc3_ - s_Rect.height;
+               graphics.beginBitmapFill(_loc5_,s_Trans,true,this.m_Smooth);
+               graphics.drawRect(s_Rect.x,s_Rect.y,s_Rect.width,s_Rect.height);
+            }
+            if(Boolean(this.m_Overlay) && this.m_Appearance is ObjectInstance && Boolean(_loc1_.isCumulative))
+            {
+               _loc6_ = null;
+               _loc7_ = ObjectInstance(this.m_Appearance).data;
+               if((_loc6_ = s_TextCache.getItem(_loc7_,String(_loc7_),4294967295)) != null)
+               {
+                  s_Rect.x = _loc3_ - _loc6_.width;
+                  s_Rect.y = _loc3_ - _loc6_.height;
+                  s_Trans.a = 1;
+                  s_Trans.d = 1;
+                  s_Trans.tx = -_loc6_.x + s_Rect.x;
+                  s_Trans.ty = -_loc6_.y + s_Rect.y;
+                  graphics.beginBitmapFill(s_TextCache,s_Trans,false,false);
+                  graphics.drawRect(s_Rect.x,s_Rect.y,_loc6_.width,_loc6_.height);
+               }
+            }
+            graphics.endFill();
+         }
+      }
+      
+      public function get phase() : int
+      {
+         return this.m_Phase;
       }
       
       public function set patternX(param1:int) : void
@@ -108,13 +196,9 @@ package tibia.appearances.widgetClasses
          }
       }
       
-      public function set overlay(param1:Boolean) : void
+      public function get measuredHeight() : Number
       {
-         if(this.m_Overlay != param1)
-         {
-            this.m_Overlay = param1;
-            this.draw();
-         }
+         return this.m_Size;
       }
       
       protected function onTimer(param1:TimerEvent) : void
@@ -125,7 +209,7 @@ package tibia.appearances.widgetClasses
          {
             this.m_Appearance.animate(Tibia.s_FrameTibiaTimestamp);
          }
-         else
+         else if(this.m_CacheDirty == false)
          {
             _loc3_ = Tibia.s_GetSecondaryTimer();
             _loc3_.removeEventListener(TimerEvent.TIMER,this.onTimer);
@@ -134,9 +218,13 @@ package tibia.appearances.widgetClasses
          this.draw();
       }
       
-      public function get smooth() : Boolean
+      public function set overlay(param1:Boolean) : void
       {
-         return this.m_Smooth;
+         if(this.m_Overlay != param1)
+         {
+            this.m_Overlay = param1;
+            this.draw();
+         }
       }
       
       public function set scale(param1:Number) : void
@@ -148,71 +236,18 @@ package tibia.appearances.widgetClasses
          }
       }
       
+      public function get smooth() : Boolean
+      {
+         return this.m_Smooth;
+      }
+      
       public function get measuredWidth() : Number
       {
          return this.m_Size;
       }
       
-      public function get measuredHeight() : Number
+      public function setActualSize(param1:Number, param2:Number) : void
       {
-         return this.m_Size;
-      }
-      
-      public function draw() : void
-      {
-         var _loc2_:Number = NaN;
-         var _loc3_:Number = NaN;
-         var _loc4_:BitmapData = null;
-         var _loc5_:Rectangle = null;
-         var _loc6_:int = 0;
-         graphics.clear();
-         var _loc1_:AppearanceType = null;
-         if(this.m_Appearance != null && (_loc1_ = this.m_Appearance.type) != null)
-         {
-            _loc2_ = NaN;
-            _loc3_ = NaN;
-            if(isNaN(this.m_Scale))
-            {
-               _loc2_ = this.m_Size / _loc1_.exactSize;
-               _loc3_ = this.m_Size;
-            }
-            else
-            {
-               _loc2_ = this.m_Scale;
-               _loc3_ = _loc1_.exactSize * this.m_Scale;
-            }
-            _loc4_ = this.m_Appearance.getSprite(this.m_Phase,this.m_PatternX,this.m_PatternY,this.m_PatternZ,s_Rect);
-            if(_loc4_ != null)
-            {
-               s_Trans.a = _loc2_;
-               s_Trans.d = _loc2_;
-               s_Trans.tx = (-s_Rect.right + _loc1_.exactSize) * _loc2_;
-               s_Trans.ty = (-s_Rect.bottom + _loc1_.exactSize) * _loc2_;
-               s_Rect.width = Math.min(_loc3_,s_Rect.width * _loc2_);
-               s_Rect.height = Math.min(_loc3_,s_Rect.height * _loc2_);
-               s_Rect.x = _loc3_ - s_Rect.width;
-               s_Rect.y = _loc3_ - s_Rect.height;
-               graphics.beginBitmapFill(_loc4_,s_Trans,false,this.m_Smooth);
-               graphics.drawRect(s_Rect.x,s_Rect.y,s_Rect.width,s_Rect.height);
-            }
-            if(Boolean(this.m_Overlay) && this.m_Appearance is ObjectInstance && Boolean(_loc1_.isCumulative))
-            {
-               _loc5_ = null;
-               _loc6_ = ObjectInstance(this.m_Appearance).data;
-               if((_loc5_ = s_TextCache.getItem(_loc6_,String(_loc6_),4294967295)) != null)
-               {
-                  s_Rect.x = _loc3_ - _loc5_.width;
-                  s_Rect.y = _loc3_ - _loc5_.height;
-                  s_Trans.a = 1;
-                  s_Trans.d = 1;
-                  s_Trans.tx = -_loc5_.x + s_Rect.x;
-                  s_Trans.ty = -_loc5_.y + s_Rect.y;
-                  graphics.beginBitmapFill(s_TextCache,s_Trans,false,false);
-                  graphics.drawRect(s_Rect.x,s_Rect.y,_loc5_.width,_loc5_.height);
-               }
-            }
-            graphics.endFill();
-         }
       }
       
       public function set appearance(param1:AppearanceInstance) : void
@@ -254,28 +289,9 @@ package tibia.appearances.widgetClasses
          return this.m_PatternZ;
       }
       
-      public function get overlay() : Boolean
-      {
-         return this.m_Overlay;
-      }
-      
       public function get patternX() : int
       {
          return this.m_PatternX;
-      }
-      
-      public function get scale() : Number
-      {
-         return this.m_Scale;
-      }
-      
-      public function set smooth(param1:Boolean) : void
-      {
-         if(this.m_Smooth != param1)
-         {
-            this.m_Smooth = param1;
-            this.draw();
-         }
       }
       
       public function move(param1:Number, param2:Number) : void
@@ -284,8 +300,25 @@ package tibia.appearances.widgetClasses
          y = param2;
       }
       
-      public function setActualSize(param1:Number, param2:Number) : void
+      public function set cacheDirty(param1:Boolean) : void
       {
+         var _loc2_:Timer = null;
+         this.m_CacheDirty = param1;
+         if(Boolean(this.m_CacheDirty) && this.m_HaveTimer == false)
+         {
+            _loc2_ = Tibia.s_GetSecondaryTimer();
+            _loc2_.addEventListener(TimerEvent.TIMER,this.onTimer);
+            this.m_HaveTimer = true;
+         }
+      }
+      
+      public function set phase(param1:int) : void
+      {
+         if(this.m_Phase != param1)
+         {
+            this.m_Phase = param1;
+            this.draw();
+         }
       }
    }
 }

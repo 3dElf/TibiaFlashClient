@@ -21,6 +21,7 @@ package tibia.network
    import tibia.sidebar.Widget;
    import tibia.reporting.reportType.Type;
    import tibia.appearances.ObjectInstance;
+   import tibia.appearances.Marks;
    import tibia.game.BugReportWidget;
    import shared.utility.BrowserHelper;
    import flash.system.Capabilities;
@@ -64,17 +65,19 @@ package tibia.network
       
       protected static const CUPCONTAINER:int = 136;
       
-      protected static const STATE_STRENGTHENED:int = 12;
+      protected static const CQUITGAME:int = 20;
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
-      protected static const PK_REVENGE:int = 6;
+      protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       protected static const CMARKETACCEPT:int = 248;
       
       protected static const CGONORTHWEST:int = 109;
       
-      protected static const CQUITGAME:int = 20;
+      protected static const PK_REVENGE:int = 6;
+      
+      protected static const SBUDDYSTATUSCHANGE:int = 211;
       
       protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
       
@@ -82,9 +85,11 @@ package tibia.network
       
       protected static const CADDBUDDY:int = 220;
       
-      protected static const SKILL_FIGHTCLUB:int = 9;
+      protected static const SKILL_FIGHTCLUB:int = 10;
       
-      protected static const CSETTACTICS:int = 160;
+      protected static const RISKINESS_DANGEROUS:int = 1;
+      
+      protected static const CMARKETCREATE:int = 246;
       
       protected static const CONNECTION_STATE_PENDING:int = 3;
       
@@ -92,13 +97,17 @@ package tibia.network
       
       protected static const CGOSOUTH:int = 103;
       
-      protected static const PK_PARTYMODE:int = 2;
+      protected static const CSETTACTICS:int = 160;
       
-      protected static const ERR_COULD_NOT_CONNECT:int = 5;
+      protected static const GUILD_NONE:int = 0;
+      
+      protected static const PK_PARTYMODE:int = 2;
       
       protected static const PATH_COST_OBSTACLE:int = 255;
       
       protected static const FIELD_HEIGHT:int = 24;
+      
+      protected static const ERR_COULD_NOT_CONNECT:int = 5;
       
       protected static const PACKETLENGTH_SIZE:int = 2;
       
@@ -110,11 +119,11 @@ package tibia.network
       
       protected static const STATE_DRUNK:int = 3;
       
-      protected static const SPLAYERDATABASIC:int = 159;
+      protected static const PARTY_OTHER:int = 11;
       
       protected static const SKILL_EXPERIENCE:int = 0;
       
-      protected static const TYPE_NPC:int = 2;
+      protected static const SSETTACTICS:int = 167;
       
       protected static const CENTERWORLD:int = 15;
       
@@ -124,29 +133,27 @@ package tibia.network
       
       protected static const CBUYOBJECT:int = 122;
       
+      protected static const TYPE_NPC:int = 2;
+      
       protected static const SPING:int = 29;
       
       protected static const FIELD_SIZE:int = 32;
       
       protected static const CROTATENORTH:int = 111;
       
-      protected static const SWAIT:int = 182;
-      
-      protected static const PATH_NORTH:int = 3;
+      protected static const TYPE_SUMMON_OTHERS:int = 4;
       
       protected static const SLOGINSUCCESS:int = 23;
       
-      protected static const CHECKSUM_POS:int = PACKETLENGTH_POS + PACKETLENGTH_SIZE;
+      protected static const SWAIT:int = 182;
       
-      protected static const CATTACK:int = 161;
-      
-      public static const CLIENT_VERSION:uint = 1196;
+      protected static const SPLAYERDATABASIC:int = 159;
       
       protected static const CLOOKATCREATURE:int = 141;
       
       protected static const CJOINCHANNEL:int = 152;
       
-      protected static const SKILL_FED:int = 14;
+      protected static const SKILL_FED:int = 15;
       
       protected static const CROTATEEAST:int = 112;
       
@@ -158,27 +165,35 @@ package tibia.network
       
       protected static const CUSEONCREATURE:int = 132;
       
-      protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
+      protected static const PATH_NORTH:int = 3;
+      
+      protected static const CHECKSUM_POS:int = PACKETLENGTH_POS + PACKETLENGTH_SIZE;
       
       public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
       
-      protected static const SCREATUREPARTY:int = 145;
+      protected static const SKILL_HITPOINTS_PERCENT:int = 3;
       
-      protected static const SQUESTLOG:int = 240;
+      protected static const SCREATUREPARTY:int = 145;
       
       protected static const GROUND_LAYER:int = 7;
       
       protected static const CGETQUESTLOG:int = 240;
       
-      protected static const CBROWSEFIELD:int = 203;
+      protected static const SQUESTLOG:int = 240;
       
       protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
       
       protected static const ERR_INTERNAL:int = 0;
       
+      protected static const SUMMON_OTHERS:int = 2;
+      
+      protected static const CBROWSEFIELD:int = 203;
+      
       protected static const SKILL_NONE:int = -1;
       
       protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
+      
+      protected static const GUILD_MEMBER:int = 4;
       
       protected static const SFIELDDATA:int = 105;
       
@@ -186,7 +201,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      protected static const CREMOVEBUDDY:int = 221;
+      public static const CLIENT_VERSION:uint = 1296;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -210,7 +225,7 @@ package tibia.network
       
       protected static const PATH_COST_MAX:int = 250;
       
-      protected static const SKILL_CARRYSTRENGTH:int = 6;
+      protected static const SKILL_CARRYSTRENGTH:int = 7;
       
       private static const BUNDLE:String = "Communication";
       
@@ -228,6 +243,8 @@ package tibia.network
       
       protected static const CSEEKINCONTAINER:int = 204;
       
+      protected static const GUILD_WAR_NEUTRAL:int = 3;
+      
       protected static const STATE_DROWNING:int = 8;
       
       protected static const MAP_MIN_X:int = 24576;
@@ -236,19 +253,25 @@ package tibia.network
       
       protected static const MAP_MIN_Z:int = 0;
       
+      protected static const CATTACK:int = 161;
+      
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
       protected static const CGOSOUTHWEST:int = 108;
       
       protected static const SLOGINERROR:int = 20;
       
-      protected static const SQUESTLINE:int = 241;
+      protected static const CREMOVEBUDDY:int = 221;
+      
+      protected static const SCREATUREMARKS:int = 147;
       
       protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       protected static const CREJECTTRADE:int = 128;
       
       protected static const MAP_WIDTH:int = 15;
+      
+      protected static const SQUESTLINE:int = 241;
       
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
       
@@ -262,7 +285,7 @@ package tibia.network
       
       protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
       
-      protected static const SPLAYERDATACURRENT:int = 160;
+      protected static const GUILD_WAR_ALLY:int = 1;
       
       protected static const CCLOSECONTAINER:int = 135;
       
@@ -272,8 +295,6 @@ package tibia.network
       
       protected static const SSNAPBACK:int = 181;
       
-      protected static const CGETCHANNELS:int = 151;
-      
       protected static const SOBJECTINFO:int = 244;
       
       protected static const NUM_EFFECTS:int = 200;
@@ -281,6 +302,8 @@ package tibia.network
       protected static const PROFESSION_SORCERER:int = 3;
       
       protected static const STATE_SLOW:int = 5;
+      
+      protected static const CGETCHANNELS:int = 151;
       
       protected static const PARTY_NONE:int = 0;
       
@@ -292,6 +315,8 @@ package tibia.network
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
       protected static const PATH_NORTH_WEST:int = 4;
       
       protected static const ERR_CONNECTION_LOST:int = 6;
@@ -300,7 +325,7 @@ package tibia.network
       
       protected static const SCHANNELS:int = 171;
       
-      protected static const SOPENCHANNEL:int = 172;
+      protected static const TYPE_SUMMON_OWN:int = 3;
       
       protected static const STOPFLOOR:int = 190;
       
@@ -308,7 +333,11 @@ package tibia.network
       
       protected static const SPRIVATECHANNEL:int = 173;
       
+      protected static const SOPENCHANNEL:int = 172;
+      
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
+      
+      protected static const SPLAYERDATACURRENT:int = 160;
       
       protected static const PATH_ERROR_UNREACHABLE:int = -4;
       
@@ -338,13 +367,13 @@ package tibia.network
       
       protected static const CEXCLUDEFROMCHANNEL:int = 172;
       
-      protected static const SKILL_HITPOINTS:int = 3;
+      protected static const SKILL_HITPOINTS:int = 4;
       
       protected static const PATH_WEST:int = 5;
       
       protected static const MAP_HEIGHT:int = 11;
       
-      protected static const SKILL_OFFLINETRAINING:int = 17;
+      protected static const SKILL_OFFLINETRAINING:int = 18;
       
       protected static const STATE_MANA_SHIELD:int = 4;
       
@@ -362,11 +391,9 @@ package tibia.network
       
       protected static const STATE_CURSED:int = 11;
       
-      protected static const SMARKETLEAVE:int = 247;
-      
       protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
       
-      protected static const HEADER_POS:int = 0;
+      protected static const SMARKETLEAVE:int = 247;
       
       protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
       
@@ -384,17 +411,19 @@ package tibia.network
       
       protected static const STATE_BURNING:int = 1;
       
+      protected static const HEADER_POS:int = 0;
+      
       protected static const SMARKETENTER:int = 246;
       
-      protected static const SKILL_FIGHTFIST:int = 12;
+      protected static const SKILL_FIGHTFIST:int = 13;
       
       protected static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
+      
+      protected static const GUILD_WAR_ENEMY:int = 2;
       
       protected static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
       
       protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
-      
-      protected static const SMARKCREATURE:int = 134;
       
       protected static const STATE_FIGHTING:int = 7;
       
@@ -406,15 +435,17 @@ package tibia.network
       
       protected static const STATE_PZ_BLOCK:int = 13;
       
-      protected static const CROTATEWEST:int = 114;
-      
-      protected static const WAR_ALLY:int = 1;
+      protected static const RISKINESS_NONE:int = 0;
       
       protected static const CEDITBUDDY:int = 222;
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 978;
+      public static const PROTOCOL_VERSION:int = 979;
+      
+      protected static const CROTATEWEST:int = 114;
+      
+      protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
       
       protected static const SAMBIENTE:int = 130;
       
@@ -432,25 +463,25 @@ package tibia.network
       
       protected static const SCREATUREUNPASS:int = 146;
       
-      protected static const SKILL_STAMINA:int = 16;
+      protected static const SKILL_STAMINA:int = 17;
       
       protected static const SSHOWMODALDIALOG:int = 250;
       
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
+      
       protected static const CONNECTION_STATE_DISCONNECTED:int = 0;
       
-      protected static const SKILL_FIGHTSHIELD:int = 7;
+      protected static const SKILL_FIGHTSHIELD:int = 8;
       
       protected static const STATE_NONE:int = -1;
       
-      protected static const WAR_NONE:int = 0;
-      
-      protected static const SKILL_FIGHTDISTANCE:int = 8;
+      protected static const SKILL_FIGHTDISTANCE:int = 9;
       
       protected static const PK_EXCPLAYERKILLER:int = 5;
       
       protected static const NUM_CREATURES:int = 1300;
       
-      protected static const SKILL_FISHING:int = 13;
+      protected static const SKILL_FISHING:int = 14;
       
       protected static const SDELETEINCONTAINER:int = 114;
       
@@ -508,7 +539,7 @@ package tibia.network
       
       protected static const STATE_ELECTRIFIED:int = 2;
       
-      protected static const SKILL_FIGHTSWORD:int = 10;
+      protected static const SKILL_FIGHTSWORD:int = 11;
       
       protected static const STUTORIALHINT:int = 220;
       
@@ -521,6 +552,8 @@ package tibia.network
       protected static const CMOVEOBJECT:int = 120;
       
       protected static const CRULEVIOLATIONREPORT:int = 242;
+      
+      protected static const CJOINAGGRESSION:int = 142;
       
       protected static const SMOVECREATURE:int = 109;
       
@@ -538,11 +571,9 @@ package tibia.network
       
       protected static const SMULTIUSEDELAY:int = 166;
       
-      protected static const CONNECTION_STATE_GAME:int = 4;
-      
       protected static const SSETINVENTORY:int = 120;
       
-      protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
+      protected static const SUMMON_OWN:int = 1;
       
       protected static const CLEAVEPARTY:int = 167;
       
@@ -550,25 +581,27 @@ package tibia.network
       
       protected static const CGOPATH:int = 100;
       
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
+      
       protected static const CEQUIPOBJECT:int = 119;
       
       protected static const CGOSOUTHEAST:int = 107;
       
-      protected static const WAR_NEUTRAL:int = 3;
-      
-      protected static const UNDERGROUND_LAYER:int = 2;
-      
-      protected static const COPENCHANNEL:int = 170;
+      protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
       
       protected static const PROFESSION_KNIGHT:int = 1;
       
-      protected static const WAR_ENEMY:int = 2;
+      protected static const UNDERGROUND_LAYER:int = 2;
+      
+      protected static const SCREATUREPVPHELPERS:int = 148;
+      
+      protected static const COPENCHANNEL:int = 170;
+      
+      protected static const SDEAD:int = 40;
       
       protected static const SCHANGEINCONTAINER:int = 113;
       
       public static const CLIENT_TYPE:uint = 3;
-      
-      protected static const SDEAD:int = 40;
       
       protected static const SDELETEINVENTORY:int = 121;
       
@@ -578,11 +611,13 @@ package tibia.network
       
       protected static const PLAYER_OFFSET_Y:int = 6;
       
-      protected static const SKILL_FIGHTAXE:int = 11;
+      protected static const SKILL_FIGHTAXE:int = 12;
       
       protected static const SLOGINADVICE:int = 21;
       
       protected static const SCHANNELEVENT:int = 243;
+      
+      protected static const CONNECTION_STATE_GAME:int = 4;
       
       protected static const PARTY_LEADER_SEXP_OFF:int = 4;
       
@@ -598,7 +633,9 @@ package tibia.network
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
       
-      protected static const SKILL_SOULPOINTS:int = 15;
+      protected static const STATE_FAST:int = 6;
+      
+      protected static const SKILL_SOULPOINTS:int = 16;
       
       protected static const CTALK:int = 150;
       
@@ -610,7 +647,7 @@ package tibia.network
       
       protected static const STALK:int = 170;
       
-      protected static const STATE_FAST:int = 6;
+      protected static const GUILD_OTHER:int = 5;
       
       protected static const TYPE_PLAYER:int = 0;
       
@@ -620,15 +657,15 @@ package tibia.network
       
       protected static const SRIGHTROW:int = 102;
       
-      protected static const SKILL_MANA:int = 4;
+      protected static const SKILL_MANA:int = 5;
+      
+      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
       
       protected static const SGRAPHICALEFFECT:int = 131;
       
-      protected static const SPENDINGSTATEENTERED:int = 10;
-      
       protected static const SOPENOWNCHANNEL:int = 178;
       
-      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
+      protected static const SPENDINGSTATEENTERED:int = 10;
       
       public static const PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:uint = 2;
       
@@ -646,13 +683,17 @@ package tibia.network
       
       protected static const CMARKETLEAVE:int = 244;
       
+      protected static const PAYLOADLENGTH_SIZE:int = 2;
+      
       protected static const CSHAREEXPERIENCE:int = 168;
       
       protected static const SCLEARTARGET:int = 163;
       
+      protected static const SCREATURETYPE:int = 149;
+      
       protected static const PK_AGGRESSOR:int = 3;
       
-      protected static const SBUDDYSTATUSCHANGE:int = 211;
+      protected static const MAPSIZE_W:int = 10;
       
       protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
       
@@ -662,37 +703,39 @@ package tibia.network
       
       protected static const STATE_HUNGRY:int = 31;
       
-      protected static const MAPSIZE_W:int = 10;
-      
       protected static const SKILL_LEVEL:int = 1;
       
-      protected static const SCLOSECHANNEL:int = 179;
+      protected static const PATH_EAST:int = 1;
       
       protected static const PROFESSION_DRUID:int = 4;
       
-      protected static const PAYLOADLENGTH_SIZE:int = 2;
-      
       protected static const CSETOUTFIT:int = 211;
-      
-      protected static const CGETOUTFIT:int = 210;
-      
-      protected static const SAUTOMAPFLAG:int = 221;
-      
-      protected static const SOWNOFFER:int = 125;
       
       protected static const PACKETLENGTH_POS:int = HEADER_POS;
       
-      protected static const PATH_EAST:int = 1;
+      protected static const SUMMON_NONE:int = 0;
+      
+      protected static const STATE_STRENGTHENED:int = 12;
+      
+      protected static const SOWNOFFER:int = 125;
+      
+      protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
+      
+      protected static const SCLOSECHANNEL:int = 179;
       
       protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
       
       protected static const PAYLOADDATA_POSITION:int = PAYLOADLENGTH_POS + PAYLOADLENGTH_SIZE;
       
-      protected static const SKILL_GOSTRENGTH:int = 5;
+      protected static const SAUTOMAPFLAG:int = 221;
+      
+      protected static const SKILL_GOSTRENGTH:int = 6;
+      
+      protected static const CGETOUTFIT:int = 210;
       
       protected static const PATH_MATRIX_CENTER:int = PATH_MAX_DISTANCE;
       
-      protected static const CMARKETCREATE:int = 246;
+      protected static const PK_MAX_FLASHING_TIME:uint = 5000;
       
       protected static const SPLAYERSTATE:int = 162;
        
@@ -886,21 +929,9 @@ package tibia.network
          var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
          if(_loc4_ != null)
          {
-            _loc4_.pkFlag = _loc3_;
+            _loc4_.setPKFlag(_loc3_);
          }
          this.m_CreatureStorage.invalidateOpponents();
-      }
-      
-      protected function readSMARKCREATURE(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         _loc2_ = param1.readUnsignedInt();
-         var _loc3_:int = param1.readUnsignedByte();
-         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
-         if(_loc4_ != null)
-         {
-            _loc4_.markID = _loc3_;
-         }
       }
       
       public function sendCINSPECTTRADE(param1:int, param2:int) : void
@@ -1508,6 +1539,8 @@ package tibia.network
             throw new Error("Connection.readObjectInstance: Invalid type.",2147483627);
          }
          var _loc3_:ObjectInstance = this.m_AppearanceStorage.createObjectInstance(param2,0);
+         var _loc4_:uint = param1.readUnsignedByte();
+         _loc3_.marks.setMark(Marks.MARK_TYPE_PERMANENT,_loc4_);
          if(_loc3_ == null || _loc3_.m_Type == null)
          {
             throw new Error("Connection.readObjectInstance: Invalid instance.",2147483626);
@@ -1647,8 +1680,10 @@ package tibia.network
       
       protected function readSSNAPBACK(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedByte();
-         var _loc3_:Vector3D = this.m_Player.position;
+         var _loc2_:int = 0;
+         var _loc3_:Vector3D = null;
+         _loc2_ = param1.readUnsignedByte();
+         _loc3_ = this.m_Player.position;
          if(_loc3_.equals(this.m_LastSnapback))
          {
             this.m_SnapbackCount++;
@@ -1897,7 +1932,7 @@ package tibia.network
          var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
          if(_loc4_ != null && _loc4_.ID != this.m_Player.ID)
          {
-            _loc4_.setSkillValue(SKILL_HITPOINTS,_loc3_);
+            _loc4_.setSkillValue(SKILL_HITPOINTS_PERCENT,_loc3_);
          }
          else if(_loc4_ == null)
          {
@@ -2119,10 +2154,15 @@ package tibia.network
       
       protected function readSTOPFLOOR(param1:ByteArray) : void
       {
+         var _loc2_:Vector3D = null;
+         var _loc3_:Vector3D = null;
+         var _loc4_:int = 0;
+         var _loc5_:int = 0;
+         var _loc6_:int = 0;
          var _loc7_:int = 0;
          var _loc8_:int = 0;
          var _loc9_:int = 0;
-         var _loc2_:Vector3D = this.m_WorldMapStorage.getPosition();
+         _loc2_ = this.m_WorldMapStorage.getPosition();
          _loc2_.x++;
          _loc2_.y++;
          _loc2_.z--;
@@ -2146,10 +2186,10 @@ package tibia.network
          }
          this.m_Player.stopAutowalk(true);
          this.m_WorldMapStorage.invalidateOnscreenMessages();
-         var _loc3_:Vector3D = this.m_WorldMapStorage.toMap(_loc2_);
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
+         _loc3_ = this.m_WorldMapStorage.toMap(_loc2_);
+         _loc4_ = 0;
+         _loc5_ = 0;
+         _loc6_ = 0;
          while(_loc6_ < MAPSIZE_X)
          {
             _loc9_ = 0;
@@ -2262,6 +2302,25 @@ package tibia.network
             return this.m_AppearanceStorage.createOutfitInstance(OutfitInstance.INVISIBLE_OUTFIT_ID,0,0,0,0,0);
          }
          return this.m_AppearanceStorage.createObjectInstance(_loc9_,0);
+      }
+      
+      public function sendCJOINAGGRESSION(param1:int) : void
+      {
+         var b:ByteArray = null;
+         var a_CreatureID:int = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CJOINAGGRESSION);
+            b.writeInt(a_CreatureID);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CJOINAGGRESSION,e);
+            return;
+         }
       }
       
       public function sendCREVOKEINVITATION(param1:int) : void
@@ -2429,7 +2488,7 @@ package tibia.network
                   }
                   else
                   {
-                     throw new Error("Connection.readField: Expected creatues but received regular object.",2147483618);
+                     throw new Error("Connection.readField: Expected creatures but received regular object.",2147483618);
                   }
                }
                _loc8_++;
@@ -3031,10 +3090,6 @@ package tibia.network
                   this.readSMISSILEEFFECT(CommunicationData);
                   a_MessageReader.finishMessage();
                   break;
-               case SMARKCREATURE:
-                  this.readSMARKCREATURE(CommunicationData);
-                  a_MessageReader.finishMessage();
-                  break;
                case STRAPPERS:
                   this.readSTRAPPERS(CommunicationData);
                   a_MessageReader.finishMessage();
@@ -3065,6 +3120,18 @@ package tibia.network
                   break;
                case SCREATUREUNPASS:
                   this.readSCREATUREUNPASS(CommunicationData);
+                  a_MessageReader.finishMessage();
+                  break;
+               case SCREATUREPVPHELPERS:
+                  this.readSCREATUREPVPHELPERS(CommunicationData);
+                  a_MessageReader.finishMessage();
+                  break;
+               case SCREATUREMARKS:
+                  this.readSCREATUREMARKS(CommunicationData);
+                  a_MessageReader.finishMessage();
+                  break;
+               case SCREATURETYPE:
+                  this.readSCREATURETYPE(CommunicationData);
                   a_MessageReader.finishMessage();
                   break;
                case SEDITTEXT:
@@ -3105,6 +3172,10 @@ package tibia.network
                   break;
                case SMULTIUSEDELAY:
                   this.readSUSEDELAY(CommunicationData);
+                  a_MessageReader.finishMessage();
+                  break;
+               case SSETTACTICS:
+                  this.readSSETTACTICS(CommunicationData);
                   a_MessageReader.finishMessage();
                   break;
                case STALK:
@@ -3401,7 +3472,7 @@ package tibia.network
          var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
          if(_loc4_ != null)
          {
-            _loc4_.partyFlag = _loc3_;
+            _loc4_.setPartyFlag(_loc3_);
          }
          this.m_CreatureStorage.invalidateOpponents();
       }
@@ -3410,6 +3481,7 @@ package tibia.network
       {
          var _loc2_:Vector3D = null;
          var _loc3_:Vector3D = null;
+         var _loc4_:int = 0;
          var _loc5_:int = 0;
          var _loc6_:int = 0;
          var _loc7_:int = 0;
@@ -3443,7 +3515,7 @@ package tibia.network
          this.m_Player.stopAutowalk(true);
          this.m_WorldMapStorage.invalidateOnscreenMessages();
          _loc3_ = this.m_WorldMapStorage.toMap(_loc2_);
-         var _loc4_:int = 0;
+         _loc4_ = 0;
          _loc5_ = 0;
          _loc6_ = 0;
          while(_loc6_ < MAPSIZE_X)
@@ -3555,12 +3627,13 @@ package tibia.network
          }
       }
       
-      public function sendCSETTACTICS(param1:int, param2:int, param3:int) : void
+      public function sendCSETTACTICS(param1:int, param2:int, param3:int, param4:uint) : void
       {
          var b:ByteArray = null;
          var a_AttackMode:int = param1;
          var a_ChaseMode:int = param2;
          var a_SecureMode:int = param3;
+         var a_PVPMode:uint = param4;
          try
          {
             b = this.m_ServerConnection.messageWriter.createMessage();
@@ -3568,6 +3641,7 @@ package tibia.network
             b.writeByte(a_AttackMode);
             b.writeByte(a_ChaseMode);
             b.writeByte(a_SecureMode);
+            b.writeByte(a_PVPMode);
             this.m_ServerConnection.messageWriter.finishMessage();
             return;
          }
@@ -3676,16 +3750,19 @@ package tibia.network
                {
                   _loc7_.type = _loc6_;
                   _loc7_.name = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
-                  _loc7_.setSkillValue(SKILL_HITPOINTS,param1.readUnsignedByte());
+                  _loc7_.setSkillValue(SKILL_HITPOINTS_PERCENT,param1.readUnsignedByte());
                   _loc7_.direction = param1.readUnsignedByte();
                   _loc7_.outfit = this.readCreatureOutfit(param1,_loc7_.outfit);
                   _loc7_.mountOutfit = this.readMountOutfit(param1,_loc7_.mountOutfit);
                   _loc7_.brightness = param1.readUnsignedByte();
                   _loc7_.lightColour = Colour.s_FromEightBit(param1.readUnsignedByte());
                   _loc7_.setSkillValue(SKILL_GOSTRENGTH,param1.readUnsignedShort());
-                  _loc7_.pkFlag = param1.readUnsignedByte();
-                  _loc7_.partyFlag = param1.readUnsignedByte();
-                  _loc7_.warFlag = param1.readUnsignedByte();
+                  _loc7_.setPKFlag(param1.readUnsignedByte());
+                  _loc7_.setPartyFlag(param1.readUnsignedByte());
+                  _loc7_.guildFlag = param1.readUnsignedByte();
+                  _loc7_.type = param1.readUnsignedByte();
+                  _loc7_.marks.setMark(Marks.MARK_TYPE_PERMANENT,param1.readUnsignedByte());
+                  _loc7_.numberOfPVPHelpers = param1.readUnsignedShort();
                   _loc7_.isUnpassable = param1.readUnsignedByte() != 0;
                   break;
                }
@@ -3695,15 +3772,18 @@ package tibia.network
                _loc7_ = this.m_CreatureStorage.getCreature(_loc4_);
                if(_loc7_ != null)
                {
-                  _loc7_.setSkillValue(SKILL_HITPOINTS,param1.readUnsignedByte());
+                  _loc7_.setSkillValue(SKILL_HITPOINTS_PERCENT,param1.readUnsignedByte());
                   _loc7_.direction = param1.readUnsignedByte();
                   _loc7_.outfit = this.readCreatureOutfit(param1,_loc7_.outfit);
                   _loc7_.mountOutfit = this.readMountOutfit(param1,_loc7_.mountOutfit);
                   _loc7_.brightness = param1.readUnsignedByte();
                   _loc7_.lightColour = Colour.s_FromEightBit(param1.readUnsignedByte());
                   _loc7_.setSkillValue(SKILL_GOSTRENGTH,param1.readUnsignedShort());
-                  _loc7_.pkFlag = param1.readUnsignedByte();
-                  _loc7_.partyFlag = param1.readUnsignedByte();
+                  _loc7_.setPKFlag(param1.readUnsignedByte());
+                  _loc7_.setPartyFlag(param1.readUnsignedByte());
+                  _loc7_.type = param1.readUnsignedByte();
+                  _loc7_.marks.setMark(Marks.MARK_TYPE_PERMANENT,param1.readUnsignedByte());
+                  _loc7_.numberOfPVPHelpers = param1.readUnsignedShort();
                   _loc7_.isUnpassable = param1.readUnsignedByte() != 0;
                   break;
                }
@@ -4410,6 +4490,19 @@ package tibia.network
          }
       }
       
+      protected function readSCREATUREPVPHELPERS(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
+         var _loc3_:uint = param1.readUnsignedShort();
+         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
+         if(_loc4_ != null)
+         {
+            _loc4_.numberOfPVPHelpers = _loc3_;
+         }
+         this.m_CreatureStorage.invalidateOpponents();
+      }
+      
       public function sendCLOOK(param1:int, param2:int, param3:int, param4:int, param5:int) : void
       {
          var b:ByteArray = null;
@@ -4775,6 +4868,22 @@ package tibia.network
          this.m_ChatStorage.addChannel(_loc2_,_loc2_,MessageMode.MESSAGE_PRIVATE_TO);
       }
       
+      protected function readSSETTACTICS(param1:ByteArray) : void
+      {
+         var _loc2_:uint = param1.readUnsignedByte();
+         var _loc3_:uint = param1.readUnsignedByte();
+         var _loc4_:uint = param1.readUnsignedByte();
+         var _loc5_:uint = param1.readUnsignedByte();
+         var _loc6_:OptionsStorage = Tibia.s_GetOptions();
+         if(_loc6_ != null)
+         {
+            _loc6_.combatAttackMode = _loc2_;
+            _loc6_.combatChaseMode = _loc3_;
+            _loc6_.combatSecureMode = _loc4_;
+            _loc6_.combatPVPMode = _loc5_;
+         }
+      }
+      
       public function sendCUSEONCREATURE(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int) : void
       {
          var b:ByteArray = null;
@@ -4906,6 +5015,19 @@ package tibia.network
          }
       }
       
+      protected function readSCREATURETYPE(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
+         var _loc3_:uint = param1.readUnsignedByte();
+         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
+         if(_loc4_ != null)
+         {
+            _loc4_.type = _loc3_;
+         }
+         this.m_CreatureStorage.invalidateOpponents();
+      }
+      
       public function sendCTURNOBJECT(param1:int, param2:int, param3:int, param4:int, param5:int) : void
       {
          var b:ByteArray = null;
@@ -4951,6 +5073,36 @@ package tibia.network
             handleSendError(CMARKETCANCEL,e);
             return;
          }
+      }
+      
+      protected function readSCREATUREMARKS(param1:ByteArray) : void
+      {
+         var _loc4_:int = 0;
+         var _loc5_:uint = 0;
+         var _loc6_:uint = 0;
+         var _loc7_:Creature = null;
+         var _loc2_:uint = param1.readUnsignedByte();
+         var _loc3_:uint = 0;
+         while(_loc3_ < _loc2_)
+         {
+            _loc4_ = param1.readUnsignedInt();
+            _loc5_ = param1.readUnsignedByte();
+            _loc6_ = param1.readUnsignedByte();
+            _loc7_ = this.m_CreatureStorage.getCreature(_loc4_);
+            if(_loc7_ != null)
+            {
+               if(_loc5_ == 1)
+               {
+                  _loc7_.marks.setMark(Marks.MARK_TYPE_ONE_SECOND_TEMP,_loc6_);
+               }
+               else
+               {
+                  _loc7_.marks.setMark(Marks.MARK_TYPE_PERMANENT,_loc6_);
+               }
+            }
+            _loc3_++;
+         }
+         this.m_CreatureStorage.invalidateOpponents();
       }
       
       public function sendCEXCLUDEFROMCHANNEL(param1:String) : void

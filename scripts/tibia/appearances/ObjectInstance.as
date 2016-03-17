@@ -1,19 +1,30 @@
 package tibia.appearances
 {
-   import flash.display.BitmapData;
-   import tibia.§appearances:ns_appearance_internal§.m_Phase;
-   import tibia.§appearances:ns_appearance_internal§.m_Type;
+   import tibia.appearances.widgetClasses.MarksView;
    import flash.geom.Rectangle;
+   import tibia.§appearances:ns_appearance_internal§.m_Type;
    import tibia.§appearances:ns_appearance_internal§.m_ID;
+   import flash.display.BitmapData;
+   import tibia.appearances.widgetClasses.CachedSpriteInformation;
    
    public class ObjectInstance extends AppearanceInstance
    {
-       
+      
+      private static var s_ObjectMarksView:MarksView = null;
+      
+      private static var s_HelperRect:Rectangle = new Rectangle();
+      
+      {
+         s_InitialiseMarksViews();
+      }
+      
       protected var m_Hang:int = 0;
       
-      protected var m_SpecialPatternX:int = 0;
-      
       protected var m_SpecialPatternY:int = 0;
+      
+      protected var m_Marks:tibia.appearances.Marks = null;
+      
+      protected var m_SpecialPatternX:int = 0;
       
       protected var m_Data:int = 0;
       
@@ -23,23 +34,19 @@ package tibia.appearances
       {
          super(param1,param2);
          this.m_Data = param3;
+         this.m_Marks = new tibia.appearances.Marks();
          this.updateSpecialPattern();
       }
       
-      override public function drawTo(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
+      private static function s_InitialiseMarksViews() : void
       {
-         var _loc9_:int = 0;
-         var _loc7_:int = param4;
-         var _loc8_:int = param5;
-         if(this.m_HasSpecialPattern)
-         {
-            _loc7_ = this.m_SpecialPatternX;
-            _loc8_ = this.m_SpecialPatternY;
-         }
-         _loc9_ = ((m_Phase % m_Type.phases * m_Type.patternDepth + param6 % m_Type.patternDepth) * m_Type.patternHeight + _loc8_ % m_Type.patternHeight) * m_Type.patternWidth + _loc7_ % m_Type.patternWidth;
-         var _loc10_:Rectangle = m_Type.sprite[_loc9_];
-         s_TempPoint.setTo(param2 - _loc10_.width - m_Type.displacementX,param3 - _loc10_.height - m_Type.displacementY);
-         param1.copyPixels(m_Type.bitmap,_loc10_,s_TempPoint,null,null,true);
+         s_ObjectMarksView = new MarksView(0);
+         s_ObjectMarksView.addMarkToView(tibia.appearances.Marks.MARK_TYPE_PERMANENT,MarksView.MARK_THICKNESS_THIN);
+      }
+      
+      public function get marks() : tibia.appearances.Marks
+      {
+         return this.m_Marks;
       }
       
       protected function updateSpecialPattern() : void
@@ -183,6 +190,11 @@ package tibia.appearances
          }
       }
       
+      public function get hasMark() : Boolean
+      {
+         return this.marks.isMarkSet(tibia.appearances.Marks.MARK_TYPE_PERMANENT);
+      }
+      
       public function get data() : int
       {
          return this.m_Data;
@@ -197,9 +209,40 @@ package tibia.appearances
          }
       }
       
+      override public function drawTo(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
+      {
+         var _loc9_:CachedSpriteInformation = null;
+         var _loc11_:BitmapData = null;
+         var _loc7_:int = param4;
+         var _loc8_:int = param5;
+         if(this.m_HasSpecialPattern)
+         {
+            _loc7_ = -1;
+            _loc8_ = -1;
+         }
+         _loc9_ = getSprite(-1,_loc7_,_loc8_,param6,m_Type.isAnimation);
+         m_CacheDirty = _loc9_.cacheMiss;
+         var _loc10_:Rectangle = _loc9_.rectangle;
+         s_TempPoint.setTo(param2 - _loc10_.width - m_Type.displacementX,param3 - _loc10_.height - m_Type.displacementY);
+         param1.copyPixels(_loc9_.bitmapData,_loc10_,s_TempPoint,null,null,true);
+         if(this.hasMark)
+         {
+            _loc11_ = s_ObjectMarksView.getMarksBitmap(this.marks,s_HelperRect);
+            s_TempPoint.setTo(param2 - s_HelperRect.width - m_Type.displacementX,param3 - s_HelperRect.height - m_Type.displacementY);
+            param1.copyPixels(_loc11_,s_HelperRect,s_TempPoint,null,null,true);
+         }
+      }
+      
       public function get hang() : int
       {
          return this.m_Hang;
+      }
+      
+      override public function getSpriteIndex(param1:int, param2:int, param3:int, param4:int) : uint
+      {
+         var _loc5_:int = param2 >= 0?int(param2):int(this.m_SpecialPatternX);
+         var _loc6_:int = param3 >= 0?int(param3):int(this.m_SpecialPatternY);
+         return super.getSpriteIndex(param1,_loc5_,_loc6_,param4);
       }
       
       public function set data(param1:int) : void
@@ -209,20 +252,6 @@ package tibia.appearances
             this.m_Data = param1;
             this.updateSpecialPattern();
          }
-      }
-      
-      override public function getSprite(param1:int, param2:int, param3:int, param4:int, param5:Rectangle = null) : BitmapData
-      {
-         var _loc6_:int = (param1 >= 0?param1:m_Phase) % m_Type.phases;
-         var _loc7_:int = param4 >= 0?int(param4 % m_Type.patternDepth):0;
-         var _loc8_:int = param3 >= 0?int(param3 % m_Type.patternHeight):int(this.m_SpecialPatternY);
-         var _loc9_:int = param2 >= 0?int(param2 % m_Type.patternWidth):int(this.m_SpecialPatternX);
-         var _loc10_:int = ((_loc6_ * m_Type.patternDepth + _loc7_) * m_Type.patternHeight + _loc8_) * m_Type.patternWidth + _loc9_;
-         if(param5 != null)
-         {
-            param5.copyFrom(m_Type.sprite[_loc10_]);
-         }
-         return m_Type.bitmap;
       }
    }
 }

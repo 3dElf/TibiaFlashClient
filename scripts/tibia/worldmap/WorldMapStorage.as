@@ -11,8 +11,8 @@ package tibia.worldmap
    import tibia.chat.MessageMode;
    import tibia.chat.MessageFilterSet;
    import tibia.chat.NameFilterSet;
-   import tibia.creatures.CreatureStorage;
    import tibia.creatures.Creature;
+   import tibia.creatures.CreatureStorage;
    import tibia.appearances.MissileInstance;
    
    public class WorldMapStorage
@@ -21,6 +21,8 @@ package tibia.worldmap
       public static const ONSCREEN_TARGET_BOX_BOTTOM:int = 0;
       
       protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
+      public static const ONSCREEN_TARGET_EFFECT_COORDINATE:int = 5;
       
       public static const ONSCREEN_TARGET_BOX_HIGH:int = 2;
       
@@ -34,13 +36,17 @@ package tibia.worldmap
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
-      protected static const OBJECT_UPDATE_INTERVAL:int = 40;
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
       
       public static const ONSCREEN_TARGET_NONE:int = -1;
       
       public static const ONSCREEN_TARGET_BOX_LOW:int = 1;
       
       public static const MSG_PATH_GO_DOWNSTAIRS:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_PATH_GO_DOWNSTAIRS");
+      
+      protected static const OBJECT_UPDATE_INTERVAL:int = 40;
+      
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
       
       public static const MSG_PATH_GO_UPSTAIRS:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_PATH_GO_UPSTAIRS");
       
@@ -67,6 +73,8 @@ package tibia.worldmap
       protected static const PLAYER_OFFSET_Y:int = 6;
       
       protected static const FIELD_SIZE:int = 32;
+      
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
       
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
@@ -97,8 +105,6 @@ package tibia.worldmap
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
       
       public static const MSG_SORRY_NOT_POSSIBLE:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_SORRY_NOT_POSSIBLE");
-      
-      public static const ONSCREEN_TARGET_EFFECT_COORDINATE:int = 5;
       
       public static const MSG_PATH_TOO_FAR:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_PATH_TOO_FAR");
       
@@ -626,6 +632,47 @@ package tibia.worldmap
          return _loc5_;
       }
       
+      public function getEnterPossibleFlag(param1:int, param2:int, param3:int, param4:Boolean) : uint
+      {
+         var _loc8_:ObjectInstance = null;
+         var _loc5_:tibia.worldmap.Field = this.m_Field[this.toIndexInternal(param1,param2,param3)];
+         if(Boolean(param4) && param1 < MAPSIZE_X - 1 && param2 < MAPSIZE_Y - 1 && param3 > 0 && _loc5_.m_ObjectsCount > 0 && !_loc5_.m_ObjectsNetwork[0].type.isBank && this.getFieldHeight(param1 + 1,param2 + 1,param3 - 1) > 2)
+         {
+            return FIELD_ENTER_POSSIBLE;
+         }
+         if(Boolean(param4) && this.getFieldHeight(PLAYER_OFFSET_X,PLAYER_OFFSET_Y,this.m_PlayerZPlane) > 2)
+         {
+            return FIELD_ENTER_POSSIBLE;
+         }
+         var _loc6_:Creature = null;
+         var _loc7_:int = 0;
+         while(_loc7_ < _loc5_.m_ObjectsCount)
+         {
+            _loc8_ = _loc5_.m_ObjectsNetwork[_loc7_];
+            if(_loc8_.ID == AppearanceInstance.CREATURE && _loc6_ == null)
+            {
+               _loc6_ = Tibia.s_GetCreatureStorage().getCreature(_loc8_.data);
+               if(!_loc6_.isTrapper && Boolean(_loc6_.isUnpassable))
+               {
+                  return FIELD_ENTER_NOT_POSSIBLE;
+               }
+            }
+            else
+            {
+               if(_loc8_.type.isUnpassable)
+               {
+                  return FIELD_ENTER_NOT_POSSIBLE;
+               }
+               if(_loc8_.type.preventMovementAnimation)
+               {
+                  return FIELD_ENTER_POSSIBLE_NO_ANIMATION;
+               }
+            }
+            _loc7_++;
+         }
+         return FIELD_ENTER_POSSIBLE;
+      }
+      
       private function moveEffect(param1:int, param2:int, param3:int, param4:int) : void
       {
          if(param4 < 0 || param4 >= this.m_EffectCount)
@@ -1017,40 +1064,6 @@ package tibia.worldmap
       public function getTopMultiUseObject(param1:int, param2:int, param3:int, param4:Object = null) : int
       {
          return this.m_Field[this.toIndexInternal(param1,param2,param3)].getTopMultiUseObject(param4);
-      }
-      
-      public function isEnterPossible(param1:int, param2:int, param3:int, param4:Boolean) : Boolean
-      {
-         var _loc8_:ObjectInstance = null;
-         var _loc5_:tibia.worldmap.Field = this.m_Field[this.toIndexInternal(param1,param2,param3)];
-         if(Boolean(param4) && param1 < MAPSIZE_X - 1 && param2 < MAPSIZE_Y - 1 && param3 > 0 && _loc5_.m_ObjectsCount > 0 && !_loc5_.m_ObjectsNetwork[0].type.isBank && this.getFieldHeight(param1 + 1,param2 + 1,param3 - 1) > 2)
-         {
-            return true;
-         }
-         if(Boolean(param4) && this.getFieldHeight(PLAYER_OFFSET_X,PLAYER_OFFSET_Y,this.m_PlayerZPlane) > 2)
-         {
-            return true;
-         }
-         var _loc6_:Creature = null;
-         var _loc7_:int = 0;
-         while(_loc7_ < _loc5_.m_ObjectsCount)
-         {
-            _loc8_ = _loc5_.m_ObjectsNetwork[_loc7_];
-            if(_loc8_.ID == AppearanceInstance.CREATURE && _loc6_ == null)
-            {
-               _loc6_ = Tibia.s_GetCreatureStorage().getCreature(_loc8_.data);
-               if(!_loc6_.isTrapper && Boolean(_loc6_.isUnpassable))
-               {
-                  return false;
-               }
-            }
-            else if(_loc8_.type.isUnpassable)
-            {
-               return false;
-            }
-            _loc7_++;
-         }
-         return true;
       }
       
       public function getTopMoveObject(param1:int, param2:int, param3:int, param4:Object = null) : int

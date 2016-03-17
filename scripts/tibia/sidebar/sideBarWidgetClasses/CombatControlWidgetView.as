@@ -55,7 +55,27 @@ package tibia.sidebar.sideBarWidgetClasses
          "width":NaN,
          "height":NaN
       },{
-         "left":107,
+         "left":77,
+         "top":2,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":100,
+         "top":2,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":77,
+         "top":26,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":100,
+         "top":26,
+         "width":NaN,
+         "height":NaN
+      },{
+         "left":132,
          "top":6,
          "width":NaN,
          "height":NaN
@@ -63,19 +83,27 @@ package tibia.sidebar.sideBarWidgetClasses
        
       protected var m_UIButtonMount:Button = null;
       
+      protected var m_UIButtonDove:Button = null;
+      
       protected var m_Player:Player = null;
       
       protected var m_UIButtonStop:Button = null;
+      
+      protected var m_UIButtonYellowHand:Button = null;
+      
+      private var m_UncommittedPVPMode:Boolean = false;
       
       private var m_UncommittedChaseMode:Boolean = true;
       
       protected var m_UIButtonBalanced:Button = null;
       
+      protected var m_UIButtonWhiteHand:Button = null;
+      
       private var m_UncommittedSecureMode:Boolean = true;
       
-      protected var m_AttackMode:int;
+      protected var m_ChaseMode:int = 0;
       
-      protected var m_ChaseMode:int;
+      protected var m_AttackMode:int = 1;
       
       protected var m_UIButtonOffensive:Button = null;
       
@@ -91,15 +119,16 @@ package tibia.sidebar.sideBarWidgetClasses
       
       protected var m_MountMode:Boolean = false;
       
-      protected var m_SecureMode:int;
+      protected var m_SecureMode:int = 0;
+      
+      protected var m_PVPMode:uint = 0;
       
       private var m_UncommittedAttackMode:Boolean = true;
       
+      protected var m_UIButtonRedFist:Button = null;
+      
       public function CombatControlWidgetView()
       {
-         this.m_AttackMode = OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
-         this.m_ChaseMode = OptionsStorage.COMBAT_CHASE_OFF;
-         this.m_SecureMode = OptionsStorage.COMBAT_SECURE_OFF;
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          direction = BoxDirection.HORIZONTAL;
@@ -145,6 +174,26 @@ package tibia.sidebar.sideBarWidgetClasses
             {
                StaticActionList.PLAYER_MOUNT.perform();
             }
+            else if(param1.currentTarget == this.m_UIButtonDove)
+            {
+               options.combatPVPMode = OptionsStorage.COMBAT_PVP_MODE_DOVE;
+               _loc2_ = true;
+            }
+            else if(param1.currentTarget == this.m_UIButtonWhiteHand)
+            {
+               options.combatPVPMode = OptionsStorage.COMBAT_PVP_MODE_WHITE_HAND;
+               _loc2_ = true;
+            }
+            else if(param1.currentTarget == this.m_UIButtonYellowHand)
+            {
+               options.combatPVPMode = OptionsStorage.COMBAT_PVP_MODE_YELLOW_HAND;
+               _loc2_ = true;
+            }
+            else if(param1.currentTarget == this.m_UIButtonRedFist)
+            {
+               options.combatPVPMode = OptionsStorage.COMBAT_PVP_MODE_RED_FIST;
+               _loc2_ = true;
+            }
             else if(param1.currentTarget == this.m_UIButtonSecureMode)
             {
                options.combatSecureMode = options.combatSecureMode == OptionsStorage.COMBAT_SECURE_ON?int(OptionsStorage.COMBAT_SECURE_OFF):int(OptionsStorage.COMBAT_SECURE_ON);
@@ -157,8 +206,18 @@ package tibia.sidebar.sideBarWidgetClasses
             _loc3_ = null;
             if(Boolean(_loc2_) && (_loc3_ = Tibia.s_GetCommunication()) != null && Boolean(_loc3_.isGameRunning))
             {
-               _loc3_.sendCSETTACTICS(options.combatAttackMode,options.combatChaseMode,options.combatSecureMode);
+               _loc3_.sendCSETTACTICS(m_Options.combatAttackMode,m_Options.combatChaseMode,m_Options.combatSecureMode,m_Options.combatPVPMode);
             }
+         }
+      }
+      
+      function set attackMode(param1:int) : void
+      {
+         if(this.m_AttackMode != param1)
+         {
+            this.m_AttackMode = param1;
+            this.m_UncommittedAttackMode = true;
+            invalidateProperties();
          }
       }
       
@@ -207,6 +266,34 @@ package tibia.sidebar.sideBarWidgetClasses
          this.m_UIButtonDefensive.toolTip = resourceManager.getString(BUNDLE,"TIP_ATTACK_DEFENSIVE");
          this.m_UIButtonDefensive.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
          addChild(this.m_UIButtonDefensive);
+         this.m_UIButtonDove = new CustomButton();
+         this.m_UIButtonDove.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_DOVE;
+         this.m_UIButtonDove.styleName = getStyle("buttonDoveStyle");
+         this.m_UIButtonDove.toggle = true;
+         this.m_UIButtonDove.toolTip = resourceManager.getString(BUNDLE,"TIP_PVP_MODE_DOVE");
+         this.m_UIButtonDove.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
+         addChild(this.m_UIButtonDove);
+         this.m_UIButtonWhiteHand = new CustomButton();
+         this.m_UIButtonWhiteHand.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_WHITE_HAND;
+         this.m_UIButtonWhiteHand.styleName = getStyle("buttonWhiteHandStyle");
+         this.m_UIButtonWhiteHand.toggle = true;
+         this.m_UIButtonWhiteHand.toolTip = resourceManager.getString(BUNDLE,"TIP_PVP_MODE_WHITE_HAND");
+         this.m_UIButtonWhiteHand.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
+         addChild(this.m_UIButtonWhiteHand);
+         this.m_UIButtonYellowHand = new CustomButton();
+         this.m_UIButtonYellowHand.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_YELLOW_HAND;
+         this.m_UIButtonYellowHand.styleName = getStyle("buttonYellowHandStyle");
+         this.m_UIButtonYellowHand.toggle = true;
+         this.m_UIButtonYellowHand.toolTip = resourceManager.getString(BUNDLE,"TIP_PVP_MODE_YELLOW_HAND");
+         this.m_UIButtonYellowHand.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
+         addChild(this.m_UIButtonYellowHand);
+         this.m_UIButtonRedFist = new CustomButton();
+         this.m_UIButtonRedFist.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_RED_FIST;
+         this.m_UIButtonRedFist.styleName = getStyle("buttonRedFistStyle");
+         this.m_UIButtonRedFist.toggle = true;
+         this.m_UIButtonRedFist.toolTip = resourceManager.getString(BUNDLE,"TIP_PVP_MODE_RED_FIST");
+         this.m_UIButtonRedFist.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
+         addChild(this.m_UIButtonRedFist);
          this.m_UIButtonStop = new CustomButton();
          this.m_UIButtonStop.styleName = getStyle("buttonStopStyle");
          this.m_UIButtonStop.toolTip = resourceManager.getString(BUNDLE,"TIP_STOP");
@@ -214,46 +301,14 @@ package tibia.sidebar.sideBarWidgetClasses
          addChild(this.m_UIButtonStop);
       }
       
-      function set attackMode(param1:int) : void
-      {
-         if(this.m_AttackMode != param1)
-         {
-            this.m_AttackMode = param1;
-            this.m_UncommittedAttackMode = true;
-            invalidateProperties();
-         }
-      }
-      
       function get chaseMode() : int
       {
          return this.m_ChaseMode;
       }
       
-      function set mountMode(param1:Boolean) : void
-      {
-         if(this.m_MountMode != param1)
-         {
-            this.m_MountMode = param1;
-            this.m_UncommittedMountMode = true;
-            invalidateProperties();
-         }
-      }
-      
       function get secureMode() : int
       {
          return this.m_SecureMode;
-      }
-      
-      override function releaseInstance() : void
-      {
-         super.releaseInstance();
-         this.m_UIButtonBalanced.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
-         this.m_UIButtonChase.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
-         this.m_UIButtonDefensive.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
-         this.m_UIButtonMount.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
-         this.m_UIButtonOffensive.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
-         this.m_UIButtonSecureMode.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
-         this.m_UIButtonStop.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
       }
       
       function set player(param1:Player) : void
@@ -272,6 +327,22 @@ package tibia.sidebar.sideBarWidgetClasses
                this.m_Player.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onPlayerChange);
             }
          }
+      }
+      
+      override function releaseInstance() : void
+      {
+         super.releaseInstance();
+         this.m_UIButtonBalanced.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonChase.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonDefensive.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonMount.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonOffensive.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonSecureMode.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonStop.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonDove.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonWhiteHand.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonYellowHand.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonRedFist.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
       }
       
       override protected function commitProperties() : void
@@ -304,22 +375,33 @@ package tibia.sidebar.sideBarWidgetClasses
             this.m_UIButtonSecureMode.selected = this.secureMode == OptionsStorage.COMBAT_SECURE_OFF;
             this.m_UncommittedSecureMode = false;
          }
+         if(this.m_UncommittedPVPMode)
+         {
+            this.m_UIButtonDove.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_DOVE;
+            this.m_UIButtonWhiteHand.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_WHITE_HAND;
+            this.m_UIButtonYellowHand.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_YELLOW_HAND;
+            this.m_UIButtonRedFist.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_RED_FIST;
+            this.m_UncommittedPVPMode = false;
+         }
       }
       
-      override protected function onOptionsChange(param1:PropertyChangeEvent) : void
+      function set mountMode(param1:Boolean) : void
       {
-         super.onOptionsChange(param1);
-         if(param1.property == "*" || param1.property == "combatAttackMode")
+         if(this.m_MountMode != param1)
          {
-            this.attackMode = m_Options.combatAttackMode;
+            this.m_MountMode = param1;
+            this.m_UncommittedMountMode = true;
+            invalidateProperties();
          }
-         if(param1.property == "*" || param1.property == "combatChaseMode")
+      }
+      
+      function set pvpMode(param1:uint) : void
+      {
+         if(this.m_PVPMode != param1)
          {
-            this.chaseMode = m_Options.combatChaseMode;
-         }
-         if(param1.property == "*" || param1.property == "combatSecureMode")
-         {
-            this.secureMode = m_Options.combatSecureMode;
+            this.m_PVPMode = param1;
+            this.m_UncommittedPVPMode = true;
+            invalidateProperties();
          }
       }
       
@@ -330,9 +412,8 @@ package tibia.sidebar.sideBarWidgetClasses
       
       override protected function measure() : void
       {
-         var _loc1_:EdgeMetrics = null;
          super.measure();
-         _loc1_ = viewMetricsAndPadding;
+         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
          measuredMinWidth = measuredWidth = _loc1_.left + WIDGET_VIEW_WIDTH + _loc1_.right;
          measuredMinHeight = measuredHeight = _loc1_.top + WIDGET_VIEW_HEIGHT + _loc1_.bottom;
       }
@@ -360,13 +441,20 @@ package tibia.sidebar.sideBarWidgetClasses
             this.attackMode = options.combatAttackMode;
             this.chaseMode = options.combatChaseMode;
             this.secureMode = options.combatSecureMode;
+            this.pvpMode = options.combatPVPMode;
          }
          else
          {
             this.attackMode = OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
             this.chaseMode = OptionsStorage.COMBAT_CHASE_OFF;
             this.secureMode = OptionsStorage.COMBAT_SECURE_OFF;
+            this.pvpMode = OptionsStorage.COMBAT_PVP_MODE_DOVE;
          }
+      }
+      
+      function get pvpMode() : uint
+      {
+         return this.m_PVPMode;
       }
       
       private function onPlayerChange(param1:PropertyChangeEvent) : void
@@ -374,6 +462,27 @@ package tibia.sidebar.sideBarWidgetClasses
          if(param1.property == "*" || param1.property == "mountOutfit")
          {
             this.mountMode = this.m_Player.mountOutfit != null;
+         }
+      }
+      
+      override protected function onOptionsChange(param1:PropertyChangeEvent) : void
+      {
+         super.onOptionsChange(param1);
+         if(param1.property == "*" || param1.property == "combatAttackMode")
+         {
+            this.attackMode = m_Options.combatAttackMode;
+         }
+         if(param1.property == "*" || param1.property == "combatChaseMode")
+         {
+            this.chaseMode = m_Options.combatChaseMode;
+         }
+         if(param1.property == "*" || param1.property == "combatSecureMode")
+         {
+            this.secureMode = m_Options.combatSecureMode;
+         }
+         if(param1.property == "*" || param1.property == "combatPVPMode")
+         {
+            this.pvpMode = m_Options.combatPVPMode;
          }
       }
       

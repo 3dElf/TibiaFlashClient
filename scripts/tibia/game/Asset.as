@@ -4,6 +4,7 @@ package tibia.game
    import flash.utils.ByteArray;
    import shared.utility.SharedObjectManager;
    import flash.net.SharedObject;
+   import flash.utils.setTimeout;
    import flash.events.Event;
    import flash.net.URLLoader;
    
@@ -22,6 +23,11 @@ package tibia.game
          var _loc4_:String = null;
          var _loc5_:int = 0;
          var _loc6_:int = 0;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
+         var _loc9_:Vector.<int> = null;
+         var _loc10_:uint = 0;
+         var _loc11_:int = 0;
          var _loc2_:String = param1 != null?param1.localName():null;
          var _loc3_:XMLList = null;
          if(_loc2_ == "appearances" || _loc2_ == "binary" || _loc2_ == "currentOptions" || _loc2_ == "defaultOptions" || _loc2_ == "sprites")
@@ -56,12 +62,40 @@ package tibia.game
             {
                return new OptionsAsset(_loc4_,_loc5_,"text/xml",true);
             }
-            _loc6_ = -1;
-            if((_loc3_ = param1.startid) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
+            if(_loc2_ == "sprites")
             {
-               _loc6_ = int(_loc3_[0].toString());
+               _loc6_ = -1;
+               if((_loc3_ = param1.firstSpriteID) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
+               {
+                  _loc6_ = int(_loc3_[0].toString());
+               }
+               _loc7_ = -1;
+               if((_loc3_ = param1.lastSpriteID) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
+               {
+                  _loc7_ = int(_loc3_[0].toString());
+               }
+               _loc8_ = -1;
+               if((_loc3_ = param1.spriteType) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
+               {
+                  _loc8_ = int(_loc3_[0].toString());
+               }
+               _loc9_ = new Vector.<int>();
+               if((_loc3_ = param1.area) != null && _loc3_.length() > 0)
+               {
+                  _loc10_ = 0;
+                  while(_loc10_ < _loc3_.length())
+                  {
+                     if(_loc3_[_loc10_].toString().match(/^[0-9]+$/) != null)
+                     {
+                        _loc11_ = int(_loc3_[_loc10_].toString());
+                        _loc9_.push(_loc11_);
+                     }
+                     _loc10_++;
+                  }
+               }
+               return new SpritesAsset(_loc4_,_loc5_,_loc6_,_loc7_,_loc8_,_loc9_);
             }
-            return new SpritesAsset(_loc4_,_loc5_,_loc6_);
+            return null;
          }
          return null;
       }
@@ -75,6 +109,11 @@ package tibia.game
       public function get rawBytes() : ByteArray
       {
          return this.m_RawBytes;
+      }
+      
+      override public function get loaded() : Boolean
+      {
+         return this.m_RawBytes != null;
       }
       
       override public function load() : void
@@ -95,7 +134,7 @@ package tibia.game
          }
          if(this.m_RawBytes != null && (size == 0 || this.m_RawBytes.length == size))
          {
-            dispatchEvent(new Event(Event.COMPLETE,false,false));
+            setTimeout(dispatchEvent,0,new Event(Event.COMPLETE,false,false));
          }
          else
          {

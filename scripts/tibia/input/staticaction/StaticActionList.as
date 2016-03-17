@@ -17,6 +17,8 @@ package tibia.input.staticaction
       
       public static const MISC_SHOW_WIDGET_BUDDYLIST:tibia.input.staticaction.ShowWidget = new tibia.input.staticaction.ShowWidget(36,"MISC_SHOW_WIDGET_BUDDYLIST",InputEvent.KEY_DOWN,Widget.TYPE_BUDDYLIST);
       
+      public static const MISC_COMBAT_PVP_YELLOW_HAND:tibia.input.staticaction.CombatPVPMode = new tibia.input.staticaction.CombatPVPMode(48,"MISC_COMBAT_PVP_YELLOW_HAND",InputEvent.KEY_DOWN,OptionsStorage.COMBAT_PVP_MODE_YELLOW_HAND);
+      
       public static const MISC_COMBAT_SECURE:tibia.input.staticaction.CombatSecureMode = new tibia.input.staticaction.CombatSecureMode(27,"MISC_COMBAT_SECURE",InputEvent.KEY_DOWN);
       
       public static const MISC_TOGGLE_ACTIONBAR_RIGHT:tibia.input.staticaction.ToggleActionBar = new tibia.input.staticaction.ToggleActionBar(40,"MISC_TOGGLE_ACTIONBAR_RIGHT",InputEvent.KEY_DOWN,ActionBarSet.LOCATION_RIGHT);
@@ -30,6 +32,8 @@ package tibia.input.staticaction
       public static const PLAYER_MOUNT:tibia.input.staticaction.PlayerMount = new tibia.input.staticaction.PlayerMount(525,"PLAYER_MOUNT",InputEvent.KEY_DOWN);
       
       public static const MISC_COMBAT_OFFENSIVE:tibia.input.staticaction.CombatAttackMode = new tibia.input.staticaction.CombatAttackMode(25,"MISC_COMBAT_OFFENSIVE",InputEvent.KEY_DOWN,OptionsStorage.COMBAT_ATTACK_OFFENSIVE);
+      
+      public static const MISC_COMBAT_PVP_DOVE:tibia.input.staticaction.CombatPVPMode = new tibia.input.staticaction.CombatPVPMode(46,"MISC_COMBAT_PVP_DOVE",InputEvent.KEY_DOWN,OptionsStorage.COMBAT_PVP_MODE_DOVE);
       
       public static const PLAYER_MOVE_UP_RIGHT:tibia.input.staticaction.PlayerMove = new tibia.input.staticaction.PlayerMove(513,"PLAYER_MOVE_UP_RIGHT",InputEvent.KEY_DOWN | InputEvent.KEY_REPEAT,tibia.input.staticaction.PlayerMove.NORTH_EAST);
       
@@ -123,6 +127,8 @@ package tibia.input.staticaction
       
       public static const MISC_SHOW_WIDGET_BODY:tibia.input.staticaction.ShowWidget = new tibia.input.staticaction.ShowWidget(35,"MISC_SHOW_WIDGET_BODY",InputEvent.KEY_DOWN,Widget.TYPE_BODY);
       
+      public static const MISC_COMBAT_PVP_RED_FIST:tibia.input.staticaction.CombatPVPMode = new tibia.input.staticaction.CombatPVPMode(49,"MISC_COMBAT_PVP_RED_FIST",InputEvent.KEY_DOWN,OptionsStorage.COMBAT_PVP_MODE_RED_FIST);
+      
       public static const MISC_COMBAT_BALANCED:tibia.input.staticaction.CombatAttackMode = new tibia.input.staticaction.CombatAttackMode(23,"MISC_COMBAT_BALANCED",InputEvent.KEY_DOWN,OptionsStorage.COMBAT_ATTACK_BALANCED);
       
       public static const MMAP_ZOOM_IN:tibia.input.staticaction.MiniMapZoom = new tibia.input.staticaction.MiniMapZoom(1799,"MMAP_ZOOM_IN",InputEvent.KEY_DOWN | InputEvent.KEY_REPEAT,1);
@@ -131,15 +137,15 @@ package tibia.input.staticaction
       
       public static const CHAT_DELETE_NEXT:tibia.input.staticaction.ChatEditText = new tibia.input.staticaction.ChatEditText(262,"CHAT_DELETE_NEXT",InputEvent.KEY_DOWN | InputEvent.KEY_REPEAT,true);
       
-      public static const PLAYER_TURN_LEFT:tibia.input.staticaction.PlayerTurn = new tibia.input.staticaction.PlayerTurn(522,"PLAYER_TURN_LEFT",InputEvent.KEY_DOWN,tibia.input.staticaction.PlayerTurn.WEST);
-      
       public static const CHAT_CHANNEL_OPEN:tibia.input.staticaction.ShowDialog = new tibia.input.staticaction.ShowDialog(270,"CHAT_CHANNEL_OPEN",InputEvent.KEY_DOWN,tibia.input.staticaction.ShowDialog.CHAT_CHANNEL_SELECTION);
       
-      public static const MISC_SHOW_OUTFIT:tibia.input.staticaction.ShowDialog = new tibia.input.staticaction.ShowDialog(18,"MISC_SHOW_OUTFIT",InputEvent.KEY_DOWN,tibia.input.staticaction.ShowDialog.CHARACTER_OUTFIT);
+      public static const PLAYER_TURN_LEFT:tibia.input.staticaction.PlayerTurn = new tibia.input.staticaction.PlayerTurn(522,"PLAYER_TURN_LEFT",InputEvent.KEY_DOWN,tibia.input.staticaction.PlayerTurn.WEST);
       
       public static const MISC_ATTACK_NEXT:tibia.input.staticaction.AttackCycle = new tibia.input.staticaction.AttackCycle(15,"MISC_ATTACK_NEXT",InputEvent.KEY_DOWN,tibia.input.staticaction.AttackCycle.NEXT);
       
       public static const MISC_SHOW_EDIT_OPTIONS:tibia.input.staticaction.ShowDialog = new tibia.input.staticaction.ShowDialog(4,"MISC_SHOW_EDIT_GENERAL",InputEvent.KEY_DOWN,tibia.input.staticaction.ShowDialog.OPTIONS_GENERAL);
+      
+      public static const MISC_SHOW_OUTFIT:tibia.input.staticaction.ShowDialog = new tibia.input.staticaction.ShowDialog(18,"MISC_SHOW_OUTFIT",InputEvent.KEY_DOWN,tibia.input.staticaction.ShowDialog.CHARACTER_OUTFIT);
       
       public static const CHAT_COPYPASTE_COPY:tibia.input.staticaction.ChatEditText = new tibia.input.staticaction.ChatEditText(264,"CHAT_COPYPASTE_COPY",InputEvent.KEY_DOWN,true);
       
@@ -155,7 +161,7 @@ package tibia.input.staticaction
       
       public static const PLAYER_TURN_RIGHT:tibia.input.staticaction.PlayerTurn = new tibia.input.staticaction.PlayerTurn(520,"PLAYER_TURN_RIGHT",InputEvent.KEY_DOWN,tibia.input.staticaction.PlayerTurn.EAST);
       
-      public static const MMAP_LAYER_UP:tibia.input.staticaction.MiniMapMove = new tibia.input.staticaction.MiniMapMove(1796,"MMAP_LAYER_UP",InputEvent.KEY_DOWN | InputEvent.KEY_REPEAT,tibia.input.staticaction.MiniMapMove.UP);
+      public static const MISC_COMBAT_PVP_WHITE_HAND:tibia.input.staticaction.CombatPVPMode = new tibia.input.staticaction.CombatPVPMode(47,"MISC_COMBAT_PVP_WHITE_HAND",InputEvent.KEY_DOWN,OptionsStorage.COMBAT_PVP_MODE_WHITE_HAND);
       
       public static const CHAT_COPYPASTE_CUT:tibia.input.staticaction.ChatEditText = new tibia.input.staticaction.ChatEditText(266,"CHAT_COPYPASTE_CUT",InputEvent.KEY_DOWN,true);
       
@@ -170,6 +176,8 @@ package tibia.input.staticaction
       public static const CHAT_CHANNEL_SERVER:tibia.input.staticaction.ChatChannelShow = new tibia.input.staticaction.ChatChannelShow(275,"CHAT_CHANNEL_SERVER",InputEvent.KEY_DOWN,ChatStorage.SERVER_CHANNEL_ID);
       
       public static const MMAP_MOVE_DOWN:tibia.input.staticaction.MiniMapMove = new tibia.input.staticaction.MiniMapMove(1795,"MMAP_MOVE_DOWN",InputEvent.KEY_DOWN | InputEvent.KEY_REPEAT,tibia.input.staticaction.MiniMapMove.SOUTH);
+      
+      public static const MMAP_LAYER_UP:tibia.input.staticaction.MiniMapMove = new tibia.input.staticaction.MiniMapMove(1796,"MMAP_LAYER_UP",InputEvent.KEY_DOWN | InputEvent.KEY_REPEAT,tibia.input.staticaction.MiniMapMove.UP);
       
       public static const CHAT_MOVE_CURSOR_LEFT:tibia.input.staticaction.ChatEditText = new tibia.input.staticaction.ChatEditText(257,"CHAT_MOVE_CURSOR_LEFT",InputEvent.KEY_DOWN | InputEvent.KEY_REPEAT,false);
       

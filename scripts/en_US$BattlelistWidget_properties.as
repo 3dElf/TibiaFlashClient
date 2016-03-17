@@ -28,6 +28,7 @@ package
             "CTX_START_FOLLOW":"Follow",
             "CTX_SORT_NAME_ASC":"Sort Ascending by Name",
             "CTX_SORT_NAME_DESC":"Sort Descending by Name",
+            "CTX_PARTY_JOIN_AGGRESSION":"Join Aggression of {0} ",
             "CTX_PRIVATE_CHAT":"Invite to Private Chat",
             "CTX_PARTY_JOIN":"Join {0}\'s Party",
             "CTX_STOP_FOLLOW":"Stop Follow",

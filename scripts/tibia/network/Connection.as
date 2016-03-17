@@ -31,7 +31,7 @@ package tibia.network
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 978;
+      public static const PROTOCOL_VERSION:int = 979;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -53,13 +53,13 @@ package tibia.network
       
       protected static const ERR_COULD_NOT_CONNECT:int = 5;
       
+      protected static const SSETTACTICS:int = 167;
+      
       protected static const SLOGINCHALLENGE:int = 31;
       
       protected static const CLEAVECHANNEL:int = 153;
       
       protected static const SPLAYERDATABASIC:int = 159;
-      
-      private static const PING_LATENCY_INTERVAL:uint = 15;
       
       protected static const CPING:int = 29;
       
@@ -68,6 +68,8 @@ package tibia.network
       protected static const CCLOSENPCCHANNEL:int = 158;
       
       protected static const PACKETLENGTH_SIZE:int = 2;
+      
+      private static const PING_LATENCY_INTERVAL:uint = 15;
       
       protected static const SMESSAGE:int = 180;
       
@@ -81,7 +83,7 @@ package tibia.network
       
       protected static const CBUYOBJECT:int = 122;
       
-      public static const CLIENT_VERSION:uint = 1196;
+      public static const CLIENT_VERSION:uint = 1296;
       
       protected static const SPING:int = 29;
       
@@ -95,7 +97,7 @@ package tibia.network
       
       protected static const CROTATENORTH:int = 111;
       
-      protected static const CHECKSUM_POS:int = PACKETLENGTH_POS + PACKETLENGTH_SIZE;
+      protected static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
       
       protected static const CATTACK:int = 161;
       
@@ -132,6 +134,8 @@ package tibia.network
       protected static const CINSPECTNPCTRADE:int = 121;
       
       protected static const SBOTTOMFLOOR:int = 191;
+      
+      protected static const CHECKSUM_POS:int = PACKETLENGTH_POS + PACKETLENGTH_SIZE;
       
       protected static const HEADER_SIZE:int = PACKETLENGTH_SIZE + CHECKSUM_SIZE;
       
@@ -209,9 +213,13 @@ package tibia.network
       
       protected static const CMOVEOBJECT:int = 120;
       
+      protected static const SCREATUREMARKS:int = 147;
+      
       private static const BUNDLE:String = "Connection";
       
       protected static const CHECKSUM_SIZE:int = 4;
+      
+      protected static const CJOINAGGRESSION:int = 142;
       
       protected static const CREJECTTRADE:int = 128;
       
@@ -233,8 +241,6 @@ package tibia.network
       
       protected static const SPLAYERDATACURRENT:int = 160;
       
-      protected static const CRULEVIOLATIONREPORT:int = 242;
-      
       protected static const SCLOSETRADE:int = 127;
       
       protected static const SOBJECTINFO:int = 244;
@@ -242,6 +248,8 @@ package tibia.network
       protected static const SMULTIUSEDELAY:int = 166;
       
       protected static const SSNAPBACK:int = 181;
+      
+      protected static const CRULEVIOLATIONREPORT:int = 242;
       
       protected static const CONNECTION_STATE_GAME:int = 4;
       
@@ -274,6 +282,8 @@ package tibia.network
       protected static const STOPFLOOR:int = 190;
       
       protected static const CEQUIPOBJECT:int = 119;
+      
+      protected static const SCREATUREPVPHELPERS:int = 148;
       
       public static const CLIENT_TYPE:uint = 3;
       
@@ -343,8 +353,6 @@ package tibia.network
       
       protected static const CSELLOBJECT:int = 123;
       
-      protected static const SGRAPHICALEFFECT:int = 131;
-      
       protected static const SEDITTEXT:int = 150;
       
       protected static const SOPENOWNCHANNEL:int = 178;
@@ -361,9 +369,9 @@ package tibia.network
       
       public static const CLIENT_PREVIEW_STATE:uint = 0;
       
-      protected static const SMARKETLEAVE:int = 247;
+      protected static const SGRAPHICALEFFECT:int = 131;
       
-      protected static const HEADER_POS:int = 0;
+      protected static const SMARKETLEAVE:int = 247;
       
       protected static const SCOUNTEROFFER:int = 126;
       
@@ -377,19 +385,19 @@ package tibia.network
       
       protected static const CANSWERMODALDIALOG:int = 249;
       
+      protected static const HEADER_POS:int = 0;
+      
       protected static const SMARKETENTER:int = 246;
       
       protected static const SCLEARTARGET:int = 163;
+      
+      protected static const SCREATURETYPE:int = 149;
       
       protected static const SCREATURESPEED:int = 143;
       
       protected static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
       
-      protected static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
-      
       protected static const SCLOSECHANNEL:int = 179;
-      
-      protected static const SMARKCREATURE:int = 134;
       
       protected static const CSETOUTFIT:int = 211;
       
@@ -972,7 +980,6 @@ package tibia.network
       
       protected function onSocketClose(param1:Event) : void
       {
-         var _loc2_:ConnectionEvent = null;
          this.m_LastEvent = getTimer();
          if(this.m_ConnectionState != CONNECTION_STATE_GAME && this.m_ConnectionState != CONNECTION_STATE_PENDING)
          {
@@ -991,8 +998,6 @@ package tibia.network
          else
          {
             this.disconnect();
-            _loc2_ = new ConnectionEvent(ConnectionEvent.DISCONNECTED);
-            dispatchEvent(_loc2_);
          }
       }
       

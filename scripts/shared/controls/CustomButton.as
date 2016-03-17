@@ -13,7 +13,7 @@ package shared.controls
       
       public function CustomButton()
       {
-         this.m_EventQueue = new Vector.<DeferredEvent>();
+         this.m_EventQueue = new Vector.<CustomButton>();
          super();
          addEventListener(Event.ENTER_FRAME,this.onEnterFrame);
       }

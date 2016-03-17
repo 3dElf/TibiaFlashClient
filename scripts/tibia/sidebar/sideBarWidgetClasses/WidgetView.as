@@ -325,13 +325,15 @@ package tibia.sidebar.sideBarWidgetClasses
       
       override protected function measure() : void
       {
+         var _loc6_:Number = NaN;
+         var _loc7_:Number = NaN;
          var _loc1_:EdgeMetrics = viewMetricsAndPadding;
          var _loc2_:Number = getStyle("verticalGap");
          var _loc3_:UIComponent = null;
          var _loc4_:int = 0;
          var _loc5_:int = numChildren;
-         var _loc6_:Number = 0;
-         var _loc7_:Number = 0;
+         _loc6_ = 0;
+         _loc7_ = 0;
          if(_loc5_ > 0)
          {
             if(direction == BoxDirection.VERTICAL)

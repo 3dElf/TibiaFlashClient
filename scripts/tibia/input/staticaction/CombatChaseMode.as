@@ -28,7 +28,7 @@ package tibia.input.staticaction
          var _loc3_:Communication = Tibia.s_GetCommunication();
          if(_loc3_ != null && Boolean(_loc3_.isGameRunning))
          {
-            _loc3_.sendCSETTACTICS(_loc2_.combatAttackMode,_loc2_.combatChaseMode,_loc2_.combatSecureMode);
+            _loc3_.sendCSETTACTICS(_loc2_.combatAttackMode,_loc2_.combatChaseMode,_loc2_.combatSecureMode,_loc2_.combatPVPMode);
          }
       }
    }

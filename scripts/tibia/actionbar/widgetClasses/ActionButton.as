@@ -1,6 +1,7 @@
 package tibia.actionbar.widgetClasses
 {
    import mx.core.UIComponent;
+   import flash.geom.Point;
    import shared.utility.TextFieldCache;
    import flash.geom.Rectangle;
    import mx.styles.CSSStyleDeclaration;
@@ -24,6 +25,7 @@ package tibia.actionbar.widgetClasses
    import mx.core.FlexShape;
    import tibia.magic.Spell;
    import flash.display.BitmapData;
+   import tibia.appearances.widgetClasses.CachedSpriteInformation;
    import tibia.appearances.AppearanceType;
    import tibia.input.gameaction.TalkAction;
    import mx.events.PropertyChangeEvent;
@@ -39,6 +41,8 @@ package tibia.actionbar.widgetClasses
    {
       
       private static const BUNDLE:String = "ActionBarWidget";
+      
+      private static var s_ZeroPoint:Point = new Point(0,0);
       
       private static const OVERLAY_TOP:int = 1;
       
@@ -65,7 +69,11 @@ package tibia.actionbar.widgetClasses
       
       private var m_UIActionIcon:FlexShape = null;
       
+      private var m_ActionIconCacheMiss:Boolean = false;
+      
       private var m_ActionSpell:Spell = null;
+      
+      private var m_LocalAppearanceBitmapCache:BitmapData = null;
       
       private var m_UncommittedAction:Boolean = false;
       
@@ -87,17 +95,19 @@ package tibia.actionbar.widgetClasses
       
       private var m_UIOverlay:FlexShape = null;
       
+      private var m_UncommittedCooldownDelay:Boolean = true;
+      
       private var m_UISkinBackground:IFlexDisplayObject = null;
       
       private var m_UncommittedOverlayText:Boolean = true;
-      
-      private var m_UncommittedCooldownDelay:Boolean = true;
       
       private var m_Available:Boolean = true;
       
       private var m_UncommittedPosition:Boolean = true;
       
       private var m_Position:int = 0;
+      
+      private var m_UISkinCooldown:IFlexDisplayObject = null;
       
       private var m_CooldownPhase:int = -1;
       
@@ -110,8 +120,6 @@ package tibia.actionbar.widgetClasses
       private var m_UncommittedActionBar:Boolean = false;
       
       private var m_UILabel:FlexShape = null;
-      
-      private var m_UISkinCooldown:IFlexDisplayObject = null;
       
       public function ActionButton()
       {
@@ -197,7 +205,7 @@ package tibia.actionbar.widgetClasses
             {
                this.m_ActionSpell = SpellAction(this.action).spell;
             }
-            if(this.m_ActionObject != null || this.m_ActionRune != null || this.m_ActionSpell != null)
+            if(Boolean(this.m_ActionIconCacheMiss) || this.m_ActionObject != null || this.m_ActionRune != null || this.m_ActionSpell != null)
             {
                _loc1_.addEventListener(TimerEvent.TIMER,this.onTimer,false,EventPriority.DEFAULT,true);
             }
@@ -343,21 +351,22 @@ package tibia.actionbar.widgetClasses
          return this.m_OverlayText;
       }
       
-      private function onTimer(param1:TimerEvent) : void
-      {
-         this.updateActionProperties();
-      }
-      
       public function get position() : int
       {
          return this.m_Position;
       }
       
+      private function onTimer(param1:TimerEvent) : void
+      {
+         this.updateActionProperties();
+      }
+      
       private function drawActionIcon() : void
       {
-         var _loc4_:uint = 0;
-         var _loc5_:String = null;
-         var _loc6_:Rectangle = null;
+         var _loc4_:CachedSpriteInformation = null;
+         var _loc5_:uint = 0;
+         var _loc6_:String = null;
+         var _loc7_:Rectangle = null;
          var _loc1_:Graphics = this.m_UIActionIcon.graphics;
          _loc1_.clear();
          s_Trans.a = 1;
@@ -366,8 +375,16 @@ package tibia.actionbar.widgetClasses
          var _loc3_:AppearanceType = null;
          if(this.m_ActionObject != null && (_loc3_ = this.m_ActionObject.type) != null)
          {
-            _loc2_ = this.m_ActionObject.getSprite(-1,-1,-1,-1,s_Rect);
+            _loc4_ = this.m_ActionObject.getSprite(-1,-1,-1,-1);
+            this.m_ActionIconCacheMiss = _loc4_.cacheMiss;
+            if(this.m_LocalAppearanceBitmapCache == null || this.m_LocalAppearanceBitmapCache.width < _loc4_.rectangle.width || this.m_LocalAppearanceBitmapCache.height < _loc4_.rectangle.height)
+            {
+               this.m_LocalAppearanceBitmapCache = new BitmapData(_loc4_.rectangle.width,_loc4_.rectangle.height);
+            }
+            this.m_LocalAppearanceBitmapCache.copyPixels(_loc4_.bitmapData,_loc4_.rectangle,s_ZeroPoint);
+            s_Rect.setTo(0,0,_loc4_.rectangle.width,_loc4_.rectangle.height);
             s_Trans.a = s_Trans.d = ICON_SIZE / _loc3_.exactSize;
+            _loc2_ = this.m_LocalAppearanceBitmapCache;
          }
          else if(this.m_ActionSpell != null)
          {
@@ -375,14 +392,14 @@ package tibia.actionbar.widgetClasses
          }
          else if(this.action is TalkAction)
          {
-            _loc4_ = !!getStyle("overlayLabelColor")?uint(getStyle("overlayLabelColor")):uint(65280);
-            _loc5_ = TalkAction(this.action).text;
-            _loc6_ = s_TalkTextCache.getItem(_loc5_,_loc5_,_loc4_);
+            _loc5_ = !!getStyle("overlayLabelColor")?uint(getStyle("overlayLabelColor")):uint(65280);
+            _loc6_ = TalkAction(this.action).text;
+            _loc7_ = s_TalkTextCache.getItem(_loc6_,_loc6_,_loc5_);
             _loc2_ = s_TalkTextCache;
-            s_Rect.x = _loc6_.x;
-            s_Rect.y = _loc6_.y;
-            s_Rect.width = _loc6_.width;
-            s_Rect.height = _loc6_.height;
+            s_Rect.x = _loc7_.x;
+            s_Rect.y = _loc7_.y;
+            s_Rect.width = _loc7_.width;
+            s_Rect.height = _loc7_.height;
          }
          if(_loc2_ != null)
          {
@@ -438,6 +455,11 @@ package tibia.actionbar.widgetClasses
          }
       }
       
+      private function get highlight() : Boolean
+      {
+         return this.m_Highlight;
+      }
+      
       private function set overlayText(param1:String) : void
       {
          if(this.m_OverlayText != param1)
@@ -448,11 +470,6 @@ package tibia.actionbar.widgetClasses
             invalidateDisplayList();
             invalidateProperties();
          }
-      }
-      
-      private function get highlight() : Boolean
-      {
-         return this.m_Highlight;
       }
       
       override public function styleChanged(param1:String) : void
@@ -556,7 +573,7 @@ package tibia.actionbar.widgetClasses
          if(this.m_ActionObject != null)
          {
             _loc4_ = this.m_ActionObject.type;
-            if(_loc4_ != null && (Boolean(_loc4_.isAnimateAlways) || Boolean(_loc4_.isAnimation)))
+            if(Boolean(this.m_ActionIconCacheMiss) || _loc4_ != null && (Boolean(_loc4_.isAnimateAlways) || Boolean(_loc4_.isAnimation)))
             {
                this.drawActionIcon();
             }

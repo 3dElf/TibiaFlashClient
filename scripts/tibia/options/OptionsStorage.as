@@ -1,10 +1,10 @@
 package tibia.options
 {
    import flash.events.EventDispatcher;
+   import shared.utility.XMLHelper;
    import tibia.chat.NameFilterSet;
    import tibia.chat.ChannelSet;
    import mx.events.PropertyChangeEvent;
-   import shared.utility.XMLHelper;
    import tibia.help.TutorialHint;
    import tibia.market.marketWidgetClasses.AppearanceTypeBrowser;
    import tibia.chat.MessageFilterSet;
@@ -27,155 +27,113 @@ package tibia.options
    public class OptionsStorage extends EventDispatcher
    {
       
-      protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
+      public static const COMBAT_PVP_MODE_WHITE_HAND:uint = 1;
       
-      protected static const STATE_PZ_BLOCK:int = 13;
+      protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
-      protected static const PROFESSION_SORCERER:int = 3;
-      
-      protected static const PK_REVENGE:int = 6;
-      
-      protected static const STATE_SLOW:int = 5;
-      
-      protected static const PARTY_NONE:int = 0;
+      protected static const STATE_PZ_BLOCK:int = 13;
       
       protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
       
-      protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
+      protected static const PK_REVENGE:int = 6;
       
-      protected static const SKILL_FIGHTCLUB:int = 9;
+      protected static const SKILL_FIGHTCLUB:int = 10;
       
-      public static const COMBAT_CHASE_OFF:int = 0;
+      protected static const RISKINESS_DANGEROUS:int = 1;
+      
+      protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
       
       public static const COMBAT_SECURE_ON:int = 1;
       
-      protected static const WAR_ALLY:int = 1;
-      
-      protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      protected static const GUILD_NONE:int = 0;
       
       protected static const PK_PARTYMODE:int = 2;
       
-      protected static const WAR_ENEMY:int = 2;
-      
-      protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
+      protected static const RISKINESS_NONE:int = 0;
       
       protected static const PARTY_MEMBER:int = 2;
       
       protected static const STATE_DRUNK:int = 3;
       
-      protected static const WAR_NEUTRAL:int = 3;
+      protected static const PARTY_OTHER:int = 11;
       
       protected static const SKILL_EXPERIENCE:int = 0;
       
       protected static const TYPE_NPC:int = 2;
       
-      protected static const PROFESSION_KNIGHT:int = 1;
+      protected static const SKILL_STAMINA:int = 17;
       
-      protected static const SKILL_STAMINA:int = 16;
+      protected static const TYPE_SUMMON_OTHERS:int = 4;
       
       protected static const STATE_NONE:int = -1;
       
-      protected static const PROFESSION_PALADIN:int = 2;
-      
       protected static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
       
-      protected static const SKILL_FIGHTSHIELD:int = 7;
+      protected static const SKILL_FIGHTSHIELD:int = 8;
       
-      protected static const SKILL_FIGHTAXE:int = 11;
-      
-      protected static const WAR_NONE:int = 0;
-      
-      protected static const SKILL_FIGHTDISTANCE:int = 8;
+      protected static const SKILL_FIGHTDISTANCE:int = 9;
       
       protected static const PK_EXCPLAYERKILLER:int = 5;
       
-      protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
+      protected static const NUM_CREATURES:int = 1300;
       
       protected static const NUM_TRAPPERS:int = 8;
       
-      protected static const SKILL_FED:int = 14;
+      protected static const SKILL_FED:int = 15;
       
       protected static const SKILL_MAGLEVEL:int = 2;
       
-      protected static const NUM_CREATURES:int = 1300;
+      protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
       
-      protected static const SKILL_SOULPOINTS:int = 15;
+      protected static const SKILL_FISHING:int = 14;
       
-      protected static const SKILL_FISHING:int = 13;
+      protected static const SKILL_HITPOINTS_PERCENT:int = 3;
       
-      protected static const PARTY_LEADER_SEXP_OFF:int = 4;
-      
-      protected static const PK_PLAYERKILLER:int = 4;
-      
-      protected static const STATE_FAST:int = 6;
+      public static const COMBAT_ATTACK_OFFENSIVE:int = 1;
       
       protected static const STATE_BLEEDING:int = 15;
       
-      protected static const STATE_DAZZLED:int = 10;
+      protected static const PK_PLAYERKILLER:int = 4;
       
       protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
       
-      protected static const TYPE_PLAYER:int = 0;
+      protected static const STATE_DAZZLED:int = 10;
       
-      protected static const SKILL_HITPOINTS:int = 3;
+      protected static const SUMMON_OTHERS:int = 2;
       
       protected static const SKILL_NONE:int = -1;
       
+      protected static const GUILD_MEMBER:int = 4;
+      
       public static const COMBAT_ATTACK_DEFENSIVE:int = 3;
       
-      protected static const SKILL_OFFLINETRAINING:int = 17;
+      protected static const PROFESSION_NONE:int = 0;
       
-      protected static const STATE_MANA_SHIELD:int = 4;
-      
-      protected static const SKILL_MANA:int = 4;
-      
-      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
+      public static const COMBAT_PVP_MODE_DOVE:uint = 0;
       
       protected static const MAX_NAME_LENGTH:int = 29;
       
-      protected static const STATE_CURSED:int = 11;
-      
-      protected static const STATE_FREEZING:int = 9;
-      
       protected static const PARTY_LEADER:int = 1;
-      
-      protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
       
       protected static const STATE_PZ_ENTERED:int = 14;
       
       public static const COMBAT_SECURE_OFF:int = 0;
       
-      protected static const PROFESSION_NONE:int = 0;
-      
-      protected static const SKILL_CARRYSTRENGTH:int = 6;
+      protected static const SKILL_CARRYSTRENGTH:int = 7;
       
       protected static const PK_ATTACKER:int = 1;
       
       protected static const STATE_ELECTRIFIED:int = 2;
       
-      protected static const SKILL_FIGHTSWORD:int = 10;
+      protected static const SKILL_FIGHTSWORD:int = 11;
       
-      protected static const TYPE_MONSTER:int = 1;
-      
-      protected static const STATE_POISONED:int = 0;
-      
-      protected static const SKILL_FIGHTFIST:int = 12;
+      protected static const GUILD_WAR_NEUTRAL:int = 3;
       
       protected static const STATE_DROWNING:int = 8;
       
-      protected static const STATE_BURNING:int = 1;
-      
-      protected static const PK_AGGRESSOR:int = 3;
-      
-      protected static const SKILL_LEVEL:int = 1;
-      
-      protected static const STATE_STRENGTHENED:int = 12;
-      
-      protected static const STATE_HUNGRY:int = 31;
-      
-      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
+      public static const COMBAT_CHASE_ON:int = 1;
       
       private static const OPTION_GROUPS:Array = [{
          "XMLName":"general",
@@ -221,23 +179,101 @@ package tibia.options
          "localName":"Market"
       }];
       
-      protected static const PROFESSION_DRUID:int = 4;
-      
-      public static const COMBAT_ATTACK_BALANCED:int = 2;
-      
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
       
-      protected static const STATE_FIGHTING:int = 7;
-      
-      public static const COMBAT_CHASE_ON:int = 1;
-      
-      public static const COMBAT_ATTACK_OFFENSIVE:int = 1;
-      
-      protected static const SKILL_GOSTRENGTH:int = 5;
+      protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
       
       protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
       
+      protected static const GUILD_WAR_ALLY:int = 1;
+      
       protected static const PK_NONE:int = 0;
+      
+      protected static const PROFESSION_SORCERER:int = 3;
+      
+      protected static const STATE_SLOW:int = 5;
+      
+      protected static const PARTY_NONE:int = 0;
+      
+      protected static const SUMMON_OWN:int = 1;
+      
+      protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const TYPE_SUMMON_OWN:int = 3;
+      
+      protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
+      
+      protected static const PROFESSION_KNIGHT:int = 1;
+      
+      protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
+      
+      protected static const PROFESSION_PALADIN:int = 2;
+      
+      protected static const SKILL_FIGHTAXE:int = 12;
+      
+      protected static const PARTY_LEADER_SEXP_OFF:int = 4;
+      
+      protected static const SKILL_SOULPOINTS:int = 16;
+      
+      protected static const STATE_FAST:int = 6;
+      
+      protected static const GUILD_OTHER:int = 5;
+      
+      protected static const TYPE_PLAYER:int = 0;
+      
+      protected static const SKILL_HITPOINTS:int = 4;
+      
+      public static const COMBAT_PVP_MODE_RED_FIST:uint = 3;
+      
+      protected static const SKILL_OFFLINETRAINING:int = 18;
+      
+      protected static const STATE_MANA_SHIELD:int = 4;
+      
+      protected static const SKILL_MANA:int = 5;
+      
+      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
+      
+      protected static const STATE_CURSED:int = 11;
+      
+      protected static const STATE_FREEZING:int = 9;
+      
+      protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
+      
+      protected static const STATE_POISONED:int = 0;
+      
+      protected static const TYPE_MONSTER:int = 1;
+      
+      public static const COMBAT_PVP_MODE_YELLOW_HAND:uint = 2;
+      
+      protected static const STATE_BURNING:int = 1;
+      
+      protected static const SKILL_FIGHTFIST:int = 13;
+      
+      protected static const GUILD_WAR_ENEMY:int = 2;
+      
+      public static const COMBAT_CHASE_OFF:int = 0;
+      
+      public static const COMBAT_ATTACK_BALANCED:int = 2;
+      
+      protected static const SKILL_LEVEL:int = 1;
+      
+      protected static const STATE_STRENGTHENED:int = 12;
+      
+      protected static const PK_AGGRESSOR:int = 3;
+      
+      protected static const STATE_HUNGRY:int = 31;
+      
+      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
+      
+      protected static const SUMMON_NONE:int = 0;
+      
+      protected static const PROFESSION_DRUID:int = 4;
+      
+      protected static const STATE_FIGHTING:int = 7;
+      
+      protected static const SKILL_GOSTRENGTH:int = 6;
+      
+      protected static const PK_MAX_FLASHING_TIME:uint = 5000;
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
        
@@ -351,6 +387,8 @@ package tibia.options
       
       private var m_MappingSet:Vector.<MappingSet>;
       
+      private var m_CombatPVPMode:int = 0;
+      
       private var m_NPCTradeSort:int = -1;
       
       private var m_MarketBrowserCategory:int = -1;
@@ -400,6 +438,50 @@ package tibia.options
          _Event.kind = PropertyChangeEventKind.UPDATE;
          _Event.property = "*";
          dispatchEvent(_Event);
+      }
+      
+      private function unmarshallCombat(param1:XML, param2:Number) : void
+      {
+         var _loc3_:XML = null;
+         var _loc4_:int = 0;
+         var _loc5_:int = 0;
+         var _loc6_:int = 0;
+         if(param1 == null || param1.localName() != "combat" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
+         {
+            throw new Error("OptionsStorage.unmarshallCombat: Invalid input.");
+         }
+         for each(_loc3_ in param1.elements())
+         {
+            switch(_loc3_.localName())
+            {
+               case "attackMode":
+                  _loc4_ = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  if(_loc4_ == COMBAT_ATTACK_OFFENSIVE || _loc4_ == COMBAT_ATTACK_BALANCED || _loc4_ == COMBAT_ATTACK_DEFENSIVE)
+                  {
+                     this.m_CombatAttackMode = _loc4_;
+                  }
+                  continue;
+               case "chaseMode":
+                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  if(_loc5_ == COMBAT_CHASE_OFF || _loc5_ == COMBAT_CHASE_ON)
+                  {
+                     this.m_CombatChaseMode = _loc5_;
+                  }
+                  continue;
+               case "autoChaseOff":
+                  this.m_CombatAutoChaseOff = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  continue;
+               case "secureMode":
+                  _loc6_ = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  if(_loc6_ == COMBAT_SECURE_OFF || _loc6_ == COMBAT_SECURE_ON)
+                  {
+                     this.m_CombatSecureMode = _loc6_;
+                  }
+                  continue;
+               default:
+                  continue;
+            }
+         }
       }
       
       public function get statusPlayerStyle() : int
@@ -926,6 +1008,11 @@ package tibia.options
          this.m_GeneralInputClassicControls = param1;
       }
       
+      public function get combatPVPMode() : uint
+      {
+         return this.m_CombatPVPMode;
+      }
+      
       public function get statusPlayerMana() : Boolean
       {
          return this.m_StatusPlayerMana;
@@ -1148,6 +1235,7 @@ package tibia.options
          this.m_CombatAutoChaseOff = true;
          this.m_CombatChaseMode = COMBAT_CHASE_OFF;
          this.m_CombatSecureMode = COMBAT_SECURE_ON;
+         this.m_CombatPVPMode = COMBAT_PVP_MODE_DOVE;
       }
       
       private function addListItem(param1:*, param2:*, param3:String) : *
@@ -1323,6 +1411,17 @@ package tibia.options
          if(param1 != null && (!param1.cancelable || !param1.isDefaultPrevented()))
          {
             dispatchEvent(param1);
+         }
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set combatPVPMode(param1:uint) : void
+      {
+         var _loc2_:Object = this.combatPVPMode;
+         if(_loc2_ !== param1)
+         {
+            this._614115751combatPVPMode = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"combatPVPMode",_loc2_,param1));
          }
       }
       
@@ -2558,9 +2657,18 @@ package tibia.options
          this.m_MarketBrowserName = param1;
       }
       
-      public function removeActionBarSet(param1:int) : ActionBarSet
+      private function set _614115751combatPVPMode(param1:uint) : void
       {
-         return ActionBarSet(this.removeListItem(this.m_ActionBarSet,param1,"actionBarSet"));
+         if(param1 != COMBAT_PVP_MODE_DOVE && param1 != COMBAT_PVP_MODE_WHITE_HAND && param1 != COMBAT_PVP_MODE_YELLOW_HAND && param1 != COMBAT_PVP_MODE_RED_FIST)
+         {
+            throw new ArgumentError("OptionsStorage.set combatPVPMode: Invalid mode.");
+         }
+         this.m_CombatPVPMode = param1;
+      }
+      
+      public function get combatSecureMode() : int
+      {
+         return this.m_CombatSecureMode;
       }
       
       [Bindable(event="propertyChange")]
@@ -2579,14 +2687,9 @@ package tibia.options
          this.m_NPCTradeSellKeepEquipped = param1;
       }
       
-      public function get combatSecureMode() : int
+      public function removeActionBarSet(param1:int) : ActionBarSet
       {
-         return this.m_CombatSecureMode;
-      }
-      
-      public function getNameFilterSet(param1:int) : NameFilterSet
-      {
-         return NameFilterSet(this.getListItem(this.m_NameFilterSet,param1));
+         return ActionBarSet(this.removeListItem(this.m_ActionBarSet,param1,"actionBarSet"));
       }
       
       private function initialiseMarket() : void
@@ -2601,11 +2704,6 @@ package tibia.options
          this.m_MarketBrowserName = "";
          this.m_MarketSelectedView = MarketWidget.VIEW_MARKET_OFFERS;
          this.m_MarketSelectedType = 0;
-      }
-      
-      public function getMappingSetIDs() : Array
-      {
-         return this.getListIDs(this.m_MappingSet);
       }
       
       private function marshallNPCTrade(param1:XML) : void
@@ -2624,6 +2722,11 @@ package tibia.options
          return this.m_StatusCreatureStyle;
       }
       
+      public function getNameFilterSet(param1:int) : NameFilterSet
+      {
+         return NameFilterSet(this.getListItem(this.m_NameFilterSet,param1));
+      }
+      
       private function marshallMappingSet(param1:XML) : void
       {
          var _loc2_:int = this.m_MappingSet.length;
@@ -2638,11 +2741,6 @@ package tibia.options
       public function get generalUIGameWindowHeight() : Number
       {
          return this.m_GeneralUIGameWindowHeight;
-      }
-      
-      public function addChannelSet(param1:ChannelSet) : ChannelSet
-      {
-         return ChannelSet(this.addListItem(this.m_ChannelSet,param1,"channelSet"));
       }
       
       public function get marketBrowserEditor() : int
@@ -2660,6 +2758,11 @@ package tibia.options
          this.addListItem(this.m_MessageFilterSet,_loc3_,null);
       }
       
+      public function addChannelSet(param1:ChannelSet) : ChannelSet
+      {
+         return ChannelSet(this.addListItem(this.m_ChannelSet,param1,"channelSet"));
+      }
+      
       private function unmarshallChannelSet(param1:XML, param2:Number) : void
       {
          var _loc3_:ChannelSet = ChannelSet.s_Unmarshall(param1,param2);
@@ -2675,48 +2778,9 @@ package tibia.options
          return this.m_MarketBrowserName;
       }
       
-      private function unmarshallCombat(param1:XML, param2:Number) : void
+      public function getMappingSetIDs() : Array
       {
-         var _loc3_:XML = null;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         if(param1 == null || param1.localName() != "combat" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
-         {
-            throw new Error("OptionsStorage.unmarshallCombat: Invalid input.");
-         }
-         for each(_loc3_ in param1.elements())
-         {
-            switch(_loc3_.localName())
-            {
-               case "attackMode":
-                  _loc4_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc4_ == COMBAT_ATTACK_OFFENSIVE || _loc4_ == COMBAT_ATTACK_BALANCED || _loc4_ == COMBAT_ATTACK_DEFENSIVE)
-                  {
-                     this.m_CombatAttackMode = _loc4_;
-                  }
-                  continue;
-               case "chaseMode":
-                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc5_ == COMBAT_CHASE_OFF || _loc5_ == COMBAT_CHASE_ON)
-                  {
-                     this.m_CombatChaseMode = _loc5_;
-                  }
-                  continue;
-               case "autoChaseOff":
-                  this.m_CombatAutoChaseOff = XMLHelper.s_UnmarshallBoolean(_loc3_);
-                  continue;
-               case "secureMode":
-                  _loc6_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc6_ == COMBAT_SECURE_OFF || _loc6_ == COMBAT_SECURE_ON)
-                  {
-                     this.m_CombatSecureMode = _loc6_;
-                  }
-                  continue;
-               default:
-                  continue;
-            }
-         }
+         return this.getListIDs(this.m_MappingSet);
       }
       
       [Bindable(event="propertyChange")]

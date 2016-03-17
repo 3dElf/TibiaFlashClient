@@ -29,6 +29,10 @@ package tibia.game
       {
          super(param1,param2,param3);
          this.m_IsDefaultOptions = param4;
+         if(this.m_IsDefaultOptions == false)
+         {
+            m_NoCacheEnabled = true;
+         }
       }
       
       override protected function resetDownloadedData() : void
@@ -185,6 +189,11 @@ package tibia.game
             this.unloadLoader();
             dispatchEvent(a_Event);
          }
+      }
+      
+      override public function get loaded() : Boolean
+      {
+         return this.m_XML != null;
       }
       
       private function unloadLoader() : void

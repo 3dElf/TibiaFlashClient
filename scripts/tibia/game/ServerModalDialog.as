@@ -326,7 +326,7 @@ package tibia.game
          {
             this.selectedChoice++;
          }
-         else
+         else if(param1.keyCode == Keyboard.UP)
          {
             this.selectedChoice--;
          }

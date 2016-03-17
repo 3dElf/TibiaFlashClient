@@ -22,7 +22,7 @@ package tibia.worldmap
       
       protected static const MM_SECTOR_SIZE:int = 256;
       
-      protected static const MM_IE_TIMEOUT:Number = 50;
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
       
       protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
       
@@ -30,9 +30,13 @@ package tibia.worldmap
       
       protected static const PATH_NORTH_WEST:int = 4;
       
+      protected static const MM_IE_TIMEOUT:Number = 50;
+      
       protected static const MM_IO_TIMEOUT:Number = 500;
       
       protected static const MM_SIDEBAR_ZOOM_MIN:int = -1;
+      
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
       
       protected static const FIELD_HEIGHT:int = 24;
       
@@ -44,25 +48,27 @@ package tibia.worldmap
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
-      
       protected static const MM_SIDEBAR_ZOOM_MAX:int = 2;
+      
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const PATH_ERROR_UNREACHABLE:int = -4;
       
       protected static const FIELD_SIZE:int = 32;
       
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
+      
       protected static const PLAYER_OFFSET_X:int = 8;
       
       protected static const PLAYER_OFFSET_Y:int = 6;
-      
-      protected static const PATH_NORTH:int = 3;
       
       protected static const MAP_MAX_X:int = MAP_MIN_X + (1 << 14 - 1);
       
       protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
       
       protected static const MAP_MAX_Z:int = 15;
+      
+      protected static const PATH_NORTH:int = 3;
       
       static var s_CacheBitmap:BitmapData = new BitmapData(MAPSIZE_X * FIELD_CACHESIZE,MAPSIZE_Y * MAPSIZE_Z * FIELD_CACHESIZE,true,4278255360);
       
@@ -108,9 +114,9 @@ package tibia.worldmap
       
       protected static const PATH_MAX_STEPS:int = 128;
       
-      protected static const MM_CACHE_SIZE:int = 48;
+      protected static const MM_STORAGE_MAX_VERSION:int = 1;
       
-      protected static const MM_SIDEBAR_HIGHLIGHT_DURATION:Number = 10000;
+      protected static const MM_CACHE_SIZE:int = 48;
       
       protected static const PATH_EXISTS:int = 1;
       
@@ -122,8 +128,6 @@ package tibia.worldmap
       
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
-      protected static const MM_STORAGE_MAX_VERSION:int = 1;
-      
       protected static const MAPSIZE_W:int = 10;
       
       protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
@@ -132,6 +136,8 @@ package tibia.worldmap
       
       protected static const MAPSIZE_Z:int = 8;
       
+      protected static const MM_SIDEBAR_HIGHLIGHT_DURATION:Number = 10000;
+      
       protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       protected static const PATH_EAST:int = 1;
@@ -139,7 +145,11 @@ package tibia.worldmap
       protected static const MAP_WIDTH:int = 15;
       
       protected static const PATH_MATRIX_CENTER:int = PATH_MAX_DISTANCE;
-       
+      
+      {
+         s_CacheBitmap.lock();
+      }
+      
       var m_MiniMapCost:int = 2.147483647E9;
       
       var m_ObjectsRenderer:Vector.<ObjectInstance> = null;
@@ -268,9 +278,14 @@ package tibia.worldmap
                break;
             }
             _loc5_.drawTo(s_CacheBitmap,this.m_CacheRectangle.right - this.m_CacheObjectsHeight,this.m_CacheRectangle.bottom - this.m_CacheObjectsHeight,param1,param2,param3);
+            this.m_CacheBitmapDirty = Boolean(this.m_CacheBitmapDirty) || Boolean(_loc5_.cacheDirty);
             this.m_CacheObjectsHeight = Math.min(this.m_CacheObjectsHeight + _loc6_.elevation,FIELD_HEIGHT);
             this.m_CacheLyingObject = Boolean(this.m_CacheLyingObject) || Boolean(_loc6_.isLyingObject);
             this.m_CacheObjectsCount++;
+            if(this.m_CacheBitmapDirty)
+            {
+               break;
+            }
          }
       }
       

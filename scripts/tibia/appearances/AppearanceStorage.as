@@ -1,22 +1,19 @@
 package tibia.appearances
 {
    import flash.events.EventDispatcher;
-   import flash.display.BitmapData;
-   import flash.display.Loader;
-   import tibia.game.Asset;
-   import flash.events.Event;
-   import tibia.game.SpritesAsset;
-   import flash.display.Bitmap;
-   import flash.events.IOErrorEvent;
-   import flash.system.System;
-   import tibia.game.AppearancesAsset;
-   import flash.geom.Rectangle;
-   import shared.utility.Vector3D;
+   import flash.utils.Dictionary;
    import tibia.market.MarketWidget;
+   import loader.asset.IAssetProvider;
+   import flash.events.Event;
+   import tibia.appearances.widgetClasses.AsyncCompressedSpriteProvider;
+   import tibia.appearances.widgetClasses.AsyncSpriteCache;
+   import tibia.game.AppearancesAsset;
+   import flash.system.System;
    import flash.events.ErrorEvent;
    import flash.utils.ByteArray;
    import flash.utils.Endian;
    import shared.utility.StringHelper;
+   import shared.utility.Vector3D;
    
    public class AppearanceStorage extends EventDispatcher
    {
@@ -29,7 +26,7 @@ package tibia.appearances
       
       public static const FLAG_LIQUIDPOOL:int = 11;
       
-      public static const FLAG_HOOKEAST:int = 19;
+      public static const FLAG_HOOKEAST:int = 20;
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
@@ -37,7 +34,11 @@ package tibia.appearances
       
       public static const FLAG_MULTIUSE:int = 7;
       
-      public static const FLAG_IGNORELOOK:int = 31;
+      public static const FLAG_IGNORELOOK:int = 32;
+      
+      public static const COMPRESSED_IMAGES_CACHE_MEMORY:uint = 4 * 768 * 768 * 15;
+      
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
       
       public static const FLAG_WRITE:int = 8;
       
@@ -47,11 +48,13 @@ package tibia.appearances
       
       protected static const FIELD_HEIGHT:int = 24;
       
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
       public static const FLAG_FORCEUSE:int = 6;
       
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
-      public static const FLAG_LYINGOBJECT:int = 26;
+      public static const FLAG_LYINGOBJECT:int = 27;
       
       public static const FLAG_CLIP:int = 1;
       
@@ -61,47 +64,55 @@ package tibia.appearances
       
       protected static const PLAYER_OFFSET_Y:int = 6;
       
+      public static const SPRITE_CACHE_PAGE_DIMENSION:uint = 512;
+      
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
+      
+      public static const FLAG_ANIMATION:int = 35;
+      
       public static const FLAG_CONTAINER:int = 4;
       
-      public static const FLAG_ANIMATION:int = 33;
-      
-      public static const FLAG_CLOTHES:int = 32;
-      
-      public static const FLAG_HOOKSOUTH:int = 18;
+      public static const FLAG_HOOKSOUTH:int = 19;
       
       protected static const MAP_MAX_X:int = MAP_MIN_X + (1 << 14 - 1);
       
       protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
       
-      protected static const MAP_MAX_Z:int = 15;
+      public static const FLAG_CLOTHES:int = 33;
       
       public static const FLAG_UNPASS:int = 12;
       
-      public static const FLAG_BOTTOM:int = 2;
-      
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      public static const FLAG_LIGHT:int = 21;
+      public static const FLAG_LIGHT:int = 22;
+      
+      public static const FLAG_HANG:int = 18;
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
       
-      public static const FLAG_HEIGHT:int = 25;
+      public static const FLAG_HEIGHT:int = 26;
       
-      public static const FLAG_HANG:int = 17;
+      protected static const MAP_MAX_Z:int = 15;
       
-      public static const FLAG_MARKET:int = 33;
+      public static const FLAG_BOTTOM:int = 2;
       
-      public static const FLAG_AUTOMAP:int = 28;
+      public static const FLAG_MARKET:int = 34;
+      
+      public static const FLAG_AUTOMAP:int = 29;
       
       protected static const GROUND_LAYER:int = 7;
       
-      public static const FLAG_TAKE:int = 16;
+      public static const FLAG_TAKE:int = 17;
       
-      public static const FLAG_ANIMATEALWAYS:int = 27;
+      public static const FLAG_ANIMATEALWAYS:int = 28;
+      
+      public static const SPRITE_CACHE_PAGE_COUNT:uint = 5 * 5;
       
       protected static const MAP_HEIGHT:int = 11;
       
-      public static const FLAG_ROTATE:int = 20;
+      public static const FLAG_ROTATE:int = 21;
+      
+      public static const FLAG_NOMOVEMENTANIMATION:int = 16;
       
       public static const FLAG_CUMULATIVE:int = 5;
       
@@ -109,9 +120,9 @@ package tibia.appearances
       
       public static const FLAG_UNSIGHT:int = 14;
       
-      public static const FLAG_LENSHELP:int = 29;
+      public static const FLAG_LENSHELP:int = 30;
       
-      public static const FLAG_FULLBANK:int = 30;
+      public static const FLAG_FULLBANK:int = 31;
       
       protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
       
@@ -123,9 +134,9 @@ package tibia.appearances
       
       protected static const MAP_MIN_Y:int = 24576;
       
-      public static const FLAG_DONTHIDE:int = 22;
+      public static const FLAG_DONTHIDE:int = 23;
       
-      public static const FLAG_SHIFT:int = 24;
+      public static const FLAG_SHIFT:int = 25;
       
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
@@ -147,31 +158,23 @@ package tibia.appearances
       
       protected static const MAP_WIDTH:int = 15;
       
-      public static const FLAG_TRANSLUCENT:int = 23;
+      public static const FLAG_TRANSLUCENT:int = 24;
        
-      private var m_QueueLoaded:Boolean = false;
-      
-      private var m_SpriteBitmap:BitmapData = null;
+      private var m_OutfitTypes:Vector.<tibia.appearances.AppearanceType>;
       
       private var m_ObjectTypes:Vector.<tibia.appearances.AppearanceType>;
       
-      private var m_SpriteBlockOffset:Array = null;
+      public var m_AsyncSpriteCache:AsyncSpriteCache = null;
       
-      private var m_QueueLoader:Loader = null;
-      
-      private var m_Queue:Vector.<Asset> = null;
+      private var m_AsyncCompressedSpriteProvider:AsyncCompressedSpriteProvider = null;
       
       private var m_MissileTypes:Vector.<tibia.appearances.AppearanceType>;
       
-      private var m_SpriteBlockColumns:uint = 0;
+      private var m_ObjectTypeInfoCache:Vector.<tibia.appearances.AppearanceTypeInfo>;
       
       private var m_MarketObjectTypes:Array;
       
-      private var m_OutfitTypes:Vector.<tibia.appearances.AppearanceType>;
-      
-      private var m_SpriteBlockLength:Array = null;
-      
-      private var m_ObjectTypeInfoCache:Vector.<tibia.appearances.AppearanceTypeInfo>;
+      private var m_SpritesInformation:tibia.appearances.SpritesInformation = null;
       
       private var m_EffectTypes:Vector.<tibia.appearances.AppearanceType>;
       
@@ -186,241 +189,9 @@ package tibia.appearances
          super();
       }
       
-      private function setTypeInfo(param1:Vector.<tibia.appearances.AppearanceTypeInfo>, param2:int, param3:int, param4:String) : void
-      {
-         var _loc5_:int = 0;
-         var _loc6_:int = param1.length - 1;
-         var _loc7_:int = 0;
-         var _loc8_:int = 0;
-         var _loc9_:int = -1;
-         while(_loc5_ <= _loc6_)
-         {
-            _loc7_ = (_loc5_ + _loc6_) / 2;
-            _loc8_ = AppearanceTypeRef.s_CompareExternal(param1[_loc7_],param2,param3);
-            if(_loc8_ < 0)
-            {
-               _loc5_ = _loc7_ + 1;
-               continue;
-            }
-            if(_loc8_ > 0)
-            {
-               _loc6_ = _loc7_ - 1;
-               continue;
-            }
-            _loc9_ = _loc7_;
-            break;
-         }
-         if(_loc9_ < 0)
-         {
-            param1.splice(_loc5_,0,new tibia.appearances.AppearanceTypeInfo(param2,param3,param4));
-         }
-         else
-         {
-            param1[_loc9_].name = param4;
-         }
-      }
-      
-      public function createEnvironmentalEffect(param1:int) : ObjectInstance
-      {
-         var _loc5_:Object = null;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc2_:int = 0;
-         var _loc3_:int = ENVIRONMENTAL_EFFECTS.length - 1;
-         var _loc4_:int = 0;
-         while(_loc2_ <= _loc3_)
-         {
-            _loc4_ = (_loc2_ + _loc3_) / 2;
-            _loc5_ = ENVIRONMENTAL_EFFECTS[_loc4_];
-            if(_loc5_.ID < param1)
-            {
-               _loc2_ = _loc4_ + 1;
-               continue;
-            }
-            if(_loc5_.ID > param1)
-            {
-               _loc3_ = _loc4_ - _loc4_;
-               continue;
-            }
-            _loc6_ = _loc5_.appearanceType;
-            _loc7_ = !!_loc5_.atmospheric?1:0;
-            return new ObjectInstance(_loc6_,this.m_ObjectTypes[_loc6_],_loc7_);
-         }
-         return null;
-      }
-      
-      public function getObjectType(param1:int) : tibia.appearances.AppearanceType
-      {
-         if(param1 >= AppearanceInstance.CREATURE && param1 < this.m_ObjectTypes.length)
-         {
-            return this.m_ObjectTypes[param1];
-         }
-         return null;
-      }
-      
-      public function createTextualEffectInstance(param1:int, param2:int, param3:Number) : TextualEffectInstance
-      {
-         return new TextualEffectInstance(param1,null,param2,param3);
-      }
-      
-      public function hasOutfitType(param1:int) : Boolean
-      {
-         return Boolean(this.m_QueueLoaded) && param1 >= 1 && param1 < this.m_OutfitTypes.length;
-      }
-      
-      public function setCachedObjectTypeName(param1:int, param2:int, param3:String) : void
-      {
-         if(param3 == null || param3.length < 1)
-         {
-            throw new ArgumentError("AppearanceStorage.setCachedObjectTypeName: Invalid name.");
-         }
-         this.setTypeInfo(this.m_ObjectTypeInfoCache,param1,param2,param3);
-      }
-      
-      public function createObjectInstance(param1:int, param2:int) : ObjectInstance
-      {
-         if(param1 >= AppearanceInstance.CREATURE && param1 < this.m_ObjectTypes.length)
-         {
-            return new ObjectInstance(param1,this.m_ObjectTypes[param1],param2);
-         }
-         return null;
-      }
-      
-      private function onLoaderComplete(param1:Event) : void
-      {
-         var a_Event:Event = param1;
-         var _Asset:SpritesAsset = null;
-         if(this.m_Queue != null && this.m_Queue.length > 0)
-         {
-            _Asset = this.m_Queue.shift() as SpritesAsset;
-         }
-         var _Bitmap:BitmapData = null;
-         if(this.m_QueueLoader != null && this.m_QueueLoader.contentLoaderInfo != null)
-         {
-            try
-            {
-               _Bitmap = Bitmap(this.m_QueueLoader.contentLoaderInfo.content).bitmapData;
-            }
-            catch(e:*)
-            {
-            }
-            this.m_QueueLoader.contentLoaderInfo.removeEventListener(Event.COMPLETE,this.onLoaderComplete);
-            this.m_QueueLoader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR,this.onLoaderError);
-            this.m_QueueLoader = null;
-         }
-         if(_Asset != null && _Bitmap != null)
-         {
-            this.mergeSpritesBitmap(_Asset.firstSpriteID,_Bitmap);
-            _Asset.unload();
-            _Bitmap.dispose();
-            System.pauseForGCIfCollectionImminent(0.5);
-            this.loadNext();
-         }
-         else
-         {
-            this.loadError();
-         }
-      }
-      
-      public function get marketObjectTypes() : Array
-      {
-         return this.m_MarketObjectTypes;
-      }
-      
-      public function setContent(param1:Vector.<Asset>) : void
-      {
-         var _loc3_:AppearancesAsset = null;
-         var _loc4_:int = 0;
-         var _loc2_:Boolean = Boolean(this.m_QueueLoaded) || this.m_Queue != null;
-         if(!_loc2_ && param1 != null && param1.length > 1)
-         {
-            _loc3_ = null;
-            _loc4_ = param1.length - 1;
-            while(_loc4_ >= 0)
-            {
-               if(param1[_loc4_] is AppearancesAsset)
-               {
-                  _loc3_ = AppearancesAsset(param1[_loc4_]);
-               }
-               else if(!(param1[_loc4_] is SpritesAsset))
-               {
-                  _loc3_ = null;
-                  break;
-               }
-               _loc4_--;
-            }
-            _loc2_ = _loc3_ == null || !this.loadAppearances(_loc3_.rawBytes) || !this.allocateSpritesBitmap();
-         }
-         if(!_loc2_)
-         {
-            this.m_Queue = param1;
-            this.loadNext();
-         }
-         else
-         {
-            this.loadError();
-         }
-      }
-      
-      private function getSprite(param1:uint, param2:Rectangle = null) : Rectangle
-      {
-         var _loc3_:* = param1 >> 29;
-         var _loc4_:uint = param1 & 268435455;
-         if(this.m_SpriteBlockOffset == null || this.m_SpriteBlockLength == null || _loc3_ < 0 || _loc4_ >= this.m_SpriteBlockLength[_loc3_])
-         {
-            return null;
-         }
-         if(param2 == null)
-         {
-            param2 = new Rectangle();
-         }
-         var _loc5_:uint = this.m_SpriteBlockOffset[_loc3_];
-         switch(_loc3_)
-         {
-            case 0:
-               _loc5_ = _loc5_ + (_loc4_ >>> 2);
-               param2.x = (_loc4_ & 1) * FIELD_SIZE;
-               param2.y = (_loc4_ & 2) * (FIELD_SIZE >>> 1);
-               param2.width = FIELD_SIZE;
-               param2.height = FIELD_SIZE;
-               break;
-            case 1:
-               _loc5_ = _loc5_ + (_loc4_ >>> 1);
-               param2.x = (_loc4_ & 1) * FIELD_SIZE;
-               param2.y = 0;
-               param2.width = FIELD_SIZE;
-               param2.height = FIELD_SIZE << 1;
-               break;
-            case 2:
-               _loc5_ = _loc5_ + (_loc4_ >>> 1);
-               param2.x = 0;
-               param2.y = (_loc4_ & 1) * FIELD_SIZE;
-               param2.width = FIELD_SIZE << 1;
-               param2.height = FIELD_SIZE;
-               break;
-            case 3:
-               _loc5_ = _loc5_ + _loc4_;
-               param2.x = 0;
-               param2.y = 0;
-               param2.width = FIELD_SIZE << 1;
-               param2.height = FIELD_SIZE << 1;
-         }
-         param2.x = param2.x + _loc5_ % this.m_SpriteBlockColumns * (FIELD_SIZE << 1);
-         param2.y = param2.y + int(_loc5_ / this.m_SpriteBlockColumns) * (FIELD_SIZE << 1);
-         return param2;
-      }
-      
-      public function createMissileInstance(param1:uint, param2:Vector3D, param3:Vector3D) : MissileInstance
-      {
-         if(param1 >= 1 && param1 < this.m_MissileTypes.length)
-         {
-            return new MissileInstance(param1,this.m_MissileTypes[param1],param2,param3);
-         }
-         return null;
-      }
-      
       private function postprocessAppearances() : Boolean
       {
+         var CachedSpriteInformations:Dictionary = null;
          var _Type:tibia.appearances.AppearanceType = null;
          var i:int = 0;
          var j:int = 0;
@@ -454,7 +225,7 @@ package tibia.appearances
             j = 0;
             while(j < 4)
             {
-               _Type.sprite[i * 4 + j] = this.m_EffectTypes[13].sprite[i + 1].clone();
+               _Type.spriteIDs[i * 4 + j] = this.m_EffectTypes[13].spriteIDs[i + 1];
                j++;
             }
             i++;
@@ -497,26 +268,69 @@ package tibia.appearances
          _Type.marketTradeAs = MarketWidget.REQUEST_OWN_HISTORY;
          this.m_MarketObjectTypes.push(_Type);
          this.m_MarketObjectTypes.sortOn("marketTradeAs",Array.NUMERIC);
-         var UpdateSprite:Function = function(param1:AppearanceType, param2:int, param3:Vector.<AppearanceType>):void
+         CachedSpriteInformations = this.m_SpritesInformation.cachedSpriteInformations;
+         var UpdateAppearanceTypes:Function = function(param1:AppearanceType, param2:int, param3:Vector.<AppearanceType>):void
          {
-            var _loc4_:Rectangle = null;
+            var _loc4_:uint = 0;
+            var _loc5_:uint = 0;
             if(param1 != null)
             {
-               param1.bitmap = m_SpriteBitmap;
-               for each(_loc4_ in param1.sprite)
+               if(this == m_OutfitTypes && param1.layers == 2)
                {
-                  if(_loc4_.x == -1)
+                  param1.spriteProvider = m_AsyncCompressedSpriteProvider;
+               }
+               else
+               {
+                  param1.spriteProvider = m_AsyncSpriteCache;
+               }
+               _loc4_ = 0;
+               while(_loc4_ < param1.spriteIDs.length)
+               {
+                  param1.cachedSpriteInformations[_loc4_] = CachedSpriteInformations[param1.spriteIDs[_loc4_]];
+                  _loc5_ = m_SpritesInformation.getFirstSpriteID(param1.spriteIDs[_loc4_]);
+                  if(param1.spritesheetIDs.indexOf(_loc5_) < 0)
                   {
-                     getSprite(_loc4_.y,_loc4_);
+                     param1.spritesheetIDs.push(_loc5_);
                   }
+                  _loc4_++;
                }
             }
          };
-         this.m_ObjectTypes.forEach(UpdateSprite);
-         this.m_OutfitTypes.forEach(UpdateSprite);
-         this.m_EffectTypes.forEach(UpdateSprite);
-         this.m_MissileTypes.forEach(UpdateSprite);
+         this.m_ObjectTypes.forEach(UpdateAppearanceTypes);
+         this.m_OutfitTypes.forEach(UpdateAppearanceTypes,this.m_OutfitTypes);
+         this.m_EffectTypes.forEach(UpdateAppearanceTypes);
+         this.m_MissileTypes.forEach(UpdateAppearanceTypes);
          return true;
+      }
+      
+      public function setAssetProvider(param1:IAssetProvider) : void
+      {
+         var _loc4_:Event = null;
+         if(param1 == null)
+         {
+            throw new ArgumentError("AppearanceStorage.setAssetProvider: asset provider must not be null");
+         }
+         var _loc2_:Boolean = false;
+         this.m_SpritesInformation = new tibia.appearances.SpritesInformation(param1.getSpriteAssets());
+         this.m_AsyncCompressedSpriteProvider = new AsyncCompressedSpriteProvider(param1,this.m_SpritesInformation,COMPRESSED_IMAGES_CACHE_MEMORY);
+         this.m_AsyncSpriteCache = new AsyncSpriteCache(this.m_AsyncCompressedSpriteProvider,this.m_SpritesInformation.cachedSpriteInformations);
+         var _loc3_:AppearancesAsset = param1.getAppearances();
+         _loc2_ = _loc3_ == null || !this.loadAppearances(_loc3_.rawBytes);
+         if(this.postprocessAppearances())
+         {
+            param1.removeAsset(_loc3_);
+            System.pauseForGCIfCollectionImminent(0.25);
+            _loc4_ = new Event(Event.COMPLETE);
+            dispatchEvent(_loc4_);
+         }
+         else
+         {
+            this.loadError();
+         }
+         if(_loc2_)
+         {
+            this.loadError();
+         }
       }
       
       private function loadError() : void
@@ -524,40 +338,6 @@ package tibia.appearances
          this.reset();
          var _loc1_:ErrorEvent = new ErrorEvent(ErrorEvent.ERROR);
          dispatchEvent(_loc1_);
-      }
-      
-      private function mergeSpritesBitmap(param1:uint, param2:BitmapData) : Boolean
-      {
-         if(param2 == null)
-         {
-            return false;
-         }
-         var _loc3_:Rectangle = this.getSprite(param1);
-         if(_loc3_ == null)
-         {
-            return false;
-         }
-         _loc3_.x = 0;
-         _loc3_.y = 0;
-         var _loc4_:Rectangle = null;
-         this.m_SpriteBitmap.lock();
-         while((_loc4_ = this.getSprite(param1,_loc4_)) != null)
-         {
-            this.m_SpriteBitmap.copyPixels(param2,_loc3_,_loc4_.topLeft);
-            _loc3_.x = _loc3_.x + _loc3_.width;
-            if(_loc3_.x >= param2.width)
-            {
-               _loc3_.x = 0;
-               _loc3_.y = _loc3_.y + _loc3_.height;
-               if(_loc3_.y >= param2.height)
-               {
-                  break;
-               }
-            }
-            param1++;
-         }
-         this.m_SpriteBitmap.unlock();
-         return true;
       }
       
       private function loadAppearances(param1:ByteArray) : Boolean
@@ -608,36 +388,47 @@ package tibia.appearances
          return _loc3_;
       }
       
-      public function reset() : void
+      public function getObjectType(param1:int) : tibia.appearances.AppearanceType
       {
-         this.m_ObjectTypes.length = 0;
-         this.m_OutfitTypes.length = 0;
-         this.m_MissileTypes.length = 0;
-         this.m_EffectTypes.length = 0;
-         this.m_MarketObjectTypes.length = 0;
-         this.m_Queue = null;
-         this.m_QueueLoaded = false;
-         if(this.m_QueueLoader != null)
+         if(param1 >= AppearanceInstance.CREATURE && param1 < this.m_ObjectTypes.length)
          {
-            this.m_QueueLoader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR,this.onLoaderError);
-            this.m_QueueLoader.contentLoaderInfo.removeEventListener(Event.COMPLETE,this.onLoaderComplete);
-            try
-            {
-               this.m_QueueLoader.close();
-            }
-            catch(_Error:*)
-            {
-            }
-            this.m_QueueLoader = null;
+            return this.m_ObjectTypes[param1];
          }
-         this.m_ObjectTypeInfoCache.length = 0;
-         if(this.m_SpriteBitmap != null)
+         return null;
+      }
+      
+      private function setTypeInfo(param1:Vector.<tibia.appearances.AppearanceTypeInfo>, param2:int, param3:int, param4:String) : void
+      {
+         var _loc5_:int = 0;
+         var _loc6_:int = param1.length - 1;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
+         var _loc9_:int = -1;
+         while(_loc5_ <= _loc6_)
          {
-            this.m_SpriteBitmap.dispose();
+            _loc7_ = (_loc5_ + _loc6_) / 2;
+            _loc8_ = AppearanceTypeRef.s_CompareExternal(param1[_loc7_],param2,param3);
+            if(_loc8_ < 0)
+            {
+               _loc5_ = _loc7_ + 1;
+               continue;
+            }
+            if(_loc8_ > 0)
+            {
+               _loc6_ = _loc7_ - 1;
+               continue;
+            }
+            _loc9_ = _loc7_;
+            break;
          }
-         this.m_SpriteBitmap = null;
-         this.m_SpriteBlockOffset = null;
-         this.m_SpriteBlockLength = null;
+         if(_loc9_ < 0)
+         {
+            param1.splice(_loc5_,0,new tibia.appearances.AppearanceTypeInfo(param2,param3,param4));
+         }
+         else
+         {
+            param1[_loc9_].name = param4;
+         }
       }
       
       public function getOutfitType(param1:int) : tibia.appearances.AppearanceType
@@ -658,70 +449,33 @@ package tibia.appearances
          return null;
       }
       
-      public function get isLoaded() : Boolean
+      public function reset() : void
       {
-         return this.m_QueueLoaded;
+         this.m_ObjectTypes.length = 0;
+         this.m_OutfitTypes.length = 0;
+         this.m_MissileTypes.length = 0;
+         this.m_EffectTypes.length = 0;
+         this.m_MarketObjectTypes.length = 0;
+         this.m_ObjectTypeInfoCache.length = 0;
       }
       
-      private function onLoaderError(param1:Event) : void
+      public function createTextualEffectInstance(param1:int, param2:int, param3:Number) : TextualEffectInstance
       {
-         if(this.m_QueueLoader != null)
-         {
-            this.m_QueueLoader.contentLoaderInfo.removeEventListener(Event.COMPLETE,this.onLoaderComplete);
-            this.m_QueueLoader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR,this.onLoaderError);
-         }
-         this.loadError();
+         return new TextualEffectInstance(param1,null,param2,param3);
       }
       
-      private function allocateSpritesBitmap() : Boolean
+      public function get marketObjectTypes() : Array
       {
-         var SpriteLength:Array = null;
-         var BlockLength:Array = null;
-         var BlockTotal:uint = 0;
-         var BlockColumns:uint = 0;
-         var GetSpriteLength:Function = function(param1:AppearanceType, param2:int, param3:Vector.<AppearanceType>):void
+         return this.m_MarketObjectTypes;
+      }
+      
+      public function createObjectInstance(param1:int, param2:int) : ObjectInstance
+      {
+         if(param1 >= AppearanceInstance.CREATURE && param1 < this.m_ObjectTypes.length)
          {
-            var _loc4_:Rectangle = null;
-            var _loc5_:* = 0;
-            var _loc6_:uint = 0;
-            if(param1 != null)
-            {
-               for each(_loc4_ in param1.sprite)
-               {
-                  if(_loc4_.x == -1)
-                  {
-                     _loc5_ = uint(_loc4_.y) >> 29;
-                     _loc6_ = uint(_loc4_.y) & 268435455;
-                     if(_loc5_ >= 0)
-                     {
-                        this[_loc5_] = Math.max(this[_loc5_],_loc6_ + 1);
-                     }
-                  }
-               }
-            }
-         };
-         SpriteLength = [0,0,0,0];
-         this.m_ObjectTypes.forEach(GetSpriteLength,SpriteLength);
-         this.m_OutfitTypes.forEach(GetSpriteLength,SpriteLength);
-         this.m_EffectTypes.forEach(GetSpriteLength,SpriteLength);
-         this.m_MissileTypes.forEach(GetSpriteLength,SpriteLength);
-         BlockLength = [Math.ceil(SpriteLength[0] / 4),Math.ceil(SpriteLength[1] / 2),Math.ceil(SpriteLength[2] / 2),SpriteLength[3]];
-         BlockTotal = BlockLength[0] + BlockLength[1] + BlockLength[2] + BlockLength[3];
-         BlockColumns = Math.ceil(Math.sqrt(BlockTotal));
-         var BlockRows:uint = Math.ceil(BlockTotal / BlockColumns);
-         var AllocationSuccessfull:Boolean = false;
-         try
-         {
-            this.m_SpriteBitmap = new BitmapData(BlockColumns * (FIELD_SIZE << 1),BlockRows * (FIELD_SIZE << 1),true,4278255360);
-            this.m_SpriteBlockColumns = BlockColumns;
-            this.m_SpriteBlockOffset = [0,BlockLength[0],BlockLength[0] + BlockLength[1],BlockLength[0] + BlockLength[1] + BlockLength[2]];
-            this.m_SpriteBlockLength = SpriteLength;
-            AllocationSuccessfull = true;
+            return new ObjectInstance(param1,this.m_ObjectTypes[param1],param2);
          }
-         catch(_Error:Error)
-         {
-         }
-         return AllocationSuccessfull;
+         return null;
       }
       
       public function createEffectInstance(param1:int) : EffectInstance
@@ -733,46 +487,58 @@ package tibia.appearances
          return null;
       }
       
+      public function setCachedObjectTypeName(param1:int, param2:int, param3:String) : void
+      {
+         if(param3 == null || param3.length < 1)
+         {
+            throw new ArgumentError("AppearanceStorage.setCachedObjectTypeName: Invalid name.");
+         }
+         this.setTypeInfo(this.m_ObjectTypeInfoCache,param1,param2,param3);
+      }
+      
       public function getMarketObjectType(param1:*) : tibia.appearances.AppearanceType
       {
-         var _loc2_:int = 0;
+         var _loc6_:tibia.appearances.AppearanceType = null;
+         var _loc2_:int = -1;
+         if(param1 is tibia.appearances.AppearanceType && Boolean(AppearanceType(param1).isMarket))
+         {
+            _loc2_ = AppearanceType(param1).marketTradeAs;
+         }
+         else
+         {
+            _loc2_ = int(param1);
+         }
          var _loc3_:int = 0;
          var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:tibia.appearances.AppearanceType = null;
-         if(this.m_QueueLoaded)
+         var _loc5_:int = this.m_MarketObjectTypes.length - 1;
+         while(_loc4_ <= _loc5_)
          {
-            _loc2_ = -1;
-            if(param1 is tibia.appearances.AppearanceType && Boolean(AppearanceType(param1).isMarket))
+            _loc3_ = _loc4_ + _loc5_ >>> 1;
+            _loc6_ = AppearanceType(this.m_MarketObjectTypes[_loc3_]);
+            if(_loc6_.marketTradeAs == _loc2_)
             {
-               _loc2_ = AppearanceType(param1).marketTradeAs;
+               return _loc6_;
+            }
+            if(_loc6_.marketTradeAs < _loc2_)
+            {
+               _loc4_ = _loc3_ + 1;
             }
             else
             {
-               _loc2_ = int(param1);
-            }
-            _loc3_ = 0;
-            _loc4_ = 0;
-            _loc5_ = this.m_MarketObjectTypes.length - 1;
-            while(_loc4_ <= _loc5_)
-            {
-               _loc3_ = _loc4_ + _loc5_ >>> 1;
-               _loc6_ = AppearanceType(this.m_MarketObjectTypes[_loc3_]);
-               if(_loc6_.marketTradeAs == _loc2_)
-               {
-                  return _loc6_;
-               }
-               if(_loc6_.marketTradeAs < _loc2_)
-               {
-                  _loc4_ = _loc3_ + 1;
-               }
-               else
-               {
-                  _loc5_ = _loc3_ - 1;
-               }
+               _loc5_ = _loc3_ - 1;
             }
          }
          return null;
+      }
+      
+      private function onLoaderError(param1:Event) : void
+      {
+         this.loadError();
+      }
+      
+      public function hasOutfitType(param1:int) : Boolean
+      {
+         return param1 >= 1 && param1 < this.m_OutfitTypes.length;
       }
       
       private function readAppearanceType(param1:ByteArray, param2:Vector.<tibia.appearances.AppearanceType>, param3:int, param4:int = 0) : Boolean
@@ -821,7 +587,7 @@ package tibia.appearances
                _loc7_ = 0;
                while(_loc7_ < _loc5_.numSprites)
                {
-                  _loc5_.sprite[_loc7_] = new Rectangle(-1,param1.readUnsignedInt(),0,0);
+                  _loc5_.spriteIDs[_loc7_] = param1.readUnsignedInt();
                   _loc7_++;
                }
                _loc5_.isCachable = !_loc5_.isAnimation && !_loc5_.isHangable && !_loc5_.isLight && _loc5_.exactSize + Math.max(_loc5_.displacementX,_loc5_.displacementY) <= FIELD_CACHESIZE;
@@ -898,6 +664,9 @@ package tibia.appearances
                   continue;
                case FLAG_AVOID:
                   _loc5_.isAvoid = true;
+                  continue;
+               case FLAG_NOMOVEMENTANIMATION:
+                  _loc5_.preventMovementAnimation = true;
                   continue;
                case FLAG_TAKE:
                   _loc5_.isTakeable = true;
@@ -981,47 +750,33 @@ package tibia.appearances
          throw new Error("AppearanceStorage.readAppearanceType: Invalid flag: " + _loc6_ + ".");
       }
       
-      private function loadNext() : void
+      public function createEnvironmentalEffect(param1:int) : ObjectInstance
       {
-         var _loc1_:Asset = null;
-         var _loc2_:Event = null;
-         if(Boolean(this.m_QueueLoaded) || this.m_Queue == null || this.m_QueueLoader != null)
+         var _loc5_:Object = null;
+         var _loc6_:int = 0;
+         var _loc7_:int = 0;
+         var _loc2_:int = 0;
+         var _loc3_:int = ENVIRONMENTAL_EFFECTS.length - 1;
+         var _loc4_:int = 0;
+         while(_loc2_ <= _loc3_)
          {
-            this.loadError();
-         }
-         else if(this.m_Queue.length > 0)
-         {
-            _loc1_ = this.m_Queue[0];
-            if(_loc1_ is SpritesAsset)
+            _loc4_ = (_loc2_ + _loc3_) / 2;
+            _loc5_ = ENVIRONMENTAL_EFFECTS[_loc4_];
+            if(_loc5_.ID < param1)
             {
-               this.m_QueueLoader = new Loader();
-               this.m_QueueLoader.contentLoaderInfo.addEventListener(Event.COMPLETE,this.onLoaderComplete);
-               this.m_QueueLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,this.onLoaderError);
-               this.m_QueueLoader.loadBytes(_loc1_.rawBytes);
+               _loc2_ = _loc4_ + 1;
+               continue;
             }
-            else if(_loc1_ is AppearancesAsset)
+            if(_loc5_.ID > param1)
             {
-               this.m_Queue.shift();
-               this.loadNext();
+               _loc3_ = _loc4_ - _loc4_;
+               continue;
             }
-            else
-            {
-               this.loadError();
-            }
+            _loc6_ = _loc5_.appearanceType;
+            _loc7_ = !!_loc5_.atmospheric?1:0;
+            return new ObjectInstance(_loc6_,this.m_ObjectTypes[_loc6_],_loc7_);
          }
-         else if(this.postprocessAppearances())
-         {
-            this.m_QueueLoaded = true;
-            this.m_Queue = null;
-            this.m_QueueLoader = null;
-            System.pauseForGCIfCollectionImminent(0.25);
-            _loc2_ = new Event(Event.COMPLETE);
-            dispatchEvent(_loc2_);
-         }
-         else
-         {
-            this.loadError();
-         }
+         return null;
       }
       
       private function buildAnimationLoop(param1:tibia.appearances.AppearanceType, param2:int, param3:int) : void
@@ -1046,7 +801,7 @@ package tibia.appearances
             while(param2 < param1.phases)
             {
                _loc6_ = param2 * param1.patternDepth * param1.patternHeight * param1.patternWidth;
-               if(param1.sprite[_loc6_].equals(param1.sprite[0]))
+               if(param1.spriteIDs[_loc6_] == param1.spriteIDs[0])
                {
                   break;
                }
@@ -1076,7 +831,7 @@ package tibia.appearances
                   {
                      _loc10_ = ((_loc4_ % param2 * param1.patternDepth + _loc9_) * param1.patternHeight + _loc8_) * param1.patternWidth + _loc7_;
                      _loc11_ = ((_loc4_ * param1.patternDepth + _loc9_) * param1.patternHeight + _loc8_) * param1.patternWidth + _loc7_;
-                     param1.sprite[_loc11_] = param1.sprite[_loc10_].clone();
+                     param1.spriteIDs[_loc11_] = param1.spriteIDs[_loc10_];
                      param1.phaseDuration[_loc4_] = param1.phaseDuration[_loc4_ % param2];
                      _loc9_++;
                   }
@@ -1088,7 +843,7 @@ package tibia.appearances
          }
          var _loc5_:int = param3 * param1.patternDepth * param1.patternHeight * param1.patternWidth;
          param1.numSprites = _loc5_;
-         param1.sprite.length = _loc5_;
+         param1.spriteIDs.length = _loc5_;
          param1.phases = param3;
          param1.phaseDuration.length = param3;
          param1.totalDuration = 0;
@@ -1131,6 +886,15 @@ package tibia.appearances
                continue;
             }
             return param1[_loc6_];
+         }
+         return null;
+      }
+      
+      public function createMissileInstance(param1:uint, param2:Vector3D, param3:Vector3D) : MissileInstance
+      {
+         if(param1 >= 1 && param1 < this.m_MissileTypes.length)
+         {
+            return new MissileInstance(param1,this.m_MissileTypes[param1],param2,param3);
          }
          return null;
       }

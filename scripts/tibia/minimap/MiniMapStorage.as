@@ -39,15 +39,19 @@ package tibia.minimap
       
       protected static const MM_SECTOR_SIZE:int = 256;
       
-      protected static const MM_IE_TIMEOUT:Number = 50;
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
       
       protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
       
       protected static const PATH_NORTH_WEST:int = 4;
       
+      protected static const MM_IE_TIMEOUT:Number = 50;
+      
       protected static const MM_IO_TIMEOUT:Number = 500;
       
       protected static const MM_SIDEBAR_ZOOM_MIN:int = -1;
+      
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
       
       protected static const FIELD_HEIGHT:int = 24;
       
@@ -59,25 +63,27 @@ package tibia.minimap
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
-      
       protected static const MM_SIDEBAR_ZOOM_MAX:int = 2;
+      
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const PATH_ERROR_UNREACHABLE:int = -4;
       
       protected static const FIELD_SIZE:int = 32;
       
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
+      
       protected static const PLAYER_OFFSET_X:int = 8;
       
       protected static const PLAYER_OFFSET_Y:int = 6;
-      
-      protected static const PATH_NORTH:int = 3;
       
       protected static const MAP_MAX_X:int = MAP_MIN_X + (1 << 14 - 1);
       
       protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
       
       protected static const MAP_MAX_Z:int = 15;
+      
+      protected static const PATH_NORTH:int = 3;
       
       private static const MARK_ICON_BITMAP:BitmapData = (new MARK_ICON_CLASS() as BitmapAsset).bitmapData;
       
@@ -129,9 +135,9 @@ package tibia.minimap
       
       protected static const PATH_MAX_STEPS:int = 128;
       
-      protected static const MM_CACHE_SIZE:int = 48;
+      protected static const MM_STORAGE_MAX_VERSION:int = 1;
       
-      protected static const MM_SIDEBAR_HIGHLIGHT_DURATION:Number = 10000;
+      protected static const MM_CACHE_SIZE:int = 48;
       
       private static const MARK_ICON_CLASS:Class = MiniMapStorage_MARK_ICON_CLASS;
       
@@ -147,8 +153,6 @@ package tibia.minimap
       
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
-      protected static const MM_STORAGE_MAX_VERSION:int = 1;
-      
       protected static const MAPSIZE_W:int = 10;
       
       protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
@@ -156,6 +160,8 @@ package tibia.minimap
       protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
       
       protected static const MAPSIZE_Z:int = 8;
+      
+      protected static const MM_SIDEBAR_HIGHLIGHT_DURATION:Number = 10000;
       
       protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       

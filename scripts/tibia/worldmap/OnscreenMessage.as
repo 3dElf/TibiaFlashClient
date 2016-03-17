@@ -20,6 +20,10 @@ package tibia.worldmap
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
+      
       protected static const UNDERGROUND_LAYER:int = 2;
       
       protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
@@ -27,8 +31,6 @@ package tibia.worldmap
       protected static const FIELD_HEIGHT:int = 24;
       
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
-      
-      private static var s_NextID:int = 0;
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
@@ -41,6 +43,8 @@ package tibia.worldmap
       protected static const PLAYER_OFFSET_Y:int = 6;
       
       protected static const FIELD_SIZE:int = 32;
+      
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
       
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
@@ -68,13 +72,15 @@ package tibia.worldmap
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
       
+      private static var s_NextID:int = 0;
+      
       protected static const GROUND_LAYER:int = 7;
        
       protected var m_TTL:Number = NaN;
       
       protected var m_Speaker:String = null;
       
-      protected var m_Mode:int;
+      protected var m_Mode:int = 0;
       
       protected var m_CacheText:String = null;
       
@@ -90,7 +96,6 @@ package tibia.worldmap
       
       public function OnscreenMessage(param1:int, param2:String, param3:int, param4:int, param5:String)
       {
-         this.m_Mode = MessageMode.MESSAGE_NONE;
          super();
          if(param1 <= 0)
          {

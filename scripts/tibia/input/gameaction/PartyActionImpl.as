@@ -19,6 +19,8 @@ package tibia.input.gameaction
       
       public static const LEAVE:int = 1;
       
+      public static const JOIN_AGGRESSION:int = 7;
+      
       public static const EXCLUDE:int = 3;
        
       protected var m_Creature:Creature = null;
@@ -28,11 +30,11 @@ package tibia.input.gameaction
       public function PartyActionImpl(param1:int, param2:Creature)
       {
          super();
-         if(param1 != JOIN && param1 != LEAVE && param1 != INVITE && param1 != EXCLUDE && param1 != PASS_LEADERSHIP && param1 != ENABLE_SHARED_EXPERIENCE && param1 != DISABLE_SHARED_EXPERIENCE)
+         if(param1 != JOIN && param1 != LEAVE && param1 != INVITE && param1 != EXCLUDE && param1 != PASS_LEADERSHIP && param1 != ENABLE_SHARED_EXPERIENCE && param1 != DISABLE_SHARED_EXPERIENCE && param1 != JOIN_AGGRESSION)
          {
             throw new ArgumentError("PartyActionImpl.PartyActionImpl: Invalid type: " + param1 + ".");
          }
-         if((param1 == JOIN || param1 == INVITE || param1 == EXCLUDE || param1 == PASS_LEADERSHIP) && param2 == null)
+         if((param1 == JOIN || param1 == INVITE || param1 == EXCLUDE || param1 == PASS_LEADERSHIP || param1 == JOIN_AGGRESSION) && param2 == null)
          {
             throw new ArgumentError("PartyActionImpl.PartyActionImpl: Invalid creature for type: " + param1 + ".");
          }
@@ -67,6 +69,9 @@ package tibia.input.gameaction
                   break;
                case DISABLE_SHARED_EXPERIENCE:
                   _loc2_.sendCSHAREEXPERIENCE(false);
+                  break;
+               case JOIN_AGGRESSION:
+                  _loc2_.sendCJOINAGGRESSION(this.m_Creature.ID);
             }
          }
       }

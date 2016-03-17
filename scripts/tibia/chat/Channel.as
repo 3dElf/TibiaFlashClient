@@ -17,7 +17,7 @@ package tibia.chat
       
       public static const MAX_NAME_LENGTH:int = 30;
        
-      protected var m_SendMode:int = 0;
+      protected var m_SendMode:int;
       
       protected var m_SendAllowed:Boolean = true;
       
@@ -33,6 +33,7 @@ package tibia.chat
       
       public function Channel(param1:Object, param2:String, param3:int)
       {
+         this.m_SendMode = MessageMode.MESSAGE_NONE;
          super();
          this.m_ID = Channel.s_NormaliseIdentifier(param1);
          this.m_Name = param2;

@@ -17,6 +17,7 @@ package tibia.game
    import mx.controls.Image;
    import tibia.appearances.AppearanceType;
    import flash.geom.Rectangle;
+   import tibia.appearances.widgetClasses.CachedSpriteInformation;
    import flash.display.BitmapData;
    import flash.display.Bitmap;
    import tibia.appearances.AppearanceInstance;
@@ -178,8 +179,9 @@ package tibia.game
          var _loc5_:Number = NaN;
          var _loc6_:AppearanceType = null;
          var _loc7_:Rectangle = null;
-         var _loc8_:BitmapData = null;
-         var _loc9_:Bitmap = null;
+         var _loc8_:CachedSpriteInformation = null;
+         var _loc9_:BitmapData = null;
+         var _loc10_:Bitmap = null;
          if(this.m_DragStart != null && this.m_DragPosition != -1 && this.m_DragObject != null && param1.currentTarget is UIComponent)
          {
             _loc2_ = new DragSource();
@@ -194,14 +196,16 @@ package tibia.game
             if(_loc6_ != null && _loc6_.ID != AppearanceInstance.CREATURE && !_loc6_.isBank && !_loc6_.isClip && !_loc6_.isBottom && !_loc6_.isTop)
             {
                _loc7_ = new Rectangle();
-               _loc8_ = this.m_DragObject.getSprite(-1,-1,-1,-1,_loc7_);
-               _loc9_ = new Bitmap();
-               if(_loc7_ != null && _loc8_ != null)
+               _loc8_ = this.m_DragObject.getSprite(-1,-1,-1,-1);
+               _loc9_ = _loc8_.bitmapData;
+               _loc7_.copyFrom(_loc8_.rectangle);
+               _loc10_ = new Bitmap();
+               if(_loc7_ != null && _loc9_ != null)
                {
-                  _loc9_.bitmapData = new BitmapData(_loc7_.width,_loc7_.height);
-                  _loc9_.bitmapData.copyPixels(_loc8_,_loc7_,new Point(0,0));
+                  _loc10_.bitmapData = new BitmapData(_loc7_.width,_loc7_.height);
+                  _loc10_.bitmapData.copyPixels(_loc9_,_loc7_,new Point(0,0));
                }
-               _loc3_.source = _loc9_;
+               _loc3_.source = _loc10_;
                _loc4_ = _loc7_.width - _loc6_.exactSize;
                _loc5_ = _loc7_.height - _loc6_.exactSize;
             }

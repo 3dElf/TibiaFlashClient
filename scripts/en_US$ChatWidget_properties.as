@@ -35,7 +35,7 @@ package
             "CTX_TAB_SHOW_RIGHT":"Show in Secondary Channel Window",
             "CTX_VIEW_COPY_SELECTED_TEXT":"Copy",
             "ACTION_INVITE_PROMPT":"Please enter a character name:",
-            "ACTION_SAVE_FAILURE":"An internal error occured while saving the above messages. The channel contents were not saved.",
+            "ACTION_SAVE_FAILURE":"An internal error occurred while saving the above messages. The channel contents were not saved.",
             "CTX_VIEW_COPY_MESSAGE":"Copy Message",
             "CTX_VIEW_PLAYER_UNIGNORE":"Unignore {0}",
             "ACTION_MESSAGE_TITLE":"Open a private message channel",

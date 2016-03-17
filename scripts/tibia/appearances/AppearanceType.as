@@ -1,14 +1,14 @@
 package tibia.appearances
 {
-   import flash.display.BitmapData;
-   import flash.geom.Rectangle;
+   import tibia.appearances.widgetClasses.ISpriteProvider;
+   import tibia.appearances.widgetClasses.CachedSpriteInformation;
    
    public class AppearanceType
    {
        
-      public var isMarket:Boolean = false;
-      
       public var isHookEast:Boolean = false;
+      
+      public var isMarket:Boolean = false;
       
       public var isUnmoveable:Boolean = false;
       
@@ -33,8 +33,6 @@ package tibia.appearances
       public var isLiquidContainer:Boolean = false;
       
       public var isLight:Boolean = false;
-      
-      public var bitmap:BitmapData = null;
       
       public var phaseDuration:Vector.<int>;
       
@@ -94,6 +92,8 @@ package tibia.appearances
       
       public var exactSize:int = 0;
       
+      public var preventMovementAnimation:Boolean = false;
+      
       public var isLensHelp:Boolean = false;
       
       public var marketNameLowerCase:String = null;
@@ -106,9 +106,9 @@ package tibia.appearances
       
       public var isCumulative:Boolean = false;
       
-      public var isAutomap:Boolean = false;
+      public var spritesheetIDs:Vector.<uint>;
       
-      public var sprite:Vector.<Rectangle>;
+      public var isAutomap:Boolean = false;
       
       public var width:int = 0;
       
@@ -118,9 +118,13 @@ package tibia.appearances
       
       public var isWriteableOnce:Boolean = false;
       
+      public var spriteIDs:Vector.<uint>;
+      
       public var isMultiUse:Boolean = false;
       
       public var marketTradeAs:int = 0;
+      
+      public var spriteProvider:ISpriteProvider = null;
       
       public var patternHeight:int = 0;
       
@@ -138,12 +142,16 @@ package tibia.appearances
       
       public var totalDuration:int = 0;
       
+      public var cachedSpriteInformations:Vector.<CachedSpriteInformation>;
+      
       public var isRotateable:Boolean = false;
       
       public function AppearanceType(param1:int)
       {
          this.phaseDuration = new Vector.<int>();
-         this.sprite = new Vector.<Rectangle>();
+         this.spriteIDs = new Vector.<uint>();
+         this.spritesheetIDs = new Vector.<uint>();
+         this.cachedSpriteInformations = new Vector.<CachedSpriteInformation>();
          super();
          this.ID = param1;
       }

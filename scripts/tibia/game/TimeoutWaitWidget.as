@@ -63,7 +63,7 @@ package tibia.game
             if(_loc2_ <= 0)
             {
                Tibia.s_GetSecondaryTimer().removeEventListener(TimerEvent.TIMER,this.onTimer);
-               this.onTimeoutOccured();
+               this.onTimeoutOccurred();
             }
             else
             {
@@ -138,13 +138,6 @@ package tibia.game
          }
       }
       
-      protected function onTimeoutOccured() : void
-      {
-         var _loc1_:CloseEvent = new CloseEvent(CloseEvent.CLOSE);
-         _loc1_.detail = TIMOUT_EXPIRED;
-         dispatchEvent(_loc1_);
-      }
-      
       override public function show() : void
       {
          super.show();
@@ -153,6 +146,13 @@ package tibia.game
             this.m_ShowTimestamp = getTimer();
             Tibia.s_GetSecondaryTimer().addEventListener(TimerEvent.TIMER,this.onTimer);
          }
+      }
+      
+      protected function onTimeoutOccurred() : void
+      {
+         var _loc1_:CloseEvent = new CloseEvent(CloseEvent.CLOSE);
+         _loc1_.detail = TIMOUT_EXPIRED;
+         dispatchEvent(_loc1_);
       }
    }
 }

@@ -40,6 +40,10 @@ package tibia.worldmap.widgetClasses
       
       public static const COLOUR_ABOVE_GROUND:Colour = new Colour(200,200,255);
       
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
+      
       protected static const UNDERGROUND_LAYER:int = 2;
       
       protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
@@ -61,6 +65,8 @@ package tibia.worldmap.widgetClasses
       public static const LIGHTMAP_SHRINK_FACTOR:uint = 8;
       
       protected static const FIELD_SIZE:int = 32;
+      
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
       
       protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
@@ -204,13 +210,13 @@ package tibia.worldmap.widgetClasses
          var _loc10_:int = _loc7_ + param4;
          var _loc11_:int = _loc8_ - param4;
          var _loc12_:int = _loc8_ + param4;
-         var _loc13_:Number = 0;
-         var _loc14_:Number = 0;
-         var _loc15_:Number = param4;
+         var _loc13_:uint = 0;
+         var _loc14_:uint = 0;
+         var _loc15_:uint = param4;
          var _loc16_:Number = 0;
-         var _loc17_:Number = 1;
-         var _loc18_:Number = 1;
-         var _loc19_:Number = 1;
+         var _loc17_:uint = 1;
+         var _loc18_:uint = 1;
+         var _loc19_:uint = 1;
          var _loc20_:ObjectInstance = null;
          var _loc21_:Vector.<Boolean> = this.getLayerInformation(param3);
          var _loc22_:uint = param5.red;
