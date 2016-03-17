@@ -46,6 +46,8 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
       
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
+      
       protected static const RISKINESS_NONE:int = 0;
       
       protected static const GUILD_NONE:int = 0;

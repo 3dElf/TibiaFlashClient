@@ -113,7 +113,7 @@ package tibia.appearances.widgetClasses
             throw new Error("MarksView.MarksView: Invalid marks start size.");
          }
          this.m_MarksStartSize = param1;
-         this.m_MarksViewInformations = new Vector.<MarksView>();
+         this.m_MarksViewInformations = new Vector.<MarksViewInformation>();
       }
       
       private static function s_CreateCacheKey(param1:Vector.<uint>) : String
@@ -269,18 +269,15 @@ package tibia.appearances.widgetClasses
    }
 }
 
-import tibia.appearances.Marks;
-
 class MarksViewInformation
 {
     
-   public var m_MarkType:uint;
+   public var m_MarkType:uint = 255;
    
    public var m_MarkThickness:uint = 1;
    
    function MarksViewInformation()
    {
-      this.m_MarkType = Marks.MARK_UNMARKED;
       super();
    }
 }

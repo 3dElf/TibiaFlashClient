@@ -49,6 +49,8 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
+      
       protected static const RISKINESS_DANGEROUS:int = 1;
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
@@ -417,9 +419,10 @@ package tibia.creatures.battlelistWidgetClasses
       
       override protected function measure() : void
       {
+         var _loc1_:EdgeMetrics = null;
          var _loc3_:Number = NaN;
          super.measure();
-         var _loc1_:EdgeMetrics = this.viewMetricsAndPadding;
+         _loc1_ = this.viewMetricsAndPadding;
          var _loc2_:Number = CREATURE_ICON_SIZE + getStyle("horizontalGap") + Math.max(CreatureStorage.STATE_FLAG_SIZE,s_NameCache.slotWidth,getStyle("healthbarWidth"));
          _loc3_ = Math.max(CREATURE_ICON_SIZE,Math.max(CreatureStorage.STATE_FLAG_SIZE,s_NameCache.slotHeight) + getStyle("verticalGap") + getStyle("healthbarHeight"));
          measuredMinWidth = measuredWidth = _loc1_.left + _loc2_ + _loc1_.right;

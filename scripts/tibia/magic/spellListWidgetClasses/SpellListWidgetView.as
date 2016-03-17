@@ -54,6 +54,8 @@ package tibia.magic.spellListWidgetClasses
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
+      
       protected static const RISKINESS_DANGEROUS:int = 1;
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;

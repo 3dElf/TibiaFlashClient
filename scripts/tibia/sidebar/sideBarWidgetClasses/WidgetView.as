@@ -90,7 +90,7 @@ package tibia.sidebar.sideBarWidgetClasses
       
       protected var m_WidgetClosed:Boolean = false;
       
-      private var m_UICollapseButton:Button = null;
+      protected var m_UICollapseButton:Button = null;
       
       protected var m_WidgetCollapsed:Boolean = false;
       
@@ -100,13 +100,13 @@ package tibia.sidebar.sideBarWidgetClasses
       
       private var m_UncommittedWidgetClosable:Boolean = false;
       
-      private var m_UICloseButton:Button = null;
+      protected var m_UICloseButton:Button = null;
       
       private var m_UncommittedTitle:Boolean = false;
       
       private var m_UITitleLabel:CustomLabel = null;
       
-      private var m_UIHeader:HBox = null;
+      protected var m_UIHeader:HBox = null;
       
       protected var m_WidgetResizable:Boolean = false;
       
@@ -247,7 +247,7 @@ package tibia.sidebar.sideBarWidgetClasses
       function hitTestDragHandle(param1:Number, param2:Number) : Boolean
       {
          var _loc3_:Point = globalToLocal(new Point(param1,param2));
-         return _loc3_.x >= 0 && _loc3_.x < width && _loc3_.y >= 0 && _loc3_.y < this.getHeaderHeight();
+         return Boolean(this.m_WidgetInstance.draggable) && _loc3_.x >= 0 && _loc3_.x < width && _loc3_.y >= 0 && _loc3_.y < this.getHeaderHeight();
       }
       
       function get widgetCollapsible() : Boolean
@@ -325,15 +325,13 @@ package tibia.sidebar.sideBarWidgetClasses
       
       override protected function measure() : void
       {
-         var _loc6_:Number = NaN;
-         var _loc7_:Number = NaN;
          var _loc1_:EdgeMetrics = viewMetricsAndPadding;
          var _loc2_:Number = getStyle("verticalGap");
          var _loc3_:UIComponent = null;
          var _loc4_:int = 0;
          var _loc5_:int = numChildren;
-         _loc6_ = 0;
-         _loc7_ = 0;
+         var _loc6_:Number = 0;
+         var _loc7_:Number = 0;
          if(_loc5_ > 0)
          {
             if(direction == BoxDirection.VERTICAL)

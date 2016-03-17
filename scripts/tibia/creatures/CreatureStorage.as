@@ -33,11 +33,13 @@ package tibia.creatures
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
-      private static const MARK_NUM_TOTAL:uint = MARK_TRAPPER + 1;
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
       
       protected static const RISKINESS_DANGEROUS:int = 1;
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
+      
+      private static const MARK_NUM_TOTAL:uint = MARK_TRAPPER + 1;
       
       private static const OPPONENTS_REFRESH:int = 1;
       
@@ -441,11 +443,29 @@ package tibia.creatures
       
       public static function s_GetNpcSpeechFlag(param1:uint, param2:Rectangle) : BitmapData
       {
-         if(param1 < NPC_SPEECH_NONE || param1 > NPC_SPEECH_QUESTTRADER)
+         var _loc3_:uint = 0;
+         if(param1 < NPC_SPEECH_NONE || param1 > NPC_SPEECH_TRAVEL)
          {
             throw new ArgumentError("CreatureStorage.s_GetNpcSpeechFlag: Invalid flag.");
          }
-         param2.x = param1 * SPEECH_FLAG_SIZE;
+         switch(param1)
+         {
+            case NPC_SPEECH_NORMAL:
+               _loc3_ = 1;
+               break;
+            case NPC_SPEECH_TRADER:
+               _loc3_ = 2;
+               break;
+            case NPC_SPEECH_QUEST:
+               _loc3_ = 3;
+               break;
+            case NPC_SPEECH_TRAVEL:
+               _loc3_ = 4;
+               break;
+            default:
+               _loc3_ = 0;
+         }
+         param2.x = _loc3_ * SPEECH_FLAG_SIZE;
          param2.y = 0;
          param2.width = SPEECH_FLAG_SIZE;
          param2.height = SPEECH_FLAG_SIZE;

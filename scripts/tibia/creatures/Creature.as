@@ -32,6 +32,8 @@ package tibia.creatures
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
+      
       protected static const RISKINESS_DANGEROUS:int = 1;
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
@@ -813,7 +815,7 @@ package tibia.creatures
       
       public function set speechCategory(param1:uint) : void
       {
-         if(param1 < NPC_SPEECH_NONE || param1 > NPC_SPEECH_QUESTTRADER)
+         if(param1 < NPC_SPEECH_NONE || param1 > NPC_SPEECH_TRAVEL)
          {
             throw new ArgumentError("Creature.speechFlag: Invalid speech flag: " + param1);
          }

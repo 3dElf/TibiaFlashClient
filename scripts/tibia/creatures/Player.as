@@ -2,9 +2,9 @@ package tibia.creatures
 {
    import shared.utility.Vector3D;
    import tibia.§creatures:ns_creature_internal§.m_Position;
-   import tibia.magic.Rune;
    import mx.events.PropertyChangeEvent;
    import mx.events.PropertyChangeEventKind;
+   import tibia.magic.Rune;
    import tibia.magic.Spell;
    import tibia.network.Communication;
    import tibia.minimap.MiniMapStorage;
@@ -83,6 +83,8 @@ package tibia.creatures
       
       private var m_Premium:Boolean = false;
       
+      private var m_PremiumUntil:uint = 0;
+      
       protected var m_AutowalkPathSteps:Array;
       
       public function Player()
@@ -112,6 +114,19 @@ package tibia.creatures
       public function get level() : uint
       {
          return uint(getSkillValue(SKILL_LEVEL));
+      }
+      
+      public function set premiumUntil(param1:uint) : void
+      {
+         var _loc2_:PropertyChangeEvent = null;
+         if(this.m_PremiumUntil != param1)
+         {
+            this.m_PremiumUntil = param1;
+            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc2_.kind = PropertyChangeEventKind.UPDATE;
+            _loc2_.property = "premiumUntil";
+            dispatchEvent(_loc2_);
+         }
       }
       
       override public function setSkill(param1:int, param2:Number, param3:Number, param4:Number) : void
@@ -241,7 +256,7 @@ package tibia.creatures
       
       public function get isFighting() : Boolean
       {
-         return (this.m_StateFlags & STATE_FIGHTING) > 0;
+         return (this.m_StateFlags & 1 << STATE_FIGHTING) > 0;
       }
       
       public function get soulPointPercent() : Number
@@ -256,15 +271,11 @@ package tibia.creatures
       
       public function set premium(param1:Boolean) : void
       {
-         var _loc2_:PropertyChangeEvent = null;
-         if(this.m_Premium != param1)
-         {
-            this.m_Premium = param1;
-            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-            _loc2_.kind = PropertyChangeEventKind.UPDATE;
-            _loc2_.property = "premium";
-            dispatchEvent(_loc2_);
-         }
+         this.m_Premium = param1;
+         var _loc2_:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+         _loc2_.kind = PropertyChangeEventKind.UPDATE;
+         _loc2_.property = "premium";
+         dispatchEvent(_loc2_);
       }
       
       public function get soulPoints() : Number
@@ -392,6 +403,20 @@ package tibia.creatures
          return getSkillBase(SKILL_SOULPOINTS);
       }
       
+      public function get premiumUntil() : uint
+      {
+         if(this.m_PremiumUntil == 0 && Boolean(this.m_Premium))
+         {
+            return uint.MAX_VALUE;
+         }
+         return this.m_PremiumUntil;
+      }
+      
+      public function get premium() : Boolean
+      {
+         return this.m_Premium;
+      }
+      
       override public function reset() : void
       {
          var _loc1_:int = m_ID;
@@ -410,9 +435,21 @@ package tibia.creatures
          dispatchEvent(_loc2_);
       }
       
-      public function get premium() : Boolean
+      public function set knownSpells(param1:Array) : void
       {
-         return this.m_Premium;
+         var _loc2_:PropertyChangeEvent = null;
+         if(param1 == null)
+         {
+            param1 = [];
+         }
+         if(this.m_KnownSpells != param1)
+         {
+            this.m_KnownSpells = param1.sort(Array.NUMERIC);
+            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc2_.kind = PropertyChangeEventKind.UPDATE;
+            _loc2_.property = "knownSpells";
+            dispatchEvent(_loc2_);
+         }
       }
       
       private function startAutowalkInternal() : void
@@ -463,23 +500,6 @@ package tibia.creatures
                break;
             default:
                throw new Error("Player.startAutowalkInternal: Unknown path state: " + _loc4_);
-         }
-      }
-      
-      public function set knownSpells(param1:Array) : void
-      {
-         var _loc2_:PropertyChangeEvent = null;
-         if(param1 == null)
-         {
-            param1 = [];
-         }
-         if(this.m_KnownSpells != param1)
-         {
-            this.m_KnownSpells = param1.sort(Array.NUMERIC);
-            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-            _loc2_.kind = PropertyChangeEventKind.UPDATE;
-            _loc2_.property = "knownSpells";
-            dispatchEvent(_loc2_);
          }
       }
       

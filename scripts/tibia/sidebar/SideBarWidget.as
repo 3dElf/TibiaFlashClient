@@ -115,6 +115,8 @@ package tibia.sidebar
       {
          var _loc4_:WidgetView = null;
          var _loc5_:int = 0;
+         var _loc6_:Widget = null;
+         var _loc7_:int = 0;
          var _loc2_:DragSource = null;
          var _loc3_:int = -1;
          if(param1 != null && (_loc2_ = param1.dragSource) != null && (Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_WIDGETBASE) && (Boolean(_loc2_.hasFormat("widgetID")) && (_loc3_ = int(_loc2_.dataForFormat("widgetID"))) > -1))
@@ -125,6 +127,12 @@ package tibia.sidebar
             {
                case DragEvent.DRAG_DROP:
                   _loc5_ = this.getDropIndex(param1.localY);
+                  _loc6_ = this.m_SideBarSet.getWidgetByType(Widget.TYPE_PREMIUM);
+                  if(_loc6_ != null && Boolean(Tibia.s_GetPremiumManager().freePlayerLimitations))
+                  {
+                     _loc7_ = this.m_SideBarSet.getSideBar(this.m_Location).getWidgetInstanceIndex(_loc6_);
+                     _loc5_ = Math.max(_loc5_,_loc7_ + 1);
+                  }
                   if(this.m_DropIndicatorSkipIndex > -1 && _loc5_ > this.m_DropIndicatorSkipIndex)
                   {
                      _loc5_--;

@@ -1,0 +1,61 @@
+package tibia.premium
+{
+   import flash.events.Event;
+   
+   public class PremiumEvent extends Event
+   {
+      
+      public static const TRIGGER:String = "PREMIUMTRIGGER";
+      
+      public static const HIGHLIGHT:String = "PREMIUMHIGHLIGHT";
+       
+      protected var m_Highlight:Boolean = false;
+      
+      protected var m_HighlightExpiry:int = 0;
+      
+      protected var m_Messages:Vector.<tibia.premium.PremiumMessage> = null;
+      
+      public function PremiumEvent(param1:String, param2:Boolean = false, param3:Boolean = false, param4:Vector.<tibia.premium.PremiumMessage> = null, param5:Boolean = false, param6:int = 0)
+      {
+         super(param1,param2,param3);
+         this.m_Messages = param4;
+         this.m_Highlight = param5;
+         this.m_HighlightExpiry = param6;
+      }
+      
+      public function get highlightExpiry() : int
+      {
+         return this.m_HighlightExpiry;
+      }
+      
+      public function set highlight(param1:Boolean) : void
+      {
+         this.m_Highlight = param1;
+      }
+      
+      public function get messages() : Vector.<tibia.premium.PremiumMessage>
+      {
+         return this.m_Messages;
+      }
+      
+      public function set highlightExpiry(param1:int) : void
+      {
+         this.m_HighlightExpiry = param1;
+      }
+      
+      public function get highlight() : Boolean
+      {
+         return this.m_Highlight;
+      }
+      
+      public function set messages(param1:Vector.<tibia.premium.PremiumMessage>) : void
+      {
+         this.m_Messages = param1;
+      }
+      
+      override public function clone() : Event
+      {
+         return new PremiumEvent(type,bubbles,cancelable,this.messages,this.highlight,this.highlightExpiry);
+      }
+   }
+}

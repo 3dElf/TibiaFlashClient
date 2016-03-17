@@ -96,7 +96,7 @@ package tibia.help
          }
       }
       
-      private function addUIComponentGlowEffect(param1:UIComponent, param2:Boolean = true, param3:Boolean = false) : void
+      public function addUIComponentGlowEffect(param1:UIComponent, param2:Boolean = true, param3:Boolean = false) : void
       {
          (this.m_SequenceGlow.children[0] as Glow).inner = param2;
          (this.m_SequenceGlow.children[1] as Glow).inner = param2;
@@ -108,6 +108,27 @@ package tibia.help
             this.m_SequenceGlow.end();
          }
          this.m_SequenceGlow.play();
+      }
+      
+      public function removeUIComponentGlowEffect(param1:UIComponent) : void
+      {
+         var _loc2_:int = 0;
+         if(this.m_SequenceGlow != null)
+         {
+            _loc2_ = this.m_SequenceGlow.targets.indexOf(param1);
+            if(_loc2_ > -1)
+            {
+               this.m_SequenceGlow.targets.splice(_loc2_,1);
+               if(this.m_SequenceGlow.isPlaying)
+               {
+                  this.m_SequenceGlow.end();
+                  if(this.m_SequenceGlow.targets.length > 0)
+                  {
+                     this.m_SequenceGlow.play();
+                  }
+               }
+            }
+         }
       }
       
       public function findUIElementByIdentifier(param1:Class, param2:*) : UIComponent

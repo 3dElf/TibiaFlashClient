@@ -65,6 +65,8 @@ package tibia.sessiondump
       
       protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
       
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
+      
       protected static const CGOSOUTH:int = 103;
       
       protected static const SSETTACTICS:int = 167;
@@ -253,13 +255,13 @@ package tibia.sessiondump
       
       protected static const SOPENCHANNEL:int = 172;
       
-      protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
-      
       protected static const STOPFLOOR:int = 190;
       
       protected static const PROFESSION_SORCERER:int = 3;
       
       protected static const TYPE_SUMMON_OWN:int = 3;
+      
+      protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
       
       protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
@@ -359,7 +361,7 @@ package tibia.sessiondump
       
       protected static const CROTATEWEST:int = 114;
       
-      public static const PROTOCOL_VERSION:int = 1037;
+      public static const PROTOCOL_VERSION:int = 1038;
       
       protected static const SCREATUREOUTFIT:int = 142;
       
@@ -446,6 +448,8 @@ package tibia.sessiondump
       protected static const ERR_INVALID_STATE:int = 4;
       
       public static const STATE_DONE:int = 3;
+      
+      protected static const SPREMIUMTRIGGER:int = 158;
       
       protected static const CINVITETOPARTY:int = 163;
       

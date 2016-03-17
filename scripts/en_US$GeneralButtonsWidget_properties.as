@@ -17,6 +17,7 @@ package
             "BTN_OPTIONS":"Options",
             "BTN_CHANGE_CHARACTER":"Change Character",
             "BTN_CHARACTER_PROFILE":"Character Profile",
+            "BTN_PREMIUM":"Get Premium",
             "TITLE":"General Controls",
             "BTN_QUEST_LOG":"Quest Log",
             "BTN_LOGOUT_CHARACTER":"Logout Character"

@@ -31,7 +31,7 @@ package tibia.network
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 1037;
+      public static const PROTOCOL_VERSION:int = 1038;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -83,7 +83,7 @@ package tibia.network
       
       protected static const CBUYOBJECT:int = 122;
       
-      public static const CLIENT_VERSION:uint = 1654;
+      public static const CLIENT_VERSION:uint = 1678;
       
       protected static const SPING:int = 29;
       
@@ -155,6 +155,8 @@ package tibia.network
       
       protected static const CCLOSECONTAINER:int = 135;
       
+      protected static const SPREMIUMTRIGGER:int = 158;
+      
       protected static const CREMOVEBUDDY:int = 221;
       
       protected static const SFIELDDATA:int = 105;
@@ -171,8 +173,6 @@ package tibia.network
       
       protected static const SMISSILEEFFECT:int = 133;
       
-      protected static const ERR_INVALID_MESSAGE:int = 3;
-      
       protected static const CGOWEST:int = 104;
       
       protected static const CCANCEL:int = 190;
@@ -182,6 +182,8 @@ package tibia.network
       protected static const SPINGBACK:int = 30;
       
       protected static const RECONNECT_DELAY:int = 3000;
+      
+      protected static const ERR_INVALID_MESSAGE:int = 3;
       
       protected static const SCREATURELIGHT:int = 141;
       

@@ -2,8 +2,9 @@ package tibia.sidebar.sideBarWidgetClasses
 {
    import mx.controls.Button;
    import flash.events.MouseEvent;
-   import shared.controls.CustomButton;
    import tibia.input.staticaction.StaticActionList;
+   import tibia.premium.PremiumManager;
+   import shared.controls.CustomButton;
    import mx.core.ScrollPolicy;
    
    public class GeneralButtonsWidgetView extends WidgetView
@@ -25,6 +26,8 @@ package tibia.sidebar.sideBarWidgetClasses
       
       protected var m_UIButtonQuestLog:Button = null;
       
+      protected var m_UIButtonPremium:Button = null;
+      
       public function GeneralButtonsWidgetView()
       {
          super();
@@ -42,11 +45,39 @@ package tibia.sidebar.sideBarWidgetClasses
          this.m_UIButtonOptions.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
          this.m_UIButtonQuestLog.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
          this.m_UIButtonSpellList.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonPremium.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
       }
       
       override protected function commitProperties() : void
       {
          super.commitProperties();
+      }
+      
+      protected function onButtonClick(param1:MouseEvent) : void
+      {
+         switch(param1.currentTarget)
+         {
+            case this.m_UIButtonLogout:
+               StaticActionList.MISC_LOGOUT_CHARACTER.perform();
+               break;
+            case this.m_UIButtonChangeCharacter:
+               StaticActionList.MISC_CHANGE_CHARACTER.perform();
+               break;
+            case this.m_UIButtonOptions:
+               StaticActionList.MISC_SHOW_EDIT_OPTIONS.perform();
+               break;
+            case this.m_UIButtonQuestLog:
+               StaticActionList.MISC_SHOW_QUEST_LOG.perform();
+               break;
+            case this.m_UIButtonCharacterProfile:
+               StaticActionList.MISC_SHOW_CHARACTER.perform();
+               break;
+            case this.m_UIButtonSpellList:
+               StaticActionList.MISC_SHOW_WIDGET_SPELLLIST.perform();
+               break;
+            case this.m_UIButtonPremium:
+               Tibia.s_GetPremiumManager().goToPaymentWebsite(PremiumManager.PREMIUM_BUTTON_GENERAL_CONTROLS);
+         }
       }
       
       override protected function createChildren() : void
@@ -84,31 +115,12 @@ package tibia.sidebar.sideBarWidgetClasses
             this.m_UIButtonSpellList.label = resourceManager.getString(BUNDLE,"BTN_SPELLLIST");
             this.m_UIButtonSpellList.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             addChild(this.m_UIButtonSpellList);
+            this.m_UIButtonPremium = new CustomButton();
+            this.m_UIButtonPremium.percentWidth = 100;
+            this.m_UIButtonPremium.label = resourceManager.getString(BUNDLE,"BTN_PREMIUM");
+            this.m_UIButtonPremium.addEventListener(MouseEvent.CLICK,this.onButtonClick);
+            addChild(this.m_UIButtonPremium);
             this.m_UIConstructed = true;
-         }
-      }
-      
-      protected function onButtonClick(param1:MouseEvent) : void
-      {
-         switch(param1.currentTarget)
-         {
-            case this.m_UIButtonLogout:
-               StaticActionList.MISC_LOGOUT_CHARACTER.perform();
-               break;
-            case this.m_UIButtonChangeCharacter:
-               StaticActionList.MISC_CHANGE_CHARACTER.perform();
-               break;
-            case this.m_UIButtonOptions:
-               StaticActionList.MISC_SHOW_EDIT_OPTIONS.perform();
-               break;
-            case this.m_UIButtonQuestLog:
-               StaticActionList.MISC_SHOW_QUEST_LOG.perform();
-               break;
-            case this.m_UIButtonCharacterProfile:
-               StaticActionList.MISC_SHOW_CHARACTER.perform();
-               break;
-            case this.m_UIButtonSpellList:
-               StaticActionList.MISC_SHOW_WIDGET_SPELLLIST.perform();
          }
       }
    }

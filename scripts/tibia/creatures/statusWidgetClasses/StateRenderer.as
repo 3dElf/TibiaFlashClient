@@ -38,6 +38,8 @@ package tibia.creatures.statusWidgetClasses
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
       
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
+      
       protected static const RISKINESS_NONE:int = 0;
       
       protected static const GUILD_NONE:int = 0;
@@ -476,7 +478,8 @@ package tibia.creatures.statusWidgetClasses
       override protected function measure() : void
       {
          var _loc3_:EdgeMetrics = null;
-         var _loc5_:Number = NaN;
+         var _loc4_:Number = NaN;
+         var _loc6_:Number = NaN;
          var _loc7_:Number = NaN;
          super.measure();
          this.m_ChildColumns = this.m_MinColumns;
@@ -506,11 +509,11 @@ package tibia.creatures.statusWidgetClasses
             break;
          }
          _loc3_ = this.viewMetricsAndPadding;
-         var _loc4_:Number = getStyle("horizontalGap");
-         _loc5_ = _loc3_.left + _loc3_.right;
+         _loc4_ = getStyle("horizontalGap");
+         var _loc5_:Number = _loc3_.left + _loc3_.right;
          measuredMinWidth = this.m_MinColumns * s_ChildWidth + (this.m_MinColumns - 1) * _loc4_ + _loc5_;
          measuredWidth = Math.max(measuredMinWidth,this.m_ChildColumns * s_ChildWidth + (this.m_ChildColumns - 1) * _loc4_ + _loc5_);
-         var _loc6_:Number = getStyle("verticalGap");
+         _loc6_ = getStyle("verticalGap");
          _loc7_ = _loc3_.top + _loc3_.bottom;
          measuredMinHeight = this.m_MinRows * s_ChildHeight + (this.m_MinRows - 1) * _loc6_ + _loc7_;
          measuredHeight = Math.max(measuredMinHeight,this.m_ChildRows * s_ChildHeight + (this.m_ChildRows - 1) * _loc6_ + _loc7_);

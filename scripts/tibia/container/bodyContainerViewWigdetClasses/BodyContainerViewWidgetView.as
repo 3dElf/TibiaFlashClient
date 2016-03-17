@@ -6,8 +6,9 @@ package tibia.container.bodyContainerViewWigdetClasses
    import tibia.container.BodyContainerView;
    import flash.text.TextField;
    import tibia.game.ObjectDragImpl;
-   import mx.events.PropertyChangeEvent;
+   import tibia.help.UIEffectsRetrieveComponentCommandEvent;
    import flash.events.MouseEvent;
+   import tibia.premium.PremiumManager;
    import tibia.creatures.Player;
    import mx.controls.Button;
    import flash.text.TextFieldAutoSize;
@@ -18,8 +19,8 @@ package tibia.container.bodyContainerViewWigdetClasses
    import tibia.container.containerViewWidgetClasses.ContainerSlot;
    import shared.utility.getClassInstanceUnderPoint;
    import shared.utility.Vector3D;
+   import mx.events.PropertyChangeEvent;
    import tibia.input.ModifierKeyEvent;
-   import tibia.help.UIEffectsRetrieveComponentCommandEvent;
    import flash.text.TextFormat;
    import tibia.cursors.CursorHelper;
    import mx.core.EdgeMetrics;
@@ -49,6 +50,8 @@ package tibia.container.bodyContainerViewWigdetClasses
       protected static const PK_REVENGE:int = 6;
       
       protected static const SKILL_FIGHTCLUB:int = 10;
+      
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
       
       protected static const RISKINESS_DANGEROUS:int = 1;
       
@@ -360,6 +363,14 @@ package tibia.container.bodyContainerViewWigdetClasses
          "height":NaN,
          "style":"bodySlotPurseStyle",
          "tooltip":"TOOLTIP_PURSE"
+      },{
+         "slot":BodyContainerView.PREMIUM,
+         "left":156,
+         "top":1,
+         "width":NaN,
+         "height":NaN,
+         "style":"bodySlotPremiumStyle",
+         "tooltip":"TOOLTIP_PREMIUM"
       }];
       
       protected static const NPC_SPEECH_NONE:uint = 0;
@@ -386,6 +397,8 @@ package tibia.container.bodyContainerViewWigdetClasses
       
       private var m_TempPurseSlot:ContainerSlot;
       
+      private var m_UIPremium:Button = null;
+      
       private var m_UncommittedBodyContainer:Boolean = false;
       
       public function BodyContainerViewWidgetView()
@@ -401,23 +414,36 @@ package tibia.container.bodyContainerViewWigdetClasses
          Tibia.s_GetUIEffectsManager().addEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
       }
       
-      function set bodyContainer(param1:BodyContainerView) : void
+      private function onUIEffectsCommandEvent(param1:UIEffectsRetrieveComponentCommandEvent) : void
       {
-         if(param1 != this.m_BodyContainer)
+         var _loc2_:int = 0;
+         var _loc3_:int = 0;
+         var _loc4_:BodySlot = null;
+         if(param1.type == UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT && param1.identifier == BodyContainerViewWidgetView)
          {
-            if(this.m_BodyContainer != null)
+            _loc2_ = param1.subIdentifier as int;
+            if(_loc2_ == -1)
             {
-               this.m_BodyContainer.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onBodyContainerChange);
+               param1.resultUIComponent = this;
             }
-            this.m_BodyContainer = param1;
-            if(this.m_BodyContainer != null)
+            else if(_loc2_ == BodyContainerView.PURSE)
             {
-               this.m_BodyContainer.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onBodyContainerChange);
+               param1.resultUIComponent = this.m_UIPurse;
             }
-            this.m_UncommittedBodyContainer = true;
-            invalidateDisplayList();
-            invalidateProperties();
-            invalidateSize();
+            else
+            {
+               _loc3_ = 0;
+               while(_loc3_ < numChildren)
+               {
+                  _loc4_ = BodySlot(getChildAt(_loc3_));
+                  if(_loc4_.position == _loc2_)
+                  {
+                     param1.resultUIComponent = _loc4_;
+                     break;
+                  }
+                  _loc3_++;
+               }
+            }
          }
       }
       
@@ -437,6 +463,19 @@ package tibia.container.bodyContainerViewWigdetClasses
             this.m_RolloverSlot = param1.target as BodySlot;
          }
          this.determineAction(param1,false,true);
+      }
+      
+      private function onPremiumClick(param1:MouseEvent) : void
+      {
+         var _loc2_:PremiumManager = Tibia.s_GetPremiumManager();
+         if(_loc2_.freePlayerLimitations)
+         {
+            _loc2_.toggleHighlight(PremiumManager.HIGHLIGHT_MINIBUTTON_TIMEOUT);
+         }
+         else
+         {
+            _loc2_.toggleWidget();
+         }
       }
       
       override protected function createChildren() : void
@@ -465,10 +504,21 @@ package tibia.container.bodyContainerViewWigdetClasses
          this.m_UIPurse.addEventListener(MouseEvent.ROLL_OVER,this.onSlotRollOver);
          this.m_UIPurse.addEventListener(MouseEvent.ROLL_OUT,this.onSlotRollOut);
          rawChildren.addChild(this.m_UIPurse);
+         this.m_UIPremium = new CustomButton();
+         if(WIDGET_COMPONENTS[BodyContainerView.PREMIUM].style != null)
+         {
+            this.m_UIPremium.styleName = getStyle(WIDGET_COMPONENTS[BodyContainerView.PREMIUM].style);
+         }
+         if(WIDGET_COMPONENTS[BodyContainerView.PREMIUM].tooltip != null)
+         {
+            this.m_UIPremium.toolTip = resourceManager.getString(BUNDLE,WIDGET_COMPONENTS[BodyContainerView.PREMIUM].tooltip);
+         }
+         this.m_UIPremium.addEventListener(MouseEvent.CLICK,this.onPremiumClick);
+         rawChildren.addChild(this.m_UIPremium);
          var _loc1_:int = BodyContainerView.FIRST_SLOT;
          while(_loc1_ <= BodyContainerView.LAST_SLOT)
          {
-            if(_loc1_ != BodyContainerView.PURSE)
+            if(!(_loc1_ == BodyContainerView.PURSE || _loc1_ == BodyContainerView.PREMIUM))
             {
                _loc2_ = new BodySlot();
                _loc2_.appearance = null;
@@ -548,12 +598,17 @@ package tibia.container.bodyContainerViewWigdetClasses
             _loc2_.removeEventListener(MouseEvent.CLICK,this.onSlotClick);
             _loc2_.removeEventListener(MouseEvent.RIGHT_CLICK,this.onSlotClick);
             _loc2_.removeEventListener(MouseEvent.MIDDLE_CLICK,this.onSlotClick);
+            _loc2_.removeEventListener(MouseEvent.ROLL_OVER,this.onSlotRollOver);
+            _loc2_.removeEventListener(MouseEvent.ROLL_OUT,this.onSlotRollOut);
             this.m_DragHandler.removeDragComponent(_loc2_);
             _loc1_++;
          }
          this.m_UIPurse.removeEventListener(MouseEvent.CLICK,this.onPurseClick);
          this.m_UIPurse.removeEventListener(MouseEvent.MIDDLE_CLICK,this.onPurseClick);
          this.m_UIPurse.removeEventListener(MouseEvent.RIGHT_CLICK,this.onPurseClick);
+         this.m_UIPurse.removeEventListener(MouseEvent.ROLL_OVER,this.onSlotRollOver);
+         this.m_UIPurse.removeEventListener(MouseEvent.ROLL_OUT,this.onSlotRollOut);
+         this.m_UIPremium.removeEventListener(MouseEvent.CLICK,this.onPremiumClick);
          Tibia.s_GetInputHandler().removeEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
          Tibia.s_GetUIEffectsManager().removeEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
       }
@@ -572,6 +627,24 @@ package tibia.container.bodyContainerViewWigdetClasses
                break;
             default:
                super.styleChanged(param1);
+         }
+      }
+      
+      function set player(param1:Player) : void
+      {
+         if(this.m_Player != param1)
+         {
+            if(this.m_Player != null)
+            {
+               this.m_Player.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onPlayerChange);
+            }
+            this.m_Player = param1;
+            this.m_UncommittedPlayer = true;
+            invalidateProperties();
+            if(this.m_Player != null)
+            {
+               this.m_Player.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onPlayerChange);
+            }
          }
       }
       
@@ -603,24 +676,6 @@ package tibia.container.bodyContainerViewWigdetClasses
             this.m_UncommittedBodyContainer = false;
          }
          super.commitProperties();
-      }
-      
-      function set player(param1:Player) : void
-      {
-         if(this.m_Player != param1)
-         {
-            if(this.m_Player != null)
-            {
-               this.m_Player.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onPlayerChange);
-            }
-            this.m_Player = param1;
-            this.m_UncommittedPlayer = true;
-            invalidateProperties();
-            if(this.m_Player != null)
-            {
-               this.m_Player.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onPlayerChange);
-            }
-         }
       }
       
       public function getMultiUseObjectUnderPoint(param1:Point) : Object
@@ -787,6 +842,9 @@ package tibia.container.bodyContainerViewWigdetClasses
          this.m_UIPurse.visible = _loc3_;
          this.m_UIPurse.move(_loc4_.left + WIDGET_COMPONENTS[BodyContainerView.PURSE].left,_loc4_.top + WIDGET_COMPONENTS[BodyContainerView.PURSE].top);
          this.m_UIPurse.setActualSize(this.m_UIPurse.getExplicitOrMeasuredWidth(),this.m_UIPurse.getExplicitOrMeasuredHeight());
+         this.m_UIPremium.visible = _loc3_;
+         this.m_UIPremium.move(_loc4_.left + WIDGET_COMPONENTS[BodyContainerView.PREMIUM].left,_loc4_.top + WIDGET_COMPONENTS[BodyContainerView.PREMIUM].top);
+         this.m_UIPremium.setActualSize(this.m_UIPremium.getExplicitOrMeasuredWidth(),this.m_UIPremium.getExplicitOrMeasuredHeight());
          var _loc5_:int = numChildren - 1;
          while(_loc5_ >= 0)
          {
@@ -808,36 +866,23 @@ package tibia.container.bodyContainerViewWigdetClasses
          }
       }
       
-      private function onUIEffectsCommandEvent(param1:UIEffectsRetrieveComponentCommandEvent) : void
+      function set bodyContainer(param1:BodyContainerView) : void
       {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:BodySlot = null;
-         if(param1.type == UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT && param1.identifier == BodyContainerViewWidgetView)
+         if(param1 != this.m_BodyContainer)
          {
-            _loc2_ = param1.subIdentifier as int;
-            if(_loc2_ == -1)
+            if(this.m_BodyContainer != null)
             {
-               param1.resultUIComponent = this;
+               this.m_BodyContainer.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onBodyContainerChange);
             }
-            else if(_loc2_ == BodyContainerView.PURSE)
+            this.m_BodyContainer = param1;
+            if(this.m_BodyContainer != null)
             {
-               param1.resultUIComponent = this.m_UIPurse;
+               this.m_BodyContainer.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onBodyContainerChange);
             }
-            else
-            {
-               _loc3_ = 0;
-               while(_loc3_ < numChildren)
-               {
-                  _loc4_ = BodySlot(getChildAt(_loc3_));
-                  if(_loc4_.position == _loc2_)
-                  {
-                     param1.resultUIComponent = _loc4_;
-                     break;
-                  }
-                  _loc3_++;
-               }
-            }
+            this.m_UncommittedBodyContainer = true;
+            invalidateDisplayList();
+            invalidateProperties();
+            invalidateSize();
          }
       }
       

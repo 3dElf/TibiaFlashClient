@@ -9,6 +9,7 @@ package tibia.sidebar
    import tibia.trade.NPCTradeWidget;
    import tibia.trade.SafeTradeWidget;
    import tibia.magic.SpellListWidget;
+   import tibia.premium.PremiumWidget;
    import tibia.creatures.battlelistWidgetClasses.BattlelistWidgetView;
    import tibia.creatures.buddylistWidgetClasses.BuddylistWidgetView;
    import tibia.container.containerViewWidgetClasses.ContainerViewWidgetView;
@@ -19,8 +20,9 @@ package tibia.sidebar
    import tibia.trade.npcTradeWidgetClasses.NPCTradeWidgetView;
    import tibia.trade.safeTradeWidgetClasses.SafeTradeWidgetView;
    import tibia.magic.spellListWidgetClasses.SpellListWidgetView;
-   import tibia.sidebar.sideBarWidgetClasses.WidgetView;
+   import tibia.premium.premiumWidgetClasses.PremiumWidgetView;
    import tibia.options.OptionsStorage;
+   import tibia.sidebar.sideBarWidgetClasses.WidgetView;
    import mx.events.PropertyChangeEvent;
    import flash.events.Event;
    
@@ -37,7 +39,7 @@ package tibia.sidebar
       
       protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
-      public static const TYPES_BEYONDLAST:int = 10;
+      public static const TYPES_BEYONDLAST:int = 11;
       
       public static const EVENT_CLOSE:String = "close";
       
@@ -131,19 +133,29 @@ package tibia.sidebar
          "collapsible":true,
          "resizable":true,
          "viewClass":SpellListWidgetView
+      },{
+         "type":TYPE_PREMIUM,
+         "unique":true,
+         "restorable":false,
+         "closable":false,
+         "collapsible":false,
+         "resizable":false,
+         "viewClass":PremiumWidgetView
       }];
       
       public static const TYPE_SPELLLIST:int = 9;
+      
+      public static const TYPE_PREMIUM:int = 10;
       
       public static const TYPE_BATTLELIST:int = 0;
       
       public static const TYPE_BUDDYLIST:int = 1;
        
-      protected var m_Closed:Boolean = true;
-      
       protected var m_ViewInstance:WidgetView = null;
       
       protected var m_Height:Number = NaN;
+      
+      protected var m_Closed:Boolean = true;
       
       protected var m_Collapsed:Boolean = false;
       
@@ -222,6 +234,9 @@ package tibia.sidebar
                break;
             case TYPE_SPELLLIST:
                _loc3_ = new SpellListWidget();
+               break;
+            case TYPE_PREMIUM:
+               _loc3_ = new PremiumWidget();
          }
          _loc3_.initialise(param1,param2);
          return _loc3_;
@@ -257,6 +272,11 @@ package tibia.sidebar
             throw new ArgumentError("Widget.s_GetLimit: Invalid type.");
          }
          return TYPE_DATA[param1].restorable;
+      }
+      
+      public function get options() : OptionsStorage
+      {
+         return this.m_Options;
       }
       
       public function releaseViewInstance() : void
@@ -299,6 +319,11 @@ package tibia.sidebar
       
       protected function commitOptions() : void
       {
+      }
+      
+      public function get draggable() : Boolean
+      {
+         return true;
       }
       
       public function set height(param1:Number) : void
@@ -372,11 +397,6 @@ package tibia.sidebar
          return this.m_ID;
       }
       
-      public function get options() : OptionsStorage
-      {
-         return this.m_Options;
-      }
-      
       public function get closable() : Boolean
       {
          return TYPE_DATA[this.m_Type].closable;
@@ -439,7 +459,7 @@ package tibia.sidebar
       {
          var _loc2_:Boolean = false;
          var _loc3_:Event = null;
-         if(Boolean(param1) || Boolean(TYPE_DATA[this.m_Type].closable) && Boolean(!this.m_Closed))
+         if(Boolean(param1) || Boolean(this.closable) && !this.m_Closed)
          {
             _loc2_ = this.m_Closed;
             this.m_Closed = true;

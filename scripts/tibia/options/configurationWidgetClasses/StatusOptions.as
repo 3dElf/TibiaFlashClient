@@ -48,6 +48,8 @@ package tibia.options.configurationWidgetClasses
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
       
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
+      
       protected static const WIDGET_STATUS_STYLES:Array = [{"value":StatusWidget.STATUS_STYLE_DEFAULT},{"value":StatusWidget.STATUS_STYLE_COMPACT},{"value":StatusWidget.STATUS_STYLE_PARALLEL},{"value":StatusWidget.STATUS_STYLE_FAT},{"value":StatusWidget.STATUS_STYLE_OFF}];
       
       protected static const RISKINESS_NONE:int = 0;
@@ -259,13 +261,13 @@ package tibia.options.configurationWidgetClasses
       
       protected var m_Options:OptionsStorage = null;
       
-      protected var m_OtherStyle:int = 1;
+      protected var m_OtherStyle:int;
       
       protected var m_UIWidgetStyle:ComboBox = null;
       
       private var m_UncommittedOptions:Boolean = false;
       
-      protected var m_WidgetStyle:int = 1;
+      protected var m_WidgetStyle:int;
       
       protected var m_UIWidgetSkill:ComboBox = null;
       
@@ -279,10 +281,13 @@ package tibia.options.configurationWidgetClasses
       
       private var m_UncommittedOwnStyle:Boolean = false;
       
-      protected var m_OwnStyle:int = 1;
+      protected var m_OwnStyle:int;
       
       public function StatusOptions()
       {
+         this.m_OwnStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+         this.m_OtherStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+         this.m_WidgetStyle = StatusWidget.STATUS_STYLE_DEFAULT;
          super();
          label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_LABEL");
       }

@@ -15,13 +15,13 @@ package tibia.network
    import tibia.game.EditListWidget;
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.Marks;
-   import tibia.game.PopUpBase;
    import tibia.appearances.AppearanceTypeRef;
    import mx.collections.ArrayCollection;
    import mx.collections.IList;
    import tibia.chat.Channel;
    import tibia.chat.ChatStorage;
    import tibia.chat.ChannelSelectionWidget;
+   import tibia.game.PopUpBase;
    import tibia.container.InventoryTypeInfo;
    import tibia.container.ContainerStorage;
    import tibia.options.OptionsStorage;
@@ -89,7 +89,7 @@ package tibia.network
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
-      protected static const SKILL_GOSTRENGTH:int = 6;
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
       
       protected static const RISKINESS_DANGEROUS:int = 1;
       
@@ -113,8 +113,6 @@ package tibia.network
       
       protected static const ERR_COULD_NOT_CONNECT:int = 5;
       
-      protected static const PACKETLENGTH_SIZE:int = 2;
-      
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
       protected static const SMESSAGE:int = 180;
@@ -127,9 +125,11 @@ package tibia.network
       
       protected static const SKILL_EXPERIENCE:int = 0;
       
+      protected static const PACKETLENGTH_SIZE:int = 2;
+      
       protected static const SSETTACTICS:int = 167;
       
-      protected static const CENTERWORLD:int = 15;
+      protected static const SKILL_GOSTRENGTH:int = 6;
       
       protected static const CCLOSENPCCHANNEL:int = 158;
       
@@ -146,6 +146,8 @@ package tibia.network
       protected static const CROTATENORTH:int = 111;
       
       protected static const TYPE_SUMMON_OTHERS:int = 4;
+      
+      protected static const CENTERWORLD:int = 15;
       
       protected static const SLOGINSUCCESS:int = 23;
       
@@ -209,7 +211,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1654;
+      public static const CLIENT_VERSION:uint = 1678;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -455,7 +457,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1037;
+      public static const PROTOCOL_VERSION:int = 1038;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -540,6 +542,8 @@ package tibia.network
       protected static const ERR_INVALID_STATE:int = 4;
       
       protected static const PATH_COST_UNDEFINED:int = 254;
+      
+      protected static const SPREMIUMTRIGGER:int = 158;
       
       protected static const SCREATURELIGHT:int = 141;
       
@@ -1346,14 +1350,17 @@ package tibia.network
          }
       }
       
-      protected function readSMARKETLEAVE(param1:ByteArray) : void
+      protected function readSPREMIUMTRIGGER(param1:ByteArray) : void
       {
-         var _loc2_:MarketWidget = null;
-         _loc2_ = PopUpBase.getCurrent() as MarketWidget;
-         if(_loc2_ != null)
+         var _loc2_:Vector.<uint> = new Vector.<uint>();
+         var _loc3_:int = param1.readUnsignedByte() - 1;
+         while(_loc3_ >= 0)
          {
-            _loc2_.hide(true);
+            _loc2_.push(param1.readUnsignedByte());
+            _loc3_--;
          }
+         var _loc4_:* = param1.readUnsignedByte() == 1;
+         Tibia.s_GetPremiumManager().updatePremiumMessages(_loc2_,_loc4_);
       }
       
       protected function readSCREATUREHEALTH(param1:ByteArray) : void
@@ -1568,6 +1575,16 @@ package tibia.network
                _loc9_++;
             }
             _loc6_++;
+         }
+      }
+      
+      protected function readSMARKETLEAVE(param1:ByteArray) : void
+      {
+         var _loc2_:MarketWidget = null;
+         _loc2_ = PopUpBase.getCurrent() as MarketWidget;
+         if(_loc2_ != null)
+         {
+            _loc2_.hide(true);
          }
       }
       
@@ -3714,6 +3731,10 @@ package tibia.network
                   this.readSEDITLIST(CommunicationData);
                   a_MessageReader.finishMessage();
                   break;
+               case SPREMIUMTRIGGER:
+                  this.readSPREMIUMTRIGGER(CommunicationData);
+                  a_MessageReader.finishMessage();
+                  break;
                case SPLAYERDATABASIC:
                   this.readSPLAYERDATABASIC(CommunicationData);
                   a_MessageReader.finishMessage();
@@ -4470,16 +4491,18 @@ package tibia.network
       
       protected function readSPLAYERDATABASIC(param1:ByteArray) : void
       {
-         this.m_Player.premium = param1.readBoolean();
+         var _loc2_:Boolean = param1.readBoolean();
+         this.m_Player.premiumUntil = param1.readUnsignedInt();
+         this.m_Player.premium = _loc2_;
          this.m_Player.profession = param1.readUnsignedByte();
-         var _loc2_:Array = [];
-         var _loc3_:int = param1.readUnsignedShort() - 1;
-         while(_loc3_ >= 0)
+         var _loc3_:Array = [];
+         var _loc4_:int = param1.readUnsignedShort() - 1;
+         while(_loc4_ >= 0)
          {
-            _loc2_.push(param1.readUnsignedByte());
-            _loc3_--;
+            _loc3_.push(param1.readUnsignedByte());
+            _loc4_--;
          }
-         this.m_Player.knownSpells = _loc2_;
+         this.m_Player.knownSpells = _loc3_;
       }
       
       protected function readSTALK(param1:ByteArray) : void

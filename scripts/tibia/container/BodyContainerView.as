@@ -12,7 +12,7 @@ package tibia.container
       
       public static const BOTH_HANDS:int = 0;
       
-      public static const LAST_SLOT:int = PURSE;
+      public static const LAST_SLOT:int = PREMIUM;
       
       public static const FIRST_SLOT:int = HEAD;
       
@@ -35,6 +35,8 @@ package tibia.container
       public static const HIP:int = 10;
       
       public static const FEET:int = 8;
+      
+      public static const PREMIUM:int = 12;
       
       public static const PURSE:int = 11;
        

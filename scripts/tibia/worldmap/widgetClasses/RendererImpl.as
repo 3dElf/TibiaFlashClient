@@ -65,6 +65,8 @@ package tibia.worldmap.widgetClasses
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
       
+      protected static const NPC_SPEECH_TRAVEL:uint = 5;
+      
       private static const OBJECT_CURSOR_COLOR:uint = 16769335;
       
       public static const COLOUR_ABOVE_GROUND:Colour = new Colour(200,200,255);
