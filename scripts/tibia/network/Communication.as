@@ -214,7 +214,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1831;
+      public static const CLIENT_VERSION:uint = 1847;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -462,7 +462,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1053;
+      public static const PROTOCOL_VERSION:int = 1054;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -2701,6 +2701,7 @@ package tibia.network
          _loc4_ = 1;
          _loc5_ = param1.readUnsignedByte();
          this.m_Player.setSkill(SKILL_LEVEL,_loc3_,_loc4_,_loc5_);
+         this.m_Player.experienceBonus = this.readDouble(param1);
          _loc3_ = Math.max(0,param1.readShort());
          _loc4_ = Math.max(0,param1.readShort());
          _loc5_ = 0;

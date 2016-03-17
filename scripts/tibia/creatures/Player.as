@@ -81,15 +81,17 @@ package tibia.creatures
       
       protected var m_AutowalkTarget:Vector3D;
       
+      protected var m_ExperienceBonus:Number = 0.0;
+      
       protected var m_AutowalkTargetExact:Boolean = false;
       
       private var m_Premium:Boolean = false;
       
+      protected var m_AutowalkPathSteps:Array;
+      
       private var m_PremiumUntil:uint = 0;
       
       private var m_UnjustPoints:tibia.creatures.UnjustPointsInfo;
-      
-      protected var m_AutowalkPathSteps:Array;
       
       public function Player()
       {
@@ -170,6 +172,23 @@ package tibia.creatures
       public function get level() : uint
       {
          return uint(getSkillValue(SKILL_LEVEL));
+      }
+      
+      public function set profession(param1:int) : void
+      {
+         var _loc2_:PropertyChangeEvent = null;
+         if(param1 != PROFESSION_DRUID && param1 != PROFESSION_KNIGHT && param1 != PROFESSION_PALADIN && param1 != PROFESSION_SORCERER)
+         {
+            param1 = PROFESSION_NONE;
+         }
+         if(this.m_Profession != param1)
+         {
+            this.m_Profession = param1;
+            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc2_.kind = PropertyChangeEventKind.UPDATE;
+            _loc2_.property = "profession";
+            dispatchEvent(_loc2_);
+         }
       }
       
       public function set premiumUntil(param1:uint) : void
@@ -351,6 +370,11 @@ package tibia.creatures
          return 100;
       }
       
+      public function set experienceBonus(param1:Number) : void
+      {
+         this.m_ExperienceBonus = param1;
+      }
+      
       public function set premium(param1:Boolean) : void
       {
          this.m_Premium = param1;
@@ -358,11 +382,6 @@ package tibia.creatures
          _loc2_.kind = PropertyChangeEventKind.UPDATE;
          _loc2_.property = "premium";
          dispatchEvent(_loc2_);
-      }
-      
-      public function get soulPoints() : Number
-      {
-         return getSkillValue(SKILL_SOULPOINTS);
       }
       
       public function get soulPointPercent() : Number
@@ -384,6 +403,11 @@ package tibia.creatures
             default:
                return NaN;
          }
+      }
+      
+      public function get soulPoints() : Number
+      {
+         return getSkillValue(SKILL_SOULPOINTS);
       }
       
       override function animateMovement(param1:Number) : void
@@ -514,23 +538,6 @@ package tibia.creatures
          dispatchEvent(_loc2_);
       }
       
-      public function set knownSpells(param1:Array) : void
-      {
-         var _loc2_:PropertyChangeEvent = null;
-         if(param1 == null)
-         {
-            param1 = [];
-         }
-         if(this.m_KnownSpells != param1)
-         {
-            this.m_KnownSpells = param1.sort(Array.NUMERIC);
-            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-            _loc2_.kind = PropertyChangeEventKind.UPDATE;
-            _loc2_.property = "knownSpells";
-            dispatchEvent(_loc2_);
-         }
-      }
-      
       private function startAutowalkInternal() : void
       {
          if(Boolean(m_MovementRunning) || Boolean(this.m_AutowalkPathAborting) || !this.m_AutowalkPathDelta.isZero() || this.m_AutowalkTarget.x == -1 && this.m_AutowalkTarget.y == -1 && this.m_AutowalkTarget.z == -1)
@@ -601,9 +608,31 @@ package tibia.creatures
          }
       }
       
+      public function set knownSpells(param1:Array) : void
+      {
+         var _loc2_:PropertyChangeEvent = null;
+         if(param1 == null)
+         {
+            param1 = [];
+         }
+         if(this.m_KnownSpells != param1)
+         {
+            this.m_KnownSpells = param1.sort(Array.NUMERIC);
+            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc2_.kind = PropertyChangeEventKind.UPDATE;
+            _loc2_.property = "knownSpells";
+            dispatchEvent(_loc2_);
+         }
+      }
+      
       public function set stateFlags(param1:uint) : void
       {
          this.updateStateFlags(param1);
+      }
+      
+      public function get experienceBonus() : Number
+      {
+         return this.m_ExperienceBonus;
       }
       
       public function get knownSpells() : Array
@@ -753,23 +782,6 @@ package tibia.creatures
                break;
             }
             _loc5_++;
-         }
-      }
-      
-      public function set profession(param1:int) : void
-      {
-         var _loc2_:PropertyChangeEvent = null;
-         if(param1 != PROFESSION_DRUID && param1 != PROFESSION_KNIGHT && param1 != PROFESSION_PALADIN && param1 != PROFESSION_SORCERER)
-         {
-            param1 = PROFESSION_NONE;
-         }
-         if(this.m_Profession != param1)
-         {
-            this.m_Profession = param1;
-            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-            _loc2_.kind = PropertyChangeEventKind.UPDATE;
-            _loc2_.property = "profession";
-            dispatchEvent(_loc2_);
          }
       }
       

@@ -321,12 +321,13 @@ package tibia.creatures.statusWidgetClasses
          var _loc5_:String = null;
          var _loc6_:String = null;
          var _loc7_:IToolTip = null;
-         var _loc8_:Number = NaN;
+         var _loc8_:int = 0;
          var _loc9_:Number = NaN;
          var _loc10_:Number = NaN;
          var _loc11_:Number = NaN;
          var _loc12_:Number = NaN;
          var _loc13_:Number = NaN;
+         var _loc14_:Number = NaN;
          if(this.skill != SKILL_NONE && this.character != null)
          {
             _loc2_ = NaN;
@@ -351,24 +352,29 @@ package tibia.creatures.statusWidgetClasses
             _loc7_ = param1.toolTip;
             if(_loc3_ > 0)
             {
-               _loc8_ = Math.floor(_loc4_ * 60 / _loc3_);
-               _loc9_ = Math.floor(_loc8_ / 60);
-               _loc8_ = _loc8_ - _loc9_ * 60;
-               _loc7_.text = resourceManager.getString(BUNDLE,"TIP_SKILL_TEXT_EXTENDED",[_loc6_,_loc2_,_loc4_,_loc5_,_loc3_,_loc9_,_loc8_]);
+               _loc9_ = Math.floor(_loc4_ * 60 / _loc3_);
+               _loc10_ = Math.floor(_loc9_ / 60);
+               _loc9_ = _loc9_ - _loc10_ * 60;
+               _loc7_.text = resourceManager.getString(BUNDLE,"TIP_SKILL_TEXT_EXTENDED",[_loc6_,_loc2_,_loc4_,_loc5_,_loc3_,_loc10_,_loc9_]);
             }
             else
             {
                _loc7_.text = resourceManager.getString(BUNDLE,"TIP_SKILL_TEXT_SIMPLE",[_loc6_,_loc2_,_loc4_,_loc5_]);
             }
+            _loc8_ = this.character.experienceBonus * 100;
+            if(this.skill == SKILL_LEVEL && _loc8_ > 0)
+            {
+               _loc7_.text = _loc7_.text + resourceManager.getString(BUNDLE,"TIP_SKILL_TEXT_EXP_BONUS",[_loc8_]);
+            }
             if(_loc7_ is IInvalidating)
             {
                IInvalidating(_loc7_).validateNow();
-               _loc10_ = _loc7_.getExplicitOrMeasuredWidth();
-               _loc11_ = _loc7_.getExplicitOrMeasuredHeight();
-               _loc12_ = Math.max(0,Math.min(_loc7_.x,stage.stageWidth - _loc10_));
-               _loc13_ = Math.max(0,Math.min(_loc7_.y,stage.stageHeight - _loc11_));
-               _loc7_.move(_loc12_,_loc13_);
-               _loc7_.setActualSize(_loc10_,_loc11_);
+               _loc11_ = _loc7_.getExplicitOrMeasuredWidth();
+               _loc12_ = _loc7_.getExplicitOrMeasuredHeight();
+               _loc13_ = Math.max(0,Math.min(_loc7_.x,stage.stageWidth - _loc11_));
+               _loc14_ = Math.max(0,Math.min(_loc7_.y,stage.stageHeight - _loc12_));
+               _loc7_.move(_loc13_,_loc14_);
+               _loc7_.setActualSize(_loc11_,_loc12_);
             }
          }
          else
@@ -465,6 +471,22 @@ package tibia.creatures.statusWidgetClasses
          {
             this.skillLabel = String(this.character.getSkillValue(this.skill));
             this.m_UIProgress.value = this.character.getSkillProgress(this.skill);
+            this.updateExperienceBarStyle();
+         }
+      }
+      
+      private function updateExperienceBarStyle() : void
+      {
+         if(this.m_UIProgress != null)
+         {
+            if(this.m_Character != null && this.m_Character.experienceBonus > 0)
+            {
+               this.m_UIProgress.styleName = getStyle("progressBarBonusStyleName");
+            }
+            else
+            {
+               this.m_UIProgress.styleName = getStyle("progressBarStyleName");
+            }
          }
       }
       
@@ -547,6 +569,7 @@ package tibia.creatures.statusWidgetClasses
                includeInLayout = false;
                visible = false;
             }
+            this.updateExperienceBarStyle();
             this.m_UncommittedSkill = false;
          }
          if(this.m_UncommittedSkillLabel)
@@ -563,10 +586,7 @@ package tibia.creatures.statusWidgetClasses
          {
             this.m_UIIcon.styleName = getStyle("iconStyleName");
          }
-         if(this.m_UIProgress != null)
-         {
-            this.m_UIProgress.styleName = getStyle("progressBarStyleName");
-         }
+         this.updateExperienceBarStyle();
          this.m_UncommittedSkillLabel = true;
          invalidateProperties();
       }

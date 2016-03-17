@@ -14,6 +14,7 @@ package
       {
          var _loc1_:Object = {
             "SKILL_FIGHTAXE":"Axe Fighting",
+            "TIP_SKILL_TEXT_EXP_BONUS":". All characters under level 50 benefit from an increased experience gain. You currently enjoy an experience bonus of {0}%",
             "TIP_STATE_PZ_BLOCK":"You may not logout or enter a protection zone",
             "SKILL_FISHING":"Fishing",
             "TIP_STATE_DROWNING":"You are drowning",

@@ -397,8 +397,9 @@ package tibia.creatures.unjustPointsWidgetClasses
       
       private function createProgressBars() : void
       {
+         var _loc1_:EdgeMetrics = null;
          var _loc3_:UnjustPointsBarRenderer = null;
-         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
+         _loc1_ = viewMetricsAndPadding;
          this.m_UIOpenSituationLabel = new Label();
          this.m_UIOpenSituationLabel.toolTip = resourceManager.getString(BUNDLE,"TOOLTIP_OPEN_SITUATIONS");
          this.updateOpenPvPSituations();

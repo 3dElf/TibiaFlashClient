@@ -133,7 +133,7 @@ package
       
       public static const CLIENT_TYPE:uint = 3;
       
-      public static const CLIENT_VERSION:uint = 1831;
+      public static const CLIENT_VERSION:uint = 1847;
       
       private static const OPTIONS_SAVE_INTERVAL:int = 30 * 60 * 1000;
       
@@ -807,6 +807,8 @@ package
       
       private var _embed_css_images_Minimap_ZoomOut_pressed_png_551236802:Class;
       
+      private var _embed_css_images_BarsXP_default_improved_png_873432335:Class;
+      
       private var _embed_css_images_Icons_ProgressBars_SwordFighting_png_598278734:Class;
       
       private var _embed_css_images_Button_ContainerUp_over_png_481410398:Class;
@@ -1138,6 +1140,7 @@ package
          this._embed_css_images_BarsHealth_fat_RedLow_png_1302187306 = Tibia__embed_css_images_BarsHealth_fat_RedLow_png_1302187306;
          this._embed_css_images_BarsHealth_fat_Yellow_png_1588158565 = Tibia__embed_css_images_BarsHealth_fat_Yellow_png_1588158565;
          this._embed_css_images_BarsXP_default__png_639110899 = Tibia__embed_css_images_BarsXP_default__png_639110899;
+         this._embed_css_images_BarsXP_default_improved_png_873432335 = Tibia__embed_css_images_BarsXP_default_improved_png_873432335;
          this._embed_css_images_Bars_ProgressMarker_png_1429758896 = Tibia__embed_css_images_Bars_ProgressMarker_png_1429758896;
          this._embed_css_images_Border02_WidgetSidebar_png_450459769 = Tibia__embed_css_images_Border02_WidgetSidebar_png_450459769;
          this._embed_css_images_Border02_WidgetSidebar_slim_png_1226136413 = Tibia__embed_css_images_Border02_WidgetSidebar_slim_png_1226136413;

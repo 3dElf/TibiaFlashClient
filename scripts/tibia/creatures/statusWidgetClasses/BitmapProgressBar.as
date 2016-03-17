@@ -301,13 +301,16 @@ package tibia.creatures.statusWidgetClasses
       
       override public function set styleName(param1:Object) : void
       {
-         super.styleName = param1;
-         this.m_UIBackground.invalidateStyle();
-         this.m_UILeftOrnament.invalidateStyle();
-         this.m_UIRightOrnament.invalidateStyle();
-         this.m_UITick.invalidateStyle();
-         this.m_BarImages = null;
-         this.m_BarLimits = null;
+         if(styleName != param1)
+         {
+            super.styleName = param1;
+            this.m_UIBackground.invalidateStyle();
+            this.m_UILeftOrnament.invalidateStyle();
+            this.m_UIRightOrnament.invalidateStyle();
+            this.m_UITick.invalidateStyle();
+            this.m_BarImages = null;
+            this.m_BarLimits = null;
+         }
       }
       
       override public function styleChanged(param1:String) : void
