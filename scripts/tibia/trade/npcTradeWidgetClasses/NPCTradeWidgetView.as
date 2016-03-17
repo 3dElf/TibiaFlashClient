@@ -48,11 +48,11 @@ package tibia.trade.npcTradeWidgetClasses
       
       protected static const SKILL_FIGHTCLUB:int = 9;
       
-      protected static const PK_PARTYMODE:int = 2;
-      
       protected static const WAR_ALLY:int = 1;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const PK_PARTYMODE:int = 2;
       
       protected static const WAR_ENEMY:int = 2;
       
@@ -127,6 +127,8 @@ package tibia.trade.npcTradeWidgetClasses
       protected static const SKILL_HITPOINTS:int = 3;
       
       protected static const SKILL_NONE:int = -1;
+      
+      protected static const SKILL_OFFLINETRAINING:int = 17;
       
       private static const BUNDLE:String = "NPCTradeWidget";
       

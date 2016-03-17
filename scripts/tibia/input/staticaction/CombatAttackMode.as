@@ -6,10 +6,11 @@ package tibia.input.staticaction
    public class CombatAttackMode extends StaticAction
    {
        
-      private var m_AttackMode:int = 2;
+      private var m_AttackMode:int;
       
       public function CombatAttackMode(param1:int, param2:String, param3:uint, param4:int)
       {
+         this.m_AttackMode = OptionsStorage.COMBAT_ATTACK_BALANCED;
          super(param1,param2,param3,false);
          if(param4 != OptionsStorage.COMBAT_ATTACK_BALANCED && param4 != OptionsStorage.COMBAT_ATTACK_DEFENSIVE && param4 != OptionsStorage.COMBAT_ATTACK_OFFENSIVE)
          {

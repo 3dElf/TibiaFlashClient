@@ -60,13 +60,11 @@ package tibia.creatures
       
       public static const LOCATION_RIGHT:int = 3;
       
-      protected static const PK_PARTYMODE:int = 2;
-      
       protected static const WAR_ALLY:int = 1;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
       
-      public static const DIRECTION_BOTTOM_TO_TOP:String = "bt";
+      protected static const PK_PARTYMODE:int = 2;
       
       public static const DIRECTION_RIGHT_TO_LEFT:String = "rl";
       
@@ -75,6 +73,8 @@ package tibia.creatures
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
       protected static const PARTY_MEMBER:int = 2;
+      
+      public static const DIRECTION_BOTTOM_TO_TOP:String = "bt";
       
       protected static const STATE_DRUNK:int = 3;
       
@@ -142,7 +142,7 @@ package tibia.creatures
       
       protected static const SKILL_NONE:int = -1;
       
-      public static const DIRECTION_AUTO:String = "a";
+      protected static const SKILL_OFFLINETRAINING:int = 17;
       
       public static const DIRECTION_LEFT_TO_RIGHT:String = "lr";
       
@@ -161,6 +161,8 @@ package tibia.creatures
       protected static const STATE_FREEZING:int = 9;
       
       protected static const DRAG_TYPE_ACTION:String = "action";
+      
+      public static const DIRECTION_AUTO:String = "a";
       
       protected static const PARTY_LEADER:int = 1;
       

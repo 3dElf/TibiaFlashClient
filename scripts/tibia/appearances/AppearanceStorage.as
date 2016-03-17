@@ -300,8 +300,9 @@ package tibia.appearances
             this.m_QueueLoader.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR,this.onLoaderError);
             this.m_QueueLoader = null;
          }
-         if(_Asset != null && _Bitmap != null && Boolean(this.mergeSpritesBitmap(_Asset.firstSpriteID,_Bitmap)))
+         if(_Asset != null && _Bitmap != null)
          {
+            this.mergeSpritesBitmap(_Asset.firstSpriteID,_Bitmap);
             _Asset.unload();
             _Bitmap.dispose();
             System.pauseForGCIfCollectionImminent(0.5);
@@ -340,7 +341,7 @@ package tibia.appearances
                }
                _loc4_--;
             }
-            _loc2_ = _loc3_ == null || !this.loadAppearances(_loc3_.rawBytes);
+            _loc2_ = _loc3_ == null || !this.loadAppearances(_loc3_.rawBytes) || !this.allocateSpritesBitmap();
          }
          if(!_loc2_)
          {
@@ -489,16 +490,15 @@ package tibia.appearances
          var UpdateSprite:Function = function(param1:AppearanceType, param2:int, param3:Vector.<AppearanceType>):void
          {
             var _loc4_:Rectangle = null;
-            if(param1 == null)
+            if(param1 != null)
             {
-               return;
-            }
-            param1.bitmap = m_SpriteBitmap;
-            for each(_loc4_ in param1.sprite)
-            {
-               if(_loc4_.x == -1)
+               param1.bitmap = m_SpriteBitmap;
+               for each(_loc4_ in param1.sprite)
                {
-                  getSprite(_loc4_.y,_loc4_);
+                  if(_loc4_.x == -1)
+                  {
+                     getSprite(_loc4_.y,_loc4_);
+                  }
                }
             }
          };
@@ -518,6 +518,10 @@ package tibia.appearances
       
       private function mergeSpritesBitmap(param1:uint, param2:BitmapData) : Boolean
       {
+         if(param2 == null)
+         {
+            return false;
+         }
          var _loc3_:Rectangle = this.getSprite(param1);
          if(_loc3_ == null)
          {
@@ -525,10 +529,6 @@ package tibia.appearances
          }
          _loc3_.x = 0;
          _loc3_.y = 0;
-         if(param2 == null)
-         {
-            return false;
-         }
          var _loc4_:Rectangle = null;
          this.m_SpriteBitmap.lock();
          while((_loc4_ = this.getSprite(param1,_loc4_)) != null)
@@ -593,7 +593,7 @@ package tibia.appearances
             _loc3_ = this.readAppearanceType(param1,this.m_MissileTypes,_loc4_);
             _loc4_++;
          }
-         _loc3_ = Boolean(_loc3_) && param1.bytesAvailable == 0 && Boolean(this.allocateSpritesBitmap());
+         _loc3_ = Boolean(_loc3_) && param1.bytesAvailable == 0;
          param1.endian = _loc2_;
          return _loc3_;
       }
@@ -665,36 +665,36 @@ package tibia.appearances
       
       private function allocateSpritesBitmap() : Boolean
       {
+         var SpriteLength:Array = null;
          var BlockLength:Array = null;
          var BlockTotal:uint = 0;
          var BlockColumns:uint = 0;
          var GetSpriteLength:Function = function(param1:AppearanceType, param2:int, param3:Vector.<AppearanceType>):void
          {
-            var _loc5_:Rectangle = null;
-            if(param1 == null)
+            var _loc4_:Rectangle = null;
+            var _loc5_:* = 0;
+            var _loc6_:uint = 0;
+            if(param1 != null)
             {
-               return;
-            }
-            var _loc4_:int = -1;
-            for each(_loc5_ in param1.sprite)
-            {
-               if(_loc5_.x == -1 && (_loc4_ = uint(_loc5_.y) >> 29) > -1)
+               for each(_loc4_ in param1.sprite)
                {
-                  this[_loc4_] = Math.max(this[_loc4_],uint(_loc5_.y));
+                  if(_loc4_.x == -1)
+                  {
+                     _loc5_ = uint(_loc4_.y) >> 29;
+                     _loc6_ = uint(_loc4_.y) & 268435455;
+                     if(_loc5_ >= 0)
+                     {
+                        this[_loc5_] = Math.max(this[_loc5_],_loc6_ + 1);
+                     }
+                  }
                }
             }
          };
-         var SpriteLength:Array = [0,0,0,0];
+         SpriteLength = [0,0,0,0];
          this.m_ObjectTypes.forEach(GetSpriteLength,SpriteLength);
          this.m_OutfitTypes.forEach(GetSpriteLength,SpriteLength);
          this.m_EffectTypes.forEach(GetSpriteLength,SpriteLength);
          this.m_MissileTypes.forEach(GetSpriteLength,SpriteLength);
-         var i:int = SpriteLength.length - 1;
-         while(i >= 0)
-         {
-            SpriteLength[i] = (SpriteLength[i] & 268435455) + 1;
-            i--;
-         }
          BlockLength = [Math.ceil(SpriteLength[0] / 4),Math.ceil(SpriteLength[1] / 2),Math.ceil(SpriteLength[2] / 2),SpriteLength[3]];
          BlockTotal = BlockLength[0] + BlockLength[1] + BlockLength[2] + BlockLength[3];
          BlockColumns = Math.ceil(Math.sqrt(BlockTotal));

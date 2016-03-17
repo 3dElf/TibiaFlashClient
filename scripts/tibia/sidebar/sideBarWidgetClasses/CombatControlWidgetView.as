@@ -74,9 +74,9 @@ package tibia.sidebar.sideBarWidgetClasses
       
       private var m_UncommittedSecureMode:Boolean = false;
       
-      protected var m_AttackMode:int = 1;
+      protected var m_AttackMode:int;
       
-      protected var m_ChaseMode:int = 0;
+      protected var m_ChaseMode:int;
       
       protected var m_UIButtonOffensive:Button = null;
       
@@ -92,12 +92,15 @@ package tibia.sidebar.sideBarWidgetClasses
       
       protected var m_MountMode:Boolean = false;
       
-      protected var m_SecureMode:int = 0;
+      protected var m_SecureMode:int;
       
       private var m_UncommittedAttackMode:Boolean = false;
       
       public function CombatControlWidgetView()
       {
+         this.m_AttackMode = OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
+         this.m_ChaseMode = OptionsStorage.COMBAT_CHASE_OFF;
+         this.m_SecureMode = OptionsStorage.COMBAT_SECURE_OFF;
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          direction = BoxDirection.HORIZONTAL;

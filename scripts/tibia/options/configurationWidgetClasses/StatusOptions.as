@@ -4,11 +4,11 @@ package tibia.options.configurationWidgetClasses
    import tibia.worldmap.widgetClasses.RendererImpl;
    import tibia.creatures.StatusWidget;
    import mx.controls.CheckBox;
+   import mx.controls.ComboBox;
    import mx.containers.Form;
    import mx.containers.FormItem;
    import mx.containers.FormHeading;
    import tibia.options.ConfigurationWidget;
-   import mx.controls.ComboBox;
    import mx.core.ClassFactory;
    import shared.controls.CustomList;
    import mx.events.DropdownEvent;
@@ -40,11 +40,11 @@ package tibia.options.configurationWidgetClasses
       
       protected static const WIDGET_STATUS_STYLES:Array = [{"value":StatusWidget.STATUS_STYLE_DEFAULT},{"value":StatusWidget.STATUS_STYLE_COMPACT},{"value":StatusWidget.STATUS_STYLE_PARALLEL},{"value":StatusWidget.STATUS_STYLE_FAT},{"value":StatusWidget.STATUS_STYLE_OFF}];
       
-      protected static const PK_PARTYMODE:int = 2;
-      
       protected static const WAR_ALLY:int = 1;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const PK_PARTYMODE:int = 2;
       
       protected static const WAR_ENEMY:int = 2;
       
@@ -98,11 +98,11 @@ package tibia.options.configurationWidgetClasses
       
       protected static const STATE_FAST:int = 6;
       
-      protected static const WIDGET_STATUS_SKILLS:Array = [{"value":SKILL_NONE},{"value":SKILL_LEVEL},{"value":SKILL_MAGLEVEL},{"value":SKILL_FIGHTFIST},{"value":SKILL_FIGHTCLUB},{"value":SKILL_FIGHTSWORD},{"value":SKILL_FIGHTAXE},{"value":SKILL_FIGHTDISTANCE},{"value":SKILL_FIGHTSHIELD},{"value":SKILL_FISHING}];
-      
       protected static const STATE_BLEEDING:int = 15;
       
       protected static const STATE_DAZZLED:int = 10;
+      
+      protected static const WIDGET_STATUS_SKILLS:Array = [{"value":SKILL_NONE},{"value":SKILL_LEVEL},{"value":SKILL_MAGLEVEL},{"value":SKILL_FIGHTFIST},{"value":SKILL_FIGHTCLUB},{"value":SKILL_FIGHTSWORD},{"value":SKILL_FIGHTAXE},{"value":SKILL_FIGHTDISTANCE},{"value":SKILL_FIGHTSHIELD},{"value":SKILL_FISHING}];
       
       protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
       
@@ -111,6 +111,8 @@ package tibia.options.configurationWidgetClasses
       protected static const SKILL_HITPOINTS:int = 3;
       
       protected static const SKILL_NONE:int = -1;
+      
+      protected static const SKILL_OFFLINETRAINING:int = 17;
       
       protected static const STATE_MANA_SHIELD:int = 4;
       
@@ -150,7 +152,7 @@ package tibia.options.configurationWidgetClasses
       
       protected static const STATE_DROWNING:int = 8;
       
-      protected static const CREATURE_STATUS_STYLES:Array = [{
+      protected static const OTHER_STATUS_STYLES:Array = [{
          "value":RendererImpl.STATUS_STYLE_CLASSIC,
          "label":"STATUS_RENDERER_STATUS_STYLE_CLASSIC"
       },{
@@ -164,17 +166,7 @@ package tibia.options.configurationWidgetClasses
       
       protected static const STATE_STRENGTHENED:int = 12;
       
-      protected static const STATE_HUNGRY:int = 31;
-      
-      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
-      
-      protected static const PROFESSION_DRUID:int = 4;
-      
-      protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
-      
-      protected static const STATE_FIGHTING:int = 7;
-      
-      protected static const PLAYER_STATUS_STYLES:Array = [{
+      protected static const OWN_STATUS_STYLES:Array = [{
          "value":RendererImpl.STATUS_STYLE_CLASSIC,
          "label":"STATUS_RENDERER_STATUS_STYLE_CLASSIC"
       },{
@@ -185,6 +177,16 @@ package tibia.options.configurationWidgetClasses
          "label":"STATUS_RENDERER_STATUS_STYLE_OFF"
       }];
       
+      protected static const STATE_HUNGRY:int = 31;
+      
+      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
+      
+      protected static const PROFESSION_DRUID:int = 4;
+      
+      protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
+      
+      protected static const STATE_FIGHTING:int = 7;
+      
       protected static const SKILL_GOSTRENGTH:int = 5;
       
       protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
@@ -193,51 +195,51 @@ package tibia.options.configurationWidgetClasses
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
        
-      protected var m_UICreatureFlags:CheckBox = null;
+      protected var m_UIOwnHealth:CheckBox = null;
       
-      protected var m_UIPlayerMana:CheckBox = null;
+      protected var m_UIOtherHealth:CheckBox = null;
+      
+      private var m_UncommittedWidgetStyle:Boolean = false;
+      
+      protected var m_UIOwnStyle:ComboBox = null;
       
       private var m_UncommittedValues:Boolean = true;
       
       private var m_UncommittedWidgetSkill:Boolean = false;
       
-      protected var m_UIPlayerFlags:CheckBox = null;
+      protected var m_UIOtherFlags:CheckBox = null;
       
-      private var m_UncommittedCreatureStyle:Boolean = false;
-      
-      protected var m_Options:OptionsStorage = null;
-      
-      private var m_UIConstructed:Boolean = false;
+      protected var m_UIOwnName:CheckBox = null;
       
       protected var m_UICreatureStyle:ComboBox = null;
       
-      protected var m_UICreatureName:CheckBox = null;
+      private var m_UIConstructed:Boolean = false;
       
-      protected var m_CreatureStyle:int = 1;
+      protected var m_UIOtherName:CheckBox = null;
       
-      protected var m_UICreatureHealth:CheckBox = null;
+      protected var m_Options:OptionsStorage = null;
       
-      protected var m_UIPlayerStyle:ComboBox = null;
-      
-      private var m_UncommittedOptions:Boolean = false;
+      protected var m_OtherStyle:int = 1;
       
       protected var m_UIWidgetStyle:ComboBox = null;
       
-      protected var m_UIPlayerName:CheckBox = null;
+      private var m_UncommittedOptions:Boolean = false;
       
       protected var m_WidgetStyle:int = 1;
       
-      protected var m_PlayerStyle:int = 1;
-      
-      protected var m_UIPlayerHealth:CheckBox = null;
-      
       protected var m_UIWidgetSkill:ComboBox = null;
+      
+      protected var m_UIOwnMana:CheckBox = null;
+      
+      private var m_UncommittedOtherStyle:Boolean = false;
+      
+      protected var m_UIOwnFlags:CheckBox = null;
       
       protected var m_WidgetSkill:int = 0;
       
-      private var m_UncommittedWidgetStyle:Boolean = false;
+      private var m_UncommittedOwnStyle:Boolean = false;
       
-      private var m_UncommittedPlayerStyle:Boolean = false;
+      protected var m_OwnStyle:int = 1;
       
       public function StatusOptions()
       {
@@ -249,15 +251,15 @@ package tibia.options.configurationWidgetClasses
       {
          if(this.m_Options != null && Boolean(param1) && Boolean(this.m_UncommittedValues))
          {
-            this.m_Options.statusPlayerStyle = this.m_PlayerStyle;
-            this.m_Options.statusPlayerName = this.m_UIPlayerName.selected;
-            this.m_Options.statusPlayerHealth = this.m_UIPlayerHealth.selected;
-            this.m_Options.statusPlayerMana = this.m_UIPlayerMana.selected;
-            this.m_Options.statusPlayerFlags = this.m_UIPlayerFlags.selected;
-            this.m_Options.statusCreatureStyle = this.m_CreatureStyle;
-            this.m_Options.statusCreatureName = this.m_UICreatureName.selected;
-            this.m_Options.statusCreatureHealth = this.m_UICreatureHealth.selected;
-            this.m_Options.statusCreatureFlags = this.m_UICreatureFlags.selected;
+            this.m_Options.statusPlayerStyle = this.m_OwnStyle;
+            this.m_Options.statusPlayerName = this.m_UIOwnName.selected;
+            this.m_Options.statusPlayerHealth = this.m_UIOwnHealth.selected;
+            this.m_Options.statusPlayerMana = this.m_UIOwnMana.selected;
+            this.m_Options.statusPlayerFlags = this.m_UIOwnFlags.selected;
+            this.m_Options.statusCreatureStyle = this.m_OtherStyle;
+            this.m_Options.statusCreatureName = this.m_UIOtherName.selected;
+            this.m_Options.statusCreatureHealth = this.m_UIOtherHealth.selected;
+            this.m_Options.statusCreatureFlags = this.m_UIOtherFlags.selected;
             if(this.m_WidgetStyle == StatusWidget.STATUS_STYLE_OFF)
             {
                this.m_Options.statusWidgetVisible = false;
@@ -312,47 +314,47 @@ package tibia.options.configurationWidgetClasses
             Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_PLAYER_STYLE");
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
-            this.m_UIPlayerStyle = new ComboBox();
-            this.m_UIPlayerStyle.dataProvider = PLAYER_STATUS_STYLES;
-            this.m_UIPlayerStyle.dropdownFactory = new ClassFactory(CustomList);
-            this.m_UIPlayerStyle.labelField = "label";
-            this.m_UIPlayerStyle.labelFunction = LocalisedLabelFunction;
-            this.m_UIPlayerStyle.addEventListener(DropdownEvent.CLOSE,this.onComboBoxChange);
-            this.m_UIPlayerStyle.addEventListener(ListEvent.CHANGE,this.onComboBoxChange);
-            this.m_UIPlayerStyle.addEventListener(ListEvent.CHANGE,this.onValueChange);
-            Item.addChild(this.m_UIPlayerStyle);
+            this.m_UIOwnStyle = new ComboBox();
+            this.m_UIOwnStyle.dataProvider = OWN_STATUS_STYLES;
+            this.m_UIOwnStyle.dropdownFactory = new ClassFactory(CustomList);
+            this.m_UIOwnStyle.labelField = "label";
+            this.m_UIOwnStyle.labelFunction = LocalisedLabelFunction;
+            this.m_UIOwnStyle.addEventListener(DropdownEvent.CLOSE,this.onComboBoxChange);
+            this.m_UIOwnStyle.addEventListener(ListEvent.CHANGE,this.onComboBoxChange);
+            this.m_UIOwnStyle.addEventListener(ListEvent.CHANGE,this.onValueChange);
+            Item.addChild(this.m_UIOwnStyle);
             Frm.addChild(Item);
             Item = new FormItem();
             Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_PLAYER_NAME");
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
-            this.m_UIPlayerName = new CheckBox();
-            this.m_UIPlayerName.addEventListener(Event.CHANGE,this.onValueChange);
-            Item.addChild(this.m_UIPlayerName);
+            this.m_UIOwnName = new CheckBox();
+            this.m_UIOwnName.addEventListener(Event.CHANGE,this.onValueChange);
+            Item.addChild(this.m_UIOwnName);
             Frm.addChild(Item);
             Item = new FormItem();
             Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_PLAYER_HEALTH");
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
-            this.m_UIPlayerHealth = new CheckBox();
-            this.m_UIPlayerHealth.addEventListener(Event.CHANGE,this.onValueChange);
-            Item.addChild(this.m_UIPlayerHealth);
+            this.m_UIOwnHealth = new CheckBox();
+            this.m_UIOwnHealth.addEventListener(Event.CHANGE,this.onValueChange);
+            Item.addChild(this.m_UIOwnHealth);
             Frm.addChild(Item);
             Item = new FormItem();
             Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_PLAYER_MANA");
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
-            this.m_UIPlayerMana = new CheckBox();
-            this.m_UIPlayerMana.addEventListener(Event.CHANGE,this.onValueChange);
-            Item.addChild(this.m_UIPlayerMana);
+            this.m_UIOwnMana = new CheckBox();
+            this.m_UIOwnMana.addEventListener(Event.CHANGE,this.onValueChange);
+            Item.addChild(this.m_UIOwnMana);
             Frm.addChild(Item);
             Item = new FormItem();
             Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_PLAYER_FLAGS");
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
-            this.m_UIPlayerFlags = new CheckBox();
-            this.m_UIPlayerFlags.addEventListener(Event.CHANGE,this.onValueChange);
-            Item.addChild(this.m_UIPlayerFlags);
+            this.m_UIOwnFlags = new CheckBox();
+            this.m_UIOwnFlags.addEventListener(Event.CHANGE,this.onValueChange);
+            Item.addChild(this.m_UIOwnFlags);
             Frm.addChild(Item);
             Heading = new FormHeading();
             Heading.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_CREATURE_HEADING");
@@ -364,7 +366,7 @@ package tibia.options.configurationWidgetClasses
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
             this.m_UICreatureStyle = new ComboBox();
-            this.m_UICreatureStyle.dataProvider = CREATURE_STATUS_STYLES;
+            this.m_UICreatureStyle.dataProvider = OTHER_STATUS_STYLES;
             this.m_UICreatureStyle.dropdownFactory = new ClassFactory(CustomList);
             this.m_UICreatureStyle.labelField = "label";
             this.m_UICreatureStyle.labelFunction = LocalisedLabelFunction;
@@ -377,25 +379,25 @@ package tibia.options.configurationWidgetClasses
             Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_CREATURE_NAME");
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
-            this.m_UICreatureName = new CheckBox();
-            this.m_UICreatureName.addEventListener(Event.CHANGE,this.onValueChange);
-            Item.addChild(this.m_UICreatureName);
+            this.m_UIOtherName = new CheckBox();
+            this.m_UIOtherName.addEventListener(Event.CHANGE,this.onValueChange);
+            Item.addChild(this.m_UIOtherName);
             Frm.addChild(Item);
             Item = new FormItem();
             Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_CREATURE_HEALTH");
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
-            this.m_UICreatureHealth = new CheckBox();
-            this.m_UICreatureHealth.addEventListener(Event.CHANGE,this.onValueChange);
-            Item.addChild(this.m_UICreatureHealth);
+            this.m_UIOtherHealth = new CheckBox();
+            this.m_UIOtherHealth.addEventListener(Event.CHANGE,this.onValueChange);
+            Item.addChild(this.m_UIOtherHealth);
             Frm.addChild(Item);
             Item = new FormItem();
             Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_CREATURE_FLAGS");
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
-            this.m_UICreatureFlags = new CheckBox();
-            this.m_UICreatureFlags.addEventListener(Event.CHANGE,this.onValueChange);
-            Item.addChild(this.m_UICreatureFlags);
+            this.m_UIOtherFlags = new CheckBox();
+            this.m_UIOtherFlags.addEventListener(Event.CHANGE,this.onValueChange);
+            Item.addChild(this.m_UIOtherFlags);
             Frm.addChild(Item);
             Heading = new FormHeading();
             Heading.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_WIDGET_HEADING");
@@ -450,6 +452,16 @@ package tibia.options.configurationWidgetClasses
          }
       }
       
+      public function set options(param1:OptionsStorage) : void
+      {
+         if(this.m_Options != param1)
+         {
+            this.m_Options = param1;
+            this.m_UncommittedOptions = true;
+            invalidateProperties();
+         }
+      }
+      
       protected function onComboBoxChange(param1:Event) : void
       {
          var _loc2_:int = 0;
@@ -460,21 +472,21 @@ package tibia.options.configurationWidgetClasses
             _loc3_ = null;
             switch(param1.currentTarget)
             {
-               case this.m_UIPlayerStyle:
-                  _loc2_ = this.m_UIPlayerStyle.selectedIndex;
-                  if(_loc2_ >= 0 && _loc2_ < PLAYER_STATUS_STYLES.length)
+               case this.m_UIOwnStyle:
+                  _loc2_ = this.m_UIOwnStyle.selectedIndex;
+                  if(_loc2_ >= 0 && _loc2_ < OWN_STATUS_STYLES.length)
                   {
-                     this.m_PlayerStyle = PLAYER_STATUS_STYLES[_loc2_].value;
-                     this.m_UncommittedPlayerStyle = true;
+                     this.m_OwnStyle = OWN_STATUS_STYLES[_loc2_].value;
+                     this.m_UncommittedOwnStyle = true;
                      invalidateProperties();
                   }
                   break;
                case this.m_UICreatureStyle:
                   _loc2_ = this.m_UICreatureStyle.selectedIndex;
-                  if(_loc2_ >= 0 && _loc2_ < CREATURE_STATUS_STYLES.length)
+                  if(_loc2_ >= 0 && _loc2_ < OTHER_STATUS_STYLES.length)
                   {
-                     this.m_CreatureStyle = CREATURE_STATUS_STYLES[_loc2_].value;
-                     this.m_UncommittedCreatureStyle = true;
+                     this.m_OtherStyle = OTHER_STATUS_STYLES[_loc2_].value;
+                     this.m_UncommittedOtherStyle = true;
                      invalidateProperties();
                   }
                   break;
@@ -499,16 +511,6 @@ package tibia.options.configurationWidgetClasses
          }
       }
       
-      public function set options(param1:OptionsStorage) : void
-      {
-         if(this.m_Options != param1)
-         {
-            this.m_Options = param1;
-            this.m_UncommittedOptions = true;
-            invalidateProperties();
-         }
-      }
-      
       override protected function commitProperties() : void
       {
          super.commitProperties();
@@ -516,60 +518,63 @@ package tibia.options.configurationWidgetClasses
          {
             if(this.m_Options != null)
             {
-               this.m_PlayerStyle = this.m_Options.statusPlayerStyle;
-               this.m_UIPlayerName.selected = this.m_Options.statusPlayerName;
-               this.m_UIPlayerHealth.selected = this.m_Options.statusPlayerHealth;
-               this.m_UIPlayerMana.selected = this.m_Options.statusPlayerMana;
-               this.m_UIPlayerFlags.selected = this.m_Options.statusPlayerFlags;
-               this.m_CreatureStyle = this.m_Options.statusCreatureStyle;
-               this.m_UICreatureName.selected = this.m_Options.statusCreatureName;
-               this.m_UICreatureHealth.selected = this.m_Options.statusCreatureHealth;
-               this.m_UICreatureFlags.selected = this.m_Options.statusCreatureFlags;
+               this.m_OwnStyle = this.m_Options.statusPlayerStyle;
+               this.m_UIOwnName.selected = this.m_Options.statusPlayerName;
+               this.m_UIOwnHealth.selected = this.m_Options.statusPlayerHealth;
+               this.m_UIOwnMana.selected = this.m_Options.statusPlayerMana;
+               this.m_UIOwnFlags.selected = this.m_Options.statusPlayerFlags;
+               this.m_OtherStyle = this.m_Options.statusCreatureStyle;
+               this.m_UIOtherName.selected = this.m_Options.statusCreatureName;
+               this.m_UIOtherHealth.selected = this.m_Options.statusCreatureHealth;
+               this.m_UIOtherFlags.selected = this.m_Options.statusCreatureFlags;
                this.m_WidgetStyle = !!this.m_Options.statusWidgetVisible?int(this.m_Options.statusWidgetStyle):int(StatusWidget.STATUS_STYLE_OFF);
                this.m_WidgetSkill = this.m_Options.statusWidgetSkill;
             }
             else
             {
-               this.m_PlayerStyle = RendererImpl.STATUS_STYLE_CLASSIC;
-               this.m_UIPlayerName.selected = false;
-               this.m_UIPlayerHealth.selected = false;
-               this.m_UIPlayerMana.selected = false;
-               this.m_UIPlayerFlags.selected = false;
-               this.m_CreatureStyle = RendererImpl.STATUS_STYLE_CLASSIC;
-               this.m_UICreatureName.selected = false;
-               this.m_UICreatureHealth.selected = false;
-               this.m_UICreatureFlags.selected = false;
+               this.m_OwnStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+               this.m_UIOwnName.selected = false;
+               this.m_UIOwnHealth.selected = false;
+               this.m_UIOwnMana.selected = false;
+               this.m_UIOwnFlags.selected = false;
+               this.m_OtherStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+               this.m_UIOtherName.selected = false;
+               this.m_UIOtherHealth.selected = false;
+               this.m_UIOtherFlags.selected = false;
                this.m_WidgetStyle = StatusWidget.STATUS_STYLE_OFF;
                this.m_WidgetSkill = SKILL_EXPERIENCE;
             }
-            this.m_UIPlayerStyle.selectedIndex = ArrayHelper.s_IndexOf(PLAYER_STATUS_STYLES,"value",this.m_PlayerStyle);
-            this.m_UICreatureStyle.selectedIndex = ArrayHelper.s_IndexOf(CREATURE_STATUS_STYLES,"value",this.m_CreatureStyle);
-            this.m_UIWidgetStyle.selectedIndex = ArrayHelper.s_IndexOf(WIDGET_STATUS_STYLES,"value",this.m_WidgetStyle);
-            this.m_UIWidgetSkill.selectedIndex = ArrayHelper.s_IndexOf(WIDGET_STATUS_SKILLS,"value",this.m_WidgetSkill);
+            this.m_UncommittedOwnStyle = true;
+            this.m_UncommittedOtherStyle = true;
+            this.m_UncommittedWidgetStyle = true;
             this.m_UncommittedOptions = false;
          }
          var _loc1_:* = false;
-         if(this.m_UncommittedPlayerStyle)
+         if(this.m_UncommittedOwnStyle)
          {
-            _loc1_ = this.m_PlayerStyle != RendererImpl.STATUS_STYLE_OFF;
-            this.m_UIPlayerName.enabled = _loc1_;
-            this.m_UIPlayerHealth.enabled = _loc1_;
-            this.m_UIPlayerMana.enabled = _loc1_;
-            this.m_UIPlayerFlags.enabled = _loc1_;
-            this.m_UncommittedPlayerStyle = false;
+            this.m_UIOwnStyle.selectedIndex = ArrayHelper.s_IndexOf(OWN_STATUS_STYLES,"value",this.m_OwnStyle);
+            _loc1_ = this.m_OwnStyle != RendererImpl.STATUS_STYLE_OFF;
+            this.m_UIOwnName.enabled = _loc1_;
+            this.m_UIOwnHealth.enabled = _loc1_;
+            this.m_UIOwnMana.enabled = _loc1_;
+            this.m_UIOwnFlags.enabled = _loc1_;
+            this.m_UncommittedOwnStyle = false;
          }
-         if(this.m_UncommittedCreatureStyle)
+         if(this.m_UncommittedOtherStyle)
          {
-            _loc1_ = this.m_CreatureStyle != RendererImpl.STATUS_STYLE_OFF;
-            this.m_UICreatureName.enabled = _loc1_;
-            this.m_UICreatureHealth.enabled = _loc1_;
-            this.m_UICreatureFlags.enabled = _loc1_;
-            this.m_UncommittedCreatureStyle = false;
+            this.m_UICreatureStyle.selectedIndex = ArrayHelper.s_IndexOf(OTHER_STATUS_STYLES,"value",this.m_OtherStyle);
+            _loc1_ = this.m_OtherStyle != RendererImpl.STATUS_STYLE_OFF;
+            this.m_UIOtherName.enabled = _loc1_;
+            this.m_UIOtherHealth.enabled = _loc1_;
+            this.m_UIOtherFlags.enabled = _loc1_;
+            this.m_UncommittedOtherStyle = false;
          }
          if(this.m_UncommittedWidgetStyle)
          {
+            this.m_UIWidgetStyle.selectedIndex = ArrayHelper.s_IndexOf(WIDGET_STATUS_STYLES,"value",this.m_WidgetStyle);
             _loc1_ = this.m_WidgetStyle != StatusWidget.STATUS_STYLE_OFF;
             this.m_UIWidgetSkill.enabled = _loc1_;
+            this.m_UIWidgetSkill.selectedIndex = ArrayHelper.s_IndexOf(WIDGET_STATUS_SKILLS,"value",this.m_WidgetSkill);
             this.m_UncommittedWidgetStyle = false;
          }
       }

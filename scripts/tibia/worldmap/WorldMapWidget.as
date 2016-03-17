@@ -536,15 +536,15 @@ package tibia.worldmap
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
-         var Width:Number = NaN;
+         var Height:Number = NaN;
          var RowHeight:Number = NaN;
          var a_UnscaledWidth:Number = param1;
          var a_UnscaledHeight:Number = param2;
          super.updateDisplayList(a_UnscaledWidth,a_UnscaledHeight);
          var AvailHeight:Number = Math.max(0,a_UnscaledHeight - 2);
-         var Height:Number = MAP_HEIGHT * FIELD_SIZE;
+         Height = MAP_HEIGHT * FIELD_SIZE;
          var AvailWidth:Number = Math.max(0,a_UnscaledWidth - 2);
-         Width = MAP_WIDTH * FIELD_SIZE;
+         var Width:Number = MAP_WIDTH * FIELD_SIZE;
          var Left:Number = 0;
          var Top:Number = 0;
          var Scale:Number = 1;

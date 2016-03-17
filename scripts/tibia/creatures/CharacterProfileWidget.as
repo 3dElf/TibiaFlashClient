@@ -27,11 +27,11 @@ package tibia.creatures
       
       protected static const SKILL_FIGHTCLUB:int = 9;
       
-      protected static const PK_PARTYMODE:int = 2;
-      
       protected static const WAR_ALLY:int = 1;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const PK_PARTYMODE:int = 2;
       
       protected static const WAR_ENEMY:int = 2;
       
@@ -96,6 +96,8 @@ package tibia.creatures
       protected static const SKILL_HITPOINTS:int = 3;
       
       protected static const SKILL_NONE:int = -1;
+      
+      protected static const SKILL_OFFLINETRAINING:int = 17;
       
       public static const BUNDLE:String = "CharacterProfileWidget";
       
@@ -200,6 +202,10 @@ package tibia.creatures
             "label":"FORM_ITEM_STAMINA",
             "renderer":null
          },{
+            "skill":SKILL_OFFLINETRAINING,
+            "label":"FORM_ITEM_OFFLINETRAINING",
+            "renderer":null
+         },{
             "skill":SKILL_MAGLEVEL,
             "label":"FORM_ITEM_MAGLEVEL",
             "renderer":null
@@ -282,7 +288,7 @@ package tibia.creatures
             _loc3_ = param1.getSkillValue(param2);
             _loc4_ = param1.getSkillBase(param2);
             _loc5_ = param1.getSkillProgress(param2);
-            if(param2 == SKILL_STAMINA)
+            if(param2 == SKILL_STAMINA || param2 == SKILL_OFFLINETRAINING)
             {
                _loc3_ = Math.round(Math.max(0,_loc3_ - _loc4_) / (60 * 1000));
                return ("0" + Math.floor(_loc3_ / 60)).substr(-2) + ":" + ("0" + Math.floor(_loc3_ % 60)).substr(-2) + ":00";

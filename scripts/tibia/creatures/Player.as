@@ -514,7 +514,7 @@ package tibia.creatures
       
       override public function resetSkills() : void
       {
-         m_Skills = new Vector.<Number>((SKILL_STAMINA + 1) * 3,true);
+         m_Skills = new Vector.<Number>((SKILL_OFFLINETRAINING + 1) * 3,true);
          var _loc1_:int = 0;
          while(_loc1_ < m_Skills.length)
          {

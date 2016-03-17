@@ -51,11 +51,11 @@ package tibia.options
       
       public static const COMBAT_SECURE_ON:int = 1;
       
-      protected static const PK_PARTYMODE:int = 2;
-      
       protected static const WAR_ALLY:int = 1;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const PK_PARTYMODE:int = 2;
       
       protected static const WAR_ENEMY:int = 2;
       
@@ -124,6 +124,8 @@ package tibia.options
       protected static const SKILL_NONE:int = -1;
       
       public static const COMBAT_ATTACK_DEFENSIVE:int = 3;
+      
+      protected static const SKILL_OFFLINETRAINING:int = 17;
       
       protected static const STATE_MANA_SHIELD:int = 4;
       
@@ -2291,8 +2293,9 @@ package tibia.options
       
       private function set _737429024statusCreatureStyle(param1:int) : void
       {
-         if(param1 == RendererImpl.STATUS_STYLE_CLASSIC || param1 == RendererImpl.STATUS_STYLE_HUD || param1 == RendererImpl.STATUS_STYLE_OFF)
+         if(param1 == RendererImpl.STATUS_STYLE_CLASSIC || param1 == RendererImpl.STATUS_STYLE_OFF)
          {
+            this.m_StatusCreatureStyle = param1;
             return;
          }
          this.m_StatusCreatureStyle = param1;

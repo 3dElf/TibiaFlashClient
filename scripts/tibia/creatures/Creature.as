@@ -38,13 +38,11 @@ package tibia.creatures
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
-      protected static const PK_PARTYMODE:int = 2;
-      
       protected static const WAR_ALLY:int = 1;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
       
-      protected static const FIELD_HEIGHT:int = 24;
+      protected static const PK_PARTYMODE:int = 2;
       
       protected static const WAR_ENEMY:int = 2;
       
@@ -59,6 +57,8 @@ package tibia.creatures
       protected static const SKILL_EXPERIENCE:int = 0;
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
+      
+      protected static const FIELD_HEIGHT:int = 24;
       
       protected static const TYPE_NPC:int = 2;
       
@@ -129,6 +129,8 @@ package tibia.creatures
       protected static const SKILL_HITPOINTS:int = 3;
       
       protected static const SKILL_NONE:int = -1;
+      
+      protected static const SKILL_OFFLINETRAINING:int = 17;
       
       protected static const GROUND_LAYER:int = 7;
       

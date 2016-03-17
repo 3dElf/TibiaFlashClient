@@ -180,6 +180,8 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const SKILL_HITPOINTS:int = 3;
       
+      protected static const SKILL_OFFLINETRAINING:int = 17;
+      
       protected static const MAP_HEIGHT:int = 11;
       
       protected static const STATE_MANA_SHIELD:int = 4;

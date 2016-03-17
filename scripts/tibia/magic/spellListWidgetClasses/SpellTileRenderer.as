@@ -39,11 +39,11 @@ package tibia.magic.spellListWidgetClasses
       
       protected static const SKILL_FIGHTCLUB:int = 9;
       
-      protected static const PK_PARTYMODE:int = 2;
-      
       protected static const WAR_ALLY:int = 1;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const PK_PARTYMODE:int = 2;
       
       protected static const DRAG_TYPE_WIDGETBASE:String = "widgetBase";
       
@@ -114,6 +114,8 @@ package tibia.magic.spellListWidgetClasses
       protected static const SKILL_HITPOINTS:int = 3;
       
       protected static const SKILL_NONE:int = -1;
+      
+      protected static const SKILL_OFFLINETRAINING:int = 17;
       
       protected static const STATE_MANA_SHIELD:int = 4;
       

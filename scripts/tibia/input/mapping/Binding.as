@@ -448,7 +448,7 @@ package tibia.input.mapping
       
       public static function isBindable(param1:uint, param2:Boolean = false, param3:Boolean = false, param4:Boolean = false) : Boolean
       {
-         return param1 != Keyboard.ALTERNATE && param1 != Keyboard.COMMAND && param1 != Keyboard.CONTROL && param1 != Keyboard.SHIFT && param1 != 12 && param1 != 19 && param1 != 20 && param1 != 44 && param1 != 144 && param1 != 145 && (!param2 && !param3 && !param4 || Boolean(param2) && !param3 && !param4 || !param2 && Boolean(param3) && !param4 || !param2 && !param3 && Boolean(param4));
+         return param1 != Keyboard.ALTERNATE && param1 != Keyboard.COMMAND && param1 != Keyboard.CONTROL && param1 != Keyboard.SHIFT && param1 != 12 && param1 != 19 && param1 != 20 && param1 != 44 && param1 != 91 && param1 != 92 && param1 != 93 && param1 != 144 && param1 != 145 && (!param2 && !param3 && !param4 || Boolean(param2) && !param3 && !param4 || !param2 && Boolean(param3) && !param4 || !param2 && !param3 && Boolean(param4));
       }
       
       public static function unmarshall(param1:XML, param2:Number) : Binding
@@ -492,7 +492,7 @@ package tibia.input.mapping
       
       public static function isControlKey(param1:uint) : Boolean
       {
-         return param1 == 0 || param1 == Keyboard.BACKSPACE || param1 == Keyboard.TAB || param1 == Keyboard.ENTER || param1 >= Keyboard.COMMAND && param1 <= Keyboard.ALTERNATE || param1 >= Keyboard.CAPS_LOCK && param1 <= Keyboard.NUMPAD || param1 == Keyboard.ESCAPE || param1 >= Keyboard.PAGE_UP && param1 <= Keyboard.DOWN || param1 >= Keyboard.INSERT && param1 <= Keyboard.DELETE || param1 >= Keyboard.NUMPAD_0 && param1 <= Keyboard.NUMPAD_DIVIDE || param1 >= Keyboard.F1 && param1 <= Keyboard.F15;
+         return param1 == 0 || param1 == Keyboard.BACKSPACE || param1 == Keyboard.TAB || param1 == Keyboard.ENTER || param1 >= Keyboard.COMMAND && param1 <= Keyboard.ALTERNATE || param1 >= Keyboard.CAPS_LOCK && param1 <= Keyboard.NUMPAD || param1 == Keyboard.ESCAPE || param1 >= Keyboard.PAGE_UP && param1 <= Keyboard.DOWN || param1 >= Keyboard.INSERT && param1 <= Keyboard.DELETE || param1 >= Keyboard.NUMPAD_0 && param1 <= Keyboard.NUMPAD_DIVIDE || param1 >= Keyboard.F1 && param1 <= Keyboard.F15 || param1 == 91 || param1 == 92 || param1 == 93;
       }
       
       public static function toModifierCode(param1:Boolean, param2:Boolean, param3:Boolean) : uint

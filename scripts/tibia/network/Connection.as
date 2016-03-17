@@ -339,6 +339,8 @@ package tibia.network
       
       protected static const MAP_HEIGHT:int = 11;
       
+      protected static const SKILL_OFFLINETRAINING:int = 17;
+      
       protected static const STATE_MANA_SHIELD:int = 4;
       
       protected static const CMOUNT:int = 212;
@@ -395,7 +397,7 @@ package tibia.network
       
       protected static const SSPELLDELAY:int = 164;
       
-      protected static const TERMINAL_VERSION:int = 954;
+      protected static const TERMINAL_VERSION:int = 960;
       
       protected static const SDELETEONMAP:int = 108;
       
@@ -843,7 +845,8 @@ package tibia.network
       
       protected function readSCREATURESKULL(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedInt();
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
          var _loc3_:int = param1.readUnsignedByte();
          var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
          if(_loc4_ != null)
@@ -896,7 +899,8 @@ package tibia.network
       
       protected function readSMARKCREATURE(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedInt();
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
          var _loc3_:int = param1.readUnsignedByte();
          var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
          if(_loc4_ != null)
@@ -1075,7 +1079,8 @@ package tibia.network
       
       protected function readSCREATUREHEALTH(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedInt();
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
          var _loc3_:int = param1.readUnsignedByte();
          var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
          if(_loc4_ != null)
@@ -1755,10 +1760,16 @@ package tibia.network
       protected function readSPLAYERSKILLS(param1:ByteArray) : void
       {
          var _loc3_:int = 0;
+         var _loc4_:Number = NaN;
+         var _loc5_:Number = NaN;
+         var _loc6_:Number = NaN;
          var _loc2_:Array = [SKILL_FIGHTFIST,SKILL_FIGHTCLUB,SKILL_FIGHTSWORD,SKILL_FIGHTAXE,SKILL_FIGHTDISTANCE,SKILL_FIGHTSHIELD,SKILL_FISHING];
          for each(_loc3_ in _loc2_)
          {
-            this.m_Player.setSkill(_loc3_,param1.readUnsignedByte(),param1.readUnsignedByte(),param1.readUnsignedByte());
+            _loc4_ = param1.readUnsignedByte();
+            _loc5_ = param1.readUnsignedByte();
+            _loc6_ = param1.readUnsignedByte();
+            this.m_Player.setSkill(_loc3_,_loc4_,_loc5_,_loc6_);
          }
       }
       
@@ -2599,7 +2610,8 @@ package tibia.network
       
       protected function readSCREATURESPEED(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedInt();
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
          var _loc3_:int = param1.readUnsignedShort();
          var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
          if(_loc4_ != null)
@@ -2898,12 +2910,12 @@ package tibia.network
          var _loc3_:Number = 0;
          var _loc4_:Number = 0;
          var _loc5_:Number = 0;
-         _loc3_ = param1.readUnsignedShort();
-         _loc4_ = param1.readUnsignedShort();
+         _loc3_ = Math.max(0,param1.readShort());
+         _loc4_ = Math.max(0,param1.readShort());
          _loc5_ = 0;
          this.m_Player.setSkill(SKILL_HITPOINTS,_loc3_,_loc4_,_loc5_);
-         _loc3_ = param1.readUnsignedInt();
-         _loc4_ = param1.readUnsignedInt();
+         _loc3_ = Math.max(0,param1.readInt());
+         _loc4_ = Math.max(0,param1.readInt());
          _loc5_ = 0;
          this.m_Player.setSkill(SKILL_CARRYSTRENGTH,_loc3_,_loc4_,_loc5_);
          var _loc6_:uint = param1.readUnsignedInt();
@@ -2916,8 +2928,8 @@ package tibia.network
          _loc4_ = 1;
          _loc5_ = param1.readUnsignedByte();
          this.m_Player.setSkill(SKILL_LEVEL,_loc3_,_loc4_,_loc5_);
-         _loc3_ = param1.readUnsignedShort();
-         _loc4_ = param1.readUnsignedShort();
+         _loc3_ = Math.max(0,param1.readShort());
+         _loc4_ = Math.max(0,param1.readShort());
          _loc5_ = 0;
          this.m_Player.setSkill(SKILL_MANA,_loc3_,_loc4_,_loc5_);
          _loc3_ = param1.readUnsignedByte();
@@ -2940,6 +2952,10 @@ package tibia.network
          _loc4_ = _loc2_;
          _loc5_ = 0;
          this.m_Player.setSkill(SKILL_FED,_loc3_,_loc4_,_loc5_);
+         _loc3_ = _loc2_ + 60 * 1000 * param1.readUnsignedShort();
+         _loc4_ = _loc2_;
+         _loc5_ = 0;
+         this.m_Player.setSkill(SKILL_OFFLINETRAINING,_loc3_,_loc4_,_loc5_);
       }
       
       protected function readSOWNOFFER(param1:ByteArray) : void
@@ -3161,7 +3177,7 @@ package tibia.network
             {
                Message = Message + a_UserMessage.substr(0,BugReportWidget.MAX_USER_MESSAGE_LENGTH);
             }
-            Message = Message + ("\nBuild=" + "release;vanilla;2012-06-12;14:09:11;branches/bugfixes;768");
+            Message = Message + ("\nBuild=" + "release;vanilla;2012-07-09;11:49:47;branches/bugfixes;798");
             Message = Message + ("\nBrowser=" + BrowserHelper.s_GetBrowserString());
             Message = Message + ("\nFlash=" + Capabilities.serverString);
             SystemMessage = null;
@@ -3737,7 +3753,8 @@ package tibia.network
       
       protected function readSCREATUREPARTY(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedInt();
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
          var _loc3_:int = param1.readUnsignedByte();
          var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
          if(_loc4_ != null)
@@ -4203,7 +4220,8 @@ package tibia.network
       
       protected function readSCREATURELIGHT(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedInt();
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
          var _loc3_:int = param1.readUnsignedByte();
          var _loc4_:int = param1.readUnsignedByte();
          var _loc5_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
@@ -4503,7 +4521,8 @@ package tibia.network
       
       protected function readSCREATUREOUTFIT(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedInt();
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
          var _loc3_:AppearanceInstance = this.readCreatureOutfit(param1,null);
          var _loc4_:AppearanceInstance = this.readMountOutfit(param1,null);
          var _loc5_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
@@ -4899,8 +4918,9 @@ package tibia.network
       
       protected function readSCREATUREUNPASS(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedInt();
-         var _loc3_:* = param1.readUnsignedByte() != 0;
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
+         var _loc3_:Boolean = param1.readBoolean();
          var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
          if(_loc4_ != null)
          {
