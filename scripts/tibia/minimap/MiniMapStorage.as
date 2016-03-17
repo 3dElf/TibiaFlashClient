@@ -527,9 +527,9 @@ package tibia.minimap
          this.m_PathDirty.push(_loc18_);
          var _loc19_:tibia.minimap.PathItem = this.m_PathMatrix[(PATH_MATRIX_CENTER + _loc11_) * PATH_MATRIX_SIZE + (PATH_MATRIX_CENTER + _loc10_)];
          _loc19_.predecessor = null;
-         if(param1 < _loc16_)
+         if(param4 < _loc16_)
          {
-            if(param2 < _loc17_)
+            if(param5 < _loc17_)
             {
                _loc14_ = 0;
             }
@@ -538,7 +538,7 @@ package tibia.minimap
                _loc14_ = 1;
             }
          }
-         else if(param2 < _loc17_)
+         else if(param5 < _loc17_)
          {
             _loc14_ = 3;
          }

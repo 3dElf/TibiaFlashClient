@@ -133,7 +133,7 @@ package
       
       public static const CLIENT_TYPE:uint = 3;
       
-      public static const CLIENT_VERSION:uint = 1694;
+      public static const CLIENT_VERSION:uint = 1701;
       
       private static const OPTIONS_SAVE_INTERVAL:int = 30 * 60 * 1000;
       
