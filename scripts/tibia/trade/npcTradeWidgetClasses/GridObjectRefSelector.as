@@ -233,6 +233,8 @@ package tibia.trade.npcTradeWidgetClasses
       override protected function measure() : void
       {
          var _loc3_:Number = NaN;
+         var _loc4_:Number = NaN;
+         var _loc6_:Number = NaN;
          var _loc8_:IUIComponent = null;
          var _loc9_:Number = NaN;
          var _loc10_:Number = NaN;
@@ -240,7 +242,7 @@ package tibia.trade.npcTradeWidgetClasses
          var _loc1_:Number = 0;
          var _loc2_:Number = 0;
          _loc3_ = 0;
-         var _loc4_:Number = 0;
+         _loc4_ = 0;
          var _loc5_:int = numChildren - 1;
          while(_loc5_ >= 0)
          {
@@ -253,7 +255,7 @@ package tibia.trade.npcTradeWidgetClasses
             _loc3_ = _loc3_ + (!isNaN(_loc8_.minHeight)?_loc8_.minHeight:_loc10_);
             _loc5_--;
          }
-         var _loc6_:Number = getStyle("paddingTop") + Math.max(numChildren - 1,0) * getStyle("verticalGap") + getStyle("paddingBottom");
+         _loc6_ = getStyle("paddingTop") + Math.max(numChildren - 1,0) * getStyle("verticalGap") + getStyle("paddingBottom");
          var _loc7_:Number = getStyle("paddingLeft") + getStyle("paddingRight");
          measuredWidth = _loc2_ + _loc7_;
          measuredMinWidth = _loc1_ + _loc7_;

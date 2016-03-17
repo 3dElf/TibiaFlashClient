@@ -1,14 +1,18 @@
 package tibia.appearances
 {
    import flash.display.BitmapData;
+   import flash.filters.BitmapFilter;
    import flash.display.Shader;
+   import flash.geom.ColorTransform;
+   import flash.filters.ColorMatrixFilter;
    import tibia.§appearances:ns_appearance_internal§.m_Type;
    import flash.geom.Rectangle;
    import tibia.appearances.widgetClasses.CachedSpriteInformation;
    import tibia.appearances.widgetClasses.ISpriteProvider;
+   import shared.utility.Colour;
+   import flash.display.BitmapDataChannel;
    import tibia.§appearances:ns_appearance_internal§.m_Phase;
    import flash.geom.Point;
-   import shared.utility.Colour;
    import flash.display.ShaderJob;
    
    public class OutfitInstance extends AppearanceInstance
@@ -21,6 +25,8 @@ package tibia.appearances
       protected static const NUM_EFFECTS:int = 200;
       
       protected static const MAP_HEIGHT:int = 11;
+      
+      private static const REPLACE_BLUE_WIDTH_YELLOW:BitmapFilter = new ColorMatrixFilter([1,-1,0,0,0,-1,1,0,0,0,1,1,0,0,-255,0,0,-1,1,0]);
       
       protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
@@ -49,6 +55,8 @@ package tibia.appearances
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       private static const s_MaskBitmap:BitmapData = new BitmapData(INSTANCE_CACHE_MAX_WIDTH * INSTANCE_CACHE_MAX_SPRITES,INSTANCE_CACHE_MAX_HEIGHT,true,0);
+      
+      private static const s_ColourBitmap:BitmapData = new BitmapData(INSTANCE_CACHE_MAX_WIDTH * INSTANCE_CACHE_MAX_SPRITES,INSTANCE_CACHE_MAX_HEIGHT,true,0);
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
@@ -89,6 +97,8 @@ package tibia.appearances
       protected static const MAP_WIDTH:int = 15;
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
+      
+      private static const s_ColourTransform:ColorTransform = new ColorTransform();
       
       private static const INSTANCE_CACHE_MAX_HEIGHT:int = 2 * FIELD_SIZE;
       
@@ -182,6 +192,17 @@ package tibia.appearances
          }
       }
       
+      private function colouriseChannel(param1:BitmapData, param2:BitmapData, param3:uint, param4:Colour) : void
+      {
+         s_ColourBitmap.copyPixels(param1,param1.rect,s_ColourBitmap.rect.topLeft);
+         s_ColourBitmap.copyChannel(param2,param2.rect,s_ColourBitmap.rect.topLeft,param3,BitmapDataChannel.ALPHA);
+         s_ColourTransform.redMultiplier = param4.redFloat;
+         s_ColourTransform.greenMultiplier = param4.greenFloat;
+         s_ColourTransform.blueMultiplier = param4.blueFloat;
+         s_ColourBitmap.colorTransform(s_ColourBitmap.rect,s_ColourTransform);
+         param1.copyPixels(s_ColourBitmap,s_ColourBitmap.rect,param1.rect.topLeft,null,null,true);
+      }
+      
       override public function getSpriteIndex(param1:int, param2:int, param3:int, param4:int) : uint
       {
          var _loc5_:int = (param1 >= 0?param1:m_Phase) % m_Type.phases;
@@ -203,6 +224,20 @@ package tibia.appearances
             this.m_AddOns = param5;
             this.m_UncomittedRebuildCache = true;
          }
+      }
+      
+      private function colouriseOutfitWithInternalMethod(param1:BitmapData, param2:BitmapData, param3:BitmapData) : void
+      {
+         var _loc4_:Colour = Colour.s_FromHSI(this.m_ColourHead);
+         var _loc5_:Colour = Colour.s_FromHSI(this.m_ColourTorso);
+         var _loc6_:Colour = Colour.s_FromHSI(this.m_ColourLegs);
+         var _loc7_:Colour = Colour.s_FromHSI(this.m_ColourDetail);
+         this.colouriseChannel(param1,param2,BitmapDataChannel.BLUE,_loc7_);
+         s_MaskBitmap.applyFilter(param2,param2.rect,param2.rect.topLeft,REPLACE_BLUE_WIDTH_YELLOW);
+         this.colouriseChannel(param1,param2,BitmapDataChannel.BLUE,_loc4_);
+         this.colouriseChannel(param1,param2,BitmapDataChannel.RED,_loc5_);
+         this.colouriseChannel(param1,param2,BitmapDataChannel.GREEN,_loc6_);
+         param3.copyPixels(s_GreyBitmap,s_GreyBitmap.rect,new Point(0,0));
       }
       
       override public function animate(param1:Number) : Boolean
@@ -281,7 +316,7 @@ package tibia.appearances
                         }
                         p--;
                      }
-                     this.colouriseOutfitWithPixelBender(s_GreyBitmap,s_MaskBitmap,s_DestinationBitmap);
+                     this.colouriseOutfitWithInternalMethod(s_GreyBitmap,s_MaskBitmap,s_DestinationBitmap);
                      this.m_InstanceBitmap.copyPixels(s_DestinationBitmap,s_DestinationBitmap.rect,ZeroPoint,null,null,y > 0);
                   }
                   y++;

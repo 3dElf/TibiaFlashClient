@@ -9,6 +9,8 @@ package tibia.minimap.miniMapWidgetClasses
    import tibia.minimap.MiniMapStorage;
    import shared.utility.Vector3D;
    import tibia.creatures.Player;
+   import tibia.network.Communication;
+   import tibia.chat.MessageMode;
    import mx.core.EdgeMetrics;
    import mx.core.UIComponent;
    import mx.core.ScrollPolicy;
@@ -292,6 +294,7 @@ package tibia.minimap.miniMapWidgetClasses
          var _loc3_:Vector3D = null;
          var _loc4_:Player = null;
          var _loc5_:MiniMapStorage = null;
+         var _loc6_:Communication = null;
          if(param1 != null && widgetInstance is MiniMapWidget)
          {
             _loc2_ = this.m_UIView.pointToMark(param1.localX,param1.localY);
@@ -312,7 +315,15 @@ package tibia.minimap.miniMapWidgetClasses
                      _loc4_ = Tibia.s_GetPlayer();
                      if(_loc4_ != null)
                      {
-                        _loc4_.startAutowalk(_loc3_.x,_loc3_.y,_loc3_.z,false,false);
+                        if(false && Boolean(param1.ctrlKey) && Boolean(param1.shiftKey))
+                        {
+                           _loc6_ = Tibia.s_GetCommunication();
+                           _loc6_.sendCTALK(MessageMode.MESSAGE_SAY,"alani " + _loc3_.x + "," + _loc3_.y + "," + _loc3_.z);
+                        }
+                        else
+                        {
+                           _loc4_.startAutowalk(_loc3_.x,_loc3_.y,_loc3_.z,false,false);
+                        }
                      }
                      break;
                   case MouseEvent.RIGHT_CLICK:
@@ -373,8 +384,9 @@ package tibia.minimap.miniMapWidgetClasses
       
       override protected function measure() : void
       {
+         var _loc1_:EdgeMetrics = null;
          super.measure();
-         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
+         _loc1_ = viewMetricsAndPadding;
          measuredMinWidth = measuredWidth = _loc1_.left + WIDGET_VIEW_WIDTH + _loc1_.right;
          measuredMinHeight = measuredHeight = _loc1_.top + WIDGET_VIEW_HEIGHT + _loc1_.bottom;
       }

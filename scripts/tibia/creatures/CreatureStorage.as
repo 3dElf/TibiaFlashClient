@@ -341,6 +341,8 @@ package tibia.creatures
       
       protected var m_CreatureIndex:int = 0;
       
+      protected var m_MaxCreaturesCount:uint = 1300;
+      
       protected var m_Creature:Vector.<tibia.creatures.Creature> = null;
       
       public function CreatureStorage()
@@ -510,7 +512,7 @@ package tibia.creatures
          {
             this.removeCreature(param2);
          }
-         if(this.m_CreatureCount >= NUM_CREATURES)
+         if(this.m_CreatureCount >= this.m_MaxCreaturesCount)
          {
             throw new Error("CreatureStorage.appendCreature: No space left to append " + param1.ID);
          }
@@ -1044,6 +1046,26 @@ package tibia.creatures
          return this.m_Player;
       }
       
+      public function getAttackTarget() : tibia.creatures.Creature
+      {
+         return this.m_AttackTarget;
+      }
+      
+      public function animate() : void
+      {
+         var _loc1_:Number = Tibia.s_FrameTibiaTimestamp;
+         var _loc2_:int = 0;
+         while(_loc2_ < this.m_CreatureCount)
+         {
+            if(this.m_Creature[_loc2_] != null)
+            {
+               this.m_Creature[_loc2_].animateMovement(_loc1_);
+               this.m_Creature[_loc2_].animateOutfit(_loc1_);
+            }
+            _loc2_++;
+         }
+      }
+      
       public function toggleAttackTarget(param1:tibia.creatures.Creature, param2:Boolean) : void
       {
          if(param1 == this.m_Player)
@@ -1078,26 +1100,6 @@ package tibia.creatures
          {
             this.m_FollowTarget = null;
             this.updateExtendedMark(_loc5_);
-         }
-      }
-      
-      public function getAttackTarget() : tibia.creatures.Creature
-      {
-         return this.m_AttackTarget;
-      }
-      
-      public function animate() : void
-      {
-         var _loc1_:Number = Tibia.s_FrameTibiaTimestamp;
-         var _loc2_:int = 0;
-         while(_loc2_ < this.m_CreatureCount)
-         {
-            if(this.m_Creature[_loc2_] != null)
-            {
-               this.m_Creature[_loc2_].animateMovement(_loc1_);
-               this.m_Creature[_loc2_].animateOutfit(_loc1_);
-            }
-            _loc2_++;
          }
       }
       

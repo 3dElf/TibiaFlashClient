@@ -32,8 +32,8 @@ package
    import tibia.network.ConnectionEvent;
    import tibia.game.MessageWidget;
    import tibia.actionbar.HActionBarWidget;
-   import tibia.game.TimeoutWaitWidget;
    import tibia.sidebar.ToggleBar;
+   import tibia.game.TimeoutWaitWidget;
    import mx.binding.Binding;
    import tibia.sidebar.SideBarSet;
    import mx.containers.BoxDirection;
@@ -117,7 +117,7 @@ package
       
       public static const CLIENT_TYPE:uint = 3;
       
-      public static const CLIENT_VERSION:uint = 1296;
+      public static const CLIENT_VERSION:uint = 1312;
       
       private static const OPTIONS_SAVE_INTERVAL:int = 30 * 60 * 1000;
       
@@ -131,497 +131,541 @@ package
       
       mx_internal static var _Tibia_StylesInit_done:Boolean = false;
        
-      private var _embed_css_images_Icons_ProgressBars_ProgressOff_png_1857357311:Class;
+      private var _embed_css_images_Icons_CombatControls_StandOff_idle_png_2144676134:Class;
       
-      private var _embed_css_images_ChatTab_tileable_EndpieceLeft_png_1191442963:Class;
+      private var _embed_css_images_Minimap_Center_active_png_1666601632:Class;
       
-      private var _embed_css_images_Button_Combat_Stop_pressed_png_2012688527:Class;
+      private var _embed_css_images_Slot_InventoryLegs_png_1770687572:Class;
       
-      private var _embed_css_images_ChatTab_tileable_png_954459878:Class;
+      private var _embed_css_images_Arrow_ScrollHotkeys_pressed_png_1462559263:Class;
+      
+      private var _embed_css_images_Icons_ProgressBars_AxeFighting_png_863006467:Class;
       
       protected var m_CurrentOptionsAsset:OptionsAsset = null;
       
-      private var _embed_css_images_Button_ContainerUp_pressed_png_301356766:Class;
+      private var _embed_css_images_Button_ChatTab_Close_over_png_2144230324:Class;
       
-      private var _embed_css_images_Slot_InventoryBoots_png_1188945492:Class;
+      private var _embed_css_images_Minimap_ZoomOut_over_png_554390786:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Inventory_active_png_574279422:Class;
+      private var _embed_css_images_Button_Maximize_over_png_653976534:Class;
       
-      private var _embed_css_images_Icons_ProgressBars_ProgressOn_png_502744633:Class;
+      private var _embed_css_images_Scrollbar_Arrow_up_over_png_996496841:Class;
       
-      private var _embed_css_images_Icons_WidgetHeaders_Minimap_png_1695571713:Class;
+      private var _embed_css_images_Icons_BattleList_HideMonsters_active_png_1653601666:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_BattleList_idle_over_png_266891861:Class;
+      private var _embed_css_images_Button_Combat_Stop_pressed_png_1268200595:Class;
+      
+      private var _embed_css_images_Button_Minimize_idle_png_927296540:Class;
+      
+      private var _embed_css_images_Icons_ProgressBars_FistFighting_png_1219110463:Class;
+      
+      private var _embed_css_images_Icons_BattleList_HideNPCs_active_png_1942225789:Class;
+      
+      private var _embed_css_images_BG_ChatTab_Tabdrop_png_471962684:Class;
+      
+      private var _embed_css_images_Icons_ProgressBars_Shielding_png_1148874264:Class;
       
       mx_internal var _bindingsByDestination:Object;
       
-      private var _embed_css_images_Icons_ProgressBars_AxeFighting_png_926059007:Class;
+      private var _embed_css_images_Slot_InventoryBackpack_png_1072136453:Class;
       
       private var _1314206572m_UIWorldMapWidget:WorldMapWidget;
       
-      private var _embed_css_images_Scrollbar_tileable_png_1484535251:Class;
+      private var _embed_css_images_Button_Close_over_png_1551963246:Class;
       
-      private var _embed_css_images_Icons_Conditions_Poisoned_png_2070767127:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Trades_idle_over_png_565305968:Class;
+      
+      private var _embed_css_images_BarsHealth_fat_RedFull_png_787158423:Class;
+      
+      private var _embed_css_images_Icons_CombatControls_Mounted_over_png_665667993:Class;
+      
+      private var _embed_css_images_Button_Standard_tileable_end_disabled_png_2034495004:Class;
       
       protected var m_ContainerStorage:ContainerStorage = null;
       
-      private var _embed_css_images_Arrow_ScrollHotkeys_pressed_png_1514857951:Class;
+      private var _embed_css_images_Icons_WidgetMenu_GeneralControls_active_png_1011953256:Class;
       
       protected var m_IsActive:Boolean = false;
       
-      private var _embed_css_images_Button_Close_idle_png_1218836874:Class;
+      private var _embed_css_images_Slot_InventoryNecklace_png_1875912705:Class;
       
-      private var _embed_css_images_Icons_CombatControls_DefensiveOff_idle_png_2028276291:Class;
+      private var _embed_css_images_Icons_CombatControls_WhiteHandOff_idle_png_958285816:Class;
       
-      private var _embed_css_images_Icons_Conditions_Bleeding_png_849233240:Class;
+      private var _embed_css_images_Icons_CombatControls_OffensiveOn_over_png_2041601067:Class;
       
-      private var _embed_css_images_Icons_ProgressBars_ClubFighting_png_1528255203:Class;
+      private var _embed_css_images_Icons_BattleList_HidePlayers_active_png_1093559463:Class;
       
-      private var _embed_css_images_BG_BarsXP_default_tileable_png_1546217951:Class;
+      private var _embed_css_images_Icons_Conditions_Strenghtened_png_751812737:Class;
       
-      private var _embed_css_images_BuySellTab_active_png_1113828490:Class;
+      private var _embed_css_images_Icons_Conditions_MagicShield_png_8396320:Class;
       
-      private var _embed_css_images_Icons_WidgetHeaders_GeneralControls_png_246844262:Class;
+      private var _embed_css_images_Icons_CombatControls_WhiteHandOn_over_png_1917883478:Class;
+      
+      private var _embed_css_images_slot_Hotkey_highlighted_png_1930802827:Class;
+      
+      private var _embed_css_images_Slot_Hotkey_Cooldown_png_1086649271:Class;
+      
+      private var _embed_css_images_ChatTab_tileable_idle_png_1162118089:Class;
+      
+      private var _embed_css_images_Scrollbar_Arrow_down_pressed_png_1457443904:Class;
       
       protected var m_Options:OptionsStorage = null;
       
+      private var _embed_css_images_Icons_CombatControls_WhiteHandOn_idle_png_1492771498:Class;
+      
       protected var m_CurrentOptionsLastUpload:int = -2.147483648E9;
       
-      private var _embed_css_images_Slot_Hotkey_Cooldown_png_1292179891:Class;
+      private var _embed_css_images_Button_Close_pressed_png_1157613766:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_end_disabled_png_1281608928:Class;
+      private var _embed_css_images_Icons_CombatControls_DoveOn_idle_png_1394565798:Class;
       
-      private var _embed_css_images_BarsHealth_default_GreenFull_png_535588893:Class;
+      private var _embed_css_images_Icons_CombatControls_RedFistOff_idle_png_1210018985:Class;
       
-      private var _embed_css_images_Arrow_WidgetToggle_idle_png_1422630963:Class;
+      private var _embed_css_images_Icons_CombatControls_StandOff_over_png_186767398:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Minimap_active_over_png_227932024:Class;
+      private var _embed_css_images_Icons_Conditions_Electrified_png_1775143710:Class;
       
-      private var _embed_css_images_Slot_InventoryLegs_png_1771204180:Class;
+      private var _embed_css_images_Icons_BattleList_HideMonsters_idle_png_1175600896:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_GeneralControls_active_png_405475236:Class;
+      private var _embed_css_images_Icons_BattleList_HideSkulled_idle_png_1109498491:Class;
       
-      private var _embed_css_images_Button_ChatTab_Close_pressed_png_1701257512:Class;
+      private var _embed_css_images_ChatTab_tileable_EndpieceRound_png_1670854302:Class;
       
-      private var _embed_css_images_slot_Hotkey_disabled_png_994917156:Class;
+      private var _embed_css_images_Icons_Conditions_Freezing_png_1381179200:Class;
       
-      private var _embed_css_images_Slot_InventoryWeapon_png_1996454291:Class;
+      private var _embed_css_images_Icons_Conditions_Hungry_png_351039795:Class;
       
-      private var _embed_css_images_BG_Bars_default_enpiece_png_452312320:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Containers_active_png_448347528:Class;
       
-      private var _embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_409591214:Class;
-      
-      private var _embed_css_images_Minimap_ZoomOut_over_png_86849538:Class;
-      
-      private var _embed_css_images_Button_Combat_Stop_idle_png_1987376657:Class;
-      
-      private var _embed_css_images_Icons_WidgetHeaders_BattleList_png_1377456108:Class;
-      
-      private var _embed_css_images_Arrow_HotkeyToggle_BG_png_431200598:Class;
+      private var _embed_css_images_Icons_WidgetHeaders_BattleList_png_1188721388:Class;
       
       private var _1174474338m_UIActionBarLeft:VActionBarWidget;
       
-      private var _embed_css_images_Icons_WidgetMenu_Containers_idle_over_png_992643145:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_DoveOn_over_png_1667484838:Class;
-      
       protected var m_CurrentOptionsDirty:Boolean = false;
       
-      private var _embed_css_images_Icons_ProgressBars_SwordFighting_png_935789070:Class;
+      private var _embed_css_images_Button_Close_idle_png_1218294638:Class;
       
-      private var _embed_css_images_Icons_BattleList_HideMonsters_idle_png_1429348608:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Containers_idle_png_1939647142:Class;
       
-      private var _embed_css_images_BarsHealth_default_RedLow_png_1714080914:Class;
+      private var _embed_css_images_Icons_Conditions_Drunk_png_447748178:Class;
       
-      private var _embed_css_images_BG_Stone2_Tileable_png_2078005292:Class;
+      private var _embed_css_images_Minimap_ZoomIn_idle_png_267736575:Class;
       
-      private var _embed_css_images_Icons_CombatControls_Mounted_over_png_211474599:Class;
+      private var _embed_css_images_Icons_CombatControls_DoveOff_over_png_1037695272:Class;
       
-      private var _embed_css_images_Icons_CombatControls_AttackYes_over_png_180526418:Class;
+      private var _embed_css_images_ChatTab_tileable_EndpieceLeft_png_388101843:Class;
       
-      private var _embed_css_images_Slot_InventoryAmmo_png_1348517275:Class;
+      private var _embed_css_images_BarsHealth_default_RedLow2_png_1116494842:Class;
+      
+      private var _embed_css_images_Icons_WidgetMenu_GeneralControls_idle_png_1921951062:Class;
+      
+      private var _embed_css_images_BarsHealth_default_RedFull_png_2438479:Class;
       
       private var m_GameClientReady:Boolean = false;
       
-      private var _embed_css_images_Icons_PremmyPurse_active_over_png_1273433520:Class;
+      private var _embed_css_images_slot_container_png_1524796916:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_VipList_idle_over_png_605006672:Class;
+      private var _embed_css_images_Button_ChatTabIgnore_idle_png_1239977521:Class;
       
-      private var _embed_css_images_slot_Hotkey_png_146592943:Class;
+      private var _embed_css_images_Icons_CombatControls_MediumOn_idle_png_1749550303:Class;
       
-      private var _embed_css_images_Button_Close_pressed_png_1220914118:Class;
+      private var _embed_css_images_Icons_CombatControls_Unmounted_idle_png_1683372450:Class;
       
-      private var _embed_css_images_Button_Combat_Stop_over_png_490634991:Class;
+      private var _embed_css_images_Icons_Conditions_Poisoned_png_1746048425:Class;
       
-      private var _embed_css_images_Icons_BattleList_PartyMembers_active_png_1989961286:Class;
+      private var _embed_css_images_Icons_BattleList_HideMonsters_active_over_png_777638187:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_gold_over_png_609039619:Class;
+      private var _embed_css_images_Button_LockHotkeys_Locked_over_png_545469859:Class;
       
-      private var _embed_css_images_Icons_CombatControls_MediumOff_over_png_1017829655:Class;
+      private var _embed_css_images_Icons_CombatControls_YellowHandOff_over_png_913218715:Class;
       
-      private var _embed_css_images_BG_Bars_compact_enpiece_png_1528117550:Class;
+      private var _embed_css_images_Scrollbar_Handler_png_487848961:Class;
       
-      private var _embed_css_images_BarsHealth_fat_GreenLow_png_358153400:Class;
+      private var _embed_css_images_Icons_TradeLists_ContainerDisplay_idle_png_1063010071:Class;
       
-      private var _embed_css_images_Minimap_Center_over_png_58280658:Class;
+      private var _embed_css_images_Icons_PremmyPurse_active_over_png_1535578612:Class;
       
-      private var _embed_css_images_Arrow_ScrollTabsHighlighted_pressed_png_1146743901:Class;
+      private var _embed_css_images_ChatTab_tileable_EndpieceLeft_idle_png_971709072:Class;
       
-      private var _embed_css_images_BarsHealth_compact_RedFull_png_982391891:Class;
+      private var _embed_css_images_Icons_CombatControls_MediumOff_idle_png_852604073:Class;
       
-      private var _embed_css_images_BarsHealth_compact_RedLow2_png_138959196:Class;
+      private var _embed_css_images_BarsHealth_fat_RedLow_png_1157484874:Class;
+      
+      private var _embed_css_images_Icons_WidgetMenu_VipList_active_png_19492319:Class;
+      
+      private var _embed_css_images_Arrow_WidgetToggle_pressed_png_884491423:Class;
+      
+      private var _embed_css_images_BarsHealth_compact_RedLow2_png_68651684:Class;
+      
+      private var _embed_css_images_BuySellTab_idle_png_1813518400:Class;
+      
+      private var _embed_css_images_Slot_InventoryBoots_png_1938275472:Class;
+      
+      private var _embed_css_images_Icons_CombatControls_YellowHandOn_idle_png_499580335:Class;
+      
+      private var _embed_css_images_Arrow_ScrollHotkeys_over_png_254379147:Class;
       
       mx_internal var _bindingsBeginWithWord:Object;
       
-      private var _embed_css_images_Icons_ProgressBars_DefaultStyle_png_1679698075:Class;
+      private var _embed_css_images_Icons_BattleList_PartyMembers_idle_png_451139672:Class;
       
-      private var _embed_css_images_Scrollbar_Arrow_up_idle_png_260180361:Class;
+      private var _embed_css_images_slot_Hotkey_disabled_png_1139776804:Class;
       
-      private var _embed_css_images_Icons_Conditions_Strenghtened_png_1097710785:Class;
+      private var _embed_css_images_Icons_CombatControls_AutochaseOn_idle_png_1498472403:Class;
       
-      private var _embed_css_images_Icons_BattleList_PartyMembers_active_over_png_482845357:Class;
+      private var _embed_css_images_BarsHealth_default_RedLow_png_1387055326:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Combat_idle_over_png_801197927:Class;
+      private var _embed_css_images_BG_Bars_compact_enpiece_png_1387240418:Class;
+      
+      private var _embed_css_images_Button_Standard_tileable_gold_pressed_png_1220997645:Class;
       
       private var _1404294856m_UIGameWindow:GridContainer;
       
-      private var _embed_css_images_Icons_WidgetHeaders_VipList_png_509844711:Class;
+      private var _embed_css_images_Icons_Conditions_Burning_png_1220928865:Class;
       
-      private var _embed_css_images_Icons_CombatControls_DoveOff_idle_png_302692372:Class;
+      private var _embed_css_images_Arrow_Minimap_LevelUpDown_pressed_png_1401325198:Class;
+      
+      private var _embed_css_images_Arrow_ScrollTabs_pressed_png_106428656:Class;
+      
+      private var _embed_css_images_Button_Standard_tileable_gold_idle_png_2075764191:Class;
       
       protected var m_Connection:IServerConnection = null;
       
-      private var _embed_css_images_Scrollbar_Arrow_down_over_png_1767216064:Class;
+      private var _embed_css_images_Icons_TradeLists_ContainerDisplay_pressed_png_536906987:Class;
       
-      private var _embed_css_images_Button_LockHotkeys_Locked_over_png_145315999:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_WhiteHandOn_idle_png_1432093558:Class;
-      
-      private var _embed_css_images_ChatWindow_Mover_png_2104666118:Class;
+      private var _embed_css_images_Button_LockHotkeys_UnLocked_over_png_1327393802:Class;
       
       private var _64278965m_UISideBarA:SideBarWidget;
       
-      private var _embed_css_images_Button_Minimize_over_png_1583134748:Class;
+      private var _embed_css_images_Button_ContainerUp_over_png_69852574:Class;
       
-      private var _embed_css_images_Icons_CombatControls_AttackYes_idle_png_1048976978:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Combat_active_over_png_1000643385:Class;
       
-      private var _embed_css_images_BarsHealth_fat_RedLow2_png_1921195902:Class;
+      private var _embed_css_images_Minimap_ZoomOut_pressed_png_962262274:Class;
       
-      private var _embed_css_images_Minimap_ZoomOut_pressed_png_1102125518:Class;
+      private var _embed_css_images_Arrow_ScrollTabsHighlighted_pressed_png_943450909:Class;
       
-      private var _embed_css_images_slot_Hotkey_highlighted_png_2071319371:Class;
+      private var _embed_css_images_Icons_CombatControls_AttackYes_over_png_853589918:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_end_idle_png_1458084888:Class;
-      
-      private var _embed_css_images_Arrow_ScrollTabsHighlighted_idle_png_1404044595:Class;
+      private var _embed_css_images_Arrow_WidgetToggle_BG_png_1644395136:Class;
       
       protected var m_ConnectionDataPending:int = -1;
       
-      private var _embed_css_images_Border02_png_456293754:Class;
+      private var _embed_css_images_Arrow_ScrollTabs_disabled_png_672934468:Class;
       
-      private var _embed_css_images_Button_ChatTabIgnore_over_png_356784399:Class;
+      private var _embed_css_images_Icons_CombatControls_OffensiveOn_idle_png_906069205:Class;
       
-      private var _embed_css_images_Icons_CombatControls_DefensiveOn_active_png_1983273089:Class;
+      private var _embed_css_images_Arrow_ScrollTabs_idle_png_1329667852:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Inventory_active_over_png_1468961855:Class;
+      private var _embed_css_images_Icons_CombatControls_DefensiveOff_over_png_114850745:Class;
       
-      private var _embed_css_images_Icons_Conditions_Logoutblock_png_348408429:Class;
+      private var _embed_css_images_Icons_Conditions_Cursed_png_969214734:Class;
       
-      private var _embed_css_images_Button_ChatTabIgnore_idle_png_906529265:Class;
+      private var _embed_css_images_Minimap_Center_idle_png_2086053406:Class;
       
-      private var _embed_css_images_Icons_BattleList_HideMonsters_over_png_1051811840:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Trades_active_over_png_1720517198:Class;
       
-      private var _embed_css_images_slot_container_highlighted_png_490294368:Class;
+      private var _embed_css_images_Icons_CombatControls_Mounted_idle_png_996457113:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_GeneralControls_idle_over_png_1919873437:Class;
+      private var _embed_css_images_Border02_WidgetSidebar_slim_png_626342685:Class;
       
-      private var _embed_css_images_BG_Bars_fat_enpieceOrnamented_png_1210365909:Class;
+      private var _embed_css_images_Icons_WidgetHeaders_VipList_png_432242855:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_VipList_active_over_png_515177278:Class;
+      private var _embed_css_images_ChatTab_tileable_png_891668710:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Combat_active_png_68537130:Class;
+      private var _embed_css_images_BarsHealth_compact_RedFull_png_923672751:Class;
       
-      private var _embed_css_images_BarsHealth_default_RedFull_png_193278283:Class;
+      private var _embed_css_images_Icons_ProgressBars_DefaultStyle_png_1812077861:Class;
       
-      private var _embed_css_images_Button_Maximize_over_png_1127940310:Class;
+      private var _embed_css_images_Icons_CombatControls_DefensiveOn_active_png_1844528831:Class;
       
       protected var m_WorldMapStorage:WorldMapStorage = null;
       
-      private var _embed_css_images_BG_Bars_default_enpieceOrnamented_png_1565724477:Class;
+      private var _embed_css_images_Slot_Statusicon_highlighted_png_1731350362:Class;
       
-      private var _embed_css_images_Icons_Conditions_Drunk_png_225324206:Class;
+      private var _embed_css_images_Slot_InventoryArmor_png_1986121246:Class;
       
-      private var _embed_css_images_BarsHealth_fat_Yellow_png_1789485381:Class;
+      private var _embed_css_images_Button_Standard_tileable_disabled_png_924179912:Class;
+      
+      private var _embed_css_images_Icons_Conditions_PZ_png_2003666550:Class;
+      
+      private var _embed_css_images_Scrollbar_Arrow_down_over_png_1433768060:Class;
+      
+      private var _embed_css_images_BarsHealth_fat_RedLow2_png_1901763458:Class;
+      
+      private var _embed_css_images_Arrow_HotkeyToggle_BG_png_703829874:Class;
       
       protected var m_SpellStorage:SpellStorage = null;
       
-      private var _embed_css_images_Border02_WidgetSidebar_png_249805245:Class;
+      private var _embed_css_images_BG_BohemianTileable_png_1620000669:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Combat_idle_png_1067895292:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Minimap_active_png_279706907:Class;
+      
+      private var _embed_css_images_Icons_WidgetMenu_Containers_idle_over_png_1671581321:Class;
       
       protected var m_CharacterDeath:Boolean = false;
       
-      private var _embed_css_images_Button_LockHotkeys_UnLocked_over_png_455510538:Class;
+      private var _embed_css_images_BG_Bars_default_tileable_png_482309035:Class;
       
-      private var _embed_css_images_Icons_CombatControls_DoveOff_over_png_1497487084:Class;
+      private var _embed_css_images_Icons_WidgetHeaders_Spells_png_528765315:Class;
       
-      private var _embed_css_images_Icons_CombatControls_OffensiveOff_idle_png_930638717:Class;
+      private var _embed_css_images_Slot_Statusicon_png_1271145738:Class;
       
-      private var _embed_css_images_Icons_CombatControls_DefensiveOn_idle_png_1010616943:Class;
+      private var _embed_css_images_Icons_Conditions_PZlock_png_1221525371:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_GeneralControls_idle_png_1694038902:Class;
+      private var _embed_css_images_Icons_CombatControls_AttackYes_idle_png_1185167518:Class;
       
-      private var _embed_css_images_Button_ContainerUp_idle_png_814560594:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_OffensiveOn_idle_png_30841963:Class;
-      
-      private var _embed_css_images_Icons_WidgetHeaders_Spells_png_922897783:Class;
+      private var _embed_css_images_Button_ChatTabIgnore_over_png_1096946895:Class;
       
       protected var m_SecondaryTimestamp:int = 0;
       
-      private var _embed_css_images_Bars_ProgressMarker_png_2128477780:Class;
+      private var _embed_css_images_Icons_ProgressBars_LargeStyle_png_1488259167:Class;
       
-      private var _embed_css_images_BG_BarsXP_default_endpiece_png_1535104458:Class;
+      private var _embed_css_images_Icons_BattleList_HidePlayers_over_png_561845963:Class;
       
-      private var _embed_css_images_Icons_CombatControls_Unmounted_over_png_1144110062:Class;
+      private var _embed_css_images_slot_container_highlighted_png_630804576:Class;
       
-      private var _embed_css_images_Icons_BattleList_HideNPCs_idle_png_1453157047:Class;
+      private var _embed_css_images_Icons_ProgressBars_MagicLevel_png_1498653378:Class;
       
-      private var _embed_css_images_Slot_InventoryArmor_png_1780250670:Class;
+      private var _embed_css_images_BarsHealth_compact_GreenLow_png_1092246698:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Trades_idle_png_1725788361:Class;
+      private var _embed_css_images_Button_Standard_tileable_end_gold_over_png_1554034499:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_end_gold_idle_png_1742944567:Class;
+      private var _embed_css_images_Icons_ProgressBars_SwordFighting_png_320929806:Class;
       
-      private var _embed_css_images_Icons_PremmyPurse_active_png_1396443373:Class;
+      private var _embed_css_images_Button_Minimize_pressed_png_1889087864:Class;
       
-      private var _embed_css_images_Border_Widget_corner_png_304991513:Class;
+      private var _embed_css_images_Arrow_Minimap_LevelUpDown_over_png_544718418:Class;
       
-      private var _embed_css_images_BarsHealth_default_Yellow_png_468838109:Class;
+      private var _embed_css_images_Button_Standard_tileable_end_pressed_png_502750776:Class;
       
-      private var _embed_css_images_Button_Maximize_pressed_png_610216230:Class;
+      private var _embed_css_images_Border02_WidgetSidebar_png_989951673:Class;
       
-      private var _embed_css_images_BG_Bars_default_tileable_png_1212117159:Class;
+      private var _embed_css_images_BuySellTab_active_png_1448857198:Class;
       
-      private var _embed_css_images_Button_LockHotkeys_UnLocked_idle_png_123799818:Class;
+      private var _embed_css_images_Icons_BattleList_HideSkulled_active_png_1482272179:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_BattleList_idle_png_1103299902:Class;
+      private var _embed_css_images_Icons_BattleList_HideNPCs_over_png_985907899:Class;
       
-      private var _embed_css_images_Icons_Conditions_Drowning_png_674758486:Class;
+      private var _embed_css_images_Icons_BattleList_HideSkulled_over_png_761929083:Class;
       
-      private var _embed_css_images_Widget_Footer_tileable_png_1831820003:Class;
+      private var _embed_css_images_Button_ContainerUp_idle_png_418208414:Class;
       
-      private var _embed_css_images_Icons_ProgressBars_Fishing_png_231099783:Class;
+      private var _embed_css_images_Icons_CombatControls_OffensiveOff_idle_png_460352161:Class;
       
-      private var _embed_css_images_BarsHealth_default_Mana_png_1338023818:Class;
+      private var _embed_css_images_Icons_ProgressBars_ProgressOn_png_767116025:Class;
+      
+      private var _embed_css_images_Border_Widget_corner_png_97234701:Class;
+      
+      private var _embed_css_images_Icons_Conditions_Haste_png_183664137:Class;
+      
+      private var _embed_css_images_Button_Minimize_over_png_1788663068:Class;
       
       private var _64278964m_UISideBarB:SideBarWidget;
       
-      private var _embed_css_images_Icons_CombatControls_YellowHandOff_idle_png_1167129563:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Combat_active_png_399020502:Class;
       
-      private var _embed_css_images_Scrollbar_Arrow_down_idle_png_32443200:Class;
+      private var _embed_css_images_Border02_png_258489466:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_end_gold_disabled_png_459454495:Class;
+      private var _embed_css_images_Icons_ProgressBars_ParallelStyle_png_436085555:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_VipList_active_png_783570017:Class;
+      private var _embed_css_images_Scrollbar_Arrow_up_idle_png_664921289:Class;
       
-      private var _embed_css_images_Slot_InventoryRing_png_670916409:Class;
+      private var _embed_css_images_Icons_BattleList_HideNPCs_idle_png_1854361531:Class;
       
-      private var _embed_css_images_Icons_BattleList_HideNPCs_active_over_png_13561492:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Minimap_idle_over_png_1922488614:Class;
       
-      private var _embed_css_images_Scrollbar_Arrow_up_over_png_1127971465:Class;
+      private var _embed_css_images_Icons_WidgetMenu_GeneralControls_idle_over_png_1318367641:Class;
       
-      private var _embed_css_images_BG_Widget_Menu_png_1051938572:Class;
+      private var _embed_css_images_Icons_CombatControls_AttackNo_over_png_839560426:Class;
       
-      private var _embed_css_images_Slot_InventoryNecklace_png_2079223005:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Combat_idle_png_1613024508:Class;
+      
+      private var _embed_css_images_Icons_CombatControls_AttackNo_idle_png_489114602:Class;
+      
+      private var _embed_css_images_BG_Bars_compact_enpieceOrnamented_png_584547301:Class;
+      
+      private var _embed_css_images_Icons_Conditions_Dazzled_png_1667984088:Class;
       
       mx_internal var _bindings:Array;
       
-      private var _embed_css_images_Icons_ProgressBars_ParallelStyle_png_906379559:Class;
+      private var _embed_css_images_Button_Standard_tileable_idle_png_197744608:Class;
       
-      private var _embed_css_images_Icons_Conditions_Slowed_png_348049024:Class;
+      private var _embed_css_images_BG_BohemianTileable_ChatConsole_png_1243090589:Class;
       
-      private var _embed_css_images_Arrow_Minimap_LevelUpDown_over_png_1012243282:Class;
+      private var _embed_css_images_BG_BarsXP_default_tileable_png_1330218467:Class;
       
-      private var _embed_css_images_Minimap_png_799283533:Class;
+      private var _embed_css_images_BG_BohemianTileable_Game_png_221217288:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Containers_idle_png_1737794982:Class;
+      private var _embed_css_images_BG_Bars_fat_enpieceOrnamented_png_1480373397:Class;
       
-      private var _embed_css_images_Border_Widget_png_600256443:Class;
+      private var _embed_css_images_Button_Combat_Stop_over_png_177970641:Class;
       
-      private var _embed_css_images_Icons_BattleList_HideSkulled_active_png_1686359923:Class;
+      private var _embed_css_images_Button_ChatTabIgnore_pressed_png_42905147:Class;
       
-      private var _embed_css_images_Button_ChatTab_Close_idle_png_668415752:Class;
+      private var _embed_css_images_Button_ContainerUp_pressed_png_370569950:Class;
       
-      private var _embed_css_images_Icons_Conditions_Dazzled_png_938167768:Class;
+      private var _embed_css_images_Icons_CombatControls_OffensiveOff_over_png_1186785697:Class;
       
-      private var _embed_css_images_Scrollbar_Arrow_up_pressed_png_442933175:Class;
+      private var _embed_css_images_Button_Maximize_pressed_png_1014565850:Class;
       
-      private var _embed_css_images_BarsHealth_fat_GreenFull_png_1276731611:Class;
-      
-      private var _embed_css_images_BuySellTab_idle_png_1022867196:Class;
-      
-      private var _embed_css_images_Icons_WidgetHeaders_Trades_png_288371299:Class;
-      
-      private var _embed_css_images_Button_Minimize_pressed_png_1686066740:Class;
-      
-      private var _embed_css_images_Slot_InventoryShield_png_333720080:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_StandOff_over_png_608069082:Class;
+      private var _embed_css_images_Button_ChatTabNew_idle_png_1730706573:Class;
       
       private var _2056921391m_UISideBarToggleLeft:ToggleBar;
       
-      private var _embed_css_images_Minimap_ZoomIn_idle_png_255100865:Class;
+      private var _embed_css_images_Icons_CombatControls_DoveOff_idle_png_784504280:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_gold_pressed_png_539431885:Class;
+      private var _embed_css_images_Icons_WidgetHeaders_SafeTrades_png_1500578858:Class;
       
-      private var _embed_css_images_Arrow_Minimap_LevelUpDown_pressed_png_1064231874:Class;
+      private var _embed_css_images_Button_Standard_tileable_gold_over_png_278071585:Class;
       
-      private var _embed_css_images_Button_ChatTabNew_over_png_273922193:Class;
+      private var _embed_css_images_Minimap_ZoomIn_over_png_1553063167:Class;
       
-      private var _embed_css_images_Icons_Conditions_PZ_png_1799563562:Class;
-      
-      private var _embed_css_images_Inventory_png_84216506:Class;
+      private var _embed_css_images_Button_Combat_Stop_idle_png_2120162001:Class;
       
       protected var m_AssetProvider:IAssetProvider = null;
       
-      private var _embed_css_images_Icons_WidgetMenu_Containers_active_png_177830792:Class;
+      private var _embed_css_images_Button_Standard_tileable_end_gold_idle_png_1136343619:Class;
       
-      private var _embed_css_images_Slot_InventoryHead_png_1028429015:Class;
+      private var _embed_css_images_Icons_CombatControls_AutochaseOn_over_png_627798739:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Minimap_idle_over_png_1577674970:Class;
+      private var _embed_css_images_Widget_Footer_tileable_end01_png_642865466:Class;
       
-      private var _embed_css_images_Icons_Conditions_Electrified_png_1232635934:Class;
+      private var _embed_css_images_Icons_TradeLists_ContainerDisplay_over_png_858104855:Class;
       
-      private var _embed_css_images_Scrollbar_Handler_png_488364481:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Trades_active_png_1461845359:Class;
       
-      private var _embed_css_images_Button_LockHotkeys_Locked_idle_png_1029749151:Class;
+      private var _embed_css_images_BarsHealth_default_Mana_png_1540948590:Class;
       
-      private var _embed_css_images_Icons_BattleList_HidePlayers_active_png_613968615:Class;
+      private var _embed_css_images_BG_Bars_default_enpiece_png_249551292:Class;
       
-      private var _embed_css_images_Button_ChatTabNew_idle_png_1535784849:Class;
+      private var _embed_css_images_Icons_WidgetHeaders_Combat_png_510137618:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Trades_active_png_988029035:Class;
+      private var _embed_css_images_Icons_WidgetMenu_GeneralControls_active_over_png_161215467:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_end_gold_over_png_2137606601:Class;
+      private var _embed_css_images_BG_Bars_fat_enpiece_png_357381060:Class;
       
-      private var _embed_css_images_Icons_TradeLists_ListDisplay_over_png_1087787706:Class;
+      private var _embed_css_images_Icons_CombatControls_RedFistOff_over_png_862580649:Class;
       
-      private var _embed_css_images_Icons_CombatControls_YellowHandOn_idle_png_1103035475:Class;
+      private var _embed_css_images_BG_Bars_fat_tileable_png_1650647357:Class;
       
       protected var m_DefaultOptionsAsset:OptionsAsset = null;
       
-      private var _embed_css_images_BG_Bars_compact_tileable_png_1240312325:Class;
+      private var _embed_css_images_Button_Standard_tileable_end_over_png_1185179228:Class;
       
-      private var _embed_css_images_Arrow_WidgetToggle_over_png_535174963:Class;
+      private var _embed_css_images_Icons_Conditions_Bleeding_png_253641108:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_end_gold_pressed_png_303194441:Class;
+      private var _embed_css_images_Slot_InventoryHead_png_1095038683:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Trades_idle_over_png_365528236:Class;
+      private var _embed_css_images_Icons_CombatControls_WhiteHandOff_over_png_1288816888:Class;
       
-      private var _embed_css_images_Icons_WidgetHeaders_Inventory_png_1539700056:Class;
+      private var _embed_css_images_Icons_CombatControls_YellowHandOff_idle_png_629742491:Class;
       
-      private var _embed_css_images_Button_ChatTabNew_pressed_png_1589975055:Class;
+      private var _embed_css_images_Slot_InventoryWeapon_png_2057395095:Class;
       
-      private var _embed_css_images_BarsXP_default__png_775287027:Class;
+      private var _embed_css_images_Button_LockHotkeys_UnLocked_idle_png_460000010:Class;
+      
+      private var _embed_css_images_Icons_CombatControls_RedFistOn_idle_png_133528589:Class;
+      
+      private var _embed_css_images_Icons_BattleList_HidePlayers_active_over_png_953158762:Class;
+      
+      private var _embed_css_images_Icons_TradeLists_ListDisplay_pressed_png_1589951190:Class;
+      
+      private var _embed_css_images_Icons_WidgetMenu_VipList_active_over_png_450699582:Class;
+      
+      private var _embed_css_images_Icons_Conditions_Slowed_png_543074756:Class;
+      
+      private var _embed_css_images_Icons_WidgetHeaders_GeneralControls_png_216495590:Class;
+      
+      private var _embed_css_images_BarsHealth_default_Yellow_png_527690397:Class;
+      
+      private var _embed_css_images_Arrow_ScrollTabs_over_png_999008780:Class;
+      
+      private var _embed_css_images_Icons_BattleList_HideNPCs_active_over_png_943132624:Class;
       
       private var _64278963m_UISideBarC:SideBarWidget;
       
-      private var _embed_css_images_Icons_CombatControls_RedFistOn_over_png_948317875:Class;
+      private var _embed_css_images_Icons_BattleList_HideMonsters_over_png_1321679360:Class;
       
-      private var _embed_css_images_Icons_Conditions_Haste_png_646986501:Class;
+      private var _embed_css_images_Icons_ProgressBars_DistanceFighting_png_1314144530:Class;
       
-      private var _embed_css_images_Icons_ProgressBars_Shielding_png_603613976:Class;
+      private var _embed_css_images_Icons_WidgetMenu_VipList_idle_png_176944461:Class;
       
-      private var _embed_css_images_Icons_CombatControls_YellowHandOff_over_png_373718235:Class;
-      
-      private var _embed_css_images_Icons_BattleList_PartyMembers_over_png_379592024:Class;
-      
-      private var _embed_css_images_Icons_Conditions_Freezing_png_2127895292:Class;
-      
-      private var _embed_css_images_Slot_Statusicon_png_1736713046:Class;
+      private var _embed_css_images_Arrow_WidgetToggle_over_png_139451379:Class;
       
       protected var m_CreatureStorage:CreatureStorage = null;
       
-      private var _embed_css_images_Icons_TradeLists_ContainerDisplay_over_png_1730126619:Class;
+      private var _embed_css_images_BarsHealth_fat_Mana_png_1998294378:Class;
       
-      private var _embed_css_images_BG_BohemianTileable_ChatConsole_png_2124402909:Class;
+      private var _embed_css_images_Minimap_png_476321933:Class;
       
-      private var _embed_css_images_BG_Bars_fat_enpiece_png_115157624:Class;
+      private var _embed_css_images_Button_LockHotkeys_Locked_idle_png_893327011:Class;
       
-      private var _embed_css_images_Icons_ProgressBars_LargeStyle_png_1217604511:Class;
-      
-      private var _embed_css_images_Button_ContainerUp_over_png_70795182:Class;
-      
-      private var _embed_css_images_Arrow_ScrollHotkeys_idle_png_2128087935:Class;
-      
-      private var _embed_css_images_Icons_BattleList_HideMonsters_active_png_1786236546:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_WhiteHandOn_over_png_1695517814:Class;
-      
-      private var _embed_css_images_Arrow_WidgetToggle_pressed_png_131489987:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Inventory_active_over_png_1010209603:Class;
       
       private var _1356021457m_UICenterColumn:CustomDividedBox;
       
-      private var _embed_css_images_Icons_WidgetMenu_Inventory_idle_over_png_962986095:Class;
+      private var _embed_css_images_Icons_ProgressBars_ProgressOff_png_1772969717:Class;
       
-      private var _embed_css_images_Icons_Conditions_Burning_png_1413841213:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Minimap_active_over_png_122833288:Class;
       
-      private var _embed_css_images_BarsHealth_default_GreenLow_png_1416814704:Class;
+      private var _embed_css_images_Button_Standard_tileable_end_gold_pressed_png_240394377:Class;
+      
+      private var _embed_css_images_BG_BarsXP_default_endpiece_png_1325396426:Class;
+      
+      private var _embed_css_images_Icons_WidgetHeaders_Minimap_png_2095987393:Class;
+      
+      private var _embed_css_images_Button_ChatTabNew_over_png_1005712781:Class;
+      
+      private var _embed_css_images_BarsHealth_compact_RedLow_png_497477180:Class;
       
       protected var m_ConnectionDataList:Vector.<IConnectionData> = null;
       
-      private var _embed_css_images_Icons_CombatControls_MediumOn_over_png_1143236059:Class;
+      private var _embed_css_images_Icons_CombatControls_DefensiveOn_idle_png_1948052399:Class;
       
-      private var _embed_css_images_Icons_CombatControls_DefensiveOff_over_png_449870525:Class;
+      private var _embed_css_images_Icons_Conditions_Logoutblock_png_692217617:Class;
       
-      private var _embed_css_images_Icons_ProgressBars_DistanceFighting_png_712925790:Class;
+      private var _embed_css_images_Button_Standard_tileable_pressed_png_1457624492:Class;
       
-      private var _embed_css_images_ChatTab_tileable_EndpieceRound_png_796201886:Class;
+      private var _embed_css_images_Scrollbar_Arrow_down_idle_png_382013060:Class;
       
-      private var _embed_css_images_Minimap_Center_idle_png_1674526766:Class;
+      private var _embed_css_images_Icons_BattleList_HideSkulled_active_over_png_467647408:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_over_png_272709604:Class;
+      private var _embed_css_images_Icons_PremmyPurse_active_png_1741057169:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Combat_active_over_png_391026041:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Inventory_idle_png_2109320296:Class;
       
       private var _228925540m_UIStatusWidget:StatusWidget;
       
-      private var _embed_css_images_Icons_WidgetMenu_Trades_active_over_png_1517215874:Class;
+      private var _embed_css_images_BG_Stone2_Tileable_png_2077997612:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_idle_png_83428580:Class;
-      
-      private var _embed_css_images_Arrow_ScrollTabsHighlighted_over_png_947289549:Class;
-      
-      private var _embed_css_images_Button_Standard_tileable_end_over_png_1782319384:Class;
+      private var _embed_css_images_Border_Widget_png_127725563:Class;
       
       private var _2043305115m_UIActionBarRight:VActionBarWidget;
       
-      private var _embed_css_images_Icons_CombatControls_Mounted_idle_png_667719769:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Inventory_idle_over_png_1019732347:Class;
       
-      private var _embed_css_images_Icons_BattleList_HideSkulled_active_over_png_464116400:Class;
+      private var _embed_css_images_Minimap_ZoomIn_pressed_png_608234453:Class;
       
-      private var _embed_css_images_Icons_BattleList_HideNPCs_active_png_1734731145:Class;
+      private var _embed_css_images_Icons_CombatControls_YellowHandOn_over_png_1122206033:Class;
       
-      private var _embed_css_images_Icons_TradeLists_ListDisplay_idle_png_1277352378:Class;
+      private var _embed_css_images_Icons_TradeLists_ListDisplay_idle_png_410695582:Class;
       
-      private var _embed_css_images_BarsHealth_fat_Mana_png_1769920466:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Inventory_active_png_47370426:Class;
       
-      private var _embed_css_images_BG_BohemianTileable_Game_png_1085244936:Class;
+      private var _embed_css_images_BarsHealth_compact_Yellow_png_1013592239:Class;
       
-      private var _embed_css_images_BarsHealth_compact_Yellow_png_948450415:Class;
+      private var _embed_css_images_Inventory_png_321074298:Class;
       
-      private var _embed_css_images_Arrow_ScrollTabs_pressed_png_584578288:Class;
+      private var _embed_css_images_Button_Maximize_idle_png_625709866:Class;
       
       protected var m_AppearanceStorage:AppearanceStorage = null;
       
-      private var _embed_css_images_Arrow_ScrollTabs_idle_png_2141274448:Class;
+      private var _embed_css_images_Border02_corners_png_2015171811:Class;
       
-      private var _embed_css_images_Button_Maximize_idle_png_694251050:Class;
+      private var _embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_339985070:Class;
       
-      private var _embed_css_images_Icons_ProgressBars_FistFighting_png_948562175:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_YellowHandOn_over_png_1320911533:Class;
+      private var _embed_css_images_Icons_CombatControls_MediumOff_over_png_424204887:Class;
       
       private var _629924354m_UIActionBarBottom:HActionBarWidget;
       
@@ -629,215 +673,171 @@ package
       
       public var _Tibia_Array2:Array;
       
-      private var _embed_css_images_BG_Bars_fat_tileable_png_1759296703:Class;
-      
       protected var m_ConnectionDataCurrent:int = -1;
       
-      private var _embed_css_images_Icons_CombatControls_OffensiveOff_over_png_1656023677:Class;
+      private var _embed_css_images_BG_Bars_default_enpieceOrnamented_png_1764422781:Class;
       
-      private var _embed_css_images_Border02_WidgetSidebar_slim_png_481662557:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Trades_idle_png_1264544957:Class;
       
-      private var _embed_css_images_Icons_WidgetHeaders_SafeTrades_png_1294933802:Class;
+      private var _embed_css_images_Slot_InventoryShield_png_125994256:Class;
       
-      private var _embed_css_images_Icons_TradeLists_ListDisplay_pressed_png_1980997418:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Containers_active_over_png_1289566917:Class;
       
-      private var _embed_css_images_Icons_CombatControls_AttackNo_idle_png_28240362:Class;
+      private var _embed_css_images_Widget_Footer_tileable_end02_png_641667519:Class;
       
-      private var _embed_css_images_Icons_BattleList_HidePlayers_active_over_png_955272042:Class;
+      private var _embed_css_images_BarsHealth_compact_Mana_png_2044063888:Class;
       
-      private var _embed_css_images_Icons_CombatControls_WhiteHandOff_over_png_819578872:Class;
+      private var _embed_css_images_Icons_CombatControls_MediumOn_over_png_863798239:Class;
       
-      private var _embed_css_images_Icons_Conditions_MagicShield_png_553787936:Class;
+      private var _embed_css_images_Icons_ProgressBars_CompactStyle_png_1922114025:Class;
       
-      private var _embed_css_images_Arrow_WidgetToggle_BG_png_1699469372:Class;
+      private var _embed_css_images_Icons_CombatControls_RedFistOn_over_png_196873459:Class;
       
-      private var _embed_css_images_Button_Close_over_png_1484485258:Class;
+      private var _embed_css_images_Button_Standard_tileable_end_idle_png_843118940:Class;
+      
+      private var _embed_css_images_Icons_ProgressBars_ClubFighting_png_1268717091:Class;
+      
+      private var _embed_css_images_Icons_ProgressBars_Fishing_png_354963859:Class;
       
       private var _748017946m_UIInputHandler:InputHandler;
       
-      private var _embed_css_images_Icons_BattleList_HideMonsters_active_over_png_714322155:Class;
+      private var _embed_css_images_Icons_CombatControls_DefensiveOff_idle_png_1393751737:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_gold_idle_png_1872350211:Class;
+      private var _embed_css_images_BarsHealth_fat_GreenFull_png_949577175:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Minimap_idle_png_627021395:Class;
+      private var _embed_css_images_Icons_CombatControls_Unmounted_over_png_941079202:Class;
       
-      private var _embed_css_images_Border02_corners_png_1952110039:Class;
+      private var _embed_css_images_Arrow_ScrollHotkeys_disabled_png_600112781:Class;
       
-      private var _embed_css_images_BarsHealth_fat_RedLow_png_698199702:Class;
-      
-      private var _embed_css_images_slot_container_disabled_png_1749251401:Class;
-      
-      private var _embed_css_images_BG_ChatTab_tileable_png_2139509006:Class;
-      
-      private var _embed_css_images_Button_ChatTabIgnore_pressed_png_926460463:Class;
-      
-      private var _embed_css_images_Button_Standard_tileable_disabled_png_442335108:Class;
-      
-      private var _embed_css_images_Icons_BattleList_PartyMembers_idle_png_730569304:Class;
-      
-      private var _embed_css_images_Button_Standard_tileable_pressed_png_2061080748:Class;
-      
-      private var _embed_css_images_Button_ChatTab_Close_over_png_2075240456:Class;
-      
-      private var _embed_css_images_Icons_BattleList_HidePlayers_over_png_354760843:Class;
+      private var _embed_css_images_Widget_HeaderBG_png_331533643:Class;
       
       private var _1423351586m_UIActionBarTop:HActionBarWidget;
       
-      private var _embed_css_images_Icons_CombatControls_AttackNo_over_png_896166634:Class;
-      
-      private var _embed_css_images_Icons_WidgetMenu_GeneralControls_active_over_png_115616801:Class;
+      private var _embed_css_images_Icons_WidgetMenu_VipList_idle_over_png_418761040:Class;
       
       private var _64278962m_UISideBarD:SideBarWidget;
       
-      private var _embed_css_images_Icons_CombatControls_RedFistOff_idle_png_1804027557:Class;
+      private var _embed_css_images_BarsXP_default__png_23728205:Class;
       
-      private var _embed_css_images_Icons_CombatControls_AutochaseOn_over_png_218968467:Class;
+      private var _embed_css_images_Widget_Footer_tileable_png_1991139393:Class;
       
-      private var _embed_css_images_slot_container_png_2097535244:Class;
+      private var _embed_css_images_BarsHealth_fat_GreenLow_png_757293180:Class;
       
-      private var _embed_css_images_Arrow_ScrollHotkeys_disabled_png_54985369:Class;
+      private var _embed_css_images_Icons_WidgetHeaders_Trades_png_116771265:Class;
       
-      private var _embed_css_images_BarsHealth_compact_RedLow_png_822903424:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Combat_idle_over_png_1328098599:Class;
       
-      private var _embed_css_images_Icons_BattleList_HidePlayers_idle_png_560056203:Class;
+      private var _embed_css_images_Bars_ProgressMarker_png_1417159536:Class;
       
-      private var _embed_css_images_Icons_Conditions_Cursed_png_896460354:Class;
+      private var _embed_css_images_BG_Bars_compact_tileable_png_1835904521:Class;
       
-      private var _embed_css_images_ChatTab_tileable_idle_png_694452361:Class;
+      private var _embed_css_images_Icons_WidgetMenu_BattleList_idle_over_png_394809621:Class;
+      
+      private var _embed_css_images_Icons_CombatControls_DoveOn_over_png_1063899558:Class;
+      
+      private var _embed_css_images_Arrow_ScrollHotkeys_idle_png_1515718539:Class;
+      
+      private var _embed_css_images_BarsHealth_fat_Yellow_png_1533633413:Class;
+      
+      private var _embed_css_images_Icons_BattleList_PartyMembers_active_png_1962653882:Class;
+      
+      private var _embed_css_images_Icons_WidgetMenu_BattleList_active_png_991395604:Class;
       
       protected var m_CurrentOptionsUploading:Boolean = false;
       
-      private var _embed_css_images_Icons_ProgressBars_MagicLevel_png_1228129678:Class;
+      private var _embed_css_images_Slot_InventoryAmmo_png_1348526999:Class;
       
-      private var _embed_css_images_BarsHealth_fat_RedFull_png_1268077203:Class;
+      private var _embed_css_images_Icons_WidgetHeaders_Inventory_png_1804456604:Class;
       
-      private var _embed_css_images_Icons_CombatControls_MediumOn_idle_png_2011162331:Class;
+      private var _embed_css_images_slot_container_disabled_png_1545968009:Class;
       
-      private var _embed_css_images_BarsHealth_compact_GreenFull_png_648276767:Class;
+      private var _embed_css_images_BarsHealth_compact_GreenFull_png_119664419:Class;
       
-      private var _embed_css_images_Icons_Conditions_Hungry_png_1025807859:Class;
+      private var _embed_css_images_Arrow_WidgetToggle_idle_png_1543716083:Class;
       
-      private var _embed_css_images_Widget_HeaderBG_png_1130679947:Class;
+      private var _embed_css_images_Button_Standard_tileable_over_png_8469280:Class;
       
-      private var _embed_css_images_Icons_CombatControls_MediumOff_idle_png_1318827497:Class;
+      private var _embed_css_images_Button_ChatTab_Close_idle_png_1261255500:Class;
       
       protected var m_ChatStorage:ChatStorage = null;
       
       protected var m_Player:Player = null;
       
-      private var _embed_css_images_Icons_TradeLists_ContainerDisplay_idle_png_1399078427:Class;
-      
-      private var _embed_css_images_Icons_BattleList_HideSkulled_over_png_170031803:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Minimap_idle_png_362912147:Class;
       
       protected var m_SessionKey:String = null;
       
-      private var _embed_css_images_Icons_CombatControls_Unmounted_idle_png_1350580974:Class;
-      
-      private var _embed_css_images_Minimap_ZoomIn_over_png_2081920831:Class;
-      
-      private var _embed_css_images_Minimap_ZoomIn_pressed_png_1348677857:Class;
-      
-      private var _embed_css_images_Slot_InventoryBackpack_png_877476873:Class;
+      private var _embed_css_images_Minimap_ZoomOut_idle_png_1822944258:Class;
       
       private var _1494180935m_UIRootContainer:HBox;
       
-      private var _embed_css_images_BarsHealth_compact_GreenLow_png_893155438:Class;
-      
-      private var _embed_css_images_Icons_TradeLists_ContainerDisplay_pressed_png_1279184043:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_RedFistOff_over_png_935448997:Class;
-      
       private var _1313911232m_UIWorldMapWindow:GameWindowContainer;
+      
+      private var _embed_css_images_Icons_Conditions_Drowning_png_748290826:Class;
       
       private var _665607314m_UISideBarToggleRight:ToggleBar;
       
       protected var m_SeconaryTimer:Timer = null;
       
-      private var _embed_css_images_Icons_WidgetHeaders_Combat_png_113774866:Class;
+      private var _embed_css_images_slot_Hotkey_png_344241391:Class;
       
-      private var _embed_css_images_BG_Combat_png_1063995284:Class;
+      private var _embed_css_images_Minimap_Center_over_png_470603490:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_VipList_idle_png_447476365:Class;
+      private var _embed_css_images_Scrollbar_tileable_png_1484543023:Class;
       
-      private var _embed_css_images_Widget_Footer_tileable_end02_png_96302267:Class;
+      private var _embed_css_images_BG_ChatTab_tileable_png_1559497918:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Minimap_active_png_1074018139:Class;
+      private var _embed_css_images_Icons_BattleList_PartyMembers_over_png_81241256:Class;
+      
+      private var _embed_css_images_Button_ChatTab_Close_pressed_png_1158749480:Class;
+      
+      private var _embed_css_images_Arrow_ScrollTabsHighlighted_idle_png_1205200911:Class;
+      
+      private var _embed_css_images_ChatTab_tileable_EndpieceRound_idle_png_1500200523:Class;
       
       protected var m_Communication:Communication = null;
       
       protected var m_MiniMapStorage:MiniMapStorage = null;
       
-      private var _embed_css_images_Icons_CombatControls_RedFistOn_idle_png_6251085:Class;
+      private var _embed_css_images_Slot_InventoryRing_png_670915893:Class;
       
-      private var _embed_css_images_Icons_ProgressBars_CompactStyle_png_2093916375:Class;
+      private var _embed_css_images_BG_Widget_Menu_png_651382796:Class;
       
-      private var _embed_css_images_BG_BohemianTileable_png_1823278301:Class;
+      private var _embed_css_images_Arrow_ScrollTabsHighlighted_over_png_609657585:Class;
       
-      private var _embed_css_images_Icons_BattleList_HideNPCs_over_png_1122622903:Class;
+      private var _embed_css_images_ChatWindow_Mover_png_1984658938:Class;
       
-      private var _embed_css_images_Arrow_ScrollHotkeys_over_png_849969279:Class;
-      
-      private var _embed_css_images_BarsHealth_compact_Mana_png_2110386868:Class;
-      
-      private var _embed_css_images_Button_Minimize_idle_png_1795639068:Class;
-      
-      private var _embed_css_images_Minimap_Center_active_png_1393972580:Class;
-      
-      private var _embed_css_images_Scrollbar_Arrow_down_pressed_png_1986056256:Class;
-      
-      private var _embed_css_images_BarsHealth_default_RedLow2_png_1242322938:Class;
-      
-      private var _embed_css_images_ChatTab_tileable_EndpieceLeft_idle_png_1027817616:Class;
+      private var _embed_css_images_BarsHealth_default_GreenLow_png_1217453236:Class;
       
       private var _883427326m_UIChatWidget:ChatWidget;
       
-      private var _embed_css_images_Icons_WidgetMenu_BattleList_active_png_1261396244:Class;
-      
-      private var _embed_css_images_Icons_BattleList_HideSkulled_idle_png_495581115:Class;
+      private var _embed_css_images_BarsHealth_default_GreenFull_png_6976577:Class;
       
       mx_internal var _watchers:Array;
       
-      private var _embed_css_images_Minimap_ZoomOut_idle_png_1902626562:Class;
+      private var _embed_css_images_Icons_WidgetMenu_BattleList_idle_png_633661502:Class;
       
-      private var _embed_css_images_Icons_CombatControls_DoveOn_idle_png_2009546150:Class;
+      private var _embed_css_images_Icons_BattleList_PartyMembers_active_over_png_604627565:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Inventory_idle_png_1990727124:Class;
+      private var _embed_css_images_Button_ChatTabNew_pressed_png_860036047:Class;
       
-      private var _embed_css_images_ChatTab_tileable_EndpieceRound_idle_png_1363221643:Class;
+      private var _embed_css_images_Icons_WidgetMenu_BattleList_active_over_png_55788873:Class;
       
-      private var _embed_css_images_Slot_Statusicon_highlighted_png_1540639774:Class;
+      private var _embed_css_images_Icons_TradeLists_ListDisplay_over_png_742275230:Class;
       
       protected var m_ChannelsPending:Vector.<int> = null;
       
-      private var _embed_css_images_Widget_Footer_tileable_end01_png_94854202:Class;
-      
-      private var _embed_css_images_Icons_Conditions_PZlock_png_1362435131:Class;
-      
       private var m_ConnectionLostDialog:ConnectionLostWidget;
       
-      private var _embed_css_images_Icons_CombatControls_AutochaseOn_idle_png_569425555:Class;
+      private var _embed_css_images_Button_Standard_tileable_end_gold_disabled_png_937580587:Class;
       
-      private var _embed_css_images_BG_Bars_compact_enpieceOrnamented_png_1318019493:Class;
+      private var _embed_css_images_Scrollbar_Arrow_up_pressed_png_29793219:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_BattleList_active_over_png_662397961:Class;
+      private var _embed_css_images_Icons_BattleList_HidePlayers_idle_png_214541771:Class;
       
-      private var _embed_css_images_BG_ChatTab_Tabdrop_png_472086076:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_WhiteHandOff_idle_png_487999224:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_OffensiveOn_over_png_1836049045:Class;
-      
-      private var _embed_css_images_Arrow_ScrollTabs_disabled_png_1268655624:Class;
-      
-      private var _embed_css_images_Icons_WidgetMenu_Containers_active_over_png_1619319301:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_StandOff_idle_png_1888154842:Class;
-      
-      private var _embed_css_images_Button_Standard_tileable_end_pressed_png_109002808:Class;
+      private var _embed_css_images_BG_Combat_png_923993944:Class;
       
       private var _documentDescriptor_:UIComponentDescriptor;
-      
-      private var _embed_css_images_Arrow_ScrollTabs_over_png_1793967184:Class;
       
       public function Tibia()
       {
@@ -967,307 +967,307 @@ package
             }
          });
          this.m_ConnectionLostDialog = new ConnectionLostWidget();
-         this._embed_css_images_Arrow_HotkeyToggle_BG_png_431200598 = Tibia__embed_css_images_Arrow_HotkeyToggle_BG_png_431200598;
-         this._embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_409591214 = Tibia__embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_409591214;
-         this._embed_css_images_Arrow_Minimap_LevelUpDown_over_png_1012243282 = Tibia__embed_css_images_Arrow_Minimap_LevelUpDown_over_png_1012243282;
-         this._embed_css_images_Arrow_Minimap_LevelUpDown_pressed_png_1064231874 = Tibia__embed_css_images_Arrow_Minimap_LevelUpDown_pressed_png_1064231874;
-         this._embed_css_images_Arrow_ScrollHotkeys_disabled_png_54985369 = Tibia__embed_css_images_Arrow_ScrollHotkeys_disabled_png_54985369;
-         this._embed_css_images_Arrow_ScrollHotkeys_idle_png_2128087935 = Tibia__embed_css_images_Arrow_ScrollHotkeys_idle_png_2128087935;
-         this._embed_css_images_Arrow_ScrollHotkeys_over_png_849969279 = Tibia__embed_css_images_Arrow_ScrollHotkeys_over_png_849969279;
-         this._embed_css_images_Arrow_ScrollHotkeys_pressed_png_1514857951 = Tibia__embed_css_images_Arrow_ScrollHotkeys_pressed_png_1514857951;
-         this._embed_css_images_Arrow_ScrollTabsHighlighted_idle_png_1404044595 = Tibia__embed_css_images_Arrow_ScrollTabsHighlighted_idle_png_1404044595;
-         this._embed_css_images_Arrow_ScrollTabsHighlighted_over_png_947289549 = Tibia__embed_css_images_Arrow_ScrollTabsHighlighted_over_png_947289549;
-         this._embed_css_images_Arrow_ScrollTabsHighlighted_pressed_png_1146743901 = Tibia__embed_css_images_Arrow_ScrollTabsHighlighted_pressed_png_1146743901;
-         this._embed_css_images_Arrow_ScrollTabs_disabled_png_1268655624 = Tibia__embed_css_images_Arrow_ScrollTabs_disabled_png_1268655624;
-         this._embed_css_images_Arrow_ScrollTabs_idle_png_2141274448 = Tibia__embed_css_images_Arrow_ScrollTabs_idle_png_2141274448;
-         this._embed_css_images_Arrow_ScrollTabs_over_png_1793967184 = Tibia__embed_css_images_Arrow_ScrollTabs_over_png_1793967184;
-         this._embed_css_images_Arrow_ScrollTabs_pressed_png_584578288 = Tibia__embed_css_images_Arrow_ScrollTabs_pressed_png_584578288;
-         this._embed_css_images_Arrow_WidgetToggle_BG_png_1699469372 = Tibia__embed_css_images_Arrow_WidgetToggle_BG_png_1699469372;
-         this._embed_css_images_Arrow_WidgetToggle_idle_png_1422630963 = Tibia__embed_css_images_Arrow_WidgetToggle_idle_png_1422630963;
-         this._embed_css_images_Arrow_WidgetToggle_over_png_535174963 = Tibia__embed_css_images_Arrow_WidgetToggle_over_png_535174963;
-         this._embed_css_images_Arrow_WidgetToggle_pressed_png_131489987 = Tibia__embed_css_images_Arrow_WidgetToggle_pressed_png_131489987;
-         this._embed_css_images_BG_BarsXP_default_endpiece_png_1535104458 = Tibia__embed_css_images_BG_BarsXP_default_endpiece_png_1535104458;
-         this._embed_css_images_BG_BarsXP_default_tileable_png_1546217951 = Tibia__embed_css_images_BG_BarsXP_default_tileable_png_1546217951;
-         this._embed_css_images_BG_Bars_compact_enpieceOrnamented_png_1318019493 = Tibia__embed_css_images_BG_Bars_compact_enpieceOrnamented_png_1318019493;
-         this._embed_css_images_BG_Bars_compact_enpiece_png_1528117550 = Tibia__embed_css_images_BG_Bars_compact_enpiece_png_1528117550;
-         this._embed_css_images_BG_Bars_compact_tileable_png_1240312325 = Tibia__embed_css_images_BG_Bars_compact_tileable_png_1240312325;
-         this._embed_css_images_BG_Bars_default_enpieceOrnamented_png_1565724477 = Tibia__embed_css_images_BG_Bars_default_enpieceOrnamented_png_1565724477;
-         this._embed_css_images_BG_Bars_default_enpiece_png_452312320 = Tibia__embed_css_images_BG_Bars_default_enpiece_png_452312320;
-         this._embed_css_images_BG_Bars_default_tileable_png_1212117159 = Tibia__embed_css_images_BG_Bars_default_tileable_png_1212117159;
-         this._embed_css_images_BG_Bars_fat_enpieceOrnamented_png_1210365909 = Tibia__embed_css_images_BG_Bars_fat_enpieceOrnamented_png_1210365909;
-         this._embed_css_images_BG_Bars_fat_enpiece_png_115157624 = Tibia__embed_css_images_BG_Bars_fat_enpiece_png_115157624;
-         this._embed_css_images_BG_Bars_fat_tileable_png_1759296703 = Tibia__embed_css_images_BG_Bars_fat_tileable_png_1759296703;
-         this._embed_css_images_BG_BohemianTileable_ChatConsole_png_2124402909 = Tibia__embed_css_images_BG_BohemianTileable_ChatConsole_png_2124402909;
-         this._embed_css_images_BG_BohemianTileable_Game_png_1085244936 = Tibia__embed_css_images_BG_BohemianTileable_Game_png_1085244936;
-         this._embed_css_images_BG_BohemianTileable_png_1823278301 = Tibia__embed_css_images_BG_BohemianTileable_png_1823278301;
-         this._embed_css_images_BG_ChatTab_Tabdrop_png_472086076 = Tibia__embed_css_images_BG_ChatTab_Tabdrop_png_472086076;
-         this._embed_css_images_BG_ChatTab_tileable_png_2139509006 = Tibia__embed_css_images_BG_ChatTab_tileable_png_2139509006;
-         this._embed_css_images_BG_Combat_png_1063995284 = Tibia__embed_css_images_BG_Combat_png_1063995284;
-         this._embed_css_images_BG_Stone2_Tileable_png_2078005292 = Tibia__embed_css_images_BG_Stone2_Tileable_png_2078005292;
-         this._embed_css_images_BG_Widget_Menu_png_1051938572 = Tibia__embed_css_images_BG_Widget_Menu_png_1051938572;
-         this._embed_css_images_BarsHealth_compact_GreenFull_png_648276767 = Tibia__embed_css_images_BarsHealth_compact_GreenFull_png_648276767;
-         this._embed_css_images_BarsHealth_compact_GreenLow_png_893155438 = Tibia__embed_css_images_BarsHealth_compact_GreenLow_png_893155438;
-         this._embed_css_images_BarsHealth_compact_Mana_png_2110386868 = Tibia__embed_css_images_BarsHealth_compact_Mana_png_2110386868;
-         this._embed_css_images_BarsHealth_compact_RedFull_png_982391891 = Tibia__embed_css_images_BarsHealth_compact_RedFull_png_982391891;
-         this._embed_css_images_BarsHealth_compact_RedLow2_png_138959196 = Tibia__embed_css_images_BarsHealth_compact_RedLow2_png_138959196;
-         this._embed_css_images_BarsHealth_compact_RedLow_png_822903424 = Tibia__embed_css_images_BarsHealth_compact_RedLow_png_822903424;
-         this._embed_css_images_BarsHealth_compact_Yellow_png_948450415 = Tibia__embed_css_images_BarsHealth_compact_Yellow_png_948450415;
-         this._embed_css_images_BarsHealth_default_GreenFull_png_535588893 = Tibia__embed_css_images_BarsHealth_default_GreenFull_png_535588893;
-         this._embed_css_images_BarsHealth_default_GreenLow_png_1416814704 = Tibia__embed_css_images_BarsHealth_default_GreenLow_png_1416814704;
-         this._embed_css_images_BarsHealth_default_Mana_png_1338023818 = Tibia__embed_css_images_BarsHealth_default_Mana_png_1338023818;
-         this._embed_css_images_BarsHealth_default_RedFull_png_193278283 = Tibia__embed_css_images_BarsHealth_default_RedFull_png_193278283;
-         this._embed_css_images_BarsHealth_default_RedLow2_png_1242322938 = Tibia__embed_css_images_BarsHealth_default_RedLow2_png_1242322938;
-         this._embed_css_images_BarsHealth_default_RedLow_png_1714080914 = Tibia__embed_css_images_BarsHealth_default_RedLow_png_1714080914;
-         this._embed_css_images_BarsHealth_default_Yellow_png_468838109 = Tibia__embed_css_images_BarsHealth_default_Yellow_png_468838109;
-         this._embed_css_images_BarsHealth_fat_GreenFull_png_1276731611 = Tibia__embed_css_images_BarsHealth_fat_GreenFull_png_1276731611;
-         this._embed_css_images_BarsHealth_fat_GreenLow_png_358153400 = Tibia__embed_css_images_BarsHealth_fat_GreenLow_png_358153400;
-         this._embed_css_images_BarsHealth_fat_Mana_png_1769920466 = Tibia__embed_css_images_BarsHealth_fat_Mana_png_1769920466;
-         this._embed_css_images_BarsHealth_fat_RedFull_png_1268077203 = Tibia__embed_css_images_BarsHealth_fat_RedFull_png_1268077203;
-         this._embed_css_images_BarsHealth_fat_RedLow2_png_1921195902 = Tibia__embed_css_images_BarsHealth_fat_RedLow2_png_1921195902;
-         this._embed_css_images_BarsHealth_fat_RedLow_png_698199702 = Tibia__embed_css_images_BarsHealth_fat_RedLow_png_698199702;
-         this._embed_css_images_BarsHealth_fat_Yellow_png_1789485381 = Tibia__embed_css_images_BarsHealth_fat_Yellow_png_1789485381;
-         this._embed_css_images_BarsXP_default__png_775287027 = Tibia__embed_css_images_BarsXP_default__png_775287027;
-         this._embed_css_images_Bars_ProgressMarker_png_2128477780 = Tibia__embed_css_images_Bars_ProgressMarker_png_2128477780;
-         this._embed_css_images_Border02_WidgetSidebar_png_249805245 = Tibia__embed_css_images_Border02_WidgetSidebar_png_249805245;
-         this._embed_css_images_Border02_WidgetSidebar_slim_png_481662557 = Tibia__embed_css_images_Border02_WidgetSidebar_slim_png_481662557;
-         this._embed_css_images_Border02_corners_png_1952110039 = Tibia__embed_css_images_Border02_corners_png_1952110039;
-         this._embed_css_images_Border02_png_456293754 = Tibia__embed_css_images_Border02_png_456293754;
-         this._embed_css_images_Border_Widget_corner_png_304991513 = Tibia__embed_css_images_Border_Widget_corner_png_304991513;
-         this._embed_css_images_Border_Widget_png_600256443 = Tibia__embed_css_images_Border_Widget_png_600256443;
-         this._embed_css_images_Button_ChatTabIgnore_idle_png_906529265 = Tibia__embed_css_images_Button_ChatTabIgnore_idle_png_906529265;
-         this._embed_css_images_Button_ChatTabIgnore_over_png_356784399 = Tibia__embed_css_images_Button_ChatTabIgnore_over_png_356784399;
-         this._embed_css_images_Button_ChatTabIgnore_pressed_png_926460463 = Tibia__embed_css_images_Button_ChatTabIgnore_pressed_png_926460463;
-         this._embed_css_images_Button_ChatTabNew_idle_png_1535784849 = Tibia__embed_css_images_Button_ChatTabNew_idle_png_1535784849;
-         this._embed_css_images_Button_ChatTabNew_over_png_273922193 = Tibia__embed_css_images_Button_ChatTabNew_over_png_273922193;
-         this._embed_css_images_Button_ChatTabNew_pressed_png_1589975055 = Tibia__embed_css_images_Button_ChatTabNew_pressed_png_1589975055;
-         this._embed_css_images_Button_ChatTab_Close_idle_png_668415752 = Tibia__embed_css_images_Button_ChatTab_Close_idle_png_668415752;
-         this._embed_css_images_Button_ChatTab_Close_over_png_2075240456 = Tibia__embed_css_images_Button_ChatTab_Close_over_png_2075240456;
-         this._embed_css_images_Button_ChatTab_Close_pressed_png_1701257512 = Tibia__embed_css_images_Button_ChatTab_Close_pressed_png_1701257512;
-         this._embed_css_images_Button_Close_idle_png_1218836874 = Tibia__embed_css_images_Button_Close_idle_png_1218836874;
-         this._embed_css_images_Button_Close_over_png_1484485258 = Tibia__embed_css_images_Button_Close_over_png_1484485258;
-         this._embed_css_images_Button_Close_pressed_png_1220914118 = Tibia__embed_css_images_Button_Close_pressed_png_1220914118;
-         this._embed_css_images_Button_Combat_Stop_idle_png_1987376657 = Tibia__embed_css_images_Button_Combat_Stop_idle_png_1987376657;
-         this._embed_css_images_Button_Combat_Stop_over_png_490634991 = Tibia__embed_css_images_Button_Combat_Stop_over_png_490634991;
-         this._embed_css_images_Button_Combat_Stop_pressed_png_2012688527 = Tibia__embed_css_images_Button_Combat_Stop_pressed_png_2012688527;
-         this._embed_css_images_Button_ContainerUp_idle_png_814560594 = Tibia__embed_css_images_Button_ContainerUp_idle_png_814560594;
-         this._embed_css_images_Button_ContainerUp_over_png_70795182 = Tibia__embed_css_images_Button_ContainerUp_over_png_70795182;
-         this._embed_css_images_Button_ContainerUp_pressed_png_301356766 = Tibia__embed_css_images_Button_ContainerUp_pressed_png_301356766;
-         this._embed_css_images_Button_LockHotkeys_Locked_idle_png_1029749151 = Tibia__embed_css_images_Button_LockHotkeys_Locked_idle_png_1029749151;
-         this._embed_css_images_Button_LockHotkeys_Locked_over_png_145315999 = Tibia__embed_css_images_Button_LockHotkeys_Locked_over_png_145315999;
-         this._embed_css_images_Button_LockHotkeys_UnLocked_idle_png_123799818 = Tibia__embed_css_images_Button_LockHotkeys_UnLocked_idle_png_123799818;
-         this._embed_css_images_Button_LockHotkeys_UnLocked_over_png_455510538 = Tibia__embed_css_images_Button_LockHotkeys_UnLocked_over_png_455510538;
-         this._embed_css_images_Button_Maximize_idle_png_694251050 = Tibia__embed_css_images_Button_Maximize_idle_png_694251050;
-         this._embed_css_images_Button_Maximize_over_png_1127940310 = Tibia__embed_css_images_Button_Maximize_over_png_1127940310;
-         this._embed_css_images_Button_Maximize_pressed_png_610216230 = Tibia__embed_css_images_Button_Maximize_pressed_png_610216230;
-         this._embed_css_images_Button_Minimize_idle_png_1795639068 = Tibia__embed_css_images_Button_Minimize_idle_png_1795639068;
-         this._embed_css_images_Button_Minimize_over_png_1583134748 = Tibia__embed_css_images_Button_Minimize_over_png_1583134748;
-         this._embed_css_images_Button_Minimize_pressed_png_1686066740 = Tibia__embed_css_images_Button_Minimize_pressed_png_1686066740;
-         this._embed_css_images_Button_Standard_tileable_disabled_png_442335108 = Tibia__embed_css_images_Button_Standard_tileable_disabled_png_442335108;
-         this._embed_css_images_Button_Standard_tileable_end_disabled_png_1281608928 = Tibia__embed_css_images_Button_Standard_tileable_end_disabled_png_1281608928;
-         this._embed_css_images_Button_Standard_tileable_end_gold_disabled_png_459454495 = Tibia__embed_css_images_Button_Standard_tileable_end_gold_disabled_png_459454495;
-         this._embed_css_images_Button_Standard_tileable_end_gold_idle_png_1742944567 = Tibia__embed_css_images_Button_Standard_tileable_end_gold_idle_png_1742944567;
-         this._embed_css_images_Button_Standard_tileable_end_gold_over_png_2137606601 = Tibia__embed_css_images_Button_Standard_tileable_end_gold_over_png_2137606601;
-         this._embed_css_images_Button_Standard_tileable_end_gold_pressed_png_303194441 = Tibia__embed_css_images_Button_Standard_tileable_end_gold_pressed_png_303194441;
-         this._embed_css_images_Button_Standard_tileable_end_idle_png_1458084888 = Tibia__embed_css_images_Button_Standard_tileable_end_idle_png_1458084888;
-         this._embed_css_images_Button_Standard_tileable_end_over_png_1782319384 = Tibia__embed_css_images_Button_Standard_tileable_end_over_png_1782319384;
-         this._embed_css_images_Button_Standard_tileable_end_pressed_png_109002808 = Tibia__embed_css_images_Button_Standard_tileable_end_pressed_png_109002808;
-         this._embed_css_images_Button_Standard_tileable_gold_idle_png_1872350211 = Tibia__embed_css_images_Button_Standard_tileable_gold_idle_png_1872350211;
-         this._embed_css_images_Button_Standard_tileable_gold_over_png_609039619 = Tibia__embed_css_images_Button_Standard_tileable_gold_over_png_609039619;
-         this._embed_css_images_Button_Standard_tileable_gold_pressed_png_539431885 = Tibia__embed_css_images_Button_Standard_tileable_gold_pressed_png_539431885;
-         this._embed_css_images_Button_Standard_tileable_idle_png_83428580 = Tibia__embed_css_images_Button_Standard_tileable_idle_png_83428580;
-         this._embed_css_images_Button_Standard_tileable_over_png_272709604 = Tibia__embed_css_images_Button_Standard_tileable_over_png_272709604;
-         this._embed_css_images_Button_Standard_tileable_pressed_png_2061080748 = Tibia__embed_css_images_Button_Standard_tileable_pressed_png_2061080748;
-         this._embed_css_images_BuySellTab_active_png_1113828490 = Tibia__embed_css_images_BuySellTab_active_png_1113828490;
-         this._embed_css_images_BuySellTab_idle_png_1022867196 = Tibia__embed_css_images_BuySellTab_idle_png_1022867196;
-         this._embed_css_images_ChatTab_tileable_EndpieceLeft_idle_png_1027817616 = Tibia__embed_css_images_ChatTab_tileable_EndpieceLeft_idle_png_1027817616;
-         this._embed_css_images_ChatTab_tileable_EndpieceLeft_png_1191442963 = Tibia__embed_css_images_ChatTab_tileable_EndpieceLeft_png_1191442963;
-         this._embed_css_images_ChatTab_tileable_EndpieceRound_idle_png_1363221643 = Tibia__embed_css_images_ChatTab_tileable_EndpieceRound_idle_png_1363221643;
-         this._embed_css_images_ChatTab_tileable_EndpieceRound_png_796201886 = Tibia__embed_css_images_ChatTab_tileable_EndpieceRound_png_796201886;
-         this._embed_css_images_ChatTab_tileable_idle_png_694452361 = Tibia__embed_css_images_ChatTab_tileable_idle_png_694452361;
-         this._embed_css_images_ChatTab_tileable_png_954459878 = Tibia__embed_css_images_ChatTab_tileable_png_954459878;
-         this._embed_css_images_ChatWindow_Mover_png_2104666118 = Tibia__embed_css_images_ChatWindow_Mover_png_2104666118;
-         this._embed_css_images_Icons_BattleList_HideMonsters_active_over_png_714322155 = Tibia__embed_css_images_Icons_BattleList_HideMonsters_active_over_png_714322155;
-         this._embed_css_images_Icons_BattleList_HideMonsters_active_png_1786236546 = Tibia__embed_css_images_Icons_BattleList_HideMonsters_active_png_1786236546;
-         this._embed_css_images_Icons_BattleList_HideMonsters_idle_png_1429348608 = Tibia__embed_css_images_Icons_BattleList_HideMonsters_idle_png_1429348608;
-         this._embed_css_images_Icons_BattleList_HideMonsters_over_png_1051811840 = Tibia__embed_css_images_Icons_BattleList_HideMonsters_over_png_1051811840;
-         this._embed_css_images_Icons_BattleList_HideNPCs_active_over_png_13561492 = Tibia__embed_css_images_Icons_BattleList_HideNPCs_active_over_png_13561492;
-         this._embed_css_images_Icons_BattleList_HideNPCs_active_png_1734731145 = Tibia__embed_css_images_Icons_BattleList_HideNPCs_active_png_1734731145;
-         this._embed_css_images_Icons_BattleList_HideNPCs_idle_png_1453157047 = Tibia__embed_css_images_Icons_BattleList_HideNPCs_idle_png_1453157047;
-         this._embed_css_images_Icons_BattleList_HideNPCs_over_png_1122622903 = Tibia__embed_css_images_Icons_BattleList_HideNPCs_over_png_1122622903;
-         this._embed_css_images_Icons_BattleList_HidePlayers_active_over_png_955272042 = Tibia__embed_css_images_Icons_BattleList_HidePlayers_active_over_png_955272042;
-         this._embed_css_images_Icons_BattleList_HidePlayers_active_png_613968615 = Tibia__embed_css_images_Icons_BattleList_HidePlayers_active_png_613968615;
-         this._embed_css_images_Icons_BattleList_HidePlayers_idle_png_560056203 = Tibia__embed_css_images_Icons_BattleList_HidePlayers_idle_png_560056203;
-         this._embed_css_images_Icons_BattleList_HidePlayers_over_png_354760843 = Tibia__embed_css_images_Icons_BattleList_HidePlayers_over_png_354760843;
-         this._embed_css_images_Icons_BattleList_HideSkulled_active_over_png_464116400 = Tibia__embed_css_images_Icons_BattleList_HideSkulled_active_over_png_464116400;
-         this._embed_css_images_Icons_BattleList_HideSkulled_active_png_1686359923 = Tibia__embed_css_images_Icons_BattleList_HideSkulled_active_png_1686359923;
-         this._embed_css_images_Icons_BattleList_HideSkulled_idle_png_495581115 = Tibia__embed_css_images_Icons_BattleList_HideSkulled_idle_png_495581115;
-         this._embed_css_images_Icons_BattleList_HideSkulled_over_png_170031803 = Tibia__embed_css_images_Icons_BattleList_HideSkulled_over_png_170031803;
-         this._embed_css_images_Icons_BattleList_PartyMembers_active_over_png_482845357 = Tibia__embed_css_images_Icons_BattleList_PartyMembers_active_over_png_482845357;
-         this._embed_css_images_Icons_BattleList_PartyMembers_active_png_1989961286 = Tibia__embed_css_images_Icons_BattleList_PartyMembers_active_png_1989961286;
-         this._embed_css_images_Icons_BattleList_PartyMembers_idle_png_730569304 = Tibia__embed_css_images_Icons_BattleList_PartyMembers_idle_png_730569304;
-         this._embed_css_images_Icons_BattleList_PartyMembers_over_png_379592024 = Tibia__embed_css_images_Icons_BattleList_PartyMembers_over_png_379592024;
-         this._embed_css_images_Icons_CombatControls_AttackNo_idle_png_28240362 = Tibia__embed_css_images_Icons_CombatControls_AttackNo_idle_png_28240362;
-         this._embed_css_images_Icons_CombatControls_AttackNo_over_png_896166634 = Tibia__embed_css_images_Icons_CombatControls_AttackNo_over_png_896166634;
-         this._embed_css_images_Icons_CombatControls_AttackYes_idle_png_1048976978 = Tibia__embed_css_images_Icons_CombatControls_AttackYes_idle_png_1048976978;
-         this._embed_css_images_Icons_CombatControls_AttackYes_over_png_180526418 = Tibia__embed_css_images_Icons_CombatControls_AttackYes_over_png_180526418;
-         this._embed_css_images_Icons_CombatControls_AutochaseOn_idle_png_569425555 = Tibia__embed_css_images_Icons_CombatControls_AutochaseOn_idle_png_569425555;
-         this._embed_css_images_Icons_CombatControls_AutochaseOn_over_png_218968467 = Tibia__embed_css_images_Icons_CombatControls_AutochaseOn_over_png_218968467;
-         this._embed_css_images_Icons_CombatControls_DefensiveOff_idle_png_2028276291 = Tibia__embed_css_images_Icons_CombatControls_DefensiveOff_idle_png_2028276291;
-         this._embed_css_images_Icons_CombatControls_DefensiveOff_over_png_449870525 = Tibia__embed_css_images_Icons_CombatControls_DefensiveOff_over_png_449870525;
-         this._embed_css_images_Icons_CombatControls_DefensiveOn_active_png_1983273089 = Tibia__embed_css_images_Icons_CombatControls_DefensiveOn_active_png_1983273089;
-         this._embed_css_images_Icons_CombatControls_DefensiveOn_idle_png_1010616943 = Tibia__embed_css_images_Icons_CombatControls_DefensiveOn_idle_png_1010616943;
-         this._embed_css_images_Icons_CombatControls_DoveOff_idle_png_302692372 = Tibia__embed_css_images_Icons_CombatControls_DoveOff_idle_png_302692372;
-         this._embed_css_images_Icons_CombatControls_DoveOff_over_png_1497487084 = Tibia__embed_css_images_Icons_CombatControls_DoveOff_over_png_1497487084;
-         this._embed_css_images_Icons_CombatControls_DoveOn_idle_png_2009546150 = Tibia__embed_css_images_Icons_CombatControls_DoveOn_idle_png_2009546150;
-         this._embed_css_images_Icons_CombatControls_DoveOn_over_png_1667484838 = Tibia__embed_css_images_Icons_CombatControls_DoveOn_over_png_1667484838;
-         this._embed_css_images_Icons_CombatControls_MediumOff_idle_png_1318827497 = Tibia__embed_css_images_Icons_CombatControls_MediumOff_idle_png_1318827497;
-         this._embed_css_images_Icons_CombatControls_MediumOff_over_png_1017829655 = Tibia__embed_css_images_Icons_CombatControls_MediumOff_over_png_1017829655;
-         this._embed_css_images_Icons_CombatControls_MediumOn_idle_png_2011162331 = Tibia__embed_css_images_Icons_CombatControls_MediumOn_idle_png_2011162331;
-         this._embed_css_images_Icons_CombatControls_MediumOn_over_png_1143236059 = Tibia__embed_css_images_Icons_CombatControls_MediumOn_over_png_1143236059;
-         this._embed_css_images_Icons_CombatControls_Mounted_idle_png_667719769 = Tibia__embed_css_images_Icons_CombatControls_Mounted_idle_png_667719769;
-         this._embed_css_images_Icons_CombatControls_Mounted_over_png_211474599 = Tibia__embed_css_images_Icons_CombatControls_Mounted_over_png_211474599;
-         this._embed_css_images_Icons_CombatControls_OffensiveOff_idle_png_930638717 = Tibia__embed_css_images_Icons_CombatControls_OffensiveOff_idle_png_930638717;
-         this._embed_css_images_Icons_CombatControls_OffensiveOff_over_png_1656023677 = Tibia__embed_css_images_Icons_CombatControls_OffensiveOff_over_png_1656023677;
-         this._embed_css_images_Icons_CombatControls_OffensiveOn_idle_png_30841963 = Tibia__embed_css_images_Icons_CombatControls_OffensiveOn_idle_png_30841963;
-         this._embed_css_images_Icons_CombatControls_OffensiveOn_over_png_1836049045 = Tibia__embed_css_images_Icons_CombatControls_OffensiveOn_over_png_1836049045;
-         this._embed_css_images_Icons_CombatControls_RedFistOff_idle_png_1804027557 = Tibia__embed_css_images_Icons_CombatControls_RedFistOff_idle_png_1804027557;
-         this._embed_css_images_Icons_CombatControls_RedFistOff_over_png_935448997 = Tibia__embed_css_images_Icons_CombatControls_RedFistOff_over_png_935448997;
-         this._embed_css_images_Icons_CombatControls_RedFistOn_idle_png_6251085 = Tibia__embed_css_images_Icons_CombatControls_RedFistOn_idle_png_6251085;
-         this._embed_css_images_Icons_CombatControls_RedFistOn_over_png_948317875 = Tibia__embed_css_images_Icons_CombatControls_RedFistOn_over_png_948317875;
-         this._embed_css_images_Icons_CombatControls_StandOff_idle_png_1888154842 = Tibia__embed_css_images_Icons_CombatControls_StandOff_idle_png_1888154842;
-         this._embed_css_images_Icons_CombatControls_StandOff_over_png_608069082 = Tibia__embed_css_images_Icons_CombatControls_StandOff_over_png_608069082;
-         this._embed_css_images_Icons_CombatControls_Unmounted_idle_png_1350580974 = Tibia__embed_css_images_Icons_CombatControls_Unmounted_idle_png_1350580974;
-         this._embed_css_images_Icons_CombatControls_Unmounted_over_png_1144110062 = Tibia__embed_css_images_Icons_CombatControls_Unmounted_over_png_1144110062;
-         this._embed_css_images_Icons_CombatControls_WhiteHandOff_idle_png_487999224 = Tibia__embed_css_images_Icons_CombatControls_WhiteHandOff_idle_png_487999224;
-         this._embed_css_images_Icons_CombatControls_WhiteHandOff_over_png_819578872 = Tibia__embed_css_images_Icons_CombatControls_WhiteHandOff_over_png_819578872;
-         this._embed_css_images_Icons_CombatControls_WhiteHandOn_idle_png_1432093558 = Tibia__embed_css_images_Icons_CombatControls_WhiteHandOn_idle_png_1432093558;
-         this._embed_css_images_Icons_CombatControls_WhiteHandOn_over_png_1695517814 = Tibia__embed_css_images_Icons_CombatControls_WhiteHandOn_over_png_1695517814;
-         this._embed_css_images_Icons_CombatControls_YellowHandOff_idle_png_1167129563 = Tibia__embed_css_images_Icons_CombatControls_YellowHandOff_idle_png_1167129563;
-         this._embed_css_images_Icons_CombatControls_YellowHandOff_over_png_373718235 = Tibia__embed_css_images_Icons_CombatControls_YellowHandOff_over_png_373718235;
-         this._embed_css_images_Icons_CombatControls_YellowHandOn_idle_png_1103035475 = Tibia__embed_css_images_Icons_CombatControls_YellowHandOn_idle_png_1103035475;
-         this._embed_css_images_Icons_CombatControls_YellowHandOn_over_png_1320911533 = Tibia__embed_css_images_Icons_CombatControls_YellowHandOn_over_png_1320911533;
-         this._embed_css_images_Icons_Conditions_Bleeding_png_849233240 = Tibia__embed_css_images_Icons_Conditions_Bleeding_png_849233240;
-         this._embed_css_images_Icons_Conditions_Burning_png_1413841213 = Tibia__embed_css_images_Icons_Conditions_Burning_png_1413841213;
-         this._embed_css_images_Icons_Conditions_Cursed_png_896460354 = Tibia__embed_css_images_Icons_Conditions_Cursed_png_896460354;
-         this._embed_css_images_Icons_Conditions_Dazzled_png_938167768 = Tibia__embed_css_images_Icons_Conditions_Dazzled_png_938167768;
-         this._embed_css_images_Icons_Conditions_Drowning_png_674758486 = Tibia__embed_css_images_Icons_Conditions_Drowning_png_674758486;
-         this._embed_css_images_Icons_Conditions_Drunk_png_225324206 = Tibia__embed_css_images_Icons_Conditions_Drunk_png_225324206;
-         this._embed_css_images_Icons_Conditions_Electrified_png_1232635934 = Tibia__embed_css_images_Icons_Conditions_Electrified_png_1232635934;
-         this._embed_css_images_Icons_Conditions_Freezing_png_2127895292 = Tibia__embed_css_images_Icons_Conditions_Freezing_png_2127895292;
-         this._embed_css_images_Icons_Conditions_Haste_png_646986501 = Tibia__embed_css_images_Icons_Conditions_Haste_png_646986501;
-         this._embed_css_images_Icons_Conditions_Hungry_png_1025807859 = Tibia__embed_css_images_Icons_Conditions_Hungry_png_1025807859;
-         this._embed_css_images_Icons_Conditions_Logoutblock_png_348408429 = Tibia__embed_css_images_Icons_Conditions_Logoutblock_png_348408429;
-         this._embed_css_images_Icons_Conditions_MagicShield_png_553787936 = Tibia__embed_css_images_Icons_Conditions_MagicShield_png_553787936;
-         this._embed_css_images_Icons_Conditions_PZ_png_1799563562 = Tibia__embed_css_images_Icons_Conditions_PZ_png_1799563562;
-         this._embed_css_images_Icons_Conditions_PZlock_png_1362435131 = Tibia__embed_css_images_Icons_Conditions_PZlock_png_1362435131;
-         this._embed_css_images_Icons_Conditions_Poisoned_png_2070767127 = Tibia__embed_css_images_Icons_Conditions_Poisoned_png_2070767127;
-         this._embed_css_images_Icons_Conditions_Slowed_png_348049024 = Tibia__embed_css_images_Icons_Conditions_Slowed_png_348049024;
-         this._embed_css_images_Icons_Conditions_Strenghtened_png_1097710785 = Tibia__embed_css_images_Icons_Conditions_Strenghtened_png_1097710785;
-         this._embed_css_images_Icons_PremmyPurse_active_over_png_1273433520 = Tibia__embed_css_images_Icons_PremmyPurse_active_over_png_1273433520;
-         this._embed_css_images_Icons_PremmyPurse_active_png_1396443373 = Tibia__embed_css_images_Icons_PremmyPurse_active_png_1396443373;
-         this._embed_css_images_Icons_ProgressBars_AxeFighting_png_926059007 = Tibia__embed_css_images_Icons_ProgressBars_AxeFighting_png_926059007;
-         this._embed_css_images_Icons_ProgressBars_ClubFighting_png_1528255203 = Tibia__embed_css_images_Icons_ProgressBars_ClubFighting_png_1528255203;
-         this._embed_css_images_Icons_ProgressBars_CompactStyle_png_2093916375 = Tibia__embed_css_images_Icons_ProgressBars_CompactStyle_png_2093916375;
-         this._embed_css_images_Icons_ProgressBars_DefaultStyle_png_1679698075 = Tibia__embed_css_images_Icons_ProgressBars_DefaultStyle_png_1679698075;
-         this._embed_css_images_Icons_ProgressBars_DistanceFighting_png_712925790 = Tibia__embed_css_images_Icons_ProgressBars_DistanceFighting_png_712925790;
-         this._embed_css_images_Icons_ProgressBars_Fishing_png_231099783 = Tibia__embed_css_images_Icons_ProgressBars_Fishing_png_231099783;
-         this._embed_css_images_Icons_ProgressBars_FistFighting_png_948562175 = Tibia__embed_css_images_Icons_ProgressBars_FistFighting_png_948562175;
-         this._embed_css_images_Icons_ProgressBars_LargeStyle_png_1217604511 = Tibia__embed_css_images_Icons_ProgressBars_LargeStyle_png_1217604511;
-         this._embed_css_images_Icons_ProgressBars_MagicLevel_png_1228129678 = Tibia__embed_css_images_Icons_ProgressBars_MagicLevel_png_1228129678;
-         this._embed_css_images_Icons_ProgressBars_ParallelStyle_png_906379559 = Tibia__embed_css_images_Icons_ProgressBars_ParallelStyle_png_906379559;
-         this._embed_css_images_Icons_ProgressBars_ProgressOff_png_1857357311 = Tibia__embed_css_images_Icons_ProgressBars_ProgressOff_png_1857357311;
-         this._embed_css_images_Icons_ProgressBars_ProgressOn_png_502744633 = Tibia__embed_css_images_Icons_ProgressBars_ProgressOn_png_502744633;
-         this._embed_css_images_Icons_ProgressBars_Shielding_png_603613976 = Tibia__embed_css_images_Icons_ProgressBars_Shielding_png_603613976;
-         this._embed_css_images_Icons_ProgressBars_SwordFighting_png_935789070 = Tibia__embed_css_images_Icons_ProgressBars_SwordFighting_png_935789070;
-         this._embed_css_images_Icons_TradeLists_ContainerDisplay_idle_png_1399078427 = Tibia__embed_css_images_Icons_TradeLists_ContainerDisplay_idle_png_1399078427;
-         this._embed_css_images_Icons_TradeLists_ContainerDisplay_over_png_1730126619 = Tibia__embed_css_images_Icons_TradeLists_ContainerDisplay_over_png_1730126619;
-         this._embed_css_images_Icons_TradeLists_ContainerDisplay_pressed_png_1279184043 = Tibia__embed_css_images_Icons_TradeLists_ContainerDisplay_pressed_png_1279184043;
-         this._embed_css_images_Icons_TradeLists_ListDisplay_idle_png_1277352378 = Tibia__embed_css_images_Icons_TradeLists_ListDisplay_idle_png_1277352378;
-         this._embed_css_images_Icons_TradeLists_ListDisplay_over_png_1087787706 = Tibia__embed_css_images_Icons_TradeLists_ListDisplay_over_png_1087787706;
-         this._embed_css_images_Icons_TradeLists_ListDisplay_pressed_png_1980997418 = Tibia__embed_css_images_Icons_TradeLists_ListDisplay_pressed_png_1980997418;
-         this._embed_css_images_Icons_WidgetHeaders_BattleList_png_1377456108 = Tibia__embed_css_images_Icons_WidgetHeaders_BattleList_png_1377456108;
-         this._embed_css_images_Icons_WidgetHeaders_Combat_png_113774866 = Tibia__embed_css_images_Icons_WidgetHeaders_Combat_png_113774866;
-         this._embed_css_images_Icons_WidgetHeaders_GeneralControls_png_246844262 = Tibia__embed_css_images_Icons_WidgetHeaders_GeneralControls_png_246844262;
-         this._embed_css_images_Icons_WidgetHeaders_Inventory_png_1539700056 = Tibia__embed_css_images_Icons_WidgetHeaders_Inventory_png_1539700056;
-         this._embed_css_images_Icons_WidgetHeaders_Minimap_png_1695571713 = Tibia__embed_css_images_Icons_WidgetHeaders_Minimap_png_1695571713;
-         this._embed_css_images_Icons_WidgetHeaders_SafeTrades_png_1294933802 = Tibia__embed_css_images_Icons_WidgetHeaders_SafeTrades_png_1294933802;
-         this._embed_css_images_Icons_WidgetHeaders_Spells_png_922897783 = Tibia__embed_css_images_Icons_WidgetHeaders_Spells_png_922897783;
-         this._embed_css_images_Icons_WidgetHeaders_Trades_png_288371299 = Tibia__embed_css_images_Icons_WidgetHeaders_Trades_png_288371299;
-         this._embed_css_images_Icons_WidgetHeaders_VipList_png_509844711 = Tibia__embed_css_images_Icons_WidgetHeaders_VipList_png_509844711;
-         this._embed_css_images_Icons_WidgetMenu_BattleList_active_over_png_662397961 = Tibia__embed_css_images_Icons_WidgetMenu_BattleList_active_over_png_662397961;
-         this._embed_css_images_Icons_WidgetMenu_BattleList_active_png_1261396244 = Tibia__embed_css_images_Icons_WidgetMenu_BattleList_active_png_1261396244;
-         this._embed_css_images_Icons_WidgetMenu_BattleList_idle_over_png_266891861 = Tibia__embed_css_images_Icons_WidgetMenu_BattleList_idle_over_png_266891861;
-         this._embed_css_images_Icons_WidgetMenu_BattleList_idle_png_1103299902 = Tibia__embed_css_images_Icons_WidgetMenu_BattleList_idle_png_1103299902;
-         this._embed_css_images_Icons_WidgetMenu_Combat_active_over_png_391026041 = Tibia__embed_css_images_Icons_WidgetMenu_Combat_active_over_png_391026041;
-         this._embed_css_images_Icons_WidgetMenu_Combat_active_png_68537130 = Tibia__embed_css_images_Icons_WidgetMenu_Combat_active_png_68537130;
-         this._embed_css_images_Icons_WidgetMenu_Combat_idle_over_png_801197927 = Tibia__embed_css_images_Icons_WidgetMenu_Combat_idle_over_png_801197927;
-         this._embed_css_images_Icons_WidgetMenu_Combat_idle_png_1067895292 = Tibia__embed_css_images_Icons_WidgetMenu_Combat_idle_png_1067895292;
-         this._embed_css_images_Icons_WidgetMenu_Containers_active_over_png_1619319301 = Tibia__embed_css_images_Icons_WidgetMenu_Containers_active_over_png_1619319301;
-         this._embed_css_images_Icons_WidgetMenu_Containers_active_png_177830792 = Tibia__embed_css_images_Icons_WidgetMenu_Containers_active_png_177830792;
-         this._embed_css_images_Icons_WidgetMenu_Containers_idle_over_png_992643145 = Tibia__embed_css_images_Icons_WidgetMenu_Containers_idle_over_png_992643145;
-         this._embed_css_images_Icons_WidgetMenu_Containers_idle_png_1737794982 = Tibia__embed_css_images_Icons_WidgetMenu_Containers_idle_png_1737794982;
-         this._embed_css_images_Icons_WidgetMenu_GeneralControls_active_over_png_115616801 = Tibia__embed_css_images_Icons_WidgetMenu_GeneralControls_active_over_png_115616801;
-         this._embed_css_images_Icons_WidgetMenu_GeneralControls_active_png_405475236 = Tibia__embed_css_images_Icons_WidgetMenu_GeneralControls_active_png_405475236;
-         this._embed_css_images_Icons_WidgetMenu_GeneralControls_idle_over_png_1919873437 = Tibia__embed_css_images_Icons_WidgetMenu_GeneralControls_idle_over_png_1919873437;
-         this._embed_css_images_Icons_WidgetMenu_GeneralControls_idle_png_1694038902 = Tibia__embed_css_images_Icons_WidgetMenu_GeneralControls_idle_png_1694038902;
-         this._embed_css_images_Icons_WidgetMenu_Inventory_active_over_png_1468961855 = Tibia__embed_css_images_Icons_WidgetMenu_Inventory_active_over_png_1468961855;
-         this._embed_css_images_Icons_WidgetMenu_Inventory_active_png_574279422 = Tibia__embed_css_images_Icons_WidgetMenu_Inventory_active_png_574279422;
-         this._embed_css_images_Icons_WidgetMenu_Inventory_idle_over_png_962986095 = Tibia__embed_css_images_Icons_WidgetMenu_Inventory_idle_over_png_962986095;
-         this._embed_css_images_Icons_WidgetMenu_Inventory_idle_png_1990727124 = Tibia__embed_css_images_Icons_WidgetMenu_Inventory_idle_png_1990727124;
-         this._embed_css_images_Icons_WidgetMenu_Minimap_active_over_png_227932024 = Tibia__embed_css_images_Icons_WidgetMenu_Minimap_active_over_png_227932024;
-         this._embed_css_images_Icons_WidgetMenu_Minimap_active_png_1074018139 = Tibia__embed_css_images_Icons_WidgetMenu_Minimap_active_png_1074018139;
-         this._embed_css_images_Icons_WidgetMenu_Minimap_idle_over_png_1577674970 = Tibia__embed_css_images_Icons_WidgetMenu_Minimap_idle_over_png_1577674970;
-         this._embed_css_images_Icons_WidgetMenu_Minimap_idle_png_627021395 = Tibia__embed_css_images_Icons_WidgetMenu_Minimap_idle_png_627021395;
-         this._embed_css_images_Icons_WidgetMenu_Trades_active_over_png_1517215874 = Tibia__embed_css_images_Icons_WidgetMenu_Trades_active_over_png_1517215874;
-         this._embed_css_images_Icons_WidgetMenu_Trades_active_png_988029035 = Tibia__embed_css_images_Icons_WidgetMenu_Trades_active_png_988029035;
-         this._embed_css_images_Icons_WidgetMenu_Trades_idle_over_png_365528236 = Tibia__embed_css_images_Icons_WidgetMenu_Trades_idle_over_png_365528236;
-         this._embed_css_images_Icons_WidgetMenu_Trades_idle_png_1725788361 = Tibia__embed_css_images_Icons_WidgetMenu_Trades_idle_png_1725788361;
-         this._embed_css_images_Icons_WidgetMenu_VipList_active_over_png_515177278 = Tibia__embed_css_images_Icons_WidgetMenu_VipList_active_over_png_515177278;
-         this._embed_css_images_Icons_WidgetMenu_VipList_active_png_783570017 = Tibia__embed_css_images_Icons_WidgetMenu_VipList_active_png_783570017;
-         this._embed_css_images_Icons_WidgetMenu_VipList_idle_over_png_605006672 = Tibia__embed_css_images_Icons_WidgetMenu_VipList_idle_over_png_605006672;
-         this._embed_css_images_Icons_WidgetMenu_VipList_idle_png_447476365 = Tibia__embed_css_images_Icons_WidgetMenu_VipList_idle_png_447476365;
-         this._embed_css_images_Inventory_png_84216506 = Tibia__embed_css_images_Inventory_png_84216506;
-         this._embed_css_images_Minimap_Center_active_png_1393972580 = Tibia__embed_css_images_Minimap_Center_active_png_1393972580;
-         this._embed_css_images_Minimap_Center_idle_png_1674526766 = Tibia__embed_css_images_Minimap_Center_idle_png_1674526766;
-         this._embed_css_images_Minimap_Center_over_png_58280658 = Tibia__embed_css_images_Minimap_Center_over_png_58280658;
-         this._embed_css_images_Minimap_ZoomIn_idle_png_255100865 = Tibia__embed_css_images_Minimap_ZoomIn_idle_png_255100865;
-         this._embed_css_images_Minimap_ZoomIn_over_png_2081920831 = Tibia__embed_css_images_Minimap_ZoomIn_over_png_2081920831;
-         this._embed_css_images_Minimap_ZoomIn_pressed_png_1348677857 = Tibia__embed_css_images_Minimap_ZoomIn_pressed_png_1348677857;
-         this._embed_css_images_Minimap_ZoomOut_idle_png_1902626562 = Tibia__embed_css_images_Minimap_ZoomOut_idle_png_1902626562;
-         this._embed_css_images_Minimap_ZoomOut_over_png_86849538 = Tibia__embed_css_images_Minimap_ZoomOut_over_png_86849538;
-         this._embed_css_images_Minimap_ZoomOut_pressed_png_1102125518 = Tibia__embed_css_images_Minimap_ZoomOut_pressed_png_1102125518;
-         this._embed_css_images_Minimap_png_799283533 = Tibia__embed_css_images_Minimap_png_799283533;
-         this._embed_css_images_Scrollbar_Arrow_down_idle_png_32443200 = Tibia__embed_css_images_Scrollbar_Arrow_down_idle_png_32443200;
-         this._embed_css_images_Scrollbar_Arrow_down_over_png_1767216064 = Tibia__embed_css_images_Scrollbar_Arrow_down_over_png_1767216064;
-         this._embed_css_images_Scrollbar_Arrow_down_pressed_png_1986056256 = Tibia__embed_css_images_Scrollbar_Arrow_down_pressed_png_1986056256;
-         this._embed_css_images_Scrollbar_Arrow_up_idle_png_260180361 = Tibia__embed_css_images_Scrollbar_Arrow_up_idle_png_260180361;
-         this._embed_css_images_Scrollbar_Arrow_up_over_png_1127971465 = Tibia__embed_css_images_Scrollbar_Arrow_up_over_png_1127971465;
-         this._embed_css_images_Scrollbar_Arrow_up_pressed_png_442933175 = Tibia__embed_css_images_Scrollbar_Arrow_up_pressed_png_442933175;
-         this._embed_css_images_Scrollbar_Handler_png_488364481 = Tibia__embed_css_images_Scrollbar_Handler_png_488364481;
-         this._embed_css_images_Scrollbar_tileable_png_1484535251 = Tibia__embed_css_images_Scrollbar_tileable_png_1484535251;
-         this._embed_css_images_Slot_Hotkey_Cooldown_png_1292179891 = Tibia__embed_css_images_Slot_Hotkey_Cooldown_png_1292179891;
-         this._embed_css_images_Slot_InventoryAmmo_png_1348517275 = Tibia__embed_css_images_Slot_InventoryAmmo_png_1348517275;
-         this._embed_css_images_Slot_InventoryArmor_png_1780250670 = Tibia__embed_css_images_Slot_InventoryArmor_png_1780250670;
-         this._embed_css_images_Slot_InventoryBackpack_png_877476873 = Tibia__embed_css_images_Slot_InventoryBackpack_png_877476873;
-         this._embed_css_images_Slot_InventoryBoots_png_1188945492 = Tibia__embed_css_images_Slot_InventoryBoots_png_1188945492;
-         this._embed_css_images_Slot_InventoryHead_png_1028429015 = Tibia__embed_css_images_Slot_InventoryHead_png_1028429015;
-         this._embed_css_images_Slot_InventoryLegs_png_1771204180 = Tibia__embed_css_images_Slot_InventoryLegs_png_1771204180;
-         this._embed_css_images_Slot_InventoryNecklace_png_2079223005 = Tibia__embed_css_images_Slot_InventoryNecklace_png_2079223005;
-         this._embed_css_images_Slot_InventoryRing_png_670916409 = Tibia__embed_css_images_Slot_InventoryRing_png_670916409;
-         this._embed_css_images_Slot_InventoryShield_png_333720080 = Tibia__embed_css_images_Slot_InventoryShield_png_333720080;
-         this._embed_css_images_Slot_InventoryWeapon_png_1996454291 = Tibia__embed_css_images_Slot_InventoryWeapon_png_1996454291;
-         this._embed_css_images_Slot_Statusicon_highlighted_png_1540639774 = Tibia__embed_css_images_Slot_Statusicon_highlighted_png_1540639774;
-         this._embed_css_images_Slot_Statusicon_png_1736713046 = Tibia__embed_css_images_Slot_Statusicon_png_1736713046;
-         this._embed_css_images_Widget_Footer_tileable_end01_png_94854202 = Tibia__embed_css_images_Widget_Footer_tileable_end01_png_94854202;
-         this._embed_css_images_Widget_Footer_tileable_end02_png_96302267 = Tibia__embed_css_images_Widget_Footer_tileable_end02_png_96302267;
-         this._embed_css_images_Widget_Footer_tileable_png_1831820003 = Tibia__embed_css_images_Widget_Footer_tileable_png_1831820003;
-         this._embed_css_images_Widget_HeaderBG_png_1130679947 = Tibia__embed_css_images_Widget_HeaderBG_png_1130679947;
-         this._embed_css_images_slot_Hotkey_disabled_png_994917156 = Tibia__embed_css_images_slot_Hotkey_disabled_png_994917156;
-         this._embed_css_images_slot_Hotkey_highlighted_png_2071319371 = Tibia__embed_css_images_slot_Hotkey_highlighted_png_2071319371;
-         this._embed_css_images_slot_Hotkey_png_146592943 = Tibia__embed_css_images_slot_Hotkey_png_146592943;
-         this._embed_css_images_slot_container_disabled_png_1749251401 = Tibia__embed_css_images_slot_container_disabled_png_1749251401;
-         this._embed_css_images_slot_container_highlighted_png_490294368 = Tibia__embed_css_images_slot_container_highlighted_png_490294368;
-         this._embed_css_images_slot_container_png_2097535244 = Tibia__embed_css_images_slot_container_png_2097535244;
+         this._embed_css_images_Arrow_HotkeyToggle_BG_png_703829874 = Tibia__embed_css_images_Arrow_HotkeyToggle_BG_png_703829874;
+         this._embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_339985070 = Tibia__embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_339985070;
+         this._embed_css_images_Arrow_Minimap_LevelUpDown_over_png_544718418 = Tibia__embed_css_images_Arrow_Minimap_LevelUpDown_over_png_544718418;
+         this._embed_css_images_Arrow_Minimap_LevelUpDown_pressed_png_1401325198 = Tibia__embed_css_images_Arrow_Minimap_LevelUpDown_pressed_png_1401325198;
+         this._embed_css_images_Arrow_ScrollHotkeys_disabled_png_600112781 = Tibia__embed_css_images_Arrow_ScrollHotkeys_disabled_png_600112781;
+         this._embed_css_images_Arrow_ScrollHotkeys_idle_png_1515718539 = Tibia__embed_css_images_Arrow_ScrollHotkeys_idle_png_1515718539;
+         this._embed_css_images_Arrow_ScrollHotkeys_over_png_254379147 = Tibia__embed_css_images_Arrow_ScrollHotkeys_over_png_254379147;
+         this._embed_css_images_Arrow_ScrollHotkeys_pressed_png_1462559263 = Tibia__embed_css_images_Arrow_ScrollHotkeys_pressed_png_1462559263;
+         this._embed_css_images_Arrow_ScrollTabsHighlighted_idle_png_1205200911 = Tibia__embed_css_images_Arrow_ScrollTabsHighlighted_idle_png_1205200911;
+         this._embed_css_images_Arrow_ScrollTabsHighlighted_over_png_609657585 = Tibia__embed_css_images_Arrow_ScrollTabsHighlighted_over_png_609657585;
+         this._embed_css_images_Arrow_ScrollTabsHighlighted_pressed_png_943450909 = Tibia__embed_css_images_Arrow_ScrollTabsHighlighted_pressed_png_943450909;
+         this._embed_css_images_Arrow_ScrollTabs_disabled_png_672934468 = Tibia__embed_css_images_Arrow_ScrollTabs_disabled_png_672934468;
+         this._embed_css_images_Arrow_ScrollTabs_idle_png_1329667852 = Tibia__embed_css_images_Arrow_ScrollTabs_idle_png_1329667852;
+         this._embed_css_images_Arrow_ScrollTabs_over_png_999008780 = Tibia__embed_css_images_Arrow_ScrollTabs_over_png_999008780;
+         this._embed_css_images_Arrow_ScrollTabs_pressed_png_106428656 = Tibia__embed_css_images_Arrow_ScrollTabs_pressed_png_106428656;
+         this._embed_css_images_Arrow_WidgetToggle_BG_png_1644395136 = Tibia__embed_css_images_Arrow_WidgetToggle_BG_png_1644395136;
+         this._embed_css_images_Arrow_WidgetToggle_idle_png_1543716083 = Tibia__embed_css_images_Arrow_WidgetToggle_idle_png_1543716083;
+         this._embed_css_images_Arrow_WidgetToggle_over_png_139451379 = Tibia__embed_css_images_Arrow_WidgetToggle_over_png_139451379;
+         this._embed_css_images_Arrow_WidgetToggle_pressed_png_884491423 = Tibia__embed_css_images_Arrow_WidgetToggle_pressed_png_884491423;
+         this._embed_css_images_BG_BarsXP_default_endpiece_png_1325396426 = Tibia__embed_css_images_BG_BarsXP_default_endpiece_png_1325396426;
+         this._embed_css_images_BG_BarsXP_default_tileable_png_1330218467 = Tibia__embed_css_images_BG_BarsXP_default_tileable_png_1330218467;
+         this._embed_css_images_BG_Bars_compact_enpieceOrnamented_png_584547301 = Tibia__embed_css_images_BG_Bars_compact_enpieceOrnamented_png_584547301;
+         this._embed_css_images_BG_Bars_compact_enpiece_png_1387240418 = Tibia__embed_css_images_BG_Bars_compact_enpiece_png_1387240418;
+         this._embed_css_images_BG_Bars_compact_tileable_png_1835904521 = Tibia__embed_css_images_BG_Bars_compact_tileable_png_1835904521;
+         this._embed_css_images_BG_Bars_default_enpieceOrnamented_png_1764422781 = Tibia__embed_css_images_BG_Bars_default_enpieceOrnamented_png_1764422781;
+         this._embed_css_images_BG_Bars_default_enpiece_png_249551292 = Tibia__embed_css_images_BG_Bars_default_enpiece_png_249551292;
+         this._embed_css_images_BG_Bars_default_tileable_png_482309035 = Tibia__embed_css_images_BG_Bars_default_tileable_png_482309035;
+         this._embed_css_images_BG_Bars_fat_enpieceOrnamented_png_1480373397 = Tibia__embed_css_images_BG_Bars_fat_enpieceOrnamented_png_1480373397;
+         this._embed_css_images_BG_Bars_fat_enpiece_png_357381060 = Tibia__embed_css_images_BG_Bars_fat_enpiece_png_357381060;
+         this._embed_css_images_BG_Bars_fat_tileable_png_1650647357 = Tibia__embed_css_images_BG_Bars_fat_tileable_png_1650647357;
+         this._embed_css_images_BG_BohemianTileable_ChatConsole_png_1243090589 = Tibia__embed_css_images_BG_BohemianTileable_ChatConsole_png_1243090589;
+         this._embed_css_images_BG_BohemianTileable_Game_png_221217288 = Tibia__embed_css_images_BG_BohemianTileable_Game_png_221217288;
+         this._embed_css_images_BG_BohemianTileable_png_1620000669 = Tibia__embed_css_images_BG_BohemianTileable_png_1620000669;
+         this._embed_css_images_BG_ChatTab_Tabdrop_png_471962684 = Tibia__embed_css_images_BG_ChatTab_Tabdrop_png_471962684;
+         this._embed_css_images_BG_ChatTab_tileable_png_1559497918 = Tibia__embed_css_images_BG_ChatTab_tileable_png_1559497918;
+         this._embed_css_images_BG_Combat_png_923993944 = Tibia__embed_css_images_BG_Combat_png_923993944;
+         this._embed_css_images_BG_Stone2_Tileable_png_2077997612 = Tibia__embed_css_images_BG_Stone2_Tileable_png_2077997612;
+         this._embed_css_images_BG_Widget_Menu_png_651382796 = Tibia__embed_css_images_BG_Widget_Menu_png_651382796;
+         this._embed_css_images_BarsHealth_compact_GreenFull_png_119664419 = Tibia__embed_css_images_BarsHealth_compact_GreenFull_png_119664419;
+         this._embed_css_images_BarsHealth_compact_GreenLow_png_1092246698 = Tibia__embed_css_images_BarsHealth_compact_GreenLow_png_1092246698;
+         this._embed_css_images_BarsHealth_compact_Mana_png_2044063888 = Tibia__embed_css_images_BarsHealth_compact_Mana_png_2044063888;
+         this._embed_css_images_BarsHealth_compact_RedFull_png_923672751 = Tibia__embed_css_images_BarsHealth_compact_RedFull_png_923672751;
+         this._embed_css_images_BarsHealth_compact_RedLow2_png_68651684 = Tibia__embed_css_images_BarsHealth_compact_RedLow2_png_68651684;
+         this._embed_css_images_BarsHealth_compact_RedLow_png_497477180 = Tibia__embed_css_images_BarsHealth_compact_RedLow_png_497477180;
+         this._embed_css_images_BarsHealth_compact_Yellow_png_1013592239 = Tibia__embed_css_images_BarsHealth_compact_Yellow_png_1013592239;
+         this._embed_css_images_BarsHealth_default_GreenFull_png_6976577 = Tibia__embed_css_images_BarsHealth_default_GreenFull_png_6976577;
+         this._embed_css_images_BarsHealth_default_GreenLow_png_1217453236 = Tibia__embed_css_images_BarsHealth_default_GreenLow_png_1217453236;
+         this._embed_css_images_BarsHealth_default_Mana_png_1540948590 = Tibia__embed_css_images_BarsHealth_default_Mana_png_1540948590;
+         this._embed_css_images_BarsHealth_default_RedFull_png_2438479 = Tibia__embed_css_images_BarsHealth_default_RedFull_png_2438479;
+         this._embed_css_images_BarsHealth_default_RedLow2_png_1116494842 = Tibia__embed_css_images_BarsHealth_default_RedLow2_png_1116494842;
+         this._embed_css_images_BarsHealth_default_RedLow_png_1387055326 = Tibia__embed_css_images_BarsHealth_default_RedLow_png_1387055326;
+         this._embed_css_images_BarsHealth_default_Yellow_png_527690397 = Tibia__embed_css_images_BarsHealth_default_Yellow_png_527690397;
+         this._embed_css_images_BarsHealth_fat_GreenFull_png_949577175 = Tibia__embed_css_images_BarsHealth_fat_GreenFull_png_949577175;
+         this._embed_css_images_BarsHealth_fat_GreenLow_png_757293180 = Tibia__embed_css_images_BarsHealth_fat_GreenLow_png_757293180;
+         this._embed_css_images_BarsHealth_fat_Mana_png_1998294378 = Tibia__embed_css_images_BarsHealth_fat_Mana_png_1998294378;
+         this._embed_css_images_BarsHealth_fat_RedFull_png_787158423 = Tibia__embed_css_images_BarsHealth_fat_RedFull_png_787158423;
+         this._embed_css_images_BarsHealth_fat_RedLow2_png_1901763458 = Tibia__embed_css_images_BarsHealth_fat_RedLow2_png_1901763458;
+         this._embed_css_images_BarsHealth_fat_RedLow_png_1157484874 = Tibia__embed_css_images_BarsHealth_fat_RedLow_png_1157484874;
+         this._embed_css_images_BarsHealth_fat_Yellow_png_1533633413 = Tibia__embed_css_images_BarsHealth_fat_Yellow_png_1533633413;
+         this._embed_css_images_BarsXP_default__png_23728205 = Tibia__embed_css_images_BarsXP_default__png_23728205;
+         this._embed_css_images_Bars_ProgressMarker_png_1417159536 = Tibia__embed_css_images_Bars_ProgressMarker_png_1417159536;
+         this._embed_css_images_Border02_WidgetSidebar_png_989951673 = Tibia__embed_css_images_Border02_WidgetSidebar_png_989951673;
+         this._embed_css_images_Border02_WidgetSidebar_slim_png_626342685 = Tibia__embed_css_images_Border02_WidgetSidebar_slim_png_626342685;
+         this._embed_css_images_Border02_corners_png_2015171811 = Tibia__embed_css_images_Border02_corners_png_2015171811;
+         this._embed_css_images_Border02_png_258489466 = Tibia__embed_css_images_Border02_png_258489466;
+         this._embed_css_images_Border_Widget_corner_png_97234701 = Tibia__embed_css_images_Border_Widget_corner_png_97234701;
+         this._embed_css_images_Border_Widget_png_127725563 = Tibia__embed_css_images_Border_Widget_png_127725563;
+         this._embed_css_images_Button_ChatTabIgnore_idle_png_1239977521 = Tibia__embed_css_images_Button_ChatTabIgnore_idle_png_1239977521;
+         this._embed_css_images_Button_ChatTabIgnore_over_png_1096946895 = Tibia__embed_css_images_Button_ChatTabIgnore_over_png_1096946895;
+         this._embed_css_images_Button_ChatTabIgnore_pressed_png_42905147 = Tibia__embed_css_images_Button_ChatTabIgnore_pressed_png_42905147;
+         this._embed_css_images_Button_ChatTabNew_idle_png_1730706573 = Tibia__embed_css_images_Button_ChatTabNew_idle_png_1730706573;
+         this._embed_css_images_Button_ChatTabNew_over_png_1005712781 = Tibia__embed_css_images_Button_ChatTabNew_over_png_1005712781;
+         this._embed_css_images_Button_ChatTabNew_pressed_png_860036047 = Tibia__embed_css_images_Button_ChatTabNew_pressed_png_860036047;
+         this._embed_css_images_Button_ChatTab_Close_idle_png_1261255500 = Tibia__embed_css_images_Button_ChatTab_Close_idle_png_1261255500;
+         this._embed_css_images_Button_ChatTab_Close_over_png_2144230324 = Tibia__embed_css_images_Button_ChatTab_Close_over_png_2144230324;
+         this._embed_css_images_Button_ChatTab_Close_pressed_png_1158749480 = Tibia__embed_css_images_Button_ChatTab_Close_pressed_png_1158749480;
+         this._embed_css_images_Button_Close_idle_png_1218294638 = Tibia__embed_css_images_Button_Close_idle_png_1218294638;
+         this._embed_css_images_Button_Close_over_png_1551963246 = Tibia__embed_css_images_Button_Close_over_png_1551963246;
+         this._embed_css_images_Button_Close_pressed_png_1157613766 = Tibia__embed_css_images_Button_Close_pressed_png_1157613766;
+         this._embed_css_images_Button_Combat_Stop_idle_png_2120162001 = Tibia__embed_css_images_Button_Combat_Stop_idle_png_2120162001;
+         this._embed_css_images_Button_Combat_Stop_over_png_177970641 = Tibia__embed_css_images_Button_Combat_Stop_over_png_177970641;
+         this._embed_css_images_Button_Combat_Stop_pressed_png_1268200595 = Tibia__embed_css_images_Button_Combat_Stop_pressed_png_1268200595;
+         this._embed_css_images_Button_ContainerUp_idle_png_418208414 = Tibia__embed_css_images_Button_ContainerUp_idle_png_418208414;
+         this._embed_css_images_Button_ContainerUp_over_png_69852574 = Tibia__embed_css_images_Button_ContainerUp_over_png_69852574;
+         this._embed_css_images_Button_ContainerUp_pressed_png_370569950 = Tibia__embed_css_images_Button_ContainerUp_pressed_png_370569950;
+         this._embed_css_images_Button_LockHotkeys_Locked_idle_png_893327011 = Tibia__embed_css_images_Button_LockHotkeys_Locked_idle_png_893327011;
+         this._embed_css_images_Button_LockHotkeys_Locked_over_png_545469859 = Tibia__embed_css_images_Button_LockHotkeys_Locked_over_png_545469859;
+         this._embed_css_images_Button_LockHotkeys_UnLocked_idle_png_460000010 = Tibia__embed_css_images_Button_LockHotkeys_UnLocked_idle_png_460000010;
+         this._embed_css_images_Button_LockHotkeys_UnLocked_over_png_1327393802 = Tibia__embed_css_images_Button_LockHotkeys_UnLocked_over_png_1327393802;
+         this._embed_css_images_Button_Maximize_idle_png_625709866 = Tibia__embed_css_images_Button_Maximize_idle_png_625709866;
+         this._embed_css_images_Button_Maximize_over_png_653976534 = Tibia__embed_css_images_Button_Maximize_over_png_653976534;
+         this._embed_css_images_Button_Maximize_pressed_png_1014565850 = Tibia__embed_css_images_Button_Maximize_pressed_png_1014565850;
+         this._embed_css_images_Button_Minimize_idle_png_927296540 = Tibia__embed_css_images_Button_Minimize_idle_png_927296540;
+         this._embed_css_images_Button_Minimize_over_png_1788663068 = Tibia__embed_css_images_Button_Minimize_over_png_1788663068;
+         this._embed_css_images_Button_Minimize_pressed_png_1889087864 = Tibia__embed_css_images_Button_Minimize_pressed_png_1889087864;
+         this._embed_css_images_Button_Standard_tileable_disabled_png_924179912 = Tibia__embed_css_images_Button_Standard_tileable_disabled_png_924179912;
+         this._embed_css_images_Button_Standard_tileable_end_disabled_png_2034495004 = Tibia__embed_css_images_Button_Standard_tileable_end_disabled_png_2034495004;
+         this._embed_css_images_Button_Standard_tileable_end_gold_disabled_png_937580587 = Tibia__embed_css_images_Button_Standard_tileable_end_gold_disabled_png_937580587;
+         this._embed_css_images_Button_Standard_tileable_end_gold_idle_png_1136343619 = Tibia__embed_css_images_Button_Standard_tileable_end_gold_idle_png_1136343619;
+         this._embed_css_images_Button_Standard_tileable_end_gold_over_png_1554034499 = Tibia__embed_css_images_Button_Standard_tileable_end_gold_over_png_1554034499;
+         this._embed_css_images_Button_Standard_tileable_end_gold_pressed_png_240394377 = Tibia__embed_css_images_Button_Standard_tileable_end_gold_pressed_png_240394377;
+         this._embed_css_images_Button_Standard_tileable_end_idle_png_843118940 = Tibia__embed_css_images_Button_Standard_tileable_end_idle_png_843118940;
+         this._embed_css_images_Button_Standard_tileable_end_over_png_1185179228 = Tibia__embed_css_images_Button_Standard_tileable_end_over_png_1185179228;
+         this._embed_css_images_Button_Standard_tileable_end_pressed_png_502750776 = Tibia__embed_css_images_Button_Standard_tileable_end_pressed_png_502750776;
+         this._embed_css_images_Button_Standard_tileable_gold_idle_png_2075764191 = Tibia__embed_css_images_Button_Standard_tileable_gold_idle_png_2075764191;
+         this._embed_css_images_Button_Standard_tileable_gold_over_png_278071585 = Tibia__embed_css_images_Button_Standard_tileable_gold_over_png_278071585;
+         this._embed_css_images_Button_Standard_tileable_gold_pressed_png_1220997645 = Tibia__embed_css_images_Button_Standard_tileable_gold_pressed_png_1220997645;
+         this._embed_css_images_Button_Standard_tileable_idle_png_197744608 = Tibia__embed_css_images_Button_Standard_tileable_idle_png_197744608;
+         this._embed_css_images_Button_Standard_tileable_over_png_8469280 = Tibia__embed_css_images_Button_Standard_tileable_over_png_8469280;
+         this._embed_css_images_Button_Standard_tileable_pressed_png_1457624492 = Tibia__embed_css_images_Button_Standard_tileable_pressed_png_1457624492;
+         this._embed_css_images_BuySellTab_active_png_1448857198 = Tibia__embed_css_images_BuySellTab_active_png_1448857198;
+         this._embed_css_images_BuySellTab_idle_png_1813518400 = Tibia__embed_css_images_BuySellTab_idle_png_1813518400;
+         this._embed_css_images_ChatTab_tileable_EndpieceLeft_idle_png_971709072 = Tibia__embed_css_images_ChatTab_tileable_EndpieceLeft_idle_png_971709072;
+         this._embed_css_images_ChatTab_tileable_EndpieceLeft_png_388101843 = Tibia__embed_css_images_ChatTab_tileable_EndpieceLeft_png_388101843;
+         this._embed_css_images_ChatTab_tileable_EndpieceRound_idle_png_1500200523 = Tibia__embed_css_images_ChatTab_tileable_EndpieceRound_idle_png_1500200523;
+         this._embed_css_images_ChatTab_tileable_EndpieceRound_png_1670854302 = Tibia__embed_css_images_ChatTab_tileable_EndpieceRound_png_1670854302;
+         this._embed_css_images_ChatTab_tileable_idle_png_1162118089 = Tibia__embed_css_images_ChatTab_tileable_idle_png_1162118089;
+         this._embed_css_images_ChatTab_tileable_png_891668710 = Tibia__embed_css_images_ChatTab_tileable_png_891668710;
+         this._embed_css_images_ChatWindow_Mover_png_1984658938 = Tibia__embed_css_images_ChatWindow_Mover_png_1984658938;
+         this._embed_css_images_Icons_BattleList_HideMonsters_active_over_png_777638187 = Tibia__embed_css_images_Icons_BattleList_HideMonsters_active_over_png_777638187;
+         this._embed_css_images_Icons_BattleList_HideMonsters_active_png_1653601666 = Tibia__embed_css_images_Icons_BattleList_HideMonsters_active_png_1653601666;
+         this._embed_css_images_Icons_BattleList_HideMonsters_idle_png_1175600896 = Tibia__embed_css_images_Icons_BattleList_HideMonsters_idle_png_1175600896;
+         this._embed_css_images_Icons_BattleList_HideMonsters_over_png_1321679360 = Tibia__embed_css_images_Icons_BattleList_HideMonsters_over_png_1321679360;
+         this._embed_css_images_Icons_BattleList_HideNPCs_active_over_png_943132624 = Tibia__embed_css_images_Icons_BattleList_HideNPCs_active_over_png_943132624;
+         this._embed_css_images_Icons_BattleList_HideNPCs_active_png_1942225789 = Tibia__embed_css_images_Icons_BattleList_HideNPCs_active_png_1942225789;
+         this._embed_css_images_Icons_BattleList_HideNPCs_idle_png_1854361531 = Tibia__embed_css_images_Icons_BattleList_HideNPCs_idle_png_1854361531;
+         this._embed_css_images_Icons_BattleList_HideNPCs_over_png_985907899 = Tibia__embed_css_images_Icons_BattleList_HideNPCs_over_png_985907899;
+         this._embed_css_images_Icons_BattleList_HidePlayers_active_over_png_953158762 = Tibia__embed_css_images_Icons_BattleList_HidePlayers_active_over_png_953158762;
+         this._embed_css_images_Icons_BattleList_HidePlayers_active_png_1093559463 = Tibia__embed_css_images_Icons_BattleList_HidePlayers_active_png_1093559463;
+         this._embed_css_images_Icons_BattleList_HidePlayers_idle_png_214541771 = Tibia__embed_css_images_Icons_BattleList_HidePlayers_idle_png_214541771;
+         this._embed_css_images_Icons_BattleList_HidePlayers_over_png_561845963 = Tibia__embed_css_images_Icons_BattleList_HidePlayers_over_png_561845963;
+         this._embed_css_images_Icons_BattleList_HideSkulled_active_over_png_467647408 = Tibia__embed_css_images_Icons_BattleList_HideSkulled_active_over_png_467647408;
+         this._embed_css_images_Icons_BattleList_HideSkulled_active_png_1482272179 = Tibia__embed_css_images_Icons_BattleList_HideSkulled_active_png_1482272179;
+         this._embed_css_images_Icons_BattleList_HideSkulled_idle_png_1109498491 = Tibia__embed_css_images_Icons_BattleList_HideSkulled_idle_png_1109498491;
+         this._embed_css_images_Icons_BattleList_HideSkulled_over_png_761929083 = Tibia__embed_css_images_Icons_BattleList_HideSkulled_over_png_761929083;
+         this._embed_css_images_Icons_BattleList_PartyMembers_active_over_png_604627565 = Tibia__embed_css_images_Icons_BattleList_PartyMembers_active_over_png_604627565;
+         this._embed_css_images_Icons_BattleList_PartyMembers_active_png_1962653882 = Tibia__embed_css_images_Icons_BattleList_PartyMembers_active_png_1962653882;
+         this._embed_css_images_Icons_BattleList_PartyMembers_idle_png_451139672 = Tibia__embed_css_images_Icons_BattleList_PartyMembers_idle_png_451139672;
+         this._embed_css_images_Icons_BattleList_PartyMembers_over_png_81241256 = Tibia__embed_css_images_Icons_BattleList_PartyMembers_over_png_81241256;
+         this._embed_css_images_Icons_CombatControls_AttackNo_idle_png_489114602 = Tibia__embed_css_images_Icons_CombatControls_AttackNo_idle_png_489114602;
+         this._embed_css_images_Icons_CombatControls_AttackNo_over_png_839560426 = Tibia__embed_css_images_Icons_CombatControls_AttackNo_over_png_839560426;
+         this._embed_css_images_Icons_CombatControls_AttackYes_idle_png_1185167518 = Tibia__embed_css_images_Icons_CombatControls_AttackYes_idle_png_1185167518;
+         this._embed_css_images_Icons_CombatControls_AttackYes_over_png_853589918 = Tibia__embed_css_images_Icons_CombatControls_AttackYes_over_png_853589918;
+         this._embed_css_images_Icons_CombatControls_AutochaseOn_idle_png_1498472403 = Tibia__embed_css_images_Icons_CombatControls_AutochaseOn_idle_png_1498472403;
+         this._embed_css_images_Icons_CombatControls_AutochaseOn_over_png_627798739 = Tibia__embed_css_images_Icons_CombatControls_AutochaseOn_over_png_627798739;
+         this._embed_css_images_Icons_CombatControls_DefensiveOff_idle_png_1393751737 = Tibia__embed_css_images_Icons_CombatControls_DefensiveOff_idle_png_1393751737;
+         this._embed_css_images_Icons_CombatControls_DefensiveOff_over_png_114850745 = Tibia__embed_css_images_Icons_CombatControls_DefensiveOff_over_png_114850745;
+         this._embed_css_images_Icons_CombatControls_DefensiveOn_active_png_1844528831 = Tibia__embed_css_images_Icons_CombatControls_DefensiveOn_active_png_1844528831;
+         this._embed_css_images_Icons_CombatControls_DefensiveOn_idle_png_1948052399 = Tibia__embed_css_images_Icons_CombatControls_DefensiveOn_idle_png_1948052399;
+         this._embed_css_images_Icons_CombatControls_DoveOff_idle_png_784504280 = Tibia__embed_css_images_Icons_CombatControls_DoveOff_idle_png_784504280;
+         this._embed_css_images_Icons_CombatControls_DoveOff_over_png_1037695272 = Tibia__embed_css_images_Icons_CombatControls_DoveOff_over_png_1037695272;
+         this._embed_css_images_Icons_CombatControls_DoveOn_idle_png_1394565798 = Tibia__embed_css_images_Icons_CombatControls_DoveOn_idle_png_1394565798;
+         this._embed_css_images_Icons_CombatControls_DoveOn_over_png_1063899558 = Tibia__embed_css_images_Icons_CombatControls_DoveOn_over_png_1063899558;
+         this._embed_css_images_Icons_CombatControls_MediumOff_idle_png_852604073 = Tibia__embed_css_images_Icons_CombatControls_MediumOff_idle_png_852604073;
+         this._embed_css_images_Icons_CombatControls_MediumOff_over_png_424204887 = Tibia__embed_css_images_Icons_CombatControls_MediumOff_over_png_424204887;
+         this._embed_css_images_Icons_CombatControls_MediumOn_idle_png_1749550303 = Tibia__embed_css_images_Icons_CombatControls_MediumOn_idle_png_1749550303;
+         this._embed_css_images_Icons_CombatControls_MediumOn_over_png_863798239 = Tibia__embed_css_images_Icons_CombatControls_MediumOn_over_png_863798239;
+         this._embed_css_images_Icons_CombatControls_Mounted_idle_png_996457113 = Tibia__embed_css_images_Icons_CombatControls_Mounted_idle_png_996457113;
+         this._embed_css_images_Icons_CombatControls_Mounted_over_png_665667993 = Tibia__embed_css_images_Icons_CombatControls_Mounted_over_png_665667993;
+         this._embed_css_images_Icons_CombatControls_OffensiveOff_idle_png_460352161 = Tibia__embed_css_images_Icons_CombatControls_OffensiveOff_idle_png_460352161;
+         this._embed_css_images_Icons_CombatControls_OffensiveOff_over_png_1186785697 = Tibia__embed_css_images_Icons_CombatControls_OffensiveOff_over_png_1186785697;
+         this._embed_css_images_Icons_CombatControls_OffensiveOn_idle_png_906069205 = Tibia__embed_css_images_Icons_CombatControls_OffensiveOn_idle_png_906069205;
+         this._embed_css_images_Icons_CombatControls_OffensiveOn_over_png_2041601067 = Tibia__embed_css_images_Icons_CombatControls_OffensiveOn_over_png_2041601067;
+         this._embed_css_images_Icons_CombatControls_RedFistOff_idle_png_1210018985 = Tibia__embed_css_images_Icons_CombatControls_RedFistOff_idle_png_1210018985;
+         this._embed_css_images_Icons_CombatControls_RedFistOff_over_png_862580649 = Tibia__embed_css_images_Icons_CombatControls_RedFistOff_over_png_862580649;
+         this._embed_css_images_Icons_CombatControls_RedFistOn_idle_png_133528589 = Tibia__embed_css_images_Icons_CombatControls_RedFistOn_idle_png_133528589;
+         this._embed_css_images_Icons_CombatControls_RedFistOn_over_png_196873459 = Tibia__embed_css_images_Icons_CombatControls_RedFistOn_over_png_196873459;
+         this._embed_css_images_Icons_CombatControls_StandOff_idle_png_2144676134 = Tibia__embed_css_images_Icons_CombatControls_StandOff_idle_png_2144676134;
+         this._embed_css_images_Icons_CombatControls_StandOff_over_png_186767398 = Tibia__embed_css_images_Icons_CombatControls_StandOff_over_png_186767398;
+         this._embed_css_images_Icons_CombatControls_Unmounted_idle_png_1683372450 = Tibia__embed_css_images_Icons_CombatControls_Unmounted_idle_png_1683372450;
+         this._embed_css_images_Icons_CombatControls_Unmounted_over_png_941079202 = Tibia__embed_css_images_Icons_CombatControls_Unmounted_over_png_941079202;
+         this._embed_css_images_Icons_CombatControls_WhiteHandOff_idle_png_958285816 = Tibia__embed_css_images_Icons_CombatControls_WhiteHandOff_idle_png_958285816;
+         this._embed_css_images_Icons_CombatControls_WhiteHandOff_over_png_1288816888 = Tibia__embed_css_images_Icons_CombatControls_WhiteHandOff_over_png_1288816888;
+         this._embed_css_images_Icons_CombatControls_WhiteHandOn_idle_png_1492771498 = Tibia__embed_css_images_Icons_CombatControls_WhiteHandOn_idle_png_1492771498;
+         this._embed_css_images_Icons_CombatControls_WhiteHandOn_over_png_1917883478 = Tibia__embed_css_images_Icons_CombatControls_WhiteHandOn_over_png_1917883478;
+         this._embed_css_images_Icons_CombatControls_YellowHandOff_idle_png_629742491 = Tibia__embed_css_images_Icons_CombatControls_YellowHandOff_idle_png_629742491;
+         this._embed_css_images_Icons_CombatControls_YellowHandOff_over_png_913218715 = Tibia__embed_css_images_Icons_CombatControls_YellowHandOff_over_png_913218715;
+         this._embed_css_images_Icons_CombatControls_YellowHandOn_idle_png_499580335 = Tibia__embed_css_images_Icons_CombatControls_YellowHandOn_idle_png_499580335;
+         this._embed_css_images_Icons_CombatControls_YellowHandOn_over_png_1122206033 = Tibia__embed_css_images_Icons_CombatControls_YellowHandOn_over_png_1122206033;
+         this._embed_css_images_Icons_Conditions_Bleeding_png_253641108 = Tibia__embed_css_images_Icons_Conditions_Bleeding_png_253641108;
+         this._embed_css_images_Icons_Conditions_Burning_png_1220928865 = Tibia__embed_css_images_Icons_Conditions_Burning_png_1220928865;
+         this._embed_css_images_Icons_Conditions_Cursed_png_969214734 = Tibia__embed_css_images_Icons_Conditions_Cursed_png_969214734;
+         this._embed_css_images_Icons_Conditions_Dazzled_png_1667984088 = Tibia__embed_css_images_Icons_Conditions_Dazzled_png_1667984088;
+         this._embed_css_images_Icons_Conditions_Drowning_png_748290826 = Tibia__embed_css_images_Icons_Conditions_Drowning_png_748290826;
+         this._embed_css_images_Icons_Conditions_Drunk_png_447748178 = Tibia__embed_css_images_Icons_Conditions_Drunk_png_447748178;
+         this._embed_css_images_Icons_Conditions_Electrified_png_1775143710 = Tibia__embed_css_images_Icons_Conditions_Electrified_png_1775143710;
+         this._embed_css_images_Icons_Conditions_Freezing_png_1381179200 = Tibia__embed_css_images_Icons_Conditions_Freezing_png_1381179200;
+         this._embed_css_images_Icons_Conditions_Haste_png_183664137 = Tibia__embed_css_images_Icons_Conditions_Haste_png_183664137;
+         this._embed_css_images_Icons_Conditions_Hungry_png_351039795 = Tibia__embed_css_images_Icons_Conditions_Hungry_png_351039795;
+         this._embed_css_images_Icons_Conditions_Logoutblock_png_692217617 = Tibia__embed_css_images_Icons_Conditions_Logoutblock_png_692217617;
+         this._embed_css_images_Icons_Conditions_MagicShield_png_8396320 = Tibia__embed_css_images_Icons_Conditions_MagicShield_png_8396320;
+         this._embed_css_images_Icons_Conditions_PZ_png_2003666550 = Tibia__embed_css_images_Icons_Conditions_PZ_png_2003666550;
+         this._embed_css_images_Icons_Conditions_PZlock_png_1221525371 = Tibia__embed_css_images_Icons_Conditions_PZlock_png_1221525371;
+         this._embed_css_images_Icons_Conditions_Poisoned_png_1746048425 = Tibia__embed_css_images_Icons_Conditions_Poisoned_png_1746048425;
+         this._embed_css_images_Icons_Conditions_Slowed_png_543074756 = Tibia__embed_css_images_Icons_Conditions_Slowed_png_543074756;
+         this._embed_css_images_Icons_Conditions_Strenghtened_png_751812737 = Tibia__embed_css_images_Icons_Conditions_Strenghtened_png_751812737;
+         this._embed_css_images_Icons_PremmyPurse_active_over_png_1535578612 = Tibia__embed_css_images_Icons_PremmyPurse_active_over_png_1535578612;
+         this._embed_css_images_Icons_PremmyPurse_active_png_1741057169 = Tibia__embed_css_images_Icons_PremmyPurse_active_png_1741057169;
+         this._embed_css_images_Icons_ProgressBars_AxeFighting_png_863006467 = Tibia__embed_css_images_Icons_ProgressBars_AxeFighting_png_863006467;
+         this._embed_css_images_Icons_ProgressBars_ClubFighting_png_1268717091 = Tibia__embed_css_images_Icons_ProgressBars_ClubFighting_png_1268717091;
+         this._embed_css_images_Icons_ProgressBars_CompactStyle_png_1922114025 = Tibia__embed_css_images_Icons_ProgressBars_CompactStyle_png_1922114025;
+         this._embed_css_images_Icons_ProgressBars_DefaultStyle_png_1812077861 = Tibia__embed_css_images_Icons_ProgressBars_DefaultStyle_png_1812077861;
+         this._embed_css_images_Icons_ProgressBars_DistanceFighting_png_1314144530 = Tibia__embed_css_images_Icons_ProgressBars_DistanceFighting_png_1314144530;
+         this._embed_css_images_Icons_ProgressBars_Fishing_png_354963859 = Tibia__embed_css_images_Icons_ProgressBars_Fishing_png_354963859;
+         this._embed_css_images_Icons_ProgressBars_FistFighting_png_1219110463 = Tibia__embed_css_images_Icons_ProgressBars_FistFighting_png_1219110463;
+         this._embed_css_images_Icons_ProgressBars_LargeStyle_png_1488259167 = Tibia__embed_css_images_Icons_ProgressBars_LargeStyle_png_1488259167;
+         this._embed_css_images_Icons_ProgressBars_MagicLevel_png_1498653378 = Tibia__embed_css_images_Icons_ProgressBars_MagicLevel_png_1498653378;
+         this._embed_css_images_Icons_ProgressBars_ParallelStyle_png_436085555 = Tibia__embed_css_images_Icons_ProgressBars_ParallelStyle_png_436085555;
+         this._embed_css_images_Icons_ProgressBars_ProgressOff_png_1772969717 = Tibia__embed_css_images_Icons_ProgressBars_ProgressOff_png_1772969717;
+         this._embed_css_images_Icons_ProgressBars_ProgressOn_png_767116025 = Tibia__embed_css_images_Icons_ProgressBars_ProgressOn_png_767116025;
+         this._embed_css_images_Icons_ProgressBars_Shielding_png_1148874264 = Tibia__embed_css_images_Icons_ProgressBars_Shielding_png_1148874264;
+         this._embed_css_images_Icons_ProgressBars_SwordFighting_png_320929806 = Tibia__embed_css_images_Icons_ProgressBars_SwordFighting_png_320929806;
+         this._embed_css_images_Icons_TradeLists_ContainerDisplay_idle_png_1063010071 = Tibia__embed_css_images_Icons_TradeLists_ContainerDisplay_idle_png_1063010071;
+         this._embed_css_images_Icons_TradeLists_ContainerDisplay_over_png_858104855 = Tibia__embed_css_images_Icons_TradeLists_ContainerDisplay_over_png_858104855;
+         this._embed_css_images_Icons_TradeLists_ContainerDisplay_pressed_png_536906987 = Tibia__embed_css_images_Icons_TradeLists_ContainerDisplay_pressed_png_536906987;
+         this._embed_css_images_Icons_TradeLists_ListDisplay_idle_png_410695582 = Tibia__embed_css_images_Icons_TradeLists_ListDisplay_idle_png_410695582;
+         this._embed_css_images_Icons_TradeLists_ListDisplay_over_png_742275230 = Tibia__embed_css_images_Icons_TradeLists_ListDisplay_over_png_742275230;
+         this._embed_css_images_Icons_TradeLists_ListDisplay_pressed_png_1589951190 = Tibia__embed_css_images_Icons_TradeLists_ListDisplay_pressed_png_1589951190;
+         this._embed_css_images_Icons_WidgetHeaders_BattleList_png_1188721388 = Tibia__embed_css_images_Icons_WidgetHeaders_BattleList_png_1188721388;
+         this._embed_css_images_Icons_WidgetHeaders_Combat_png_510137618 = Tibia__embed_css_images_Icons_WidgetHeaders_Combat_png_510137618;
+         this._embed_css_images_Icons_WidgetHeaders_GeneralControls_png_216495590 = Tibia__embed_css_images_Icons_WidgetHeaders_GeneralControls_png_216495590;
+         this._embed_css_images_Icons_WidgetHeaders_Inventory_png_1804456604 = Tibia__embed_css_images_Icons_WidgetHeaders_Inventory_png_1804456604;
+         this._embed_css_images_Icons_WidgetHeaders_Minimap_png_2095987393 = Tibia__embed_css_images_Icons_WidgetHeaders_Minimap_png_2095987393;
+         this._embed_css_images_Icons_WidgetHeaders_SafeTrades_png_1500578858 = Tibia__embed_css_images_Icons_WidgetHeaders_SafeTrades_png_1500578858;
+         this._embed_css_images_Icons_WidgetHeaders_Spells_png_528765315 = Tibia__embed_css_images_Icons_WidgetHeaders_Spells_png_528765315;
+         this._embed_css_images_Icons_WidgetHeaders_Trades_png_116771265 = Tibia__embed_css_images_Icons_WidgetHeaders_Trades_png_116771265;
+         this._embed_css_images_Icons_WidgetHeaders_VipList_png_432242855 = Tibia__embed_css_images_Icons_WidgetHeaders_VipList_png_432242855;
+         this._embed_css_images_Icons_WidgetMenu_BattleList_active_over_png_55788873 = Tibia__embed_css_images_Icons_WidgetMenu_BattleList_active_over_png_55788873;
+         this._embed_css_images_Icons_WidgetMenu_BattleList_active_png_991395604 = Tibia__embed_css_images_Icons_WidgetMenu_BattleList_active_png_991395604;
+         this._embed_css_images_Icons_WidgetMenu_BattleList_idle_over_png_394809621 = Tibia__embed_css_images_Icons_WidgetMenu_BattleList_idle_over_png_394809621;
+         this._embed_css_images_Icons_WidgetMenu_BattleList_idle_png_633661502 = Tibia__embed_css_images_Icons_WidgetMenu_BattleList_idle_png_633661502;
+         this._embed_css_images_Icons_WidgetMenu_Combat_active_over_png_1000643385 = Tibia__embed_css_images_Icons_WidgetMenu_Combat_active_over_png_1000643385;
+         this._embed_css_images_Icons_WidgetMenu_Combat_active_png_399020502 = Tibia__embed_css_images_Icons_WidgetMenu_Combat_active_png_399020502;
+         this._embed_css_images_Icons_WidgetMenu_Combat_idle_over_png_1328098599 = Tibia__embed_css_images_Icons_WidgetMenu_Combat_idle_over_png_1328098599;
+         this._embed_css_images_Icons_WidgetMenu_Combat_idle_png_1613024508 = Tibia__embed_css_images_Icons_WidgetMenu_Combat_idle_png_1613024508;
+         this._embed_css_images_Icons_WidgetMenu_Containers_active_over_png_1289566917 = Tibia__embed_css_images_Icons_WidgetMenu_Containers_active_over_png_1289566917;
+         this._embed_css_images_Icons_WidgetMenu_Containers_active_png_448347528 = Tibia__embed_css_images_Icons_WidgetMenu_Containers_active_png_448347528;
+         this._embed_css_images_Icons_WidgetMenu_Containers_idle_over_png_1671581321 = Tibia__embed_css_images_Icons_WidgetMenu_Containers_idle_over_png_1671581321;
+         this._embed_css_images_Icons_WidgetMenu_Containers_idle_png_1939647142 = Tibia__embed_css_images_Icons_WidgetMenu_Containers_idle_png_1939647142;
+         this._embed_css_images_Icons_WidgetMenu_GeneralControls_active_over_png_161215467 = Tibia__embed_css_images_Icons_WidgetMenu_GeneralControls_active_over_png_161215467;
+         this._embed_css_images_Icons_WidgetMenu_GeneralControls_active_png_1011953256 = Tibia__embed_css_images_Icons_WidgetMenu_GeneralControls_active_png_1011953256;
+         this._embed_css_images_Icons_WidgetMenu_GeneralControls_idle_over_png_1318367641 = Tibia__embed_css_images_Icons_WidgetMenu_GeneralControls_idle_over_png_1318367641;
+         this._embed_css_images_Icons_WidgetMenu_GeneralControls_idle_png_1921951062 = Tibia__embed_css_images_Icons_WidgetMenu_GeneralControls_idle_png_1921951062;
+         this._embed_css_images_Icons_WidgetMenu_Inventory_active_over_png_1010209603 = Tibia__embed_css_images_Icons_WidgetMenu_Inventory_active_over_png_1010209603;
+         this._embed_css_images_Icons_WidgetMenu_Inventory_active_png_47370426 = Tibia__embed_css_images_Icons_WidgetMenu_Inventory_active_png_47370426;
+         this._embed_css_images_Icons_WidgetMenu_Inventory_idle_over_png_1019732347 = Tibia__embed_css_images_Icons_WidgetMenu_Inventory_idle_over_png_1019732347;
+         this._embed_css_images_Icons_WidgetMenu_Inventory_idle_png_2109320296 = Tibia__embed_css_images_Icons_WidgetMenu_Inventory_idle_png_2109320296;
+         this._embed_css_images_Icons_WidgetMenu_Minimap_active_over_png_122833288 = Tibia__embed_css_images_Icons_WidgetMenu_Minimap_active_over_png_122833288;
+         this._embed_css_images_Icons_WidgetMenu_Minimap_active_png_279706907 = Tibia__embed_css_images_Icons_WidgetMenu_Minimap_active_png_279706907;
+         this._embed_css_images_Icons_WidgetMenu_Minimap_idle_over_png_1922488614 = Tibia__embed_css_images_Icons_WidgetMenu_Minimap_idle_over_png_1922488614;
+         this._embed_css_images_Icons_WidgetMenu_Minimap_idle_png_362912147 = Tibia__embed_css_images_Icons_WidgetMenu_Minimap_idle_png_362912147;
+         this._embed_css_images_Icons_WidgetMenu_Trades_active_over_png_1720517198 = Tibia__embed_css_images_Icons_WidgetMenu_Trades_active_over_png_1720517198;
+         this._embed_css_images_Icons_WidgetMenu_Trades_active_png_1461845359 = Tibia__embed_css_images_Icons_WidgetMenu_Trades_active_png_1461845359;
+         this._embed_css_images_Icons_WidgetMenu_Trades_idle_over_png_565305968 = Tibia__embed_css_images_Icons_WidgetMenu_Trades_idle_over_png_565305968;
+         this._embed_css_images_Icons_WidgetMenu_Trades_idle_png_1264544957 = Tibia__embed_css_images_Icons_WidgetMenu_Trades_idle_png_1264544957;
+         this._embed_css_images_Icons_WidgetMenu_VipList_active_over_png_450699582 = Tibia__embed_css_images_Icons_WidgetMenu_VipList_active_over_png_450699582;
+         this._embed_css_images_Icons_WidgetMenu_VipList_active_png_19492319 = Tibia__embed_css_images_Icons_WidgetMenu_VipList_active_png_19492319;
+         this._embed_css_images_Icons_WidgetMenu_VipList_idle_over_png_418761040 = Tibia__embed_css_images_Icons_WidgetMenu_VipList_idle_over_png_418761040;
+         this._embed_css_images_Icons_WidgetMenu_VipList_idle_png_176944461 = Tibia__embed_css_images_Icons_WidgetMenu_VipList_idle_png_176944461;
+         this._embed_css_images_Inventory_png_321074298 = Tibia__embed_css_images_Inventory_png_321074298;
+         this._embed_css_images_Minimap_Center_active_png_1666601632 = Tibia__embed_css_images_Minimap_Center_active_png_1666601632;
+         this._embed_css_images_Minimap_Center_idle_png_2086053406 = Tibia__embed_css_images_Minimap_Center_idle_png_2086053406;
+         this._embed_css_images_Minimap_Center_over_png_470603490 = Tibia__embed_css_images_Minimap_Center_over_png_470603490;
+         this._embed_css_images_Minimap_ZoomIn_idle_png_267736575 = Tibia__embed_css_images_Minimap_ZoomIn_idle_png_267736575;
+         this._embed_css_images_Minimap_ZoomIn_over_png_1553063167 = Tibia__embed_css_images_Minimap_ZoomIn_over_png_1553063167;
+         this._embed_css_images_Minimap_ZoomIn_pressed_png_608234453 = Tibia__embed_css_images_Minimap_ZoomIn_pressed_png_608234453;
+         this._embed_css_images_Minimap_ZoomOut_idle_png_1822944258 = Tibia__embed_css_images_Minimap_ZoomOut_idle_png_1822944258;
+         this._embed_css_images_Minimap_ZoomOut_over_png_554390786 = Tibia__embed_css_images_Minimap_ZoomOut_over_png_554390786;
+         this._embed_css_images_Minimap_ZoomOut_pressed_png_962262274 = Tibia__embed_css_images_Minimap_ZoomOut_pressed_png_962262274;
+         this._embed_css_images_Minimap_png_476321933 = Tibia__embed_css_images_Minimap_png_476321933;
+         this._embed_css_images_Scrollbar_Arrow_down_idle_png_382013060 = Tibia__embed_css_images_Scrollbar_Arrow_down_idle_png_382013060;
+         this._embed_css_images_Scrollbar_Arrow_down_over_png_1433768060 = Tibia__embed_css_images_Scrollbar_Arrow_down_over_png_1433768060;
+         this._embed_css_images_Scrollbar_Arrow_down_pressed_png_1457443904 = Tibia__embed_css_images_Scrollbar_Arrow_down_pressed_png_1457443904;
+         this._embed_css_images_Scrollbar_Arrow_up_idle_png_664921289 = Tibia__embed_css_images_Scrollbar_Arrow_up_idle_png_664921289;
+         this._embed_css_images_Scrollbar_Arrow_up_over_png_996496841 = Tibia__embed_css_images_Scrollbar_Arrow_up_over_png_996496841;
+         this._embed_css_images_Scrollbar_Arrow_up_pressed_png_29793219 = Tibia__embed_css_images_Scrollbar_Arrow_up_pressed_png_29793219;
+         this._embed_css_images_Scrollbar_Handler_png_487848961 = Tibia__embed_css_images_Scrollbar_Handler_png_487848961;
+         this._embed_css_images_Scrollbar_tileable_png_1484543023 = Tibia__embed_css_images_Scrollbar_tileable_png_1484543023;
+         this._embed_css_images_Slot_Hotkey_Cooldown_png_1086649271 = Tibia__embed_css_images_Slot_Hotkey_Cooldown_png_1086649271;
+         this._embed_css_images_Slot_InventoryAmmo_png_1348526999 = Tibia__embed_css_images_Slot_InventoryAmmo_png_1348526999;
+         this._embed_css_images_Slot_InventoryArmor_png_1986121246 = Tibia__embed_css_images_Slot_InventoryArmor_png_1986121246;
+         this._embed_css_images_Slot_InventoryBackpack_png_1072136453 = Tibia__embed_css_images_Slot_InventoryBackpack_png_1072136453;
+         this._embed_css_images_Slot_InventoryBoots_png_1938275472 = Tibia__embed_css_images_Slot_InventoryBoots_png_1938275472;
+         this._embed_css_images_Slot_InventoryHead_png_1095038683 = Tibia__embed_css_images_Slot_InventoryHead_png_1095038683;
+         this._embed_css_images_Slot_InventoryLegs_png_1770687572 = Tibia__embed_css_images_Slot_InventoryLegs_png_1770687572;
+         this._embed_css_images_Slot_InventoryNecklace_png_1875912705 = Tibia__embed_css_images_Slot_InventoryNecklace_png_1875912705;
+         this._embed_css_images_Slot_InventoryRing_png_670915893 = Tibia__embed_css_images_Slot_InventoryRing_png_670915893;
+         this._embed_css_images_Slot_InventoryShield_png_125994256 = Tibia__embed_css_images_Slot_InventoryShield_png_125994256;
+         this._embed_css_images_Slot_InventoryWeapon_png_2057395095 = Tibia__embed_css_images_Slot_InventoryWeapon_png_2057395095;
+         this._embed_css_images_Slot_Statusicon_highlighted_png_1731350362 = Tibia__embed_css_images_Slot_Statusicon_highlighted_png_1731350362;
+         this._embed_css_images_Slot_Statusicon_png_1271145738 = Tibia__embed_css_images_Slot_Statusicon_png_1271145738;
+         this._embed_css_images_Widget_Footer_tileable_end01_png_642865466 = Tibia__embed_css_images_Widget_Footer_tileable_end01_png_642865466;
+         this._embed_css_images_Widget_Footer_tileable_end02_png_641667519 = Tibia__embed_css_images_Widget_Footer_tileable_end02_png_641667519;
+         this._embed_css_images_Widget_Footer_tileable_png_1991139393 = Tibia__embed_css_images_Widget_Footer_tileable_png_1991139393;
+         this._embed_css_images_Widget_HeaderBG_png_331533643 = Tibia__embed_css_images_Widget_HeaderBG_png_331533643;
+         this._embed_css_images_slot_Hotkey_disabled_png_1139776804 = Tibia__embed_css_images_slot_Hotkey_disabled_png_1139776804;
+         this._embed_css_images_slot_Hotkey_highlighted_png_1930802827 = Tibia__embed_css_images_slot_Hotkey_highlighted_png_1930802827;
+         this._embed_css_images_slot_Hotkey_png_344241391 = Tibia__embed_css_images_slot_Hotkey_png_344241391;
+         this._embed_css_images_slot_container_disabled_png_1545968009 = Tibia__embed_css_images_slot_container_disabled_png_1545968009;
+         this._embed_css_images_slot_container_highlighted_png_630804576 = Tibia__embed_css_images_slot_container_highlighted_png_630804576;
+         this._embed_css_images_slot_container_png_1524796916 = Tibia__embed_css_images_slot_container_png_1524796916;
          this._bindings = [];
          this._watchers = [];
          this._bindingsByDestination = {};
@@ -1601,6 +1601,17 @@ package
          this.m_CurrentOptionsUploading = false;
       }
       
+      public function set m_UISideBarToggleRight(param1:ToggleBar) : void
+      {
+         var _loc2_:Object = null;
+         _loc2_ = this._665607314m_UISideBarToggleRight;
+         if(_loc2_ !== param1)
+         {
+            this._665607314m_UISideBarToggleRight = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UISideBarToggleRight",_loc2_,param1));
+         }
+      }
+      
       private function onCloseLoginWait(param1:CloseEvent) : void
       {
          if(param1.detail == TimeoutWaitWidget.TIMOUT_EXPIRED)
@@ -1625,17 +1636,6 @@ package
          {
             this._1314206572m_UIWorldMapWidget = param1;
             this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UIWorldMapWidget",_loc2_,param1));
-         }
-      }
-      
-      public function set m_UISideBarToggleRight(param1:ToggleBar) : void
-      {
-         var _loc2_:Object = null;
-         _loc2_ = this._665607314m_UISideBarToggleRight;
-         if(_loc2_ !== param1)
-         {
-            this._665607314m_UISideBarToggleRight = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UISideBarToggleRight",_loc2_,param1));
          }
       }
       
@@ -2058,6 +2058,17 @@ package
          this.autofitGameWindow();
       }
       
+      public function set m_UIActionBarLeft(param1:VActionBarWidget) : void
+      {
+         var _loc2_:Object = null;
+         _loc2_ = this._1174474338m_UIActionBarLeft;
+         if(_loc2_ !== param1)
+         {
+            this._1174474338m_UIActionBarLeft = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UIActionBarLeft",_loc2_,param1));
+         }
+      }
+      
       private function _Tibia_HActionBarWidget2_i() : HActionBarWidget
       {
          var _loc1_:HActionBarWidget = new HActionBarWidget();
@@ -2072,17 +2083,6 @@ package
          return _loc1_;
       }
       
-      public function set m_UIActionBarLeft(param1:VActionBarWidget) : void
-      {
-         var _loc2_:Object = null;
-         _loc2_ = this._1174474338m_UIActionBarLeft;
-         if(_loc2_ !== param1)
-         {
-            this._1174474338m_UIActionBarLeft = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UIActionBarLeft",_loc2_,param1));
-         }
-      }
-      
       private function onConnectionLoginAdvice(param1:ConnectionEvent) : void
       {
          visible = false;
@@ -2095,15 +2095,15 @@ package
          _loc2_.show();
       }
       
+      private function onConnectionRecovered(param1:ConnectionEvent) : void
+      {
+         this.m_ConnectionLostDialog.hide();
+      }
+      
       [Bindable(event="propertyChange")]
       public function get m_UIActionBarRight() : VActionBarWidget
       {
          return this._2043305115m_UIActionBarRight;
-      }
-      
-      private function onConnectionRecovered(param1:ConnectionEvent) : void
-      {
-         this.m_ConnectionLostDialog.hide();
       }
       
       override public function initialize() : void
@@ -2295,6 +2295,12 @@ package
          }
       }
       
+      [Bindable(event="propertyChange")]
+      public function get m_UISideBarToggleRight() : ToggleBar
+      {
+         return this._665607314m_UISideBarToggleRight;
+      }
+      
       public function set m_UISideBarC(param1:SideBarWidget) : void
       {
          var _loc2_:Object = null;
@@ -2303,17 +2309,6 @@ package
          {
             this._64278963m_UISideBarC = param1;
             this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UISideBarC",_loc2_,param1));
-         }
-      }
-      
-      public function set m_UISideBarB(param1:SideBarWidget) : void
-      {
-         var _loc2_:Object = null;
-         _loc2_ = this._64278964m_UISideBarB;
-         if(_loc2_ !== param1)
-         {
-            this._64278964m_UISideBarB = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UISideBarB",_loc2_,param1));
          }
       }
       
@@ -2328,10 +2323,15 @@ package
          }
       }
       
-      [Bindable(event="propertyChange")]
-      public function get m_UISideBarToggleRight() : ToggleBar
+      public function set m_UISideBarB(param1:SideBarWidget) : void
       {
-         return this._665607314m_UISideBarToggleRight;
+         var _loc2_:Object = null;
+         _loc2_ = this._64278964m_UISideBarB;
+         if(_loc2_ !== param1)
+         {
+            this._64278964m_UISideBarB = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UISideBarB",_loc2_,param1));
+         }
       }
       
       private function onCloseChangeCharacter(param1:CloseEvent) : void
@@ -2646,15 +2646,15 @@ package
       }
       
       [Bindable(event="propertyChange")]
-      public function get m_UIWorldMapWindow() : GameWindowContainer
-      {
-         return this._1313911232m_UIWorldMapWindow;
-      }
-      
-      [Bindable(event="propertyChange")]
       public function get m_UISideBarA() : SideBarWidget
       {
          return this._64278965m_UISideBarA;
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function get m_UISideBarB() : SideBarWidget
+      {
+         return this._64278964m_UISideBarB;
       }
       
       [Bindable(event="propertyChange")]
@@ -2664,9 +2664,15 @@ package
       }
       
       [Bindable(event="propertyChange")]
-      public function get m_UISideBarB() : SideBarWidget
+      public function get m_UISideBarD() : SideBarWidget
       {
-         return this._64278964m_UISideBarB;
+         return this._64278962m_UISideBarD;
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function get m_UIWorldMapWindow() : GameWindowContainer
+      {
+         return this._1313911232m_UIWorldMapWindow;
       }
       
       private function onConnectionDeath(param1:ConnectionEvent) : void
@@ -2686,12 +2692,6 @@ package
          }
          _loc3_.addEventListener(CloseEvent.CLOSE,this.onCloseDeath);
          _loc3_.show();
-      }
-      
-      [Bindable(event="propertyChange")]
-      public function get m_UISideBarD() : SideBarWidget
-      {
-         return this._64278962m_UISideBarD;
       }
       
       public function saveOptions() : void
@@ -2755,17 +2755,6 @@ package
          return this.m_Options;
       }
       
-      public function set m_UIActionBarRight(param1:VActionBarWidget) : void
-      {
-         var _loc2_:Object = null;
-         _loc2_ = this._2043305115m_UIActionBarRight;
-         if(_loc2_ !== param1)
-         {
-            this._2043305115m_UIActionBarRight = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UIActionBarRight",_loc2_,param1));
-         }
-      }
-      
       [Bindable(event="propertyChange")]
       public function get m_UIGameWindow() : GridContainer
       {
@@ -2773,15 +2762,15 @@ package
       }
       
       [Bindable(event="propertyChange")]
-      public function get m_UICenterColumn() : CustomDividedBox
-      {
-         return this._1356021457m_UICenterColumn;
-      }
-      
-      [Bindable(event="propertyChange")]
       public function get m_UISideBarToggleLeft() : ToggleBar
       {
          return this._2056921391m_UISideBarToggleLeft;
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function get m_UICenterColumn() : CustomDividedBox
+      {
+         return this._1356021457m_UICenterColumn;
       }
       
       [Bindable(event="propertyChange")]
@@ -2805,6 +2794,17 @@ package
             _loc1_.document = this;
          }
          return _loc1_;
+      }
+      
+      public function set m_UIActionBarRight(param1:VActionBarWidget) : void
+      {
+         var _loc2_:Object = null;
+         _loc2_ = this._2043305115m_UIActionBarRight;
+         if(_loc2_ !== param1)
+         {
+            this._2043305115m_UIActionBarRight = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UIActionBarRight",_loc2_,param1));
+         }
       }
       
       public function unload() : void
