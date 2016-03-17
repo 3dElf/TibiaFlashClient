@@ -201,7 +201,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1312;
+      public static const CLIENT_VERSION:uint = 1328;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -441,7 +441,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1010;
+      public static const PROTOCOL_VERSION:int = 1011;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -3704,12 +3704,15 @@ package tibia.network
       
       protected function readSWORLDENTERED(param1:ByteArray) : void
       {
-         this.m_CreatureStorage.reset();
-         this.m_MiniMapStorage.setPosition(0,0,0);
-         this.m_WorldMapStorage.resetMap();
-         this.m_WorldMapStorage.resetOnscreenMessages();
-         this.m_WorldMapStorage.setPosition(0,0,0);
-         this.m_WorldMapStorage.valid = false;
+         if(this.m_ServerConnection.connectionState == CONNECTION_STATE_PENDING)
+         {
+            this.m_CreatureStorage.reset();
+            this.m_MiniMapStorage.setPosition(0,0,0);
+            this.m_WorldMapStorage.resetMap();
+            this.m_WorldMapStorage.resetOnscreenMessages();
+            this.m_WorldMapStorage.setPosition(0,0,0);
+            this.m_WorldMapStorage.valid = false;
+         }
          this.m_ServerConnection.setConnectionState(CONNECTION_STATE_GAME);
       }
       
