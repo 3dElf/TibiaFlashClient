@@ -25,13 +25,12 @@ package tibia.trade.npcTradeWidgetClasses
        
       protected var m_TradeObjects:AppearanceTypeRef = null;
       
-      protected var m_TradeMode:int;
+      protected var m_TradeMode:int = 0;
       
       protected var m_Options:OptionsStorage = null;
       
       public function NPCTradeContextMenu(param1:OptionsStorage, param2:int, param3:AppearanceTypeRef)
       {
-         this.m_TradeMode = NPCTradeWidgetView.MODE_BUY;
          super();
          if(param1 == null)
          {

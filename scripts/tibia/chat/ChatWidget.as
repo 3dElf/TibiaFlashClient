@@ -99,13 +99,13 @@ package tibia.chat
       
       private var m_UncommittedMappingSetID:Boolean = true;
       
-      protected var m_MappingSetID:int = 0;
+      protected var m_MappingSetID:int;
       
       protected var m_UITabBar:ChannelTabBar = null;
       
       private var m_UncommittedVolume:Boolean = false;
       
-      protected var m_MappingMode:int = 1;
+      protected var m_MappingMode:int;
       
       protected var m_History:IList = null;
       
@@ -127,6 +127,8 @@ package tibia.chat
       
       public function ChatWidget()
       {
+         this.m_MappingSetID = MappingSet.DEFAULT_SET;
+         this.m_MappingMode = MappingSet.CHAT_MODE_OFF;
          super();
          focusEnabled = false;
          tabEnabled = false;

@@ -4,21 +4,21 @@ package
    import mx.binding.IBindingClient;
    import tibia.game.IGameClient;
    import tibia.minimap.MiniMapStorage;
+   import mx.core.mx_internal;
    import tibia.options.OptionsStorage;
-   import tibia.container.ContainerStorage;
-   import tibia.chat.ChatStorage;
    import tibia.chat.ChatWidget;
    import tibia.creatures.StatusWidget;
+   import tibia.input.InputHandler;
    import tibia.worldmap.WorldMapStorage;
    import tibia.network.Connection;
    import mx.binding.IWatcherSetupUtil;
    import tibia.creatures.Player;
    import tibia.appearances.AppearanceStorage;
    import tibia.creatures.CreatureStorage;
-   import mx.core.mx_internal;
-   import tibia.input.InputHandler;
-   import flash.utils.Timer;
    import tibia.magic.SpellStorage;
+   import tibia.chat.ChatStorage;
+   import flash.utils.Timer;
+   import tibia.container.ContainerStorage;
    import tibia.actionbar.HActionBarWidget;
    import mx.events.PropertyChangeEvent;
    import tibia.actionbar.VActionBarWidget;
@@ -37,6 +37,8 @@ package
    import tibia.network.ConnectionEvent;
    import tibia.game.MessageWidget;
    import tibia.game.GameEvent;
+   import shared.controls.EmbeddedDialog;
+   import tibia.game.AccountCharacter;
    import tibia.game.CharacterSelectionWidget;
    import flash.utils.getTimer;
    import tibia.game.LoginWaitWidget;
@@ -50,7 +52,10 @@ package
    import flash.events.ErrorEvent;
    import shared.controls.CustomDividedBox;
    import tibia.game.Asset;
-   import tibia.game.AccountCharacter;
+   import flash.net.URLVariables;
+   import flash.net.URLRequest;
+   import shared.utility.URLHelper;
+   import flash.net.navigateToURL;
    import mx.styles.CSSStyleDeclaration;
    import mx.styles.StyleManager;
    import tibia.cursors.ResizeVerticalCursor;
@@ -88,17 +93,29 @@ package
       
       private static const BUNDLE:String = "Tibia";
       
+      public static const CLIENT_VERSION:uint = 1007;
+      
+      mx_internal static var _Tibia_StylesInit_done:Boolean = false;
+      
       private static const OPTIONS_SAVE_INTERVAL:int = 30 * 60 * 1000;
+      
+      public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
       
       private static const SHAREDOBJECT_NAME:String = "options";
       
+      public static const PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:uint = 2;
+      
       public static var s_FrameTimestamp:Number = 0;
+      
+      public static const PREVIEW_STATE_REGULAR:uint = 0;
+      
+      public static const CLIENT_PREVIEW_STATE:uint = 0;
       
       private static var _watcherSetupUtil:IWatcherSetupUtil;
       
       public static const MAX_SESSION_KEY_LENGTH:int = 30;
       
-      mx_internal static var _Tibia_StylesInit_done:Boolean = false;
+      public static const CLIENT_TYPE:uint = 3;
        
       private var _embed_css_images_Minimap_ZoomIn_pressed_png_1286278305:Class;
       
@@ -1207,26 +1224,6 @@ package
          }
       }
       
-      public static function s_GetContainerStorage() : ContainerStorage
-      {
-         return (application as Tibia).m_ContainerStorage;
-      }
-      
-      public static function s_GetFrameFlash() : Boolean
-      {
-         return (int(Tibia.s_FrameTimestamp / 300) & 1) != 0;
-      }
-      
-      public static function s_GetChatStorage() : ChatStorage
-      {
-         return (application as Tibia).m_ChatStorage;
-      }
-      
-      public static function s_GetOptions() : OptionsStorage
-      {
-         return (application as Tibia).m_Options;
-      }
-      
       public static function s_GetChatWidget() : ChatWidget
       {
          return (application as Tibia).m_UIChatWidget;
@@ -1240,6 +1237,16 @@ package
       public static function s_GetStatusWidget() : StatusWidget
       {
          return (application as Tibia).m_UIStatusWidget;
+      }
+      
+      public static function s_GetInputHandler() : InputHandler
+      {
+         return (application as Tibia).m_UIInputHandler;
+      }
+      
+      public static function s_GetFrameFlash() : Boolean
+      {
+         return (int(Tibia.s_FrameTimestamp / 300) & 1) != 0;
       }
       
       public static function s_GetWorldMapStorage() : WorldMapStorage
@@ -1257,6 +1264,11 @@ package
          return (application as Tibia).m_Player;
       }
       
+      public static function s_GetOptions() : OptionsStorage
+      {
+         return (application as Tibia).m_Options;
+      }
+      
       public static function s_GetAppearanceStorage() : AppearanceStorage
       {
          return (application as Tibia).m_AppearanceStorage;
@@ -1272,9 +1284,14 @@ package
          Tibia._watcherSetupUtil = param1;
       }
       
-      public static function s_GetInputHandler() : InputHandler
+      public static function s_GetSpellStorage() : SpellStorage
       {
-         return (application as Tibia).m_UIInputHandler;
+         return (application as Tibia).m_SpellStorage;
+      }
+      
+      public static function s_GetChatStorage() : ChatStorage
+      {
+         return (application as Tibia).m_ChatStorage;
       }
       
       public static function s_GetSecondaryTimer() : Timer
@@ -1282,9 +1299,9 @@ package
          return (application as Tibia).m_SeconaryTimer;
       }
       
-      public static function s_GetSpellStorage() : SpellStorage
+      public static function s_GetContainerStorage() : ContainerStorage
       {
-         return (application as Tibia).m_SpellStorage;
+         return (application as Tibia).m_ContainerStorage;
       }
       
       public function set m_UIActionBarBottom(param1:HActionBarWidget) : void
@@ -1457,6 +1474,21 @@ package
          this.m_CharacterPending = param3;
       }
       
+      private function isValidPreviewStateForClient(param1:uint) : Boolean
+      {
+         switch(param1)
+         {
+            case PREVIEW_STATE_REGULAR:
+               return CLIENT_PREVIEW_STATE == PREVIEW_STATE_REGULAR || CLIENT_PREVIEW_STATE == PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE;
+            case PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:
+               return CLIENT_PREVIEW_STATE == PREVIEW_STATE_REGULAR || CLIENT_PREVIEW_STATE == PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE;
+            case PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:
+               return CLIENT_PREVIEW_STATE == PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE;
+            default:
+               return false;
+         }
+      }
+      
       public function set m_UIWorldMapWindow(param1:GameWindowContainer) : void
       {
          var _loc2_:Object = null;
@@ -1546,26 +1578,43 @@ package
       
       private function onCloseChangeCharacter(param1:CloseEvent) : void
       {
-         var _loc2_:GameEvent = null;
-         if(param1.detail == PopUpBase.BUTTON_OKAY && Boolean(this.m_Connection.isConnected))
+         var _loc3_:GameEvent = null;
+         var _loc4_:EmbeddedDialog = null;
+         var _loc2_:AccountCharacter = null;
+         if(param1.currentTarget is CharacterSelectionWidget && param1.detail == PopUpBase.BUTTON_OKAY)
          {
             this.m_CharacterPending = CharacterSelectionWidget(param1.currentTarget).selectedCharacter;
-            if(this.m_Connection != null)
+            _loc2_ = AccountCharacter(this.m_CharacterList[this.m_CharacterPending]);
+         }
+         if(param1.detail != PopUpBase.BUTTON_OKAY && param1.currentTarget is CharacterSelectionWidget && (this.m_Connection == null || !this.m_Connection.isConnected))
+         {
+            _loc3_ = new GameEvent(GameEvent.CLOSE,true,false);
+            dispatchEvent(_loc3_);
+         }
+         else if(param1.detail == PopUpBase.BUTTON_OKAY && param1.currentTarget is CharacterSelectionWidget && _loc2_ != null && !this.isValidPreviewStateForClient(_loc2_.worldPreviewState))
+         {
+            param1.preventDefault();
+            _loc4_ = new EmbeddedDialog();
+            _loc4_.name = "ConfirmClientChange";
+            _loc4_.buttonFlags = PopUpBase.BUTTON_YES | PopUpBase.BUTTON_NO;
+            _loc4_.text = resourceManager.getString(BUNDLE,"DLG_CLIENT_CHANGE_TEXT");
+            _loc4_.title = resourceManager.getString(BUNDLE,"DLG_CLIENT_CHANGE_TITLE");
+            _loc4_.addEventListener(CloseEvent.CLOSE,this.onCloseChangeCharacter);
+            CharacterSelectionWidget(param1.currentTarget).embeddedDialog = _loc4_;
+         }
+         else if((param1.detail == PopUpBase.BUTTON_YES || param1.detail == PopUpBase.BUTTON_OKAY) && (param1.currentTarget is CharacterSelectionWidget || param1.currentTarget is EmbeddedDialog))
+         {
+            if(param1.currentTarget as EmbeddedDialog != null)
+            {
+               ((param1.currentTarget as EmbeddedDialog).parent as PopUpBase).hide(false);
+            }
+            if(this.m_Connection != null && Boolean(this.m_Connection.isConnected))
             {
                this.m_Connection.disconnect(false);
             }
-         }
-         else if(param1.detail == PopUpBase.BUTTON_OKAY && !this.m_Connection.isConnected)
-         {
-            this.m_CharacterPending = CharacterSelectionWidget(param1.currentTarget).selectedCharacter;
-            this.loginCharacter();
-         }
-         else if(!(param1.detail != PopUpBase.BUTTON_OKAY && Boolean(this.m_Connection.isConnected)))
-         {
-            if(param1.detail != PopUpBase.BUTTON_OKAY && !this.m_Connection.isConnected)
+            else if(!this.m_Connection.isConnected)
             {
-               _loc2_ = new GameEvent(GameEvent.CLOSE,true,false);
-               dispatchEvent(_loc2_);
+               this.loginCharacter();
             }
          }
       }
@@ -1746,7 +1795,7 @@ package
             }
             for each(_loc1_ in this.options.getBuddySetIDs())
             {
-               this.options.getBuddySet(_loc1_).markBuddiesOffline();
+               this.options.getBuddySet(_loc1_).clearBuddies();
             }
          }
          this.invalidateOptions();
@@ -1995,6 +2044,11 @@ package
       
       public function loginCharacter() : void
       {
+         var _loc1_:AccountCharacter = null;
+         var _loc3_:String = null;
+         var _loc4_:String = null;
+         var _loc5_:URLVariables = null;
+         var _loc6_:URLRequest = null;
          if(this.m_Connection == null)
          {
             throw new Error("Tibia.loginCharacter: Invalid state.");
@@ -2018,8 +2072,22 @@ package
          this.reset();
          this.m_CharacterCurrent = this.m_CharacterPending;
          this.m_CharacterPending = -1;
-         var _loc1_:AccountCharacter = AccountCharacter(this.m_CharacterList[this.m_CharacterCurrent]);
-         this.m_Connection.connect(this.m_SessionKey,_loc1_.name,_loc1_.address,_loc1_.port);
+         _loc1_ = AccountCharacter(this.m_CharacterList[this.m_CharacterCurrent]);
+         var _loc2_:* = !this.isValidPreviewStateForClient(_loc1_.worldPreviewState);
+         if(_loc2_)
+         {
+            _loc3_ = URLHelper.s_GetBrowserCurrentBaseUrl();
+            _loc4_ = URLHelper.s_GetBrowserCurrentQuerystring();
+            _loc5_ = new URLVariables(_loc4_);
+            _loc6_ = new URLRequest(_loc3_);
+            _loc5_.name = _loc1_.name;
+            _loc6_.data = _loc5_;
+            navigateToURL(_loc6_,"_self");
+         }
+         else
+         {
+            this.m_Connection.connect(this.m_SessionKey,_loc1_.name,_loc1_.address,_loc1_.port);
+         }
       }
       
       public function set m_UICenterColumn(param1:CustomDividedBox) : void
@@ -2291,16 +2359,6 @@ package
          }
       }
       
-      public function ___Tibia_Application1_applicationComplete(param1:FlexEvent) : void
-      {
-         this.onApplicationComplete(param1);
-      }
-      
-      public function ___Tibia_Application1_preinitialize(param1:FlexEvent) : void
-      {
-         this.onPreinitialise(param1);
-      }
-      
       public function saveOptions() : void
       {
          this.m_ChatStorage.saveChannels();
@@ -2309,6 +2367,16 @@ package
             this.m_CurrentOptionsAsset.upload(this.options.marshall());
             this.m_CurrentOptionsUploading = true;
          }
+      }
+      
+      public function ___Tibia_Application1_applicationComplete(param1:FlexEvent) : void
+      {
+         this.onApplicationComplete(param1);
+      }
+      
+      public function ___Tibia_Application1_preinitialize(param1:FlexEvent) : void
+      {
+         this.onPreinitialise(param1);
       }
       
       public function set m_UISideBarToggleLeft(param1:ToggleBar) : void

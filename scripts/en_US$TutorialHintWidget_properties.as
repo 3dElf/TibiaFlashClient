@@ -5,6 +5,10 @@ package
    public class en_US$TutorialHintWidget_properties extends ResourceBundle
    {
       
+      private static var _embed_properties_______images_help_hint_16_whiteskull_png_838565860:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_whiteskull_png_838565860;
+      
+      private static var _embed_properties_______images_help_hint_20_premium_png_1434509332:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_20_premium_png_1434509332;
+      
       private static var _embed_properties_______images_help_hint_02_automap_png_2031831832:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_02_automap_png_2031831832;
       
       private static var _embed_properties_______images_help_hint_04_openchest_png_965425056:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_04_openchest_png_965425056;
@@ -19,19 +23,15 @@ package
       
       private static var _embed_properties_______images_help_hint_01_mouse_png_1162327674:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_01_mouse_png_1162327674;
       
-      private static var _embed_properties_______images_help_hint_10_useshovel_png_2020226404:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_10_useshovel_png_2020226404;
+      private static var _embed_properties_______images_help_hint_05_dragcoat_png_585475430:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_05_dragcoat_png_585475430;
       
       private static var _embed_properties_______images_help_hint_16_redskull_png_772130148:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_redskull_png_772130148;
       
       private static var _embed_properties_______images_help_hint_13_npctradeupper_png_1864500060:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_13_npctradeupper_png_1864500060;
       
+      private static var _embed_properties_______images_help_hint_10_useshovel_png_2020226404:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_10_useshovel_png_2020226404;
+      
       private static var _embed_properties_______images_help_hint_08_openbody_png_626091210:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_08_openbody_png_626091210;
-      
-      private static var _embed_properties_______images_help_hint_16_whiteskull_png_838565860:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_whiteskull_png_838565860;
-      
-      private static var _embed_properties_______images_help_hint_20_premium_png_1434509332:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_20_premium_png_1434509332;
-      
-      private static var _embed_properties_______images_help_hint_05_dragcoat_png_585475430:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_05_dragcoat_png_585475430;
        
       public function en_US$TutorialHintWidget_properties()
       {

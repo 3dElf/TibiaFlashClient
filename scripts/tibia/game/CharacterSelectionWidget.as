@@ -15,9 +15,21 @@ package tibia.game
    public class CharacterSelectionWidget extends PopUpBase
    {
       
+      public static const CLIENT_VERSION:uint = 1007;
+      
+      public static const CLIENT_PREVIEW_STATE:uint = 0;
+      
+      public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
+      
       private static const BUNDLE:String = "CharacterSelectionWidget";
       
+      public static const PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:uint = 2;
+      
+      public static const CLIENT_TYPE:uint = 3;
+      
       public static const TIMEOUT_EXPIRED:int = 2147483647;
+      
+      public static const PREVIEW_STATE_REGULAR:uint = 0;
       
       private static const CLOSE_TIMEOUT:Number = 60 * 1000;
        
@@ -128,7 +140,13 @@ package tibia.game
       
       private function buildCharacterLabel(param1:Object) : String
       {
-         return AccountCharacter(param1).name + " (" + AccountCharacter(param1).world + ")";
+         var _loc2_:* = AccountCharacter(param1).name + " (" + AccountCharacter(param1).world;
+         if(AccountCharacter(param1).worldPreviewState != PREVIEW_STATE_REGULAR)
+         {
+            _loc2_ = _loc2_ + ", Preview";
+         }
+         _loc2_ = _loc2_ + ")";
+         return _loc2_;
       }
       
       private function onListDoubleClick(param1:MouseEvent) : void

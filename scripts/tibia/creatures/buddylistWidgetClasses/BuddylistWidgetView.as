@@ -22,7 +22,7 @@ package tibia.creatures.buddylistWidgetClasses
        
       private var m_UncommittedShowOffline:Boolean = false;
       
-      private var m_SortOrder:int;
+      private var m_SortOrder:int = 0;
       
       private var m_UIList:SmoothList = null;
       
@@ -38,7 +38,6 @@ package tibia.creatures.buddylistWidgetClasses
       
       public function BuddylistWidgetView()
       {
-         this.m_SortOrder = BuddylistWidget.SORT_BY_NAME;
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          verticalScrollPolicy = ScrollPolicy.OFF;

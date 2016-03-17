@@ -81,7 +81,10 @@ package tibia.game
       
       private function onClose(param1:CloseEvent) : void
       {
-         this.hide(param1.currentTarget as tibia.game.PopUpBase);
+         if(!param1.cancelable || !param1.isDefaultPrevented())
+         {
+            this.hide(param1.currentTarget as tibia.game.PopUpBase);
+         }
       }
       
       private function showInternal(param1:tibia.game.PopUpBase) : void

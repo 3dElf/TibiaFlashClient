@@ -241,5 +241,10 @@ package tibia.creatures
          }
          return _loc1_;
       }
+      
+      public function clearBuddies() : void
+      {
+         this.m_Buddies.removeAll();
+      }
    }
 }

@@ -150,7 +150,7 @@ package tibia.network
       
       protected static const CATTACK:int = 161;
       
-      public static const LATENCY_LOW:Number = 200;
+      public static const CLIENT_VERSION:uint = 1007;
       
       protected static const CLOOKATCREATURE:int = 141;
       
@@ -159,6 +159,8 @@ package tibia.network
       protected static const SKILL_FED:int = 14;
       
       protected static const STATE_CONNECTING_STAGE1:int = 1;
+      
+      public static const LATENCY_LOW:Number = 200;
       
       protected static const CROTATEEAST:int = 112;
       
@@ -171,6 +173,8 @@ package tibia.network
       protected static const CUSEONCREATURE:int = 132;
       
       public static const LATENCY_HIGH:Number = 1000;
+      
+      public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
       
       protected static const SCREATUREPARTY:int = 145;
       
@@ -328,6 +332,8 @@ package tibia.network
       
       protected static const SCHALLENGE:int = 31;
       
+      public static const PREVIEW_STATE_REGULAR:uint = 0;
+      
       protected static const PATH_SOUTH_WEST:int = 6;
       
       protected static const CLOOK:int = 140;
@@ -410,8 +416,6 @@ package tibia.network
       
       protected static const SSPELLDELAY:int = 164;
       
-      protected static const TERMINAL_VERSION:int = 970;
-      
       protected static const SDELETEONMAP:int = 108;
       
       public static const LATENCY_MEDIUM:Number = 500;
@@ -426,6 +430,8 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
+      protected static const PROTOCOL_VERSION:int = 971;
+      
       protected static const SAMBIENTE:int = 130;
       
       protected static const ERR_INVALID_SIZE:int = 1;
@@ -438,11 +444,11 @@ package tibia.network
       
       protected static const CTHANKYOU:int = 231;
       
+      private static const PING_LATENCY_INTERVAL:uint = 15;
+      
       protected static const SCREATUREUNPASS:int = 146;
       
       protected static const SKILL_STAMINA:int = 16;
-      
-      private static const PING_LATENCY_INTERVAL:uint = 15;
       
       protected static const SSHOWMODALDIALOG:int = 250;
       
@@ -562,8 +568,6 @@ package tibia.network
       
       protected static const SCHANGEONMAP:int = 107;
       
-      protected static const TERMINAL_TYPE:int = 3;
-      
       protected static const CGOPATH:int = 100;
       
       protected static const CEQUIPOBJECT:int = 119;
@@ -581,6 +585,8 @@ package tibia.network
       protected static const WAR_ENEMY:int = 2;
       
       protected static const SCHANGEINCONTAINER:int = 113;
+      
+      public static const CLIENT_TYPE:uint = 3;
       
       protected static const SDEAD:int = 40;
       
@@ -648,13 +654,17 @@ package tibia.network
       
       protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
       
-      protected static const PAYLOADLENGTH_SIZE:int = 2;
+      public static const PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:uint = 2;
       
       protected static const CBUGREPORT:int = 230;
       
       protected static const PATH_SOUTH_EAST:int = 8;
       
       protected static const CINSPECTTRADE:int = 126;
+      
+      public static const CLIENT_PREVIEW_STATE:uint = 0;
+      
+      protected static const PAYLOADLENGTH_SIZE:int = 2;
       
       protected static const TYPE_MONSTER:int = 1;
       
@@ -3189,7 +3199,7 @@ package tibia.network
             {
                Message = Message + a_UserMessage.substr(0,BugReportWidget.MAX_USER_MESSAGE_LENGTH);
             }
-            Message = Message + ("\nBuild=" + "release;vanilla;2012-10-08;14:19:50;branches/bugfixes;973");
+            Message = Message + ("\nClient-Version=" + CLIENT_VERSION);
             Message = Message + ("\nBrowser=" + BrowserHelper.s_GetBrowserString());
             Message = Message + ("\nFlash=" + Capabilities.serverString);
             SystemMessage = null;
@@ -3404,8 +3414,10 @@ package tibia.network
             b = this.createPacket();
             b.position = b.position - PAYLOADLENGTH_SIZE;
             b.writeByte(CENTERGAME);
-            b.writeShort(TERMINAL_TYPE);
-            b.writeShort(TERMINAL_VERSION);
+            b.writeShort(CLIENT_TYPE);
+            b.writeShort(PROTOCOL_VERSION);
+            b.writeUnsignedInt(CLIENT_VERSION);
+            b.writeByte(CLIENT_PREVIEW_STATE);
             PayloadStart = b.position;
             b.writeByte(0);
             this.m_XTEA.writeKey(b);
