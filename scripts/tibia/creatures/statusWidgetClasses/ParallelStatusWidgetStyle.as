@@ -24,11 +24,12 @@ package tibia.creatures.statusWidgetClasses
       override public function measure() : void
       {
          var _loc1_:EdgeMetrics = null;
+         var _loc2_:Number = NaN;
          var _loc4_:Number = NaN;
          var _loc5_:Number = NaN;
          var _loc10_:BitmapProgressBar = null;
          _loc1_ = target.viewMetricsAndPadding;
-         var _loc2_:Number = 0;
+         _loc2_ = 0;
          var _loc3_:Number = 0;
          _loc4_ = 0;
          _loc5_ = 0;

@@ -322,13 +322,13 @@ package tibia.creatures.battlelistWidgetClasses
          {
             createTextItem(resourceManager.getString(BUNDLE,"CTX_PRIVATE_MESSAGE",[this.m_Creature.name]),function(param1:*):void
             {
-               new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,m_Creature.name).perform();
+               new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,PrivateChatActionImpl.CHAT_CHANNEL_NO_CHANNEL,m_Creature.name).perform();
             });
             if(Tibia.s_GetChatStorage().hasOwnPrivateChannel)
             {
                createTextItem(resourceManager.getString(BUNDLE,"CTX_PRIVATE_CHAT"),function(param1:*):void
                {
-                  new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_INVITE,m_Creature.name).perform();
+                  new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_INVITE,Tibia.s_GetChatStorage().ownPrivateChannelID,m_Creature.name).perform();
                });
             }
             if(!BuddylistActionImpl.s_IsBuddy(this.m_Creature.ID))

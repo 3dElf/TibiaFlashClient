@@ -616,9 +616,11 @@ package tibia.creatures
                break;
             case PATH_ERROR_UNREACHABLE:
                _loc3_.addOnscreenMessage(MessageMode.MESSAGE_FAILURE,WorldMapStorage.MSG_PATH_UNREACHABLE);
+               this.stopAutowalk(false);
                break;
             case PATH_ERROR_INTERNAL:
                _loc3_.addOnscreenMessage(MessageMode.MESSAGE_FAILURE,WorldMapStorage.MSG_SORRY_NOT_POSSIBLE);
+               this.stopAutowalk(false);
                break;
             default:
                throw new Error("Player.startAutowalkInternal: Unknown path state: " + _loc4_);

@@ -29,6 +29,7 @@ package tibia.creatures.battlelistWidgetClasses
    import tibia.appearances.AppearanceInstance;
    import tibia.appearances.widgetClasses.CachedSpriteInformation;
    import tibia.appearances.OutfitInstance;
+   import tibia.appearances.FrameGroup;
    
    public class BattlelistItemRenderer extends UIComponent implements IListItemRenderer, IDataRenderer
    {
@@ -534,7 +535,7 @@ package tibia.creatures.battlelistWidgetClasses
                this.m_LocalAppearanceBitmapCache.copyPixels(_loc12_.bitmapData,_loc12_.rectangle,s_ZeroPoint);
                s_Rect.setTo(0,0,_loc12_.rectangle.width,_loc12_.rectangle.height);
                _loc10_ = this.m_LocalAppearanceBitmapCache;
-               _loc19_ = _loc11_.type.exactSize;
+               _loc19_ = _loc11_.type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize;
                _loc20_ = Math.min(Math.ceil(Math.sqrt(_loc19_) * CREATURE_ICON_SIZE / Math.sqrt(2 * FIELD_SIZE)),CREATURE_ICON_SIZE);
                _loc21_ = _loc20_ / _loc19_;
                _loc22_ = CREATURE_ICON_SIZE - _loc20_;

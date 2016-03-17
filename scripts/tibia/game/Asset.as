@@ -32,9 +32,10 @@ package tibia.game
          var _loc6_:int = 0;
          var _loc7_:int = 0;
          var _loc8_:int = 0;
-         var _loc9_:Vector.<int> = null;
-         var _loc10_:uint = 0;
-         var _loc11_:int = 0;
+         var _loc9_:int = 0;
+         var _loc10_:Vector.<int> = null;
+         var _loc11_:uint = 0;
+         var _loc12_:int = 0;
          var _loc2_:String = param1 != null?param1.localName():null;
          var _loc3_:XMLList = null;
          if(_loc2_ == "appearances" || _loc2_ == "binary" || _loc2_ == "currentOptions" || _loc2_ == "defaultOptions" || _loc2_ == "defaultOptionsTutorial" || _loc2_ == "tutorialProgressService" || _loc2_ == "sprites" || _loc2_ == "tutorialSessiondump" || _loc2_ == "tutorialSessiondumpHints" || _loc2_ == "tutorialProgressService")
@@ -49,13 +50,18 @@ package tibia.game
             {
                _loc5_ = int(_loc3_[0].toString());
             }
+            _loc6_ = 0;
+            if((_loc3_ = param1.version) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[1-9[0-9]*$/) != null)
+            {
+               _loc6_ = int(_loc3_[0].toString());
+            }
             if(_loc2_ != "currentOptions" && _loc2_ != "defaultOptions" && _loc2_ != "defaultOptionsTutorial" && _loc2_ != "tutorialProgressService" && _loc5_ < 1)
             {
                return null;
             }
             if(_loc2_ == "appearances")
             {
-               return new AppearancesAsset(_loc4_,_loc5_);
+               return new AppearancesAsset(_loc4_,_loc5_,_loc6_);
             }
             if(_loc2_ == "binary")
             {
@@ -75,36 +81,36 @@ package tibia.game
             }
             if(_loc2_ == "sprites")
             {
-               _loc6_ = -1;
-               if((_loc3_ = param1.firstSpriteID) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
-               {
-                  _loc6_ = int(_loc3_[0].toString());
-               }
                _loc7_ = -1;
-               if((_loc3_ = param1.lastSpriteID) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
+               if((_loc3_ = param1.firstSpriteID) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
                {
                   _loc7_ = int(_loc3_[0].toString());
                }
                _loc8_ = -1;
-               if((_loc3_ = param1.spriteType) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
+               if((_loc3_ = param1.lastSpriteID) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
                {
                   _loc8_ = int(_loc3_[0].toString());
                }
-               _loc9_ = new Vector.<int>();
+               _loc9_ = -1;
+               if((_loc3_ = param1.spriteType) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
+               {
+                  _loc9_ = int(_loc3_[0].toString());
+               }
+               _loc10_ = new Vector.<int>();
                if((_loc3_ = param1.area) != null && _loc3_.length() > 0)
                {
-                  _loc10_ = 0;
-                  while(_loc10_ < _loc3_.length())
+                  _loc11_ = 0;
+                  while(_loc11_ < _loc3_.length())
                   {
-                     if(_loc3_[_loc10_].toString().match(/^[0-9]+$/) != null)
+                     if(_loc3_[_loc11_].toString().match(/^[0-9]+$/) != null)
                      {
-                        _loc11_ = int(_loc3_[_loc10_].toString());
-                        _loc9_.push(_loc11_);
+                        _loc12_ = int(_loc3_[_loc11_].toString());
+                        _loc10_.push(_loc12_);
                      }
-                     _loc10_++;
+                     _loc11_++;
                   }
                }
-               return new SpritesAsset(_loc4_,_loc5_,_loc6_,_loc7_,_loc8_,_loc9_);
+               return new SpritesAsset(_loc4_,_loc5_,_loc7_,_loc8_,_loc9_,_loc10_);
             }
             if(_loc2_ == "tutorialSessiondump")
             {

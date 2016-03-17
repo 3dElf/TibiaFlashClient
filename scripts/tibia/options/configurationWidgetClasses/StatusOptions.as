@@ -40,8 +40,6 @@ package tibia.options.configurationWidgetClasses
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
       
-      public static var canChangePvpFraming:Boolean = true;
-      
       protected static const GUILD_NONE:int = 0;
       
       protected static const PK_PARTYMODE:int = 2;
@@ -287,7 +285,7 @@ package tibia.options.configurationWidgetClasses
       
       private var m_UncommittedOptions:Boolean = false;
       
-      protected var m_WidgetStyle:int;
+      protected var m_WidgetStyle:int = 1;
       
       protected var m_UIWidgetSkill:ComboBox = null;
       
@@ -307,7 +305,6 @@ package tibia.options.configurationWidgetClasses
       {
          this.m_OwnStyle = RendererImpl.STATUS_STYLE_CLASSIC;
          this.m_OtherStyle = RendererImpl.STATUS_STYLE_CLASSIC;
-         this.m_WidgetStyle = StatusWidget.STATUS_STYLE_DEFAULT;
          super();
          label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_LABEL");
       }
@@ -485,7 +482,7 @@ package tibia.options.configurationWidgetClasses
             Item.percentWidth = 100;
             this.m_UIBothPvPFrames = new CheckBox();
             this.m_UIBothPvPFrames.addEventListener(Event.CHANGE,this.onValueChange);
-            this.m_UIBothPvPFrames.enabled = canChangePvpFraming;
+            this.m_UIBothPvPFrames.enabled = this.m_Options.uiHints.canChangePvPFramingOption;
             Item.addChild(this.m_UIBothPvPFrames);
             Frm.addChild(Item);
             Heading = new FormHeading();

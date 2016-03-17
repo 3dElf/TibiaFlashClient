@@ -5,6 +5,7 @@ package tibia.worldmap.widgetClasses
    import flash.geom.Rectangle;
    import tibia.creatures.Creature;
    import tibia.appearances.AppearanceType;
+   import tibia.appearances.FrameGroup;
    import tibia.appearances.AppearanceInstance;
    
    public class ObjectCursor extends TileCursor
@@ -151,14 +152,14 @@ package tibia.worldmap.widgetClasses
          var _loc2_:AppearanceType = null;
          if(param1.outfit != null && (_loc2_ = param1.outfit.type) != null)
          {
-            this.m_MaskRect.width = Math.max(this.m_MaskRect.width,_loc2_.width * FIELD_SIZE + _loc2_.displacementX);
-            this.m_MaskRect.height = Math.max(this.m_MaskRect.height,_loc2_.height * FIELD_SIZE + _loc2_.displacementY);
+            this.m_MaskRect.width = Math.max(this.m_MaskRect.width,_loc2_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].width * FIELD_SIZE + _loc2_.displacementX);
+            this.m_MaskRect.height = Math.max(this.m_MaskRect.height,_loc2_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].height * FIELD_SIZE + _loc2_.displacementY);
             s_TempPoint.setTo(_loc2_.displacementX,_loc2_.displacementY);
          }
          if(param1.mountOutfit != null && (_loc2_ = param1.mountOutfit.type) != null)
          {
-            this.m_MaskRect.width = Math.max(this.m_MaskRect.width,_loc2_.width * FIELD_SIZE + _loc2_.displacementX) + s_TempPoint.x;
-            this.m_MaskRect.height = Math.max(this.m_MaskRect.height,_loc2_.height * FIELD_SIZE + _loc2_.displacementY) + s_TempPoint.y;
+            this.m_MaskRect.width = Math.max(this.m_MaskRect.width,_loc2_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].width * FIELD_SIZE + _loc2_.displacementX) + s_TempPoint.x;
+            this.m_MaskRect.height = Math.max(this.m_MaskRect.height,_loc2_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].height * FIELD_SIZE + _loc2_.displacementY) + s_TempPoint.y;
          }
          if(this.m_MaskBitmapData == null || this.m_MaskBitmapData.width < this.m_MaskRect.width || this.m_MaskBitmapData.height < this.m_MaskRect.height)
          {
@@ -181,7 +182,7 @@ package tibia.worldmap.widgetClasses
       public function copyMaskFromAppearance(param1:AppearanceInstance, param2:int = -1, param3:int = -1, param4:int = -1) : void
       {
          var _loc5_:AppearanceType = param1.type;
-         this.m_MaskRect.setTo(0,0,_loc5_.width * FIELD_SIZE + _loc5_.displacementX,_loc5_.height * FIELD_SIZE + _loc5_.displacementY);
+         this.m_MaskRect.setTo(0,0,_loc5_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].width * FIELD_SIZE + _loc5_.displacementX,_loc5_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].height * FIELD_SIZE + _loc5_.displacementY);
          if(this.m_MaskBitmapData == null || this.m_MaskBitmapData.width < this.m_MaskRect.width || this.m_MaskBitmapData.height < this.m_MaskRect.height)
          {
             this.m_MaskBitmapData = new BitmapData(this.m_MaskRect.width,this.m_MaskRect.height,true,0);

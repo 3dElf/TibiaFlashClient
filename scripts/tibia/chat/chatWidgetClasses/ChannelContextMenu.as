@@ -10,6 +10,9 @@ package tibia.chat.chatWidgetClasses
    import tibia.reporting.reportType.Type;
    import tibia.reporting.ReportWidget;
    import tibia.chat.ChatStorage;
+   import tibia.game.BugReportTypo;
+   import tibia.input.gameaction.SendBugReportActionImpl;
+   import tibia.game.BugReportWidget;
    import tibia.network.Communication;
    import tibia.worldmap.WorldMapStorage;
    import tibia.chat.MessageMode;
@@ -66,20 +69,20 @@ package tibia.chat.chatWidgetClasses
          {
             createTextItem(resourceManager.getString(BUNDLE,"CTX_VIEW_PRIVATE_MESSAGE",[this.m_SpeakerName]),function(param1:*):void
             {
-               new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,m_SpeakerName).perform();
+               new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,PrivateChatActionImpl.CHAT_CHANNEL_NO_CHANNEL,m_SpeakerName).perform();
             });
             if(Boolean(this.m_ChatStorage.hasOwnPrivateChannel) && this.m_Channel.ID != this.m_ChatStorage.ownPrivateChannelID)
             {
                createTextItem(resourceManager.getString(BUNDLE,"CTX_VIEW_PRIVATE_INVITE"),function(param1:*):void
                {
-                  new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_INVITE,m_SpeakerName).perform();
+                  new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_INVITE,m_ChatStorage.ownPrivateChannelID,m_SpeakerName).perform();
                });
             }
             else if(Boolean(this.m_ChatStorage.hasOwnPrivateChannel) && this.m_Channel.ID == this.m_ChatStorage.ownPrivateChannelID)
             {
                createTextItem(resourceManager.getString(BUNDLE,"CTX_VIEW_PRIVATE_EXCLUDE"),function(param1:*):void
                {
-                  new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_EXCLUDE,m_SpeakerName).perform();
+                  new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_EXCLUDE,m_ChatStorage.ownPrivateChannelID,m_SpeakerName).perform();
                });
             }
             if(!BuddylistActionImpl.s_IsBuddy(this.m_SpeakerName))
@@ -137,6 +140,16 @@ package tibia.chat.chatWidgetClasses
             createTextItem(resourceManager.getString(BUNDLE,"CTX_VIEW_REPORT_NAME"),function(param1:*):void
             {
                new ReportWidget(Type.REPORT_NAME,m_Message).show();
+            });
+         }
+         if(this.m_Message != null && Boolean(Tibia.s_GetCommunication().allowBugreports) && this.m_Message.speakerLevel == 0 && (this.m_Channel.ID == ChatStorage.NPC_CHANNEL_ID || this.m_Channel.ID == ChatStorage.SERVER_CHANNEL_ID))
+         {
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_VIEW_REPORT_TYPO"),function(param1:*):void
+            {
+               var _loc2_:BugReportTypo = new BugReportTypo();
+               _loc2_.Speaker = m_Message.speaker;
+               _loc2_.Text = m_Message.reportableText;
+               new SendBugReportActionImpl(null,_loc2_,null,BugReportWidget.BUG_CATEGORY_TYPO).perform();
             });
          }
          createSeparatorItem();

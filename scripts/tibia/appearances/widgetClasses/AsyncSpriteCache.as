@@ -3,6 +3,7 @@ package tibia.appearances.widgetClasses
    import tibia.appearances.AppearanceType;
    import shared.utility.BitmapPart;
    import shared.utility.PagedBitmapCache;
+   import tibia.appearances.FrameGroup;
    import flash.display.BitmapData;
    import flash.utils.Dictionary;
    import flash.geom.Rectangle;
@@ -12,31 +13,77 @@ package tibia.appearances.widgetClasses
       
       private static const ENVIRONMENTAL_EFFECTS:Array = [];
       
+      public static const FRAME_GROUP_WALKING:uint = 1;
+      
       protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
+      private static const MINIMUM_SPEED_FRAME_DURATION:int = 90 * 8;
+      
       protected static const NUM_EFFECTS:int = 200;
+      
+      protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
+      
+      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
+      public static const PHASE_AUTOMATIC:int = -1;
+      
+      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
+      
+      protected static const APPEARANCE_MISSILE:uint = 3;
+      
+      protected static const FIELD_HEIGHT:int = 24;
+      
+      public static const COMPRESSED_IMAGES_CACHE_MEMORY:uint = 4 * 768 * 768 * 15;
+      
+      protected static const UNDERGROUND_LAYER:int = 2;
+      
+      protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
+      
+      public static const PHASE_RANDOM:int = 254;
+      
+      private static const MAXIMUM_SPEED_FRAME_DURATION:int = 35 * 8;
+      
+      protected static const APPEARANCE_OUTFIT:uint = 1;
+      
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
+      
+      protected static const FIELD_SIZE:int = 32;
+      
+      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
+      
+      protected static const PLAYER_OFFSET_X:int = 8;
+      
+      protected static const PLAYER_OFFSET_Y:int = 6;
+      
+      public static const SPRITE_CACHE_PAGE_DIMENSION:uint = 512;
+      
+      protected static const MAP_MAX_X:int = MAP_MIN_X + (1 << 14 - 1);
+      
+      protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
+      
+      protected static const MAP_MAX_Z:int = 15;
+      
+      protected static const NUM_ONSCREEN_MESSAGES:int = 16;
+      
+      public static const SPRITE_CACHE_PAGE_COUNT:uint = 5 * 5;
+      
+      protected static const GROUND_LAYER:int = 7;
+      
+      protected static const APPEARANCE_OBJECT:uint = 0;
+      
+      public static const ANIMATION_DELAY_BEFORE_RESET:int = 1000;
       
       protected static const MAP_HEIGHT:int = 11;
       
       protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
-      protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      public static const ANIMATION_ASYNCHRON:int = 0;
       
-      protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
-      
-      public static const COMPRESSED_IMAGES_CACHE_MEMORY:uint = 4 * 768 * 768 * 15;
-      
-      protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
-      
-      protected static const UNDERGROUND_LAYER:int = 2;
+      public static const PHASE_ASYNCHRONOUS:int = 255;
       
       protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
       
-      protected static const FIELD_HEIGHT:int = 24;
-      
-      protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
-      
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
+      private static const MIN_SPEED_DELAY:int = 550;
       
       protected static const MAP_MIN_X:int = 24576;
       
@@ -44,15 +91,11 @@ package tibia.appearances.widgetClasses
       
       protected static const MAP_MIN_Z:int = 0;
       
-      protected static const PLAYER_OFFSET_Y:int = 6;
+      protected static const APPEARANCE_EFFECT:uint = 2;
       
-      public static const SPRITE_CACHE_PAGE_DIMENSION:uint = 512;
+      public static const FRAME_GROUP_DEFAULT:uint = FRAME_GROUP_IDLE;
       
-      protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
-      
-      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
-      
-      protected static const PLAYER_OFFSET_X:int = 8;
+      private static const MAX_SPEED_DELAY:int = 100;
       
       protected static const MAPSIZE_W:int = 10;
       
@@ -62,23 +105,15 @@ package tibia.appearances.widgetClasses
       
       protected static const MAPSIZE_Z:int = 8;
       
-      protected static const MAP_MAX_X:int = MAP_MIN_X + (1 << 14 - 1);
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
-      protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
-      
-      protected static const MAP_MAX_Z:int = 15;
-      
-      protected static const FIELD_SIZE:int = 32;
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
       protected static const MAP_WIDTH:int = 15;
       
-      protected static const NUM_ONSCREEN_MESSAGES:int = 16;
+      public static const FRAME_GROUP_IDLE:uint = 0;
       
-      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
-      
-      public static const SPRITE_CACHE_PAGE_COUNT:uint = 5 * 5;
-      
-      protected static const GROUND_LAYER:int = 7;
+      public static const ANIMATION_SYNCHRON:int = 1;
        
       private var m_AsyncCompressedSpriteProvider:tibia.appearances.widgetClasses.AsyncCompressedSpriteProvider = null;
       
@@ -197,22 +232,29 @@ package tibia.appearances.widgetClasses
       
       private function cacheSpritesForAppearanceType(param1:AppearanceType, param2:Boolean = false) : void
       {
-         var _loc6_:tibia.appearances.widgetClasses.CachedSpriteInformation = null;
+         var _loc3_:FrameGroup = null;
+         var _loc4_:uint = 0;
+         var _loc5_:uint = 0;
+         var _loc6_:uint = 0;
+         var _loc7_:tibia.appearances.widgetClasses.CachedSpriteInformation = null;
          if(param1 == null)
          {
             return;
          }
-         var _loc3_:uint = param1.cachedSpriteInformations.length;
-         var _loc4_:uint = 0;
-         var _loc5_:uint = 0;
-         while(_loc5_ < _loc3_)
+         for each(_loc3_ in param1.FrameGroups)
          {
-            _loc6_ = param1.cachedSpriteInformations[_loc5_];
-            if(this.cacheSprite(_loc6_))
+            _loc4_ = _loc3_.cachedSpriteInformations.length;
+            _loc5_ = 0;
+            _loc6_ = 0;
+            while(_loc6_ < _loc4_)
             {
-               _loc4_++;
+               _loc7_ = _loc3_.cachedSpriteInformations[_loc6_];
+               if(this.cacheSprite(_loc7_))
+               {
+                  _loc5_++;
+               }
+               _loc6_++;
             }
-            _loc5_++;
          }
       }
    }

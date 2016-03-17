@@ -585,7 +585,6 @@ package tibia.worldmap
                _loc12_ = new Object();
                if(_loc11_ != null)
                {
-                  _loc10_ = _loc11_.position;
                   this.m_WorldMapStorage.getCreatureObjectForCreature(_loc11_,_loc12_);
                   _loc17_ = null;
                   if(_loc12_.object != null)
@@ -713,6 +712,10 @@ package tibia.worldmap
                case ACTION_LOOK:
                   if(_loc13_.object != null)
                   {
+                     if(_loc13_ == _loc12_)
+                     {
+                        _loc10_ = _loc17_.position;
+                     }
                      new LookActionImpl(_loc10_,_loc13_.object,_loc13_.position).perform();
                   }
                   break;

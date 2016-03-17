@@ -9,11 +9,19 @@ package tibia.appearances
          phase = AppearanceAnimator.PHASE_ASYNCHRONOUS;
       }
       
+      public function setEndless() : void
+      {
+         if(Boolean(m_Animators.hasOwnProperty(m_ActiveFrameGroup)) && m_Animators[m_ActiveFrameGroup] != null)
+         {
+            m_Animators[m_ActiveFrameGroup].setEndless();
+         }
+      }
+      
       public function end() : void
       {
-         if(m_Animator != null)
+         if(m_Animators.hasOwnProperty(m_ActiveFrameGroup))
          {
-            m_Animator.finished = true;
+            m_Animators[m_ActiveFrameGroup].finished = true;
          }
       }
    }

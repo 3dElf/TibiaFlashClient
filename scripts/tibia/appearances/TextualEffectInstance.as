@@ -70,13 +70,13 @@ package tibia.appearances
          return this.m_InstanceRectangle.width;
       }
       
-      override public function animate(param1:Number) : Boolean
+      override public function animate(param1:Number, param2:int = 0) : Boolean
       {
-         var _loc2_:Number = NaN;
-         _loc2_ = Math.abs(param1 - this.m_LastPhaseChange);
-         var _loc3_:int = int(_loc2_ / PHASE_DURATION);
-         this.m_Phase = this.m_Phase + _loc3_;
-         this.m_LastPhaseChange = this.m_LastPhaseChange + _loc3_ * PHASE_DURATION;
+         var _loc3_:Number = NaN;
+         _loc3_ = Math.abs(param1 - this.m_LastPhaseChange);
+         var _loc4_:int = int(_loc3_ / PHASE_DURATION);
+         this.m_Phase = this.m_Phase + _loc4_;
+         this.m_LastPhaseChange = this.m_LastPhaseChange + _loc4_ * PHASE_DURATION;
          return this.m_Phase < PHASE_COUNT;
       }
       

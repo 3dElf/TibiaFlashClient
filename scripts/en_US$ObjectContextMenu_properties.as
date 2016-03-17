@@ -45,7 +45,8 @@ package
             "CTX_CREATURE_ATTACK_STOP":"Stop Attack",
             "CTX_PLAYER_UNIGNORE":"Unignore {0}",
             "CTX_PARTY_INVITE":"Invite to Party",
-            "CTX_PLAYER_CHAT_MESSAGE":"Message to {0} ..."
+            "CTX_PLAYER_CHAT_MESSAGE":"Message to {0} ...",
+            "CTX_OBJECT_REPORT_FIELD":"Report Coordinate"
          };
          return _loc1_;
       }

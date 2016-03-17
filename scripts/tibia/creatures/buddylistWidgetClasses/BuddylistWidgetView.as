@@ -31,7 +31,7 @@ package tibia.creatures.buddylistWidgetClasses
       
       private var m_UncommittedShowOffline:Boolean = false;
       
-      private var m_SortOrder:int;
+      private var m_SortOrder:int = 0;
       
       private var m_UIList:SmoothList = null;
       
@@ -47,7 +47,6 @@ package tibia.creatures.buddylistWidgetClasses
       
       public function BuddylistWidgetView()
       {
-         this.m_SortOrder = BuddylistWidget.SORT_BY_NAME;
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          verticalScrollPolicy = ScrollPolicy.OFF;
@@ -135,7 +134,7 @@ package tibia.creatures.buddylistWidgetClasses
             {
                if(_loc2_ != null)
                {
-                  new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,_loc2_.name).perform();
+                  new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,PrivateChatActionImpl.CHAT_CHANNEL_NO_CHANNEL,_loc2_.name).perform();
                }
             }
             else if(param1.type == MouseEvent.RIGHT_CLICK)

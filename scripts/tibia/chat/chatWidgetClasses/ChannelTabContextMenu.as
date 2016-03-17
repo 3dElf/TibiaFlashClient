@@ -5,6 +5,7 @@ package tibia.chat.chatWidgetClasses
    import tibia.chat.ChatStorage;
    import mx.core.IUIComponent;
    import tibia.input.gameaction.PrivateChatActionImpl;
+   import tibia.network.Communication;
    import tibia.input.gameaction.SaveChannelActionImpl;
    
    public class ChannelTabContextMenu extends ContextMenuBase
@@ -36,15 +37,27 @@ package tibia.chat.chatWidgetClasses
          var a_Owner:IUIComponent = param1;
          var a_StageX:Number = param2;
          var a_StageY:Number = param3;
-         if(Boolean(this.m_ChatStorage.hasOwnPrivateChannel) && this.m_Channel.ID == this.m_ChatStorage.ownPrivateChannelID)
+         if(this.m_Channel.canModerate)
          {
             createTextItem(resourceManager.getString(BUNDLE,"CTX_TAB_INVITE"),function(param1:*):void
             {
-               new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_INVITE,null).perform();
+               new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_INVITE,m_Channel.safeID,null).perform();
             });
             createTextItem(resourceManager.getString(BUNDLE,"CTX_TAB_EXCLUDE"),function(param1:*):void
             {
-               new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_EXCLUDE,null).perform();
+               new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_EXCLUDE,m_Channel.safeID,null).perform();
+            });
+            createSeparatorItem();
+         }
+         if(Boolean(this.m_Channel.canModerate) && Boolean(this.m_Channel.isGuildChannel))
+         {
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_TAB_EDIT_MOTD"),function(param1:*):void
+            {
+               var _loc2_:Communication = Tibia.s_GetCommunication();
+               if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
+               {
+                  _loc2_.sendCGUILDMESSAGE();
+               }
             });
             createSeparatorItem();
          }

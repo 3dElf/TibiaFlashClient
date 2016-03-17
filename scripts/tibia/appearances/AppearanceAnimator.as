@@ -3,13 +3,45 @@ package tibia.appearances
    public class AppearanceAnimator
    {
       
+      private static const ENVIRONMENTAL_EFFECTS:Array = [];
+      
+      public static const ANIMATION_DELAY_BEFORE_RESET:int = 1000;
+      
+      public static const FRAME_GROUP_WALKING:uint = 1;
+      
       public static const PHASE_AUTOMATIC:int = -1;
       
-      public static const PHASE_RANDOM:int = 254;
+      protected static const APPEARANCE_EFFECT:uint = 2;
+      
+      public static const SPRITE_CACHE_PAGE_DIMENSION:uint = 512;
+      
+      public static const FRAME_GROUP_DEFAULT:uint = FRAME_GROUP_IDLE;
+      
+      private static const MAX_SPEED_DELAY:int = 100;
+      
+      public static const FRAME_GROUP_IDLE:uint = 0;
+      
+      public static const COMPRESSED_IMAGES_CACHE_MEMORY:uint = 4 * 768 * 768 * 15;
       
       public static const ANIMATION_ASYNCHRON:int = 0;
       
+      protected static const APPEARANCE_MISSILE:uint = 3;
+      
+      public static const PHASE_RANDOM:int = 254;
+      
+      private static const MINIMUM_SPEED_FRAME_DURATION:int = 90 * 8;
+      
       public static const PHASE_ASYNCHRONOUS:int = 255;
+      
+      public static const SPRITE_CACHE_PAGE_COUNT:uint = 5 * 5;
+      
+      private static const MIN_SPEED_DELAY:int = 550;
+      
+      protected static const APPEARANCE_OBJECT:uint = 0;
+      
+      private static const MAXIMUM_SPEED_FRAME_DURATION:int = 35 * 8;
+      
+      protected static const APPEARANCE_OUTFIT:uint = 1;
       
       public static const ANIMATION_SYNCHRON:int = 1;
        
@@ -50,6 +82,7 @@ package tibia.appearances
          this.m_StartPhase = param2;
          this.m_AnimationType = param4;
          this.m_FrameDurations = param5;
+         this.m_LastAnimationTick = Tibia.s_FrameTibiaTimestamp > 0?Number(Tibia.s_FrameTibiaTimestamp):Number(Tibia.s_GetTibiaTimer());
          if(param3 < 0)
          {
             this.m_NextFrameStrategy = new PingPongFrameStrategy();
@@ -61,9 +94,20 @@ package tibia.appearances
          this.phase = PHASE_AUTOMATIC;
       }
       
-      public function get finished() : Boolean
+      public function get frameDurations() : Vector.<tibia.appearances.FrameDuration>
       {
-         return this.m_HasFinishedAnimation;
+         return this.m_FrameDurations;
+      }
+      
+      public function setEndless() : void
+      {
+         this.m_NextFrameStrategy = new LoopFrameStrategy(0);
+         this.reset();
+      }
+      
+      public function get lastAnimationTick() : Number
+      {
+         return this.m_LastAnimationTick;
       }
       
       public function reset() : void
@@ -96,28 +140,33 @@ package tibia.appearances
          return this.m_AnimationType;
       }
       
-      public function animate(param1:Number) : void
+      public function get finished() : Boolean
       {
-         var _loc2_:Number = NaN;
-         var _loc3_:uint = 0;
-         var _loc4_:int = 0;
+         return this.m_HasFinishedAnimation;
+      }
+      
+      public function animate(param1:Number, param2:int = 0) : void
+      {
+         var _loc3_:Number = NaN;
+         var _loc4_:uint = 0;
+         var _loc5_:int = 0;
          if(param1 != this.m_LastAnimationTick && !this.m_HasFinishedAnimation)
          {
-            _loc2_ = param1 - this.m_LastAnimationTick;
-            if(_loc2_ >= this.m_CurrentPhaseDuration)
+            _loc3_ = param1 - this.m_LastAnimationTick;
+            if(_loc3_ >= this.m_CurrentPhaseDuration)
             {
-               _loc3_ = this.m_NextFrameStrategy.nextFrame(this.m_CurrentPhase,this.m_PhaseCount);
-               if(this.m_CurrentPhase != _loc3_)
+               _loc4_ = this.m_NextFrameStrategy.nextFrame(this.m_CurrentPhase,this.m_PhaseCount);
+               if(this.m_CurrentPhase != _loc4_)
                {
-                  _loc4_ = this.m_FrameDurations[_loc3_].duration - (_loc2_ - this.m_CurrentPhaseDuration);
-                  if(_loc4_ < 0 && this.m_AnimationType == ANIMATION_SYNCHRON)
+                  _loc5_ = param2 == 0?int(this.m_FrameDurations[_loc4_].duration - (_loc3_ - this.m_CurrentPhaseDuration)):int(this.calculateMovementPhaseDuration(param2));
+                  if(_loc5_ < 0 && this.m_AnimationType == ANIMATION_SYNCHRON)
                   {
                      this.calculateSynchronousPhase();
                   }
                   else
                   {
-                     this.m_CurrentPhase = _loc3_;
-                     this.m_CurrentPhaseDuration = Math.max(0,_loc4_);
+                     this.m_CurrentPhase = _loc4_;
+                     this.m_CurrentPhaseDuration = Math.max(0,_loc5_);
                   }
                }
                else
@@ -127,7 +176,7 @@ package tibia.appearances
             }
             else
             {
-               this.m_CurrentPhaseDuration = this.m_CurrentPhaseDuration - _loc2_;
+               this.m_CurrentPhaseDuration = this.m_CurrentPhaseDuration - _loc3_;
             }
             this.m_LastAnimationTick = param1;
          }
@@ -154,7 +203,6 @@ package tibia.appearances
                this.m_CurrentPhase = this.startPhase;
             }
             this.m_HasFinishedAnimation = false;
-            this.m_LastAnimationTick = Tibia.s_FrameTibiaTimestamp;
             this.m_CurrentPhaseDuration = this.m_FrameDurations[this.m_CurrentPhase].duration;
          }
          else
@@ -203,6 +251,19 @@ package tibia.appearances
             return this.m_StartPhase;
          }
          return Math.floor(Math.random() * this.m_PhaseCount);
+      }
+      
+      private function calculateMovementPhaseDuration(param1:int) : Number
+      {
+         var _loc2_:int = 0;
+         var _loc3_:int = 0;
+         _loc2_ = MAX_SPEED_DELAY;
+         _loc3_ = MIN_SPEED_DELAY;
+         var _loc4_:int = Math.min(Math.max(_loc2_,param1),_loc3_);
+         var _loc5_:Number = Number(_loc4_ - _loc2_) / Number(_loc3_ - _loc2_);
+         var _loc6_:int = MINIMUM_SPEED_FRAME_DURATION / this.m_PhaseCount;
+         var _loc7_:int = MAXIMUM_SPEED_FRAME_DURATION / this.m_PhaseCount;
+         return (_loc6_ - _loc7_) * _loc5_ + _loc7_;
       }
       
       public function get phase() : int

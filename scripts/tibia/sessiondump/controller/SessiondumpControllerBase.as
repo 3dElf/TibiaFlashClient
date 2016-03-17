@@ -12,6 +12,8 @@ package tibia.sessiondump.controller
    public class SessiondumpControllerBase implements ISessiondumpRemoteControl
    {
       
+      protected static const CEDITGUILDMESSAGE:int = 156;
+      
       protected static const CUPCONTAINER:int = 136;
       
       protected static const CMARKETACCEPT:int = 248;
@@ -24,7 +26,7 @@ package tibia.sessiondump.controller
       
       protected static const CSHAREEXPERIENCE:int = 168;
       
-      public static const PROTOCOL_VERSION:int = 1055;
+      public static const PROTOCOL_VERSION:int = 1074;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -32,17 +34,19 @@ package tibia.sessiondump.controller
       
       protected static const SOUTFIT:int = 200;
       
+      protected static const SEDITGUILDMESSAGE:int = 174;
+      
       protected static const CEDITBUDDY:int = 222;
       
       protected static const CSETTACTICS:int = 160;
+      
+      protected static const CPERFORMANCEMETRICS:int = 31;
       
       protected static const SAMBIENTE:int = 130;
       
       protected static const ERR_INVALID_SIZE:int = 1;
       
       protected static const ERR_COULD_NOT_CONNECT:int = 5;
-      
-      protected static const CGOSOUTH:int = 103;
       
       protected static const SSETTACTICS:int = 167;
       
@@ -51,6 +55,8 @@ package tibia.sessiondump.controller
       protected static const CLEAVECHANNEL:int = 153;
       
       protected static const SPLAYERDATABASIC:int = 159;
+      
+      protected static const CGOSOUTH:int = 103;
       
       protected static const PACKETLENGTH_SIZE:int = 2;
       
@@ -82,11 +88,11 @@ package tibia.sessiondump.controller
       
       protected static const CONNECTION_STATE_DISCONNECTED:int = 0;
       
-      protected static const CATTACK:int = 161;
-      
       protected static const SLOGINSUCCESS:int = 23;
       
       protected static const CTHANKYOU:int = 231;
+      
+      protected static const CATTACK:int = 161;
       
       protected static const CJOINCHANNEL:int = 152;
       
@@ -121,6 +127,8 @@ package tibia.sessiondump.controller
       protected static const CINSPECTNPCTRADE:int = 121;
       
       protected static const CHECKSUM_SIZE:int = 4;
+      
+      protected static const CGUILDMESSAGE:int = 155;
       
       protected static const CUSEOBJECT:int = 130;
       

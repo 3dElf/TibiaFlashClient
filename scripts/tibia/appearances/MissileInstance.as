@@ -211,42 +211,42 @@ package tibia.appearances
       {
          var _loc6_:int = 0;
          var _loc7_:int = 0;
-         var _loc5_:int = param1 >= 0?int(param1 % m_Type.phases):int(phase);
+         var _loc5_:int = param1 >= 0?int(param1 % m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].phases):int(phase);
          _loc6_ = this.m_PatternY;
          _loc7_ = this.m_PatternX;
-         var _loc8_:int = ((_loc5_ * m_Type.patternDepth + 0) * m_Type.patternHeight + _loc6_) * m_Type.patternWidth + _loc7_;
+         var _loc8_:int = ((_loc5_ * m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].patternDepth + 0) * m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].patternHeight + _loc6_) * m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].patternWidth + _loc7_;
          return _loc8_;
       }
       
-      override public function animate(param1:Number) : Boolean
+      override public function animate(param1:Number, param2:int = 0) : Boolean
       {
-         var _loc3_:Number = NaN;
          var _loc4_:Number = NaN;
+         var _loc5_:Number = NaN;
          super.animate(param1);
-         var _loc2_:Number = param1 - (this.m_AnimationEnd - this.m_AnimationSpeed.z);
-         if(_loc2_ <= 0)
+         var _loc3_:Number = param1 - (this.m_AnimationEnd - this.m_AnimationSpeed.z);
+         if(_loc3_ <= 0)
          {
             this.m_AnimationDelta.x = this.m_AnimationSpeed.x;
             this.m_AnimationDelta.y = this.m_AnimationSpeed.y;
          }
-         else if(_loc2_ >= this.m_AnimationSpeed.z)
+         else if(_loc3_ >= this.m_AnimationSpeed.z)
          {
             this.m_AnimationDelta.x = 0;
             this.m_AnimationDelta.y = 0;
          }
          else
          {
-            this.m_AnimationDelta.x = this.m_AnimationSpeed.x - int(this.m_AnimationSpeed.x / this.m_AnimationSpeed.z * _loc2_ + 0.5);
-            this.m_AnimationDelta.y = this.m_AnimationSpeed.y - int(this.m_AnimationSpeed.y / this.m_AnimationSpeed.z * _loc2_ + 0.5);
+            this.m_AnimationDelta.x = this.m_AnimationSpeed.x - int(this.m_AnimationSpeed.x / this.m_AnimationSpeed.z * _loc3_ + 0.5);
+            this.m_AnimationDelta.y = this.m_AnimationSpeed.y - int(this.m_AnimationSpeed.y / this.m_AnimationSpeed.z * _loc3_ + 0.5);
          }
          if(this.m_AnimationDelta.x == 0 && this.m_AnimationDelta.y == 0 || param1 >= this.m_AnimationEnd)
          {
             return false;
          }
-         _loc3_ = (this.m_Target.x + 1) * FIELD_SIZE - m_Type.displacementX + this.m_AnimationDelta.x;
-         _loc4_ = (this.m_Target.y + 1) * FIELD_SIZE - m_Type.displacementY + this.m_AnimationDelta.y;
-         this.m_Position.x = int((_loc3_ - 1) / FIELD_SIZE);
-         this.m_Position.y = int((_loc4_ - 1) / FIELD_SIZE);
+         _loc4_ = (this.m_Target.x + 1) * FIELD_SIZE - m_Type.displacementX + this.m_AnimationDelta.x;
+         _loc5_ = (this.m_Target.y + 1) * FIELD_SIZE - m_Type.displacementY + this.m_AnimationDelta.y;
+         this.m_Position.x = int((_loc4_ - 1) / FIELD_SIZE);
+         this.m_Position.y = int((_loc5_ - 1) / FIELD_SIZE);
          return true;
       }
       

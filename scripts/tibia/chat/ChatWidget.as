@@ -36,6 +36,7 @@ package tibia.chat
    import mx.core.Container;
    import mx.collections.IList;
    import tibia.network.Communication;
+   import flash.utils.getTimer;
    import mx.events.CollectionEventKind;
    import flash.display.InteractiveObject;
    import tibia.chat.chatWidgetClasses.ChannelContextMenu;
@@ -780,7 +781,7 @@ package tibia.chat
             n = 0;
             c = null;
             _Communication = Tibia.s_GetCommunication();
-            AutoSwitch = _Communication != null && Boolean(_Communication.isGameRunning);
+            AutoSwitch = _Communication != null && Boolean(_Communication.isGameRunning) && this.m_ChatStorage != null && this.m_ChatStorage.channelActivationTimeout < getTimer();
             switch(a_Event.kind)
             {
                case CollectionEventKind.ADD:

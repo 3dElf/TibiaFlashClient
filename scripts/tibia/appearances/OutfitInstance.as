@@ -5,10 +5,9 @@ package tibia.appearances
    import flash.display.Shader;
    import flash.geom.ColorTransform;
    import flash.filters.ColorMatrixFilter;
-   import tibia.§appearances:ns_appearance_internal§.m_Type;
    import flash.geom.Rectangle;
+   import tibia.§appearances:ns_appearance_internal§.m_Type;
    import tibia.appearances.widgetClasses.CachedSpriteInformation;
-   import tibia.appearances.widgetClasses.ISpriteProvider;
    import shared.utility.Colour;
    import flash.display.BitmapDataChannel;
    import flash.geom.Point;
@@ -117,95 +116,101 @@ package tibia.appearances
       
       protected var m_AddOns:int = 0;
       
-      private var m_SpriteProvider:ISpriteProvider = null;
-      
       var m_Phase:uint = 0;
-      
-      private var m_InstanceSpriteIDs:Vector.<uint> = null;
-      
-      private var m_UncomittedCreateInstanceBitmap:Boolean = false;
       
       protected var m_ColourTorso:int = 0;
       
-      private var m_InstanceBitmap:BitmapData = null;
+      private var m_InstanceCache:Object;
       
       protected var m_ColourDetail:int = 0;
-      
-      private var m_InstanceSprite:Vector.<Rectangle> = null;
-      
-      private var m_UncomittedRebuildCache:Boolean = false;
       
       protected var m_ColourHead:int = 0;
       
       public function OutfitInstance(param1:int, param2:AppearanceType, param3:int, param4:int, param5:int, param6:int, param7:int)
       {
+         var _loc8_:* = null;
+         var _loc9_:SpriteCacheContainer = null;
+         this.m_InstanceCache = {};
          this.m_TempSpriteInformation = new CachedSpriteInformation();
          super(param1,param2);
-         this.m_InstanceSpriteIDs = m_Type.spriteIDs;
-         this.m_SpriteProvider = m_Type.spriteProvider;
-         this.m_UncomittedCreateInstanceBitmap = true;
-         this.m_UncomittedRebuildCache = true;
+         for(_loc8_ in m_Type.FrameGroups)
+         {
+            _loc9_ = new SpriteCacheContainer();
+            _loc9_.m_InstanceSpriteIDs = m_Type.FrameGroups[_loc8_].spriteIDs;
+            _loc9_.m_SpriteProvider = m_Type.FrameGroups[_loc8_].spriteProvider;
+            this.m_InstanceCache[_loc8_] = _loc9_;
+         }
          this.updateProperties(param3,param4,param5,param6,param7);
       }
       
-      private function createInstanceBitmap() : void
+      private function createInstanceBitmap(param1:uint) : void
       {
-         var _loc8_:int = 0;
-         var _loc9_:int = 0;
-         if(m_Type.layers != 2 || this.m_UncomittedCreateInstanceBitmap == false)
+         var _loc10_:int = 0;
+         var _loc11_:int = 0;
+         var _loc12_:Vector.<Rectangle> = null;
+         if(m_Type.FrameGroups[param1].layers != 2 || this.m_InstanceCache[param1].m_UncomittedCreateInstanceBitmap == false)
          {
             return;
          }
-         this.m_UncomittedCreateInstanceBitmap = false;
-         var _loc1_:int = 0;
+         this.m_InstanceCache[param1].m_UncomittedCreateInstanceBitmap = false;
          var _loc2_:int = 0;
          var _loc3_:int = 0;
          var _loc4_:int = 0;
          var _loc5_:int = 0;
          var _loc6_:int = 0;
          var _loc7_:int = 0;
-         if(this.m_InstanceBitmap == null)
+         var _loc8_:int = 0;
+         var _loc9_:BitmapData = this.m_InstanceCache[param1].m_InstanceBitmap;
+         if(_loc9_ == null)
          {
-            _loc8_ = m_Type.width * FIELD_SIZE;
-            _loc9_ = m_Type.height * FIELD_SIZE;
-            this.m_InstanceBitmap = new BitmapData(_loc8_ * m_Type.phases * m_Type.patternDepth * m_Type.patternWidth,_loc9_,true,0);
-            this.m_InstanceBitmap.lock();
-            this.m_InstanceSprite = new Vector.<Rectangle>(m_Type.numSprites,true);
-            _loc1_ = 0;
-            _loc3_ = m_Type.phases - 1;
-            while(_loc3_ >= 0)
+            _loc10_ = m_Type.FrameGroups[param1].width * FIELD_SIZE;
+            _loc11_ = m_Type.FrameGroups[param1].height * FIELD_SIZE;
+            _loc9_ = new BitmapData(_loc10_ * m_Type.FrameGroups[param1].phases * m_Type.FrameGroups[param1].patternDepth * m_Type.FrameGroups[param1].patternWidth,_loc11_,true,0);
+            _loc9_.lock();
+            _loc12_ = new Vector.<Rectangle>(m_Type.FrameGroups[param1].numSprites,true);
+            _loc2_ = 0;
+            _loc4_ = m_Type.FrameGroups[param1].phases - 1;
+            while(_loc4_ >= 0)
             {
-               _loc7_ = m_Type.patternDepth - 1;
-               while(_loc7_ >= 0)
+               _loc8_ = m_Type.FrameGroups[param1].patternDepth - 1;
+               while(_loc8_ >= 0)
                {
-                  _loc5_ = m_Type.patternWidth - 1;
-                  while(_loc5_ >= 0)
+                  _loc6_ = m_Type.FrameGroups[param1].patternWidth - 1;
+                  while(_loc6_ >= 0)
                   {
-                     _loc2_ = (((_loc3_ * m_Type.patternDepth + _loc7_) * m_Type.patternHeight + 0) * m_Type.patternWidth + _loc5_) * m_Type.layers + 0;
-                     this.m_InstanceSprite[_loc2_] = new Rectangle(_loc1_ * _loc8_,0,_loc8_,_loc9_);
-                     _loc1_++;
-                     _loc5_--;
+                     _loc3_ = (((_loc4_ * m_Type.FrameGroups[param1].patternDepth + _loc8_) * m_Type.FrameGroups[param1].patternHeight + 0) * m_Type.FrameGroups[param1].patternWidth + _loc6_) * m_Type.FrameGroups[param1].layers + 0;
+                     _loc12_[_loc3_] = new Rectangle(_loc2_ * _loc10_,0,_loc10_,_loc11_);
+                     _loc2_++;
+                     _loc6_--;
                   }
-                  _loc7_--;
+                  _loc8_--;
                }
-               _loc3_--;
+               _loc4_--;
             }
+            this.m_InstanceCache[param1].m_InstanceSprite = _loc12_;
+            this.m_InstanceCache[param1].m_InstanceBitmap = _loc9_;
          }
       }
       
       override public function getSprite(param1:int, param2:int, param3:int, param4:int, param5:Boolean = false) : CachedSpriteInformation
       {
-         var _loc6_:int = 0;
-         if(m_Type.layers != 2)
+         var _loc6_:* = null;
+         var _loc7_:int = 0;
+         var _loc8_:uint = 0;
+         if(m_Type.FrameGroups[m_ActiveFrameGroup].layers != 2)
          {
             return super.getSprite(param1,param2,param3,param4,param5);
          }
-         if(Boolean(m_CacheDirty) || Boolean(this.m_UncomittedRebuildCache))
+         for(_loc6_ in this.m_InstanceCache)
          {
-            this.rebuildCache();
+            _loc8_ = parseInt(_loc6_);
+            if(Boolean(this.m_InstanceCache[_loc8_].m_CacheDirty) || Boolean(this.m_InstanceCache[_loc8_].m_UncomittedRebuildCache))
+            {
+               this.rebuildCache(_loc8_);
+            }
          }
-         _loc6_ = this.getSpriteIndex(param1,param2,param3,param4);
-         this.m_TempSpriteInformation.setCachedSpriteInformationTo(m_Type.spriteIDs[_loc6_],this.m_InstanceBitmap,this.m_InstanceSprite[_loc6_],m_CacheDirty);
+         _loc7_ = this.getSpriteIndex(param1,param2,param3,param4);
+         this.m_TempSpriteInformation.setCachedSpriteInformationTo(m_Type.FrameGroups[m_ActiveFrameGroup].spriteIDs[_loc7_],this.m_InstanceCache[m_ActiveFrameGroup].m_InstanceBitmap,this.m_InstanceCache[m_ActiveFrameGroup].m_InstanceSprite[_loc7_],this.m_InstanceCache[_loc8_].m_CacheDirty);
          return this.m_TempSpriteInformation;
       }
       
@@ -218,29 +223,6 @@ package tibia.appearances
          s_ColourTransform.blueMultiplier = param4.blueFloat;
          s_ColourBitmap.colorTransform(s_ColourBitmap.rect,s_ColourTransform);
          param1.copyPixels(s_ColourBitmap,s_ColourBitmap.rect,param1.rect.topLeft,null,null,true);
-      }
-      
-      override public function getSpriteIndex(param1:int, param2:int, param3:int, param4:int) : uint
-      {
-         var _loc5_:int = (param1 >= 0?param1:this.m_Phase) % m_Type.phases;
-         var _loc6_:int = param2 >= 0?int(param2 % m_Type.patternWidth):0;
-         var _loc7_:int = param3 >= 0?int(param3 % m_Type.patternHeight):0;
-         var _loc8_:int = param4 >= 0?int(param4 % m_Type.patternDepth):0;
-         var _loc9_:int = (((_loc5_ * m_Type.patternDepth + _loc8_) * m_Type.patternHeight + _loc7_) * m_Type.patternWidth + _loc6_) * m_Type.layers + 0;
-         return _loc9_;
-      }
-      
-      public function updateProperties(param1:int, param2:int, param3:int, param4:int, param5:int) : void
-      {
-         if(this.m_ColourHead != param1 || this.m_ColourTorso != param2 || this.m_ColourLegs != param3 || this.m_ColourDetail != param4 || this.m_AddOns != param5)
-         {
-            this.m_ColourHead = param1;
-            this.m_ColourTorso = param2;
-            this.m_ColourLegs = param3;
-            this.m_ColourDetail = param4;
-            this.m_AddOns = param5;
-            this.m_UncomittedRebuildCache = true;
-         }
       }
       
       private function colouriseOutfitWithInternalMethod(param1:BitmapData, param2:BitmapData, param3:BitmapData) : void
@@ -257,20 +239,61 @@ package tibia.appearances
          param3.copyPixels(s_GreyBitmap,s_GreyBitmap.rect,new Point(0,0));
       }
       
-      override public function animate(param1:Number) : Boolean
+      override public function getSpriteIndex(param1:int, param2:int, param3:int, param4:int) : uint
       {
-         if(Boolean(m_Type.isAnimateAlways) && m_Animator != null)
-         {
-            super.animate(param1);
-            this.m_Phase = m_Animator.phase;
-         }
-         return true;
+         var _loc5_:int = (param1 >= 0?param1:this.m_Phase) % m_Type.FrameGroups[m_ActiveFrameGroup].phases;
+         var _loc6_:int = param2 >= 0?int(param2 % m_Type.FrameGroups[m_ActiveFrameGroup].patternWidth):0;
+         var _loc7_:int = param3 >= 0?int(param3 % m_Type.FrameGroups[m_ActiveFrameGroup].patternHeight):0;
+         var _loc8_:int = param4 >= 0?int(param4 % m_Type.FrameGroups[m_ActiveFrameGroup].patternDepth):0;
+         var _loc9_:int = (((_loc5_ * m_Type.FrameGroups[m_ActiveFrameGroup].patternDepth + _loc8_) * m_Type.FrameGroups[m_ActiveFrameGroup].patternHeight + _loc7_) * m_Type.FrameGroups[m_ActiveFrameGroup].patternWidth + _loc6_) * m_Type.FrameGroups[m_ActiveFrameGroup].layers + 0;
+         return _loc9_;
       }
       
-      private function rebuildCache() : void
+      public function updateProperties(param1:int, param2:int, param3:int, param4:int, param5:int) : void
+      {
+         var _loc6_:SpriteCacheContainer = null;
+         if(this.m_ColourHead != param1 || this.m_ColourTorso != param2 || this.m_ColourLegs != param3 || this.m_ColourDetail != param4 || this.m_AddOns != param5)
+         {
+            this.m_ColourHead = param1;
+            this.m_ColourTorso = param2;
+            this.m_ColourLegs = param3;
+            this.m_ColourDetail = param4;
+            this.m_AddOns = param5;
+            for each(_loc6_ in this.m_InstanceCache)
+            {
+               _loc6_.m_UncomittedRebuildCache = true;
+            }
+         }
+      }
+      
+      override public function animate(param1:Number, param2:int = 0) : Boolean
+      {
+         if(m_Animators.hasOwnProperty(m_ActiveFrameGroup))
+         {
+            m_Animators[m_ActiveFrameGroup].animate(param1,param2);
+            this.m_Phase = m_Animators[m_ActiveFrameGroup].phase;
+            return !m_Animators[m_ActiveFrameGroup].finished;
+         }
+         return false;
+      }
+      
+      override public function switchFrameGroup(param1:uint) : void
+      {
+         if(param1 != m_ActiveFrameGroup)
+         {
+            m_ActiveFrameGroup = param1;
+            if(Boolean(m_Animators.hasOwnProperty(m_ActiveFrameGroup)) && (m_Animators[m_ActiveFrameGroup].lastAnimationTick + AppearanceAnimator.ANIMATION_DELAY_BEFORE_RESET < Tibia.s_FrameTibiaTimestamp || param1 != FrameGroup.FRAME_GROUP_WALKING))
+            {
+               m_Animators[m_ActiveFrameGroup].reset();
+            }
+         }
+      }
+      
+      private function rebuildCache(param1:uint) : void
       {
          var _TempSpriteInformation:CachedSpriteInformation = null;
-         if(m_Type.layers != 2 || m_CacheDirty == false && this.m_UncomittedRebuildCache == false)
+         var a_FrameGroupID:uint = param1;
+         if(m_Type.FrameGroups[a_FrameGroupID].layers != 2 || this.m_InstanceCache[a_FrameGroupID].m_CacheDirty == false && this.m_InstanceCache[a_FrameGroupID].m_UncomittedRebuildCache == false)
          {
             return;
          }
@@ -282,11 +305,11 @@ package tibia.appearances
          var y:int = 0;
          var z:int = 0;
          var CacheDirty:Boolean = false;
-         if(this.m_UncomittedCreateInstanceBitmap)
+         if(this.m_InstanceCache[a_FrameGroupID].m_UncomittedCreateInstanceBitmap)
          {
-            this.createInstanceBitmap();
+            this.createInstanceBitmap(a_FrameGroupID);
          }
-         this.m_UncomittedRebuildCache = false;
+         this.m_InstanceCache[a_FrameGroupID].m_UncomittedRebuildCache = false;
          var ZeroPoint:Point = new Point(0,0);
          var m_NumberOfAddOns:int = -1;
          try
@@ -294,40 +317,40 @@ package tibia.appearances
             y = 0;
             while(true)
             {
-               if(y < m_Type.patternHeight)
+               if(y < m_Type.FrameGroups[a_FrameGroupID].patternHeight)
                {
                   if(!(y > 0 && (this.m_AddOns & 1 << y - 1) == 0))
                   {
                      m_NumberOfAddOns++;
-                     p = m_Type.phases - 1;
+                     p = m_Type.FrameGroups[a_FrameGroupID].phases - 1;
                      while(p >= 0)
                      {
-                        z = m_Type.patternDepth - 1;
+                        z = m_Type.FrameGroups[a_FrameGroupID].patternDepth - 1;
                         while(z >= 0)
                         {
-                           x = m_Type.patternWidth - 1;
+                           x = m_Type.FrameGroups[a_FrameGroupID].patternWidth - 1;
                            while(x >= 0)
                            {
-                              s = (((p * m_Type.patternDepth + z) * m_Type.patternHeight + y) * m_Type.patternWidth + x) * m_Type.layers + 0;
-                              c = (((p * m_Type.patternDepth + z) * m_Type.patternHeight + 0) * m_Type.patternWidth + x) * m_Type.layers + 0;
-                              _TempSpriteInformation = m_Type.cachedSpriteInformations[s];
-                              _TempSpriteInformation = m_Type.spriteProvider.getSprite(m_Type.spriteIDs[s],_TempSpriteInformation,this.m_Type);
+                              s = (((p * m_Type.FrameGroups[a_FrameGroupID].patternDepth + z) * m_Type.FrameGroups[a_FrameGroupID].patternHeight + y) * m_Type.FrameGroups[a_FrameGroupID].patternWidth + x) * m_Type.FrameGroups[a_FrameGroupID].layers + 0;
+                              c = (((p * m_Type.FrameGroups[a_FrameGroupID].patternDepth + z) * m_Type.FrameGroups[a_FrameGroupID].patternHeight + 0) * m_Type.FrameGroups[a_FrameGroupID].patternWidth + x) * m_Type.FrameGroups[a_FrameGroupID].layers + 0;
+                              _TempSpriteInformation = m_Type.FrameGroups[a_FrameGroupID].cachedSpriteInformations[s];
+                              _TempSpriteInformation = m_Type.FrameGroups[a_FrameGroupID].spriteProvider.getSprite(m_Type.FrameGroups[a_FrameGroupID].spriteIDs[s],_TempSpriteInformation,this.m_Type);
                               CacheDirty = Boolean(CacheDirty) || Boolean(_TempSpriteInformation.cacheMiss);
                               if(CacheDirty)
                               {
-                                 addr224:
+                                 addr306:
                                  return;
                               }
-                              s_GreyBitmap.copyPixels(_TempSpriteInformation.bitmapData,_TempSpriteInformation.rectangle,this.m_InstanceSprite[c].topLeft);
+                              s_GreyBitmap.copyPixels(_TempSpriteInformation.bitmapData,_TempSpriteInformation.rectangle,this.m_InstanceCache[a_FrameGroupID].m_InstanceSprite[c].topLeft);
                               s++;
-                              _TempSpriteInformation = m_Type.cachedSpriteInformations[s];
-                              _TempSpriteInformation = m_Type.spriteProvider.getSprite(m_Type.spriteIDs[s],_TempSpriteInformation,this.m_Type);
+                              _TempSpriteInformation = m_Type.FrameGroups[a_FrameGroupID].cachedSpriteInformations[s];
+                              _TempSpriteInformation = m_Type.FrameGroups[a_FrameGroupID].spriteProvider.getSprite(m_Type.FrameGroups[a_FrameGroupID].spriteIDs[s],_TempSpriteInformation,this.m_Type);
                               CacheDirty = Boolean(CacheDirty) || Boolean(_TempSpriteInformation.cacheMiss);
                               if(CacheDirty)
                               {
                                  return;
                               }
-                              s_MaskBitmap.copyPixels(_TempSpriteInformation.bitmapData,_TempSpriteInformation.rectangle,this.m_InstanceSprite[c].topLeft);
+                              s_MaskBitmap.copyPixels(_TempSpriteInformation.bitmapData,_TempSpriteInformation.rectangle,this.m_InstanceCache[a_FrameGroupID].m_InstanceSprite[c].topLeft);
                               x--;
                            }
                            z--;
@@ -335,13 +358,13 @@ package tibia.appearances
                         p--;
                      }
                      this.colouriseOutfitWithInternalMethod(s_GreyBitmap,s_MaskBitmap,s_DestinationBitmap);
-                     this.m_InstanceBitmap.copyPixels(s_DestinationBitmap,s_DestinationBitmap.rect,ZeroPoint,null,null,y > 0);
+                     this.m_InstanceCache[a_FrameGroupID].m_InstanceBitmap.copyPixels(s_DestinationBitmap,s_DestinationBitmap.rect,ZeroPoint,null,null,y > 0);
                   }
                   y++;
                   continue;
                }
             }
-            §§goto(addr224);
+            §§goto(addr306);
             return;
          }
          finally
@@ -350,11 +373,11 @@ package tibia.appearances
             {
                if(CacheDirty == false)
                {
-                  m_CacheDirty = false;
+                  this.m_InstanceCache[a_FrameGroupID].m_CacheDirty = false;
                }
                else
                {
-                  m_CacheDirty = true;
+                  this.m_InstanceCache[a_FrameGroupID].m_CacheDirty = true;
                }
             }
          }
@@ -378,9 +401,9 @@ package tibia.appearances
          _loc8_.start(true);
       }
       
-      override public function resetAnimation() : void
+      override public function get phase() : int
       {
-         this.m_Phase = 0;
+         return this.m_Phase;
       }
       
       override public function set phase(param1:int) : void
@@ -388,10 +411,32 @@ package tibia.appearances
          super.phase = param1;
          this.m_Phase = param1;
       }
-      
-      override public function get phase() : int
-      {
-         return this.m_Phase;
-      }
+   }
+}
+
+import tibia.appearances.widgetClasses.ISpriteProvider;
+import flash.geom.Rectangle;
+import flash.display.BitmapData;
+
+class SpriteCacheContainer
+{
+    
+   public var m_UncomittedRebuildCache:Boolean = true;
+   
+   public var m_CacheDirty:Boolean = true;
+   
+   public var m_SpriteProvider:ISpriteProvider = null;
+   
+   public var m_InstanceSprite:Vector.<Rectangle> = null;
+   
+   public var m_UncomittedCreateInstanceBitmap:Boolean = true;
+   
+   public var m_InstanceBitmap:BitmapData = null;
+   
+   public var m_InstanceSpriteIDs:Vector.<uint> = null;
+   
+   function SpriteCacheContainer()
+   {
+      super();
    }
 }

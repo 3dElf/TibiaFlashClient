@@ -11,7 +11,7 @@ package tibia.input.staticaction
       public function ChatChannelShow(param1:int, param2:String, param3:uint, param4:int)
       {
          super(param1,param2,param3,false);
-         if(param4 != ChatStorage.GUILD_CHANNEL_ID && param4 != ChatStorage.PARTY_CHANNEL_ID && param4 != ChatStorage.MAIN_ADVERTISING_CHANNEL_ID && param4 != ChatStorage.ROOK_ADVERTISING_CHANNEL_ID && param4 != ChatStorage.HELP_CHANNEL_ID && param4 != ChatStorage.NPC_CHANNEL_ID && param4 != ChatStorage.PRIVATE_CHANNEL_ID && param4 != ChatStorage.SERVER_CHANNEL_ID && param4 != ChatStorage.LOCAL_CHANNEL_ID)
+         if(param4 != ChatStorage.MAIN_ADVERTISING_CHANNEL_ID && param4 != ChatStorage.ROOK_ADVERTISING_CHANNEL_ID && param4 != ChatStorage.HELP_CHANNEL_ID && param4 != ChatStorage.NPC_CHANNEL_ID && param4 != ChatStorage.PRIVATE_CHANNEL_ID && param4 != ChatStorage.SERVER_CHANNEL_ID && param4 != ChatStorage.LOCAL_CHANNEL_ID)
          {
             throw new ArgumentError("ChatChannelShow.ChatChannelShow: Invalid channel ID: " + param4);
          }

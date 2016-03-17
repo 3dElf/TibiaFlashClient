@@ -9,6 +9,7 @@ package tibia.appearances.widgetClasses
    import flash.display.BitmapData;
    import tibia.appearances.AppearanceInstance;
    import tibia.appearances.AppearanceType;
+   import tibia.appearances.FrameGroup;
    import tibia.appearances.ObjectInstance;
    import flash.events.TimerEvent;
    import flash.utils.Timer;
@@ -114,13 +115,13 @@ package tibia.appearances.widgetClasses
             _loc3_ = NaN;
             if(isNaN(this.m_Scale))
             {
-               _loc2_ = this.m_Size / _loc1_.exactSize;
+               _loc2_ = this.m_Size / _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize;
                _loc3_ = this.m_Size;
             }
             else
             {
                _loc2_ = this.m_Scale;
-               _loc3_ = _loc1_.exactSize * this.m_Scale;
+               _loc3_ = _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize * this.m_Scale;
             }
             _loc4_ = this.m_Appearance.getSprite(this.m_Phase,this.m_PatternX,this.m_PatternY,this.m_PatternZ);
             this.cacheDirty = _loc4_.cacheMiss;
@@ -135,8 +136,8 @@ package tibia.appearances.widgetClasses
             {
                s_Trans.a = _loc2_;
                s_Trans.d = _loc2_;
-               s_Trans.tx = (-s_Rect.right + _loc1_.exactSize) * _loc2_;
-               s_Trans.ty = (-s_Rect.bottom + _loc1_.exactSize) * _loc2_;
+               s_Trans.tx = (-s_Rect.right + _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize) * _loc2_;
+               s_Trans.ty = (-s_Rect.bottom + _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize) * _loc2_;
                s_Rect.width = Math.min(_loc3_,s_Rect.width * _loc2_);
                s_Rect.height = Math.min(_loc3_,s_Rect.height * _loc2_);
                s_Rect.x = _loc3_ - s_Rect.width;
@@ -205,7 +206,7 @@ package tibia.appearances.widgetClasses
       {
          var _loc3_:Timer = null;
          var _loc2_:AppearanceType = null;
-         if(this.m_Appearance != null && (_loc2_ = this.m_Appearance.type) != null && Boolean(_loc2_.isAnimation))
+         if(this.m_Appearance != null && (_loc2_ = this.m_Appearance.type) != null && Boolean(_loc2_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].isAnimation))
          {
             this.m_Appearance.animate(Tibia.s_FrameTibiaTimestamp);
          }
@@ -263,7 +264,7 @@ package tibia.appearances.widgetClasses
             this.m_PatternY = -1;
             this.m_PatternZ = -1;
             _loc2_ = null;
-            _loc3_ = this.m_Appearance != null && (_loc2_ = this.m_Appearance.type) != null && Boolean(_loc2_.isAnimation);
+            _loc3_ = this.m_Appearance != null && (_loc2_ = this.m_Appearance.type) != null && Boolean(_loc2_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].isAnimation);
             _loc4_ = Tibia.s_GetSecondaryTimer();
             if(Boolean(_loc3_) && !this.m_HaveTimer)
             {

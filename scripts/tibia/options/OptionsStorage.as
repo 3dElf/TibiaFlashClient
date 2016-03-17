@@ -406,6 +406,8 @@ package tibia.options
       
       private var m_CombatSecureMode:int = -1;
       
+      private var m_ServerUIHints:tibia.options.UiServerHints = null;
+      
       private var m_ChannelSet:Vector.<ChannelSet>;
       
       private var m_RendererLevelSeparator:Number = -1;
@@ -466,10 +468,11 @@ package tibia.options
          {
             throw new Error("OptionsStorage.OptionsStorage: Could not load default option set.");
          }
-         if(a_CurrentOptions != null)
+         if(a_CurrentOptions != null && a_CurrentOptions.localName() == "options")
          {
             try
             {
+               this.removeStarterMappings();
                this.unmarshall(a_CurrentOptions);
             }
             catch(e:Error)
@@ -477,6 +480,7 @@ package tibia.options
             }
          }
          this.initialiseBuddySet();
+         this.m_ServerUIHints = new tibia.options.UiServerHints(this);
          var _Event:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
          _Event.kind = PropertyChangeEventKind.UPDATE;
          _Event.property = "*";
@@ -942,13 +946,13 @@ package tibia.options
       }
       
       [Bindable(event="propertyChange")]
-      public function set rendererScaleMap(param1:Boolean) : void
+      public function set combatChaseMode(param1:int) : void
       {
-         var _loc2_:Object = this.rendererScaleMap;
+         var _loc2_:Object = this.combatChaseMode;
          if(_loc2_ !== param1)
          {
-            this._1408018027rendererScaleMap = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererScaleMap",_loc2_,param1));
+            this._558862877combatChaseMode = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"combatChaseMode",_loc2_,param1));
          }
       }
       
@@ -1070,17 +1074,6 @@ package tibia.options
          }
       }
       
-      [Bindable(event="propertyChange")]
-      public function set combatChaseMode(param1:int) : void
-      {
-         var _loc2_:Object = this.combatChaseMode;
-         if(_loc2_ !== param1)
-         {
-            this._558862877combatChaseMode = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"combatChaseMode",_loc2_,param1));
-         }
-      }
-      
       public function getChannelSet(param1:int) : ChannelSet
       {
          return ChannelSet(this.getListItem(this.m_ChannelSet,param1));
@@ -1192,6 +1185,17 @@ package tibia.options
       private function set _789326636statusPlayerFlags(param1:Boolean) : void
       {
          this.m_StatusPlayerFlags = param1;
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set rendererScaleMap(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.rendererScaleMap;
+         if(_loc2_ !== param1)
+         {
+            this._1408018027rendererScaleMap = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererScaleMap",_loc2_,param1));
+         }
       }
       
       private function marshallMarket(param1:XML) : void
@@ -1406,9 +1410,9 @@ package tibia.options
          }
       }
       
-      private function initialiseHelp() : void
+      public function get uiHints() : tibia.options.UiServerHints
       {
-         this.m_KnownTutorialHint.length = 0;
+         return this.m_ServerUIHints;
       }
       
       [Bindable(event="propertyChange")]
@@ -1432,14 +1436,9 @@ package tibia.options
          return this.m_StatusPlayerName;
       }
       
-      private function unmarshallNameFilterSet(param1:XML, param2:Number, param3:Boolean = false) : void
+      private function initialiseHelp() : void
       {
-         var _loc4_:NameFilterSet = NameFilterSet.s_Unmarshall(param1,param2);
-         if(this.m_NameFilterSet.length >= NameFilterSet.NUM_SETS && this.getListItem(this.m_NameFilterSet,_loc4_.ID) == null)
-         {
-            throw new Error("OptionsStorage.unmarshallNameFilterSet: Too many sets.");
-         }
-         this.addListItem(this.m_NameFilterSet,_loc4_,null);
+         this.m_KnownTutorialHint.length = 0;
       }
       
       private function initialiseRenderer() : void
@@ -1465,15 +1464,14 @@ package tibia.options
          }
       }
       
-      [Bindable(event="propertyChange")]
-      public function set rendererMaxFrameRate(param1:int) : void
+      private function unmarshallNameFilterSet(param1:XML, param2:Number, param3:Boolean = false) : void
       {
-         var _loc2_:Object = this.rendererMaxFrameRate;
-         if(_loc2_ !== param1)
+         var _loc4_:NameFilterSet = NameFilterSet.s_Unmarshall(param1,param2);
+         if(this.m_NameFilterSet.length >= NameFilterSet.NUM_SETS && this.getListItem(this.m_NameFilterSet,_loc4_.ID) == null)
          {
-            this._1843511116rendererMaxFrameRate = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererMaxFrameRate",_loc2_,param1));
+            throw new Error("OptionsStorage.unmarshallNameFilterSet: Too many sets.");
          }
+         this.addListItem(this.m_NameFilterSet,_loc4_,null);
       }
       
       public function getMappingSet(param1:int) : MappingSet
@@ -1642,6 +1640,22 @@ package tibia.options
          return this.m_StatusWidgetVisible;
       }
       
+      private function set _1823004292combatAutoChaseOff(param1:Boolean) : void
+      {
+         this.m_CombatAutoChaseOff = param1;
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set rendererMaxFrameRate(param1:int) : void
+      {
+         var _loc2_:Object = this.rendererMaxFrameRate;
+         if(_loc2_ !== param1)
+         {
+            this._1843511116rendererMaxFrameRate = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererMaxFrameRate",_loc2_,param1));
+         }
+      }
+      
       [Bindable(event="propertyChange")]
       public function set marketBrowserBodyPosition(param1:int) : void
       {
@@ -1711,17 +1725,15 @@ package tibia.options
          this.m_MarketBrowserDepot = param1;
       }
       
-      private function initialiseMappingSet() : void
+      private function marshallActionBarSet(param1:XML) : void
       {
-         this.removeAllListItems(this.m_MappingSet,null);
-         var _loc1_:MappingSet = new MappingSet(MappingSet.DEFAULT_SET);
-         _loc1_.initialiseDefaultBindings();
-         this.addListItem(this.m_MappingSet,_loc1_,null);
-      }
-      
-      private function set _1823004292combatAutoChaseOff(param1:Boolean) : void
-      {
-         this.m_CombatAutoChaseOff = param1;
+         var _loc2_:int = this.m_ActionBarSet.length;
+         var _loc3_:int = 0;
+         while(_loc3_ < _loc2_)
+         {
+            param1.appendChild(this.m_ActionBarSet[_loc3_].marshall());
+            _loc3_++;
+         }
       }
       
       private function set _777059330statusPlayerStyle(param1:int) : void
@@ -1780,15 +1792,10 @@ package tibia.options
          this.m_StatusPlayerHealth = param1;
       }
       
-      private function marshallActionBarSet(param1:XML) : void
+      private function set _460459880uiHints(param1:tibia.options.UiServerHints) : void
       {
-         var _loc2_:int = this.m_ActionBarSet.length;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            param1.appendChild(this.m_ActionBarSet[_loc3_].marshall());
-            _loc3_++;
-         }
+         this.m_ServerUIHints = param1;
+         this.m_ServerUIHints.options = this;
       }
       
       private function marshallHelp(param1:XML) : void
@@ -1827,15 +1834,12 @@ package tibia.options
          }
       }
       
-      [Bindable(event="propertyChange")]
-      public function set statusCreatureName(param1:Boolean) : void
+      private function initialiseMappingSet() : void
       {
-         var _loc2_:Object = this.statusCreatureName;
-         if(_loc2_ !== param1)
-         {
-            this._1361517692statusCreatureName = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"statusCreatureName",_loc2_,param1));
-         }
+         this.removeAllListItems(this.m_MappingSet,null);
+         var _loc1_:MappingSet = new MappingSet(MappingSet.DEFAULT_SET);
+         _loc1_.initialiseDefaultBindings();
+         this.addListItem(this.m_MappingSet,_loc1_,null);
       }
       
       public function getMessageFilterSet(param1:int) : MessageFilterSet
@@ -1914,11 +1918,6 @@ package tibia.options
          {
             this.addListItem(this.m_ActionBarSet,_loc4_,null);
          }
-      }
-      
-      private function set _999334091opponentFilter(param1:int) : void
-      {
-         this.m_OpponentFilter = param1;
       }
       
       public function addSideBarSet(param1:SideBarSet) : SideBarSet
@@ -2039,9 +2038,25 @@ package tibia.options
          }
       }
       
+      [Bindable(event="propertyChange")]
+      public function set statusCreatureName(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.statusCreatureName;
+         if(_loc2_ !== param1)
+         {
+            this._1361517692statusCreatureName = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"statusCreatureName",_loc2_,param1));
+         }
+      }
+      
       public function get npcTradeBuyWithBackpacks() : Boolean
       {
          return this.m_NPCTradeBuyWithBackpacks;
+      }
+      
+      private function set _999334091opponentFilter(param1:int) : void
+      {
+         this.m_OpponentFilter = param1;
       }
       
       public function get npcTradeSellKeepEquipped() : Boolean
@@ -2071,9 +2086,9 @@ package tibia.options
          this.m_RendererAmbientBrightness = param1;
       }
       
-      private function set _1361517692statusCreatureName(param1:Boolean) : void
+      public function get statusCreaturePvpFrames() : Boolean
       {
-         this.m_StatusCreatureName = param1;
+         return this.m_StatusCreaturePvpFrames;
       }
       
       private function getListIDs(param1:*) : Array
@@ -2104,9 +2119,14 @@ package tibia.options
          this.addListItem(this.m_SideBarSet,_loc4_,null);
       }
       
-      public function get statusCreaturePvpFrames() : Boolean
+      public function getMessageFilterSetIDs() : Array
       {
-         return this.m_StatusCreaturePvpFrames;
+         return this.getListIDs(this.m_MessageFilterSet);
+      }
+      
+      private function set _1361517692statusCreatureName(param1:Boolean) : void
+      {
+         this.m_StatusCreatureName = param1;
       }
       
       private function set _1714951155statusCreatureHealth(param1:Boolean) : void
@@ -2119,19 +2139,33 @@ package tibia.options
          return this.m_StatusWidgetSkill;
       }
       
-      public function getMessageFilterSetIDs() : Array
+      public function getDefaultMappingSet() : MappingSet
       {
-         return this.getListIDs(this.m_MessageFilterSet);
+         var _loc2_:XML = null;
+         var _loc3_:MappingSet = null;
+         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("MappingSet");
+         if(_loc1_.length() > 0)
+         {
+            for each(_loc2_ in _loc1_)
+            {
+               _loc3_ = MappingSet.s_Unmarshall(_loc2_,this.m_Version);
+               if(_loc3_.ID == 0)
+               {
+                  return _loc3_;
+               }
+            }
+         }
+         throw new Error("OptionsStorage.getDefaultMappingSet: No mapping set width ID 0 found in default options");
       }
       
       [Bindable(event="propertyChange")]
-      public function set marketBrowserLevel(param1:Boolean) : void
+      public function set uiHints(param1:tibia.options.UiServerHints) : void
       {
-         var _loc2_:Object = this.marketBrowserLevel;
+         var _loc2_:Object = this.uiHints;
          if(_loc2_ !== param1)
          {
-            this._449599592marketBrowserLevel = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserLevel",_loc2_,param1));
+            this._460459880uiHints = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"uiHints",_loc2_,param1));
          }
       }
       
@@ -2173,23 +2207,15 @@ package tibia.options
          }
       }
       
-      public function getDefaultMappingSet() : MappingSet
+      [Bindable(event="propertyChange")]
+      public function set marketBrowserLevel(param1:Boolean) : void
       {
-         var _loc2_:XML = null;
-         var _loc3_:MappingSet = null;
-         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("MappingSet");
-         if(_loc1_.length() > 0)
+         var _loc2_:Object = this.marketBrowserLevel;
+         if(_loc2_ !== param1)
          {
-            for each(_loc2_ in _loc1_)
-            {
-               _loc3_ = MappingSet.s_Unmarshall(_loc2_,this.m_Version);
-               if(_loc3_.ID == 0)
-               {
-                  return _loc3_;
-               }
-            }
+            this._449599592marketBrowserLevel = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserLevel",_loc2_,param1));
          }
-         throw new Error("OptionsStorage.getDefaultMappingSet: No mapping set width ID 0 found in default options");
       }
       
       private function set _251195935combatAttackMode(param1:int) : void
@@ -2498,12 +2524,46 @@ package tibia.options
          {
             _loc2_.addNameFilterSet(_loc4_.clone());
          }
+         _loc2_.uiHints = this.uiHints.clone();
          return _loc2_;
       }
       
       private function set _1252438854generalUIChatLeftViewWidth(param1:Number) : void
       {
          this.m_GeneralUIChatLeftViewWidth = Math.max(0,Math.min(param1,100));
+      }
+      
+      public function addBuddySet(param1:BuddySet) : BuddySet
+      {
+         return BuddySet(this.addListItem(this.m_BuddySet,param1,"buddySet"));
+      }
+      
+      private function set _558862877combatChaseMode(param1:int) : void
+      {
+         if(param1 != COMBAT_CHASE_OFF && param1 != COMBAT_CHASE_ON)
+         {
+            throw new ArgumentError("OptionsStorage.set combatChaseMode: Invalid mode.");
+         }
+         this.m_CombatChaseMode = param1;
+      }
+      
+      private function initialiseStatus() : void
+      {
+         this.m_StatusCreatureFlags = true;
+         this.m_StatusCreatureIcons = true;
+         this.m_StatusCreatureHealth = true;
+         this.m_StatusCreatureName = true;
+         this.m_StatusCreaturePvpFrames = true;
+         this.m_StatusPlayerFlags = true;
+         this.m_StatusPlayerHealth = true;
+         this.m_StatusPlayerName = true;
+         this.m_StatusPlayerMana = true;
+         this.m_StatusPlayerStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+         this.m_StatusCreatureStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+         this.m_StatusWidgetLocation = StatusWidget.LOCATION_TOP;
+         this.m_StatusWidgetSkill = SKILL_LEVEL;
+         this.m_StatusWidgetStyle = StatusWidget.STATUS_STYLE_DEFAULT;
+         this.m_StatusWidgetVisible = true;
       }
       
       public function setMappingAndActionBarSets(param1:String, param2:Boolean = false) : void
@@ -2548,39 +2608,6 @@ package tibia.options
          {
             this.generalInputSetID = _loc6_.ID;
          }
-      }
-      
-      public function addBuddySet(param1:BuddySet) : BuddySet
-      {
-         return BuddySet(this.addListItem(this.m_BuddySet,param1,"buddySet"));
-      }
-      
-      private function set _558862877combatChaseMode(param1:int) : void
-      {
-         if(param1 != COMBAT_CHASE_OFF && param1 != COMBAT_CHASE_ON)
-         {
-            throw new ArgumentError("OptionsStorage.set combatChaseMode: Invalid mode.");
-         }
-         this.m_CombatChaseMode = param1;
-      }
-      
-      private function initialiseStatus() : void
-      {
-         this.m_StatusCreatureFlags = true;
-         this.m_StatusCreatureIcons = true;
-         this.m_StatusCreatureHealth = true;
-         this.m_StatusCreatureName = true;
-         this.m_StatusCreaturePvpFrames = true;
-         this.m_StatusPlayerFlags = true;
-         this.m_StatusPlayerHealth = true;
-         this.m_StatusPlayerName = true;
-         this.m_StatusPlayerMana = true;
-         this.m_StatusPlayerStyle = RendererImpl.STATUS_STYLE_CLASSIC;
-         this.m_StatusCreatureStyle = RendererImpl.STATUS_STYLE_CLASSIC;
-         this.m_StatusWidgetLocation = StatusWidget.LOCATION_TOP;
-         this.m_StatusWidgetSkill = SKILL_LEVEL;
-         this.m_StatusWidgetStyle = StatusWidget.STATUS_STYLE_DEFAULT;
-         this.m_StatusWidgetVisible = true;
       }
       
       private function initialiseActionBarSet() : void
@@ -3010,6 +3037,14 @@ package tibia.options
             return;
          }
          throw new ArgumentError("OptionsStorage.set statusWidgetLocation: Invalid location: " + param1);
+      }
+      
+      private function removeStarterMappings() : void
+      {
+         this.m_MappingSet = this.m_MappingSet.filter(function(param1:MappingSet, param2:int, param3:Vector.<MappingSet>):Boolean
+         {
+            return param1.name != "Knight" && param1.name != "Paladin" && param1.name != "Sorcerer" && param1.name != "Druid";
+         });
       }
    }
 }

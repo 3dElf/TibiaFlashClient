@@ -35,13 +35,15 @@ package tibia.network
       
       protected static const SOUTFIT:int = 200;
       
-      protected static const CSETTACTICS:int = 160;
-      
       protected static const CONNECTION_STATE_PENDING:int = 3;
       
-      protected static const CGOSOUTH:int = 103;
+      protected static const CSETTACTICS:int = 160;
+      
+      protected static const CPERFORMANCEMETRICS:int = 31;
       
       protected static const ERR_COULD_NOT_CONNECT:int = 5;
+      
+      protected static const CGOSOUTH:int = 103;
       
       protected static const SSETTACTICS:int = 167;
       
@@ -63,7 +65,7 @@ package tibia.network
       
       protected static const CBUYOBJECT:int = 122;
       
-      public static const CLIENT_VERSION:uint = 1864;
+      public static const CLIENT_VERSION:uint = 2019;
       
       protected static const SPING:int = 29;
       
@@ -97,9 +99,11 @@ package tibia.network
       
       protected static const SQUESTLOG:int = 240;
       
-      protected static const ERR_INTERNAL:int = 0;
+      protected static const CGUILDMESSAGE:int = 155;
       
       protected static const CCANCEL:int = 190;
+      
+      protected static const ERR_INTERNAL:int = 0;
       
       private static const BUNDLE:String = "Connection";
       
@@ -239,11 +243,15 @@ package tibia.network
       
       protected static const SDELETEONMAP:int = 108;
       
+      protected static const CEDITGUILDMESSAGE:int = 156;
+      
       protected static const CROTATEWEST:int = 114;
       
-      public static const PROTOCOL_VERSION:int = 1055;
+      protected static const SEDITGUILDMESSAGE:int = 174;
       
       protected static const SCREATUREOUTFIT:int = 142;
+      
+      public static const PROTOCOL_VERSION:int = 1074;
       
       protected static const SAMBIENTE:int = 130;
       
@@ -620,6 +628,7 @@ package tibia.network
             b.writeShort(CLIENT_TYPE);
             b.writeShort(Communication.PROTOCOL_VERSION);
             b.writeUnsignedInt(CLIENT_VERSION);
+            b.writeShort(Tibia.s_GetAppearanceStorage().contentRevision);
             b.writeByte(CLIENT_PREVIEW_STATE);
             PayloadStart = b.position;
             b.writeByte(0);

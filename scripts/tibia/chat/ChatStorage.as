@@ -3,16 +3,17 @@ package tibia.chat
    import flash.events.EventDispatcher;
    import mx.resources.ResourceManager;
    import mx.collections.IList;
-   import tibia.reporting.reportType.Type;
    import tibia.network.Communication;
    import tibia.§chat:ns_chat_internal§.s_IsPrivateChannel;
    import tibia.creatures.Player;
    import shared.utility.StringHelper;
+   import tibia.reporting.reportType.Type;
    import tibia.§chat:ns_chat_internal§.s_IsRestorableChannel;
+   import flash.utils.getTimer;
+   import tibia.options.OptionsStorage;
    import mx.resources.IResourceManager;
    import mx.events.CollectionEvent;
    import mx.events.CollectionEventKind;
-   import tibia.options.OptionsStorage;
    import mx.events.PropertyChangeEvent;
    import mx.collections.ArrayCollection;
    import mx.core.EventPriority;
@@ -24,51 +25,61 @@ package tibia.chat
       
       public static const DEBUG_CHANNEL_ID:int = 131069;
       
+      public static const LOCAL_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_LOCAL_CHANNEL");
+      
+      public static const MAX_GUILD_MOTD_LENGTH:int = 255;
+      
+      public static const DEBUG_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_DEBUG_CHANNEL");
+      
+      private static const CHANNEL_ACTIVATION_TIMEOUT:int = 500;
+      
+      public static const LAST_PARTY_CHANNEL_ID:int = 65533;
+      
+      public static const LAST_PRIVATE_CHANNEL_ID:int = 9999;
+      
+      public static const NPC_CHANNEL_ID:int = 65534;
+      
+      public static const FIRST_GUILD_CHANNEL_ID:int = 10000;
+      
+      public static const ROOK_ADVERTISING_CHANNEL_ID:int = 6;
+      
       private static const MSG_CHANNEL_NO_ANONYMOUS:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_CHANNEL_NO_ANONYMOUS");
       
-      public static const PARTY_CHANNEL_ID:int = 1;
+      public static const HELP_CHANNEL_ID:int = 7;
       
       public static const PRIVATE_CHANNEL_ID:int = 65535;
-      
-      public static const SERVER_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_SERVER_CHANNEL");
-      
-      public static const MAIN_ADVERTISING_CHANNEL_ID:int = 5;
-      
-      public static const LAST_PRIVATE_CHANNEL_ID:int = 65533;
       
       private static const MSG_CHANNEL_TO_SELF:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_CHANNEL_TO_SELF");
       
       public static const MAX_TALK_LENGTH:int = 255;
       
-      public static const GUILD_CHANNEL_ID:int = 0;
+      public static const MAIN_ADVERTISING_CHANNEL_ID:int = 5;
       
       public static const FIRST_PRIVATE_CHANNEL_ID:int = 10;
       
-      public static const LOCAL_CHANNEL_ID:int = 131071;
-      
-      public static const SESSIONDUMP_CHANNEL_ID:int = 131068;
-      
       public static const SESSIONDUMP_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_SESSIONDUMP_CHANNEL");
-      
-      public static const SERVER_CHANNEL_ID:int = 131070;
-      
-      public static const NPC_CHANNEL_ID:int = 65534;
-      
-      public static const NPC_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_NPC_CHANNEL");
-      
-      public static const DEBUG_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_DEBUG_CHANNEL");
-      
-      public static const HELP_CHANNEL_ID:int = 7;
-      
-      public static const LOCAL_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_LOCAL_CHANNEL");
       
       private static const MSG_CHANNEL_CLOSED:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_CHANNEL_CLOSED");
       
-      public static const ROOK_ADVERTISING_CHANNEL_ID:int = 6;
+      public static const LOCAL_CHANNEL_ID:int = 131071;
+      
+      public static const LAST_GUILD_CHANNEL_ID:int = 19999;
+      
+      public static const FIRST_PARTY_CHANNEL_ID:int = 20000;
+      
+      public static const SERVER_CHANNEL_ID:int = 131070;
+      
+      public static const NPC_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_NPC_CHANNEL");
+      
+      public static const SESSIONDUMP_CHANNEL_ID:int = 131068;
+      
+      public static const SERVER_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_SERVER_CHANNEL");
        
       protected var m_Channels:IList = null;
       
       protected var m_OwnPrivateChannelID:int = -1;
+      
+      protected var m_ChannelActivationTimeout:Number = 0;
       
       protected var m_Options:OptionsStorage = null;
       
@@ -77,13 +88,16 @@ package tibia.chat
          super();
          this.m_Channels = new ArrayCollection();
          this.m_Channels.addEventListener(CollectionEvent.COLLECTION_CHANGE,this.onChannelsChange,false,EventPriority.DEFAULT_HANDLER,true);
+         this.resetChannelActivationTimeout();
       }
       
-      static function s_IsRestorableChannel(param1:Object) : Boolean
+      static function s_IsPartyChannel(param1:Object) : Boolean
       {
+         var _loc2_:int = 0;
          if(param1 is int)
          {
-            return int(param1) < FIRST_PRIVATE_CHANNEL_ID && int(param1) != PARTY_CHANNEL_ID;
+            _loc2_ = int(param1);
+            return _loc2_ >= FIRST_PARTY_CHANNEL_ID && _loc2_ <= LAST_PARTY_CHANNEL_ID;
          }
          return false;
       }
@@ -97,133 +111,50 @@ package tibia.chat
          return false;
       }
       
+      static function s_IsRestorableChannel(param1:Object) : Boolean
+      {
+         if(param1 is int)
+         {
+            return param1 < FIRST_PRIVATE_CHANNEL_ID;
+         }
+         return false;
+      }
+      
+      static function s_IsGuildChannel(param1:Object) : Boolean
+      {
+         var _loc2_:int = 0;
+         if(param1 is int)
+         {
+            _loc2_ = int(param1);
+            return _loc2_ >= FIRST_GUILD_CHANNEL_ID && _loc2_ <= LAST_GUILD_CHANNEL_ID;
+         }
+         return false;
+      }
+      
       public function get ownPrivateChannelID() : int
       {
          return this.m_OwnPrivateChannelID;
       }
       
-      public function addChannelMessage(param1:Object, param2:int, param3:String, param4:int, param5:int, param6:String) : ChannelMessage
+      public function getChannelIndex(param1:Object) : int
       {
-         var _loc10_:Boolean = false;
-         var _loc11_:* = false;
-         var _loc12_:Channel = null;
-         var _loc13_:ChannelMessage = null;
-         var _loc7_:MessageFilterSet = null;
-         var _loc8_:MessageMode = null;
-         var _loc9_:NameFilterSet = null;
-         if(this.m_Options != null && (_loc7_ = this.m_Options.getMessageFilterSet(MessageFilterSet.DEFAULT_SET)) != null && (_loc8_ = _loc7_.getMessageMode(param5)) != null && Boolean(_loc8_.showChannelMessage) && (_loc9_ = this.m_Options.getNameFilterSet(NameFilterSet.DEFAULT_SET)) != null && (Boolean(_loc8_.ignoreNameFilter) || Boolean(_loc9_.acceptMessage(param5,param3,param6))))
+         var _loc4_:Channel = null;
+         var _loc2_:Object = Channel.s_NormaliseIdentifier(param1);
+         if(_loc2_ == null)
          {
-            _loc10_ = param3 != null && (param1 === ChatStorage.HELP_CHANNEL_ID || param4 > 0);
-            _loc11_ = param2 > 0;
-            _loc12_ = null;
-            _loc13_ = new ChannelMessage(param2,param3,param4,param5,param6);
-            _loc13_.formatMessage(_loc7_.showTimestamps,_loc7_.showLevels,_loc8_.textARGB,_loc8_.highlightARGB);
-            switch(param5)
-            {
-               case MessageMode.MESSAGE_SAY:
-               case MessageMode.MESSAGE_WHISPER:
-               case MessageMode.MESSAGE_YELL:
-                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
-                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
-                  _loc12_ = this.getChannel(LOCAL_CHANNEL_ID);
-                  break;
-               case MessageMode.MESSAGE_PRIVATE_FROM:
-                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
-                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
-                  _loc12_ = this.getChannel(param3);
-                  if(_loc12_ == null)
-                  {
-                     _loc12_ = this.getChannel(LOCAL_CHANNEL_ID);
-                  }
-                  break;
-               case MessageMode.MESSAGE_PRIVATE_TO:
-                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
-                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
-                  _loc12_ = this.getChannel(param1);
-                  if(_loc12_ == null)
-                  {
-                     _loc12_ = this.getChannel(LOCAL_CHANNEL_ID);
-                  }
-                  break;
-               case MessageMode.MESSAGE_CHANNEL_MANAGEMENT:
-                  _loc12_ = this.getChannel(param1);
-                  if(_loc12_ == null)
-                  {
-                     _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
-                  }
-                  break;
-               case MessageMode.MESSAGE_CHANNEL:
-               case MessageMode.MESSAGE_CHANNEL_HIGHLIGHT:
-                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
-                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
-                  _loc12_ = this.getChannel(param1);
-                  break;
-               case MessageMode.MESSAGE_SPELL:
-                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
-                  _loc12_ = this.getChannel(LOCAL_CHANNEL_ID);
-                  break;
-               case MessageMode.MESSAGE_NPC_FROM_START_BLOCK:
-               case MessageMode.MESSAGE_NPC_FROM:
-               case MessageMode.MESSAGE_NPC_TO:
-                  _loc12_ = this.addChannel(NPC_CHANNEL_ID,NPC_CHANNEL_LABEL,MessageMode.MESSAGE_NPC_TO);
-                  break;
-               case MessageMode.MESSAGE_GAMEMASTER_BROADCAST:
-                  _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
-                  break;
-               case MessageMode.MESSAGE_GAMEMASTER_CHANNEL:
-                  _loc12_ = this.getChannel(param1);
-                  break;
-               case MessageMode.MESSAGE_GAMEMASTER_PRIVATE_FROM:
-               case MessageMode.MESSAGE_GAMEMASTER_PRIVATE_TO:
-                  _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
-                  break;
-               case MessageMode.MESSAGE_LOGIN:
-               case MessageMode.MESSAGE_ADMIN:
-               case MessageMode.MESSAGE_GAME:
-               case MessageMode.MESSAGE_GAME_HIGHLIGHT:
-               case MessageMode.MESSAGE_LOOK:
-               case MessageMode.MESSAGE_DAMAGE_DEALED:
-               case MessageMode.MESSAGE_DAMAGE_RECEIVED:
-               case MessageMode.MESSAGE_HEAL:
-               case MessageMode.MESSAGE_EXP:
-               case MessageMode.MESSAGE_DAMAGE_OTHERS:
-               case MessageMode.MESSAGE_HEAL_OTHERS:
-               case MessageMode.MESSAGE_EXP_OTHERS:
-               case MessageMode.MESSAGE_STATUS:
-               case MessageMode.MESSAGE_LOOT:
-               case MessageMode.MESSAGE_TRADE_NPC:
-               case MessageMode.MESSAGE_REPORT:
-               case MessageMode.MESSAGE_HOTKEY_USE:
-               case MessageMode.MESSAGE_TUTORIAL_HINT:
-               case MessageMode.MESSAGE_THANKYOU:
-                  _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
-                  break;
-               case MessageMode.MESSAGE_GUILD:
-                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
-                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
-                  _loc12_ = this.getChannel(GUILD_CHANNEL_ID);
-                  if(_loc12_ == null)
-                  {
-                     _loc12_ == this.getChannel(SERVER_CHANNEL_ID);
-                  }
-                  break;
-               case MessageMode.MESSAGE_PARTY_MANAGEMENT:
-               case MessageMode.MESSAGE_PARTY:
-                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
-                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
-                  _loc12_ = this.getChannel(PARTY_CHANNEL_ID);
-                  if(_loc12_ == null)
-                  {
-                     _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
-                  }
-            }
-            if(_loc12_ != null)
-            {
-               _loc12_.appendMessage(_loc13_);
-               return _loc13_;
-            }
+            return -1;
          }
-         return null;
+         var _loc3_:int = 0;
+         while(_loc3_ < this.m_Channels.length)
+         {
+            _loc4_ = this.m_Channels.getItemAt(_loc3_) as Channel;
+            if(_loc4_ != null && _loc4_.ID === _loc2_)
+            {
+               return _loc3_;
+            }
+            _loc3_++;
+         }
+         return -1;
       }
       
       public function set ownPrivateChannelID(param1:int) : void
@@ -359,11 +290,11 @@ package tibia.chat
          {
             if(_loc13_ == "i")
             {
-               _loc4_.sendCINVITETOCHANNEL(_loc6_);
+               _loc4_.sendCINVITETOCHANNEL(_loc6_,this.ownPrivateChannelID);
             }
             else if(_loc13_ == "x")
             {
-               _loc4_.sendCEXCLUDEFROMCHANNEL(_loc6_);
+               _loc4_.sendCEXCLUDEFROMCHANNEL(_loc6_,this.ownPrivateChannelID);
             }
          }
          switch(_loc7_)
@@ -409,54 +340,133 @@ package tibia.chat
          return "";
       }
       
-      public function reset() : void
-      {
-         var _loc1_:Channel = null;
-         var _loc2_:int = this.m_Channels.length - 1;
-         while(_loc2_ >= 0)
-         {
-            Channel(this.m_Channels.removeItemAt(_loc2_)).dispose();
-            _loc2_--;
-         }
-         _loc1_ = this.getChannel(LOCAL_CHANNEL_ID);
-         if(_loc1_ == null)
-         {
-            _loc1_ = this.addChannel(LOCAL_CHANNEL_ID,LOCAL_CHANNEL_LABEL,MessageMode.MESSAGE_SAY);
-            _loc1_.closable = false;
-         }
-         _loc1_ = this.getChannel(SERVER_CHANNEL_ID);
-         if(_loc1_ == null)
-         {
-            _loc1_ = this.addChannel(SERVER_CHANNEL_ID,SERVER_CHANNEL_LABEL,MessageMode.MESSAGE_SAY);
-            _loc1_.closable = false;
-         }
-         this.m_OwnPrivateChannelID = -1;
-      }
-      
       public function get channels() : IList
       {
          return this.m_Channels;
       }
       
-      public function getChannelIndex(param1:Object) : int
+      public function addChannelMessage(param1:Object, param2:int, param3:String, param4:int, param5:int, param6:String) : ChannelMessage
       {
-         var _loc4_:Channel = null;
-         var _loc2_:Object = Channel.s_NormaliseIdentifier(param1);
-         if(_loc2_ == null)
+         var _loc10_:Boolean = false;
+         var _loc11_:* = false;
+         var _loc12_:Channel = null;
+         var _loc13_:ChannelMessage = null;
+         var _loc7_:MessageFilterSet = null;
+         var _loc8_:MessageMode = null;
+         var _loc9_:NameFilterSet = null;
+         if(this.m_Options != null && (_loc7_ = this.m_Options.getMessageFilterSet(MessageFilterSet.DEFAULT_SET)) != null && (_loc8_ = _loc7_.getMessageMode(param5)) != null && Boolean(_loc8_.showChannelMessage) && (_loc9_ = this.m_Options.getNameFilterSet(NameFilterSet.DEFAULT_SET)) != null && (Boolean(_loc8_.ignoreNameFilter) || Boolean(_loc9_.acceptMessage(param5,param3,param6))))
          {
-            return -1;
-         }
-         var _loc3_:int = 0;
-         while(_loc3_ < this.m_Channels.length)
-         {
-            _loc4_ = this.m_Channels.getItemAt(_loc3_) as Channel;
-            if(_loc4_ != null && _loc4_.ID === _loc2_)
+            _loc10_ = param3 != null && (param1 === ChatStorage.HELP_CHANNEL_ID || param4 > 0);
+            _loc11_ = param2 > 0;
+            _loc12_ = null;
+            _loc13_ = new ChannelMessage(param2,param3,param4,param5,param6);
+            _loc13_.formatMessage(_loc7_.showTimestamps,_loc7_.showLevels,_loc8_.textARGB,_loc8_.highlightARGB);
+            switch(param5)
             {
-               return _loc3_;
+               case MessageMode.MESSAGE_SAY:
+               case MessageMode.MESSAGE_WHISPER:
+               case MessageMode.MESSAGE_YELL:
+                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
+                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
+                  _loc12_ = this.getChannel(LOCAL_CHANNEL_ID);
+                  break;
+               case MessageMode.MESSAGE_PRIVATE_FROM:
+                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
+                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
+                  _loc12_ = this.getChannel(param3);
+                  if(_loc12_ == null)
+                  {
+                     _loc12_ = this.getChannel(LOCAL_CHANNEL_ID);
+                  }
+                  break;
+               case MessageMode.MESSAGE_PRIVATE_TO:
+                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
+                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
+                  _loc12_ = this.getChannel(param1);
+                  if(_loc12_ == null)
+                  {
+                     _loc12_ = this.getChannel(LOCAL_CHANNEL_ID);
+                  }
+                  break;
+               case MessageMode.MESSAGE_CHANNEL_MANAGEMENT:
+                  _loc12_ = this.getChannel(param1);
+                  if(_loc12_ == null)
+                  {
+                     _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
+                  }
+                  break;
+               case MessageMode.MESSAGE_CHANNEL:
+               case MessageMode.MESSAGE_CHANNEL_HIGHLIGHT:
+                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
+                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
+                  _loc12_ = this.getChannel(param1);
+                  break;
+               case MessageMode.MESSAGE_SPELL:
+                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
+                  _loc12_ = this.getChannel(LOCAL_CHANNEL_ID);
+                  break;
+               case MessageMode.MESSAGE_NPC_FROM_START_BLOCK:
+               case MessageMode.MESSAGE_NPC_FROM:
+               case MessageMode.MESSAGE_NPC_TO:
+                  _loc12_ = this.addChannel(NPC_CHANNEL_ID,NPC_CHANNEL_LABEL,MessageMode.MESSAGE_NPC_TO);
+                  break;
+               case MessageMode.MESSAGE_GAMEMASTER_BROADCAST:
+                  _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
+                  break;
+               case MessageMode.MESSAGE_GAMEMASTER_CHANNEL:
+                  _loc12_ = this.getChannel(param1);
+                  break;
+               case MessageMode.MESSAGE_GAMEMASTER_PRIVATE_FROM:
+               case MessageMode.MESSAGE_GAMEMASTER_PRIVATE_TO:
+                  _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
+                  break;
+               case MessageMode.MESSAGE_LOGIN:
+               case MessageMode.MESSAGE_ADMIN:
+               case MessageMode.MESSAGE_GAME:
+               case MessageMode.MESSAGE_GAME_HIGHLIGHT:
+               case MessageMode.MESSAGE_LOOK:
+               case MessageMode.MESSAGE_DAMAGE_DEALED:
+               case MessageMode.MESSAGE_DAMAGE_RECEIVED:
+               case MessageMode.MESSAGE_HEAL:
+               case MessageMode.MESSAGE_EXP:
+               case MessageMode.MESSAGE_DAMAGE_OTHERS:
+               case MessageMode.MESSAGE_HEAL_OTHERS:
+               case MessageMode.MESSAGE_EXP_OTHERS:
+               case MessageMode.MESSAGE_STATUS:
+               case MessageMode.MESSAGE_LOOT:
+               case MessageMode.MESSAGE_TRADE_NPC:
+               case MessageMode.MESSAGE_REPORT:
+               case MessageMode.MESSAGE_HOTKEY_USE:
+               case MessageMode.MESSAGE_TUTORIAL_HINT:
+               case MessageMode.MESSAGE_THANKYOU:
+                  _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
+                  break;
+               case MessageMode.MESSAGE_GUILD:
+                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
+                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
+                  _loc12_ = this.getChannel(param1);
+                  if(_loc12_ == null)
+                  {
+                     _loc12_ == this.getChannel(SERVER_CHANNEL_ID);
+                  }
+                  break;
+               case MessageMode.MESSAGE_PARTY_MANAGEMENT:
+               case MessageMode.MESSAGE_PARTY:
+                  _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
+                  _loc13_.setReportTypeAllowed(Type.REPORT_STATEMENT,_loc11_);
+                  _loc12_ = this.getChannel(param1);
+                  if(_loc12_ == null)
+                  {
+                     _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
+                  }
             }
-            _loc3_++;
+            if(_loc12_ != null)
+            {
+               _loc12_.appendMessage(_loc13_);
+               return _loc13_;
+            }
          }
-         return -1;
+         return null;
       }
       
       public function loadChannels() : Vector.<int>
@@ -481,6 +491,16 @@ package tibia.chat
             }
          }
          return _loc1_;
+      }
+      
+      public function resetChannelActivationTimeout() : void
+      {
+         this.m_ChannelActivationTimeout = getTimer() + CHANNEL_ACTIVATION_TIMEOUT;
+      }
+      
+      public function get options() : OptionsStorage
+      {
+         return this.m_Options;
       }
       
       public function removeChannel(param1:Object) : Channel
@@ -548,11 +568,6 @@ package tibia.chat
          return _loc4_;
       }
       
-      public function get options() : OptionsStorage
-      {
-         return this.m_Options;
-      }
-      
       protected function onChannelsChange(param1:CollectionEvent) : void
       {
          if(param1 != null && (!param1.cancelable || !param1.isDefaultPrevented()))
@@ -561,27 +576,34 @@ package tibia.chat
          }
       }
       
-      protected function onOptionsChange(param1:PropertyChangeEvent) : void
+      public function reset() : void
       {
-         if(param1 != null)
+         var _loc1_:Channel = null;
+         var _loc2_:int = this.m_Channels.length - 1;
+         while(_loc2_ >= 0)
          {
-            switch(param1.property)
-            {
-               case "messageFilterSet":
-               case "textColour":
-               case "highlightColour":
-               case "showTimestamps":
-               case "showLevels":
-                  this.formatChannelMessages();
-                  break;
-               case "channelSet":
-                  this.arrangeChannelSet();
-                  break;
-               case "*":
-                  this.arrangeChannelSet();
-                  this.formatChannelMessages();
-            }
+            Channel(this.m_Channels.removeItemAt(_loc2_)).dispose();
+            _loc2_--;
          }
+         _loc1_ = this.getChannel(LOCAL_CHANNEL_ID);
+         if(_loc1_ == null)
+         {
+            _loc1_ = this.addChannel(LOCAL_CHANNEL_ID,LOCAL_CHANNEL_LABEL,MessageMode.MESSAGE_SAY);
+            _loc1_.closable = false;
+         }
+         _loc1_ = this.getChannel(SERVER_CHANNEL_ID);
+         if(_loc1_ == null)
+         {
+            _loc1_ = this.addChannel(SERVER_CHANNEL_ID,SERVER_CHANNEL_LABEL,MessageMode.MESSAGE_SAY);
+            _loc1_.closable = false;
+         }
+         this.m_OwnPrivateChannelID = -1;
+         this.resetChannelActivationTimeout();
+      }
+      
+      public function get channelActivationTimeout() : Number
+      {
+         return this.m_ChannelActivationTimeout;
       }
       
       public function closeChannel(param1:Object) : void
@@ -599,11 +621,6 @@ package tibia.chat
          {
             this.m_OwnPrivateChannelID = -1;
          }
-      }
-      
-      public function get hasOwnPrivateChannel() : Boolean
-      {
-         return s_IsPrivateChannel(this.m_OwnPrivateChannelID);
       }
       
       public function saveChannels() : void
@@ -628,6 +645,29 @@ package tibia.chat
                _loc3_++;
             }
             _loc1_.length = _loc2_;
+         }
+      }
+      
+      protected function onOptionsChange(param1:PropertyChangeEvent) : void
+      {
+         if(param1 != null)
+         {
+            switch(param1.property)
+            {
+               case "messageFilterSet":
+               case "textColour":
+               case "highlightColour":
+               case "showTimestamps":
+               case "showLevels":
+                  this.formatChannelMessages();
+                  break;
+               case "channelSet":
+                  this.arrangeChannelSet();
+                  break;
+               case "*":
+                  this.arrangeChannelSet();
+                  this.formatChannelMessages();
+            }
          }
       }
       
@@ -707,6 +747,11 @@ package tibia.chat
                }
             }
          }
+      }
+      
+      public function get hasOwnPrivateChannel() : Boolean
+      {
+         return s_IsPrivateChannel(this.m_OwnPrivateChannelID);
       }
       
       public function set options(param1:OptionsStorage) : void

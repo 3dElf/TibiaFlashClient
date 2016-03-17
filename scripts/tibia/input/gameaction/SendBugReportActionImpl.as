@@ -14,18 +14,25 @@ package tibia.input.gameaction
       
       private static const BUNDLE:String = "BugReportWidget";
        
-      protected var m_SystemMessage = null;
+      protected var m_BugCategory:int;
       
-      protected var m_Callback:Function = null;
+      protected var m_SystemMessage = null;
       
       protected var m_UserMessage:String = null;
       
-      public function SendBugReportActionImpl(param1:String = null, param2:* = null, param3:Function = null)
+      protected var m_Callback:Function = null;
+      
+      public function SendBugReportActionImpl(param1:String = null, param2:* = null, param3:Function = null, param4:int = -1)
       {
+         this.m_BugCategory = BugReportWidget.BUG_CATEGORY_OTHER;
          super();
          this.m_UserMessage = param1;
          this.m_SystemMessage = param2;
          this.m_Callback = param3;
+         if(param4 > -1)
+         {
+            this.m_BugCategory = param4;
+         }
       }
       
       public function perform(param1:Boolean = false) : void
@@ -39,7 +46,8 @@ package tibia.input.gameaction
          {
             _loc3_ = new BugReportWidget();
             _loc3_.userMessage = this.m_UserMessage;
-            _loc3_.systemMessage = this.m_SystemMessage;
+            _loc3_.bugInformation = this.m_SystemMessage;
+            _loc3_.category = this.m_BugCategory;
             if(this.m_Callback != null)
             {
                _loc3_.addEventListener(CloseEvent.CLOSE,this.m_Callback);

@@ -313,6 +313,7 @@ package tibia.worldmap.widgetClasses
       
       public function dispose() : void
       {
+         Tibia3D.instance.removeEventListener(Tibia3DEvent.CONTEXT3D_CREATED,this.onContextCreated);
          this.m_UpdateCoordinatesBuffer = true;
          this.m_UpdateColorBuffer = true;
          this.m_UpdateShaderProgram = true;
@@ -321,7 +322,6 @@ package tibia.worldmap.widgetClasses
          this.m_CoordinatesBuffer = null;
          this.m_IndexBuffer = null;
          this.m_LightmapBitmap = null;
-         Tibia3D.instance.removeEventListener(Tibia3DEvent.CONTEXT3D_CREATED,this.onContextCreated);
       }
       
       protected function onContextCreated(param1:Tibia3DEvent) : void
@@ -398,69 +398,79 @@ package tibia.worldmap.widgetClasses
       
       public function createLightmap() : void
       {
-         var _loc2_:uint = 0;
-         var _loc3_:uint = 0;
-         var _loc4_:uint = 0;
-         var _loc5_:uint = 0;
-         var _loc6_:Boolean = false;
-         var _loc7_:uint = 0;
-         if(Tibia3D.isReady)
+         var x:uint = 0;
+         var y:uint = 0;
+         var DestIndex:uint = 0;
+         var SourceIndex:uint = 0;
+         var Same:Boolean = false;
+         var i:uint = 0;
+         try
          {
-            if(Tibia3D.instance.viewPort.equals(this.m_Rect) == false)
+            if(Tibia3D.isReady)
             {
-               Tibia3D.instance.viewPort = this.m_Rect;
-            }
-            if(this.lightmapBitmap == null)
-            {
-               this.createLightmapBitmap();
-               this.m_UpdateLightmap = true;
-            }
-            _loc2_ = 0;
-            _loc3_ = 0;
-            _loc4_ = 0;
-            _loc5_ = 0;
-            _loc2_ = 0;
-            while(_loc2_ < MAPSIZE_X + 1)
-            {
-               _loc4_ = _loc2_ * this.COLOR_VALUES_PER_VERTEX;
-               _loc5_ = (_loc2_ + MAPSIZE_X + 1) * this.COLOR_VALUES_PER_VERTEX;
-               this.m_CurrentColorData[_loc4_] = this.m_CurrentColorData[_loc5_];
-               this.m_CurrentColorData[_loc4_ + 1] = this.m_CurrentColorData[_loc5_ + 1];
-               this.m_CurrentColorData[_loc4_ + 2] = this.m_CurrentColorData[_loc5_ + 2];
-               _loc2_++;
-            }
-            _loc3_ = 0;
-            while(_loc3_ < MAPSIZE_Y + 1)
-            {
-               _loc4_ = _loc3_ * (MAPSIZE_X + 1) * this.COLOR_VALUES_PER_VERTEX;
-               _loc5_ = _loc4_ + this.COLOR_VALUES_PER_VERTEX;
-               this.m_CurrentColorData[_loc4_] = this.m_CurrentColorData[_loc5_];
-               this.m_CurrentColorData[_loc4_ + 1] = this.m_CurrentColorData[_loc5_ + 1];
-               this.m_CurrentColorData[_loc4_ + 2] = this.m_CurrentColorData[_loc5_ + 2];
-               _loc3_++;
-            }
-            _loc6_ = true;
-            _loc7_ = 0;
-            while(_loc7_ < this.COLOR_VALUES_COUNT)
-            {
-               _loc6_ = Boolean(_loc6_) && this.m_OldColorData[_loc7_] == this.m_CurrentColorData[_loc7_];
-               this.m_OldColorData[_loc7_] = this.m_CurrentColorData[_loc7_];
-               _loc7_++;
-            }
-            this.m_UpdateLightmap = Boolean(this.m_UpdateLightmap) || _loc6_ == false;
-            if(this.m_UpdateLightmap)
-            {
-               this.m_Context3D.clear(1,1,1,1);
-               this.draw();
-               this.m_Context3D.drawToBitmapData(this.m_LightmapBitmap);
-               this.m_UpdateLightmap = false;
+               if(Tibia3D.instance.viewPort.equals(this.m_Rect) == false)
+               {
+                  Tibia3D.instance.viewPort = this.m_Rect;
+               }
+               if(this.lightmapBitmap == null)
+               {
+                  this.createLightmapBitmap();
+                  this.m_UpdateLightmap = true;
+               }
+               x = 0;
+               y = 0;
+               DestIndex = 0;
+               SourceIndex = 0;
+               x = 0;
+               while(x < MAPSIZE_X + 1)
+               {
+                  DestIndex = x * this.COLOR_VALUES_PER_VERTEX;
+                  SourceIndex = (x + MAPSIZE_X + 1) * this.COLOR_VALUES_PER_VERTEX;
+                  this.m_CurrentColorData[DestIndex] = this.m_CurrentColorData[SourceIndex];
+                  this.m_CurrentColorData[DestIndex + 1] = this.m_CurrentColorData[SourceIndex + 1];
+                  this.m_CurrentColorData[DestIndex + 2] = this.m_CurrentColorData[SourceIndex + 2];
+                  x++;
+               }
+               y = 0;
+               while(y < MAPSIZE_Y + 1)
+               {
+                  DestIndex = y * (MAPSIZE_X + 1) * this.COLOR_VALUES_PER_VERTEX;
+                  SourceIndex = DestIndex + this.COLOR_VALUES_PER_VERTEX;
+                  this.m_CurrentColorData[DestIndex] = this.m_CurrentColorData[SourceIndex];
+                  this.m_CurrentColorData[DestIndex + 1] = this.m_CurrentColorData[SourceIndex + 1];
+                  this.m_CurrentColorData[DestIndex + 2] = this.m_CurrentColorData[SourceIndex + 2];
+                  y++;
+               }
+               Same = true;
+               i = 0;
+               while(i < this.COLOR_VALUES_COUNT)
+               {
+                  Same = Boolean(Same) && this.m_OldColorData[i] == this.m_CurrentColorData[i];
+                  this.m_OldColorData[i] = this.m_CurrentColorData[i];
+                  i++;
+               }
+               this.m_UpdateLightmap = Boolean(this.m_UpdateLightmap) || Same == false;
+               if(this.m_UpdateLightmap)
+               {
+                  this.m_Context3D.clear(1,1,1,1);
+                  this.draw();
+                  this.m_Context3D.drawToBitmapData(this.m_LightmapBitmap);
+                  this.m_UpdateLightmap = false;
+               }
             }
          }
-         var _loc1_:uint = 0;
-         while(_loc1_ < MAPSIZE_Z)
+         catch(_Error:Error)
          {
-            this.m_CachedLayerBrightnessInfo[_loc1_] = null;
-            _loc1_++;
+            if(_Error.errorID != 3694)
+            {
+               throw _Error;
+            }
+         }
+         var z:uint = 0;
+         while(z < MAPSIZE_Z)
+         {
+            this.m_CachedLayerBrightnessInfo[z] = null;
+            z++;
          }
       }
       

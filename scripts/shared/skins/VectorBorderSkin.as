@@ -38,6 +38,10 @@ package shared.skins
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
+         if(Boolean(isNaN(param1)) || Boolean(isNaN(param2)))
+         {
+            return;
+         }
          var _loc3_:uint = 0;
          var _loc4_:Number = NaN;
          var _loc5_:Number = 0;

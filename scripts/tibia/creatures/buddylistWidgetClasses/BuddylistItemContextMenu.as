@@ -70,7 +70,7 @@ package tibia.creatures.buddylistWidgetClasses
          {
             createTextItem(resourceManager.getString(BUNDLE,"CTX_OPEN_MESSAGE_CHANNEL",[this.m_Buddy.name]),function(param1:*):void
             {
-               new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,m_Buddy.name).perform();
+               new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,PrivateChatActionImpl.CHAT_CHANNEL_NO_CHANNEL,m_Buddy.name).perform();
             });
             createSeparatorItem();
          }

@@ -18,6 +18,7 @@ package tibia.worldmap.widgetClasses
    import tibia.creatures.Creature;
    import tibia.appearances.TextualEffectInstance;
    import tibia.appearances.MissileInstance;
+   import tibia.appearances.FrameGroup;
    import shared.utility.Vector3D;
    import tibia.appearances.AppearanceType;
    import flash.geom.Point;
@@ -811,7 +812,7 @@ package tibia.worldmap.widgetClasses
                   _loc28_.drawTo(this.m_MainLayer,_loc18_,_loc19_,param3,param4,param5);
                   if(Boolean(param9) && Boolean(this.m_OptionsLightEnabled) && Boolean(_loc28_.m_Type.isLight))
                   {
-                     _loc31_ = int((Math.min(_loc28_.phase,_loc28_.m_Type.phases + 1 - _loc28_.phase) * _loc28_.m_Type.brightness + 2) / 3);
+                     _loc31_ = int((Math.min(_loc28_.phase,_loc28_.m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].phases + 1 - _loc28_.phase) * _loc28_.m_Type.brightness + 2) / 3);
                      this.m_TempEffectColor.eightBit = _loc28_.m_Type.lightColour;
                      this.m_TiledLightmapRenderer.setLightSource(_loc20_,_loc21_,param8,Math.min(_loc31_,_loc28_.m_Type.brightness),this.m_TempEffectColor);
                   }
@@ -1131,13 +1132,13 @@ package tibia.worldmap.widgetClasses
          var _loc11_:Number = 0;
          if(param1.mountOutfit != null)
          {
-            _loc10_ = param2 - param1.mountOutfit.m_Type.exactSize / 2;
-            _loc11_ = param3 - param1.mountOutfit.m_Type.exactSize / 2;
+            _loc10_ = param2 - param1.mountOutfit.m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize / 2;
+            _loc11_ = param3 - param1.mountOutfit.m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize / 2;
          }
          else if(param1.outfit != null)
          {
-            _loc10_ = param2 - param1.outfit.m_Type.exactSize / 2;
-            _loc11_ = param3 - param1.outfit.m_Type.exactSize / 2;
+            _loc10_ = param2 - param1.outfit.m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize / 2;
+            _loc11_ = param3 - param1.outfit.m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize / 2;
          }
          if((Boolean(_loc9_) || Boolean(param4)) && Boolean(param6))
          {

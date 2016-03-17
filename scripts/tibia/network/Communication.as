@@ -15,10 +15,11 @@ package tibia.network
    import tibia.game.EditListWidget;
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.Marks;
+   import tibia.appearances.FrameGroup;
    import tibia.appearances.AppearanceAnimator;
    import tibia.appearances.AppearanceTypeRef;
-   import mx.collections.ArrayCollection;
    import mx.collections.IList;
+   import mx.collections.ArrayCollection;
    import tibia.chat.Channel;
    import tibia.chat.ChatStorage;
    import tibia.chat.ChannelSelectionWidget;
@@ -28,7 +29,6 @@ package tibia.network
    import tibia.options.OptionsStorage;
    import tibia.creatures.BuddySet;
    import tibia.container.ContainerView;
-   import tibia.options.configurationWidgetClasses.StatusOptions;
    import mx.resources.ResourceManager;
    import tibia.trade.NPCTradeWidget;
    import tibia.trade.TradeObjectRef;
@@ -38,9 +38,9 @@ package tibia.network
    import tibia.worldmap.WorldMapStorage;
    import tibia.game.EditTextWidget;
    import tibia.container.BodyContainerView;
+   import tibia.chat.MessageMode;
    import tibia.questlog.QuestLogWidget;
    import tibia.questlog.QuestFlag;
-   import tibia.chat.MessageMode;
    import tibia.help.TutorialHint;
    import tibia.magic.SpellStorage;
    import tibia.creatures.Player;
@@ -49,11 +49,13 @@ package tibia.network
    import tibia.game.BugReportWidget;
    import shared.utility.BrowserHelper;
    import flash.system.Capabilities;
-   import flash.events.ErrorEvent;
+   import tibia.game.BugReportTypo;
    import tibia.creatures.UnjustPointsInfo;
+   import tibia.game.SimpleEditTextWidget;
    import tibia.creatures.CreatureStorage;
    import shared.utility.Colour;
    import tibia.minimap.MiniMapStorage;
+   import shared.utility.AccumulatingCounter;
    import tibia.market.OfferStatistics;
    import tibia.questlog.QuestLine;
    import tibia.appearances.MissileInstance;
@@ -96,11 +98,9 @@ package tibia.network
       
       protected static const RISKINESS_DANGEROUS:int = 1;
       
-      protected static const CMARKETCREATE:int = 246;
+      protected static const CPERFORMANCEMETRICS:int = 31;
       
       protected static const CADDBUDDY:int = 220;
-      
-      protected static const CGOSOUTH:int = 103;
       
       protected static const CSETTACTICS:int = 160;
       
@@ -109,6 +109,10 @@ package tibia.network
       protected static const PK_PARTYMODE:int = 2;
       
       protected static const PATH_COST_OBSTACLE:int = 255;
+      
+      protected static const CMARKETCREATE:int = 246;
+      
+      protected static const CGOSOUTH:int = 103;
       
       protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
@@ -164,8 +168,6 @@ package tibia.network
       
       protected static const SKILL_FED:int = 15;
       
-      protected static const CCLOSENPCCHANNEL:int = 158;
-      
       protected static const CROTATEEAST:int = 112;
       
       protected static const NUM_TRAPPERS:int = 8;
@@ -190,6 +192,8 @@ package tibia.network
       
       protected static const SCREATUREPARTY:int = 145;
       
+      protected static const CGUILDMESSAGE:int = 155;
+      
       protected static const GROUND_LAYER:int = 7;
       
       protected static const CGETQUESTLOG:int = 240;
@@ -206,8 +210,6 @@ package tibia.network
       
       protected static const SKILL_NONE:int = -1;
       
-      protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
-      
       protected static const GUILD_MEMBER:int = 4;
       
       protected static const SFIELDDATA:int = 105;
@@ -218,7 +220,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1864;
+      public static const CLIENT_VERSION:uint = 2019;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -244,7 +246,7 @@ package tibia.network
       
       protected static const SKILL_CARRYSTRENGTH:int = 7;
       
-      private static const BUNDLE:String = "Communication";
+      protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
       
       protected static const STATE_PZ_ENTERED:int = 14;
       
@@ -253,6 +255,8 @@ package tibia.network
       protected static const PATH_MAX_STEPS:int = 128;
       
       protected static const SSPELLGROUPDELAY:int = 165;
+      
+      protected static const CCLOSENPCCHANNEL:int = 158;
       
       protected static const SBOTTOMROW:int = 103;
       
@@ -277,6 +281,8 @@ package tibia.network
       protected static const SLOGINERROR:int = 20;
       
       protected static const CREMOVEBUDDY:int = 221;
+      
+      private static const BUNDLE:String = "Communication";
       
       protected static const SCREATUREMARKS:int = 147;
       
@@ -470,11 +476,15 @@ package tibia.network
       
       protected static const RISKINESS_NONE:int = 0;
       
-      protected static const CEDITBUDDY:int = 222;
+      protected static const SEDITGUILDMESSAGE:int = 174;
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1055;
+      public static const PROTOCOL_VERSION:int = 1074;
+      
+      protected static const CEDITGUILDMESSAGE:int = 156;
+      
+      protected static const CEDITBUDDY:int = 222;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -1016,15 +1026,17 @@ package tibia.network
          }
       }
       
-      public function sendCINVITETOCHANNEL(param1:String) : void
+      public function sendCINVITETOCHANNEL(param1:String, param2:int) : void
       {
          var b:ByteArray = null;
          var a_Name:String = param1;
+         var a_ChannelID:int = param2;
          try
          {
             b = this.m_ServerConnection.messageWriter.createMessage();
             b.writeByte(CINVITETOCHANNEL);
             StringHelper.s_WriteToByteArray(b,a_Name,Creature.MAX_NAME_LENGHT);
+            b.writeShort(a_ChannelID);
             this.m_ServerConnection.messageWriter.finishMessage();
             return;
          }
@@ -1270,7 +1282,7 @@ package tibia.network
          {
             _loc3_.data = param1.readUnsignedByte();
          }
-         if(_loc3_.m_Type.isAnimation)
+         if(_loc3_.m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].isAnimation)
          {
             _loc5_ = param1.readUnsignedByte();
             if(_loc5_ == 0)
@@ -1535,8 +1547,10 @@ package tibia.network
       
       protected function readSCHANNELS(param1:ByteArray) : void
       {
-         var _loc2_:IList = new ArrayCollection();
-         var _loc3_:int = param1.readUnsignedByte();
+         var _loc2_:IList = null;
+         var _loc3_:int = 0;
+         _loc2_ = new ArrayCollection();
+         _loc3_ = param1.readUnsignedByte();
          while(_loc3_ > 0)
          {
             _loc2_.addItem({
@@ -1896,7 +1910,9 @@ package tibia.network
          Creature.speedB = this.readDouble(param1);
          Creature.speedC = this.readDouble(param1);
          this.m_BugreportsAllowed = param1.readUnsignedByte() == 1;
-         StatusOptions.canChangePvpFraming = param1.readUnsignedByte() == 1;
+         var _loc2_:OptionsStorage = Tibia.s_GetOptions();
+         _loc2_.uiHints.canChangePvPFramingOption = param1.readUnsignedByte() == 1;
+         _loc2_.uiHints.expertModeButtonEnabled = param1.readUnsignedByte() == 1;
       }
       
       public function sendBotCRULEVIOLATIONREPORT(param1:int, param2:String, param3:String) : void
@@ -2344,35 +2360,9 @@ package tibia.network
          }
       }
       
-      protected function readSQUESTLINE(param1:ByteArray) : void
+      protected function readSUSEDELAY(param1:ByteArray) : void
       {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:Array = null;
-         var _loc5_:int = 0;
-         var _loc6_:String = null;
-         var _loc7_:String = null;
-         var _loc8_:QuestLogWidget = null;
-         _loc2_ = param1.readUnsignedShort();
-         _loc3_ = param1.readUnsignedByte();
-         _loc4_ = new Array();
-         _loc5_ = 0;
-         while(_loc5_ < _loc3_)
-         {
-            _loc6_ = StringHelper.s_ReadLongStringFromByteArray(param1,QuestFlag.MAX_NAME_LENGTH);
-            _loc7_ = StringHelper.s_ReadLongStringFromByteArray(param1,QuestFlag.MAX_DESCRIPTION_LENGTH);
-            _loc4_.push(new QuestFlag(_loc6_,_loc7_));
-            _loc5_++;
-         }
-         if(this.m_PendingQuestLine == _loc2_)
-         {
-            _loc8_ = PopUpBase.getCurrent() as QuestLogWidget;
-            if(_loc8_ != null)
-            {
-               _loc8_.questFlags = _loc4_;
-            }
-            this.m_PendingQuestLine = -1;
-         }
+         this.m_ContainerStorage.setMultiUseDelay(param1.readUnsignedInt());
       }
       
       public function sendCLOOK(param1:int, param2:int, param3:int, param4:int, param5:int) : void
@@ -2404,13 +2394,40 @@ package tibia.network
       
       protected function readSPRIVATECHANNEL(param1:ByteArray) : void
       {
-         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
+         var _loc2_:String = null;
+         _loc2_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
          this.m_ChatStorage.addChannel(_loc2_,_loc2_,MessageMode.MESSAGE_PRIVATE_TO);
       }
       
-      protected function readSUSEDELAY(param1:ByteArray) : void
+      protected function readSQUESTLINE(param1:ByteArray) : void
       {
-         this.m_ContainerStorage.setMultiUseDelay(param1.readUnsignedInt());
+         var _loc2_:int = 0;
+         var _loc3_:int = 0;
+         var _loc4_:Array = null;
+         var _loc5_:int = 0;
+         var _loc6_:String = null;
+         var _loc7_:String = null;
+         var _loc8_:QuestLogWidget = null;
+         _loc2_ = param1.readUnsignedShort();
+         _loc3_ = param1.readUnsignedByte();
+         _loc4_ = new Array();
+         _loc5_ = 0;
+         while(_loc5_ < _loc3_)
+         {
+            _loc6_ = StringHelper.s_ReadLongStringFromByteArray(param1,QuestFlag.MAX_NAME_LENGTH);
+            _loc7_ = StringHelper.s_ReadLongStringFromByteArray(param1,QuestFlag.MAX_DESCRIPTION_LENGTH);
+            _loc4_.push(new QuestFlag(_loc6_,_loc7_));
+            _loc5_++;
+         }
+         if(this.m_PendingQuestLine == _loc2_)
+         {
+            _loc8_ = PopUpBase.getCurrent() as QuestLogWidget;
+            if(_loc8_ != null)
+            {
+               _loc8_.questFlags = _loc4_;
+            }
+            this.m_PendingQuestLine = -1;
+         }
       }
       
       protected function readSTUTORIALHINT(param1:ByteArray) : void
@@ -2496,10 +2513,11 @@ package tibia.network
          var _loc2_:int = 0;
          _loc2_ = param1.readUnsignedInt();
          var _loc3_:int = param1.readUnsignedShort();
-         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
-         if(_loc4_ != null)
+         var _loc4_:int = param1.readUnsignedShort();
+         var _loc5_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
+         if(_loc5_ != null)
          {
-            _loc4_.setSkillValue(SKILL_GOSTRENGTH,_loc3_);
+            _loc5_.setSkill(SKILL_GOSTRENGTH,_loc4_,_loc3_,0);
          }
          this.m_CreatureStorage.invalidateOpponents();
       }
@@ -2550,15 +2568,17 @@ package tibia.network
          }
       }
       
-      public function sendCEXCLUDEFROMCHANNEL(param1:String) : void
+      public function sendCEXCLUDEFROMCHANNEL(param1:String, param2:int) : void
       {
          var b:ByteArray = null;
          var a_Name:String = param1;
+         var a_ChannelID:int = param2;
          try
          {
             b = this.m_ServerConnection.messageWriter.createMessage();
             b.writeByte(CEXCLUDEFROMCHANNEL);
             StringHelper.s_WriteToByteArray(b,a_Name,Creature.MAX_NAME_LENGHT);
+            b.writeShort(a_ChannelID);
             this.m_ServerConnection.messageWriter.finishMessage();
             return;
          }
@@ -3065,13 +3085,16 @@ package tibia.network
          }
       }
       
-      public function sendCBUGREPORT(param1:String, param2:* = null) : void
+      public function sendCBUGREPORT(param1:int, param2:String, param3:* = null) : void
       {
          var Message:String = null;
-         var SystemMessage:String = null;
          var b:ByteArray = null;
-         var a_UserMessage:String = param1;
-         var a_SystemMessage:* = param2;
+         var Coordinate:Vector3D = null;
+         var TypoSpeaker:String = null;
+         var TypoText:String = null;
+         var a_BugCategory:int = param1;
+         var a_UserMessage:String = param2;
+         var a_BugInformation:* = param3;
          try
          {
             Message = "";
@@ -3082,22 +3105,37 @@ package tibia.network
             Message = Message + ("\nClient-Version=" + CLIENT_VERSION);
             Message = Message + ("\nBrowser=" + BrowserHelper.s_GetBrowserString());
             Message = Message + ("\nFlash=" + Capabilities.serverString);
-            SystemMessage = null;
-            if(a_SystemMessage is ErrorEvent && Boolean(a_SystemMessage.hasOwnProperty("error")))
-            {
-               Message = Message + ("\nInternal=" + Error(a_SystemMessage["error"]).getStackTrace());
-            }
-            else if(a_SystemMessage != null)
-            {
-               Message = Message + ("\nInternal=" + String(a_SystemMessage));
-            }
             if(Message.length > BugReportWidget.MAX_TOTAL_MESSAGE_LENGTH)
             {
                Message = Message.substr(0,BugReportWidget.MAX_TOTAL_MESSAGE_LENGTH);
             }
             b = this.m_ServerConnection.messageWriter.createMessage();
             b.writeByte(CBUGREPORT);
+            b.writeByte(a_BugCategory);
             StringHelper.s_WriteToByteArray(b,Message);
+            if(a_BugCategory == BugReportWidget.BUG_CATEGORY_MAP)
+            {
+               Coordinate = this.m_Player.getPosition();
+               if(a_BugInformation is Vector3D)
+               {
+                  Coordinate = a_BugInformation as Vector3D;
+               }
+               b.writeShort(Coordinate.x);
+               b.writeShort(Coordinate.y);
+               b.writeByte(Coordinate.z);
+            }
+            else if(a_BugCategory == BugReportWidget.BUG_CATEGORY_TYPO)
+            {
+               TypoSpeaker = "";
+               TypoText = "";
+               if(a_BugInformation is BugReportTypo)
+               {
+                  TypoSpeaker = (a_BugInformation as BugReportTypo).Speaker;
+                  TypoText = (a_BugInformation as BugReportTypo).Text;
+               }
+               StringHelper.s_WriteToByteArray(b,TypoSpeaker != null?TypoSpeaker:"");
+               StringHelper.s_WriteToByteArray(b,TypoText != null?TypoText:"");
+            }
             this.m_ServerConnection.messageWriter.finishMessage();
             return;
          }
@@ -3136,6 +3174,16 @@ package tibia.network
          {
             _loc4_.setObject(_loc2_,_loc3_);
          }
+      }
+      
+      protected function readSEDITGUILDMESSAGE(param1:ByteArray) : void
+      {
+         var _loc2_:SimpleEditTextWidget = null;
+         _loc2_ = new SimpleEditTextWidget();
+         _loc2_.ID = 0;
+         _loc2_.maxChars = ChatStorage.MAX_GUILD_MOTD_LENGTH;
+         _loc2_.text = StringHelper.s_ReadLongStringFromByteArray(param1,ChatStorage.MAX_GUILD_MOTD_LENGTH);
+         _loc2_.show();
       }
       
       public function sendCANSWERMODALDIALOG(param1:uint, param2:int, param3:int) : void
@@ -3239,6 +3287,8 @@ package tibia.network
       
       protected function readSOPENOWNCHANNEL(param1:ByteArray) : void
       {
+         var _loc2_:int = 0;
+         var _loc3_:String = null;
          var _loc4_:Channel = null;
          var _loc5_:int = 0;
          var _loc6_:int = 0;
@@ -3246,10 +3296,14 @@ package tibia.network
          var _loc8_:int = 0;
          var _loc9_:String = null;
          var _loc10_:String = null;
-         var _loc2_:int = param1.readUnsignedShort();
-         var _loc3_:String = StringHelper.s_ReadLongStringFromByteArray(param1,Channel.MAX_NAME_LENGTH);
+         _loc2_ = param1.readUnsignedShort();
+         _loc3_ = StringHelper.s_ReadLongStringFromByteArray(param1,Channel.MAX_NAME_LENGTH);
          _loc4_ = this.m_ChatStorage.addChannel(_loc2_,_loc3_,MessageMode.MESSAGE_CHANNEL);
-         this.m_ChatStorage.ownPrivateChannelID = _loc2_;
+         _loc4_.canModerate = true;
+         if(_loc4_.isPrivate)
+         {
+            this.m_ChatStorage.ownPrivateChannelID = _loc2_;
+         }
          _loc5_ = param1.readUnsignedShort();
          _loc6_ = 0;
          while(_loc6_ < _loc5_)
@@ -3481,6 +3535,25 @@ package tibia.network
                case 4:
                   _loc3_.playerPending(_loc4_);
             }
+         }
+      }
+      
+      public function sendCEDITGUILDMESSAGE(param1:String) : void
+      {
+         var b:ByteArray = null;
+         var a_Text:String = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CEDITGUILDMESSAGE);
+            StringHelper.s_WriteToByteArray(b,a_Text,ChatStorage.MAX_GUILD_MOTD_LENGTH);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CPRIVATECHANNEL,e);
+            return;
          }
       }
       
@@ -3927,6 +4000,10 @@ package tibia.network
                   this.readSPRIVATECHANNEL(CommunicationData);
                   a_MessageReader.finishMessage();
                   break;
+               case SEDITGUILDMESSAGE:
+                  this.readSEDITGUILDMESSAGE(CommunicationData);
+                  a_MessageReader.finishMessage();
+                  break;
                case SOPENOWNCHANNEL:
                   this.readSOPENOWNCHANNEL(CommunicationData);
                   a_MessageReader.finishMessage();
@@ -4056,6 +4133,34 @@ package tibia.network
          catch(e:Error)
          {
             handleSendError(CSETTACTICS,e);
+            return;
+         }
+      }
+      
+      public function sendCPERFORMANCEMETRICS(param1:AccumulatingCounter, param2:AccumulatingCounter) : void
+      {
+         var b:ByteArray = null;
+         var FLASH_FPS_LIMIT:uint = 0;
+         var a_ObjectCounter:AccumulatingCounter = param1;
+         var a_FpsCounter:AccumulatingCounter = param2;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CPERFORMANCEMETRICS);
+            b.writeShort(a_ObjectCounter.minimum);
+            b.writeShort(a_ObjectCounter.maximum);
+            b.writeShort(a_ObjectCounter.average);
+            b.writeShort(a_FpsCounter.minimum);
+            b.writeShort(a_FpsCounter.maximum);
+            b.writeShort(a_FpsCounter.average);
+            FLASH_FPS_LIMIT = 60;
+            b.writeShort(FLASH_FPS_LIMIT);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CPERFORMANCEMETRICS,e);
             return;
          }
       }
@@ -4457,21 +4562,28 @@ package tibia.network
       
       protected function readSOPENCHANNEL(param1:ByteArray) : void
       {
+         var _loc2_:int = 0;
+         var _loc3_:String = null;
+         var _loc4_:Channel = null;
+         var _loc5_:int = 0;
+         var _loc6_:int = 0;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
          var _loc9_:String = null;
          var _loc10_:String = null;
-         var _loc2_:int = param1.readUnsignedShort();
-         var _loc3_:String = StringHelper.s_ReadLongStringFromByteArray(param1,Channel.MAX_NAME_LENGTH);
-         var _loc4_:Channel = this.m_ChatStorage.addChannel(_loc2_,_loc3_,MessageMode.MESSAGE_CHANNEL);
-         var _loc5_:int = param1.readUnsignedShort();
-         var _loc6_:int = 0;
+         _loc2_ = param1.readUnsignedShort();
+         _loc3_ = StringHelper.s_ReadLongStringFromByteArray(param1,Channel.MAX_NAME_LENGTH);
+         _loc4_ = this.m_ChatStorage.addChannel(_loc2_,_loc3_,MessageMode.MESSAGE_CHANNEL);
+         _loc5_ = param1.readUnsignedShort();
+         _loc6_ = 0;
          while(_loc6_ < _loc5_)
          {
             _loc9_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
             _loc4_.playerJoined(_loc9_);
             _loc6_++;
          }
-         var _loc7_:int = param1.readUnsignedShort();
-         var _loc8_:int = 0;
+         _loc7_ = param1.readUnsignedShort();
+         _loc8_ = 0;
          while(_loc8_ < _loc7_)
          {
             _loc10_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
@@ -4559,7 +4671,7 @@ package tibia.network
             {
                throw new Error("Connection.readSOUTFIT: Unknown player outfit type " + _loc9_ + ".",0);
             }
-            _loc11_ = _loc11_ & 1 << _loc12_.patternHeight - 1 - 1;
+            _loc11_ = _loc11_ & 1 << _loc12_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].patternHeight - 1 - 1;
             _loc13_.addItem({
                "ID":_loc9_,
                "name":_loc10_,
@@ -4874,7 +4986,7 @@ package tibia.network
       {
          var SecondaryError:int = 0;
          var Mode:int = 0;
-         var ChannelID:uint = 0;
+         var ChannelID:int = 0;
          var Text:String = null;
          var Pos:Vector3D = null;
          var Value:Number = NaN;
@@ -4888,7 +5000,7 @@ package tibia.network
          {
             SecondaryError = 0;
             Mode = a_Bytes.readUnsignedByte();
-            ChannelID = 0;
+            ChannelID = -1;
             Text = null;
             Pos = null;
             Value = NaN;
@@ -4898,7 +5010,7 @@ package tibia.network
                case MessageMode.MESSAGE_CHANNEL_MANAGEMENT:
                   ChannelID = a_Bytes.readUnsignedShort();
                   Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
-                  SpeakerMatch = Text.match(/^(.+?) invites you to (his|her) private chat channel\.|^You have been excluded from ([^']+)'s channel\./);
+                  SpeakerMatch = Text.match(/^(.+?) invites you to |^You have been excluded from ([^']+)'s channel\./);
                   Speaker = SpeakerMatch != null?SpeakerMatch[1] != undefined?SpeakerMatch[1]:SpeakerMatch[3]:null;
                   NameFilter = Tibia.s_GetOptions().getNameFilterSet(NameFilterSet.DEFAULT_SET);
                   if(NameFilter != null && Boolean(NameFilter.acceptMessage(Mode,Speaker,Text)))
@@ -4909,6 +5021,10 @@ package tibia.network
                      this.m_ChatStorage.addChannelMessage(ChannelID,-1,null,0,Mode,Text);
                   }
                   break;
+               case MessageMode.MESSAGE_GUILD:
+               case MessageMode.MESSAGE_PARTY_MANAGEMENT:
+               case MessageMode.MESSAGE_PARTY:
+                  ChannelID = a_Bytes.readUnsignedShort();
                case MessageMode.MESSAGE_LOGIN:
                case MessageMode.MESSAGE_ADMIN:
                case MessageMode.MESSAGE_GAME:
@@ -4918,15 +5034,12 @@ package tibia.network
                case MessageMode.MESSAGE_STATUS:
                case MessageMode.MESSAGE_LOOT:
                case MessageMode.MESSAGE_TRADE_NPC:
-               case MessageMode.MESSAGE_GUILD:
-               case MessageMode.MESSAGE_PARTY_MANAGEMENT:
-               case MessageMode.MESSAGE_PARTY:
                case MessageMode.MESSAGE_HOTKEY_USE:
                   Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
                   SecondaryError = 3;
                   this.m_WorldMapStorage.addOnscreenMessage(null,-1,null,0,Mode,Text);
                   SecondaryError = 4;
-                  this.m_ChatStorage.addChannelMessage(-1,-1,null,0,Mode,Text);
+                  this.m_ChatStorage.addChannelMessage(ChannelID,-1,null,0,Mode,Text);
                   break;
                case MessageMode.MESSAGE_MARKET:
                   Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
@@ -5233,6 +5346,23 @@ package tibia.network
          if(_loc4_ != null && (_loc5_ = _loc4_.getBuddySet(BuddySet.DEFAULT_SET)) != null)
          {
             _loc5_.updateBuddy(_loc2_,_loc3_);
+         }
+      }
+      
+      public function sendCGUILDMESSAGE() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CGUILDMESSAGE);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CPRIVATECHANNEL,e);
+            return;
          }
       }
       

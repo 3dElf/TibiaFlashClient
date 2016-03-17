@@ -13,6 +13,7 @@ package tibia.game
    import tibia.input.gameaction.UseActionImpl;
    import tibia.input.gameaction.TurnActionImpl;
    import tibia.input.gameaction.BrowseFieldActionImpl;
+   import tibia.input.gameaction.SendBugReportActionImpl;
    import tibia.appearances.AppearanceInstance;
    import tibia.input.gameaction.SafeTradeActionImpl;
    import tibia.input.gameaction.MoveActionImpl;
@@ -382,6 +383,13 @@ package tibia.game
             {
                new BrowseFieldActionImpl(m_Absolute).perform();
             });
+            if(Tibia.s_GetCommunication().allowBugreports)
+            {
+               createTextItem(resourceManager.getString(BUNDLE,"CTX_OBJECT_REPORT_FIELD"),function(param1:*):void
+               {
+                  new SendBugReportActionImpl(null,m_Absolute,null,BugReportWidget.BUG_CATEGORY_MAP).perform();
+               });
+            }
          }
          createSeparatorItem();
          if(LookObj != null && LookObj.ID != AppearanceInstance.CREATURE && !LookObj.type.isUnmoveable && Boolean(LookObj.type.isTakeable))
@@ -444,7 +452,7 @@ package tibia.game
                {
                   if(m_CreatureTarget != null)
                   {
-                     new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,m_CreatureTarget.name).perform();
+                     new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,PrivateChatActionImpl.CHAT_CHANNEL_NO_CHANNEL,m_CreatureTarget.name).perform();
                   }
                });
                if(Tibia.s_GetChatStorage().hasOwnPrivateChannel)
@@ -453,7 +461,7 @@ package tibia.game
                   {
                      if(m_CreatureTarget != null)
                      {
-                        new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_INVITE,m_CreatureTarget.name).perform();
+                        new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_INVITE,Tibia.s_GetChatStorage().ownPrivateChannelID,m_CreatureTarget.name).perform();
                      }
                   });
                }

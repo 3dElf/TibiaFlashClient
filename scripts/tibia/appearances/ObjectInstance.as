@@ -100,8 +100,8 @@ package tibia.appearances
                this.m_SpecialPatternX = 3;
                this.m_SpecialPatternY = 1;
             }
-            this.m_SpecialPatternX = this.m_SpecialPatternX % m_Type.patternWidth;
-            this.m_SpecialPatternY = this.m_SpecialPatternY % m_Type.patternHeight;
+            this.m_SpecialPatternX = this.m_SpecialPatternX % m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].patternWidth;
+            this.m_SpecialPatternY = this.m_SpecialPatternY % m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].patternHeight;
          }
          else if(Boolean(m_Type.isLiquidPool) || Boolean(m_Type.isLiquidContainer))
          {
@@ -166,20 +166,20 @@ package tibia.appearances
                default:
                   _loc1_ = 1;
             }
-            this.m_SpecialPatternX = (_loc1_ & 3) % m_Type.patternWidth;
-            this.m_SpecialPatternY = (_loc1_ >> 2) % m_Type.patternHeight;
+            this.m_SpecialPatternX = (_loc1_ & 3) % m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].patternWidth;
+            this.m_SpecialPatternY = (_loc1_ >> 2) % m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].patternHeight;
          }
          else if(m_Type.isHangable)
          {
             this.m_HasSpecialPattern = true;
             if(this.m_Hang == AppearanceStorage.FLAG_HOOKSOUTH)
             {
-               this.m_SpecialPatternX = m_Type.patternWidth >= 2?1:0;
+               this.m_SpecialPatternX = m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].patternWidth >= 2?1:0;
                this.m_SpecialPatternY = 0;
             }
             else if(this.m_Hang == AppearanceStorage.FLAG_HOOKEAST)
             {
-               this.m_SpecialPatternX = m_Type.patternWidth >= 3?2:0;
+               this.m_SpecialPatternX = m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].patternWidth >= 3?2:0;
                this.m_SpecialPatternY = 0;
             }
             else
@@ -225,7 +225,7 @@ package tibia.appearances
             _loc7_ = -1;
             _loc8_ = -1;
          }
-         _loc9_ = getSprite(-1,_loc7_,_loc8_,param6,m_Type.isAnimation);
+         _loc9_ = getSprite(-1,_loc7_,_loc8_,param6,m_Type.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].isAnimation);
          m_CacheDirty = _loc9_.cacheMiss;
          var _loc10_:Rectangle = _loc9_.rectangle;
          s_TempPoint.setTo(param2 - _loc10_.width - m_Type.displacementX,param3 - _loc10_.height - m_Type.displacementY);

@@ -10,6 +10,7 @@ package tibia.options
    import tibia.game.SecureWebsiteService;
    import flash.events.Event;
    import flash.events.ErrorEvent;
+   import flash.events.IOErrorEvent;
    
    public class OptionsAsset extends AssetBase
    {
@@ -36,6 +37,7 @@ package tibia.options
             this.m_SecureWebsiteService.addEventListener(SecureWebsiteServiceEvent.REQUEST_DATA,this.onWebsiteServiceRequestData);
             this.m_SecureWebsiteService.addEventListener(SecureWebsiteServiceEvent.COMPLETE,this.onWebsiteServiceComplete);
             this.m_SecureWebsiteService.addEventListener(ErrorEvent.ERROR,this.onWebsiteServiceError);
+            this.m_SecureWebsiteService.addEventListener(IOErrorEvent.IO_ERROR,this.onWebsiteServiceError);
          }
       }
       

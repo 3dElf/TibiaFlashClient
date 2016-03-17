@@ -132,6 +132,8 @@ package tibia.sidebar.sideBarWidgetClasses
       
       protected var m_UIButtonChase:Button = null;
       
+      private var m_UncommittedExpertMode:Boolean = true;
+      
       protected var m_MountMode:Boolean = false;
       
       protected var m_SecureMode:int = 0;
@@ -154,6 +156,11 @@ package tibia.sidebar.sideBarWidgetClasses
       function get attackMode() : int
       {
          return this.m_AttackMode;
+      }
+      
+      function get expertMode() : Boolean
+      {
+         return this.m_ExpertMode;
       }
       
       private function onButtonClick(param1:MouseEvent) : void
@@ -218,19 +225,14 @@ package tibia.sidebar.sideBarWidgetClasses
             {
                StaticActionList.PLAYER_CANCEL.perform();
             }
-            else if(param1.currentTarget == this.m_UIButtonExpertMode)
+            else if(param1.currentTarget == this.m_UIButtonExpertMode && Boolean(this.m_UIButtonExpertMode.enabled))
             {
-               this.m_UIButtonExpertMode.selected = !this.m_UIButtonExpertMode.selected;
-               this.m_ExpertMode = this.m_UIButtonExpertMode.selected;
-               if(!this.m_ExpertMode)
+               this.expertMode = !this.expertMode;
+               if(!this.expertMode)
                {
                   options.combatPVPMode = OptionsStorage.COMBAT_PVP_MODE_DOVE;
                   _loc2_ = true;
                }
-               styleName = !!this.m_ExpertMode?WIDGET_STYLE_EXPANDED:"";
-               this.measure();
-               setActualSize(getExplicitOrMeasuredWidth(),measuredMinHeight);
-               m_WidgetInstance.height = measuredMinHeight;
             }
             _loc3_ = null;
             if(Boolean(_loc2_) && (_loc3_ = Tibia.s_GetCommunication()) != null && Boolean(_loc3_.isGameRunning))
@@ -272,6 +274,7 @@ package tibia.sidebar.sideBarWidgetClasses
          this.m_UIButtonExpertMode.toggle = true;
          this.m_UIButtonExpertMode.toolTip = resourceManager.getString(BUNDLE,"TIP_EXPERT_MODE");
          this.m_UIButtonExpertMode.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
+         this.m_UIButtonExpertMode.enabled = m_Options.uiHints.expertModeButtonEnabled;
          addChild(this.m_UIButtonExpertMode);
          this.m_UIButtonOffensive = new CustomButton();
          this.m_UIButtonOffensive.selected = this.attackMode == OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
@@ -409,6 +412,7 @@ package tibia.sidebar.sideBarWidgetClasses
          if(this.m_UncommittedSecureMode)
          {
             this.m_UIButtonSecureMode.selected = this.secureMode == OptionsStorage.COMBAT_SECURE_OFF;
+            this.m_UIButtonSecureMode.toolTip = this.secureMode == OptionsStorage.COMBAT_SECURE_OFF?resourceManager.getString(BUNDLE,"TIP_SECURE_OFF"):resourceManager.getString(BUNDLE,"TIP_SECURE_ON");
             this.m_UncommittedSecureMode = false;
          }
          if(this.m_UncommittedPVPMode)
@@ -418,6 +422,14 @@ package tibia.sidebar.sideBarWidgetClasses
             this.m_UIButtonYellowHand.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_YELLOW_HAND;
             this.m_UIButtonRedFist.selected = this.m_PVPMode == OptionsStorage.COMBAT_PVP_MODE_RED_FIST;
             this.m_UncommittedPVPMode = false;
+         }
+         if(this.m_UncommittedExpertMode)
+         {
+            this.m_UIButtonExpertMode.selected = m_Options != null && Boolean(m_Options.uiHints.expertModeButtonEnabled) && Boolean(this.m_ExpertMode);
+            styleName = !!this.m_ExpertMode?WIDGET_STYLE_EXPANDED:"";
+            invalidateSize();
+            invalidateDisplayList();
+            this.m_UncommittedExpertMode = false;
          }
       }
       
@@ -446,14 +458,6 @@ package tibia.sidebar.sideBarWidgetClasses
          return this.m_MountMode;
       }
       
-      override protected function measure() : void
-      {
-         super.measure();
-         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
-         measuredMinWidth = measuredWidth = _loc1_.left + WIDGET_VIEW_WIDTH + _loc1_.right;
-         measuredMinHeight = measuredHeight = _loc1_.top + (!!this.m_ExpertMode?WIDGET_VIEW_HEIGHT_EXPANDED:WIDGET_VIEW_HEIGHT_COLLAPSED) + _loc1_.bottom;
-      }
-      
       function get player() : Player
       {
          return this.m_Player;
@@ -467,6 +471,14 @@ package tibia.sidebar.sideBarWidgetClasses
             this.m_UncommittedChaseMode = true;
             invalidateProperties();
          }
+      }
+      
+      override protected function measure() : void
+      {
+         super.measure();
+         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
+         measuredMinWidth = measuredWidth = _loc1_.left + WIDGET_VIEW_WIDTH + _loc1_.right;
+         measuredMinHeight = measuredHeight = _loc1_.top + (!!this.m_ExpertMode?WIDGET_VIEW_HEIGHT_EXPANDED:WIDGET_VIEW_HEIGHT_COLLAPSED) + _loc1_.bottom;
       }
       
       override protected function commitOptions() : void
@@ -485,6 +497,16 @@ package tibia.sidebar.sideBarWidgetClasses
             this.chaseMode = OptionsStorage.COMBAT_CHASE_OFF;
             this.secureMode = OptionsStorage.COMBAT_SECURE_ON;
             this.pvpMode = OptionsStorage.COMBAT_PVP_MODE_DOVE;
+         }
+      }
+      
+      function set expertMode(param1:Boolean) : void
+      {
+         if(this.m_ExpertMode != param1)
+         {
+            this.m_ExpertMode = param1;
+            this.m_UncommittedExpertMode = true;
+            invalidateProperties();
          }
       }
       
@@ -519,6 +541,14 @@ package tibia.sidebar.sideBarWidgetClasses
          if(param1.property == "*" || param1.property == "combatPVPMode")
          {
             this.pvpMode = m_Options.combatPVPMode;
+         }
+         if(param1.property == "*" || param1.property == "uiHints")
+         {
+            this.m_UIButtonExpertMode.enabled = m_Options.uiHints.expertModeButtonEnabled;
+            if(!m_Options.uiHints.expertModeButtonEnabled)
+            {
+               this.expertMode = false;
+            }
          }
       }
       

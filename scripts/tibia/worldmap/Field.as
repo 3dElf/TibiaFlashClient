@@ -6,6 +6,7 @@ package tibia.worldmap
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.AppearanceType;
    import tibia.appearances.AppearanceInstance;
+   import tibia.appearances.FrameGroup;
    import tibia.appearances.AppearanceStorage;
    import shared.utility.Colour;
    
@@ -307,7 +308,7 @@ package tibia.worldmap
          {
             _loc5_ = this.m_ObjectsRenderer[this.m_CacheObjectsCount];
             _loc6_ = _loc5_.type;
-            if(!_loc6_.isCachable || _loc6_.exactSize + Math.max(_loc6_.displacementX,_loc6_.displacementY) + this.m_CacheObjectsHeight > FIELD_CACHESIZE)
+            if(!_loc6_.isCachable || _loc6_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize + Math.max(_loc6_.displacementX,_loc6_.displacementY) + this.m_CacheObjectsHeight > FIELD_CACHESIZE)
             {
                break;
             }

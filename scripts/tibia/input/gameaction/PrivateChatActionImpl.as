@@ -14,11 +14,13 @@ package tibia.input.gameaction
    public class PrivateChatActionImpl implements IActionImpl
    {
       
-      public static const OPEN_CHAT_CHANNEL:int = 0;
-      
       private static const BUNDLE:String = "ChatWidget";
       
+      public static const CHAT_CHANNEL_NO_CHANNEL:int = -1;
+      
       public static const CHAT_CHANNEL_INVITE:int = 1;
+      
+      public static const OPEN_CHAT_CHANNEL:int = 0;
       
       public static const OPEN_MESSAGE_CHANNEL:int = 3;
       
@@ -26,9 +28,11 @@ package tibia.input.gameaction
        
       protected var m_Type:int = -1;
       
+      protected var m_ChannelID:int = -1;
+      
       protected var m_Name:String = null;
       
-      public function PrivateChatActionImpl(param1:int, param2:String)
+      public function PrivateChatActionImpl(param1:int, param2:int, param3:String)
       {
          super();
          if(param1 != OPEN_CHAT_CHANNEL && param1 != OPEN_MESSAGE_CHANNEL && param1 != CHAT_CHANNEL_INVITE && param1 != CHAT_CHANNEL_EXCLUDE)
@@ -36,7 +40,8 @@ package tibia.input.gameaction
             throw new ArgumentError("ChatActionImpl.ChatActionImpl: Invalid type: " + param1 + ".");
          }
          this.m_Type = param1;
-         this.m_Name = param2;
+         this.m_ChannelID = param2;
+         this.m_Name = param3;
       }
       
       public function perform(param1:Boolean = false) : void
@@ -114,15 +119,15 @@ package tibia.input.gameaction
                   }
                   break;
                case CHAT_CHANNEL_INVITE:
-                  if(_loc3_.hasOwnPrivateChannel)
+                  if(this.m_ChannelID > -1)
                   {
-                     _loc5_.sendCINVITETOCHANNEL(param2);
+                     _loc5_.sendCINVITETOCHANNEL(param2,this.m_ChannelID);
                   }
                   break;
                case CHAT_CHANNEL_EXCLUDE:
-                  if(_loc3_.hasOwnPrivateChannel)
+                  if(this.m_ChannelID > -1)
                   {
-                     _loc5_.sendCEXCLUDEFROMCHANNEL(param2);
+                     _loc5_.sendCEXCLUDEFROMCHANNEL(param2,this.m_ChannelID);
                   }
             }
          }

@@ -25,8 +25,6 @@ package tibia.sessiondump
    public class Sessiondump extends EventDispatcher implements IServerConnection
    {
       
-      protected static const CMARKETCREATE:int = 246;
-      
       protected static const CUPCONTAINER:int = 136;
       
       protected static const CQUITGAME:int = 20;
@@ -39,6 +37,8 @@ package tibia.sessiondump
       
       protected static const CGONORTHWEST:int = 109;
       
+      protected static const CMARKETCREATE:int = 246;
+      
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       protected static const SPLAYERSTATE:int = 162;
@@ -50,6 +50,8 @@ package tibia.sessiondump
       protected static const NPC_SPEECH_NONE:uint = 0;
       
       protected static const CSETTACTICS:int = 160;
+      
+      protected static const CPERFORMANCEMETRICS:int = 31;
       
       protected static const PK_REVENGE:int = 6;
       
@@ -67,13 +69,13 @@ package tibia.sessiondump
       
       protected static const NPC_SPEECH_TRAVEL:uint = 5;
       
-      protected static const CGOSOUTH:int = 103;
-      
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       protected static const SSETTACTICS:int = 167;
       
       protected static const SPLAYERDATABASIC:int = 159;
+      
+      protected static const CGOSOUTH:int = 103;
       
       protected static const PACKETLENGTH_SIZE:int = 2;
       
@@ -145,19 +147,21 @@ package tibia.sessiondump
       
       protected static const CCANCEL:int = 190;
       
+      protected static const CGUILDMESSAGE:int = 155;
+      
       protected static const SUMMON_OTHERS:int = 2;
       
-      protected static const SKILL_NONE:int = -1;
+      protected static const CREMOVEBUDDY:int = 221;
       
       protected static const CCLOSECONTAINER:int = 135;
       
-      protected static const GUILD_MEMBER:int = 4;
+      protected static const SKILL_NONE:int = -1;
       
       protected static const SFIELDDATA:int = 105;
       
-      protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
+      private static const KEYFRAME_STATE_PROCESS:uint = 1;
       
-      protected static const CREMOVEBUDDY:int = 221;
+      protected static const GUILD_MEMBER:int = 4;
       
       protected static const SKILL_HITPOINTS_PERCENT:int = 3;
       
@@ -173,13 +177,11 @@ package tibia.sessiondump
       
       protected static const SMISSILEEFFECT:int = 133;
       
-      protected static const NPC_SPEECH_TRADER:uint = 2;
-      
       protected static const CGOWEST:int = 104;
       
       protected static const PROFESSION_NONE:int = 0;
       
-      public static const SCREATUREDATA:int = 3;
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       protected static const STATE_PZ_ENTERED:int = 14;
       
@@ -211,13 +213,13 @@ package tibia.sessiondump
       
       protected static const SLOGINERROR:int = 20;
       
-      private static const KEYFRAME_STATE_PROCESS:uint = 1;
-      
       protected static const SCREATUREMARKS:int = 147;
       
       private static const HEADER_MAGIC_BYTES_SIZE:uint = 3;
       
       protected static const CREJECTTRADE:int = 128;
+      
+      public static const SCREATUREDATA:int = 3;
       
       protected static const CREVOKEINVITATION:int = 165;
       
@@ -226,8 +228,6 @@ package tibia.sessiondump
       protected static const CLOGIN:int = 10;
       
       protected static const ERR_CONNECTION_LOST:int = 6;
-      
-      protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
       
       protected static const SUNJUSTIFIEDPOINTS:int = 183;
       
@@ -244,6 +244,8 @@ package tibia.sessiondump
       protected static const CGETQUESTLINE:int = 241;
       
       protected static const SSNAPBACK:int = 181;
+      
+      protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
       
       protected static const CROTATESOUTH:int = 113;
       
@@ -274,6 +276,8 @@ package tibia.sessiondump
       protected static const SPRIVATECHANNEL:int = 173;
       
       protected static const SBLESSINGS:int = 156;
+      
+      protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
       
       protected static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
       
@@ -375,11 +379,15 @@ package tibia.sessiondump
       
       protected static const SDELETEONMAP:int = 108;
       
+      protected static const CEDITGUILDMESSAGE:int = 156;
+      
       protected static const CROTATEWEST:int = 114;
       
-      public static const PROTOCOL_VERSION:int = 1055;
+      public static const PROTOCOL_VERSION:int = 1074;
       
       protected static const SCREATUREOUTFIT:int = 142;
+      
+      protected static const SEDITGUILDMESSAGE:int = 174;
       
       protected static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
       

@@ -133,7 +133,7 @@ package
       
       public static const CLIENT_TYPE:uint = 3;
       
-      public static const CLIENT_VERSION:uint = 1864;
+      public static const CLIENT_VERSION:uint = 2019;
       
       private static const OPTIONS_SAVE_INTERVAL:int = 30 * 60 * 1000;
       
@@ -763,6 +763,8 @@ package
       
       private var _embed_css_images_Minimap_ZoomIn_over_png_1540463935:Class;
       
+      private var _embed_css_images_Icons_CombatControls_ExpertMode_disabled_png_344934570:Class;
+      
       private var _embed_css_images_Widget_Footer_tileable_end01_png_913406746:Class;
       
       private var _embed_css_images_Icons_CombatControls_PvPOff_active_png_133651908:Class;
@@ -1269,6 +1271,7 @@ package
          this._embed_css_images_Icons_CombatControls_DoveOn_over_png_1321323654 = Tibia__embed_css_images_Icons_CombatControls_DoveOn_over_png_1321323654;
          this._embed_css_images_Icons_CombatControls_ExpertModeOn_idle_png_390361655 = Tibia__embed_css_images_Icons_CombatControls_ExpertModeOn_idle_png_390361655;
          this._embed_css_images_Icons_CombatControls_ExpertModeOn_over_png_1675686199 = Tibia__embed_css_images_Icons_CombatControls_ExpertModeOn_over_png_1675686199;
+         this._embed_css_images_Icons_CombatControls_ExpertMode_disabled_png_344934570 = Tibia__embed_css_images_Icons_CombatControls_ExpertMode_disabled_png_344934570;
          this._embed_css_images_Icons_CombatControls_ExpertMode_idle_png_1288628946 = Tibia__embed_css_images_Icons_CombatControls_ExpertMode_idle_png_1288628946;
          this._embed_css_images_Icons_CombatControls_ExpertMode_over_png_957839826 = Tibia__embed_css_images_Icons_CombatControls_ExpertMode_over_png_957839826;
          this._embed_css_images_Icons_CombatControls_MediumOff_idle_png_1526437001 = Tibia__embed_css_images_Icons_CombatControls_MediumOff_idle_png_1526437001;
@@ -2652,8 +2655,11 @@ package
       {
          if(param1.property == "generalUIGameWindowHeight" || param1.property == "*")
          {
-            this.updateCombatTactics();
             this.updateGameWindowSize();
+         }
+         if(param1.property == "*")
+         {
+            this.updateCombatTactics();
          }
          this.m_CurrentOptionsDirty = true;
       }
@@ -3428,6 +3434,10 @@ package
       
       private function onConnectionGame(param1:ConnectionEvent) : void
       {
+         if(this.m_ChatStorage != null)
+         {
+            this.m_ChatStorage.resetChannelActivationTimeout();
+         }
          PopUpQueue.getInstance().hideByPriority(PopUpBase.DEFAULT_PRIORITY);
          if(ContextMenuBase.getCurrent() != null)
          {

@@ -21,6 +21,7 @@ package tibia.game
    import flash.display.BitmapData;
    import flash.display.Bitmap;
    import tibia.appearances.AppearanceInstance;
+   import tibia.appearances.FrameGroup;
    
    public class ObjectDragImpl
    {
@@ -206,8 +207,8 @@ package tibia.game
                   _loc10_.bitmapData.copyPixels(_loc9_,_loc7_,new Point(0,0));
                }
                _loc3_.source = _loc10_;
-               _loc4_ = _loc7_.width - _loc6_.exactSize;
-               _loc5_ = _loc7_.height - _loc6_.exactSize;
+               _loc4_ = _loc7_.width - _loc6_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize;
+               _loc5_ = _loc7_.height - _loc6_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize;
             }
             this.m_DragStart = null;
             this.m_DragPosition = -1;

@@ -141,7 +141,7 @@ package tibia.controls.dynamicTabBarClasses
          {
             this.m_UncommittedClosePolicy = false;
          }
-         if(this.m_UncommittedEnabled)
+         if(Boolean(this.m_UncommittedEnabled) && this.m_UICloseButton != null)
          {
             this.m_UICloseButton.enabled = enabled;
             this.m_UncommittedEnabled = false;

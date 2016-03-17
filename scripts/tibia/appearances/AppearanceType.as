@@ -1,8 +1,5 @@
 package tibia.appearances
 {
-   import tibia.appearances.widgetClasses.ISpriteProvider;
-   import tibia.appearances.widgetClasses.CachedSpriteInformation;
-   
    public class AppearanceType
    {
       
@@ -40,33 +37,27 @@ package tibia.appearances
       
       private static const ACTION_ATTACK_OR_TALK:int = 102;
        
-      public var isHookEast:Boolean = false;
-      
       public var isMarket:Boolean = false;
+      
+      public var isHookEast:Boolean = false;
       
       public var isUnmoveable:Boolean = false;
       
       public var isCloth:Boolean = false;
       
-      public var patternDepth:int = 0;
+      public var isLight:Boolean = false;
       
-      public var patternWidth:int = 0;
+      public var isHangable:Boolean = false;
       
       public var isUnsight:Boolean = false;
       
       public var ID:int = 0;
       
-      public var isHangable:Boolean = false;
-      
       public var displacementX:int = 0;
       
       public var displacementY:int = 0;
       
-      public var height:int = 0;
-      
       public var isLiquidContainer:Boolean = false;
-      
-      public var isLight:Boolean = false;
       
       public var clothSlot:int = 0;
       
@@ -76,19 +67,17 @@ package tibia.appearances
       
       public var isAnimateAlways:Boolean = false;
       
-      public var layers:int = 0;
+      public var isLiquidPool:Boolean = false;
       
       public var isLyingObject:Boolean = false;
       
       public var marketRestrictLevel:uint = 0;
       
-      public var brightness:int = 0;
-      
       public var isUnpassable:Boolean = false;
       
-      public var phases:int = 0;
+      public var brightness:int = 0;
       
-      public var isLiquidPool:Boolean = false;
+      public var marketCategory:int = 0;
       
       public var isIgnoreLook:Boolean = false;
       
@@ -98,19 +87,17 @@ package tibia.appearances
       
       public var isHookSouth:Boolean = false;
       
-      public var marketCategory:int = 0;
-      
       public var isCachable:Boolean = false;
       
-      public var isAvoid:Boolean = false;
-      
       public var marketShowAs:int = 0;
+      
+      public var isAvoid:Boolean = false;
       
       public var isContainer:Boolean = false;
       
       public var automapColour:int = 0;
       
-      public var isAnimation:Boolean = false;
+      public var FrameGroups:Object;
       
       public var lightColour:int = 0;
       
@@ -121,8 +108,6 @@ package tibia.appearances
       public var isClip:Boolean = false;
       
       public var isDonthide:Boolean = false;
-      
-      public var exactSize:int = 0;
       
       public var preventMovementAnimation:Boolean = false;
       
@@ -138,13 +123,9 @@ package tibia.appearances
       
       public var isCumulative:Boolean = false;
       
-      public var spritesheetIDs:Vector.<uint>;
-      
       public var isUsable:Boolean = false;
       
       public var isAutomap:Boolean = false;
-      
-      public var width:int = 0;
       
       public var isTop:Boolean = false;
       
@@ -154,41 +135,27 @@ package tibia.appearances
       
       public var isWriteableOnce:Boolean = false;
       
-      public var spriteIDs:Vector.<uint>;
-      
-      public var spriteProvider:ISpriteProvider = null;
+      public var defaultAction:int = -1;
       
       public var isMultiUse:Boolean = false;
       
       public var marketTradeAs:int = 0;
       
-      public var patternHeight:int = 0;
-      
       public var isForceUse:Boolean = false;
       
-      public var animator:tibia.appearances.AppearanceAnimator = null;
-      
-      public var numSprites:int = 0;
-      
-      public var defaultAction:int = -1;
+      public var marketName:String = null;
       
       public var isHeight:Boolean = false;
       
       public var isBottom:Boolean = false;
       
-      public var marketName:String = null;
-      
       public var maxTextLength:int = 0;
-      
-      public var cachedSpriteInformations:Vector.<CachedSpriteInformation>;
       
       public var isRotateable:Boolean = false;
       
       public function AppearanceType(param1:int)
       {
-         this.spriteIDs = new Vector.<uint>();
-         this.spritesheetIDs = new Vector.<uint>();
-         this.cachedSpriteInformations = new Vector.<CachedSpriteInformation>();
+         this.FrameGroups = {};
          super();
          this.ID = param1;
       }

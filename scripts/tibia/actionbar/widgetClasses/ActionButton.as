@@ -27,6 +27,7 @@ package tibia.actionbar.widgetClasses
    import flash.display.BitmapData;
    import tibia.appearances.widgetClasses.CachedSpriteInformation;
    import tibia.appearances.AppearanceType;
+   import tibia.appearances.FrameGroup;
    import tibia.input.gameaction.TalkAction;
    import mx.events.PropertyChangeEvent;
    import tibia.game.Delay;
@@ -383,7 +384,7 @@ package tibia.actionbar.widgetClasses
             }
             this.m_LocalAppearanceBitmapCache.copyPixels(_loc4_.bitmapData,_loc4_.rectangle,s_ZeroPoint);
             s_Rect.setTo(0,0,_loc4_.rectangle.width,_loc4_.rectangle.height);
-            s_Trans.a = s_Trans.d = ICON_SIZE / _loc3_.exactSize;
+            s_Trans.a = s_Trans.d = ICON_SIZE / _loc3_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize;
             _loc2_ = this.m_LocalAppearanceBitmapCache;
          }
          else if(this.m_ActionSpell != null)
@@ -573,7 +574,7 @@ package tibia.actionbar.widgetClasses
          if(this.m_ActionObject != null)
          {
             _loc4_ = this.m_ActionObject.type;
-            if(Boolean(this.m_ActionIconCacheMiss) || _loc4_ != null && (Boolean(_loc4_.isAnimateAlways) || Boolean(_loc4_.isAnimation)))
+            if(Boolean(this.m_ActionIconCacheMiss) || Boolean(_loc4_ != null) && (Boolean(_loc4_.isAnimateAlways || _loc4_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].isAnimation)))
             {
                this.m_ActionObject.animate(Tibia.s_FrameTibiaTimestamp);
                this.drawActionIcon();

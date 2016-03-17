@@ -21,7 +21,8 @@ package
             "HEADING_RO":"It is empty.",
             "TITLE":"Show Text",
             "HEADING_RW_TEXT":"You read the following.\nYou can enter new text.",
-            "HEADING_RW_TEXT_AUTHOR":"You read the following, written by\n{0}.\nYou can enter new text."
+            "HEADING_RW_TEXT_AUTHOR":"You read the following, written by\n{0}.\nYou can enter new text.",
+            "TITLE_EDIT":"Edit Text"
          };
          return _loc1_;
       }

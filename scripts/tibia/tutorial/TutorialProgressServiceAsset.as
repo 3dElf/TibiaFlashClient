@@ -7,6 +7,7 @@ package tibia.tutorial
    import flash.events.ErrorEvent;
    import mx.resources.ResourceManager;
    import flash.events.Event;
+   import flash.events.IOErrorEvent;
    
    public class TutorialProgressServiceAsset extends AssetBase
    {
@@ -26,6 +27,7 @@ package tibia.tutorial
          this.m_SecureWebsiteService.addEventListener(SecureWebsiteServiceEvent.REQUEST_DATA,this.onWebsiteServiceRequestData);
          this.m_SecureWebsiteService.addEventListener(SecureWebsiteServiceEvent.COMPLETE,this.onWebsiteServiceComplete);
          this.m_SecureWebsiteService.addEventListener(ErrorEvent.ERROR,this.onWebsiteServiceError);
+         this.m_SecureWebsiteService.addEventListener(IOErrorEvent.IO_ERROR,this.onWebsiteServiceError);
       }
       
       override protected function processDownloadedData(param1:URLLoader) : Boolean
@@ -61,9 +63,9 @@ package tibia.tutorial
       
       private function onWebsiteServiceError(param1:ErrorEvent) : void
       {
+         this.m_ProgressIdentifierToUpload = null;
          var _loc2_:String = null;
          var _loc3_:ErrorEvent = null;
-         this.m_ProgressIdentifierToUpload = null;
          if(param1.errorID == -4)
          {
             _loc2_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_USER_HAS_LOGGED_OUT_WHILE_PLAYING");
@@ -72,7 +74,10 @@ package tibia.tutorial
          }
          else if(param1.errorID != -5)
          {
-            dispatchEvent(param1);
+            _loc2_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_LOST_CONNECTION");
+            _loc3_ = new ErrorEvent(ErrorEvent.ERROR,false,false,_loc2_,param1.errorID);
+            dispatchEvent(_loc3_);
+            param1.preventDefault();
          }
       }
       
