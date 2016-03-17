@@ -474,6 +474,8 @@ package tibia.worldmap.widgetClasses
       
       private var m_WorldMapStorage:WorldMapStorage = null;
       
+      private var m_OptionsAntialiasing:Boolean = false;
+      
       protected var m_CreatureNameCache:TextFieldCache = null;
       
       protected var m_DrawnTextualEffects:Vector.<tibia.worldmap.widgetClasses.RenderAtom> = null;
@@ -1368,6 +1370,7 @@ package tibia.worldmap.widgetClasses
             this.m_OptionsLevelSeparator = this.options.rendererLevelSeparator;
             this.m_OptionsLightEnabled = this.options.rendererLightEnabled;
             this.m_OptionsScaleMap = this.options.rendererScaleMap;
+            this.m_OptionsAntialiasing = this.options.rendererAntialiasing;
          }
          else
          {
@@ -1377,6 +1380,7 @@ package tibia.worldmap.widgetClasses
             this.m_OptionsLevelSeparator = NaN;
             this.m_OptionsLightEnabled = false;
             this.m_OptionsScaleMap = true;
+            this.m_OptionsAntialiasing = false;
          }
          if(stage != null && !isNaN(this.m_OptionsFrameRate))
          {
@@ -2200,7 +2204,7 @@ package tibia.worldmap.widgetClasses
             this.m_MainLayer.draw(this.m_TiledLightmapRenderer.lightmapBitmap,this.m_LightTranslate,null,BlendMode.MULTIPLY,this.m_LightClipRect,true);
          }
          graphics.clear();
-         graphics.beginBitmapFill(this.m_MainLayer,this.m_Transform,false,true);
+         graphics.beginBitmapFill(this.m_MainLayer,this.m_Transform,false,this.m_OptionsAntialiasing);
          graphics.drawRect(0,0,unscaledWidth,unscaledHeight);
          graphics.endFill();
          this.drawCreatureStatus();

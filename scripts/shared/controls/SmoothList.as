@@ -1,6 +1,7 @@
 package shared.controls
 {
    import mx.core.ScrollControlBase;
+   import flash.geom.Point;
    import mx.styles.CSSStyleDeclaration;
    import mx.styles.StyleManager;
    import shared.utility.ExtentCache;
@@ -11,7 +12,6 @@ package shared.controls
    import mx.events.ScrollEvent;
    import mx.managers.LayoutManager;
    import mx.events.ScrollEventDirection;
-   import flash.geom.Point;
    import flash.display.Graphics;
    import flash.utils.Timer;
    import flash.events.TimerEvent;
@@ -33,6 +33,8 @@ package shared.controls
       
       public static const FOLLOW_TAIL_ON:String = "on";
       
+      private static const m_TempPoint2:Point = new Point();
+      
       private static const DRAGSCROLL_DELAY:int = 50;
       
       private static const LINE_SCROLL_SIZE:Number = 6;
@@ -40,6 +42,8 @@ package shared.controls
       private static const DRAGSCROLL_MAX_DISTANCE:Number = 128;
       
       public static const FOLLOW_TAIL_AUTO:String = "auto";
+      
+      private static const m_TempPoint:Point = new Point();
       
       private static const DRAGSCROLL_MAX_SPEED:Number = 12;
       
@@ -450,6 +454,7 @@ package shared.controls
       
       public function pointToItemIndex(param1:Number, param2:Number) : int
       {
+         var _loc11_:Point = null;
          var _loc3_:int = this.m_FirstVisibleItem;
          var _loc4_:int = this.m_LastVisibleItem;
          if(_loc3_ < 0 || _loc4_ < 0 || !hitTestPoint(param1,param2))
@@ -461,7 +466,17 @@ package shared.controls
          {
             _loc5_ = 0;
          }
-         var _loc6_:Point = globalToLocal(new Point(param1,param2));
+         m_TempPoint.setTo(param1,param2);
+         var _loc6_:Point = globalToLocal(m_TempPoint);
+         if(_loc6_.x < 0 || _loc6_.x > this.width || _loc6_.y < 0 || _loc6_.y > this.height)
+         {
+            return -1;
+         }
+         _loc11_ = this.m_UIItemLayer.globalToContent(m_TempPoint);
+         if(_loc11_.x < 0 || _loc11_.x > this.m_UIItemLayer.width)
+         {
+            return -1;
+         }
          var _loc7_:Number = unscaledHeight - viewMetrics.top - viewMetrics.bottom;
          if(Boolean(this.m_AlignBottom) && this.m_ExtentChache.bottom(this.m_LastVisibleItem) < _loc7_)
          {
@@ -508,7 +523,7 @@ package shared.controls
       {
          if(param1 != null)
          {
-            this.m_UIItemLayer.addEventListener(MouseEvent.MOUSE_MOVE,this.onMouseMove);
+            this.updateRollOverItem(param1.stageX,param1.stageY,true);
             this.m_DragScrollClick = null;
          }
       }
@@ -761,14 +776,13 @@ package shared.controls
       {
          if(param1 != null)
          {
-            this.m_UIItemLayer.removeEventListener(MouseEvent.MOUSE_MOVE,this.onMouseMove);
             if(Boolean(param1.buttonDown) && this.m_DragScrollClick != null && this.m_DragScrollTimer == null)
             {
                this.startDragToScroll();
             }
             if(this.m_RollOverItem > -1)
             {
-               this.updateRollOverItem(NaN,NaN,true);
+               this.updateRollOverItem(param1.stageX,param1.stageY,true);
             }
          }
       }
@@ -921,9 +935,10 @@ package shared.controls
             this.m_UIItemLayer.addEventListener(MouseEvent.CLICK,this.onMouseClick);
             this.m_UIItemLayer.addEventListener(MouseEvent.MOUSE_DOWN,this.onMouseDown);
             this.m_UIItemLayer.addEventListener(MouseEvent.MOUSE_UP,this.onMouseUp);
-            this.m_UIItemLayer.addEventListener(MouseEvent.ROLL_OUT,this.onRollOut);
-            this.m_UIItemLayer.addEventListener(MouseEvent.ROLL_OVER,this.onRollOver);
             this.m_UIContentLayer.addChild(this.m_UIItemLayer);
+            addEventListener(MouseEvent.ROLL_OUT,this.onRollOut);
+            addEventListener(MouseEvent.ROLL_OVER,this.onRollOver);
+            addEventListener(MouseEvent.MOUSE_MOVE,this.onMouseMove);
             this.m_UIConstructed = true;
          }
       }

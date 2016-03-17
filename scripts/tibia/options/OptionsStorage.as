@@ -279,6 +279,8 @@ package tibia.options
        
       private var m_MarketSelectedType:int = -1;
       
+      private var m_RendererAntialiasing:Boolean = false;
+      
       private var m_StatusPlayerMana:Boolean = false;
       
       private var m_GeneralInputSetMode:int = -1;
@@ -317,9 +319,9 @@ package tibia.options
       
       private var m_StatusCreatureHealth:Boolean = false;
       
-      private var m_MarketBrowserLevel:Boolean = false;
-      
       private var m_NPCTradeSellKeepEquipped:Boolean = false;
+      
+      private var m_MarketBrowserLevel:Boolean = false;
       
       private var m_StatusPlayerHealth:Boolean = false;
       
@@ -576,11 +578,6 @@ package tibia.options
          }
       }
       
-      private function set _251830874statusPlayerMana(param1:Boolean) : void
-      {
-         this.m_StatusPlayerMana = param1;
-      }
-      
       private function hasMethod(param1:String) : Boolean
       {
          var a_Name:String = param1;
@@ -625,15 +622,9 @@ package tibia.options
          this.m_MarketBrowserEditor = param1;
       }
       
-      [Bindable(event="propertyChange")]
-      public function set statusCreatureHealth(param1:Boolean) : void
+      private function set _251830874statusPlayerMana(param1:Boolean) : void
       {
-         var _loc2_:Object = this.statusCreatureHealth;
-         if(_loc2_ !== param1)
-         {
-            this._1714951155statusCreatureHealth = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"statusCreatureHealth",_loc2_,param1));
-         }
+         this.m_StatusPlayerMana = param1;
       }
       
       [Bindable(event="propertyChange")]
@@ -653,13 +644,13 @@ package tibia.options
       }
       
       [Bindable(event="propertyChange")]
-      public function set npcTradeLayout(param1:int) : void
+      public function set statusCreatureHealth(param1:Boolean) : void
       {
-         var _loc2_:Object = this.npcTradeLayout;
+         var _loc2_:Object = this.statusCreatureHealth;
          if(_loc2_ !== param1)
          {
-            this._738874381npcTradeLayout = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"npcTradeLayout",_loc2_,param1));
+            this._1714951155statusCreatureHealth = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"statusCreatureHealth",_loc2_,param1));
          }
       }
       
@@ -688,6 +679,9 @@ package tibia.options
                   continue;
                case "scaleMap":
                   this.m_RendererScaleMap = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  continue;
+               case "antialiasing":
+                  this.m_RendererAntialiasing = XMLHelper.s_UnmarshallBoolean(_loc3_);
                   continue;
                case "maxFrameRate":
                   this.m_RendererMaxFrameRate = Math.max(10,Math.min(XMLHelper.s_UnmarshallInteger(_loc3_),60));
@@ -803,13 +797,13 @@ package tibia.options
       }
       
       [Bindable(event="propertyChange")]
-      public function set npcTradeSellKeepEquipped(param1:Boolean) : void
+      public function set npcTradeLayout(param1:int) : void
       {
-         var _loc2_:Object = this.npcTradeSellKeepEquipped;
+         var _loc2_:Object = this.npcTradeLayout;
          if(_loc2_ !== param1)
          {
-            this._2042619673npcTradeSellKeepEquipped = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"npcTradeSellKeepEquipped",_loc2_,param1));
+            this._738874381npcTradeLayout = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"npcTradeLayout",_loc2_,param1));
          }
       }
       
@@ -837,6 +831,17 @@ package tibia.options
          {
             param1.appendChild(this.m_MessageFilterSet[_loc3_].marshall());
             _loc3_++;
+         }
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set npcTradeSellKeepEquipped(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.npcTradeSellKeepEquipped;
+         if(_loc2_ !== param1)
+         {
+            this._2042619673npcTradeSellKeepEquipped = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"npcTradeSellKeepEquipped",_loc2_,param1));
          }
       }
       
@@ -1117,6 +1122,17 @@ package tibia.options
          this.m_StatusPlayerFlags = param1;
       }
       
+      [Bindable(event="propertyChange")]
+      public function set rendererScaleMap(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.rendererScaleMap;
+         if(_loc2_ !== param1)
+         {
+            this._1408018027rendererScaleMap = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererScaleMap",_loc2_,param1));
+         }
+      }
+      
       private function marshallMarket(param1:XML) : void
       {
          param1.appendChild(<market>
@@ -1351,6 +1367,7 @@ package tibia.options
          this.m_RendererLightEnabled = false;
          this.m_RendererMaxFrameRate = 50;
          this.m_RendererScaleMap = true;
+         this.m_RendererAntialiasing = false;
          this.m_RendererShowFrameRate = false;
       }
       
@@ -1387,13 +1404,13 @@ package tibia.options
       }
       
       [Bindable(event="propertyChange")]
-      public function set generalUIChatLeftViewWidth(param1:Number) : void
+      public function set rendererAntialiasing(param1:Boolean) : void
       {
-         var _loc2_:Object = this.generalUIChatLeftViewWidth;
+         var _loc2_:Object = this.rendererAntialiasing;
          if(_loc2_ !== param1)
          {
-            this._1252438854generalUIChatLeftViewWidth = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"generalUIChatLeftViewWidth",_loc2_,param1));
+            this._1851025751rendererAntialiasing = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererAntialiasing",_loc2_,param1));
          }
       }
       
@@ -1473,6 +1490,17 @@ package tibia.options
       public function get statusCreatureFlags() : Boolean
       {
          return this.m_StatusCreatureFlags;
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set generalUIChatLeftViewWidth(param1:Number) : void
+      {
+         var _loc2_:Object = this.generalUIChatLeftViewWidth;
+         if(_loc2_ !== param1)
+         {
+            this._1252438854generalUIChatLeftViewWidth = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"generalUIChatLeftViewWidth",_loc2_,param1));
+         }
       }
       
       [Bindable(event="propertyChange")]
@@ -1576,6 +1604,11 @@ package tibia.options
          }
       }
       
+      private function set _456993208marketBrowserDepot(param1:Boolean) : void
+      {
+         this.m_MarketBrowserDepot = param1;
+      }
+      
       [Bindable(event="propertyChange")]
       public function set marketBrowserProfession(param1:Boolean) : void
       {
@@ -1585,11 +1618,6 @@ package tibia.options
             this._273891688marketBrowserProfession = param1;
             this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserProfession",_loc2_,param1));
          }
-      }
-      
-      private function set _456993208marketBrowserDepot(param1:Boolean) : void
-      {
-         this.m_MarketBrowserDepot = param1;
       }
       
       private function initialiseMappingSet() : void
@@ -1676,13 +1704,9 @@ package tibia.options
                         </help>);
       }
       
-      public function resetMessageFilterSet() : void
+      private function set _1851025751rendererAntialiasing(param1:Boolean) : void
       {
-         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("MessageFilterSet");
-         if(_loc1_.length() > 0)
-         {
-            this.unmarshallMessageFilterSet(_loc1_[0],this.m_Version);
-         }
+         this.m_RendererAntialiasing = param1;
       }
       
       [Bindable(event="propertyChange")]
@@ -1737,6 +1761,15 @@ package tibia.options
       private function set _1916522523generalUIGameWindowHeight(param1:Number) : void
       {
          this.m_GeneralUIGameWindowHeight = Math.max(0,Math.min(param1,100));
+      }
+      
+      public function resetMessageFilterSet() : void
+      {
+         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("MessageFilterSet");
+         if(_loc1_.length() > 0)
+         {
+            this.unmarshallMessageFilterSet(_loc1_[0],this.m_Version);
+         }
       }
       
       private function set _442884517generalInputSetID(param1:int) : void
@@ -2225,15 +2258,9 @@ package tibia.options
          }
       }
       
-      [Bindable(event="propertyChange")]
-      public function set rendererScaleMap(param1:Boolean) : void
+      public function get rendererAntialiasing() : Boolean
       {
-         var _loc2_:Object = this.rendererScaleMap;
-         if(_loc2_ !== param1)
-         {
-            this._1408018027rendererScaleMap = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererScaleMap",_loc2_,param1));
-         }
+         return this.m_RendererAntialiasing;
       }
       
       public function removeNameFilterSet(param1:int) : NameFilterSet
@@ -2291,6 +2318,7 @@ package tibia.options
                           <highlight>{this.m_RendererHighlight}</highlight>
                           <levelSeparator>{this.m_RendererLevelSeparator}</levelSeparator>
                           <scaleMap>{this.m_RendererScaleMap}</scaleMap>
+                          <antialiasing>{this.m_RendererAntialiasing}</antialiasing>
                           <maxFrameRate>{this.m_RendererMaxFrameRate}</maxFrameRate>
                           <showFrameRate>{this.m_RendererShowFrameRate}</showFrameRate>
                         </renderer>);

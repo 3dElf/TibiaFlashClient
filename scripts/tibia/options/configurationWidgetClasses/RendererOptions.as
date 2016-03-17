@@ -2,13 +2,13 @@ package tibia.options.configurationWidgetClasses
 {
    import mx.containers.VBox;
    import tibia.controls.CustomSlider;
+   import flash.events.Event;
    import mx.core.IContainer;
    import mx.controls.CheckBox;
    import mx.containers.Form;
    import mx.containers.FormHeading;
    import mx.containers.FormItem;
    import tibia.options.ConfigurationWidget;
-   import flash.events.Event;
    import mx.events.SliderEvent;
    import tibia.options.OptionsStorage;
    
@@ -35,10 +35,22 @@ package tibia.options.configurationWidgetClasses
       
       private var m_UIScaleMap:CheckBox = null;
       
+      private var m_UIAntialiasing:CheckBox = null;
+      
       public function RendererOptions()
       {
          super();
          label = resourceManager.getString(ConfigurationWidget.BUNDLE,"RENDERER_LABEL");
+      }
+      
+      private function onValueChange(param1:Event) : void
+      {
+         var _loc2_:OptionsEditorEvent = null;
+         if(param1 != null)
+         {
+            _loc2_ = new OptionsEditorEvent(OptionsEditorEvent.VALUE_CHANGE);
+            dispatchEvent(_loc2_);
+         }
       }
       
       override protected function commitProperties() : void
@@ -54,6 +66,7 @@ package tibia.options.configurationWidgetClasses
                this.m_UILightEnabled.selected = this.options.rendererLightEnabled;
                this.m_UIMaxFrameRate.value = this.options.rendererMaxFrameRate;
                this.m_UIScaleMap.selected = this.options.rendererScaleMap;
+               this.m_UIAntialiasing.selected = this.options.rendererAntialiasing;
                this.m_UIShowFrameRate.selected = this.options.rendererShowFrameRate;
             }
             else
@@ -64,6 +77,7 @@ package tibia.options.configurationWidgetClasses
                this.m_UILightEnabled.selected = false;
                this.m_UIMaxFrameRate.value = 0;
                this.m_UIScaleMap.selected = false;
+               this.m_UIAntialiasing.selected = false;
                this.m_UIShowFrameRate.selected = false;
             }
             IContainer(this.m_UIAmbientBrightness.parent).enabled = this.m_UILightEnabled.selected;
@@ -146,6 +160,14 @@ package tibia.options.configurationWidgetClasses
          this.m_UIScaleMap.addEventListener(Event.CHANGE,this.onValueChange);
          Item.addChild(this.m_UIScaleMap);
          Frm.addChild(Item);
+         Item = new FormItem();
+         Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"RENDERER_MAP_ANTIALIASING");
+         Item.percentHeight = NaN;
+         Item.percentWidth = 100;
+         this.m_UIAntialiasing = new CheckBox();
+         this.m_UIAntialiasing.addEventListener(Event.CHANGE,this.onValueChange);
+         Item.addChild(this.m_UIAntialiasing);
+         Frm.addChild(Item);
          Heading = new FormHeading();
          Heading.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"RENDERER_PERF_HEADING");
          Heading.percentHeight = NaN;
@@ -180,16 +202,6 @@ package tibia.options.configurationWidgetClasses
          return this.m_Options;
       }
       
-      private function onValueChange(param1:Event) : void
-      {
-         var _loc2_:OptionsEditorEvent = null;
-         if(param1 != null)
-         {
-            _loc2_ = new OptionsEditorEvent(OptionsEditorEvent.VALUE_CHANGE);
-            dispatchEvent(_loc2_);
-         }
-      }
-      
       public function set options(param1:OptionsStorage) : void
       {
          this.m_Options = param1;
@@ -207,6 +219,7 @@ package tibia.options.configurationWidgetClasses
             this.options.rendererLightEnabled = this.m_UILightEnabled.selected;
             this.options.rendererMaxFrameRate = this.m_UIMaxFrameRate.value;
             this.options.rendererScaleMap = this.m_UIScaleMap.selected;
+            this.options.rendererAntialiasing = this.m_UIAntialiasing.selected;
             this.options.rendererShowFrameRate = this.m_UIShowFrameRate.selected;
             this.m_UncommittedValues = false;
          }
