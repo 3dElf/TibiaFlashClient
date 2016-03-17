@@ -572,6 +572,13 @@ package tibia.sidebar.sideBarWidgetClasses
          return _loc3_;
       }
       
+      function releaseInstance() : void
+      {
+         this.m_UICollapseButton.removeEventListener(MouseEvent.CLICK,this.onHeaderClick);
+         this.m_UICloseButton.removeEventListener(MouseEvent.CLICK,this.onHeaderClick);
+         this.m_UIHeader.removeEventListener(MouseEvent.DOUBLE_CLICK,this.onHeaderDoubleClick);
+      }
+      
       override protected function commitProperties() : void
       {
          if(this.m_UncommittedWidgetClosable)

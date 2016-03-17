@@ -32,12 +32,11 @@ package tibia.creatures.buddylistClasses
          var _loc3_:XMLList = null;
          if((_loc3_ = param1.@ID) == null || _loc3_.length() != 1)
          {
-            throw new Error("BuddyIcon.s_Unmarshall: Missing attribute \"ID\".");
+            return null;
          }
          var _loc4_:int = parseInt(_loc3_[0].toString());
          if(_loc4_ < 0 || _loc4_ >= NUM_ICONS)
          {
-            log("BuddyIcon.s_Unmarshall: Invalid ID: " + _loc4_ + ".");
             return null;
          }
          var _loc5_:BuddyIcon = new BuddyIcon(_loc4_);

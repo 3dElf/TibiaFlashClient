@@ -3,6 +3,7 @@ package tibia.creatures.battlelistWidgetClasses
    import mx.core.UIComponent;
    import mx.controls.listClasses.IListItemRenderer;
    import mx.core.IDataRenderer;
+   import shared.utility.Colour;
    import flash.geom.Rectangle;
    import shared.utility.TextFieldCache;
    import mx.styles.CSSStyleDeclaration;
@@ -35,6 +36,8 @@ package tibia.creatures.battlelistWidgetClasses
       protected static const WAR_ALLY:int = 1;
       
       protected static const SKILL_FIGHTCLUB:int = 9;
+      
+      private static const s_TempHealthColor:Colour = new Colour(0,0,0);
       
       protected static const PK_PARTYMODE:int = 2;
       
@@ -281,7 +284,7 @@ package tibia.creatures.battlelistWidgetClasses
             invalidateDisplayList();
             this.invalidateTimer();
          }
-         else if(param1.property == "name" || param1.property == "outfit")
+         else if(param1.property == "name" || param1.property == "outfit" || param1.property == "extendedMarkID")
          {
             invalidateDisplayList();
          }
@@ -496,7 +499,8 @@ package tibia.creatures.battlelistWidgetClasses
             _loc17_ = getStyle("healthbarHeight");
             graphics.beginFill(0,1);
             graphics.drawRect(_loc4_,param2 - _loc3_.bottom - _loc17_,_loc8_,_loc17_);
-            graphics.beginFill(Creature.s_GetHealthColour(this.m_Data.hitpointsPercent).RGB,1);
+            s_TempHealthColor.ARGB = Creature.s_GetHealthColourARGB(this.m_Data.hitpointsPercent);
+            graphics.beginFill(s_TempHealthColor.RGB,1);
             graphics.drawRect(_loc4_ + 1,param2 - _loc3_.bottom - _loc17_ + 1,_loc16_,_loc17_ - 2);
          }
          graphics.endFill();
@@ -510,9 +514,10 @@ package tibia.creatures.battlelistWidgetClasses
       
       override protected function measure() : void
       {
+         var _loc1_:EdgeMetrics = null;
          var _loc3_:Number = NaN;
          super.measure();
-         var _loc1_:EdgeMetrics = this.viewMetricsAndPadding;
+         _loc1_ = this.viewMetricsAndPadding;
          var _loc2_:Number = CREATURE_ICON_SIZE + getStyle("horizontalGap") + Math.max(CreatureStorage.STATE_FLAG_SIZE,s_NameCache.slotWidth,getStyle("healthbarWidth"));
          _loc3_ = Math.max(CREATURE_ICON_SIZE,Math.max(CreatureStorage.STATE_FLAG_SIZE,s_NameCache.slotHeight) + getStyle("verticalGap") + getStyle("healthbarHeight"));
          measuredMinWidth = measuredWidth = _loc1_.left + _loc2_ + _loc1_.right;

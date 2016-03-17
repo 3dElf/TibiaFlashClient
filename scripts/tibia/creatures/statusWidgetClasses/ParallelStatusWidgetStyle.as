@@ -26,6 +26,7 @@ package tibia.creatures.statusWidgetClasses
          var _loc1_:EdgeMetrics = null;
          var _loc4_:Number = NaN;
          var _loc5_:Number = NaN;
+         var _loc10_:BitmapProgressBar = null;
          _loc1_ = target.viewMetricsAndPadding;
          var _loc2_:Number = 0;
          var _loc3_:Number = 0;
@@ -35,10 +36,10 @@ package tibia.creatures.statusWidgetClasses
          var _loc7_:Number = target.getStyle("horizontalBigGap");
          var _loc8_:Number = target.getStyle("verticalGap");
          var _loc9_:Number = target.getStyle("verticalBigGap");
-         var _loc10_:BitmapProgressBar = BitmapProgressBar(target.getChildByName("hitpoints"));
+         _loc10_ = BitmapProgressBar(target.getChildByName("hitpoints"));
          var _loc11_:Number = _loc10_.getStyle("paddingBottom");
          var _loc12_:BitmapProgressBar = BitmapProgressBar(target.getChildByName("mana"));
-         var _loc13_:BitmapProgressBar = BitmapProgressBar(target.getChildByName("skill"));
+         var _loc13_:SkillProgressBar = SkillProgressBar(target.getChildByName("skill"));
          var _loc14_:StateRenderer = StateRenderer(target.getChildByName("state"));
          _loc3_ = Math.max(_loc10_.measuredMinWidth,_loc12_.measuredMinWidth,_loc14_.measuredMinWidth) + _loc7_;
          _loc2_ = Math.max(_loc10_.getExplicitOrMeasuredWidth(),_loc12_.getExplicitOrMeasuredWidth(),_loc14_.getExplicitOrMeasuredWidth()) + _loc7_;
@@ -60,6 +61,7 @@ package tibia.creatures.statusWidgetClasses
       
       override public function updateDisplayList(param1:Number, param2:Number) : void
       {
+         var _loc12_:BitmapProgressBar = null;
          var _loc3_:EdgeMetrics = target.viewMetricsAndPadding;
          var _loc4_:Number = 0;
          var _loc5_:Number = 0;
@@ -69,12 +71,12 @@ package tibia.creatures.statusWidgetClasses
          var _loc9_:Number = target.getStyle("verticalBigGap");
          var _loc10_:Number = param1 - _loc3_.left - _loc3_.right;
          var _loc11_:Number = param2 - _loc3_.top - _loc3_.bottom;
-         var _loc12_:BitmapProgressBar = BitmapProgressBar(target.getChildByName("hitpoints"));
+         _loc12_ = BitmapProgressBar(target.getChildByName("hitpoints"));
          var _loc13_:Number = target.getStyle("hitpointsOffsetY");
          var _loc14_:Number = _loc12_.getStyle("paddingBottom");
          var _loc15_:BitmapProgressBar = BitmapProgressBar(target.getChildByName("mana"));
          var _loc16_:Number = target.getStyle("manaOffsetY");
-         var _loc17_:BitmapProgressBar = BitmapProgressBar(target.getChildByName("skill"));
+         var _loc17_:SkillProgressBar = SkillProgressBar(target.getChildByName("skill"));
          var _loc18_:StateRenderer = StateRenderer(target.getChildByName("state"));
          var _loc19_:Number = _loc3_.top;
          var _loc20_:String = direction == DIRECTION_TOP_TO_BOTTOM?DIRECTION_RIGHT_TO_LEFT:DIRECTION_LEFT_TO_RIGHT;
@@ -91,7 +93,7 @@ package tibia.creatures.statusWidgetClasses
          if(_loc17_.includeInLayout)
          {
             _loc5_ = _loc17_.getExplicitOrMeasuredHeight();
-            _loc17_.direction = _loc20_;
+            _loc17_.progressDirection = _loc20_;
             _loc17_.move(_loc3_.left,_loc19_);
             _loc17_.setActualSize(_loc10_,_loc5_);
             _loc19_ = _loc19_ + (_loc5_ + _loc8_);

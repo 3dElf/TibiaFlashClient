@@ -3,7 +3,6 @@ package tibia.game
    import mx.core.UIComponent;
    import mx.managers.ISystemManager;
    import flash.events.Event;
-   import flash.events.MouseEvent;
    import mx.controls.Label;
    
    public class FocusNotifier extends UIComponent
@@ -41,8 +40,6 @@ package tibia.game
             _loc1_ = Tibia.s_GetInstance().systemManager;
             _loc1_.addChildToSandboxRoot("popUpChildren",s_Instance);
             _loc1_.addEventListener(Event.RESIZE,s_Instance.onResize);
-            _loc1_.addEventListener(MouseEvent.MOUSE_DOWN,s_Instance.onHide);
-            _loc1_.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,s_Instance.onHide);
             s_Visible = true;
          }
       }
@@ -56,8 +53,6 @@ package tibia.game
             _loc1_ = Tibia.s_GetInstance().systemManager;
             _loc1_.removeChildFromSandboxRoot("popUpChildren",s_Instance);
             _loc1_.removeEventListener(Event.RESIZE,s_Instance.onResize);
-            _loc1_.removeEventListener(MouseEvent.MOUSE_DOWN,s_Instance.onHide);
-            _loc1_.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN,s_Instance.onHide);
             if(Tibia.s_GetInputHandler() != null)
             {
                Tibia.s_GetInputHandler().captureKeyboard = true;
@@ -67,14 +62,6 @@ package tibia.game
                PopUpBase.s_GetInstance().setFocus();
                PopUpBase.s_GetInstance().drawFocus(false);
             }
-         }
-      }
-      
-      protected function onHide(param1:MouseEvent) : void
-      {
-         if(param1 != null)
-         {
-            s_Hide();
          }
       }
       
@@ -113,12 +100,10 @@ package tibia.game
          }
       }
       
-      protected function onResize(param1:Event) : void
+      private function onResize(param1:Event) : void
       {
-         if(param1 != null)
-         {
-            invalidateSize();
-         }
+         invalidateDisplayList();
+         invalidateSize();
       }
       
       override protected function createChildren() : void

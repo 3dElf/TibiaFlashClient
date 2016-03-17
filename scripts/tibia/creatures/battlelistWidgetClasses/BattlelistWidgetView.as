@@ -3,21 +3,21 @@ package tibia.creatures.battlelistWidgetClasses
    import tibia.sidebar.sideBarWidgetClasses.WidgetView;
    import tibia.game.IUseWidget;
    import tibia.creatures.CreatureStorage;
-   import mx.collections.IList;
    import mx.controls.Button;
-   import mx.events.PropertyChangeEvent;
+   import flash.events.MouseEvent;
    import mx.events.ListEvent;
+   import mx.collections.IList;
+   import mx.events.PropertyChangeEvent;
    import tibia.§sidebar:ns_sidebar_internal§.widgetCollapsed;
    import flash.geom.Point;
    import shared.controls.SmoothList;
    import mx.containers.HBox;
-   import flash.events.MouseEvent;
    import mx.controls.listClasses.IListItemRenderer;
    import tibia.creatures.Creature;
-   import tibia.input.gameaction.LookActionImpl;
-   import tibia.appearances.AppearanceInstance;
+   import tibia.network.Connection;
    import tibia.appearances.AppearanceStorage;
    import tibia.appearances.ObjectInstance;
+   import tibia.appearances.AppearanceInstance;
    import mx.core.ScrollPolicy;
    
    public class BattlelistWidgetView extends WidgetView implements IUseWidget
@@ -91,6 +91,20 @@ package tibia.creatures.battlelistWidgetClasses
          {
             BattlelistItemRenderer.s_NameCache.removeItem(param1);
          }
+      }
+      
+      override function releaseInstance() : void
+      {
+         var _loc1_:Button = null;
+         super.releaseInstance();
+         removeEventListener(MouseEvent.CLICK,this.onItemClick);
+         removeEventListener(MouseEvent.RIGHT_CLICK,this.onItemClick);
+         for each(_loc1_ in this.m_UIFilterButtons)
+         {
+            _loc1_.removeEventListener(MouseEvent.CLICK,this.onFilterModeChange);
+         }
+         this.m_UIList.removeEventListener(ListEvent.ITEM_ROLL_OVER,this.onItemRollOver);
+         this.m_UIList.removeEventListener(ListEvent.ITEM_ROLL_OUT,this.onItemRollOut);
       }
       
       protected function invalidateFilter() : void
@@ -230,6 +244,7 @@ package tibia.creatures.battlelistWidgetClasses
          var _loc2_:IListItemRenderer = null;
          var _loc3_:Creature = null;
          var _loc4_:int = 0;
+         var _loc5_:Connection = null;
          if(param1 != null && !widgetCollapsed && this.m_CreatureStorage != null)
          {
             _loc2_ = this.m_UIList.mouseEventToItemRenderer(param1);
@@ -266,9 +281,10 @@ package tibia.creatures.battlelistWidgetClasses
                   }
                   break;
                case ACTION_LOOK:
-                  if(_loc3_ != null)
+                  _loc5_ = null;
+                  if(_loc3_ != null && (_loc5_ = Tibia.s_GetConnection()) != null && Boolean(_loc5_.isGameRunning))
                   {
-                     new LookActionImpl(_loc3_.position,AppearanceInstance.CREATURE,0).perform();
+                     _loc5_.sendCLOOKATCREATURE(_loc3_.ID);
                   }
                   break;
                case ACTION_CONTEX_MENU:

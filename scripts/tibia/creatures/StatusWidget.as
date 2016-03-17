@@ -7,9 +7,6 @@ package tibia.creatures
    import mx.core.EdgeMetrics;
    import mx.core.mx_internal;
    import mx.core.IBorder;
-   import mx.events.ToolTipEvent;
-   import mx.core.IToolTip;
-   import mx.core.IInvalidating;
    import flash.geom.Matrix;
    import tibia.options.OptionsStorage;
    import mx.events.DragEvent;
@@ -23,6 +20,7 @@ package tibia.creatures
    import mx.events.PropertyChangeEvent;
    import flash.events.MouseEvent;
    import tibia.creatures.statusWidgetClasses.StatusWidgetContextMenu;
+   import tibia.creatures.statusWidgetClasses.SkillProgressBar;
    import tibia.controls.GridContainer;
    import tibia.creatures.statusWidgetClasses.DefaultStatusWidgetStyle;
    import tibia.creatures.statusWidgetClasses.CompactStatusWidgetStyle;
@@ -236,9 +234,9 @@ package tibia.creatures
       
       private var m_RealY:Number = 0;
       
-      protected var m_UIState:StateRenderer = null;
+      private var m_UIState:StateRenderer = null;
       
-      protected var m_UIMana:BitmapProgressBar = null;
+      private var m_UIMana:BitmapProgressBar = null;
       
       protected var m_Player:tibia.creatures.Player = null;
       
@@ -248,21 +246,21 @@ package tibia.creatures
       
       protected var m_Options:OptionsStorage = null;
       
-      protected var m_UIHitpoints:BitmapProgressBar = null;
-      
       private var m_UIConstructed:Boolean = false;
+      
+      private var m_UIHitpoints:BitmapProgressBar = null;
       
       protected var m_Style:int = 1;
       
       private var m_UncommittedSkill:Boolean = false;
       
-      protected var m_UISkill:BitmapProgressBar = null;
+      private var m_UISkill:SkillProgressBar = null;
       
       private var m_UncommittedOptions:Boolean = false;
       
       private var m_UncommittedPlayer:Boolean = false;
       
-      protected var m_Skill:int = 1;
+      protected var m_Skill:int = -1;
       
       private var m_UncommittedLocation:Boolean = true;
       
@@ -371,71 +369,6 @@ package tibia.creatures
          return super.borderMetrics;
       }
       
-      protected function onSkillToolTip(param1:ToolTipEvent) : void
-      {
-         var _loc2_:Number = NaN;
-         var _loc3_:Number = NaN;
-         var _loc4_:String = null;
-         var _loc5_:String = null;
-         var _loc6_:IToolTip = null;
-         var _loc7_:Number = NaN;
-         var _loc8_:Number = NaN;
-         var _loc9_:Number = NaN;
-         var _loc10_:Number = NaN;
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         if(param1 != null && param1.toolTip != null)
-         {
-            if(this.m_Player != null && this.m_Skill != SKILL_NONE)
-            {
-               _loc2_ = NaN;
-               _loc3_ = NaN;
-               _loc4_ = null;
-               _loc5_ = StatusWidget.s_GetSkillName(this.m_Skill);
-               if(this.m_Skill == SKILL_LEVEL)
-               {
-                  _loc2_ = this.m_Player.getSkillGain(SKILL_EXPERIENCE);
-                  _loc3_ = tibia.creatures.Player.s_GetExperienceForLevel(this.m_Player.level + 1) - this.m_Player.getSkillValue(SKILL_EXPERIENCE);
-                  _loc4_ = resourceManager.getString(BUNDLE,"TIP_SKILL_UNIT_EXPERIENCE");
-               }
-               else
-               {
-                  _loc2_ = this.m_Player.getSkillGain(this.m_Skill);
-                  _loc3_ = 100 - this.m_Player.getSkillProgress(this.m_Skill);
-                  _loc4_ = resourceManager.getString(BUNDLE,"TIP_SKILL_UNIT_DEFAULT");
-               }
-               _loc3_ = Math.max(0,_loc3_);
-               _loc6_ = param1.toolTip;
-               if(_loc2_ > 0)
-               {
-                  _loc7_ = Math.floor(_loc3_ * 60 / _loc2_);
-                  _loc8_ = Math.floor(_loc7_ / 60);
-                  _loc7_ = _loc7_ - _loc8_ * 60;
-                  _loc6_.text = resourceManager.getString(BUNDLE,"TIP_SKILL_EXTENDED",[_loc5_,_loc3_,_loc4_,_loc2_,_loc8_,_loc7_]);
-               }
-               else
-               {
-                  _loc6_.text = resourceManager.getString(BUNDLE,"TIP_SKILL_SIMPLE",[_loc5_,_loc3_,_loc4_]);
-               }
-               if(_loc6_ is IInvalidating)
-               {
-                  IInvalidating(_loc6_).validateNow();
-                  _loc9_ = _loc6_.getExplicitOrMeasuredWidth();
-                  _loc10_ = _loc6_.getExplicitOrMeasuredHeight();
-                  _loc11_ = Math.max(0,Math.min(_loc6_.x,stage.stageWidth - _loc9_));
-                  _loc12_ = Math.max(0,Math.min(_loc6_.y,stage.stageHeight - _loc10_));
-                  _loc6_.move(_loc11_,_loc12_);
-                  _loc6_.setActualSize(_loc9_,_loc10_);
-               }
-            }
-            else
-            {
-               param1.preventDefault();
-               param1.stopImmediatePropagation();
-            }
-         }
-      }
-      
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
          var _loc3_:Matrix = null;
@@ -488,7 +421,7 @@ package tibia.creatures
          var _loc10_:Number = NaN;
          var _loc2_:DragSource = null;
          var _loc3_:IUIComponent = null;
-         if(param1 != null && (_loc2_ = param1.dragSource) != null && Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_STATUSWIDGET && (_loc3_ = param1.currentTarget as IUIComponent) != null)
+         if((_loc2_ = param1.dragSource) != null && Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_STATUSWIDGET && (_loc3_ = param1.currentTarget as IUIComponent) != null)
          {
             _loc4_ = _loc3_.localToGlobal(new Point(0,0));
             _loc5_ = new Rectangle(_loc4_.x,_loc4_.y,_loc3_.width / _loc3_.scaleX,_loc3_.height / _loc3_.scaleY);
@@ -576,9 +509,6 @@ package tibia.creatures
                         _loc8_.setActualSize(unscaledWidth,unscaledHeight);
                      }
                   }
-                  break;
-               default:
-                  log("StatusWidget.onDragInit: Unknown event type.");
             }
          }
       }
@@ -611,18 +541,10 @@ package tibia.creatures
       
       protected function onPlayerChange(param1:PropertyChangeEvent) : void
       {
-         if(param1 != null)
+         if(param1.property == "skill" || param1.property == "*")
          {
-            switch(param1.property)
-            {
-               case "skill":
-                  this.updateHitpoints();
-                  this.updateMana();
-                  this.updateSkill();
-                  break;
-               case "stateFlags":
-                  this.updateState();
-            }
+            this.updateHitpoints();
+            this.updateMana();
          }
       }
       
@@ -640,10 +562,7 @@ package tibia.creatures
       
       protected function onMouseClick(param1:MouseEvent) : void
       {
-         if(param1 != null)
-         {
-            new StatusWidgetContextMenu(this.m_Options).display(this,param1.stageX,param1.stageY);
-         }
+         new StatusWidgetContextMenu(this.m_Options).display(this,param1.stageX,param1.stageY);
       }
       
       override public function set explicitMaxWidth(param1:Number) : void
@@ -681,6 +600,7 @@ package tibia.creatures
             this.m_UIHitpoints.name = "hitpoints";
             this.m_UIHitpoints.percentHeight = NaN;
             this.m_UIHitpoints.percentWidth = 100;
+            this.m_UIHitpoints.styleName = getStyle("hitpointsStyle");
             this.updateHitpoints();
             addChild(this.m_UIHitpoints);
             this.m_UIMana = new BitmapProgressBar();
@@ -689,25 +609,20 @@ package tibia.creatures
             this.m_UIMana.name = "mana";
             this.m_UIMana.percentHeight = NaN;
             this.m_UIMana.percentWidth = 100;
+            this.m_UIMana.styleName = getStyle("manaStyle");
             this.updateMana();
             addChild(this.m_UIMana);
-            this.m_UISkill = new BitmapProgressBar();
-            this.m_UISkill.labelEnabled = false;
-            this.m_UISkill.labelFormat = "{1}%";
+            this.m_UISkill = new SkillProgressBar();
             this.m_UISkill.name = "skill";
-            this.m_UISkill.percentHeight = NaN;
-            this.m_UISkill.percentWidth = 100;
-            this.m_UISkill.tickValues = [25,50,75];
-            this.m_UISkill.toolTip = "toolTip";
-            this.m_UISkill.addEventListener(ToolTipEvent.TOOL_TIP_SHOW,this.onSkillToolTip);
-            this.updateSkill();
+            this.m_UISkill.styleName = getStyle("skillStyle");
             addChild(this.m_UISkill);
             this.m_UIState = new StateRenderer();
             this.m_UIState.maxColumns = int.MAX_VALUE;
-            this.m_UIState.minColumns = 4;
             this.m_UIState.maxRows = this.m_Style == STATUS_STYLE_FAT?2:1;
+            this.m_UIState.minColumns = 4;
             this.m_UIState.minRows = 1;
             this.m_UIState.name = "state";
+            this.m_UIState.styleName = getStyle("stateStyle");
             addChild(this.m_UIState);
             this.m_UIConstructed = true;
          }
@@ -768,10 +683,10 @@ package tibia.creatures
          var _loc1_:GridContainer = null;
          if(this.m_UncommittedPlayer)
          {
+            this.m_UISkill.character = this.player;
+            this.m_UIState.character = this.player;
             this.updateHitpoints();
             this.updateMana();
-            this.updateSkill();
-            this.updateState();
             this.m_UncommittedPlayer = false;
          }
          if(this.m_UncommittedOptions)
@@ -787,9 +702,7 @@ package tibia.creatures
          }
          if(this.m_UncommittedSkill)
          {
-            this.m_UISkill.includeInLayout = this.m_Skill != SKILL_NONE;
-            this.m_UISkill.visible = this.m_Skill != SKILL_NONE;
-            this.updateSkill();
+            this.m_UISkill.skill = this.skill;
             this.m_UncommittedSkill = false;
          }
          if(this.m_UncommittedStyle)
@@ -902,56 +815,26 @@ package tibia.creatures
       
       protected function onOptionsChange(param1:PropertyChangeEvent) : void
       {
-         if(param1 != null)
+         switch(param1.property)
          {
-            switch(param1.property)
-            {
-               case "statusWidgetLocation":
-                  this.location = this.m_Options.statusWidgetLocation;
-                  break;
-               case "statusWidgetSkill":
-                  this.skill = this.m_Options.statusWidgetSkill;
-                  break;
-               case "statusWidgetStyle":
-                  this.style = this.m_Options.statusWidgetStyle;
-                  break;
-               case "statusWidgetVisible":
-                  this.visible = this.m_Options.statusWidgetVisible;
-                  break;
-               case "*":
-                  this.location = this.m_Options.statusWidgetLocation;
-                  this.skill = this.m_Options.statusWidgetSkill;
-                  this.style = this.m_Options.statusWidgetStyle;
-                  this.visible = this.m_Options.statusWidgetVisible;
-            }
+            case "statusWidgetLocation":
+               this.location = this.m_Options.statusWidgetLocation;
+               break;
+            case "statusWidgetSkill":
+               this.skill = this.m_Options.statusWidgetSkill;
+               break;
+            case "statusWidgetStyle":
+               this.style = this.m_Options.statusWidgetStyle;
+               break;
+            case "statusWidgetVisible":
+               this.visible = this.m_Options.statusWidgetVisible;
+               break;
+            case "*":
+               this.location = this.m_Options.statusWidgetLocation;
+               this.skill = this.m_Options.statusWidgetSkill;
+               this.style = this.m_Options.statusWidgetStyle;
+               this.visible = this.m_Options.statusWidgetVisible;
          }
-      }
-      
-      private function updateState() : void
-      {
-         if(this.m_Player != null)
-         {
-            this.m_UIState.bitSet = this.m_Player.stateFlags;
-         }
-         else
-         {
-            this.m_UIState.bitSet = 4294967295;
-         }
-      }
-      
-      private function updateSkill() : void
-      {
-         if(this.m_Player != null && this.m_Skill != SKILL_NONE)
-         {
-            this.m_UISkill.maxValue = 100;
-            this.m_UISkill.value = this.m_Player.getSkillProgress(this.m_Skill);
-         }
-         else
-         {
-            this.m_UISkill.maxValue = 100;
-            this.m_UISkill.value = 100;
-         }
-         this.m_UISkill.toolTip = "toolTip";
       }
       
       public function get player() : tibia.creatures.Player
@@ -981,35 +864,29 @@ package tibia.creatures
       protected function onDragInit(param1:Event) : void
       {
          var _loc2_:DragSource = null;
-         if(param1 != null)
+         switch(param1.type)
          {
-            switch(param1.type)
-            {
-               case MouseEvent.MOUSE_DOWN:
-                  addEventListener(MouseEvent.MOUSE_MOVE,this.onDragInit);
-                  addEventListener(MouseEvent.MOUSE_UP,this.onDragInit);
-                  addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onDragInit);
-                  break;
-               case MouseEvent.MOUSE_MOVE:
-                  if(parent != null)
-                  {
-                     parent.addEventListener(DragEvent.DRAG_DROP,this.onDragEvent);
-                     parent.addEventListener(DragEvent.DRAG_ENTER,this.onDragEvent);
-                     parent.addEventListener(DragEvent.DRAG_EXIT,this.onDragEvent);
-                     parent.addEventListener(DragEvent.DRAG_OVER,this.onDragEvent);
-                     _loc2_ = new DragSource();
-                     _loc2_.addData(DRAG_TYPE_STATUSWIDGET,"dragType");
-                     DragManager.doDrag(this,_loc2_,param1 as MouseEvent);
-                  }
-               case MouseEvent.MOUSE_UP:
-               case SandboxMouseEvent.MOUSE_UP_SOMEWHERE:
-                  removeEventListener(MouseEvent.MOUSE_MOVE,this.onDragInit);
-                  removeEventListener(MouseEvent.MOUSE_UP,this.onDragInit);
-                  removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onDragInit);
-                  break;
-               default:
-                  log("StatusWidget.onDragInit: Unknown event type.");
-            }
+            case MouseEvent.MOUSE_DOWN:
+               addEventListener(MouseEvent.MOUSE_MOVE,this.onDragInit);
+               addEventListener(MouseEvent.MOUSE_UP,this.onDragInit);
+               addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onDragInit);
+               break;
+            case MouseEvent.MOUSE_MOVE:
+               if(parent != null)
+               {
+                  parent.addEventListener(DragEvent.DRAG_DROP,this.onDragEvent);
+                  parent.addEventListener(DragEvent.DRAG_ENTER,this.onDragEvent);
+                  parent.addEventListener(DragEvent.DRAG_EXIT,this.onDragEvent);
+                  parent.addEventListener(DragEvent.DRAG_OVER,this.onDragEvent);
+                  _loc2_ = new DragSource();
+                  _loc2_.addData(DRAG_TYPE_STATUSWIDGET,"dragType");
+                  DragManager.doDrag(this,_loc2_,param1 as MouseEvent);
+               }
+            case MouseEvent.MOUSE_UP:
+            case SandboxMouseEvent.MOUSE_UP_SOMEWHERE:
+               removeEventListener(MouseEvent.MOUSE_MOVE,this.onDragInit);
+               removeEventListener(MouseEvent.MOUSE_UP,this.onDragInit);
+               removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onDragInit);
          }
       }
       

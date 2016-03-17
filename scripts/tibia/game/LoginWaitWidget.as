@@ -3,7 +3,6 @@ package tibia.game
    import flash.utils.getTimer;
    import flash.events.TimerEvent;
    import mx.events.CloseEvent;
-   import mx.controls.Text;
    
    public class LoginWaitWidget extends MessageWidget
    {
@@ -14,13 +13,9 @@ package tibia.game
        
       protected var m_ShowTimestamp:Number = -1;
       
-      private var m_UncommittedTimeout:Boolean = false;
-      
       protected var m_Timeout:Number = 0;
       
-      private var m_UIConstructed:Boolean = false;
-      
-      protected var m_UITimeout:Text = null;
+      private var m_UncommittedTimeout:Boolean = false;
       
       private var m_UncommittedMessage:Boolean = false;
       
@@ -56,16 +51,6 @@ package tibia.game
          return this.m_Timeout;
       }
       
-      override public function show() : void
-      {
-         super.show();
-         if(this.m_ShowTimestamp < 0)
-         {
-            this.m_ShowTimestamp = getTimer();
-            Tibia.s_GetSecondaryTimer().addEventListener(TimerEvent.TIMER,this.onTimer);
-         }
-      }
-      
       private function updateMessage(param1:int) : void
       {
          var _loc2_:Number = 0;
@@ -80,8 +65,7 @@ package tibia.game
             _loc2_ = Math.ceil(param1 / 1000);
             _loc3_ = _loc2_ == 1?resourceManager.getString(BUNDLE,"DLG_LOGINWAIT_TIMEOUT_SECOND"):resourceManager.getString(BUNDLE,"DLG_LOGINWAIT_TIMEOUT_SECONDS");
          }
-         m_UIMessage.htmlText = resourceManager.getString(BUNDLE,"DLG_LOGINWAIT_TEXT",[message]);
-         this.m_UITimeout.htmlText = resourceManager.getString(BUNDLE,"DLG_LOGINWAIT_TIMEOUT",[_loc2_,_loc3_]);
+         m_UIMessage.htmlText = resourceManager.getString(BUNDLE,"DLG_LOGINWAIT_TEXT",[message,_loc2_,_loc3_]);
       }
       
       protected function onTimer(param1:TimerEvent) : void
@@ -101,21 +85,6 @@ package tibia.game
             {
                this.updateMessage(_loc2_);
             }
-         }
-      }
-      
-      override protected function createChildren() : void
-      {
-         if(!this.m_UIConstructed)
-         {
-            super.createChildren();
-            this.m_UITimeout = new Text();
-            this.m_UITimeout.maxHeight = NaN;
-            this.m_UITimeout.maxWidth = 300;
-            this.m_UITimeout.percentHeight = 100;
-            this.m_UITimeout.percentWidth = 100;
-            addChild(this.m_UITimeout);
-            this.m_UIConstructed = true;
          }
       }
       
@@ -156,6 +125,16 @@ package tibia.game
          {
             this.m_ShowTimestamp = -1;
             Tibia.s_GetSecondaryTimer().removeEventListener(TimerEvent.TIMER,this.onTimer);
+         }
+      }
+      
+      override public function show() : void
+      {
+         super.show();
+         if(this.m_ShowTimestamp < 0)
+         {
+            this.m_ShowTimestamp = getTimer();
+            Tibia.s_GetSecondaryTimer().addEventListener(TimerEvent.TIMER,this.onTimer);
          }
       }
    }

@@ -1,13 +1,13 @@
 package tibia.creatures.buddylistWidgetClasses
 {
    import tibia.sidebar.sideBarWidgetClasses.WidgetView;
+   import tibia.creatures.BuddySet;
+   import shared.controls.SmoothList;
    import flash.events.MouseEvent;
    import mx.controls.listClasses.IListItemRenderer;
    import tibia.creatures.buddylistClasses.Buddy;
    import tibia.input.gameaction.PrivateChatActionImpl;
-   import shared.controls.SmoothList;
    import mx.collections.IList;
-   import tibia.creatures.BuddySet;
    import mx.containers.HBox;
    import mx.core.ScrollPolicy;
    
@@ -42,6 +42,11 @@ package tibia.creatures.buddylistWidgetClasses
          addEventListener(MouseEvent.CLICK,this.onBuddiesClick);
          addEventListener(MouseEvent.RIGHT_CLICK,this.onBuddiesClick);
          addEventListener(MouseEvent.DOUBLE_CLICK,this.onBuddiesClick);
+      }
+      
+      function get buddySet() : BuddySet
+      {
+         return this.m_BuddySet;
       }
       
       protected function onBuddiesClick(param1:MouseEvent) : void
@@ -82,9 +87,6 @@ package tibia.creatures.buddylistWidgetClasses
                   break;
                case ACTION_CONTEXT_MENU:
                   new BuddylistItemContextMenu(this.m_BuddySet,_loc3_).display(this,stage.mouseX,stage.mouseY);
-                  break;
-               default:
-                  log("BuddylistWidgetView.onBuddiesClick: Unknown action " + _loc4_ + ".");
             }
          }
       }
@@ -135,9 +137,12 @@ package tibia.creatures.buddylistWidgetClasses
          }
       }
       
-      function get buddySet() : BuddySet
+      override function releaseInstance() : void
       {
-         return this.m_BuddySet;
+         super.releaseInstance();
+         removeEventListener(MouseEvent.CLICK,this.onBuddiesClick);
+         removeEventListener(MouseEvent.DOUBLE_CLICK,this.onBuddiesClick);
+         removeEventListener(MouseEvent.RIGHT_CLICK,this.onBuddiesClick);
       }
    }
 }

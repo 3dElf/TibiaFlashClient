@@ -80,7 +80,6 @@ package tibia.input.staticaction
          var _loc3_:XMLList = null;
          if((_loc3_ = param1.@type) == null || _loc3_.length() != 1 || _loc3_[0].toString() != "static")
          {
-            log("StaticAction.s_Unmarshall: Missing or invalid attribute: type.");
             return null;
          }
          if((_loc3_ = param1.@object) != null && _loc3_.length() == 1)
@@ -135,7 +134,7 @@ package tibia.input.staticaction
          }
          if(_loc2_ == null || _loc2_.length < 1)
          {
-            log("StaticAction.toString: No label available.");
+            _loc2_ = this.m_Label;
          }
          return _loc2_;
       }

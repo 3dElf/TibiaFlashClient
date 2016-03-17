@@ -287,8 +287,6 @@ package tibia.worldmap
                   new ObjectContextMenu(_loc7_,_loc5_,_loc6_,_loc4_).display(this,param1.stageX,param1.stageY);
                   break;
                case ACTION_UNSET:
-               default:
-                  log("WorldMapWidget.onMouseClick: Unhandled event: " + param1 + ", action: " + _loc8_);
             }
          }
       }
@@ -536,13 +534,12 @@ package tibia.worldmap
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
-         var Height:Number = NaN;
          var RowHeight:Number = NaN;
          var a_UnscaledWidth:Number = param1;
          var a_UnscaledHeight:Number = param2;
          super.updateDisplayList(a_UnscaledWidth,a_UnscaledHeight);
          var AvailHeight:Number = Math.max(0,a_UnscaledHeight - 2);
-         Height = MAP_HEIGHT * FIELD_SIZE;
+         var Height:Number = MAP_HEIGHT * FIELD_SIZE;
          var AvailWidth:Number = Math.max(0,a_UnscaledWidth - 2);
          var Width:Number = MAP_WIDTH * FIELD_SIZE;
          var Left:Number = 0;

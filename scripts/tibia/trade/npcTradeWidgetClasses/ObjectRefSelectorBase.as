@@ -222,9 +222,6 @@ package tibia.trade.npcTradeWidgetClasses
                   {
                      new NPCTradeContextMenu(_loc4_,this.m_TradeMode,_loc2_).display(this,param1.stageX,param1.stageY);
                   }
-                  break;
-               default:
-                  log("ObjectRefSelectorBase.onClick: Unknown action: " + _loc3_ + ".");
             }
          }
       }

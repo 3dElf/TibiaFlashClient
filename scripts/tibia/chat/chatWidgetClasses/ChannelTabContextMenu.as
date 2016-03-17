@@ -4,7 +4,6 @@ package tibia.chat.chatWidgetClasses
    import tibia.chat.Channel;
    import tibia.chat.ChatStorage;
    import mx.core.IUIComponent;
-   import flash.events.ContextMenuEvent;
    import tibia.input.gameaction.PrivateChatActionImpl;
    import tibia.input.gameaction.SaveChannelActionImpl;
    
@@ -37,46 +36,45 @@ package tibia.chat.chatWidgetClasses
          var a_Owner:IUIComponent = param1;
          var a_StageX:Number = param2;
          var a_StageY:Number = param3;
-         var NeedSeparator:Boolean = false;
          if(Boolean(this.m_ChatStorage.hasOwnPrivateChannel) && this.m_Channel.ID == this.m_ChatStorage.ownPrivateChannelID)
          {
-            createItem(resourceManager.getString(BUNDLE,"CTX_TAB_INVITE"),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_TAB_INVITE"),function(param1:*):void
             {
                new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_INVITE,null).perform();
             });
-            createItem(resourceManager.getString(BUNDLE,"CTX_TAB_EXCLUDE"),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_TAB_EXCLUDE"),function(param1:*):void
             {
                new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_EXCLUDE,null).perform();
             });
-            NeedSeparator = true;
+            createSeparatorItem();
          }
          if(this.m_Channel.closable)
          {
-            createItem(resourceManager.getString(BUNDLE,"CTX_TAB_CLOSE"),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_TAB_CLOSE"),function(param1:*):void
             {
                if(m_Channel != null && m_ChatStorage != null)
                {
                   m_ChatStorage.leaveChannel(m_Channel);
                }
-            },NeedSeparator);
-            NeedSeparator = true;
+            });
+            createSeparatorItem();
          }
          if(Tibia.s_GetChatWidget().rightChannel != this.m_Channel)
          {
-            createItem(resourceManager.getString(BUNDLE,"CTX_TAB_SHOW_RIGHT"),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_TAB_SHOW_RIGHT"),function(param1:*):void
             {
                Tibia.s_GetChatWidget().rightChannel = m_Channel;
-            },NeedSeparator);
-            NeedSeparator = true;
+            });
+            createSeparatorItem();
          }
-         createItem(resourceManager.getString(BUNDLE,"CTX_TAB_SAVE"),function(param1:ContextMenuEvent):void
+         createTextItem(resourceManager.getString(BUNDLE,"CTX_TAB_SAVE"),function(param1:*):void
          {
             if(m_Channel != null && m_ChatStorage != null)
             {
                new SaveChannelActionImpl(m_ChatStorage,m_Channel).perform();
             }
-         },NeedSeparator);
-         createItem(resourceManager.getString(BUNDLE,"CTX_TAB_CLEAR"),function(param1:ContextMenuEvent):void
+         });
+         createTextItem(resourceManager.getString(BUNDLE,"CTX_TAB_CLEAR"),function(param1:*):void
          {
             if(m_Channel != null)
             {

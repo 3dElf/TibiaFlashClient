@@ -157,8 +157,6 @@ package tibia.container.containerWidgetClasses
                   }
                   break;
                case ACTION_UNSET:
-               default:
-                  log("ContainerWidgetViewBase.onSlotMouseClick: Unhandled event: " + param1 + ", action: " + _loc7_);
             }
          }
       }
@@ -375,9 +373,6 @@ package tibia.container.containerWidgetClasses
             {
                case "item":
                   this.updateSlots();
-                  break;
-               default:
-                  log("ContainerWidgetViewBase.onContainerChanged: Unknown porperty " + param1.property + ".");
             }
          }
       }
@@ -385,6 +380,17 @@ package tibia.container.containerWidgetClasses
       protected function get slotFactory() : ClassFactory
       {
          return this.m_SlotFactory;
+      }
+      
+      override function releaseInstance() : void
+      {
+         super.releaseInstance();
+         var _loc1_:int = this.slotHolder.numChildren - 1;
+         while(_loc1_ >= 0)
+         {
+            this.destroySlot(_loc1_);
+            _loc1_--;
+         }
       }
    }
 }

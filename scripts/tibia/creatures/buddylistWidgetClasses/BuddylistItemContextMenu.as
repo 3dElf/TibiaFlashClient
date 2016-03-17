@@ -3,7 +3,6 @@ package tibia.creatures.buddylistWidgetClasses
    import tibia.game.ContextMenuBase;
    import tibia.creatures.BuddySet;
    import mx.core.IUIComponent;
-   import flash.events.ContextMenuEvent;
    import tibia.creatures.EditBuddyWidget;
    import tibia.input.gameaction.BuddylistActionImpl;
    import tibia.input.gameaction.PrivateChatActionImpl;
@@ -49,66 +48,65 @@ package tibia.creatures.buddylistWidgetClasses
          var a_Owner:IUIComponent = param1;
          var a_StageX:Number = param2;
          var a_StageY:Number = param3;
-         var NeedSeparator:Boolean = false;
          if(this.m_Buddy != null)
          {
-            createItem(resourceManager.getString(BUNDLE,"CTX_EDIT_BUDDY",[this.m_Buddy.name]),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_EDIT_BUDDY",[this.m_Buddy.name]),function(param1:*):void
             {
                var _loc2_:EditBuddyWidget = new EditBuddyWidget();
                _loc2_.buddySet = m_BuddySet;
                _loc2_.buddy = m_Buddy;
                _loc2_.show();
             });
-            createItem(resourceManager.getString(BUNDLE,"CTX_REMOVE_BUDDY",[this.m_Buddy.name]),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_REMOVE_BUDDY",[this.m_Buddy.name]),function(param1:*):void
             {
                new BuddylistActionImpl(BuddylistActionImpl.REMOVE,m_Buddy.ID).perform();
             });
-            NeedSeparator = true;
+            createSeparatorItem();
          }
          if(this.m_Buddy != null && Boolean(this.m_Buddy.online) && this.m_Buddy.ID != Tibia.s_GetPlayer().ID)
          {
-            createItem(resourceManager.getString(BUNDLE,"CTX_OPEN_MESSAGE_CHANNEL",[this.m_Buddy.name]),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_OPEN_MESSAGE_CHANNEL",[this.m_Buddy.name]),function(param1:*):void
             {
                new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,m_Buddy.name).perform();
-            },NeedSeparator);
-            NeedSeparator = true;
+            });
+            createSeparatorItem();
          }
-         createItem(resourceManager.getString(BUNDLE,"CTX_ADD_BUDDY"),function(param1:ContextMenuEvent):void
+         createTextItem(resourceManager.getString(BUNDLE,"CTX_ADD_BUDDY"),function(param1:*):void
          {
             new BuddylistActionImpl(BuddylistActionImpl.ADD_ASK_NAME,null).perform();
-         },NeedSeparator);
+         });
          var i:int = 0;
          while(i < SORT_MODE.length)
          {
             if(this.m_BuddySet.sortOrder != SORT_MODE[i].value)
             {
-               createItem(resourceManager.getString(BUNDLE,SORT_MODE[i].label),closure(null,function(param1:BuddySet, param2:int, param3:ContextMenuEvent):void
+               createTextItem(resourceManager.getString(BUNDLE,SORT_MODE[i].label),closure(null,function(param1:BuddySet, param2:int, param3:*):void
                {
                   param1.sortOrder = param2;
                },this.m_BuddySet,SORT_MODE[i].value));
             }
             i++;
          }
-         createItem(resourceManager.getString(BUNDLE,!!this.m_BuddySet.showOffline?"CTX_HIDE_OFFLINE":"CTX_SHOW_OFFLINE"),function(param1:ContextMenuEvent):void
+         createTextItem(resourceManager.getString(BUNDLE,!!this.m_BuddySet.showOffline?"CTX_HIDE_OFFLINE":"CTX_SHOW_OFFLINE"),function(param1:*):void
          {
             m_BuddySet.showOffline = !m_BuddySet.showOffline;
          });
-         NeedSeparator = true;
+         createSeparatorItem();
          if(this.m_Buddy != null && Boolean(this.m_Buddy.isReportTypeAllowed(Type.REPORT_NAME)))
          {
-            createItem(resourceManager.getString(BUNDLE,"CTX_REPORT_NAME"),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_REPORT_NAME"),function(param1:*):void
             {
                new ReportWidget(Type.REPORT_NAME,m_Buddy).show();
-            },NeedSeparator);
-            NeedSeparator = true;
+            });
+            createSeparatorItem();
          }
          if(this.m_Buddy != null)
          {
-            createItem(resourceManager.getString(BUNDLE,"CTX_COPY_NAME"),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_COPY_NAME"),function(param1:*):void
             {
                System.setClipboard(m_Buddy.name);
-            },NeedSeparator);
-            NeedSeparator = false;
+            });
+            createSeparatorItem();
          }
          super.display(a_Owner,a_StageX,a_StageY);
       }

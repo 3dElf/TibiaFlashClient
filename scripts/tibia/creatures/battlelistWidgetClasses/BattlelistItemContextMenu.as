@@ -4,7 +4,6 @@ package tibia.creatures.battlelistWidgetClasses
    import tibia.creatures.CreatureStorage;
    import tibia.creatures.Creature;
    import mx.core.IUIComponent;
-   import flash.events.ContextMenuEvent;
    import tibia.input.gameaction.PrivateChatActionImpl;
    import tibia.input.gameaction.BuddylistActionImpl;
    import tibia.input.gameaction.NameFilterActionImpl;
@@ -222,53 +221,51 @@ package tibia.creatures.battlelistWidgetClasses
       
       override public function display(param1:IUIComponent, param2:Number, param3:Number) : void
       {
-         var ReportEnabled:Boolean = false;
          var a_Owner:IUIComponent = param1;
          var a_StageX:Number = param2;
          var a_StageY:Number = param3;
-         var NeedSeparator:Boolean = false;
          if(this.m_Creature != null)
          {
-            createItem(resourceManager.getString(BUNDLE,this.m_CreatureStorage.getAttackTarget() == this.m_Creature?"CTX_STOP_ATTACK":"CTX_START_ATTACK"),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,this.m_CreatureStorage.getAttackTarget() == this.m_Creature?"CTX_STOP_ATTACK":"CTX_START_ATTACK"),function(param1:*):void
             {
                m_CreatureStorage.toggleAttackTarget(m_Creature,true);
             });
-            createItem(resourceManager.getString(BUNDLE,this.m_CreatureStorage.getFollowTarget() == this.m_Creature?"CTX_STOP_FOLLOW":"CTX_START_FOLLOW"),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,this.m_CreatureStorage.getFollowTarget() == this.m_Creature?"CTX_STOP_FOLLOW":"CTX_START_FOLLOW"),function(param1:*):void
             {
                m_CreatureStorage.toggleFollowTarget(m_Creature,true);
             });
-            NeedSeparator = true;
+            createSeparatorItem();
          }
          if(this.m_Creature != null && Boolean(this.m_Creature.isHuman))
          {
-            createItem(resourceManager.getString(BUNDLE,"CTX_PRIVATE_MESSAGE",[this.m_Creature.name]),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_PRIVATE_MESSAGE",[this.m_Creature.name]),function(param1:*):void
             {
                new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,m_Creature.name).perform();
-            },NeedSeparator);
+            });
             if(Tibia.s_GetChatStorage().hasOwnPrivateChannel)
             {
-               createItem(resourceManager.getString(BUNDLE,"CTX_PRIVATE_CHAT"),function(param1:ContextMenuEvent):void
+               createTextItem(resourceManager.getString(BUNDLE,"CTX_PRIVATE_CHAT"),function(param1:*):void
                {
                   new PrivateChatActionImpl(PrivateChatActionImpl.CHAT_CHANNEL_INVITE,m_Creature.name).perform();
                });
             }
             if(!BuddylistActionImpl.s_IsBuddy(this.m_Creature.ID))
             {
-               createItem(resourceManager.getString(BUNDLE,"CTX_BUDDY"),function(param1:ContextMenuEvent):void
+               createTextItem(resourceManager.getString(BUNDLE,"CTX_BUDDY"),function(param1:*):void
                {
                   new BuddylistActionImpl(BuddylistActionImpl.ADD_BY_NAME,m_Creature.name).perform();
                });
             }
             if(NameFilterActionImpl.s_IsBlacklisted(this.m_Creature.name))
             {
-               createItem(resourceManager.getString(BUNDLE,"CTX_UNIGNORE",[this.m_Creature.name]),function(param1:ContextMenuEvent):void
+               createTextItem(resourceManager.getString(BUNDLE,"CTX_UNIGNORE",[this.m_Creature.name]),function(param1:*):void
                {
                   new NameFilterActionImpl(NameFilterActionImpl.UNIGNORE,m_Creature.name).perform();
                });
             }
             else
             {
-               createItem(resourceManager.getString(BUNDLE,"CTX_IGNORE",[this.m_Creature.name]),function(param1:ContextMenuEvent):void
+               createTextItem(resourceManager.getString(BUNDLE,"CTX_IGNORE",[this.m_Creature.name]),function(param1:*):void
                {
                   new NameFilterActionImpl(NameFilterActionImpl.IGNORE,m_Creature.name).perform();
                });
@@ -280,7 +277,7 @@ package tibia.creatures.battlelistWidgetClasses
                   case PARTY_LEADER:
                      if(this.m_Creature.partyFlag == PARTY_MEMBER)
                      {
-                        createItem(resourceManager.getString(BUNDLE,"CTX_PARTY_EXCLUDE",[this.m_Creature.name]),function(param1:ContextMenuEvent):void
+                        createTextItem(resourceManager.getString(BUNDLE,"CTX_PARTY_EXCLUDE",[this.m_Creature.name]),function(param1:*):void
                         {
                            new PartyActionImpl(PartyActionImpl.EXCLUDE,m_Creature).perform();
                         });
@@ -292,21 +289,21 @@ package tibia.creatures.battlelistWidgetClasses
                   case PARTY_LEADER_SEXP_OFF:
                      if(this.m_Creature.partyFlag == PARTY_MEMBER)
                      {
-                        createItem(resourceManager.getString(BUNDLE,"CTX_PARTY_EXCLUDE",[this.m_Creature.name]),function(param1:ContextMenuEvent):void
+                        createTextItem(resourceManager.getString(BUNDLE,"CTX_PARTY_EXCLUDE",[this.m_Creature.name]),function(param1:*):void
                         {
                            new PartyActionImpl(PartyActionImpl.EXCLUDE,m_Creature).perform();
                         });
                      }
                      else if(this.m_Creature.partyFlag == PARTY_MEMBER_SEXP_ACTIVE || this.m_Creature.partyFlag == PARTY_MEMBER_SEXP_INACTIVE_GUILTY || this.m_Creature.partyFlag == PARTY_MEMBER_SEXP_INACTIVE_INNOCENT || this.m_Creature.partyFlag == PARTY_MEMBER_SEXP_OFF)
                      {
-                        createItem(resourceManager.getString(BUNDLE,"CTX_PARTY_PASS_LEADERSHIP",[this.m_Creature.name]),function(param1:ContextMenuEvent):void
+                        createTextItem(resourceManager.getString(BUNDLE,"CTX_PARTY_PASS_LEADERSHIP",[this.m_Creature.name]),function(param1:*):void
                         {
                            new PartyActionImpl(PartyActionImpl.PASS_LEADERSHIP,m_Creature).perform();
                         });
                      }
                      else
                      {
-                        createItem(resourceManager.getString(BUNDLE,"CTX_PARTY_INVITE"),function(param1:ContextMenuEvent):void
+                        createTextItem(resourceManager.getString(BUNDLE,"CTX_PARTY_INVITE"),function(param1:*):void
                         {
                            new PartyActionImpl(PartyActionImpl.INVITE,m_Creature).perform();
                         });
@@ -316,14 +313,14 @@ package tibia.creatures.battlelistWidgetClasses
                   case PARTY_NONE:
                      if(this.m_Creature.partyFlag == PARTY_LEADER)
                      {
-                        createItem(resourceManager.getString(BUNDLE,"CTX_PARTY_JOIN",[this.m_Creature.name]),function(param1:ContextMenuEvent):void
+                        createTextItem(resourceManager.getString(BUNDLE,"CTX_PARTY_JOIN",[this.m_Creature.name]),function(param1:*):void
                         {
                            new PartyActionImpl(PartyActionImpl.JOIN,m_Creature).perform();
                         });
                      }
                      else
                      {
-                        createItem(resourceManager.getString(BUNDLE,"CTX_PARTY_INVITE"),function(param1:ContextMenuEvent):void
+                        createTextItem(resourceManager.getString(BUNDLE,"CTX_PARTY_INVITE"),function(param1:*):void
                         {
                            new PartyActionImpl(PartyActionImpl.INVITE,m_Creature).perform();
                         });
@@ -335,49 +332,43 @@ package tibia.creatures.battlelistWidgetClasses
                   case PARTY_MEMBER_SEXP_OFF:
                }
             }
-            NeedSeparator = true;
+            createSeparatorItem();
          }
          if(this.m_Creature != null)
          {
-            ReportEnabled = false;
             if(this.m_Creature.isReportTypeAllowed(Type.REPORT_NAME))
             {
-               createItem(resourceManager.getString(BUNDLE,"CTX_REPORT_NAME"),function(param1:ContextMenuEvent):void
+               createTextItem(resourceManager.getString(BUNDLE,"CTX_REPORT_NAME"),function(param1:*):void
                {
                   new ReportWidget(Type.REPORT_NAME,m_Creature).show();
-               },NeedSeparator);
-               NeedSeparator = false;
-               ReportEnabled = true;
+               });
             }
             if(this.m_Creature.isReportTypeAllowed(Type.REPORT_BOT))
             {
-               createItem(resourceManager.getString(BUNDLE,"CTX_REPORT_BOT"),function(param1:ContextMenuEvent):void
+               createTextItem(resourceManager.getString(BUNDLE,"CTX_REPORT_BOT"),function(param1:*):void
                {
                   new ReportWidget(Type.REPORT_BOT,m_Creature).show();
-               },NeedSeparator);
-               NeedSeparator = false;
-               ReportEnabled = true;
+               });
             }
-            NeedSeparator = ReportEnabled;
+            createSeparatorItem();
          }
          if(this.m_Creature != null)
          {
-            createItem(resourceManager.getString(BUNDLE,"CTX_COPY_NAME"),function(param1:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_COPY_NAME"),function(param1:*):void
             {
                System.setClipboard(m_Creature.name);
-            },NeedSeparator);
-            NeedSeparator = true;
+            });
+            createSeparatorItem();
          }
          var i:int = 0;
          while(i < SORT_OPTIONS.length)
          {
             if(this.m_Options.opponentSort != SORT_OPTIONS[i].value)
             {
-               createItem(resourceManager.getString(BUNDLE,SORT_OPTIONS[i].label),closure(null,function(param1:OptionsStorage, param2:int, param3:ContextMenuEvent):void
+               createTextItem(resourceManager.getString(BUNDLE,SORT_OPTIONS[i].label),closure(null,function(param1:OptionsStorage, param2:int, param3:*):void
                {
                   param1.opponentSort = param2;
-               },this.m_Options,SORT_OPTIONS[i].value),NeedSeparator);
-               NeedSeparator = false;
+               },this.m_Options,SORT_OPTIONS[i].value));
             }
             i++;
          }

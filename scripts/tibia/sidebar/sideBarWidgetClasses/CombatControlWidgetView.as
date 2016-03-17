@@ -244,6 +244,18 @@ package tibia.sidebar.sideBarWidgetClasses
          return this.m_SecureMode;
       }
       
+      override function releaseInstance() : void
+      {
+         super.releaseInstance();
+         this.m_UIButtonBalanced.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonChase.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonDefensive.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonMount.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonOffensive.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonSecureMode.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonStop.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+      }
+      
       function set player(param1:Player) : void
       {
          if(this.m_Player != param1)

@@ -542,7 +542,7 @@ package tibia.chat
       
       public static const MESSAGE_HEAL_OTHERS:int = 26;
       
-      public static const MESSAGE_MODE_COLOURS:Array = [4291310080,4291328050,4293314610,4282367538,4281505330,4278228680,4281492680,4285419740,4290654910,4288033360,4286743170,4290690750];
+      public static const MESSAGE_MODE_COLOURS:Array = [4291310080,4291590707,4290750256,4286044524,4281505330,4281774297,4283007474,4288380927,4290732223,4289943924,4286743170,4290690750];
       
       public static const MESSAGE_EXP_OTHERS:int = 27;
       
@@ -625,7 +625,6 @@ package tibia.chat
          var _loc3_:XMLList = null;
          if((_loc3_ = param1.@id) == null || _loc3_.length() != 1)
          {
-            log("MessageFilterSet.s_Unmarshall: Missing attribute: id.");
             return null;
          }
          _loc4_ = parseInt(_loc3_[0].toString());

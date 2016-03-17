@@ -1,16 +1,16 @@
 package tibia.container.containerWidgetClasses
 {
    import tibia.container.Container;
+   import flash.events.MouseEvent;
+   import tibia.container.ContainerStorage;
+   import tibia.§sidebar:ns_sidebar_internal§.container;
    import flash.display.DisplayObjectContainer;
    import tibia.appearances.widgetClasses.SimpleAppearanceRenderer;
-   import tibia.§sidebar:ns_sidebar_internal§.container;
    import shared.utility.StringHelper;
    import mx.controls.Button;
-   import flash.events.MouseEvent;
    import mx.core.ScrollPolicy;
    import mx.styles.StyleProxy;
    import shared.skins.VectorBorderSkin;
-   import tibia.container.ContainerStorage;
    import mx.core.EdgeMetrics;
    import mx.containers.BoxDirection;
    import mx.core.ClassFactory;
@@ -59,6 +59,19 @@ package tibia.container.containerWidgetClasses
             super.container = param1;
             this.m_UncommittedContainer = true;
             invalidateProperties();
+         }
+      }
+      
+      protected function onUpButtonClick(param1:MouseEvent) : void
+      {
+         var _loc2_:ContainerStorage = null;
+         if(param1 != null)
+         {
+            _loc2_ = Tibia.s_GetContainerStorage();
+            if(_loc2_ != null && container != null && Boolean(container.isSubContainer))
+            {
+               _loc2_.sendUpContainer(container);
+            }
          }
       }
       
@@ -134,17 +147,10 @@ package tibia.container.containerWidgetClasses
          }
       }
       
-      protected function onUpButtonClick(param1:MouseEvent) : void
+      override function releaseInstance() : void
       {
-         var _loc2_:ContainerStorage = null;
-         if(param1 != null)
-         {
-            _loc2_ = Tibia.s_GetContainerStorage();
-            if(_loc2_ != null && container != null && Boolean(container.isSubContainer))
-            {
-               _loc2_.sendUpContainer(container);
-            }
-         }
+         super.releaseInstance();
+         this.m_UIUpButton.removeEventListener(MouseEvent.CLICK,this.onUpButtonClick);
       }
       
       override protected function measure() : void

@@ -2,10 +2,8 @@ package tibia.minimap.miniMapWidgetClasses
 {
    import tibia.game.ContextMenuBase;
    import mx.core.IUIComponent;
-   import flash.ui.ContextMenuItem;
-   import flash.events.ContextMenuEvent;
-   import tibia.minimap.MiniMapStorage;
    import tibia.minimap.EditMarkWidget;
+   import tibia.minimap.MiniMapStorage;
    
    public class MiniMapWidgetContextMenu extends ContextMenuBase
    {
@@ -33,43 +31,34 @@ package tibia.minimap.miniMapWidgetClasses
       
       override public function display(param1:IUIComponent, param2:Number, param3:Number) : void
       {
-         var _loc4_:ContextMenuItem = null;
+         var a_Owner:IUIComponent = param1;
+         var a_StageX:Number = param2;
+         var a_StageY:Number = param3;
          if(this.m_MiniMapStorage.getMark(this.m_PositionX,this.m_PositionY,this.m_PositionZ) == null)
          {
-            _loc4_ = new ContextMenuItem(resourceManager.getString(MiniMapWidgetView.BUNDLE,"CTX_SET_MARK"));
-            _loc4_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onItemEditMark);
-            addItem(_loc4_);
+            createTextItem(resourceManager.getString(MiniMapWidgetView.BUNDLE,"CTX_SET_MARK"),function(param1:*):void
+            {
+               var _loc2_:EditMarkWidget = new EditMarkWidget();
+               _loc2_.setMiniMapStorage(m_MiniMapStorage);
+               _loc2_.setPosition(m_PositionX,m_PositionY,m_PositionZ);
+               _loc2_.show();
+            });
          }
          else
          {
-            _loc4_ = new ContextMenuItem(resourceManager.getString(MiniMapWidgetView.BUNDLE,"CTX_EDIT_MARK"));
-            _loc4_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onItemEditMark);
-            addItem(_loc4_);
-            _loc4_ = new ContextMenuItem(resourceManager.getString(MiniMapWidgetView.BUNDLE,"CTX_CLEAR_MARK"));
-            _loc4_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onItemClearMark);
-            addItem(_loc4_);
+            createTextItem(resourceManager.getString(MiniMapWidgetView.BUNDLE,"CTX_EDIT_MARK"),function(param1:*):void
+            {
+               var _loc2_:EditMarkWidget = new EditMarkWidget();
+               _loc2_.setMiniMapStorage(m_MiniMapStorage);
+               _loc2_.setPosition(m_PositionX,m_PositionY,m_PositionZ);
+               _loc2_.show();
+            });
+            createTextItem(resourceManager.getString(MiniMapWidgetView.BUNDLE,"CTX_CLEAR_MARK"),function(param1:*):void
+            {
+               m_MiniMapStorage.removeMark(m_PositionX,m_PositionY,m_PositionZ);
+            });
          }
-         super.display(param1,param2,param3);
-      }
-      
-      protected function onItemClearMark(param1:ContextMenuEvent) : void
-      {
-         if(param1 != null)
-         {
-            this.m_MiniMapStorage.removeMark(this.m_PositionX,this.m_PositionY,this.m_PositionZ);
-         }
-      }
-      
-      protected function onItemEditMark(param1:ContextMenuEvent) : void
-      {
-         var _loc2_:EditMarkWidget = null;
-         if(param1 != null)
-         {
-            _loc2_ = new EditMarkWidget();
-            _loc2_.setMiniMapStorage(this.m_MiniMapStorage);
-            _loc2_.setPosition(this.m_PositionX,this.m_PositionY,this.m_PositionZ);
-            _loc2_.show();
-         }
+         super.display(a_Owner,a_StageX,a_StageY);
       }
    }
 }

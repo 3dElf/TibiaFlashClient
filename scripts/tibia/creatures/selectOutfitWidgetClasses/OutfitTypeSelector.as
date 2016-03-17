@@ -97,9 +97,6 @@ package tibia.creatures.selectOutfitWidgetClasses
                   break;
                case this.m_UIButtonNext:
                   this.cycleOutfitType(1);
-                  break;
-               default:
-                  log("OutfitSelector.onButtonClick: Unknown button.");
             }
          }
       }

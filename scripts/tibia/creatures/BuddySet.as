@@ -82,7 +82,6 @@ package tibia.creatures
          var _loc3_:XMLList = null;
          if((_loc3_ = param1.@ID) == null || _loc3_.length() != 1)
          {
-            log("BuddySet.s_Unmarshall: Missing attribute: ID.");
             return null;
          }
          _loc4_ = parseInt(_loc3_[0].toString());

@@ -241,9 +241,6 @@ package tibia.sidebar
                case MouseEvent.MOUSE_UP:
                case SandboxMouseEvent.MOUSE_UP_SOMEWHERE:
                   this.finishMouseResize();
-                  break;
-               default:
-                  log("SideBarWidget.onWidgetMouseResizeEvent: Unknown event type: " + param1.type);
             }
          }
       }
@@ -284,9 +281,6 @@ package tibia.sidebar
                   _loc2_.removeEventListener(MouseEvent.MOUSE_MOVE,this.onWidgetDragInit);
                   _loc2_.removeEventListener(MouseEvent.MOUSE_UP,this.onWidgetDragInit);
                   _loc2_.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onWidgetDragInit);
-                  break;
-               default:
-                  log("SideBarWidget.onWidgetMouse: Unknown event type.");
             }
          }
       }
@@ -322,9 +316,6 @@ package tibia.sidebar
                   break;
                case MouseEvent.MOUSE_OUT:
                   this.updateMouseResizeCursor(false);
-                  break;
-               default:
-                  log("SideBarWidget.onWidgetMouseResizeInit: Unknown event type: " + param1.type);
             }
          }
       }
@@ -528,9 +519,6 @@ package tibia.sidebar
                   }
                case DragEvent.DRAG_OVER:
                   this.layoutDropIndicator(param1.localY);
-                  break;
-               default:
-                  log("SideBarWidget.onWidgetDragEvent: Unknown event type.");
             }
          }
       }
@@ -602,7 +590,6 @@ package tibia.sidebar
                   }
                   break;
                default:
-                  log("SideBarWidget.onSideBarCollectionChange: Falling back to full reset.");
                   this.resetWidgets();
             }
          }
@@ -965,6 +952,7 @@ package tibia.sidebar
          var _loc3_:int = numChildren - 1;
          while(_loc3_ >= 0)
          {
+            _loc1_ = null;
             _loc2_ = removeChildAt(_loc3_) as WidgetView;
             if(_loc2_ != null)
             {

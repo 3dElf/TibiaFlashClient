@@ -181,10 +181,10 @@ package tibia.appearances
                _loc3_--;
             }
          }
-         var _loc8_:uint = Colour.s_FromHSI(this.m_ColourHead).ARGB;
-         var _loc9_:uint = Colour.s_FromHSI(this.m_ColourTorso).ARGB;
-         var _loc10_:uint = Colour.s_FromHSI(this.m_ColourLegs).ARGB;
-         var _loc11_:uint = Colour.s_FromHSI(this.m_ColourDetail).ARGB;
+         var _loc8_:uint = Colour.s_ARGBFromHSI(this.m_ColourHead);
+         var _loc9_:uint = Colour.s_ARGBFromHSI(this.m_ColourTorso);
+         var _loc10_:uint = Colour.s_ARGBFromHSI(this.m_ColourLegs);
+         var _loc11_:uint = Colour.s_ARGBFromHSI(this.m_ColourDetail);
          _loc6_ = 0;
          while(_loc6_ < m_Type.patternHeight)
          {

@@ -16,85 +16,45 @@ package tibia.creatures
    public class Creature extends EventDispatcher implements IReportable
    {
       
-      protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
-      
       protected static const STATE_PZ_BLOCK:int = 13;
-      
-      protected static const NUM_EFFECTS:int = 200;
-      
-      protected static const PROFESSION_SORCERER:int = 3;
       
       protected static const PK_REVENGE:int = 6;
       
-      protected static const STATE_SLOW:int = 5;
-      
-      protected static const PARTY_NONE:int = 0;
-      
       protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
-      
-      protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
-      
-      protected static const SKILL_FIGHTCLUB:int = 9;
-      
-      protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
       protected static const WAR_ALLY:int = 1;
       
-      protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      protected static const SKILL_FIGHTCLUB:int = 9;
       
       protected static const PK_PARTYMODE:int = 2;
       
-      protected static const WAR_ENEMY:int = 2;
-      
-      protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
+      protected static const FIELD_HEIGHT:int = 24;
       
       protected static const PARTY_MEMBER:int = 2;
       
       protected static const STATE_DRUNK:int = 3;
       
-      protected static const WAR_NEUTRAL:int = 3;
-      
       protected static const SKILL_EXPERIENCE:int = 0;
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      protected static const FIELD_HEIGHT:int = 24;
-      
       protected static const TYPE_NPC:int = 2;
-      
-      protected static const PROFESSION_KNIGHT:int = 1;
       
       protected static const SKILL_STAMINA:int = 16;
       
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
-      
       protected static const STATE_NONE:int = -1;
-      
-      protected static const PROFESSION_PALADIN:int = 2;
       
       protected static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
       
-      protected static const UNDERGROUND_LAYER:int = 2;
-      
       protected static const SKILL_FIGHTSHIELD:int = 7;
-      
-      protected static const SKILL_FIGHTAXE:int = 11;
       
       protected static const FIELD_SIZE:int = 32;
       
       protected static const WAR_NONE:int = 0;
       
-      protected static const PLAYER_OFFSET_X:int = 8;
-      
-      protected static const PLAYER_OFFSET_Y:int = 6;
-      
       protected static const SKILL_FIGHTDISTANCE:int = 8;
       
       protected static const PK_EXCPLAYERKILLER:int = 5;
-      
-      public static const MAX_NAME_LENGHT:int = 30;
-      
-      protected static const MAP_MAX_X:int = MAP_MIN_X + (1 << 14 - 1);
       
       protected static const NUM_CREATURES:int = 1300;
       
@@ -104,59 +64,27 @@ package tibia.creatures
       
       protected static const SKILL_MAGLEVEL:int = 2;
       
-      protected static const SKILL_SOULPOINTS:int = 15;
-      
       protected static const SKILL_FISHING:int = 13;
-      
-      protected static const NUM_ONSCREEN_MESSAGES:int = 16;
-      
-      protected static const PARTY_LEADER_SEXP_OFF:int = 4;
       
       protected static const PK_PLAYERKILLER:int = 4;
       
-      protected static const STATE_FAST:int = 6;
-      
       protected static const STATE_BLEEDING:int = 15;
-      
-      protected static const MAP_MAX_Z:int = 15;
-      
-      protected static const STATE_DAZZLED:int = 10;
-      
-      protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
-      
-      protected static const TYPE_PLAYER:int = 0;
-      
-      protected static const SKILL_HITPOINTS:int = 3;
-      
-      protected static const SKILL_NONE:int = -1;
-      
-      protected static const SKILL_OFFLINETRAINING:int = 17;
       
       protected static const GROUND_LAYER:int = 7;
       
-      protected static const STATE_MANA_SHIELD:int = 4;
+      protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
       
-      protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
+      protected static const STATE_DAZZLED:int = 10;
       
-      protected static const SKILL_MANA:int = 4;
+      protected static const SKILL_NONE:int = -1;
       
-      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
+      protected static const PROFESSION_NONE:int = 0;
       
       protected static const MAX_NAME_LENGTH:int = 29;
       
-      protected static const STATE_CURSED:int = 11;
-      
-      protected static const STATE_FREEZING:int = 9;
-      
       protected static const PARTY_LEADER:int = 1;
       
-      protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
-      
       protected static const STATE_PZ_ENTERED:int = 14;
-      
-      protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
-      
-      protected static const PROFESSION_NONE:int = 0;
       
       protected static const PK_ATTACKER:int = 1;
       
@@ -164,17 +92,7 @@ package tibia.creatures
       
       protected static const SKILL_FIGHTSWORD:int = 10;
       
-      protected static const TYPE_MONSTER:int = 1;
-      
       protected static const SKILL_CARRYSTRENGTH:int = 6;
-      
-      protected static const MAP_HEIGHT:int = 11;
-      
-      protected static const STATE_POISONED:int = 0;
-      
-      protected static const STATE_BURNING:int = 1;
-      
-      protected static const SKILL_FIGHTFIST:int = 12;
       
       protected static const STATE_DROWNING:int = 8;
       
@@ -184,11 +102,107 @@ package tibia.creatures
       
       protected static const MAP_MIN_X:int = 24576;
       
+      protected static const MAP_WIDTH:int = 15;
+      
+      protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
+      
+      protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
+      
+      protected static const PK_NONE:int = 0;
+      
+      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
+      
+      protected static const NUM_EFFECTS:int = 200;
+      
+      protected static const PROFESSION_SORCERER:int = 3;
+      
+      protected static const STATE_SLOW:int = 5;
+      
+      protected static const PARTY_NONE:int = 0;
+      
+      protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
+      
+      protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
+      
+      protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const WAR_NEUTRAL:int = 3;
+      
+      protected static const WAR_ENEMY:int = 2;
+      
+      protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
+      
+      protected static const PROFESSION_KNIGHT:int = 1;
+      
+      protected static const UNDERGROUND_LAYER:int = 2;
+      
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
+      
+      public static const MAX_NAME_LENGHT:int = 30;
+      
+      protected static const PROFESSION_PALADIN:int = 2;
+      
+      protected static const PLAYER_OFFSET_X:int = 8;
+      
+      protected static const PLAYER_OFFSET_Y:int = 6;
+      
+      protected static const SKILL_FIGHTAXE:int = 11;
+      
+      protected static const PARTY_LEADER_SEXP_OFF:int = 4;
+      
+      protected static const MAP_MAX_X:int = MAP_MIN_X + (1 << 14 - 1);
+      
+      protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
+      
+      protected static const MAP_MAX_Z:int = 15;
+      
+      protected static const SKILL_SOULPOINTS:int = 15;
+      
+      protected static const NUM_ONSCREEN_MESSAGES:int = 16;
+      
+      protected static const STATE_FAST:int = 6;
+      
+      protected static const TYPE_PLAYER:int = 0;
+      
+      protected static const SKILL_HITPOINTS:int = 3;
+      
+      protected static const SKILL_OFFLINETRAINING:int = 17;
+      
+      protected static const MAP_HEIGHT:int = 11;
+      
+      protected static const STATE_MANA_SHIELD:int = 4;
+      
+      protected static const SKILL_MANA:int = 4;
+      
+      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
+      
+      protected static const STATE_CURSED:int = 11;
+      
+      protected static const STATE_FREEZING:int = 9;
+      
+      private static const s_TempHealthColour:Colour = new Colour(0,0,0);
+      
+      protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
+      
+      protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
+      
+      protected static const TYPE_MONSTER:int = 1;
+      
+      protected static const STATE_POISONED:int = 0;
+      
+      protected static const STATE_BURNING:int = 1;
+      
+      protected static const SKILL_FIGHTFIST:int = 12;
+      
       protected static const PK_AGGRESSOR:int = 3;
+      
+      protected static const MAPSIZE_W:int = 10;
       
       protected static const SKILL_LEVEL:int = 1;
       
       protected static const STATE_STRENGTHENED:int = 12;
+      
+      protected static const MAPSIZE_Z:int = 8;
       
       protected static const STATE_HUNGRY:int = 31;
       
@@ -200,21 +214,9 @@ package tibia.creatures
       
       protected static const PROFESSION_DRUID:int = 4;
       
-      protected static const MAP_WIDTH:int = 15;
-      
-      protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
-      
       protected static const STATE_FIGHTING:int = 7;
       
-      protected static const MAPSIZE_W:int = 10;
-      
-      protected static const MAPSIZE_Z:int = 8;
-      
       protected static const SKILL_GOSTRENGTH:int = 5;
-      
-      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
-      
-      protected static const PK_NONE:int = 0;
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
        
@@ -250,7 +252,7 @@ package tibia.creatures
       
       protected var m_PKEnd:int = 0;
       
-      protected var m_LightColour:Colour = null;
+      protected var m_LightColour:Colour;
       
       protected var m_Skills:Vector.<Number> = null;
       
@@ -274,6 +276,7 @@ package tibia.creatures
       {
          this.m_AnimationDelta = new Vector3D();
          this.m_AnimationSpeed = new Vector3D();
+         this.m_LightColour = new Colour(0,0,0);
          this.m_Position = new Vector3D();
          super();
          this.m_ID = param1;
@@ -282,29 +285,33 @@ package tibia.creatures
          this.resetSkills();
       }
       
-      public static function s_GetHealthColour(param1:Number) : Colour
+      public static function s_GetHealthColourARGB(param1:Number) : uint
       {
          if(param1 < 4)
          {
-            return new Colour(96,0,0);
+            s_TempHealthColour.setChannels(96,0,0);
          }
-         if(param1 < 10)
+         else if(param1 < 10)
          {
-            return new Colour(192,0,0);
+            s_TempHealthColour.setChannels(192,0,0);
          }
-         if(param1 < 30)
+         else if(param1 < 30)
          {
-            return new Colour(192,48,48);
+            s_TempHealthColour.setChannels(192,48,48);
          }
-         if(param1 < 60)
+         else if(param1 < 60)
          {
-            return new Colour(192,192,0);
+            s_TempHealthColour.setChannels(192,192,0);
          }
-         if(param1 < 95)
+         else if(param1 < 95)
          {
-            return new Colour(96,192,96);
+            s_TempHealthColour.setChannels(96,192,96);
          }
-         return new Colour(0,192,0);
+         else
+         {
+            s_TempHealthColour.setChannels(0,192,0);
+         }
+         return s_TempHealthColour.ARGB;
       }
       
       public function get outfit() : AppearanceInstance
@@ -328,7 +335,6 @@ package tibia.creatures
          {
             return this.m_Skills[3 * param1 + 1];
          }
-         log("Creature.getSkillBase: Invalid skill.");
          return 0;
       }
       
@@ -371,10 +377,6 @@ package tibia.creatures
             _loc5_.kind = PropertyChangeEventKind.UPDATE;
             _loc5_.property = "skill";
             dispatchEvent(_loc5_);
-         }
-         else
-         {
-            log("Creature.setSkill: Invalid skill.");
          }
       }
       
@@ -559,7 +561,7 @@ package tibia.creatures
          this.m_IsTrapper = false;
          this.m_IsUnpassable = false;
          this.m_KnownSince = -1;
-         this.m_LightColour = new Colour(0,0,0);
+         this.m_LightColour.setChannels(0,0,0);
          this.m_MovementEnd = 0;
          this.m_MovementRunning = false;
          if(this.m_Name != null)
@@ -753,7 +755,6 @@ package tibia.creatures
          {
             return this.m_Skills[3 * param1 + 0];
          }
-         log("Creature.getSkillValue: Invalid skill.");
          return 0;
       }
       
@@ -794,10 +795,6 @@ package tibia.creatures
             _loc3_.kind = PropertyChangeEventKind.UPDATE;
             _loc3_.property = "skill";
             dispatchEvent(_loc3_);
-         }
-         else
-         {
-            log("Creature.setSkillValue: Invalid skill.");
          }
       }
       
@@ -940,7 +937,6 @@ package tibia.creatures
          {
             return this.m_Skills[3 * param1 + 2];
          }
-         log("Creature.getSkillProgress: Invalid skill.");
          return 0;
       }
       

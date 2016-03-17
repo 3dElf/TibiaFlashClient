@@ -1,10 +1,11 @@
 package tibia.creatures.statusWidgetClasses
 {
    import mx.core.UIComponent;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
+   import shared.utility.cacheStyleInstance;
+   import tibia.creatures.Player;
+   import mx.events.PropertyChangeEvent;
    import mx.core.EdgeMetrics;
-   import mx.core.IFlexDisplayObject;
+   import flash.display.DisplayObject;
    
    public class StateRenderer extends UIComponent
    {
@@ -26,76 +27,6 @@ package tibia.creatures.statusWidgetClasses
       protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
       
       protected static const SKILL_FIGHTCLUB:int = 9;
-      
-      private static const STATE_FLAGS:Array = [{
-         "state":STATE_POISONED,
-         "styleProp":"poisonedImage",
-         "toolTip":"TIP_STATE_POISONED"
-      },{
-         "state":STATE_BURNING,
-         "styleProp":"burningImage",
-         "toolTip":"TIP_STATE_BURNING"
-      },{
-         "state":STATE_ELECTRIFIED,
-         "styleProp":"electrifiedImage",
-         "toolTip":"TIP_STATE_ELECTRIFIED"
-      },{
-         "state":STATE_DRUNK,
-         "styleProp":"drunkImage",
-         "toolTip":"TIP_STATE_DRUNK"
-      },{
-         "state":STATE_MANA_SHIELD,
-         "styleProp":"manaShieldImage",
-         "toolTip":"TIP_STATE_MANA_SHIELD"
-      },{
-         "state":STATE_SLOW,
-         "styleProp":"slowImage",
-         "toolTip":"TIP_STATE_SLOW"
-      },{
-         "state":STATE_FAST,
-         "styleProp":"fastImage",
-         "toolTip":"TIP_STATE_FAST"
-      },{
-         "state":STATE_FIGHTING,
-         "styleProp":"fightingImage",
-         "toolTip":"TIP_STATE_FIGHTING"
-      },{
-         "state":STATE_DROWNING,
-         "styleProp":"drowningImage",
-         "toolTip":"TIP_STATE_DROWNING"
-      },{
-         "state":STATE_FREEZING,
-         "styleProp":"freezingImage",
-         "toolTip":"TIP_STATE_FREEZING"
-      },{
-         "state":STATE_DAZZLED,
-         "styleProp":"dazzledImage",
-         "toolTip":"TIP_STATE_DAZZLED"
-      },{
-         "state":STATE_CURSED,
-         "styleProp":"cursedImage",
-         "toolTip":"TIP_STATE_CURSED"
-      },{
-         "state":STATE_STRENGTHENED,
-         "styleProp":"strengthenedImage",
-         "toolTip":"TIP_STATE_STRENGTHENED"
-      },{
-         "state":STATE_PZ_BLOCK,
-         "styleProp":"pzBlockImage",
-         "toolTip":"TIP_STATE_PZ_BLOCK"
-      },{
-         "state":STATE_PZ_ENTERED,
-         "styleProp":"pzEnteredImage",
-         "toolTip":"TIP_STATE_PZ_ENTERED"
-      },{
-         "state":STATE_BLEEDING,
-         "styleProp":"bleedingImage",
-         "toolTip":"TIP_STATE_BLEEDING"
-      },{
-         "state":STATE_HUNGRY,
-         "styleProp":"hungryImage",
-         "toolTip":"TIP_STATE_HUNGRY"
-      }];
       
       protected static const WAR_ALLY:int = 1;
       
@@ -157,9 +88,13 @@ package tibia.creatures.statusWidgetClasses
       
       protected static const STATE_BLEEDING:int = 15;
       
+      private static var s_ChildHeight:Number = NaN;
+      
       protected static const STATE_DAZZLED:int = 10;
       
       protected static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
+      
+      private static var s_ChildWidth:Number = NaN;
       
       protected static const TYPE_PLAYER:int = 0;
       
@@ -209,6 +144,76 @@ package tibia.creatures.statusWidgetClasses
       
       protected static const STATE_DROWNING:int = 8;
       
+      private static const STATE_OPTIONS:Array = [{
+         "value":STATE_POISONED,
+         "styleProp":"iconStatePoisoned",
+         "toolTip":"TIP_STATE_POISONED"
+      },{
+         "value":STATE_BURNING,
+         "styleProp":"iconStateBurning",
+         "toolTip":"TIP_STATE_BURNING"
+      },{
+         "value":STATE_ELECTRIFIED,
+         "styleProp":"iconStateElectrified",
+         "toolTip":"TIP_STATE_ELECTRIFIED"
+      },{
+         "value":STATE_DRUNK,
+         "styleProp":"iconStateDrunk",
+         "toolTip":"TIP_STATE_DRUNK"
+      },{
+         "value":STATE_MANA_SHIELD,
+         "styleProp":"iconStateManaShield",
+         "toolTip":"TIP_STATE_MANA_SHIELD"
+      },{
+         "value":STATE_SLOW,
+         "styleProp":"iconStateSlow",
+         "toolTip":"TIP_STATE_SLOW"
+      },{
+         "value":STATE_FAST,
+         "styleProp":"iconStateFast",
+         "toolTip":"TIP_STATE_FAST"
+      },{
+         "value":STATE_FIGHTING,
+         "styleProp":"iconStateFighting",
+         "toolTip":"TIP_STATE_FIGHTING"
+      },{
+         "value":STATE_DROWNING,
+         "styleProp":"iconStateDrowning",
+         "toolTip":"TIP_STATE_DROWNING"
+      },{
+         "value":STATE_FREEZING,
+         "styleProp":"iconStateFreezing",
+         "toolTip":"TIP_STATE_FREEZING"
+      },{
+         "value":STATE_DAZZLED,
+         "styleProp":"iconStateDazzled",
+         "toolTip":"TIP_STATE_DAZZLED"
+      },{
+         "value":STATE_CURSED,
+         "styleProp":"iconStateCursed",
+         "toolTip":"TIP_STATE_CURSED"
+      },{
+         "value":STATE_STRENGTHENED,
+         "styleProp":"iconStateStrengthened",
+         "toolTip":"TIP_STATE_STRENGTHENED"
+      },{
+         "value":STATE_PZ_BLOCK,
+         "styleProp":"iconStatePZBlock",
+         "toolTip":"TIP_STATE_PZ_BLOCK"
+      },{
+         "value":STATE_PZ_ENTERED,
+         "styleProp":"iconStatePZEntered",
+         "toolTip":"TIP_STATE_PZ_ENTERED"
+      },{
+         "value":STATE_BLEEDING,
+         "styleProp":"iconStateBleeding",
+         "toolTip":"TIP_STATE_BLEEDING"
+      },{
+         "value":STATE_HUNGRY,
+         "styleProp":"iconStateHungry",
+         "toolTip":"TIP_STATE_HUNGRY"
+      }];
+      
       protected static const PK_AGGRESSOR:int = 3;
       
       protected static const SKILL_LEVEL:int = 1;
@@ -234,65 +239,76 @@ package tibia.creatures.statusWidgetClasses
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       {
-         s_InitializeStyle();
+         cacheStyleInstance(STATE_OPTIONS,".statusWidgetIcons");
       }
       
       private var m_UncommittedBitSet:Boolean = true;
       
-      protected var m_BitSet:uint = 4.294967295E9;
+      private var m_BitSet:uint = 4.294967295E9;
       
       private var m_UncommittedMaxColumns:Boolean = false;
       
-      protected var m_MaxColumns:int = 2.147483647E9;
+      private var m_MaxColumns:int = 2.147483647E9;
       
       private var m_UncommittedMaxRows:Boolean = false;
       
-      protected var m_MinRows:int = 1;
+      private var m_MinRows:int = 1;
       
       private var m_ChildColumns:int = 0;
       
       private var m_UncommittedMinColumns:Boolean = false;
       
+      private var m_UncommittedCharacter:Boolean = false;
+      
       private var m_ChildRows:int = 0;
       
-      protected var m_MinColumns:int = 1;
+      private var m_MinColumns:int = 1;
       
-      protected var m_MaxRows:int = 2.147483647E9;
+      private var m_MaxRows:int = 2.147483647E9;
       
-      private var m_InvalidStyle:Boolean = false;
+      private var m_InvalidedStyle:Boolean = true;
       
-      private var m_ChildHeight:Number = NaN;
+      private var m_Character:Player = null;
       
       private var m_UncommittedMinRows:Boolean = false;
       
-      private var m_ChildWidth:Number = NaN;
-      
       public function StateRenderer()
       {
+         var _loc1_:Object = null;
+         var _loc2_:Number = NaN;
+         var _loc3_:Number = NaN;
          super();
-      }
-      
-      private static function s_InitializeStyle() : void
-      {
-         var Selector:String = "StateRenderer";
-         var Decl:CSSStyleDeclaration = StyleManager.getStyleDeclaration(Selector);
-         if(Decl == null)
+         if(Boolean(isNaN(s_ChildWidth)) && Boolean(isNaN(s_ChildHeight)))
          {
-            Decl = new CSSStyleDeclaration(Selector);
+            s_ChildWidth = 0;
+            s_ChildHeight = 0;
+            for each(_loc1_ in STATE_OPTIONS)
+            {
+               if(Boolean(_loc1_.hasOwnProperty("styleInstance")) && _loc1_.styleInstance is DisplayObject)
+               {
+                  _loc2_ = DisplayObject(_loc1_.styleInstance).width;
+                  if(!isNaN(_loc2_))
+                  {
+                     s_ChildWidth = Math.max(s_ChildWidth,_loc2_);
+                  }
+                  _loc3_ = DisplayObject(_loc1_.styleInstance).height;
+                  if(!isNaN(_loc3_))
+                  {
+                     s_ChildHeight = Math.max(s_ChildHeight,_loc3_);
+                  }
+               }
+            }
          }
-         Decl.defaultFactory = function():void
-         {
-            StateRenderer.horizontalAlign = "center";
-            StateRenderer.verticalAlign = "middle";
-            StateRenderer.horizontalGap = 1;
-            StateRenderer.verticalGap = 1;
-         };
-         StyleManager.setStyleDeclaration(Selector,Decl,true);
       }
       
       public function get minColumns() : int
       {
          return this.m_MinColumns;
+      }
+      
+      public function get minRows() : int
+      {
+         return this.m_MinRows;
       }
       
       public function set maxRows(param1:int) : void
@@ -308,26 +324,36 @@ package tibia.creatures.statusWidgetClasses
          }
       }
       
-      public function get viewMetricsAndPadding() : EdgeMetrics
+      public function set minRows(param1:int) : void
       {
-         var _loc1_:EdgeMetrics = this.borderMetrics.clone();
-         _loc1_.bottom = _loc1_.bottom + getStyle("paddingBottom");
-         _loc1_.left = _loc1_.left + getStyle("paddingLeft");
-         _loc1_.right = _loc1_.right + getStyle("paddingRight");
-         _loc1_.top = _loc1_.top + getStyle("paddingTop");
-         return _loc1_;
+         param1 = Math.max(1,param1);
+         if(this.m_MinRows != param1)
+         {
+            this.m_MinRows = param1;
+            this.m_UncommittedMinRows = true;
+            invalidateDisplayList();
+            invalidateProperties();
+            invalidateSize();
+         }
       }
       
       override protected function commitProperties() : void
       {
          var _loc1_:int = 0;
          var _loc2_:Object = null;
-         var _loc3_:SkinWrapper = null;
+         var _loc3_:RotatingShapeWrapper = null;
          super.commitProperties();
-         if(this.m_InvalidStyle)
+         if(this.m_UncommittedCharacter)
          {
-            this.commitStyle();
-            this.m_InvalidStyle = false;
+            if(this.character != null)
+            {
+               this.bitSet = this.character.stateFlags;
+            }
+            else
+            {
+               this.bitSet = 16777215;
+            }
+            this.m_UncommittedCharacter = false;
          }
          if(this.m_UncommittedBitSet)
          {
@@ -337,12 +363,15 @@ package tibia.creatures.statusWidgetClasses
                removeChildAt(_loc1_);
                _loc1_--;
             }
-            for each(_loc2_ in STATE_FLAGS)
+            for each(_loc2_ in STATE_OPTIONS)
             {
-               if(this.m_BitSet & 1 << _loc2_.state)
+               if(this.bitSet & 1 << _loc2_.value)
                {
-                  _loc3_ = new SkinWrapper(_loc2_.skinInstance);
+                  _loc3_ = new RotatingShapeWrapper();
+                  _loc3_.explicitHeight = s_ChildHeight;
+                  _loc3_.explicitWidth = s_ChildWidth;
                   _loc3_.toolTip = resourceManager.getString(BUNDLE,_loc2_.toolTip);
+                  _loc3_.addChild(_loc2_.styleInstance);
                   addChild(_loc3_);
                }
             }
@@ -366,60 +395,85 @@ package tibia.creatures.statusWidgetClasses
          }
       }
       
-      public function get minRows() : int
+      public function set character(param1:Player) : void
       {
-         return this.m_MinRows;
+         if(this.m_Character != param1)
+         {
+            if(this.m_Character != null)
+            {
+               this.m_Character.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onCharacterChange);
+            }
+            this.m_Character = param1;
+            this.m_UncommittedCharacter = true;
+            invalidateDisplayList();
+            invalidateProperties();
+            invalidateSize();
+            if(this.m_Character != null)
+            {
+               this.m_Character.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onCharacterChange);
+            }
+         }
       }
       
-      public function get bitSet() : uint
+      protected function get bitSet() : uint
       {
          return this.m_BitSet;
+      }
+      
+      private function onCharacterChange(param1:PropertyChangeEvent) : void
+      {
+         if(param1.property == "stateFlags" || param1.property == "*")
+         {
+            this.bitSet = this.character.stateFlags;
+         }
       }
       
       override public function styleChanged(param1:String) : void
       {
          super.styleChanged(param1);
-         this.invalidateStyle();
+         this.m_InvalidedStyle = true;
+         invalidateProperties();
       }
       
       override protected function measure() : void
       {
+         var _loc3_:EdgeMetrics = null;
          super.measure();
-         var _loc1_:EdgeMetrics = this.viewMetricsAndPadding;
-         var _loc2_:Number = getStyle("horizontalGap");
-         var _loc3_:Number = _loc1_.left + _loc1_.right;
-         var _loc4_:Number = getStyle("verticalGap");
-         var _loc5_:Number = _loc1_.top + _loc1_.bottom;
          this.m_ChildColumns = this.m_MinColumns;
          this.m_ChildRows = this.m_MinRows;
-         var _loc6_:int = 0;
-         var _loc7_:int = STATE_FLAGS.length - 1;
-         while(_loc7_ >= 0)
+         var _loc1_:int = 0;
+         var _loc2_:int = STATE_OPTIONS.length - 1;
+         while(_loc2_ >= 0)
          {
-            if(this.m_BitSet & 1 << STATE_FLAGS[_loc7_].state)
+            if(this.bitSet & 1 << STATE_OPTIONS[_loc2_].value)
             {
-               _loc6_++;
+               _loc1_++;
             }
-            _loc7_--;
+            _loc2_--;
          }
-         while(this.m_ChildRows * this.m_ChildColumns < _loc6_)
+         while(this.m_ChildRows * this.m_ChildColumns < _loc1_)
          {
-            if(this.m_ChildRows < this.m_MaxRows)
-            {
-               this.m_ChildRows++;
-               continue;
-            }
             if(this.m_ChildColumns < this.m_MaxColumns)
             {
                this.m_ChildColumns++;
                continue;
             }
+            if(this.m_ChildRows < this.m_MaxRows)
+            {
+               this.m_ChildRows++;
+               continue;
+            }
             break;
          }
-         measuredMinWidth = this.m_MinColumns * this.m_ChildWidth + (this.m_MinColumns - 1) * _loc2_ + _loc3_;
-         measuredWidth = Math.max(measuredMinWidth,this.m_ChildColumns * this.m_ChildWidth + (this.m_ChildColumns - 1) * _loc2_ + _loc3_);
-         measuredMinHeight = this.m_MinRows * this.m_ChildHeight + (this.m_MinRows - 1) * _loc4_ + _loc5_;
-         measuredHeight = Math.max(measuredMinHeight,this.m_ChildRows * this.m_ChildHeight + (this.m_ChildRows - 1) * _loc4_ + _loc5_);
+         _loc3_ = this.viewMetricsAndPadding;
+         var _loc4_:Number = getStyle("horizontalGap");
+         var _loc5_:Number = _loc3_.left + _loc3_.right;
+         measuredMinWidth = this.m_MinColumns * s_ChildWidth + (this.m_MinColumns - 1) * _loc4_ + _loc5_;
+         measuredWidth = Math.max(measuredMinWidth,this.m_ChildColumns * s_ChildWidth + (this.m_ChildColumns - 1) * _loc4_ + _loc5_);
+         var _loc6_:Number = getStyle("verticalGap");
+         var _loc7_:Number = _loc3_.top + _loc3_.bottom;
+         measuredMinHeight = this.m_MinRows * s_ChildHeight + (this.m_MinRows - 1) * _loc6_ + _loc7_;
+         measuredHeight = Math.max(measuredMinHeight,this.m_ChildRows * s_ChildHeight + (this.m_ChildRows - 1) * _loc6_ + _loc7_);
       }
       
       public function get maxColumns() : int
@@ -440,36 +494,12 @@ package tibia.creatures.statusWidgetClasses
          }
       }
       
-      protected function commitStyle() : void
+      public function get character() : Player
       {
-         var _loc1_:Object = null;
-         var _loc2_:* = undefined;
-         this.m_ChildWidth = 0;
-         this.m_ChildHeight = 0;
-         for each(_loc1_ in STATE_FLAGS)
-         {
-            _loc2_ = getStyle(_loc1_.styleProp);
-            if(_loc1_.styleCache != _loc2_)
-            {
-               _loc1_.styleCache = _loc2_;
-               if(_loc2_ is Class)
-               {
-                  _loc1_.skinInstance = IFlexDisplayObject(new Class(_loc2_)());
-               }
-               else
-               {
-                  _loc1_.skinInstance = null;
-               }
-            }
-            if(_loc1_.skinInstance is IFlexDisplayObject)
-            {
-               this.m_ChildWidth = Math.max(this.m_ChildWidth,IFlexDisplayObject(_loc1_.skinInstance).measuredWidth);
-               this.m_ChildHeight = Math.max(this.m_ChildHeight,IFlexDisplayObject(_loc1_.skinInstance).measuredHeight);
-            }
-         }
+         return this.m_Character;
       }
       
-      public function set bitSet(param1:uint) : void
+      protected function set bitSet(param1:uint) : void
       {
          if(this.m_BitSet != param1)
          {
@@ -481,33 +511,9 @@ package tibia.creatures.statusWidgetClasses
          }
       }
       
-      public function set minRows(param1:int) : void
-      {
-         param1 = Math.max(1,param1);
-         if(this.m_MinRows != param1)
-         {
-            this.m_MinRows = param1;
-            this.m_UncommittedMinRows = true;
-            invalidateDisplayList();
-            invalidateProperties();
-            invalidateSize();
-         }
-      }
-      
       public function get maxRows() : int
       {
          return this.m_MaxRows;
-      }
-      
-      protected function invalidateStyle() : void
-      {
-         this.m_InvalidStyle = true;
-         invalidateProperties();
-      }
-      
-      public function get borderMetrics() : EdgeMetrics
-      {
-         return EdgeMetrics.EMPTY;
       }
       
       public function set maxColumns(param1:int) : void
@@ -525,85 +531,79 @@ package tibia.creatures.statusWidgetClasses
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
-         var _loc12_:UIComponent = null;
-         var _loc13_:Number = NaN;
+         var _loc3_:EdgeMetrics = null;
+         var _loc5_:Number = NaN;
+         var _loc13_:UIComponent = null;
          var _loc14_:Number = NaN;
-         var _loc15_:int = 0;
-         var _loc16_:Number = NaN;
+         var _loc15_:Number = NaN;
+         var _loc16_:int = 0;
          var _loc17_:Number = NaN;
          super.updateDisplayList(param1,param2);
          if(this.m_ChildRows == 0 || this.m_ChildColumns == 0)
          {
             return;
          }
-         var _loc3_:EdgeMetrics = this.viewMetricsAndPadding;
+         _loc3_ = this.viewMetricsAndPadding;
          var _loc4_:Number = getStyle("horizontalGap");
-         var _loc5_:Number = getStyle("verticalGap");
-         var _loc6_:Number = this.m_ChildRows * this.m_ChildHeight + (this.m_ChildRows - 1) * _loc5_;
+         _loc5_ = getStyle("verticalGap");
+         var _loc6_:Number = this.m_ChildRows * s_ChildHeight + (this.m_ChildRows - 1) * _loc5_;
          var _loc7_:Number = param2 - _loc3_.top - _loc3_.bottom;
-         var _loc8_:Number = _loc3_.left;
-         var _loc9_:Number = _loc3_.top + (_loc7_ - _loc6_) / 2 - this.m_ChildHeight - _loc5_;
-         var _loc10_:int = 0;
-         var _loc11_:int = numChildren;
-         while(_loc10_ < _loc11_)
+         var _loc8_:Number = param1 - _loc3_.left - _loc3_.right;
+         var _loc9_:Number = _loc3_.left;
+         var _loc10_:Number = _loc3_.top + (_loc7_ - _loc6_) / 2 - s_ChildHeight - _loc5_;
+         var _loc11_:int = 0;
+         var _loc12_:int = numChildren;
+         while(_loc11_ < _loc12_)
          {
-            if(_loc10_ % this.m_ChildColumns == 0)
+            if(_loc11_ % this.m_ChildColumns == 0)
             {
-               _loc15_ = Math.min(_loc11_ - _loc10_,this.m_ChildColumns);
-               _loc16_ = _loc15_ * this.m_ChildWidth + (_loc15_ - 1) * _loc4_;
-               _loc17_ = param1 - _loc3_.left - _loc3_.right;
-               _loc8_ = _loc3_.left + (_loc17_ - _loc16_) / 2;
-               _loc9_ = _loc9_ + (this.m_ChildHeight + _loc5_);
+               _loc16_ = Math.min(_loc12_ - _loc11_,this.m_ChildColumns);
+               _loc17_ = _loc16_ * s_ChildWidth + (_loc16_ - 1) * _loc4_;
+               _loc9_ = _loc3_.left + (_loc8_ - _loc17_) / 2;
+               _loc10_ = _loc10_ + (s_ChildHeight + _loc5_);
             }
-            _loc12_ = UIComponent(getChildAt(_loc10_));
-            _loc13_ = _loc12_.getExplicitOrMeasuredHeight();
-            _loc14_ = _loc12_.getExplicitOrMeasuredWidth();
-            _loc12_.move(_loc8_ + (this.m_ChildWidth - _loc14_) / 2,_loc9_ + (this.m_ChildHeight - _loc13_) / 2);
-            _loc12_.setActualSize(_loc14_,_loc13_);
-            _loc8_ = _loc8_ + (this.m_ChildWidth + _loc4_);
-            _loc10_++;
+            _loc13_ = UIComponent(getChildAt(_loc11_));
+            _loc14_ = _loc13_.getExplicitOrMeasuredHeight();
+            _loc15_ = _loc13_.getExplicitOrMeasuredWidth();
+            _loc13_.move(_loc9_ + (s_ChildWidth - _loc15_) / 2,_loc10_ + (s_ChildHeight - _loc14_) / 2);
+            _loc13_.setActualSize(_loc15_,_loc14_);
+            _loc9_ = _loc9_ + (s_ChildWidth + _loc4_);
+            _loc11_++;
          }
+      }
+      
+      public function get borderMetrics() : EdgeMetrics
+      {
+         return EdgeMetrics.EMPTY;
+      }
+      
+      public function get viewMetricsAndPadding() : EdgeMetrics
+      {
+         var _loc1_:EdgeMetrics = this.borderMetrics.clone();
+         _loc1_.bottom = _loc1_.bottom + getStyle("paddingBottom");
+         _loc1_.left = _loc1_.left + getStyle("paddingLeft");
+         _loc1_.right = _loc1_.right + getStyle("paddingRight");
+         _loc1_.top = _loc1_.top + getStyle("paddingTop");
+         return _loc1_;
       }
    }
 }
 
-import mx.core.UIComponent;
-import mx.core.IFlexDisplayObject;
-import flash.geom.Matrix;
+import shared.controls.ShapeWrapper;
 import flash.display.DisplayObject;
+import flash.geom.Matrix;
 
-class SkinWrapper extends UIComponent
+class RotatingShapeWrapper extends ShapeWrapper
 {
     
-   function SkinWrapper(param1:IFlexDisplayObject)
+   function RotatingShapeWrapper()
    {
       super();
-      if(param1 != null)
-      {
-         addChild(DisplayObject(param1));
-      }
-   }
-   
-   override protected function measure() : void
-   {
-      var _loc1_:IFlexDisplayObject = null;
-      super.measure();
-      if(numChildren > 0)
-      {
-         _loc1_ = IFlexDisplayObject(getChildAt(0));
-         measuredMinWidth = measuredWidth = _loc1_.measuredWidth;
-         measuredMinHeight = measuredHeight = _loc1_.measuredHeight;
-      }
-      else
-      {
-         measuredMinWidth = measuredWidth = 18;
-         measuredMinHeight = measuredHeight = 18;
-      }
    }
    
    override protected function updateDisplayList(param1:Number, param2:Number) : void
    {
-      var _loc3_:IFlexDisplayObject = null;
+      var _loc3_:DisplayObject = null;
       var _loc4_:Matrix = null;
       var _loc5_:Number = NaN;
       var _loc6_:Number = NaN;
@@ -612,25 +612,16 @@ class SkinWrapper extends UIComponent
       super.updateDisplayList(param1,param2);
       if(numChildren > 0)
       {
-         _loc3_ = IFlexDisplayObject(getChildAt(0));
-         _loc3_.move(0,0);
-         _loc3_.setActualSize(_loc3_.measuredWidth,_loc3_.measuredHeight);
+         _loc3_ = getChildAt(0);
          _loc4_ = transform.concatenatedMatrix;
          _loc5_ = _loc4_.a;
          _loc6_ = _loc4_.b;
          if(_loc5_ == _loc4_.d && Math.abs(_loc5_) <= 1 && _loc6_ == -_loc4_.c && Math.abs(_loc6_) <= 1)
          {
-            _loc7_ = _loc3_.measuredWidth / 2;
-            _loc8_ = _loc3_.measuredHeight / 2;
+            _loc7_ = _loc3_.width / 2;
+            _loc8_ = _loc3_.height / 2;
             _loc3_.transform.matrix = new Matrix(_loc5_,-_loc6_,_loc6_,_loc5_,-_loc7_ * _loc5_ - _loc8_ * _loc6_ + _loc7_,_loc7_ * _loc6_ - _loc8_ * _loc5_ + _loc8_);
          }
-      }
-      else
-      {
-         graphics.clear();
-         graphics.beginFill(65280,1);
-         graphics.drawRect(0,0,param1,param2);
-         graphics.endFill();
       }
    }
 }

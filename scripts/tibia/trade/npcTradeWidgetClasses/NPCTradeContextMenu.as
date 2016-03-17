@@ -4,7 +4,6 @@ package tibia.trade.npcTradeWidgetClasses
    import tibia.appearances.AppearanceTypeRef;
    import mx.core.IUIComponent;
    import shared.utility.closure;
-   import flash.events.ContextMenuEvent;
    import tibia.input.gameaction.InspectNPCTradeActionImpl;
    import tibia.options.OptionsStorage;
    
@@ -55,45 +54,44 @@ package tibia.trade.npcTradeWidgetClasses
          var a_Owner:IUIComponent = param1;
          var a_StageX:Number = param2;
          var a_StageY:Number = param3;
-         var NeedSeparator:Boolean = false;
          if(this.m_TradeObjects != null)
          {
-            createItem(resourceManager.getString(BUNDLE,"CTX_LOOK"),closure(null,function(param1:AppearanceTypeRef, param2:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_LOOK"),closure(null,function(param1:AppearanceTypeRef, param2:*):void
             {
                new InspectNPCTradeActionImpl(param1).perform();
-            },this.m_TradeObjects),false);
-            NeedSeparator = true;
+            },this.m_TradeObjects));
+            createSeparatorItem();
          }
          var i:int = 0;
          while(i < SORT_OPTIONS.length)
          {
             if(this.m_Options.npcTradeSort != SORT_OPTIONS[i].value)
             {
-               createItem(resourceManager.getString(BUNDLE,SORT_OPTIONS[i].label),closure(null,function(param1:OptionsStorage, param2:int, param3:ContextMenuEvent):void
+               createTextItem(resourceManager.getString(BUNDLE,SORT_OPTIONS[i].label),closure(null,function(param1:OptionsStorage, param2:int, param3:*):void
                {
                   param1.npcTradeSort = param2;
-               },this.m_Options,SORT_OPTIONS[i].value),NeedSeparator);
-               NeedSeparator = false;
+               },this.m_Options,SORT_OPTIONS[i].value));
             }
             i++;
          }
+         createSeparatorItem();
          if(this.m_TradeMode == NPCTradeWidgetView.MODE_BUY)
          {
-            createItem(resourceManager.getString(BUNDLE,!!this.m_Options.npcTradeBuyWithBackpacks?"CTX_BUY_WITHOUT_BACKPACKS":"CTX_BUY_WITH_BACKPACKS"),closure(null,function(param1:OptionsStorage, param2:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,!!this.m_Options.npcTradeBuyWithBackpacks?"CTX_BUY_WITHOUT_BACKPACKS":"CTX_BUY_WITH_BACKPACKS"),closure(null,function(param1:OptionsStorage, param2:*):void
             {
                param1.npcTradeBuyWithBackpacks = !param1.npcTradeBuyWithBackpacks;
-            },this.m_Options),true);
-            createItem(resourceManager.getString(BUNDLE,!!this.m_Options.npcTradeBuyIgnoreCapacity?"CTX_BUY_CONSIDER_CAPACITY":"CTX_BUY_IGNORE_CAPACITY"),closure(null,function(param1:OptionsStorage, param2:ContextMenuEvent):void
+            },this.m_Options));
+            createTextItem(resourceManager.getString(BUNDLE,!!this.m_Options.npcTradeBuyIgnoreCapacity?"CTX_BUY_CONSIDER_CAPACITY":"CTX_BUY_IGNORE_CAPACITY"),closure(null,function(param1:OptionsStorage, param2:*):void
             {
                param1.npcTradeBuyIgnoreCapacity = !param1.npcTradeBuyIgnoreCapacity;
-            },this.m_Options),false);
+            },this.m_Options));
          }
          else
          {
-            createItem(resourceManager.getString(BUNDLE,!!this.m_Options.npcTradeSellKeepEquipped?"CTX_SELL_SELL_EQUIPPED":"CTX_SELL_KEEP_EQUIPPED"),closure(null,function(param1:OptionsStorage, param2:ContextMenuEvent):void
+            createTextItem(resourceManager.getString(BUNDLE,!!this.m_Options.npcTradeSellKeepEquipped?"CTX_SELL_SELL_EQUIPPED":"CTX_SELL_KEEP_EQUIPPED"),closure(null,function(param1:OptionsStorage, param2:*):void
             {
                param1.npcTradeSellKeepEquipped = !param1.npcTradeSellKeepEquipped;
-            },this.m_Options),true);
+            },this.m_Options));
          }
          super.display(a_Owner,a_StageX,a_StageY);
       }

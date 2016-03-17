@@ -672,7 +672,7 @@ package tibia.worldmap
             }
             if(_loc3_.isAutomap)
             {
-               this.m_MiniMapColour = Colour.s_FromEightBit(_loc3_.automapColour).ARGB;
+               this.m_MiniMapColour = Colour.s_ARGBFromEightBit(_loc3_.automapColour);
             }
             if(Boolean(_loc3_.isAvoid) || Boolean(_loc3_.isUnpassable))
             {

@@ -32,6 +32,17 @@ package tibia.sidebar.sideBarWidgetClasses
          horizontalScrollPolicy = ScrollPolicy.OFF;
       }
       
+      override function releaseInstance() : void
+      {
+         super.releaseInstance();
+         this.m_UIButtonChangeCharacter.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonCharacterProfile.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonLogout.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonOptions.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonQuestLog.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonSpellList.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+      }
+      
       override protected function commitProperties() : void
       {
          super.commitProperties();

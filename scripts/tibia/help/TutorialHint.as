@@ -314,7 +314,6 @@ package tibia.help
          }
          catch(e:Error)
          {
-            log("TutorialHint.perform: Error while performing pre-display hook: " + e);
          }
          if(this.m_Text != null)
          {
@@ -371,7 +370,6 @@ package tibia.help
             }
             catch(e:Error)
             {
-               log("TutorialHint.perform: Error while performing post-display hook: " + e);
                return;
             }
          }

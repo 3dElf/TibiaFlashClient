@@ -270,6 +270,7 @@ package tibia.sidebar
             this.m_ViewInstance.widgetCollapsible = false;
             this.m_ViewInstance.widgetHeight = NaN;
             this.m_ViewInstance.widgetResizable = false;
+            this.m_ViewInstance.releaseInstance();
             this.m_ViewInstance = null;
          }
       }

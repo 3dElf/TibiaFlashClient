@@ -12,15 +12,14 @@ package tibia.magic.spellListWidgetClasses
    import shared.utility.replaceChild;
    import mx.core.EventPriority;
    import tibia.creatures.Player;
-   import mx.containers.Form;
-   import mx.controls.HRule;
-   import mx.containers.VBox;
-   import mx.controls.Spacer;
    import mx.containers.Box;
+   import mx.controls.Spacer;
+   import mx.controls.HRule;
+   import mx.containers.Form;
+   import mx.containers.VBox;
    import mx.containers.FormHeading;
    import mx.containers.HBox;
    import mx.controls.Button;
-   import tibia.§sidebar:ns_sidebar_internal§.layoutMode;
    import mx.controls.RadioButtonGroup;
    import mx.events.ItemClickEvent;
    import mx.containers.ViewStack;
@@ -246,6 +245,8 @@ package tibia.magic.spellListWidgetClasses
       
       private var m_UIFilterProfession:RadioButtonGroup = null;
       
+      private var m_UIViewContainer:VBox = null;
+      
       private var m_UIFilterGroup:RadioButtonGroup = null;
       
       private var m_UIView:ListBase = null;
@@ -420,25 +421,24 @@ package tibia.magic.spellListWidgetClasses
       
       override protected function createChildren() : void
       {
-         var ViewMode:VBox = null;
-         var _Box:Box = null;
-         var _Spacer:Spacer = null;
-         var _HRule:HRule = null;
-         var _Form:Form = null;
-         var FilterMode:VBox = null;
-         var _FormHeading:FormHeading = null;
+         var _loc1_:Box = null;
+         var _loc2_:Spacer = null;
+         var _loc3_:HRule = null;
+         var _loc4_:Form = null;
+         var _loc5_:VBox = null;
+         var _loc6_:FormHeading = null;
          if(!this.m_UIConstructed)
          {
             super.createChildren();
-            ViewMode = new VBox();
-            ViewMode.percentHeight = 100;
-            ViewMode.percentWidth = 100;
-            ViewMode.label = resourceManager.getString(BUNDLE,"ROOT_VIEW");
-            ViewMode.addEventListener(MouseEvent.RIGHT_CLICK,this.onViewContextMenu);
-            ViewMode.setStyle("verticalGap",2);
-            _Box = new HBox();
-            _Box.percentWidth = 100;
-            _Box.setStyle("horizontalGap",2);
+            this.m_UIViewContainer = new VBox();
+            this.m_UIViewContainer.percentHeight = 100;
+            this.m_UIViewContainer.percentWidth = 100;
+            this.m_UIViewContainer.label = resourceManager.getString(BUNDLE,"ROOT_VIEW");
+            this.m_UIViewContainer.addEventListener(MouseEvent.RIGHT_CLICK,this.onViewContextMenu);
+            this.m_UIViewContainer.setStyle("verticalGap",2);
+            _loc1_ = new HBox();
+            _loc1_.percentWidth = 100;
+            _loc1_.setStyle("horizontalGap",2);
             this.m_UIQuickProfession = new Button();
             this.m_UIQuickProfession.label = resourceManager.getString(BUNDLE,"BTN_MY_PROFESSION");
             this.m_UIQuickProfession.toggle = true;
@@ -446,7 +446,7 @@ package tibia.magic.spellListWidgetClasses
             this.m_UIQuickProfession.setStyle("fontSize",9);
             this.m_UIQuickProfession.setStyle("paddingLeft",2);
             this.m_UIQuickProfession.setStyle("paddingRight",2);
-            _Box.addChild(this.m_UIQuickProfession);
+            _loc1_.addChild(this.m_UIQuickProfession);
             this.m_UIQuickLevel = new Button();
             this.m_UIQuickLevel.label = resourceManager.getString(BUNDLE,"BTN_MY_LEVEL");
             this.m_UIQuickLevel.toggle = true;
@@ -454,7 +454,7 @@ package tibia.magic.spellListWidgetClasses
             this.m_UIQuickLevel.setStyle("fontSize",9);
             this.m_UIQuickLevel.setStyle("paddingLeft",2);
             this.m_UIQuickLevel.setStyle("paddingRight",2);
-            _Box.addChild(this.m_UIQuickLevel);
+            _loc1_.addChild(this.m_UIQuickLevel);
             this.m_UIQuickKnown = new Button();
             this.m_UIQuickKnown.label = resourceManager.getString(BUNDLE,"BTN_MY_KNOWN");
             this.m_UIQuickKnown.toggle = true;
@@ -462,96 +462,93 @@ package tibia.magic.spellListWidgetClasses
             this.m_UIQuickKnown.setStyle("fontSize",9);
             this.m_UIQuickKnown.setStyle("paddingLeft",2);
             this.m_UIQuickKnown.setStyle("paddingRight",2);
-            _Box.addChild(this.m_UIQuickKnown);
-            _Spacer = new Spacer();
-            _Spacer.percentWidth = 100;
-            _Box.addChild(_Spacer);
+            _loc1_.addChild(this.m_UIQuickKnown);
+            _loc2_ = new Spacer();
+            _loc2_.percentWidth = 100;
+            _loc1_.addChild(_loc2_);
             this.m_UIViewToggle = new Button();
             this.m_UIViewToggle.styleName = "spellListWidgetViewToggle";
             this.m_UIViewToggle.toggle = true;
-            this.m_UIViewToggle.addEventListener(MouseEvent.CLICK,function(param1:MouseEvent):void
-            {
-               layoutMode = layoutMode == SpellListWidget.LAYOUT_LIST?int(SpellListWidget.LAYOUT_TILE):int(SpellListWidget.LAYOUT_LIST);
-            });
-            _Box.addChild(this.m_UIViewToggle);
-            ViewMode.addChild(_Box);
-            _HRule = new HRule();
-            _HRule.percentWidth = 100;
-            ViewMode.addChild(_HRule);
+            this.m_UIViewToggle.addEventListener(MouseEvent.CLICK,this.onViewToggle);
+            _loc1_.addChild(this.m_UIViewToggle);
+            this.m_UIViewContainer.addChild(_loc1_);
+            _loc3_ = new HRule();
+            _loc3_.percentWidth = 100;
+            this.m_UIViewContainer.addChild(_loc3_);
             this.m_UIView = this.updateView(null);
-            ViewMode.addChild(this.m_UIView);
-            _HRule = new HRule();
-            _HRule.percentWidth = 100;
-            ViewMode.addChild(_HRule);
-            _Form = new Form();
-            _Form.percentWidth = 100;
-            _Form.styleName = "spellListWidgetForm";
-            this.m_UIInfoName = this.createInfoLabel(_Form,resourceManager.getString(BUNDLE,"FRM_ITEM_NAME"));
-            this.m_UIInfoFormula = this.createInfoLabel(_Form,resourceManager.getString(BUNDLE,"FRM_ITEM_FORMULA"));
-            this.m_UIInfoProfession = this.createInfoLabel(_Form,resourceManager.getString(BUNDLE,"FRM_ITEM_PROFESSION"));
-            this.m_UIInfoGroup = this.createInfoLabel(_Form,resourceManager.getString(BUNDLE,"FRM_ITEM_GROUP"));
-            this.m_UIInfoType = this.createInfoLabel(_Form,resourceManager.getString(BUNDLE,"FRM_ITEM_TYPE"));
-            this.m_UIInfoDelay = this.createInfoLabel(_Form,resourceManager.getString(BUNDLE,"FRM_ITEM_DELAY"));
-            this.m_UIInfoCast = this.createInfoLabel(_Form,resourceManager.getString(BUNDLE,"FRM_ITEM_CAST"));
-            this.m_UIInfoLevel = this.createInfoLabel(_Form,resourceManager.getString(BUNDLE,"FRM_ITEM_LEVEL"));
-            this.m_UIInfoPrice = this.createInfoLabel(_Form,resourceManager.getString(BUNDLE,"FRM_ITEM_PRICE"));
-            this.m_UIInfoPremium = this.createInfoLabel(_Form,resourceManager.getString(BUNDLE,"FRM_ITEM_PREMIUM"));
-            ViewMode.addChild(_Form);
-            FilterMode = new VBox();
-            FilterMode.percentHeight = 100;
-            FilterMode.percentWidth = 100;
-            FilterMode.label = resourceManager.getString(BUNDLE,"ROOT_FILTER");
-            FilterMode.setStyle("horizontalAlign","center");
-            _Form = new Form();
-            _Form.styleName = "spellListWidgetForm";
-            _Form.setStyle("paddingBottom",0);
-            _Form.setStyle("paddingTop",0);
-            _Form.setStyle("verticalGap",0);
-            _FormHeading = new FormHeading();
-            _FormHeading.label = resourceManager.getString(BUNDLE,"FRM_ITEM_PROFESSION");
-            _Form.addChild(_FormHeading);
+            this.m_UIViewContainer.addChild(this.m_UIView);
+            _loc3_ = new HRule();
+            _loc3_.percentWidth = 100;
+            this.m_UIViewContainer.addChild(_loc3_);
+            _loc4_ = new Form();
+            _loc4_.percentWidth = 100;
+            _loc4_.styleName = "spellListWidgetForm";
+            this.m_UIInfoName = this.createInfoLabel(_loc4_,resourceManager.getString(BUNDLE,"FRM_ITEM_NAME"));
+            this.m_UIInfoFormula = this.createInfoLabel(_loc4_,resourceManager.getString(BUNDLE,"FRM_ITEM_FORMULA"));
+            this.m_UIInfoProfession = this.createInfoLabel(_loc4_,resourceManager.getString(BUNDLE,"FRM_ITEM_PROFESSION"));
+            this.m_UIInfoGroup = this.createInfoLabel(_loc4_,resourceManager.getString(BUNDLE,"FRM_ITEM_GROUP"));
+            this.m_UIInfoType = this.createInfoLabel(_loc4_,resourceManager.getString(BUNDLE,"FRM_ITEM_TYPE"));
+            this.m_UIInfoDelay = this.createInfoLabel(_loc4_,resourceManager.getString(BUNDLE,"FRM_ITEM_DELAY"));
+            this.m_UIInfoCast = this.createInfoLabel(_loc4_,resourceManager.getString(BUNDLE,"FRM_ITEM_CAST"));
+            this.m_UIInfoLevel = this.createInfoLabel(_loc4_,resourceManager.getString(BUNDLE,"FRM_ITEM_LEVEL"));
+            this.m_UIInfoPrice = this.createInfoLabel(_loc4_,resourceManager.getString(BUNDLE,"FRM_ITEM_PRICE"));
+            this.m_UIInfoPremium = this.createInfoLabel(_loc4_,resourceManager.getString(BUNDLE,"FRM_ITEM_PREMIUM"));
+            this.m_UIViewContainer.addChild(_loc4_);
+            _loc5_ = new VBox();
+            _loc5_.percentHeight = 100;
+            _loc5_.percentWidth = 100;
+            _loc5_.label = resourceManager.getString(BUNDLE,"ROOT_FILTER");
+            _loc5_.setStyle("horizontalAlign","center");
+            _loc4_ = new Form();
+            _loc4_.styleName = "spellListWidgetForm";
+            _loc4_.setStyle("paddingBottom",0);
+            _loc4_.setStyle("paddingTop",0);
+            _loc4_.setStyle("verticalGap",0);
+            _loc6_ = new FormHeading();
+            _loc6_.label = resourceManager.getString(BUNDLE,"FRM_ITEM_PROFESSION");
+            _loc4_.addChild(_loc6_);
             this.m_UIFilterProfession = new RadioButtonGroup();
             this.m_UIFilterProfession.addEventListener(ItemClickEvent.ITEM_CLICK,this.onDetailFilterChange);
-            this.createFilterRadioButton(_Form,this.m_UIFilterProfession,this.formatSpellProfessionMask(-1),-1);
-            this.createFilterRadioButton(_Form,this.m_UIFilterProfession,this.formatSpellProfessionMask(PROFESSION_MASK_DRUID),PROFESSION_DRUID);
-            this.createFilterRadioButton(_Form,this.m_UIFilterProfession,this.formatSpellProfessionMask(PROFESSION_MASK_KNIGHT),PROFESSION_KNIGHT);
-            this.createFilterRadioButton(_Form,this.m_UIFilterProfession,this.formatSpellProfessionMask(PROFESSION_MASK_PALADIN),PROFESSION_PALADIN);
-            this.createFilterRadioButton(_Form,this.m_UIFilterProfession,this.formatSpellProfessionMask(PROFESSION_MASK_SORCERER),PROFESSION_SORCERER);
-            _FormHeading = new FormHeading();
-            _FormHeading.label = resourceManager.getString(BUNDLE,"FRM_ITEM_GROUP");
-            _Form.addChild(_FormHeading);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterProfession,this.formatSpellProfessionMask(-1),-1);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterProfession,this.formatSpellProfessionMask(PROFESSION_MASK_DRUID),PROFESSION_DRUID);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterProfession,this.formatSpellProfessionMask(PROFESSION_MASK_KNIGHT),PROFESSION_KNIGHT);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterProfession,this.formatSpellProfessionMask(PROFESSION_MASK_PALADIN),PROFESSION_PALADIN);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterProfession,this.formatSpellProfessionMask(PROFESSION_MASK_SORCERER),PROFESSION_SORCERER);
+            _loc6_ = new FormHeading();
+            _loc6_.label = resourceManager.getString(BUNDLE,"FRM_ITEM_GROUP");
+            _loc4_.addChild(_loc6_);
             this.m_UIFilterGroup = new RadioButtonGroup();
             this.m_UIFilterGroup.addEventListener(ItemClickEvent.ITEM_CLICK,this.onDetailFilterChange);
-            this.createFilterRadioButton(_Form,this.m_UIFilterGroup,this.formatSpellGroup(-1),-1);
-            this.createFilterRadioButton(_Form,this.m_UIFilterGroup,this.formatSpellGroup(GROUP_ATTACK),GROUP_ATTACK);
-            this.createFilterRadioButton(_Form,this.m_UIFilterGroup,this.formatSpellGroup(GROUP_HEALING),GROUP_HEALING);
-            this.createFilterRadioButton(_Form,this.m_UIFilterGroup,this.formatSpellGroup(GROUP_SUPPORT),GROUP_SUPPORT);
-            _FormHeading = new FormHeading();
-            _FormHeading.label = resourceManager.getString(BUNDLE,"FRM_ITEM_PREMIUM");
-            _Form.addChild(_FormHeading);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterGroup,this.formatSpellGroup(-1),-1);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterGroup,this.formatSpellGroup(GROUP_ATTACK),GROUP_ATTACK);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterGroup,this.formatSpellGroup(GROUP_HEALING),GROUP_HEALING);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterGroup,this.formatSpellGroup(GROUP_SUPPORT),GROUP_SUPPORT);
+            _loc6_ = new FormHeading();
+            _loc6_.label = resourceManager.getString(BUNDLE,"FRM_ITEM_PREMIUM");
+            _loc4_.addChild(_loc6_);
             this.m_UIFilterPremium = new RadioButtonGroup();
             this.m_UIFilterPremium.addEventListener(ItemClickEvent.ITEM_CLICK,this.onDetailFilterChange);
-            this.createFilterRadioButton(_Form,this.m_UIFilterPremium,resourceManager.getString(BUNDLE,"FRM_LABEL_PREMIUM_ANY"),-1);
-            this.createFilterRadioButton(_Form,this.m_UIFilterPremium,resourceManager.getString(BUNDLE,"FRM_LABEL_PREMIUM_NO"),0);
-            this.createFilterRadioButton(_Form,this.m_UIFilterPremium,resourceManager.getString(BUNDLE,"FRM_LABEL_PREMIUM_YES"),1);
-            FilterMode.addChild(_Form);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterPremium,resourceManager.getString(BUNDLE,"FRM_LABEL_PREMIUM_ANY"),-1);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterPremium,resourceManager.getString(BUNDLE,"FRM_LABEL_PREMIUM_NO"),0);
+            this.createFilterRadioButton(_loc4_,this.m_UIFilterPremium,resourceManager.getString(BUNDLE,"FRM_LABEL_PREMIUM_YES"),1);
+            _loc5_.addChild(_loc4_);
             this.m_UIRootStack = new ViewStack();
             this.m_UIRootStack.percentHeight = 100;
             this.m_UIRootStack.percentWidth = 100;
             this.m_UIRootStack.styleName = "spellListWidgetTabContent";
-            this.m_UIRootStack.addChild(ViewMode);
-            this.m_UIRootStack.addChild(FilterMode);
+            this.m_UIRootStack.addChild(this.m_UIViewContainer);
+            this.m_UIRootStack.addChild(_loc5_);
             this.m_UIRootStack.addEventListener(IndexChangedEvent.CHANGE,this.onRootStackChange);
             this.m_UIRootBar = new SimpleTabBar();
             this.m_UIRootBar.dataProvider = this.m_UIRootStack;
             this.m_UIRootBar.percentWidth = 100;
             this.m_UIRootBar.styleName = "spellListWidgetTabBar";
-            _Box = new HBox();
-            _Box.height = 27;
-            _Box.percentWidth = 100;
-            _Box.styleName = "spellListWidgetTabBarBackground";
-            _Box.addChild(this.m_UIRootBar);
-            addChild(_Box);
+            _loc1_ = new HBox();
+            _loc1_.height = 27;
+            _loc1_.percentWidth = 100;
+            _loc1_.styleName = "spellListWidgetTabBarBackground";
+            _loc1_.addChild(this.m_UIRootBar);
+            addChild(_loc1_);
             addChild(this.m_UIRootStack);
             this.m_UIConstructed = true;
          }
@@ -641,6 +638,21 @@ package tibia.magic.spellListWidgetClasses
          return _loc3_;
       }
       
+      function set filterKnown(param1:int) : void
+      {
+         if(widgetInstance is SpellListWidget)
+         {
+            SpellListWidget(widgetInstance).filterKnown = param1;
+         }
+         if(this.m_FilterKnown != param1)
+         {
+            this.m_FilterKnown = param1;
+            this.m_UncommittedFilterKnown = true;
+            invalidateProperties();
+            this.invalidateFilter();
+         }
+      }
+      
       protected function compareSpell(param1:Spell, param2:Spell, param3:Array = null) : int
       {
          var _loc4_:int = 0;
@@ -707,21 +719,6 @@ package tibia.magic.spellListWidgetClasses
          return _loc4_;
       }
       
-      function set filterKnown(param1:int) : void
-      {
-         if(widgetInstance is SpellListWidget)
-         {
-            SpellListWidget(widgetInstance).filterKnown = param1;
-         }
-         if(this.m_FilterKnown != param1)
-         {
-            this.m_FilterKnown = param1;
-            this.m_UncommittedFilterKnown = true;
-            invalidateProperties();
-            this.invalidateFilter();
-         }
-      }
-      
       function get sortMode() : int
       {
          return this.m_SortMode;
@@ -773,15 +770,6 @@ package tibia.magic.spellListWidgetClasses
          }
       }
       
-      private function onPlayerChange(param1:PropertyChangeEvent) : void
-      {
-         if(param1.property == "knownSpells" || param1.property == "premium" || param1.property == "profession" || param1.property == "skill" || param1.property == "*")
-         {
-            this.invalidateFilter();
-            this.invalidateSort();
-         }
-      }
-      
       private function onDetailFilterChange(param1:ItemClickEvent) : void
       {
          if(param1.currentTarget == this.m_UIFilterGroup)
@@ -810,6 +798,15 @@ package tibia.magic.spellListWidgetClasses
             this.m_UncommittedFilterPremium = true;
             invalidateProperties();
             this.invalidateFilter();
+         }
+      }
+      
+      private function onPlayerChange(param1:PropertyChangeEvent) : void
+      {
+         if(param1.property == "knownSpells" || param1.property == "premium" || param1.property == "profession" || param1.property == "skill" || param1.property == "*")
+         {
+            this.invalidateFilter();
+            this.invalidateSort();
          }
       }
       
@@ -854,6 +851,11 @@ package tibia.magic.spellListWidgetClasses
          this._spell = param1.itemRenderer.data as Spell;
       }
       
+      private function onViewToggle(param1:MouseEvent) : void
+      {
+         this.layoutMode = this.layoutMode == SpellListWidget.LAYOUT_LIST?int(SpellListWidget.LAYOUT_TILE):int(SpellListWidget.LAYOUT_LIST);
+      }
+      
       protected function filterSpell(param1:Spell) : Boolean
       {
          if(this.player != null)
@@ -894,6 +896,22 @@ package tibia.magic.spellListWidgetClasses
       function get filterPremium() : int
       {
          return this.m_FilterPremium;
+      }
+      
+      override function releaseInstance() : void
+      {
+         super.releaseInstance();
+         this.m_UIFilterGroup.removeEventListener(ItemClickEvent.ITEM_CLICK,this.onDetailFilterChange);
+         this.m_UIFilterPremium.removeEventListener(ItemClickEvent.ITEM_CLICK,this.onDetailFilterChange);
+         this.m_UIFilterProfession.removeEventListener(ItemClickEvent.ITEM_CLICK,this.onDetailFilterChange);
+         this.m_UIQuickKnown.removeEventListener(MouseEvent.CLICK,this.onQuickFilterToggle);
+         this.m_UIQuickLevel.removeEventListener(MouseEvent.CLICK,this.onQuickFilterToggle);
+         this.m_UIQuickProfession.removeEventListener(MouseEvent.CLICK,this.onQuickFilterToggle);
+         this.m_UIRootStack.removeEventListener(IndexChangedEvent.CHANGE,this.onRootStackChange);
+         this.m_UIView.removeEventListener(MouseEvent.MOUSE_DOWN,this.onViewDisableDragScrolling);
+         this.m_UIView.removeEventListener(ListEvent.CHANGE,this.onViewSelectionChange);
+         this.m_UIViewContainer.removeEventListener(MouseEvent.RIGHT_CLICK,this.onViewContextMenu);
+         this.m_UIViewToggle.removeEventListener(MouseEvent.CLICK,this.onViewToggle);
       }
       
       override protected function commitProperties() : void

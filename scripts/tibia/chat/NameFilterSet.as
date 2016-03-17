@@ -55,7 +55,6 @@ package tibia.chat
          var _loc3_:XMLList = null;
          if((_loc3_ = param1.@id) == null || _loc3_.length() != 1)
          {
-            log("NameFilterSet.s_Unmarshall: Missing attribute: id.");
             return null;
          }
          _loc4_ = parseInt(_loc3_[0].toString());

@@ -2,10 +2,11 @@ package tibia.creatures.statusWidgetClasses
 {
    import tibia.game.ContextMenuBase;
    import tibia.creatures.StatusWidget;
+   import shared.utility.cacheStyleInstance;
    import mx.core.IUIComponent;
+   import tibia.game.contextMenuClasses.TextItem;
    import shared.utility.closure;
    import tibia.options.OptionsStorage;
-   import flash.events.ContextMenuEvent;
    
    public class StatusWidgetContextMenu extends ContextMenuBase
    {
@@ -102,7 +103,37 @@ package tibia.creatures.statusWidgetClasses
       
       private static const BUNDLE:String = "StatusWidget";
       
-      private static const SKILL_OPTIONS:Array = [SKILL_NONE,SKILL_LEVEL,SKILL_MAGLEVEL,SKILL_FIGHTAXE,SKILL_FIGHTCLUB,SKILL_FIGHTDISTANCE,SKILL_FIGHTFIST,SKILL_FIGHTSHIELD,SKILL_FIGHTSWORD,SKILL_FISHING];
+      private static const SKILL_OPTIONS:Array = [{
+         "value":SKILL_NONE,
+         "styleProp":"iconProgressOff"
+      },{
+         "value":SKILL_LEVEL,
+         "styleProp":"iconSkillLevel"
+      },{
+         "value":SKILL_MAGLEVEL,
+         "styleProp":"iconSkillMagLevel"
+      },{
+         "value":SKILL_FIGHTAXE,
+         "styleProp":"iconSkillFightAxe"
+      },{
+         "value":SKILL_FIGHTCLUB,
+         "styleProp":"iconSkillFightClub"
+      },{
+         "value":SKILL_FIGHTDISTANCE,
+         "styleProp":"iconSkillFightDistance"
+      },{
+         "value":SKILL_FIGHTFIST,
+         "styleProp":"iconSkillFightFist"
+      },{
+         "value":SKILL_FIGHTSHIELD,
+         "styleProp":"iconSkillFightShield"
+      },{
+         "value":SKILL_FIGHTSWORD,
+         "styleProp":"iconSkillFightSword"
+      },{
+         "value":SKILL_FISHING,
+         "styleProp":"iconSkillFishing"
+      }];
       
       protected static const STATE_MANA_SHIELD:int = 4;
       
@@ -158,7 +189,19 @@ package tibia.creatures.statusWidgetClasses
       
       protected static const STATE_FIGHTING:int = 7;
       
-      private static const STYLE_OPTIONS:Array = [StatusWidget.STATUS_STYLE_DEFAULT,StatusWidget.STATUS_STYLE_COMPACT,StatusWidget.STATUS_STYLE_PARALLEL,StatusWidget.STATUS_STYLE_FAT];
+      private static const STYLE_OPTIONS:Array = [{
+         "value":StatusWidget.STATUS_STYLE_DEFAULT,
+         "styleProp":"iconStyleDefault"
+      },{
+         "value":StatusWidget.STATUS_STYLE_COMPACT,
+         "styleProp":"iconStyleCompact"
+      },{
+         "value":StatusWidget.STATUS_STYLE_PARALLEL,
+         "styleProp":"iconStyleParallel"
+      },{
+         "value":StatusWidget.STATUS_STYLE_FAT,
+         "styleProp":"iconStyleLarge"
+      }];
       
       protected static const SKILL_GOSTRENGTH:int = 5;
       
@@ -167,7 +210,12 @@ package tibia.creatures.statusWidgetClasses
       protected static const PK_NONE:int = 0;
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
-       
+      
+      {
+         cacheStyleInstance(STYLE_OPTIONS,".statusWidgetIcons");
+         cacheStyleInstance(SKILL_OPTIONS,".statusWidgetIcons");
+      }
+      
       protected var m_Options:OptionsStorage = null;
       
       public function StatusWidgetContextMenu(param1:OptionsStorage)
@@ -186,47 +234,48 @@ package tibia.creatures.statusWidgetClasses
          var a_Owner:IUIComponent = param1;
          var a_StageX:Number = param2;
          var a_StageY:Number = param3;
+         var Item:TextItem = null;
          var i:int = 0;
-         i = 0;
          while(i < STYLE_OPTIONS.length)
          {
-            if(STYLE_OPTIONS[i] != this.m_Options.statusWidgetStyle)
+            if(STYLE_OPTIONS[i].value !== this.m_Options.statusWidgetStyle)
             {
-               createItem(resourceManager.getString(BUNDLE,"CTX_SWITCH_STYLE",[StatusWidget.s_GetStyleName(STYLE_OPTIONS[i])]),closure(null,function(param1:OptionsStorage, param2:int, param3:ContextMenuEvent):void
+               Item = createTextItem(resourceManager.getString(BUNDLE,"CTX_SWITCH_STYLE",[StatusWidget.s_GetStyleName(STYLE_OPTIONS[i].value)]),closure(null,function(param1:OptionsStorage, param2:int, param3:*):void
                {
                   if(param1 != null)
                   {
                      param1.statusWidgetStyle = param2;
                   }
-               },this.m_Options,STYLE_OPTIONS[i]));
+               },this.m_Options,STYLE_OPTIONS[i].value));
+               Item.icon = STYLE_OPTIONS[i].styleInstance;
             }
             i++;
          }
-         var NeedSeparator:Boolean = true;
-         i = 0;
-         while(i < SKILL_OPTIONS.length)
+         createSeparatorItem();
+         var j:int = 0;
+         while(j < SKILL_OPTIONS.length)
          {
-            if(SKILL_OPTIONS[i] != this.m_Options.statusWidgetSkill)
+            if(SKILL_OPTIONS[j].value !== this.m_Options.statusWidgetSkill)
             {
                Label = null;
-               if(SKILL_OPTIONS[i] == SKILL_NONE)
+               if(SKILL_OPTIONS[j].value == SKILL_NONE)
                {
                   Label = resourceManager.getString(BUNDLE,"CTX_DISABLE_SKILL");
                }
                else
                {
-                  Label = resourceManager.getString(BUNDLE,"CTX_SWITCH_SKILL",[StatusWidget.s_GetSkillName(SKILL_OPTIONS[i])]);
+                  Label = resourceManager.getString(BUNDLE,"CTX_SWITCH_SKILL",[StatusWidget.s_GetSkillName(SKILL_OPTIONS[j].value)]);
                }
-               createItem(Label,closure(null,function(param1:OptionsStorage, param2:int, param3:ContextMenuEvent):void
+               Item = createTextItem(Label,closure(null,function(param1:OptionsStorage, param2:int, param3:*):void
                {
                   if(param1)
                   {
                      param1.statusWidgetSkill = param2;
                   }
-               },this.m_Options,SKILL_OPTIONS[i]),NeedSeparator);
-               NeedSeparator = false;
+               },this.m_Options,SKILL_OPTIONS[j].value));
+               Item.icon = SKILL_OPTIONS[j].styleInstance;
             }
-            i++;
+            j++;
          }
          super.display(a_Owner,a_StageX,a_StageY);
       }

@@ -336,7 +336,7 @@ package tibia.minimap
             while(x < MM_SECTOR_SIZE)
             {
                Byte = a_ByteArray.readUnsignedByte();
-               RGB = Colour.s_FromEightBit(Byte).RGB;
+               RGB = Colour.s_RGBFromEightBit(Byte);
                if(_MiniMapSector != null)
                {
                   _MiniMapSector.m_BitmapData.setPixel32(x,y,4278190080 | RGB);
@@ -552,7 +552,7 @@ package tibia.minimap
             while(_loc2_ < MM_SECTOR_SIZE)
             {
                _loc5_ = this.m_BitmapData.getPixel32(_loc2_,_loc3_) & 16777215;
-               _loc6_ = Colour.s_FromARGB(_loc5_).eightBit;
+               _loc6_ = Colour.s_EightBitFromARGB(_loc5_);
                param1.writeByte(_loc6_ & 255);
                _loc2_++;
             }

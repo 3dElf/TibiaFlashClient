@@ -109,7 +109,6 @@ package tibia.input.staticaction
          }
          catch(e:Error)
          {
-            log("ShowDialog.perform: Failed to create dialog: " + e);
             return;
          }
       }

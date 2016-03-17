@@ -693,7 +693,7 @@ package tibia.creatures
          {
             s_v1.setComponents(param1,param2,param3);
             _loc7_.toMap(s_v1,s_v1);
-            if(!_loc7_.isEnterPossible(s_v1.x,s_v1.y,s_v1.z,true))
+            if((s_v1.x != PLAYER_OFFSET_X || s_v1.y != PLAYER_OFFSET_Y) && !_loc7_.isEnterPossible(s_v1.x,s_v1.y,s_v1.z,true))
             {
                _loc7_.addOnscreenMessage(MessageMode.MESSAGE_FAILURE,WorldMapStorage.MSG_SORRY_NOT_POSSIBLE);
                return;

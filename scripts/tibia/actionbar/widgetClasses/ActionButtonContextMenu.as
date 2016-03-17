@@ -1,16 +1,14 @@
 package tibia.actionbar.widgetClasses
 {
    import tibia.game.ContextMenuBase;
-   import flash.events.ContextMenuEvent;
-   import tibia.actionbar.ConfigurationWidget;
    import mx.core.IUIComponent;
    import tibia.appearances.AppearanceType;
    import tibia.input.IAction;
    import tibia.input.gameaction.UseAction;
-   import flash.ui.ContextMenuItem;
-   import tibia.actionbar.ActionBar;
+   import tibia.actionbar.ConfigurationWidget;
    import tibia.input.staticaction.StaticActionList;
    import tibia.options.configurationWidgetClasses.HotkeyOptions;
+   import tibia.actionbar.ActionBar;
    
    public class ActionButtonContextMenu extends ContextMenuBase
    {
@@ -34,65 +32,43 @@ package tibia.actionbar.widgetClasses
          this.m_SlotIndex = param2;
       }
       
-      protected function onItemEditAction(param1:ContextMenuEvent) : void
-      {
-         var _loc2_:tibia.actionbar.ConfigurationWidget = null;
-         if(param1 != null)
-         {
-            _loc2_ = new tibia.actionbar.ConfigurationWidget();
-            _loc2_.actionBar = this.m_ActionBar;
-            _loc2_.slotIndex = this.m_SlotIndex;
-            _loc2_.show();
-         }
-      }
-      
       override public function display(param1:IUIComponent, param2:Number, param3:Number) : void
       {
-         var _loc7_:AppearanceType = null;
-         var _loc4_:IAction = this.m_ActionBar.getAction(this.m_SlotIndex);
-         var _loc5_:Boolean = true;
-         if(_loc4_ is UseAction)
+         var Type:AppearanceType = null;
+         var a_Owner:IUIComponent = param1;
+         var a_StageX:Number = param2;
+         var a_StageY:Number = param3;
+         var _Action:IAction = this.m_ActionBar.getAction(this.m_SlotIndex);
+         var ShowEditAction:Boolean = true;
+         if(_Action is UseAction)
          {
-            _loc7_ = UseAction(_loc4_).type;
-            _loc5_ = _loc7_ == null || Boolean(_loc7_.isMultiUse) || Boolean(_loc7_.isCloth);
+            Type = UseAction(_Action).type;
+            ShowEditAction = Type == null || Boolean(Type.isMultiUse) || Boolean(Type.isCloth);
          }
-         var _loc6_:ContextMenuItem = null;
-         if(_loc5_)
+         if(ShowEditAction)
          {
-            _loc6_ = new ContextMenuItem(resourceManager.getString(ActionBarWidget.BUNDLE,"CTX_EDIT_ACTION"));
-            _loc6_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onItemEditAction);
-            addItem(_loc6_);
+            createTextItem(resourceManager.getString(ActionBarWidget.BUNDLE,"CTX_EDIT_ACTION"),function(param1:*):void
+            {
+               var _loc2_:ConfigurationWidget = new ConfigurationWidget();
+               _loc2_.actionBar = m_ActionBar;
+               _loc2_.slotIndex = m_SlotIndex;
+               _loc2_.show();
+            });
          }
-         if(_loc4_ != null)
+         if(_Action != null)
          {
-            _loc6_ = new ContextMenuItem(resourceManager.getString(ActionBarWidget.BUNDLE,"CTX_CLEAR_ACTION"));
-            _loc6_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onItemClearAction);
-            addItem(_loc6_);
+            createTextItem(resourceManager.getString(ActionBarWidget.BUNDLE,"CTX_CLEAR_ACTION"),function(param1:*):void
+            {
+               m_ActionBar.setAction(m_SlotIndex,null);
+            });
          }
-         _loc6_ = new ContextMenuItem(resourceManager.getString(ActionBarWidget.BUNDLE,"CTX_EDIT_HOTKEY"),true);
-         _loc6_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onItemEditHotkey);
-         addItem(_loc6_);
-         super.display(param1,param2,param3);
-      }
-      
-      protected function onItemClearAction(param1:ContextMenuEvent) : void
-      {
-         if(param1 != null)
+         createSeparatorItem();
+         createTextItem(resourceManager.getString(ActionBarWidget.BUNDLE,"CTX_EDIT_HOTKEY"),function(param1:*):void
          {
-            this.m_ActionBar.setAction(this.m_SlotIndex,null);
-         }
-      }
-      
-      protected function onItemEditHotkey(param1:ContextMenuEvent) : void
-      {
-         var _Action:IAction = null;
-         var Widget:tibia.options.ConfigurationWidget = null;
-         var a_Event:ContextMenuEvent = param1;
-         if(a_Event != null)
-         {
-            _Action = StaticActionList.getActionButtonTrigger(this.m_ActionBar.location,this.m_SlotIndex);
-            Widget = new tibia.options.ConfigurationWidget();
-            Widget.selectedIndex = tibia.options.ConfigurationWidget.HOTKEY;
+            var a_Event:* = param1;
+            var _Action:IAction = StaticActionList.getActionButtonTrigger(m_ActionBar.location,m_SlotIndex);
+            var Dialog:ConfigurationWidget = new ConfigurationWidget();
+            Dialog.selectedIndex = ConfigurationWidget.HOTKEY;
             callLater(function(param1:IAction, param2:ConfigurationWidget):void
             {
                var _loc3_:HotkeyOptions = param2.getEditor(ConfigurationWidget.HOTKEY) as HotkeyOptions;
@@ -101,9 +77,10 @@ package tibia.actionbar.widgetClasses
                   _loc3_.action = param1;
                   _loc3_.beginEditBinding(param1);
                }
-            },[_Action,Widget]);
-            Widget.show();
-         }
+            },[_Action,Dialog]);
+            Dialog.show();
+         });
+         super.display(a_Owner,a_StageX,a_StageY);
       }
    }
 }

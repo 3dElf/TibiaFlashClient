@@ -174,7 +174,6 @@ package tibia.container
       {
          if(param1 == null || param1.window < 0)
          {
-            log("ContainerStorage.sendCloseContainer: Container is null or invalid; ignored");
             return;
          }
          var _loc2_:Connection = Tibia.s_GetConnection();
@@ -374,7 +373,6 @@ package tibia.container
       {
          if(param1 == null || param1.window < 0 || !param1.isSubContainer)
          {
-            log("ContainerStorage.sendUpContainer: Container is null or invalid; ignored");
             return;
          }
          var _loc2_:Connection = Tibia.s_GetConnection();

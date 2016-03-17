@@ -373,10 +373,6 @@ package tibia.options
             {
                this[_loc3_]();
             }
-            else
-            {
-               log("OptionsStorage.OptionsStorage: No initialisation handler for: " + _loc1_.localName + ".");
-            }
          }
          _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
          _loc2_.kind = PropertyChangeEventKind.UPDATE;
@@ -610,7 +606,6 @@ package tibia.options
       
       public function unmarshall(param1:*) : void
       {
-         var Group:Object = null;
          var XMLNode:XML = null;
          var _Event:PropertyChangeEvent = null;
          var UnmarshallFunctionName:String = null;
@@ -640,7 +635,7 @@ package tibia.options
          {
             throw new Error("OptionsStorage.unmarshall: Invalid version: " + Version);
          }
-         Group = null;
+         var Group:Object = null;
          var UnmarshalledElements:Vector.<String> = new Vector.<String>();
          for each(XMLNode in _XML.elements())
          {
@@ -658,12 +653,7 @@ package tibia.options
                      }
                      catch(_Error:*)
                      {
-                        log("OptionsStorage.unmarshall: Failed to unmarshall element: " + Group.localName + ".");
                      }
-                  }
-                  else
-                  {
-                     log("OptionsStorage.unmarshall: No unmarshall handler for: " + Group.localName + ".");
                   }
                   break;
                }
@@ -677,10 +667,6 @@ package tibia.options
                if(this.hasMethod(InitialiseFunctioName))
                {
                   this[InitialiseFunctioName]();
-               }
-               else
-               {
-                  log("OptionsStorage.unmarshall: No initialisation handler for: " + Group.localName + ".");
                }
             }
          }
@@ -1195,10 +1181,6 @@ package tibia.options
             if(this.hasMethod(_loc3_))
             {
                this[_loc3_](_loc1_);
-            }
-            else
-            {
-               log("OptionsStorage.unmarshall: No unmarshall handler for: " + _loc2_.localName + ".");
             }
          }
          return _loc1_;

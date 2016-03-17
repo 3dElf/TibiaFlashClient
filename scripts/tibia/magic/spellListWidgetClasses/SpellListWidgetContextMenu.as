@@ -4,7 +4,6 @@ package tibia.magic.spellListWidgetClasses
    import tibia.magic.SpellListWidget;
    import mx.core.IUIComponent;
    import shared.utility.closure;
-   import flash.events.ContextMenuEvent;
    
    public class SpellListWidgetContextMenu extends ContextMenuBase
    {
@@ -47,10 +46,10 @@ package tibia.magic.spellListWidgetClasses
          {
             if(this.widget.sortMode != SORT_OPTIONS[i].value)
             {
-               createItem(resourceManager.getString(BUNDLE,SORT_OPTIONS[i].label),closure(null,function(param1:SpellListWidget, param2:int, param3:ContextMenuEvent):void
+               createTextItem(resourceManager.getString(BUNDLE,SORT_OPTIONS[i].label),closure(null,function(param1:SpellListWidget, param2:int, param3:*):void
                {
                   param1.sortMode = param2;
-               },this.widget,SORT_OPTIONS[i].value),false);
+               },this.widget,SORT_OPTIONS[i].value));
             }
             i++;
          }

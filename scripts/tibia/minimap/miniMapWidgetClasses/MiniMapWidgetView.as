@@ -77,8 +77,6 @@ package tibia.minimap.miniMapWidgetClasses
       
       protected var m_Zoom:int = 0;
       
-      protected var m_UIRenderer:tibia.minimap.miniMapWidgetClasses.MiniMapRenderer = null;
-      
       protected var m_UIButtonEast:Button = null;
       
       private var m_UncommittedMiniMapStorage:Boolean = false;
@@ -108,6 +106,8 @@ package tibia.minimap.miniMapWidgetClasses
       protected var m_UIButtonZoomOut:Button = null;
       
       protected var m_MiniMapStorage:MiniMapStorage = null;
+      
+      protected var m_UIView:tibia.minimap.miniMapWidgetClasses.MiniMapRenderer = null;
       
       protected var m_UIButtonCenter:Button = null;
       
@@ -168,9 +168,6 @@ package tibia.minimap.miniMapWidgetClasses
                   break;
                case this.m_UIButtonCenter:
                   _loc2_.centerPosition();
-                  break;
-               default:
-                  log("MiniMapWidgetView.onButtonClick: Unknown button: " + param1.currentTarget);
             }
          }
       }
@@ -180,10 +177,11 @@ package tibia.minimap.miniMapWidgetClasses
          if(!this.m_UIConstructed)
          {
             super.createChildren();
-            this.m_UIRenderer = new tibia.minimap.miniMapWidgetClasses.MiniMapRenderer();
-            this.m_UIRenderer.addEventListener(MouseEvent.CLICK,this.onViewClick);
-            this.m_UIRenderer.addEventListener(MouseEvent.RIGHT_CLICK,this.onViewClick);
-            addChild(this.m_UIRenderer);
+            this.m_UIView = new tibia.minimap.miniMapWidgetClasses.MiniMapRenderer();
+            this.m_UIView.addEventListener(MouseEvent.CLICK,this.onViewClick);
+            this.m_UIView.addEventListener(MouseEvent.RIGHT_CLICK,this.onViewClick);
+            this.m_UIView.addEventListener(MouseEvent.MOUSE_WHEEL,this.onMouseWheel);
+            addChild(this.m_UIView);
             this.m_UIButtonEast = new Button();
             this.m_UIButtonEast.styleName = getStyle("buttonEastStyle");
             this.m_UIButtonEast.toolTip = resourceManager.getString(BUNDLE,"BTN_TOOLTIP_EAST");
@@ -270,6 +268,23 @@ package tibia.minimap.miniMapWidgetClasses
          return this.m_MiniMapStorage;
       }
       
+      override function releaseInstance() : void
+      {
+         super.releaseInstance();
+         this.m_UIButtonCenter.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonDown.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonEast.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonNorth.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonSouth.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonUp.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonWest.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonZoomIn.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonZoomOut.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIView.removeEventListener(MouseEvent.CLICK,this.onViewClick);
+         this.m_UIView.removeEventListener(MouseEvent.RIGHT_CLICK,this.onViewClick);
+         this.m_UIView.removeEventListener(MouseEvent.MOUSE_WHEEL,this.onMouseWheel);
+      }
+      
       protected function onViewClick(param1:MouseEvent) : void
       {
          var _loc2_:Object = null;
@@ -278,7 +293,7 @@ package tibia.minimap.miniMapWidgetClasses
          var _loc5_:MiniMapStorage = null;
          if(param1 != null && widgetInstance is MiniMapWidget)
          {
-            _loc2_ = this.m_UIRenderer.pointToMark(param1.localX,param1.localY);
+            _loc2_ = this.m_UIView.pointToMark(param1.localX,param1.localY);
             _loc3_ = null;
             if(_loc2_ != null)
             {
@@ -286,7 +301,7 @@ package tibia.minimap.miniMapWidgetClasses
             }
             else
             {
-               _loc3_ = this.m_UIRenderer.pointToAbsolute(param1.localX,param1.localY);
+               _loc3_ = this.m_UIView.pointToAbsolute(param1.localX,param1.localY);
             }
             if(_loc3_ != null)
             {
@@ -305,9 +320,6 @@ package tibia.minimap.miniMapWidgetClasses
                      {
                         new MiniMapWidgetContextMenu(_loc5_,_loc3_.x,_loc3_.y,_loc3_.z).display(this,param1.stageX,param1.stageY);
                      }
-                     break;
-                  default:
-                     log("MiniMapWidget.onViewClick: Unknown event type.");
                }
             }
          }
@@ -318,22 +330,22 @@ package tibia.minimap.miniMapWidgetClasses
          super.commitProperties();
          if(this.m_UncommittedMiniMapStorage)
          {
-            this.m_UIRenderer.miniMapStorage = this.miniMapStorage;
+            this.m_UIView.miniMapStorage = this.miniMapStorage;
             this.m_UncommittedMiniMapStorage = false;
          }
          if(this.m_UncommittedPosition)
          {
-            this.m_UIRenderer.setPosition(this.positionX,this.positionY,this.positionZ);
+            this.m_UIView.setPosition(this.positionX,this.positionY,this.positionZ);
             this.m_UncommittedPosition = false;
          }
          if(this.m_UncommittedZoom)
          {
-            this.m_UIRenderer.zoom = this.zoom;
+            this.m_UIView.zoom = this.zoom;
             this.m_UncommittedZoom = false;
          }
          if(this.m_UncommittedHighlightEnd)
          {
-            this.m_UIRenderer.highlightEnd = this.highlightEnd;
+            this.m_UIView.highlightEnd = this.highlightEnd;
             this.m_UncommittedHighlightEnd = false;
          }
       }
@@ -373,6 +385,23 @@ package tibia.minimap.miniMapWidgetClasses
             this.m_MiniMapStorage = param1;
             this.m_UncommittedMiniMapStorage = true;
             invalidateProperties();
+         }
+      }
+      
+      protected function onMouseWheel(param1:MouseEvent) : void
+      {
+         var _loc2_:MiniMapWidget = null;
+         if(param1 != null && widgetInstance is MiniMapWidget)
+         {
+            _loc2_ = MiniMapWidget(widgetInstance);
+            if(param1.delta > 0)
+            {
+               _loc2_.zoom = _loc2_.zoom + 1;
+            }
+            else if(param1.delta < 0)
+            {
+               _loc2_.zoom = _loc2_.zoom - 1;
+            }
          }
       }
       

@@ -52,7 +52,6 @@ package tibia.creatures.buddylistClasses
          var Lst:XMLList = null;
          if((Lst = a_XML.@ID) == null || Lst.length() != 1)
          {
-            log("Buddy.s_Unmarshall: Missing attribute: ID.");
             return null;
          }
          ID = parseInt(Lst[0].toString());

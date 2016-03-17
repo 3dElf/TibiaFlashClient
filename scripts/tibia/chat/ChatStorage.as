@@ -210,15 +210,8 @@ package tibia.chat
                   {
                      _loc12_ = this.getChannel(SERVER_CHANNEL_ID);
                   }
-                  break;
-               default:
-                  log("ChatStorage.addChannelMessage: Message mode " + param5 + " ignored.");
             }
-            if(_loc12_ == null)
-            {
-               log("ChatStorage.addChannelMessage: No suitable channel found for message of mode " + param5 + ".");
-            }
-            else
+            if(_loc12_ != null)
             {
                _loc12_.appendMessage(_loc13_);
             }
@@ -394,9 +387,6 @@ package tibia.chat
                {
                   _loc4_.sendCTALK(_loc7_,String(_loc8_),_loc6_);
                }
-               break;
-            default:
-               log("ChatStorage.sendChannelMessage: Message mode " + _loc7_ + " ignored.");
          }
          if(_loc8_ !== param2.ID && (_loc7_ == MessageMode.MESSAGE_PRIVATE_TO || _loc7_ == MessageMode.MESSAGE_GAMEMASTER_PRIVATE_TO))
          {
@@ -628,7 +618,6 @@ package tibia.chat
       
       private function arrangeChannelSet() : void
       {
-         log("ChatStorage.arrangeChannelSet: Not implemented yet.");
       }
       
       private function formatChannelMessages() : void
@@ -691,7 +680,6 @@ package tibia.chat
                _loc4_ = Tibia.s_GetPlayer();
                if(_loc4_ == null || _loc4_.name == null)
                {
-                  log("ChatStorage.joinChannel: Player not available.");
                   return;
                }
                if(_loc3_ == _loc4_.name.toLowerCase())

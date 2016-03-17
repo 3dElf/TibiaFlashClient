@@ -9,9 +9,13 @@ package shared.utility
       
       function get total() : Number;
       
+      function pause() : void;
+      
       function get length() : uint;
       
       function stop() : void;
+      
+      function resume() : void;
       
       function get average() : Number;
       

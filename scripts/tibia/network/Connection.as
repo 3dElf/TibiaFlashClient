@@ -147,6 +147,8 @@ package tibia.network
       
       public static const LATENCY_LOW:Number = 200;
       
+      protected static const CLOOKATCREATURE:int = 141;
+      
       protected static const CJOINCHANNEL:int = 152;
       
       protected static const SKILL_FED:int = 14;
@@ -201,8 +203,6 @@ package tibia.network
       
       protected static const PATH_MATRIX_SIZE:int = 2 * PATH_MAX_DISTANCE + 1;
       
-      protected static const CPASSLEADERSHIP:int = 166;
-      
       protected static const PROFESSION_NONE:int = 0;
       
       protected static const PATH_ERROR_GO_UPSTAIRS:int = -2;
@@ -218,6 +218,8 @@ package tibia.network
       protected static const PATH_MAX_STEPS:int = 128;
       
       protected static const SSPELLGROUPDELAY:int = 165;
+      
+      protected static const CPASSLEADERSHIP:int = 166;
       
       protected static const SBOTTOMROW:int = 103;
       
@@ -397,7 +399,7 @@ package tibia.network
       
       protected static const SSPELLDELAY:int = 164;
       
-      protected static const TERMINAL_VERSION:int = 960;
+      protected static const TERMINAL_VERSION:int = 961;
       
       protected static const SDELETEONMAP:int = 108;
       
@@ -743,8 +745,6 @@ package tibia.network
       
       private var m_InBuffer:ByteArray = null;
       
-      private var m_Nonce:uint = 0;
-      
       private var m_PingTimer:Timer = null;
       
       private var m_RSAPublicKey:RSAPublicKey = null;
@@ -853,10 +853,6 @@ package tibia.network
          {
             _loc4_.pkFlag = _loc3_;
          }
-         else
-         {
-            log("Connection.readSCREATURESKULL: Creature not found: " + _loc2_);
-         }
          this.m_CreatureStorage.invalidateOpponents();
       }
       
@@ -906,10 +902,6 @@ package tibia.network
          if(_loc4_ != null)
          {
             _loc4_.markID = _loc3_;
-         }
-         else
-         {
-            log("Connection.readSMARKCREATURE: Creature not found: " + _loc2_);
          }
       }
       
@@ -1083,13 +1075,12 @@ package tibia.network
          _loc2_ = param1.readUnsignedInt();
          var _loc3_:int = param1.readUnsignedByte();
          var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
-         if(_loc4_ != null)
+         if(_loc4_ != null && _loc4_.ID != this.m_Player.ID)
          {
             _loc4_.setSkillValue(SKILL_HITPOINTS,_loc3_);
          }
-         else
+         else if(_loc4_ == null)
          {
-            log("Connection.readSCREATUREHEALTH: Creature not found: " + _loc2_);
          }
          this.m_CreatureStorage.invalidateOpponents();
       }
@@ -1169,7 +1160,7 @@ package tibia.network
                this.m_PingSent = getTimer();
                this.sendCPING();
             }
-            if(_loc2_ >= this.m_PingTimeout)
+            if(_loc2_ >= this.m_PingTimeout && !(false || false))
             {
                this.disconnectInternal();
                _loc3_ = new ConnectionEvent(ConnectionEvent.CONNECTION_LOST);
@@ -1202,7 +1193,6 @@ package tibia.network
             _loc6_ = this.m_CreatureStorage.getCreature(_loc5_);
             if(_loc6_ == null)
             {
-               log("Connection.readSTRAPPERS: Creature not found: " + _loc5_);
             }
             _loc3_.push(_loc6_);
             _loc4_++;
@@ -1808,9 +1798,14 @@ package tibia.network
       protected function readSCLEARTARGET(param1:ByteArray) : void
       {
          var _loc2_:int = param1.readUnsignedInt();
-         if(_loc2_ == 0 || _loc2_ == this.m_Nonce)
+         var _loc3_:Creature = null;
+         if((_loc3_ = this.m_CreatureStorage.getAttackTarget()) != null && _loc2_ == _loc3_.ID)
          {
             this.m_CreatureStorage.setAttackTarget(null,false);
+         }
+         else if((_loc3_ = this.m_CreatureStorage.getFollowTarget()) != null && _loc2_ == _loc3_.ID)
+         {
+            this.m_CreatureStorage.setFollowTarget(null,false);
          }
       }
       
@@ -2582,7 +2577,6 @@ package tibia.network
          this.m_ConnectedSince = 0;
          this.m_LastSnapback.setComponents(0,0,0);
          this.m_SnapbackCount = 0;
-         this.m_Nonce = 0;
          this.m_PendingQuestLog = false;
          this.m_PendingQuestLine = -1;
          this.m_PingEarliestTime = 0;
@@ -2617,10 +2611,6 @@ package tibia.network
          if(_loc4_ != null)
          {
             _loc4_.setSkillValue(SKILL_GOSTRENGTH,_loc3_);
-         }
-         else
-         {
-            log("Connection.readSCREATURESPEED: Creature not found: " + _loc2_);
          }
          this.m_CreatureStorage.invalidateOpponents();
       }
@@ -3152,7 +3142,7 @@ package tibia.network
             b = this.createPacket();
             b.writeByte(CFOLLOW);
             b.writeInt(a_CreatureID);
-            b.writeInt(this.generateNonce());
+            b.writeInt(a_CreatureID);
             this.sendPacket(true);
             return;
          }
@@ -3177,7 +3167,7 @@ package tibia.network
             {
                Message = Message + a_UserMessage.substr(0,BugReportWidget.MAX_USER_MESSAGE_LENGTH);
             }
-            Message = Message + ("\nBuild=" + "release;vanilla;2012-07-09;11:49:47;branches/bugfixes;798");
+            Message = Message + ("\nBuild=" + "release;vanilla;2012-08-09;10:03:40;branches/bugfixes;849");
             Message = Message + ("\nBrowser=" + BrowserHelper.s_GetBrowserString());
             Message = Message + ("\nFlash=" + Capabilities.serverString);
             SystemMessage = null;
@@ -3621,16 +3611,6 @@ package tibia.network
          this.m_PingLatency = 0;
       }
       
-      protected function generateNonce() : uint
-      {
-         this.m_Nonce++;
-         if(this.m_Nonce == 0)
-         {
-            this.m_Nonce = 1;
-         }
-         return this.m_Nonce;
-      }
-      
       protected function readSLOGINERROR(param1:ByteArray) : void
       {
          var _loc2_:String = StringHelper.s_ReadFromByteArray(param1);
@@ -3760,10 +3740,6 @@ package tibia.network
          if(_loc4_ != null)
          {
             _loc4_.partyFlag = _loc3_;
-         }
-         else
-         {
-            log("Connection.readSCREATUREPARTY: Creature not found: " + _loc2_);
          }
          this.m_CreatureStorage.invalidateOpponents();
       }
@@ -4230,10 +4206,6 @@ package tibia.network
             _loc5_.brightness = _loc3_;
             _loc5_.lightColour = Colour.s_FromEightBit(_loc4_);
          }
-         else
-         {
-            log("Connection.readSCREATURELIGHT: Creature not found: " + _loc2_);
-         }
          this.m_CreatureStorage.invalidateOpponents();
       }
       
@@ -4373,7 +4345,7 @@ package tibia.network
             b = this.createPacket();
             b.writeByte(CATTACK);
             b.writeInt(a_CreatureID);
-            b.writeInt(this.generateNonce());
+            b.writeInt(a_CreatureID);
             this.sendPacket(true);
             return;
          }
@@ -4485,7 +4457,6 @@ package tibia.network
                throw new Error("Connection.readSTALK: Invalid message mode " + Mode + ".",0);
          }
          var Text:String = StringHelper.s_ReadFromByteArray(a_Bytes,ChatStorage.MAX_TALK_LENGTH);
-         log("Connection.readSTALK: Received message (mode=" + Mode + "): \"" + Text + "\"");
          try
          {
             this.m_WorldMapStorage.addOnscreenMessage(Pos,StatementID,Speaker,SpeakerLevel,Mode,Text);
@@ -4502,6 +4473,25 @@ package tibia.network
          catch(e:Error)
          {
             throw new Error("Connection.readSTALK: Failed to add message: " + e.message,2);
+         }
+      }
+      
+      public function sendCLOOKATCREATURE(param1:int) : void
+      {
+         var b:ByteArray = null;
+         var a_CreatureID:int = param1;
+         try
+         {
+            b = this.createPacket();
+            b.writeByte(CLOOKATCREATURE);
+            b.writeUnsignedInt(a_CreatureID);
+            this.sendPacket(true);
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CLOOKATCREATURE,e);
+            return;
          }
       }
       
@@ -4530,10 +4520,6 @@ package tibia.network
          {
             _loc5_.outfit = _loc3_;
             _loc5_.mountOutfit = _loc4_;
-         }
-         else
-         {
-            log("Connection.readSCREATUREOUTFIT: Creature not found: " + _loc2_);
          }
          this.m_CreatureStorage.invalidateOpponents();
       }
@@ -4925,10 +4911,6 @@ package tibia.network
          if(_loc4_ != null)
          {
             _loc4_.isUnpassable = _loc3_;
-         }
-         else
-         {
-            log("Connection.readSCREATUREUNPASS: Creature not found: " + _loc2_);
          }
       }
       

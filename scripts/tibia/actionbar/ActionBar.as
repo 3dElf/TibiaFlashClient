@@ -56,13 +56,11 @@ package tibia.actionbar
          var _loc3_:XMLList = null;
          if((_loc3_ = param1.@location) == null || _loc3_.length() != 1)
          {
-            log("ActionBar.s_Unmarshall: Missing attribute: location.");
             return null;
          }
          var _loc4_:int = parseInt(_loc3_[0].toString());
          if(_loc4_ != ActionBarSet.LOCATION_TOP && _loc4_ != ActionBarSet.LOCATION_BOTTOM && _loc4_ != ActionBarSet.LOCATION_LEFT && _loc4_ != ActionBarSet.LOCATION_RIGHT)
          {
-            log("ActionBar.s_Unmarshall: Invalid location: " + _loc4_ + ".");
             return null;
          }
          var _loc5_:ActionBar = new ActionBar(_loc4_);

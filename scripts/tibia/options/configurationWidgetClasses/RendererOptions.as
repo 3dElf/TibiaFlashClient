@@ -2,13 +2,13 @@ package tibia.options.configurationWidgetClasses
 {
    import mx.containers.VBox;
    import tibia.controls.CustomSlider;
+   import mx.core.IContainer;
    import mx.controls.CheckBox;
    import mx.containers.Form;
    import mx.containers.FormHeading;
    import mx.containers.FormItem;
    import tibia.options.ConfigurationWidget;
    import flash.events.Event;
-   import mx.core.IContainer;
    import mx.events.SliderEvent;
    import tibia.options.OptionsStorage;
    
@@ -64,6 +64,8 @@ package tibia.options.configurationWidgetClasses
                this.m_UIMaxFrameRate.value = 0;
                this.m_UIShowFrameRate.selected = false;
             }
+            IContainer(this.m_UIAmbientBrightness.parent).enabled = this.m_UILightEnabled.selected;
+            IContainer(this.m_UILevelSeparator.parent).enabled = this.m_UILightEnabled.selected;
             this.m_UncommittedOptions = false;
          }
       }
@@ -88,7 +90,6 @@ package tibia.options.configurationWidgetClasses
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
             this.m_UILightEnabled = new CheckBox();
-            this.m_UILightEnabled.enabled = false;
             this.m_UILightEnabled.addEventListener(Event.CHANGE,function(param1:Event):void
             {
                IContainer(m_UIAmbientBrightness.parent).enabled = m_UILightEnabled.selected;
@@ -98,7 +99,6 @@ package tibia.options.configurationWidgetClasses
             Item.addChild(this.m_UILightEnabled);
             Frm.addChild(Item);
             Item = new FormItem();
-            Item.enabled = false;
             Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"RENDERER_LIGHT_AMBIENT_BRIGHTNESS");
             Item.percentHeight = NaN;
             Item.percentWidth = 100;
@@ -112,7 +112,6 @@ package tibia.options.configurationWidgetClasses
             Item.setStyle("disabledOverlayAlpha",0);
             Frm.addChild(Item);
             Item = new FormItem();
-            Item.enabled = false;
             Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"RENDERER_LIGHT_LEVEL_SEPARATOR");
             Item.percentHeight = NaN;
             Item.percentWidth = 100;

@@ -118,6 +118,8 @@ package tibia.worldmap
       
       protected var m_CacheValid:Boolean = false;
       
+      private const m_LayerBrightnessInfos:Vector.<Vector.<Boolean>> = new Vector.<Vector.<Boolean>>(MAPSIZE_Z,false);
+      
       var m_Position:Vector3D = null;
       
       var m_Origin:Vector3D = null;
@@ -170,6 +172,12 @@ package tibia.worldmap
          this.m_CacheValid = false;
          this.m_AmbientNextUpdate = 0;
          this.m_ObjectNextUpdate = 0;
+         var _loc3_:uint = 0;
+         while(_loc3_ < MAPSIZE_Z)
+         {
+            this.m_LayerBrightnessInfos[_loc3_] = new Vector.<Boolean>(MAPSIZE_X * MAPSIZE_Y,false);
+            _loc3_++;
+         }
       }
       
       public function appendObject(param1:int, param2:int, param3:int, param4:ObjectInstance) : ObjectInstance
@@ -287,6 +295,11 @@ package tibia.worldmap
       public function get options() : OptionsStorage
       {
          return this.m_Options;
+      }
+      
+      public function getTopLookObject(param1:int, param2:int, param3:int, param4:Object = null) : int
+      {
+         return this.m_Field[this.toIndexInternal(param1,param2,param3)].getTopLookObject(param4);
       }
       
       public function refreshFields() : void
@@ -430,10 +443,6 @@ package tibia.worldmap
                   this.appendEffect(_loc2_.x,_loc2_.y,_loc2_.z,_loc21_);
                }
             }
-            else
-            {
-               log("WorldMapStorage.addOnscreenMessage: Invalid message target " + _loc13_ + ".");
-            }
          }
       }
       
@@ -530,6 +539,43 @@ package tibia.worldmap
       public function getObject(param1:int, param2:int, param3:int, param4:int) : ObjectInstance
       {
          return this.m_Field[this.toIndexInternal(param1,param2,param3)].getObject(param4);
+      }
+      
+      public function getLightBlockingTilesForZLayer(param1:uint) : Vector.<Boolean>
+      {
+         var _loc4_:uint = 0;
+         var _loc5_:uint = 0;
+         var _loc6_:uint = 0;
+         var _loc7_:tibia.worldmap.Field = null;
+         var _loc8_:ObjectInstance = null;
+         if(param1 < 0 || param1 >= MAPSIZE_Z)
+         {
+            throw new ArgumentError("WorldMapStorage.toIndexInternal: Input Z co-oridnate (" + param1 + ") is out of range.");
+         }
+         var _loc2_:Vector.<Boolean> = this.m_LayerBrightnessInfos[param1];
+         var _loc3_:uint = 0;
+         while(_loc3_ < MAPSIZE_Y)
+         {
+            _loc4_ = 0;
+            while(_loc4_ < MAPSIZE_X)
+            {
+               _loc5_ = ((param1 + this.m_Origin.z) % MAPSIZE_Z * MAPSIZE_X + (_loc4_ + this.m_Origin.x) % MAPSIZE_X) * MAPSIZE_Y + (_loc3_ + this.m_Origin.y) % MAPSIZE_Y;
+               _loc6_ = _loc3_ * MAPSIZE_X + _loc4_;
+               _loc7_ = this.m_Field[_loc5_];
+               _loc8_ = _loc7_.getObject(0);
+               if(_loc8_ == null || !_loc8_.m_Type.isBank)
+               {
+                  _loc2_[_loc6_] = true;
+               }
+               else
+               {
+                  _loc2_[_loc6_] = false;
+               }
+               _loc4_++;
+            }
+            _loc3_++;
+         }
+         return _loc2_;
       }
       
       public function toMapClosest(param1:Vector3D, param2:Vector3D = null) : Vector3D
@@ -680,11 +726,6 @@ package tibia.worldmap
       public function getMiniMapCost(param1:int, param2:int, param3:int) : int
       {
          return this.m_Field[this.toIndexInternal(param1,param2,param3)].m_MiniMapCost;
-      }
-      
-      public function getTopLookObject(param1:int, param2:int, param3:int, param4:Object = null) : int
-      {
-         return this.m_Field[this.toIndexInternal(param1,param2,param3)].getTopLookObject(param4);
       }
       
       public function scrollMap(param1:int, param2:int, param3:int = 0) : void

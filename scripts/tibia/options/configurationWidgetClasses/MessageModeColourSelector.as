@@ -114,10 +114,6 @@ package tibia.options.configurationWidgetClasses
             _loc3_.itemRenderer = (owner as DataGrid).editedItemRenderer;
             owner.dispatchEvent(_loc3_);
          }
-         else
-         {
-            log("MessageModeColourPicker.endEdit: Cannot end edit session.");
-         }
       }
       
       override protected function commitProperties() : void

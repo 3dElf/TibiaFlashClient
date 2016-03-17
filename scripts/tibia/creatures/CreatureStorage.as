@@ -366,7 +366,7 @@ package tibia.creatures
          _loc2_ = 0;
          while(_loc2_ < MARK_NUM_COLOURS)
          {
-            _loc3_[_loc2_] = Colour.s_FromEightBit(_loc2_).RGB;
+            _loc3_[_loc2_] = Colour.s_RGBFromEightBit(_loc2_);
             _loc2_++;
          }
          _loc3_[MARK_AIM] = 248 << 16 | 248 << 8 | 248;
@@ -792,30 +792,24 @@ package tibia.creatures
       public function setTrappers(param1:Vector.<tibia.creatures.Creature>) : void
       {
          var _loc2_:int = 0;
-         if(this.m_Trappers != null)
+         _loc2_ = this.m_Trappers != null?this.m_Trappers.length:0 - 1;
+         while(_loc2_ >= 0)
          {
-            _loc2_ = this.m_Trappers.length - 1;
-            while(_loc2_ >= 0)
+            if(this.m_Trappers[_loc2_] != null)
             {
-               if(this.m_Trappers[_loc2_] != null)
-               {
-                  this.m_Trappers[_loc2_].isTrapper = false;
-               }
-               _loc2_--;
+               this.m_Trappers[_loc2_].isTrapper = false;
             }
+            _loc2_--;
          }
          this.m_Trappers = param1;
-         if(this.m_Trappers != null)
+         _loc2_ = this.m_Trappers != null?this.m_Trappers.length:0 - 1;
+         while(_loc2_ >= 0)
          {
-            _loc2_ = this.m_Trappers.length - 1;
-            while(_loc2_ >= 0)
+            if(this.m_Trappers[_loc2_] != null)
             {
-               if(this.m_Trappers[_loc2_] != null)
-               {
-                  this.m_Trappers[_loc2_].isTrapper = true;
-               }
-               _loc2_--;
+               this.m_Trappers[_loc2_].isTrapper = true;
             }
+            _loc2_--;
          }
       }
       
@@ -973,16 +967,13 @@ package tibia.creatures
       
       protected function onOptionsChange(param1:PropertyChangeEvent) : void
       {
-         if(param1 != null)
+         switch(param1.property)
          {
-            switch(param1.property)
-            {
-               case "opponentSort":
-               case "opponentFilter":
-               case "*":
-                  this.invalidateOpponents();
-                  this.refreshOpponents();
-            }
+            case "opponentSort":
+            case "opponentFilter":
+            case "*":
+               this.invalidateOpponents();
+               this.refreshOpponents();
          }
       }
       
@@ -1011,11 +1002,40 @@ package tibia.creatures
                _loc5_ = _loc3_ - 1;
             }
          }
-         if(_loc2_ < 0)
+         if(_loc6_ == null || _loc2_ < 0)
          {
             throw new Error("CreatureStorage.removeCreature: Creature " + param1 + " not found.");
          }
-         this.m_Creature[_loc2_].reset();
+         if(_loc6_ == this.m_Player)
+         {
+            throw new Error("CreatureStorage.removeCreature: Can\'t remove the player.");
+         }
+         if(_loc6_ == this.m_Aim)
+         {
+            this.m_Aim = null;
+            this.updateExtendedMark(_loc6_);
+         }
+         if(_loc6_ == this.m_AttackTarget)
+         {
+            this.m_AttackTarget = null;
+            this.updateExtendedMark(_loc6_);
+         }
+         if(_loc6_ == this.m_FollowTarget)
+         {
+            this.m_FollowTarget = null;
+            this.updateExtendedMark(_loc6_);
+         }
+         _loc3_ = int(this.m_Trappers != null?this.m_Trappers.length:0 - 1);
+         while(_loc3_ >= 0)
+         {
+            if(_loc6_ == this.m_Trappers[_loc3_])
+            {
+               this.m_Trappers[_loc3_].isTrapper = false;
+               this.m_Trappers[_loc3_] = null;
+            }
+            _loc3_--;
+         }
+         _loc6_.reset();
          this.m_Creature.splice(_loc2_,1);
          this.m_CreatureCount--;
          this.m_OpponentsState = OPPONENTS_REBUILD;

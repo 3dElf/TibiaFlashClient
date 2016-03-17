@@ -464,6 +464,12 @@ package tibia.container.containerWidgetClasses
          }
       }
       
+      override function releaseInstance() : void
+      {
+         super.releaseInstance();
+         this.m_UIPurse.removeEventListener(MouseEvent.CLICK,this.onPurseClick);
+      }
+      
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
          var _loc5_:int = 0;

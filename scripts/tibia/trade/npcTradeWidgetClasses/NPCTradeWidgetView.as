@@ -844,6 +844,16 @@ package tibia.trade.npcTradeWidgetClasses
          return this.m_ContainerStorage;
       }
       
+      override function releaseInstance() : void
+      {
+         super.releaseInstance();
+         this.m_UITradeMode.removeEventListener(ItemClickEvent.ITEM_CLICK,this.onModeChange);
+         this.m_UIObjectLayout.removeEventListener(MouseEvent.CLICK,this.onLayoutChange);
+         this.m_UIAmountSelector.removeEventListener(Event.CHANGE,this.onAmountChange);
+         this.m_UIButtonCommit.removeEventListener(MouseEvent.CLICK,this.onButtonCommit);
+         this.m_UIObjectSelector.removeEventListener(Event.CHANGE,this.onObjectChange);
+      }
+      
       function get buyObjects() : IList
       {
          return this.m_BuyObjects;

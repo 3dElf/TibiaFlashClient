@@ -120,7 +120,6 @@ package tibia.input.gameaction
          else
          {
             _loc2_ = 1;
-            log("MoveActionImpl.performInternal: Invalid amount: " + param1);
          }
          var _loc3_:Connection = Tibia.s_GetConnection();
          if(_loc3_ != null && Boolean(_loc3_.isGameRunning))

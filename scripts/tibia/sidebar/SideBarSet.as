@@ -55,7 +55,8 @@ package tibia.sidebar
          while(_loc2_ >= 0)
          {
             this.m_SideBars[_loc2_] = new tibia.sidebar.SideBar(this,_loc2_);
-            this.addSideBarListener(this.m_SideBars[_loc2_]);
+            this.m_SideBars[_loc2_].addEventListener(CollectionEvent.COLLECTION_CHANGE,this.onSideBarEvent,false,EventPriority.DEFAULT_HANDLER,false);
+            this.m_SideBars[_loc2_].addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onSideBarEvent,false,EventPriority.DEFAULT_HANDLER,false);
             _loc2_--;
          }
          this.m_Widgets = new Vector.<tibia.sidebar.Widget>();
@@ -86,7 +87,6 @@ package tibia.sidebar
          var _loc3_:XMLList = null;
          if((_loc3_ = param1.@id) == null || _loc3_.length() != 1)
          {
-            log("SideBarSet.s_Unmarshall: Missing attribute: id.");
             return null;
          }
          _loc4_ = parseInt(_loc3_[0].toString());
@@ -151,44 +151,41 @@ package tibia.sidebar
       
       public function showWidgetByID(param1:int, param2:int, param3:int) : tibia.sidebar.Widget
       {
-         var _loc6_:int = 0;
-         var _loc7_:tibia.sidebar.SideBar = null;
+         var _loc5_:Boolean = false;
+         var _loc6_:Boolean = false;
+         var _loc7_:int = 0;
          var _loc8_:int = 0;
          if(!SideBarSet.s_CheckLocation(param2))
          {
             return null;
          }
          var _loc4_:tibia.sidebar.Widget = this.poolGetWidget(param1);
-         var _loc5_:Boolean = false;
          if(_loc4_ != null)
          {
-            _loc6_ = this.m_SideBars.length - 1;
-            while(_loc6_ >= 0)
+            _loc5_ = false;
+            _loc6_ = true;
+            _loc7_ = this.m_SideBars.length - 1;
+            while(Boolean(_loc6_) && _loc7_ >= 0)
             {
-               _loc7_ = this.m_SideBars[_loc6_];
-               _loc8_ = _loc7_.length - 1;
-               while(_loc8_ >= 0)
+               _loc8_ = this.m_SideBars[_loc7_].length - 1;
+               while(Boolean(_loc6_) && _loc8_ >= 0)
                {
-                  if(_loc7_.getWidgetIDAt(_loc8_) == _loc4_.ID)
+                  if(this.m_SideBars[_loc7_].getWidgetIDAt(_loc8_) == _loc4_.ID)
                   {
-                     if(_loc6_ == param2)
+                     if(_loc7_ == param2)
                      {
                         _loc5_ = true;
                      }
                      else
                      {
-                        _loc7_.removeWidgetAt(_loc8_);
+                        this.m_SideBars[_loc7_].removeWidgetAt(_loc8_);
                         _loc5_ = false;
                      }
-                     break;
+                     _loc6_ = false;
                   }
                   _loc8_--;
                }
-               if(_loc8_ > -1)
-               {
-                  break;
-               }
-               _loc6_--;
+               _loc7_--;
             }
             if(tibia.sidebar.Widget.s_GetUnique(_loc4_.type))
             {
@@ -266,46 +263,38 @@ package tibia.sidebar
          return this.m_SideBars[param1];
       }
       
-      public function hideWidgetType(param1:int, param2:int) : int
+      public function hideWidgetType(param1:int, param2:int) : void
       {
-         var _loc5_:tibia.sidebar.SideBar = null;
-         var _loc6_:int = 0;
-         var _loc7_:tibia.sidebar.Widget = null;
+         var _loc4_:int = 0;
+         var _loc5_:tibia.sidebar.Widget = null;
          if(!tibia.sidebar.Widget.s_CheckType(param1))
          {
-            return 0;
+            return;
          }
          if(param2 > -1 && !SideBarSet.s_CheckLocation(param2))
          {
-            return 0;
+            return;
          }
-         var _loc3_:int = 0;
-         var _loc4_:int = this.m_SideBars.length - 1;
-         while(_loc4_ >= 0)
+         var _loc3_:int = this.m_SideBars.length - 1;
+         while(_loc3_ >= 0)
          {
-            if(param2 < 0 || param2 == _loc4_)
+            _loc4_ = this.m_SideBars[_loc3_].length - 1;
+            while((param2 < 0 || param2 == _loc3_) && _loc4_ >= 0)
             {
-               _loc5_ = this.m_SideBars[_loc4_];
-               _loc6_ = _loc5_.length - 1;
-               while(_loc6_ >= 0)
+               _loc5_ = this.m_SideBars[_loc3_].getWidgetInstanceAt(_loc4_);
+               if(_loc5_.type == param1)
                {
-                  _loc7_ = _loc5_.getWidgetInstanceAt(_loc6_);
-                  if(_loc7_.type == param1)
+                  _loc5_.releaseViewInstance();
+                  this.m_SideBars[_loc3_].removeWidgetAt(_loc4_);
+                  if(!tibia.sidebar.Widget.s_GetUnique(_loc5_.type) || !tibia.sidebar.Widget.s_GetRestorable(_loc5_.type))
                   {
-                     _loc5_.removeWidgetAt(_loc6_);
-                     _loc7_.releaseViewInstance();
-                     if(!tibia.sidebar.Widget.s_GetUnique(_loc7_.type) || !tibia.sidebar.Widget.s_GetRestorable(_loc7_.type))
-                     {
-                        this.poolRemoveWidget(_loc7_.ID);
-                     }
-                     _loc3_++;
+                     this.poolRemoveWidget(_loc5_.ID);
                   }
-                  _loc6_--;
                }
+               _loc4_--;
             }
-            _loc4_--;
+            _loc3_--;
          }
-         return _loc3_;
       }
       
       private function poolAddWidget(param1:tibia.sidebar.Widget) : tibia.sidebar.Widget
@@ -333,7 +322,8 @@ package tibia.sidebar
             return null;
          }
          this.m_Widgets.splice(-_loc2_ - 1,0,param1);
-         this.addWidgetListener(param1);
+         param1.addEventListener(tibia.sidebar.Widget.EVENT_CLOSE,this.onWidgetEvent,false,EventPriority.DEFAULT_HANDLER,false);
+         param1.addEventListener(tibia.sidebar.Widget.EVENT_OPTIONS_CHANGE,this.onWidgetEvent,false,EventPriority.DEFAULT_HANDLER,false);
          return param1;
       }
       
@@ -524,15 +514,6 @@ package tibia.sidebar
          return -_loc3_ - 1;
       }
       
-      private function addWidgetListener(param1:tibia.sidebar.Widget) : void
-      {
-         if(param1 != null)
-         {
-            param1.addEventListener(tibia.sidebar.Widget.EVENT_CLOSE,this.onWidgetEvent,false,EventPriority.DEFAULT_HANDLER,false);
-            param1.addEventListener(tibia.sidebar.Widget.EVENT_OPTIONS_CHANGE,this.onWidgetEvent,false,EventPriority.DEFAULT_HANDLER,false);
-         }
-      }
-      
       public function closeVolatileWidgets() : void
       {
          var _loc2_:tibia.sidebar.Widget = null;
@@ -565,7 +546,8 @@ package tibia.sidebar
          if(_loc3_ > -1)
          {
             _loc2_ = this.m_Widgets.splice(_loc3_,1)[0];
-            this.removeWidgetListener(_loc2_);
+            _loc2_.removeEventListener(tibia.sidebar.Widget.EVENT_CLOSE,this.onWidgetEvent);
+            _loc2_.removeEventListener(tibia.sidebar.Widget.EVENT_OPTIONS_CHANGE,this.onWidgetEvent);
          }
          if(_loc2_ != null)
          {
@@ -573,24 +555,6 @@ package tibia.sidebar
             _loc2_.releaseViewInstance();
          }
          return _loc2_;
-      }
-      
-      private function removeSideBarListener(param1:tibia.sidebar.SideBar) : void
-      {
-         if(param1 != null)
-         {
-            param1.removeEventListener(CollectionEvent.COLLECTION_CHANGE,this.onSideBarEvent);
-            param1.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onSideBarEvent);
-         }
-      }
-      
-      private function addSideBarListener(param1:tibia.sidebar.SideBar) : void
-      {
-         if(param1 != null)
-         {
-            param1.addEventListener(CollectionEvent.COLLECTION_CHANGE,this.onSideBarEvent,false,EventPriority.DEFAULT_HANDLER,false);
-            param1.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onSideBarEvent,false,EventPriority.DEFAULT_HANDLER,false);
-         }
       }
       
       public function hideAllWidgets() : void
@@ -606,42 +570,38 @@ package tibia.sidebar
          }
       }
       
-      public function hideWidgetByID(param1:int) : tibia.sidebar.Widget
+      public function hideWidgetByID(param1:int) : void
       {
-         var _loc4_:tibia.sidebar.SideBar = null;
-         var _loc5_:int = 0;
+         var _loc3_:int = 0;
+         var _loc4_:tibia.sidebar.Widget = null;
          var _loc2_:int = this.m_SideBars.length - 1;
          while(_loc2_ >= 0)
          {
-            _loc4_ = this.m_SideBars[_loc2_];
-            _loc5_ = _loc4_.length - 1;
-            while(_loc5_ >= 0)
+            _loc3_ = this.m_SideBars[_loc2_].length - 1;
+            while(_loc3_ >= 0)
             {
-               if(_loc4_.getWidgetIDAt(_loc5_) == param1)
+               _loc4_ = this.m_SideBars[_loc2_].getWidgetInstanceAt(_loc3_);
+               if(_loc4_.ID == param1)
                {
-                  _loc4_.removeWidgetAt(_loc5_);
+                  _loc4_.releaseViewInstance();
+                  this.m_SideBars[_loc2_].removeWidgetAt(_loc3_);
+                  if(!tibia.sidebar.Widget.s_GetUnique(_loc4_.type) || !tibia.sidebar.Widget.s_GetRestorable(_loc4_.type))
+                  {
+                     this.poolRemoveWidget(param1);
+                  }
+                  return;
                }
-               _loc5_--;
+               _loc3_--;
             }
             _loc2_--;
          }
-         var _loc3_:tibia.sidebar.Widget = this.poolGetWidget(param1);
-         if(_loc3_ != null)
-         {
-            _loc3_.releaseViewInstance();
-            if(!tibia.sidebar.Widget.s_GetUnique(_loc3_.type) || !tibia.sidebar.Widget.s_GetRestorable(_loc3_.type))
-            {
-               this.poolRemoveWidget(param1);
-            }
-         }
-         return _loc3_;
       }
       
       public function showWidgetType(param1:int, param2:int, param3:int) : tibia.sidebar.Widget
       {
          var _loc6_:int = 0;
          var _loc7_:int = 0;
-         var _loc8_:tibia.sidebar.SideBar = null;
+         var _loc8_:* = false;
          if(!tibia.sidebar.Widget.s_CheckType(param1))
          {
             return null;
@@ -670,36 +630,29 @@ package tibia.sidebar
                }
                _loc6_--;
             }
-            if(_loc4_ != null)
+            _loc8_ = _loc4_ != null;
+            _loc6_ = this.m_SideBars.length - 1;
+            while(Boolean(_loc8_) && _loc6_ >= 0)
             {
-               _loc6_ = this.m_SideBars.length - 1;
-               while(_loc6_ >= 0)
+               _loc7_ = this.m_SideBars[_loc6_].length - 1;
+               while(Boolean(_loc8_) && _loc7_ >= 0)
                {
-                  _loc8_ = this.m_SideBars[_loc6_];
-                  _loc7_ = _loc8_.length - 1;
-                  while(_loc7_ >= 0)
+                  if(this.m_SideBars[_loc6_].getWidgetIDAt(_loc7_) == _loc4_.ID)
                   {
-                     if(_loc8_.getWidgetIDAt(_loc7_) == _loc4_.ID)
+                     if(_loc6_ == param2)
                      {
-                        if(_loc6_ == param2)
-                        {
-                           _loc5_ = true;
-                        }
-                        else
-                        {
-                           _loc8_.removeWidgetAt(_loc7_);
-                           _loc5_ = false;
-                        }
-                        break;
+                        _loc5_ = true;
                      }
-                     _loc7_--;
+                     else
+                     {
+                        this.m_SideBars[_loc6_].removeWidgetAt(_loc7_);
+                        _loc5_ = false;
+                     }
+                     _loc8_ = false;
                   }
-                  if(_loc7_ > -1)
-                  {
-                     break;
-                  }
-                  _loc6_--;
+                  _loc7_--;
                }
+               _loc6_--;
             }
             this.setDefaultLocation(param1,param2);
          }
@@ -712,15 +665,6 @@ package tibia.sidebar
             return this.m_SideBars[param2].setWidgetIndex(_loc4_,param3);
          }
          return this.m_SideBars[param2].addWidgetAt(_loc4_,param3);
-      }
-      
-      private function removeWidgetListener(param1:tibia.sidebar.Widget) : void
-      {
-         if(param1 != null)
-         {
-            param1.removeEventListener(tibia.sidebar.Widget.EVENT_CLOSE,this.onWidgetEvent);
-            param1.removeEventListener(tibia.sidebar.Widget.EVENT_OPTIONS_CHANGE,this.onWidgetEvent);
-         }
       }
       
       private function poolGetWidget(param1:int) : tibia.sidebar.Widget
