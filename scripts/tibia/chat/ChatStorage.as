@@ -403,7 +403,6 @@ package tibia.chat
       
       public function reset() : void
       {
-         this.options = null;
          var _loc1_:Channel = null;
          var _loc2_:int = this.m_Channels.length - 1;
          while(_loc2_ >= 0)
@@ -452,12 +451,12 @@ package tibia.chat
          return -1;
       }
       
-      public function loadChannels() : Array
+      public function loadChannels() : Vector.<int>
       {
          var _loc3_:int = 0;
          var _loc4_:int = 0;
          var _loc5_:int = 0;
-         var _loc1_:Array = [];
+         var _loc1_:Vector.<int> = new Vector.<int>();
          var _loc2_:ChannelSet = null;
          if(this.m_Options != null && (_loc2_ = this.m_Options.getChannelSet(ChannelSet.DEFAULT_SET)) != null)
          {

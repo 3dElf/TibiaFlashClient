@@ -409,18 +409,20 @@ package tibia.creatures
       
       override public function reset() : void
       {
+         var _loc1_:int = m_ID;
          super.reset();
          this.resetAutowalk();
          this.resetFlags();
          this.resetSkills();
+         m_ID = _loc1_;
          this.m_KnownSpells.length = 0;
          this.m_Premium = false;
          this.m_Profession = PROFESSION_NONE;
          m_Type = TYPE_PLAYER;
-         var _loc1_:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-         _loc1_.kind = PropertyChangeEventKind.UPDATE;
-         _loc1_.property = "*";
-         dispatchEvent(_loc1_);
+         var _loc2_:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+         _loc2_.kind = PropertyChangeEventKind.UPDATE;
+         _loc2_.property = "*";
+         dispatchEvent(_loc2_);
       }
       
       public function get premium() : Boolean

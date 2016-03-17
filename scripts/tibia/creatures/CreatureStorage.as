@@ -950,7 +950,6 @@ package tibia.creatures
       
       public function reset() : void
       {
-         this.options = null;
          this.m_Player.reset();
          var _loc1_:int = this.m_Creature.length - 1;
          while(_loc1_ >= 0)

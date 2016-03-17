@@ -8,7 +8,9 @@ package shared.controls
    import mx.controls.listClasses.IListItemRenderer;
    import flash.display.DisplayObject;
    import mx.core.EdgeMetrics;
+   import mx.events.ScrollEvent;
    import mx.managers.LayoutManager;
+   import mx.events.ScrollEventDirection;
    import flash.geom.Point;
    import flash.display.Graphics;
    import flash.utils.Timer;
@@ -18,8 +20,6 @@ package shared.controls
    import mx.core.UIComponent;
    import mx.events.ListEvent;
    import mx.events.ListEventReason;
-   import mx.events.ScrollEvent;
-   import mx.events.ScrollEventDirection;
    import mx.events.CollectionEvent;
    import mx.events.CollectionEventKind;
    import mx.collections.IList;
@@ -183,145 +183,162 @@ package shared.controls
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
+         var _loc3_:EdgeMetrics = null;
+         var _loc11_:Number = NaN;
+         var _loc16_:int = 0;
+         var _loc17_:Number = NaN;
          var _loc18_:int = 0;
          var _loc19_:Number = NaN;
-         var _loc20_:Number = NaN;
+         var _loc20_:ScrollEvent = null;
          var _loc21_:Array = null;
          var _loc22_:Array = null;
          super.updateDisplayList(param1,param2);
-         var _loc3_:EdgeMetrics = this.viewMetricsAndPadding;
+         _loc3_ = this.viewMetricsAndPadding;
          var _loc4_:Number = getStyle("itemHorizontalGap");
          var _loc5_:Number = getStyle("itemVerticalGap");
          var _loc6_:int = param1 - _loc3_.left - _loc3_.right;
          var _loc7_:int = param2 - _loc3_.top - _loc3_.bottom;
+         var _loc8_:int = this.m_DataProvider != null?int(this.m_DataProvider.length):0;
+         var _loc9_:int = this.m_ExtentChache.topToIndex(verticalScrollPosition);
+         var _loc10_:IListItemRenderer = null;
+         _loc11_ = verticalScrollPosition - this.m_ExtentChache.top(_loc9_);
+         var _loc12_:Number = _loc11_ + _loc7_ + _loc5_;
+         var _loc13_:Number = this.m_UIItemLayer.height;
          this.m_UIContentLayer.move(_loc3_.left,_loc3_.top);
          this.m_UIContentLayer.setActualSize(_loc6_,_loc7_);
-         var _loc8_:int = this.m_DataProvider != null?int(this.m_DataProvider.length):0;
-         var _loc9_:int = this.m_UIItemLayer.numChildren;
-         var _loc10_:int = this.m_ExtentChache.topToIndex(verticalScrollPosition);
-         var _loc11_:int = this.m_ExtentChache.topToIndex(verticalScrollPosition + _loc7_);
-         var _loc12_:IListItemRenderer = null;
-         var _loc13_:Number = verticalScrollPosition - this.m_ExtentChache.top(_loc10_);
-         if(isNaN(_loc13_))
+         if(isNaN(_loc11_))
          {
-            _loc13_ = 0;
+            _loc11_ = 0;
          }
-         var _loc14_:Number = _loc7_ + _loc13_ + _loc5_;
-         var _loc15_:Number = this.m_UIItemLayer.height;
          this.m_AlignBottom = Boolean(this.m_FollowTail) || param2 > this.m_ResizeFollowTailHeight;
-         if(Boolean(this.m_ForceUpdate) || Boolean(this.m_AlignBottom) || this.m_ExtentChache.width != _loc6_ || this.m_FirstVisibleItem != _loc10_ || this.m_LastVisibleItem != _loc11_)
+         if(Boolean(this.m_ForceUpdate) || Boolean(this.m_AlignBottom) || this.m_ExtentChache.width != _loc6_ || this.m_FirstVisibleItem != _loc9_ || this.m_LastVisibleItem != this.m_ExtentChache.topToIndex(verticalScrollPosition + _loc7_))
          {
             this.m_RendererMap.length = 0;
             this.m_ExtentChache.width = _loc6_;
-            _loc18_ = 0;
+            _loc16_ = 0;
             if(this.m_AlignBottom)
             {
-               _loc18_ = -1;
-               _loc15_ = 0;
+               _loc16_ = -1;
+               _loc13_ = 0;
                this.m_FirstVisibleItem = this.m_LastVisibleItem = _loc8_ - 1;
             }
             else
             {
-               _loc18_ = 1;
-               _loc15_ = 0;
-               this.m_FirstVisibleItem = this.m_LastVisibleItem = Math.min(_loc10_,_loc8_ - 1);
+               _loc16_ = 1;
+               _loc13_ = 0;
+               this.m_FirstVisibleItem = this.m_LastVisibleItem = Math.min(_loc9_,_loc8_ - 1);
             }
+            _loc17_ = 0;
+            _loc18_ = 0;
+            _loc18_ = 0;
+            _loc9_ = this.m_LastVisibleItem;
+            while(_loc9_ >= 0 && _loc9_ < _loc8_ && _loc13_ < _loc12_)
+            {
+               _loc10_ = this.aquireItemRenderer(_loc18_++,_loc16_);
+               _loc10_.data = this.m_DataProvider.getItemAt(_loc9_);
+               _loc10_.height = NaN;
+               _loc10_.width = _loc6_;
+               LayoutManager.getInstance().validateClient(_loc10_,true);
+               _loc17_ = _loc10_.getExplicitOrMeasuredHeight();
+               _loc13_ = _loc13_ + (_loc17_ + _loc5_);
+               this.m_RendererMap.splice(_loc16_ > 0?_loc18_ - 1:0,0,_loc10_);
+               this.m_ExtentChache.updateItemAt(_loc17_,_loc9_);
+               this.m_FirstVisibleItem = Math.min(this.m_FirstVisibleItem,_loc9_);
+               this.m_LastVisibleItem = Math.max(this.m_LastVisibleItem,_loc9_);
+               if(_loc16_ > 0 && _loc9_ == _loc8_ - 1 && _loc18_ < _loc8_ && _loc12_ > 0)
+               {
+                  _loc9_ = this.m_FirstVisibleItem;
+                  _loc16_ = -1;
+               }
+               _loc9_ = _loc9_ + _loc16_;
+            }
+            this.trimItemRenderers(_loc18_);
             _loc19_ = 0;
             _loc9_ = 0;
-            _loc10_ = this.m_LastVisibleItem;
-            while(_loc10_ >= 0 && _loc10_ < _loc8_ && _loc15_ < _loc14_)
+            while(_loc9_ < _loc18_)
             {
-               _loc12_ = this.aquireItemRenderer(_loc9_++,_loc18_);
-               _loc12_.data = this.m_DataProvider.getItemAt(_loc10_);
-               _loc12_.height = NaN;
-               _loc12_.width = _loc6_;
-               LayoutManager.getInstance().validateClient(_loc12_,true);
-               _loc19_ = _loc12_.getExplicitOrMeasuredHeight();
-               _loc15_ = _loc15_ + (_loc19_ + _loc5_);
-               this.m_RendererMap.splice(_loc18_ > 0?_loc9_ - 1:0,0,_loc12_);
-               this.m_ExtentChache.updateItemAt(_loc19_,_loc10_);
-               this.m_FirstVisibleItem = Math.min(this.m_FirstVisibleItem,_loc10_);
-               this.m_LastVisibleItem = Math.max(this.m_LastVisibleItem,_loc10_);
-               if(_loc18_ < 0 && !this.m_FollowTail)
-               {
-                  this.m_AlignBottom = true;
-                  this.m_ResizeFollowTailHeight = param2;
-               }
-               if(_loc18_ > 0 && _loc10_ == _loc8_ - 1 && _loc9_ < _loc8_ && _loc14_ > 0)
-               {
-                  _loc10_ = this.m_FirstVisibleItem;
-                  _loc18_ = -1;
-                  this.trimItemRenderers(_loc9_);
-               }
-               _loc10_ = _loc10_ + _loc18_;
-            }
-            this.trimItemRenderers(_loc9_);
-            _loc20_ = 0;
-            _loc10_ = 0;
-            while(_loc10_ < _loc9_)
-            {
-               _loc12_ = IListItemRenderer(this.m_RendererMap[_loc10_]);
-               _loc19_ = _loc12_.getExplicitOrMeasuredHeight();
-               _loc12_.move(0,_loc20_);
-               _loc12_.setActualSize(_loc6_,_loc19_);
-               _loc20_ = _loc20_ + (_loc19_ + _loc5_);
-               _loc10_++;
+               _loc10_ = IListItemRenderer(this.m_RendererMap[_loc9_]);
+               _loc17_ = _loc10_.getExplicitOrMeasuredHeight();
+               _loc10_.move(0,_loc19_);
+               _loc10_.setActualSize(_loc6_,_loc17_);
+               _loc19_ = _loc19_ + (_loc17_ + _loc5_);
+               _loc9_++;
             }
          }
-         if(_loc15_ < _loc14_ - _loc13_)
+         if(_loc13_ > _loc12_ - _loc11_)
+         {
+            if(verticalScrollPosition > maxVerticalScrollPosition)
+            {
+               this.m_ResizeFollowTailHeight = param2;
+               this.m_AlignBottom = true;
+            }
+         }
+         else
          {
             this.m_ResizeFollowTailHeight = NaN;
          }
          if(this.m_AlignBottom)
          {
-            this.m_UIItemLayer.move(0,_loc7_ - _loc15_);
-            this.m_UIItemLayer.setActualSize(_loc6_,_loc15_);
+            this.m_UIItemLayer.move(0,_loc7_ - _loc13_);
+            this.m_UIItemLayer.setActualSize(_loc6_,_loc13_);
          }
          else
          {
-            this.m_UIItemLayer.move(0,-_loc13_);
-            this.m_UIItemLayer.setActualSize(_loc6_,_loc15_);
+            this.m_UIItemLayer.move(0,_loc13_ < _loc7_?Number(0):Number(-_loc11_));
+            this.m_UIItemLayer.setActualSize(_loc6_,_loc13_);
          }
-         _loc15_ = _loc8_ > 0?Number(this.m_ExtentChache.bottom(_loc8_ - 1)):Number(0);
-         setScrollBarProperties(1,1,_loc15_,_loc7_);
+         _loc13_ = _loc8_ > 0?Number(this.m_ExtentChache.bottom(_loc8_ - 1)):Number(0);
+         setScrollBarProperties(1,1,_loc13_,_loc7_);
          if(this.m_AlignBottom)
          {
-            verticalScrollPosition = Math.max(0,_loc15_ - _loc7_);
+            verticalScrollPosition = Math.max(0,_loc13_ - _loc7_);
          }
-         var _loc16_:Point = localToGlobal(new Point(mouseX,mouseY));
-         this.updateRollOverItem(_loc16_.x,_loc16_.y,this.m_ForceUpdate);
+         else
+         {
+            if(_loc13_ < _loc7_)
+            {
+               verticalScrollPosition = 0;
+            }
+            _loc20_ = new ScrollEvent(ScrollEvent.SCROLL);
+            _loc20_.direction = ScrollEventDirection.VERTICAL;
+            _loc20_.position = verticalScrollPosition;
+            _loc20_.delta = 0;
+            dispatchEvent(_loc20_);
+         }
+         var _loc14_:Point = localToGlobal(new Point(mouseX,mouseY));
+         this.updateRollOverItem(_loc14_.x,_loc14_.y,this.m_ForceUpdate);
          this.m_ForceUpdate = false;
-         var _loc17_:Graphics = this.m_UISelectionLayer.graphics;
-         _loc17_.clear();
+         var _loc15_:Graphics = this.m_UISelectionLayer.graphics;
+         _loc15_.clear();
          if(getStyle("itemBackgroundColors") !== undefined)
          {
             _loc21_ = getStyle("itemBackgroundColors");
             _loc22_ = getStyle("itemBackgroundAlphas");
             if(_loc21_.length == 1)
             {
-               _loc17_.beginFill(_loc21_[0],_loc22_[0]);
-               _loc17_.drawRect(0,0,this.m_UIItemLayer.width,this.m_UIItemLayer.height);
+               _loc15_.beginFill(_loc21_[0],_loc22_[0]);
+               _loc15_.drawRect(0,0,this.m_UIItemLayer.width,this.m_UIItemLayer.height);
             }
             else
             {
-               _loc10_ = this.m_FirstVisibleItem;
-               while(_loc10_ <= this.m_LastVisibleItem)
+               _loc9_ = this.m_FirstVisibleItem;
+               while(_loc9_ <= this.m_LastVisibleItem)
                {
-                  if((!this.m_Selectable || this.m_SelectedIndex != _loc10_) && (_loc12_ = this.itemIndexToItemRenderer(_loc10_)) != null)
+                  if((!this.m_Selectable || this.m_SelectedIndex != _loc9_) && (_loc10_ = this.itemIndexToItemRenderer(_loc9_)) != null)
                   {
-                     _loc17_.beginFill(_loc21_[_loc10_ % _loc21_.length],_loc22_[_loc10_ % _loc21_.length]);
-                     _loc17_.drawRect(Math.floor(_loc12_.x - _loc4_ / 2),Math.floor(_loc12_.y - _loc5_ / 2),Math.ceil(_loc12_.width + _loc4_),Math.ceil(_loc12_.height + _loc5_));
+                     _loc15_.beginFill(_loc21_[_loc9_ % _loc21_.length],_loc22_[_loc9_ % _loc21_.length]);
+                     _loc15_.drawRect(Math.floor(_loc10_.x - _loc4_ / 2),Math.floor(_loc10_.y - _loc5_ / 2),Math.ceil(_loc10_.width + _loc4_),Math.ceil(_loc10_.height + _loc5_));
                   }
-                  _loc10_++;
+                  _loc9_++;
                }
             }
          }
-         if(Boolean(this.m_Selectable) && getStyle("itemSelectionColor") !== undefined && (_loc12_ = this.itemIndexToItemRenderer(this.m_SelectedIndex)) != null)
+         if(Boolean(this.m_Selectable) && getStyle("itemSelectionColor") !== undefined && (_loc10_ = this.itemIndexToItemRenderer(this.m_SelectedIndex)) != null)
          {
-            _loc17_.beginFill(getStyle("itemSelectionColor"),getStyle("itemSelectionAlpha"));
-            _loc17_.drawRect(_loc12_.x,_loc12_.y,_loc12_.width,_loc12_.height);
+            _loc15_.beginFill(getStyle("itemSelectionColor"),getStyle("itemSelectionAlpha"));
+            _loc15_.drawRect(_loc10_.x,_loc10_.y,_loc10_.width,_loc10_.height);
          }
-         _loc17_.endFill();
+         _loc15_.endFill();
          this.m_UISelectionLayer.x = this.m_UIItemLayer.x;
          this.m_UISelectionLayer.y = this.m_UIItemLayer.y;
          if(verticalScrollBar != null)

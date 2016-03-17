@@ -13,9 +13,9 @@ package tibia.creatures.buddylistWidgetClasses
    import mx.core.EdgeMetrics;
    import tibia.creatures.buddylistClasses.BuddyIcon;
    import flash.display.Graphics;
+   import tibia.creatures.buddylistClasses.Buddy;
    import mx.core.FlexShape;
    import flash.events.TimerEvent;
-   import tibia.creatures.buddylistClasses.Buddy;
    import mx.events.PropertyChangeEvent;
    
    public class BuddylistItemRenderer extends UIComponent implements IListItemRenderer, IDataRenderer
@@ -69,6 +69,7 @@ package tibia.creatures.buddylistWidgetClasses
             BuddylistItemRenderer.highlightTextColor = 16316664;
             BuddylistItemRenderer.offlineTextColor = 16277600;
             BuddylistItemRenderer.onlineTextColor = 6355040;
+            BuddylistItemRenderer.pendingTextColor = 16753920;
          };
          StyleManager.setStyleDeclaration(Selector,Decl,true);
       }
@@ -107,13 +108,17 @@ package tibia.creatures.buddylistWidgetClasses
             {
                _loc11_ = getStyle("highlightTextColor");
             }
-            else if(this.m_Buddy.online)
+            else if(this.m_Buddy.status == Buddy.STATUS_ONLINE)
             {
                _loc11_ = getStyle("onlineTextColor");
             }
-            else
+            else if(this.m_Buddy.status == Buddy.STATUS_OFFLINE)
             {
                _loc11_ = getStyle("offlineTextColor");
+            }
+            else if(this.m_Buddy.status == Buddy.STATUS_PENDING)
+            {
+               _loc11_ = getStyle("pendingTextColor");
             }
             _loc12_ = s_NameCache.getItem(this.m_Buddy.name + String(_loc11_),this.m_Buddy.name,_loc11_,_loc8_);
             if(_loc12_ != null)
@@ -176,11 +181,11 @@ package tibia.creatures.buddylistWidgetClasses
       
       override protected function measure() : void
       {
-         var _loc3_:Number = NaN;
+         var _loc1_:EdgeMetrics = null;
          super.measure();
-         var _loc1_:EdgeMetrics = this.viewMetricsAndPadding;
+         _loc1_ = this.viewMetricsAndPadding;
          var _loc2_:Number = tibia.creatures.buddylistWidgetClasses.BuddyIconRenderer.ICON_WIDTH + getStyle("horizontalGap") + s_NameCache.slotWidth;
-         _loc3_ = Math.max(tibia.creatures.buddylistWidgetClasses.BuddyIconRenderer.ICON_HEIGHT,s_NameCache.slotHeight);
+         var _loc3_:Number = Math.max(tibia.creatures.buddylistWidgetClasses.BuddyIconRenderer.ICON_HEIGHT,s_NameCache.slotHeight);
          measuredMinWidth = measuredWidth = _loc1_.left + _loc2_ + _loc1_.right;
          measuredMinHeight = measuredHeight = _loc1_.top + _loc3_ + _loc1_.bottom;
       }

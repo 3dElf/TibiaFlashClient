@@ -4,6 +4,7 @@ package tibia.help
    import tibia.sidebar.SideBarSet;
    import tibia.sidebar.Widget;
    import tibia.input.staticaction.StaticActionList;
+   import tibia.chat.ChatStorage;
    import tibia.options.OptionsStorage;
    import mx.events.CloseEvent;
    import shared.utility.StringHelper;
@@ -36,7 +37,7 @@ package tibia.help
             var _loc2_:* = null;
             if(_loc1_ != null && (_loc2_ = _loc1_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null && _loc2_.countWidgetType(Widget.TYPE_MINIMAP,-1) < 1)
             {
-               _loc2_.showWidgetType(Widget.TYPE_MINIMAP,SideBarSet.LOCATION_C,-1);
+               _loc2_.showWidgetType(Widget.TYPE_MINIMAP,-1,-1);
             }
          },
          "postDisplay":null
@@ -52,7 +53,7 @@ package tibia.help
             var _loc2_:* = null;
             if(_loc1_ != null && (_loc2_ = _loc1_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null && _loc2_.countWidgetType(Widget.TYPE_GENERALBUTTONS,-1) < 1)
             {
-               _loc2_.showWidgetType(Widget.TYPE_GENERALBUTTONS,SideBarSet.LOCATION_C,-1);
+               _loc2_.showWidgetType(Widget.TYPE_GENERALBUTTONS,-1,-1);
             }
          },
          "postDisplay":null
@@ -74,16 +75,9 @@ package tibia.help
          {
             var _loc1_:* = Tibia.s_GetOptions();
             var _loc2_:* = null;
-            if(_loc1_ != null && (_loc2_ = _loc1_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null)
+            if(_loc1_ != null && (_loc2_ = _loc1_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null && _loc2_.countWidgetType(Widget.TYPE_BODY,-1) < 1)
             {
-               if(_loc2_.countWidgetType(Widget.TYPE_BODY,-1) < 1)
-               {
-                  _loc2_.showWidgetType(Widget.TYPE_BODY,SideBarSet.LOCATION_C,-1);
-               }
-               if(_loc2_.getDefaultLocation(Widget.TYPE_CONTAINER) < 0)
-               {
-                  _loc2_.setDefaultLocation(Widget.TYPE_CONTAINER,SideBarSet.LOCATION_C);
-               }
+               _loc2_.showWidgetType(Widget.TYPE_BODY,-1,-1);
             }
          },
          "postDisplay":null
@@ -105,16 +99,9 @@ package tibia.help
          {
             var _loc1_:* = Tibia.s_GetOptions();
             var _loc2_:* = null;
-            if(_loc1_ != null && (_loc2_ = _loc1_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null)
+            if(_loc1_ != null && (_loc2_ = _loc1_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null && _loc2_.countWidgetType(Widget.TYPE_COMBATCONTROL,-1) < 1)
             {
-               if(_loc2_.countWidgetType(Widget.TYPE_COMBATCONTROL,-1) < 1)
-               {
-                  _loc2_.showWidgetType(Widget.TYPE_COMBATCONTROL,SideBarSet.LOCATION_C,-1);
-               }
-               if(_loc2_.getDefaultLocation(Widget.TYPE_BATTLELIST) < 0)
-               {
-                  _loc2_.setDefaultLocation(Widget.TYPE_BATTLELIST,SideBarSet.LOCATION_C);
-               }
+               _loc2_.showWidgetType(Widget.TYPE_COMBATCONTROL,-1,-1);
             }
          },
          "postDisplay":null
@@ -213,7 +200,7 @@ package tibia.help
             var _loc2_:* = null;
             if(_loc1_ != null && (_loc2_ = _loc1_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null && _loc2_.countWidgetType(Widget.TYPE_COMBATCONTROL,-1) < 1)
             {
-               _loc2_.showWidgetType(Widget.TYPE_COMBATCONTROL,SideBarSet.LOCATION_C,-1);
+               _loc2_.showWidgetType(Widget.TYPE_COMBATCONTROL,-1,-1);
             }
          },
          "postDisplay":null
@@ -240,26 +227,194 @@ package tibia.help
          "showDialog":true,
          "preDisplay":null,
          "postDisplay":null
+      },{
+         "ID":21,
+         "name":"HINT_21_NAME",
+         "text":"HINT_21_TEXT",
+         "images":"HINT_21_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":22,
+         "name":"HINT_22_NAME",
+         "text":"HINT_22_TEXT",
+         "images":"HINT_22_IMAGES",
+         "showDialog":true,
+         "preDisplay":function():void
+         {
+            var _loc1_:* = Tibia.s_GetChatStorage();
+            var _loc2_:* = Tibia.s_GetChatWidget();
+            if(_loc1_ != null && _loc2_ != null)
+            {
+               _loc2_.leftChannel = _loc1_.getChannel(ChatStorage.LOCAL_CHANNEL_ID);
+            }
+         },
+         "postDisplay":null
+      },{
+         "ID":23,
+         "name":"HINT_23_NAME",
+         "text":"HINT_23_TEXT",
+         "images":"HINT_23_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":24,
+         "name":"HINT_24_NAME",
+         "text":"HINT_24_TEXT",
+         "images":"HINT_24_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":25,
+         "name":"HINT_25_NAME",
+         "text":"HINT_25_TEXT",
+         "images":"HINT_25_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":26,
+         "name":"HINT_26_NAME",
+         "text":"HINT_26_TEXT",
+         "images":"HINT_26_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":27,
+         "name":"HINT_27_NAME",
+         "text":"HINT_27_TEXT",
+         "images":"HINT_27_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":28,
+         "name":"HINT_28_NAME",
+         "text":"HINT_28_TEXT",
+         "images":"HINT_28_IMAGES",
+         "showDialog":true,
+         "preDisplay":function():void
+         {
+            var _loc1_:* = Tibia.s_GetOptions();
+            var _loc2_:* = null;
+            if(_loc1_ != null && (_loc2_ = _loc1_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null && _loc2_.countWidgetType(Widget.TYPE_GENERALBUTTONS,-1) < 1)
+            {
+               _loc2_.showWidgetType(Widget.TYPE_GENERALBUTTONS,-1,-1);
+            }
+         },
+         "postDisplay":null
+      },{
+         "ID":29,
+         "name":"HINT_29_NAME",
+         "text":"HINT_29_TEXT",
+         "images":"HINT_29_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":30,
+         "name":"HINT_30_NAME",
+         "text":"HINT_30_TEXT",
+         "images":"HINT_30_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":31,
+         "name":"HINT_31_NAME",
+         "text":"HINT_31_TEXT",
+         "images":"HINT_31_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":32,
+         "name":"HINT_32_NAME",
+         "text":"HINT_32_TEXT",
+         "images":"HINT_32_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },null,{
+         "ID":34,
+         "name":"HINT_34_NAME",
+         "text":"HINT_34_TEXT",
+         "images":"HINT_34_IMAGES",
+         "showDialog":true,
+         "preDisplay":function():void
+         {
+            var _loc1_:* = Tibia.s_GetOptions();
+            var _loc2_:* = null;
+            if(_loc1_ != null && (_loc2_ = _loc1_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null && _loc2_.countWidgetType(Widget.TYPE_GENERALBUTTONS,-1) < 1)
+            {
+               _loc2_.showWidgetType(Widget.TYPE_GENERALBUTTONS,-1,-1);
+            }
+         },
+         "postDisplay":null
+      },{
+         "ID":35,
+         "name":"HINT_35_NAME",
+         "text":"HINT_35_TEXT",
+         "images":"HINT_35_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":36,
+         "name":"HINT_36_NAME",
+         "text":"HINT_36_TEXT",
+         "images":"HINT_36_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":37,
+         "name":"HINT_37_NAME",
+         "text":"HINT_37_TEXT",
+         "images":"HINT_37_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":38,
+         "name":"HINT_38_NAME",
+         "text":"HINT_38_TEXT",
+         "images":"HINT_38_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
+      },{
+         "ID":39,
+         "name":"HINT_39_NAME",
+         "text":"HINT_39_TEXT",
+         "images":"HINT_39_IMAGES",
+         "showDialog":true,
+         "preDisplay":null,
+         "postDisplay":null
       }];
        
-      protected var m_Images:Array = null;
+      private var m_Images:Array = null;
       
-      protected var m_ID:int = 0;
+      private var m_ID:int = 0;
       
-      protected var m_PostDisplayHook:Function = null;
+      private var m_PostDisplayHook:Function = null;
       
-      protected var m_PreDisplayHook:Function = null;
+      private var m_PreDisplayHook:Function = null;
       
-      protected var m_ShowDialog:Boolean = false;
+      private var m_ShowDialog:Boolean = false;
       
-      protected var m_Name:String = null;
+      private var m_Name:String = null;
       
-      protected var m_Text:String = null;
+      private var m_Text:String = null;
       
       public function TutorialHint(param1:int)
       {
          super();
-         if(!TutorialHint.s_CheckHint(param1))
+         if(!TutorialHint.checkHint(param1))
          {
             throw new ArgumentError("TutorialHint.TutorialHint: Invalid tutorial hint " + param1 + ".");
          }
@@ -280,7 +435,7 @@ package tibia.help
          }
       }
       
-      public static function s_CheckHint(param1:int) : Boolean
+      public static function checkHint(param1:int) : Boolean
       {
          return param1 > 0 && param1 < TUTORIAL_HINTS.length && TUTORIAL_HINTS[param1] != null;
       }

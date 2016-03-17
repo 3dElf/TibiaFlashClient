@@ -75,9 +75,14 @@ package tibia.appearances
             this.m_Phase = 0;
             this.m_LastPhaseChange = Tibia.s_FrameTimestamp;
          }
-         else if(0 <= param1 && param1 < this.m_Type.phases || param1 == PHASE_RANDOM)
+         else if(param1 == PHASE_RANDOM)
          {
-            this.m_Phase = param1 == PHASE_RANDOM?int(int(Math.random() * this.m_Type.phases)):int(param1);
+            this.m_Phase = int(Math.random() * this.m_Type.phases);
+            this.m_LastPhaseChange = 0;
+         }
+         else if(0 <= param1 && param1 < this.m_Type.phases)
+         {
+            this.m_Phase = param1;
             this.m_LastPhaseChange = 0;
          }
          else

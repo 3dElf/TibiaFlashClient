@@ -1,39 +1,17 @@
 package tibia.chat.chatWidgetClasses
 {
    import mx.controls.Label;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
    
    public class NicklistItemRenderer extends Label
    {
       
       public static const HEIGHT_HINT:Number = 18;
-      
-      {
-         s_InitializeStyle();
-      }
-      
+       
       private var m_UncommittedData:Boolean = false;
       
       public function NicklistItemRenderer()
       {
          super();
-      }
-      
-      private static function s_InitializeStyle() : void
-      {
-         var Selector:String = "NicklistItemRenderer";
-         var Decl:CSSStyleDeclaration = StyleManager.getStyleDeclaration(Selector);
-         if(Decl == null)
-         {
-            Decl = new CSSStyleDeclaration(Selector);
-         }
-         Decl.defaultFactory = function():void
-         {
-            NicklistItemRenderer.subscriberTextColor = 6355040;
-            NicklistItemRenderer.inviteeTextColor = 16277600;
-         };
-         StyleManager.setStyleDeclaration(Selector,Decl,true);
       }
       
       override public function set data(param1:Object) : void
@@ -45,19 +23,25 @@ package tibia.chat.chatWidgetClasses
       
       override protected function commitProperties() : void
       {
+         var _loc1_:NicklistItem = null;
          super.commitProperties();
          if(this.m_UncommittedData)
          {
-            if(data != null && Boolean(data.hasOwnProperty("nick")) && Boolean(data.hasOwnProperty("isSubscriber")))
+            if(data != null && data is NicklistItem)
             {
-               text = data["nick"];
-               if(data["isSubscriber"])
+               _loc1_ = data as NicklistItem;
+               text = _loc1_.name;
+               if(_loc1_.state == NicklistItem.STATE_SUBSCRIBER)
                {
                   setStyle("color",getStyle("subscriberTextColor"));
                }
-               else
+               else if(_loc1_.state == NicklistItem.STATE_INVITED)
                {
                   setStyle("color",getStyle("inviteeTextColor"));
+               }
+               else if(_loc1_.state == NicklistItem.STATE_PENDING)
+               {
+                  setStyle("color",getStyle("pendingTextColor"));
                }
             }
             else

@@ -423,13 +423,6 @@ package tibia.creatures
             {
                return String(_loc3_);
             }
-            if(param2 == SKILL_GOSTRENGTH)
-            {
-               _loc3_ = Math.round(_loc3_ / 2);
-               _loc4_ = Math.round(_loc4_ / 2);
-               _loc5_ = _loc3_ - _loc4_;
-               return String(_loc4_) + (_loc5_ >= 0?" +":" ") + String(_loc5_);
-            }
             _loc5_ = _loc3_ - _loc4_;
             return String(_loc4_) + (_loc5_ >= 0?" +":" ") + String(_loc5_);
          }

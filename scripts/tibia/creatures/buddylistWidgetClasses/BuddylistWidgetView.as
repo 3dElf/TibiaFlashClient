@@ -1,12 +1,13 @@
 package tibia.creatures.buddylistWidgetClasses
 {
    import tibia.sidebar.sideBarWidgetClasses.WidgetView;
+   import flash.utils.Dictionary;
+   import tibia.creatures.buddylistClasses.Buddy;
    import flash.events.MouseEvent;
    import mx.collections.Sort;
    import mx.collections.ListCollectionView;
    import mx.collections.ICollectionView;
    import tibia.creatures.BuddySet;
-   import tibia.creatures.buddylistClasses.Buddy;
    import mx.controls.listClasses.IListItemRenderer;
    import tibia.input.gameaction.PrivateChatActionImpl;
    import shared.controls.SmoothList;
@@ -19,10 +20,18 @@ package tibia.creatures.buddylistWidgetClasses
    {
       
       private static const BUNDLE:String = "BuddylistWidget";
-       
+      
+      private static const s_StatusSortOrder:Dictionary = new Dictionary();
+      
+      {
+         s_StatusSortOrder[Buddy.STATUS_ONLINE] = 1;
+         s_StatusSortOrder[Buddy.STATUS_PENDING] = 2;
+         s_StatusSortOrder[Buddy.STATUS_OFFLINE] = 3;
+      }
+      
       private var m_UncommittedShowOffline:Boolean = false;
       
-      private var m_SortOrder:int = 0;
+      private var m_SortOrder:int;
       
       private var m_UIList:SmoothList = null;
       
@@ -38,6 +47,7 @@ package tibia.creatures.buddylistWidgetClasses
       
       public function BuddylistWidgetView()
       {
+         this.m_SortOrder = BuddylistWidget.SORT_BY_NAME;
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          verticalScrollPolicy = ScrollPolicy.OFF;
@@ -139,6 +149,7 @@ package tibia.creatures.buddylistWidgetClasses
       {
          super.createChildren();
          this.m_UIList = new SmoothList(BuddylistItemRenderer,BuddylistItemRenderer.HEIGHT_HINT);
+         this.m_UIList.name = "Buddylist";
          this.m_UIList.defaultItemCount = 3;
          this.m_UIList.doubleClickEnabled = true;
          this.m_UIList.followTailPolicy = SmoothList.FOLLOW_TAIL_OFF;
@@ -168,7 +179,7 @@ package tibia.creatures.buddylistWidgetClasses
       protected function buddyFilter(param1:Object) : Boolean
       {
          var _loc2_:Buddy = param1 as Buddy;
-         return _loc2_ != null && (Boolean(this.showOffline) || Boolean(_loc2_.online));
+         return _loc2_ != null && (Boolean(this.showOffline) || _loc2_.status != Buddy.STATUS_OFFLINE);
       }
       
       function get showOffline() : Boolean
@@ -212,11 +223,11 @@ package tibia.creatures.buddylistWidgetClasses
                   }
                   break;
                case BuddylistWidget.SORT_BY_STATUS:
-                  if(Boolean(_loc4_.online) && !_loc5_.online)
+                  if(s_StatusSortOrder[_loc4_.status] < s_StatusSortOrder[_loc5_.status])
                   {
                      _loc6_ = -1;
                   }
-                  else if(!_loc4_.online && Boolean(_loc5_.online))
+                  else if(s_StatusSortOrder[_loc4_.status] > s_StatusSortOrder[_loc5_.status])
                   {
                      _loc6_ = 1;
                   }

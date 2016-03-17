@@ -99,13 +99,13 @@ package tibia.chat
       
       private var m_UncommittedMappingSetID:Boolean = true;
       
-      protected var m_MappingSetID:int;
+      protected var m_MappingSetID:int = 0;
       
       protected var m_UITabBar:ChannelTabBar = null;
       
       private var m_UncommittedVolume:Boolean = false;
       
-      protected var m_MappingMode:int;
+      protected var m_MappingMode:int = 1;
       
       protected var m_History:IList = null;
       
@@ -127,8 +127,6 @@ package tibia.chat
       
       public function ChatWidget()
       {
-         this.m_MappingSetID = MappingSet.DEFAULT_SET;
-         this.m_MappingMode = MappingSet.CHAT_MODE_OFF;
          super();
          focusEnabled = false;
          tabEnabled = false;
@@ -777,7 +775,7 @@ package tibia.chat
             n = 0;
             c = null;
             _Connection = Tibia.s_GetConnection();
-            AutoSwitch = _Connection != null && (!_Connection.isGameRunning || _Connection.connectionDuration > 5000);
+            AutoSwitch = _Connection != null && Boolean(_Connection.isGameRunning);
             switch(a_Event.kind)
             {
                case CollectionEventKind.ADD:

@@ -9,13 +9,17 @@ package tibia.network
       
       public static const DEAD:String = "DEAD";
       
-      public static const CONNECTING:String = "CONNECTING";
+      public static const CONNECTION_LOST:String = "CONNECTION_LOST";
       
       public static const ERROR:String = "ERROR";
       
-      public static const CONNECTION_LOST:String = "CONNECTION_LOST";
+      public static const CONNECTION_RECOVERED:String = "CONNECTION_RECOVERED";
       
-      public static const CONNECTED:String = "CONNECTED";
+      public static const GAME:String = "GAME";
+      
+      public static const PENDING:String = "PENDING";
+      
+      public static const CONNECTING:String = "CONNECTING";
       
       public static const DISCONNECTED:String = "DISCONNECTED";
       

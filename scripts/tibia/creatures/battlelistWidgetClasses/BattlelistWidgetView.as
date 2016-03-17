@@ -206,6 +206,7 @@ package tibia.creatures.battlelistWidgetClasses
             _loc1_.percentWidth = 100;
             _loc1_.styleName = getStyle("listBoxStyle");
             this.m_UIList = new SmoothList(BattlelistItemRenderer,BattlelistItemRenderer.HEIGHT_HINT);
+            this.m_UIList.name = "Battlelist";
             this.m_UIList.defaultItemCount = 3;
             this.m_UIList.followTailPolicy = SmoothList.FOLLOW_TAIL_OFF;
             this.m_UIList.minItemCount = 3;

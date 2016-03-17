@@ -3,7 +3,7 @@ package tibia.game
    public class AccountCharacter
    {
       
-      public static const CLIENT_VERSION:uint = 1007;
+      public static const CLIENT_VERSION:uint = 1068;
       
       public static const CLIENT_PREVIEW_STATE:uint = 0;
       

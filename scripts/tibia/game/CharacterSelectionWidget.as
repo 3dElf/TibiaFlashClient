@@ -15,7 +15,7 @@ package tibia.game
    public class CharacterSelectionWidget extends PopUpBase
    {
       
-      public static const CLIENT_VERSION:uint = 1007;
+      public static const CLIENT_VERSION:uint = 1068;
       
       public static const CLIENT_PREVIEW_STATE:uint = 0;
       
@@ -161,6 +161,11 @@ package tibia.game
                _loc3_ = new CloseEvent(CloseEvent.CLOSE,false,true);
                _loc3_.detail = PopUpBase.BUTTON_OKAY;
                dispatchEvent(_loc3_);
+               if(!_loc3_.cancelable || !_loc3_.isDefaultPrevented())
+               {
+                  this.m_UIList.removeEventListener(MouseEvent.DOUBLE_CLICK,this.onListDoubleClick);
+                  this.hide(true);
+               }
             }
          }
       }

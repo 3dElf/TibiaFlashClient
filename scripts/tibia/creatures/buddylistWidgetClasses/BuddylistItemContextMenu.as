@@ -5,12 +5,12 @@ package tibia.creatures.buddylistWidgetClasses
    import mx.core.IUIComponent;
    import tibia.creatures.EditBuddyWidget;
    import tibia.input.gameaction.BuddylistActionImpl;
+   import tibia.creatures.buddylistClasses.Buddy;
    import tibia.input.gameaction.PrivateChatActionImpl;
    import shared.utility.closure;
    import tibia.reporting.reportType.Type;
    import tibia.reporting.ReportWidget;
    import flash.system.System;
-   import tibia.creatures.buddylistClasses.Buddy;
    import tibia.creatures.BuddySet;
    
    public class BuddylistItemContextMenu extends ContextMenuBase
@@ -66,7 +66,7 @@ package tibia.creatures.buddylistWidgetClasses
             });
             createSeparatorItem();
          }
-         if(this.m_Buddy != null && Boolean(this.m_Buddy.online) && this.m_Buddy.ID != Tibia.s_GetPlayer().ID)
+         if(this.m_Buddy != null && this.m_Buddy.status == Buddy.STATUS_ONLINE && this.m_Buddy.ID != Tibia.s_GetPlayer().ID)
          {
             createTextItem(resourceManager.getString(BUNDLE,"CTX_OPEN_MESSAGE_CHANNEL",[this.m_Buddy.name]),function(param1:*):void
             {

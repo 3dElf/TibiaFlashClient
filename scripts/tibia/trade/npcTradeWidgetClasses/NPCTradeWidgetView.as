@@ -379,11 +379,11 @@ package tibia.trade.npcTradeWidgetClasses
          var _loc11_:AppearanceType = null;
          var _loc12_:int = 0;
          var _loc13_:int = 0;
-         var _loc1_:uint = 0;
+         var _loc1_:Number = 0;
          if(this.m_ContainerStorage != null)
          {
             _loc1_ = this.m_ContainerStorage.getPlayerMoney();
-            this.m_UILabelBudget.text = resourceManager.getString(BUNDLE,"LBL_MONEY_FORMAT",[_loc1_]);
+            this.m_UILabelBudget.text = resourceManager.getString(BUNDLE,"LBL_MONEY_FORMAT",[_loc1_.toFixed(0)]);
          }
          else
          {
@@ -1030,7 +1030,7 @@ package tibia.trade.npcTradeWidgetClasses
       {
          var _loc4_:AppearanceType = null;
          var _loc5_:Boolean = false;
-         var _loc6_:int = 0;
+         var _loc6_:Number = NaN;
          var _loc7_:Number = NaN;
          var _loc8_:uint = 0;
          var _loc9_:uint = 0;

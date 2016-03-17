@@ -50,7 +50,7 @@ package tibia.appearances
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
-      private static const INSTANCE_CACHE_MAX_SPRITES:int = 2 * 3 * 4;
+      private static const INSTANCE_CACHE_MAX_SPRITES:int = 2 * 9 * 4;
       
       protected static const MAP_MIN_X:int = 24576;
       

@@ -63,7 +63,7 @@ package tibia.container
       
       protected var m_OpenWidgets:Vector.<int> = null;
       
-      protected var m_PlayerMoney:uint = 0;
+      protected var m_PlayerMoney:Number = 0;
       
       protected var m_OpenContainers:Vector.<tibia.container.Container> = null;
       
@@ -232,7 +232,7 @@ package tibia.container
          return 0;
       }
       
-      public function setPlayerMoney(param1:uint) : void
+      public function setPlayerMoney(param1:Number) : void
       {
          var _loc2_:PropertyChangeEvent = null;
          if(this.m_PlayerMoney != param1)
@@ -291,7 +291,7 @@ package tibia.container
          }
       }
       
-      public function getPlayerMoney() : uint
+      public function getPlayerMoney() : Number
       {
          return this.m_PlayerMoney;
       }

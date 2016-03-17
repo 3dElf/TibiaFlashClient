@@ -462,28 +462,30 @@ package tibia.appearances
          this.m_OutfitTypes[OutfitInstance.INVISIBLE_OUTFIT_ID] = _Type;
          _Type = this.m_EffectTypes[34];
          i = 0;
-         while(i < 16)
+         while(i < _Type.phases)
          {
             _Type.phaseDuration[i] = 300;
             i++;
          }
-         _Type.totalDuration = 16 * 300;
+         _Type.totalDuration = _Type.phases * 300;
          _Type = this.m_EffectTypes[56];
+         this.buildAnimationLoop(_Type,-1,_Type.phases * 2);
          i = 0;
-         while(i < 16)
+         while(i < _Type.phases)
          {
             _Type.phaseDuration[i] = 500;
             i++;
          }
-         _Type.totalDuration = 16 * 500;
+         _Type.totalDuration = _Type.phases * 500;
          _Type = this.m_EffectTypes[57];
+         this.buildAnimationLoop(_Type,-1,_Type.phases * 2);
          i = 0;
-         while(i < 16)
+         while(i < _Type.phases)
          {
             _Type.phaseDuration[i] = 500;
             i++;
          }
-         _Type.totalDuration = 16 * 500;
+         _Type.totalDuration = _Type.phases * 500;
          _Type = new tibia.appearances.AppearanceType(MarketWidget.REQUEST_OWN_OFFERS);
          _Type.marketCategory = -1;
          _Type.marketShowAs = -1;
@@ -1019,6 +1021,82 @@ package tibia.appearances
          else
          {
             this.loadError();
+         }
+      }
+      
+      private function buildAnimationLoop(param1:tibia.appearances.AppearanceType, param2:int, param3:int) : void
+      {
+         var _loc6_:int = 0;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
+         var _loc9_:int = 0;
+         var _loc10_:int = 0;
+         var _loc11_:int = 0;
+         if(!param1.isAnimation)
+         {
+            return;
+         }
+         if(param3 < 1)
+         {
+            return;
+         }
+         if(param2 < 0)
+         {
+            param2 = 1;
+            while(param2 < param1.phases)
+            {
+               _loc6_ = param2 * param1.patternDepth * param1.patternHeight * param1.patternWidth;
+               if(param1.sprite[_loc6_].equals(param1.sprite[0]))
+               {
+                  break;
+               }
+               param2++;
+            }
+         }
+         else
+         {
+            param2 = Math.max(0,Math.min(param2,param1.phases));
+         }
+         if(param2 == 0)
+         {
+            return;
+         }
+         var _loc4_:int = 0;
+         _loc4_ = param2;
+         while(_loc4_ < param3)
+         {
+            _loc7_ = 0;
+            while(_loc7_ < param1.patternWidth)
+            {
+               _loc8_ = 0;
+               while(_loc8_ < param1.patternHeight)
+               {
+                  _loc9_ = 0;
+                  while(_loc9_ < param1.patternDepth)
+                  {
+                     _loc10_ = ((_loc4_ % param2 * param1.patternDepth + _loc9_) * param1.patternHeight + _loc8_) * param1.patternWidth + _loc7_;
+                     _loc11_ = ((_loc4_ * param1.patternDepth + _loc9_) * param1.patternHeight + _loc8_) * param1.patternWidth + _loc7_;
+                     param1.sprite[_loc11_] = param1.sprite[_loc10_].clone();
+                     param1.phaseDuration[_loc4_] = param1.phaseDuration[_loc4_ % param2];
+                     _loc9_++;
+                  }
+                  _loc8_++;
+               }
+               _loc7_++;
+            }
+            _loc4_++;
+         }
+         var _loc5_:int = param3 * param1.patternDepth * param1.patternHeight * param1.patternWidth;
+         param1.numSprites = _loc5_;
+         param1.sprite.length = _loc5_;
+         param1.phases = param3;
+         param1.phaseDuration.length = param3;
+         param1.totalDuration = 0;
+         _loc4_ = 0;
+         while(_loc4_ < param3)
+         {
+            param1.totalDuration = param1.totalDuration + param1.phaseDuration[_loc4_];
+            _loc4_++;
          }
       }
       

@@ -17,8 +17,10 @@ package
    import tibia.creatures.CreatureStorage;
    import tibia.magic.SpellStorage;
    import tibia.chat.ChatStorage;
-   import flash.utils.Timer;
    import tibia.container.ContainerStorage;
+   import mx.events.CloseEvent;
+   import tibia.game.PopUpBase;
+   import tibia.game.TimeoutWaitWidget;
    import tibia.actionbar.HActionBarWidget;
    import mx.events.PropertyChangeEvent;
    import tibia.actionbar.VActionBarWidget;
@@ -27,8 +29,6 @@ package
    import tibia.game.OptionsAsset;
    import tibia.controls.GridContainer;
    import mx.core.IUIComponent;
-   import mx.events.CloseEvent;
-   import tibia.game.PopUpBase;
    import tibia.worldmap.WorldMapWidget;
    import tibia.game.FocusNotifier;
    import tibia.sidebar.ToggleBar;
@@ -36,15 +36,13 @@ package
    import tibia.sidebar.SideBarWidget;
    import tibia.network.ConnectionEvent;
    import tibia.game.MessageWidget;
+   import tibia.game.PopUpQueue;
+   import tibia.game.ContextMenuBase;
    import tibia.game.GameEvent;
    import shared.controls.EmbeddedDialog;
    import tibia.game.AccountCharacter;
    import tibia.game.CharacterSelectionWidget;
-   import flash.utils.getTimer;
-   import tibia.game.LoginWaitWidget;
    import mx.managers.CursorManager;
-   import tibia.game.ContextMenuBase;
-   import tibia.game.PopUpQueue;
    import mx.binding.Binding;
    import tibia.sidebar.SideBarSet;
    import mx.containers.BoxDirection;
@@ -76,12 +74,14 @@ package
    import mx.events.ResizeEvent;
    import flash.events.TimerEvent;
    import mx.events.FlexEvent;
+   import flash.utils.*;
    import mx.managers.ToolTipManager;
    import flash.display.StageAlign;
    import flash.display.StageScaleMode;
    import flash.events.MouseEvent;
+   import tibia.game.LoginWaitWidget;
+   import tibia.game.ConnectionLostWidget;
    import mx.containers.HBox;
-   import flash.utils.getDefinitionByName;
    import flash.events.IOErrorEvent;
    import flash.events.SecurityErrorEvent;
    import mx.core.UIComponentDescriptor;
@@ -93,7 +93,7 @@ package
       
       private static const BUNDLE:String = "Tibia";
       
-      public static const CLIENT_VERSION:uint = 1007;
+      public static const CLIENT_VERSION:uint = 1068;
       
       mx_internal static var _Tibia_StylesInit_done:Boolean = false;
       
@@ -143,6 +143,8 @@ package
       
       protected var m_CurrentOptionsAsset:OptionsAsset = null;
       
+      private var _embed_css_images_Inventory_png_115152550:Class;
+      
       private var _embed_css_images_Minimap_ZoomOut_over_png_550320066:Class;
       
       private var _embed_css_images_Icons_WidgetHeaders_Combat_png_241046738:Class;
@@ -150,8 +152,6 @@ package
       private var _embed_css_images_Button_Minimize_idle_png_923223900:Class;
       
       private var _embed_css_images_Slot_Hotkey_Cooldown_png_1090853107:Class;
-      
-      private var _embed_css_images_Slot_InventoryArmor_png_1908291054:Class;
       
       private var _embed_css_images_Icons_WidgetMenu_GeneralControls_idle_over_png_1656018397:Class;
       
@@ -164,6 +164,8 @@ package
       private var _embed_css_images_Border02_WidgetSidebar_slim_png_826094621:Class;
       
       private var _embed_css_images_BarsHealth_fat_Yellow_png_1930650277:Class;
+      
+      private var _embed_css_images_Slot_InventoryArmor_png_1908291054:Class;
       
       private var _embed_css_images_Button_LockHotkeys_UnLocked_idle_png_123930922:Class;
       
@@ -202,8 +204,6 @@ package
       private var _embed_css_images_BarsHealth_compact_RedLow2_png_337611332:Class;
       
       private var _embed_css_images_Icons_Conditions_Drowning_png_404373814:Class;
-      
-      private var _embed_css_images_slot_Hotkey_Disabled_png_1031923524:Class;
       
       private var _embed_css_images_Icons_WidgetMenu_BattleList_active_png_1257186516:Class;
       
@@ -311,8 +311,6 @@ package
       
       private var _embed_css_images_Icons_CombatControls_Mounted_idle_png_606771065:Class;
       
-      private var m_UncommittedOptions:Boolean = false;
-      
       protected var m_CreatureStorage:CreatureStorage = null;
       
       private var _embed_css_images_Button_Standard_tileable_end_idle_png_1787338104:Class;
@@ -383,8 +381,6 @@ package
       
       private var _embed_css_images_Button_ChatTabNew_idle_png_1599232977:Class;
       
-      private var _embed_css_images_slot_hotkey_highlighted_png_1274667925:Class;
-      
       private var _embed_css_images_Icons_Conditions_Slowed_png_746630336:Class;
       
       private var _embed_css_images_Icons_WidgetMenu_Inventory_active_png_781530302:Class;
@@ -401,21 +397,19 @@ package
       
       private var _embed_css_images_Arrow_ScrollHotkeys_idle_png_1391479615:Class;
       
+      private var _embed_css_images_Icons_CombatControls_Mounted_over_png_280680839:Class;
+      
       private var _embed_css_images_Icons_TradeLists_ListDisplay_over_png_1148474522:Class;
       
       private var _2043305115m_UIActionBarRight:VActionBarWidget;
       
       private var _embed_css_images_Icons_BattleList_HidePlayers_active_png_816743815:Class;
       
-      private var _embed_css_images_Icons_CombatControls_Mounted_over_png_280680839:Class;
-      
       private var _embed_css_images_Icons_BattleList_HideMonsters_idle_png_1444013376:Class;
       
       private var _embed_css_images_Icons_ProgressBars_CompactStyle_png_1657348297:Class;
       
       private var _embed_css_images_Icons_BattleList_PartyMembers_idle_png_726398520:Class;
-      
-      private var _embed_css_images_Icons_BattleList_HideNPCs_active_over_png_150523092:Class;
       
       private var _embed_css_images_Icons_BattleList_HideSkulled_active_over_png_667523952:Class;
       
@@ -424,8 +418,6 @@ package
       private var _embed_css_images_Minimap_ZoomIn_idle_png_148060927:Class;
       
       private var _embed_css_images_Icons_BattleList_HideMonsters_active_over_png_844353547:Class;
-      
-      private var _1404294856m_UIGameWindow:GridContainer;
       
       private var _embed_css_images_Button_LockHotkeys_Locked_over_png_207844447:Class;
       
@@ -437,13 +429,19 @@ package
       
       private var _embed_css_images_BarsHealth_fat_RedLow_png_293326710:Class;
       
+      private var _embed_css_images_slot_Hotkey_disabled_png_1127037668:Class;
+      
       protected var m_AppearanceStorage:AppearanceStorage = null;
       
       private var _embed_css_images_Minimap_png_805688973:Class;
       
       private var _embed_css_images_Icons_WidgetMenu_VipList_idle_png_111284397:Class;
       
+      private var _1404294856m_UIGameWindow:GridContainer;
+      
       private var _embed_css_images_Icons_WidgetMenu_VipList_active_over_png_458955390:Class;
+      
+      private var _embed_css_images_Icons_BattleList_HideNPCs_active_over_png_150523092:Class;
       
       private var _embed_css_images_Icons_CombatControls_MediumOn_idle_png_2006950715:Class;
       
@@ -451,9 +449,9 @@ package
       
       protected var m_Connection:Connection = null;
       
-      private var _embed_css_images_Icons_BattleList_HideSkulled_idle_png_703329883:Class;
+      private var _embed_css_images_slot_Hotkey_highlighted_png_2133571723:Class;
       
-      private var _embed_css_images_Slot_container_png_459286860:Class;
+      private var _embed_css_images_Icons_BattleList_HideSkulled_idle_png_703329883:Class;
       
       private var _embed_css_images_Scrollbar_Arrow_up_over_png_1190877289:Class;
       
@@ -619,13 +617,13 @@ package
       
       private var _embed_css_images_Arrow_ScrollTabs_disabled_png_1547955240:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Combat_active_png_329806006:Class;
+      protected var m_CharacterDeath:Boolean = false;
       
       private var _embed_css_images_ChatTab_tileable_idle_png_297960041:Class;
       
       private var _embed_css_images_Button_Standard_tileable_gold_idle_png_1874454563:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_VipList_idle_over_png_617580176:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Combat_active_png_329806006:Class;
       
       protected var m_ChatStorage:ChatStorage = null;
       
@@ -638,6 +636,8 @@ package
       private var _embed_css_images_Scrollbar_Arrow_up_pressed_png_304389207:Class;
       
       protected var m_SessionKey:String = null;
+      
+      private var _embed_css_images_Icons_WidgetMenu_VipList_idle_over_png_617580176:Class;
       
       private var _embed_css_images_BG_Bars_fat_enpieceOrnamented_png_1283109301:Class;
       
@@ -677,15 +677,13 @@ package
       
       private var _embed_css_images_Icons_WidgetMenu_GeneralControls_idle_png_2119223978:Class;
       
-      private var _embed_css_images_Slot_InventoryBoots_png_1055242388:Class;
-      
       protected var m_MiniMapStorage:MiniMapStorage = null;
       
       private var _embed_css_images_Arrow_HotkeyToggle_BG_png_827693174:Class;
       
       private var _embed_css_images_BG_Bars_default_enpiece_png_53860032:Class;
       
-      private var _embed_css_images_slot_Hotkey_png_547672559:Class;
+      private var _embed_css_images_Slot_InventoryBoots_png_1055242388:Class;
       
       private var _embed_css_images_Icons_CombatControls_Unmounted_idle_png_869669038:Class;
       
@@ -713,9 +711,11 @@ package
       
       private var _64278964m_UISideBarB:SideBarWidget;
       
-      private var _embed_css_images_Icons_WidgetMenu_Minimap_active_png_537656603:Class;
+      private var _embed_css_images_slot_Hotkey_png_547672559:Class;
       
       private var _embed_css_images_Button_ChatTabNew_pressed_png_1319328207:Class;
+      
+      protected var m_ChannelsPending:Vector.<int> = null;
       
       private var _embed_css_images_Icons_WidgetMenu_Inventory_active_over_png_1144557439:Class;
       
@@ -731,6 +731,8 @@ package
       
       protected var m_CharacterCurrent:int = -1;
       
+      private var m_ConnectionLostDialog:ConnectionLostWidget;
+      
       private var _embed_css_images_Icons_CombatControls_AutochaseOn_idle_png_705338579:Class;
       
       private var _embed_css_images_Icons_WidgetMenu_Trades_idle_over_png_434734700:Class;
@@ -738,8 +740,6 @@ package
       private var _embed_css_images_Icons_WidgetMenu_Combat_active_over_png_1260682073:Class;
       
       private var _embed_css_images_BG_Combat_png_718071924:Class;
-      
-      private var _embed_css_images_Icons_WidgetHeaders_Inventory_png_1607456696:Class;
       
       private var _embed_css_images_Icons_WidgetMenu_Minimap_idle_png_291091603:Class;
       
@@ -753,7 +753,7 @@ package
       
       private var _embed_css_images_Button_LockHotkeys_Locked_idle_png_1092547935:Class;
       
-      private var _embed_css_images_Inventory_png_115152550:Class;
+      private var _embed_css_images_Icons_WidgetHeaders_Inventory_png_1607456696:Class;
       
       private var _embed_css_images_Icons_WidgetHeaders_Spells_png_787108119:Class;
       
@@ -766,6 +766,8 @@ package
       private var _embed_css_images_BuySellTab_idle_png_1557118268:Class;
       
       private var _embed_css_images_Icons_CombatControls_AttackNo_idle_png_21964554:Class;
+      
+      private var _embed_css_images_Icons_WidgetMenu_Minimap_active_png_537656603:Class;
       
       private var _embed_css_images_Icons_Conditions_Strenghtened_png_1032838017:Class;
       
@@ -910,6 +912,7 @@ package
                })]};
             }
          });
+         this.m_ConnectionLostDialog = new ConnectionLostWidget();
          this._embed_css_images_Arrow_HotkeyToggle_BG_png_827693174 = Tibia__embed_css_images_Arrow_HotkeyToggle_BG_png_827693174;
          this._embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_472129902 = Tibia__embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_472129902;
          this._embed_css_images_Arrow_Minimap_LevelUpDown_over_png_949444498 = Tibia__embed_css_images_Arrow_Minimap_LevelUpDown_over_png_949444498;
@@ -1185,17 +1188,16 @@ package
          this._embed_css_images_Slot_InventoryWeapon_png_2061465939 = Tibia__embed_css_images_Slot_InventoryWeapon_png_2061465939;
          this._embed_css_images_Slot_Statusicon_highlighted_png_1529499230 = Tibia__embed_css_images_Slot_Statusicon_highlighted_png_1529499230;
          this._embed_css_images_Slot_Statusicon_png_1205487926 = Tibia__embed_css_images_Slot_Statusicon_png_1205487926;
-         this._embed_css_images_Slot_container_png_459286860 = Tibia__embed_css_images_Slot_container_png_459286860;
          this._embed_css_images_Widget_Footer_tileable_end01_png_914963482 = Tibia__embed_css_images_Widget_Footer_tileable_end01_png_914963482;
          this._embed_css_images_Widget_Footer_tileable_end02_png_908547227 = Tibia__embed_css_images_Widget_Footer_tileable_end02_png_908547227;
          this._embed_css_images_Widget_Footer_tileable_png_2112389245 = Tibia__embed_css_images_Widget_Footer_tileable_png_2112389245;
          this._embed_css_images_Widget_HeaderBG_png_586854571 = Tibia__embed_css_images_Widget_HeaderBG_png_586854571;
-         this._embed_css_images_slot_Hotkey_Disabled_png_1031923524 = Tibia__embed_css_images_slot_Hotkey_Disabled_png_1031923524;
+         this._embed_css_images_slot_Hotkey_disabled_png_1127037668 = Tibia__embed_css_images_slot_Hotkey_disabled_png_1127037668;
+         this._embed_css_images_slot_Hotkey_highlighted_png_2133571723 = Tibia__embed_css_images_slot_Hotkey_highlighted_png_2133571723;
          this._embed_css_images_slot_Hotkey_png_547672559 = Tibia__embed_css_images_slot_Hotkey_png_547672559;
          this._embed_css_images_slot_container_disabled_png_1870894953 = Tibia__embed_css_images_slot_container_disabled_png_1870894953;
          this._embed_css_images_slot_container_highlighted_png_899764384 = Tibia__embed_css_images_slot_container_highlighted_png_899764384;
          this._embed_css_images_slot_container_png_1837356268 = Tibia__embed_css_images_slot_container_png_1837356268;
-         this._embed_css_images_slot_hotkey_highlighted_png_1274667925 = Tibia__embed_css_images_slot_hotkey_highlighted_png_1274667925;
          this._bindings = [];
          this._watchers = [];
          this._bindingsByDestination = {};
@@ -1304,6 +1306,15 @@ package
          return (application as Tibia).m_ContainerStorage;
       }
       
+      private function onCloseConnectionLostDialog(param1:CloseEvent) : void
+      {
+         if(param1.detail == PopUpBase.BUTTON_ABORT || param1.detail == TimeoutWaitWidget.TIMOUT_EXPIRED)
+         {
+            this.m_CharacterPending = -1;
+            this.m_Connection.disconnect(true);
+         }
+      }
+      
       public function set m_UIActionBarBottom(param1:HActionBarWidget) : void
       {
          var _loc2_:Object = null;
@@ -1341,12 +1352,6 @@ package
       public function ___Tibia_Application1_activate(param1:Event) : void
       {
          this.onActivation(param1);
-      }
-      
-      [Bindable(event="propertyChange")]
-      public function get m_UIChatWidget() : ChatWidget
-      {
-         return this._883427326m_UIChatWidget;
       }
       
       public function autofitGameWindow() : void
@@ -1419,6 +1424,12 @@ package
                this.m_Connection.disconnect(false);
             }
          }
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function get m_UIChatWidget() : ChatWidget
+      {
+         return this._883427326m_UIChatWidget;
       }
       
       private function onOptionsChange(param1:PropertyChangeEvent) : void
@@ -1542,6 +1553,7 @@ package
       private function onConnectionConnecting(param1:ConnectionEvent) : void
       {
          visible = false;
+         this.m_ChannelsPending = this.m_ChatStorage.loadChannels();
          var _loc2_:MessageWidget = new MessageWidget();
          _loc2_.buttonFlags = PopUpBase.BUTTON_CANCEL;
          _loc2_.keyboardFlags = PopUpBase.KEY_ESCAPE;
@@ -1554,6 +1566,43 @@ package
       public function saveLocalData() : void
       {
          this.m_MiniMapStorage.saveSectors(true);
+      }
+      
+      private function onConnectionPending(param1:ConnectionEvent) : void
+      {
+         var _loc2_:int = 0;
+         if(this.m_ChannelsPending != null)
+         {
+            for each(_loc2_ in this.m_ChannelsPending)
+            {
+               if(_loc2_ == ChatStorage.PRIVATE_CHANNEL_ID)
+               {
+                  this.m_Connection.sendCOPENCHANNEL();
+               }
+               else
+               {
+                  this.m_Connection.sendCJOINCHANNEL(_loc2_);
+               }
+            }
+            this.m_ChannelsPending = null;
+         }
+         if(!this.m_CharacterDeath)
+         {
+            PopUpQueue.getInstance().hideByPriority(PopUpBase.DEFAULT_PRIORITY);
+            if(ContextMenuBase.getCurrent() != null)
+            {
+               ContextMenuBase.getCurrent().hide();
+            }
+            if(this.m_UIWorldMapWidget != null)
+            {
+               this.m_UIWorldMapWidget.player = this.m_Player;
+            }
+            if(this.m_UIStatusWidget != null)
+            {
+               this.m_UIStatusWidget.player = this.m_Player;
+            }
+            this.m_Connection.sendCENTERWORLD();
+         }
       }
       
       public function logoutCharacter() : void
@@ -1630,12 +1679,6 @@ package
          }
       }
       
-      public function invalidateOptions() : void
-      {
-         this.m_UncommittedOptions = true;
-         invalidateProperties();
-      }
-      
       private function onConnectionDisconnected(param1:ConnectionEvent) : void
       {
          visible = false;
@@ -1666,7 +1709,7 @@ package
       
       private function onCloseLoginWait(param1:CloseEvent) : void
       {
-         if(param1.detail == LoginWaitWidget.TIMOUT_EXPIRED)
+         if(param1.detail == TimeoutWaitWidget.TIMOUT_EXPIRED)
          {
             this.m_CharacterPending = this.m_CharacterCurrent;
          }
@@ -1717,8 +1760,26 @@ package
                this.m_Options.unload();
             }
             this.m_Options = param1;
-            this.m_UncommittedOptions = true;
-            invalidateProperties();
+            this.m_ChatStorage.options = this.m_Options;
+            this.m_CreatureStorage.options = this.m_Options;
+            this.m_WorldMapStorage.options = this.m_Options;
+            this.m_UIActionBarBottom.options = this.m_Options;
+            this.m_UIActionBarLeft.options = this.m_Options;
+            this.m_UIActionBarRight.options = this.m_Options;
+            this.m_UIActionBarTop.options = this.m_Options;
+            this.m_UIChatWidget.options = this.m_Options;
+            this.m_UIInputHandler.options = this.m_Options;
+            this.m_UISideBarA.options = this.m_Options;
+            this.m_UISideBarB.options = this.m_Options;
+            this.m_UISideBarC.options = this.m_Options;
+            this.m_UISideBarD.options = this.m_Options;
+            this.m_UISideBarToggleLeft.options = this.m_Options;
+            this.m_UISideBarToggleRight.options = this.m_Options;
+            this.m_UIStatusWidget.options = this.m_Options;
+            this.m_UIWorldMapWidget.options = this.m_Options;
+            this.m_UIWorldMapWindow.options = this.m_Options;
+            this.updateCombatTactics();
+            this.updateGameWindowSize();
             if(this.m_Options != null)
             {
                this.m_Options.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
@@ -1798,7 +1859,6 @@ package
                this.options.getBuddySet(_loc1_).clearBuddies();
             }
          }
-         this.invalidateOptions();
          CursorManager.getInstance().removeAllCursors();
          if(ContextMenuBase.getCurrent() != null)
          {
@@ -1929,25 +1989,6 @@ package
          _loc1_.show();
       }
       
-      private function onConnectionConnected(param1:ConnectionEvent) : void
-      {
-         visible = true;
-         PopUpQueue.getInstance().hideByPriority(PopUpBase.DEFAULT_PRIORITY);
-         if(ContextMenuBase.getCurrent() != null)
-         {
-            ContextMenuBase.getCurrent().hide();
-         }
-         if(this.m_UIWorldMapWidget != null)
-         {
-            this.m_UIWorldMapWidget.player = this.m_Player;
-         }
-         if(this.m_UIStatusWidget != null)
-         {
-            this.m_UIStatusWidget.player = this.m_Player;
-         }
-         this.updateCombatTactics();
-      }
-      
       protected function onAppearancesLoadError(param1:ErrorEvent) : void
       {
          var _loc2_:GameEvent = null;
@@ -2072,6 +2113,7 @@ package
          this.reset();
          this.m_CharacterCurrent = this.m_CharacterPending;
          this.m_CharacterPending = -1;
+         this.m_CharacterDeath = false;
          _loc1_ = AccountCharacter(this.m_CharacterList[this.m_CharacterCurrent]);
          var _loc2_:* = !this.isValidPreviewStateForClient(_loc1_.worldPreviewState);
          if(_loc2_)
@@ -2110,35 +2152,6 @@ package
           * Error type: ExecutionException (java.lang.StackOverflowError)
           */
          throw new flash.errors.IllegalOperationError("Not decompiled due to error");
-      }
-      
-      override protected function commitProperties() : void
-      {
-         super.commitProperties();
-         if(this.m_UncommittedOptions)
-         {
-            this.m_ChatStorage.options = this.m_Options;
-            this.m_CreatureStorage.options = this.m_Options;
-            this.m_WorldMapStorage.options = this.m_Options;
-            this.m_UIActionBarBottom.options = this.m_Options;
-            this.m_UIActionBarLeft.options = this.m_Options;
-            this.m_UIActionBarRight.options = this.m_Options;
-            this.m_UIActionBarTop.options = this.m_Options;
-            this.m_UIChatWidget.options = this.m_Options;
-            this.m_UIInputHandler.options = this.m_Options;
-            this.m_UISideBarA.options = this.m_Options;
-            this.m_UISideBarB.options = this.m_Options;
-            this.m_UISideBarC.options = this.m_Options;
-            this.m_UISideBarD.options = this.m_Options;
-            this.m_UISideBarToggleLeft.options = this.m_Options;
-            this.m_UISideBarToggleRight.options = this.m_Options;
-            this.m_UIStatusWidget.options = this.m_Options;
-            this.m_UIWorldMapWidget.options = this.m_Options;
-            this.m_UIWorldMapWindow.options = this.m_Options;
-            this.updateCombatTactics();
-            this.updateGameWindowSize();
-            this.m_UncommittedOptions = false;
-         }
       }
       
       private function _Tibia_Array1_i() : Array
@@ -2206,6 +2219,7 @@ package
          this.m_AppearanceStorage.addEventListener(Event.COMPLETE,this.onAppearancesLoadComplete);
          this.m_AppearanceStorage.addEventListener(ErrorEvent.ERROR,this.onAppearancesLoadError);
          this.m_ChatStorage = new ChatStorage();
+         this.m_ChannelsPending = new Vector.<int>();
          this.m_ContainerStorage = new ContainerStorage();
          this.m_CreatureStorage = new CreatureStorage();
          this.m_MiniMapStorage = new MiniMapStorage();
@@ -2213,9 +2227,11 @@ package
          this.m_SpellStorage = new SpellStorage();
          this.m_WorldMapStorage = new WorldMapStorage();
          this.m_Connection = new Connection(this.m_AppearanceStorage,this.m_ChatStorage,this.m_ContainerStorage,this.m_CreatureStorage,this.m_MiniMapStorage,this.m_Player,this.m_SpellStorage,this.m_WorldMapStorage);
-         this.m_Connection.addEventListener(ConnectionEvent.CONNECTED,this.onConnectionConnected);
+         this.m_Connection.addEventListener(ConnectionEvent.PENDING,this.onConnectionPending);
+         this.m_Connection.addEventListener(ConnectionEvent.GAME,this.onConnectionGame);
          this.m_Connection.addEventListener(ConnectionEvent.CONNECTING,this.onConnectionConnecting);
          this.m_Connection.addEventListener(ConnectionEvent.CONNECTION_LOST,this.onConnectionLost);
+         this.m_Connection.addEventListener(ConnectionEvent.CONNECTION_RECOVERED,this.onConnectionRecovered);
          this.m_Connection.addEventListener(ConnectionEvent.DEAD,this.onConnectionDeath);
          this.m_Connection.addEventListener(ConnectionEvent.DISCONNECTED,this.onConnectionDisconnected);
          this.m_Connection.addEventListener(ConnectionEvent.ERROR,this.onConnectionError);
@@ -2331,6 +2347,7 @@ package
       private function onConnectionDeath(param1:ConnectionEvent) : void
       {
          visible = true;
+         this.m_CharacterDeath = true;
          var _loc2_:Number = param1.data is Number?Number(Number(param1.data)):Number(100);
          var _loc3_:MessageWidget = new MessageWidget();
          _loc3_.title = resourceManager.getString(BUNDLE,"DLG_DEAD_TITLE");
@@ -2361,11 +2378,14 @@ package
       
       public function saveOptions() : void
       {
-         this.m_ChatStorage.saveChannels();
-         if(!this.m_CurrentOptionsUploading && Boolean(this.m_CurrentOptionsDirty))
+         if(this.m_Options != null)
          {
-            this.m_CurrentOptionsAsset.upload(this.options.marshall());
-            this.m_CurrentOptionsUploading = true;
+            this.m_ChatStorage.saveChannels();
+            if(!this.m_CurrentOptionsUploading && Boolean(this.m_CurrentOptionsDirty))
+            {
+               this.m_CurrentOptionsAsset.upload(this.options.marshall());
+               this.m_CurrentOptionsUploading = true;
+            }
          }
       }
       
@@ -2419,15 +2439,18 @@ package
       {
          if(param1.detail == PopUpBase.BUTTON_OKAY)
          {
-            this.m_CharacterPending = this.m_CharacterCurrent;
+            if(this.m_Connection != null)
+            {
+               this.m_Connection.sendCENTERWORLD();
+            }
          }
          else
          {
             this.m_CharacterPending = -1;
-         }
-         if(this.m_Connection != null)
-         {
-            this.m_Connection.disconnect(false);
+            if(this.m_Connection != null)
+            {
+               this.m_Connection.disconnect(false);
+            }
          }
       }
       
@@ -2492,20 +2515,12 @@ package
       
       private function onConnectionLost(param1:ConnectionEvent) : void
       {
-         var a_Event:ConnectionEvent = param1;
-         visible = false;
          this.saveLocalData();
          this.saveOptions();
-         var Dialog:MessageWidget = new MessageWidget();
-         Dialog.buttonFlags = PopUpBase.BUTTON_OKAY;
-         Dialog.keyboardFlags = PopUpBase.KEY_ENTER;
-         Dialog.message = resourceManager.getString(BUNDLE,"DLG_CONNECTIONLOST_TEXT");
-         Dialog.title = resourceManager.getString(BUNDLE,"DLG_CONNECTIONLOST_TITLE");
-         Dialog.addEventListener(CloseEvent.CLOSE,function(param1:CloseEvent):void
-         {
-            changeCharacter();
-         });
-         Dialog.show();
+         this.m_ConnectionLostDialog = new ConnectionLostWidget();
+         this.m_ConnectionLostDialog.timeout = Number(60 * 1000);
+         this.m_ConnectionLostDialog.addEventListener(CloseEvent.CLOSE,this.onCloseConnectionLostDialog);
+         this.m_ConnectionLostDialog.show();
       }
       
       private function onUploadOptionsError(param1:ErrorEvent) : void
@@ -2574,9 +2589,11 @@ package
          }
          if(this.m_Connection != null)
          {
-            this.m_Connection.removeEventListener(ConnectionEvent.CONNECTED,this.onConnectionConnected);
+            this.m_Connection.removeEventListener(ConnectionEvent.PENDING,this.onConnectionPending);
+            this.m_Connection.removeEventListener(ConnectionEvent.GAME,this.onConnectionGame);
             this.m_Connection.removeEventListener(ConnectionEvent.CONNECTING,this.onConnectionConnecting);
             this.m_Connection.removeEventListener(ConnectionEvent.CONNECTION_LOST,this.onConnectionLost);
+            this.m_Connection.removeEventListener(ConnectionEvent.CONNECTION_RECOVERED,this.onConnectionRecovered);
             this.m_Connection.removeEventListener(ConnectionEvent.DEAD,this.onConnectionDeath);
             this.m_Connection.removeEventListener(ConnectionEvent.DISCONNECTED,this.onConnectionDisconnected);
             this.m_Connection.removeEventListener(ConnectionEvent.ERROR,this.onConnectionError);
@@ -2600,7 +2617,6 @@ package
          }
          FocusNotifier.getInstance().hide();
          PopUpQueue.getInstance().hideByPriority(int.MAX_VALUE);
-         this.invalidateOptions();
       }
       
       [Bindable(event="propertyChange")]
@@ -2655,6 +2671,11 @@ package
          _loc2_.priority = PopUpBase.DEFAULT_PRIORITY + 1;
          _loc2_.title = resourceManager.getString(BUNDLE,"DLG_LOGINADVICE_TITLE");
          _loc2_.show();
+      }
+      
+      private function onConnectionRecovered(param1:ConnectionEvent) : void
+      {
+         this.m_ConnectionLostDialog.hide();
       }
       
       [Bindable(event="propertyChange")]
@@ -2714,6 +2735,13 @@ package
          mx_internal::_bindings = mx_internal::_bindings.concat(bindings);
          mx_internal::_watchers = mx_internal::_watchers.concat(watchers);
          super.initialize();
+      }
+      
+      private function onConnectionGame(param1:ConnectionEvent) : void
+      {
+         visible = true;
+         this.updateCombatTactics();
+         this.m_CharacterDeath = false;
       }
       
       [Bindable(event="propertyChange")]

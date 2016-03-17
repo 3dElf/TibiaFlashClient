@@ -482,7 +482,7 @@ package tibia.options
                   {
                      _loc5_ = XMLHelper.s_UnmarshallInteger(_loc4_);
                      _loc6_ = this.getKnownTutorialHintIndex(_loc5_);
-                     if(Boolean(TutorialHint.s_CheckHint(_loc5_)) && _loc6_ < 0)
+                     if(Boolean(TutorialHint.checkHint(_loc5_)) && _loc6_ < 0)
                      {
                         this.m_KnownTutorialHint.splice(-_loc6_ - 1,0,_loc5_);
                      }
@@ -2432,7 +2432,7 @@ package tibia.options
       public function setKnownTutorialHint(param1:int, param2:Boolean) : Boolean
       {
          var _loc5_:PropertyChangeEvent = null;
-         if(!TutorialHint.s_CheckHint(param1))
+         if(!TutorialHint.checkHint(param1))
          {
             return false;
          }

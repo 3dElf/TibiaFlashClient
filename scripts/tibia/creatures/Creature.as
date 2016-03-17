@@ -6,10 +6,10 @@ package tibia.creatures
    import tibia.appearances.AppearanceInstance;
    import mx.events.PropertyChangeEvent;
    import mx.events.PropertyChangeEventKind;
-   import shared.utility.Vector3D;
    import shared.utility.StringHelper;
    import tibia.creatures.battlelistWidgetClasses.BattlelistWidgetView;
    import tibia.reporting.reportType.Type;
+   import shared.utility.Vector3D;
    import tibia.appearances.ns_appearance_internal;
    import tibia.network.Connection;
    
@@ -48,6 +48,8 @@ package tibia.creatures
       
       protected static const STATE_NONE:int = -1;
       
+      private static var s_SpeedB:Number = 1;
+      
       protected static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
       
       protected static const SKILL_FIGHTSHIELD:int = 7;
@@ -55,6 +57,8 @@ package tibia.creatures
       protected static const FIELD_SIZE:int = 32;
       
       protected static const WAR_NONE:int = 0;
+      
+      private static var s_SpeedA:Number = 0;
       
       protected static const SKILL_FIGHTDISTANCE:int = 8;
       
@@ -69,6 +73,8 @@ package tibia.creatures
       protected static const SKILL_MAGLEVEL:int = 2;
       
       protected static const SKILL_FISHING:int = 13;
+      
+      private static var s_SpeedC:Number = 1;
       
       protected static const PK_PLAYERKILLER:int = 4;
       
@@ -295,6 +301,21 @@ package tibia.creatures
          this.resetSkills();
       }
       
+      public static function get speedA() : Number
+      {
+         return s_SpeedA;
+      }
+      
+      public static function get speedB() : Number
+      {
+         return s_SpeedB;
+      }
+      
+      public static function get speedC() : Number
+      {
+         return s_SpeedC;
+      }
+      
       public static function s_GetHealthColourARGB(param1:Number) : uint
       {
          if(param1 < 4)
@@ -322,6 +343,21 @@ package tibia.creatures
             s_TempHealthColour.setChannels(0,192,0);
          }
          return s_TempHealthColour.ARGB;
+      }
+      
+      public static function set speedA(param1:Number) : void
+      {
+         s_SpeedA = param1;
+      }
+      
+      public static function set speedC(param1:Number) : void
+      {
+         s_SpeedC = param1;
+      }
+      
+      public static function set speedB(param1:Number) : void
+      {
+         s_SpeedB = param1;
       }
       
       public function get outfit() : AppearanceInstance
@@ -431,9 +467,14 @@ package tibia.creatures
          }
       }
       
-      public function get position() : Vector3D
+      public function getMovementSpeed() : int
       {
-         return this.m_Position.clone();
+         var _loc1_:Number = this.getSkillValue(SKILL_GOSTRENGTH);
+         if(_loc1_ <= -speedB)
+         {
+            return 0;
+         }
+         return Math.round(speedA * Math.log(_loc1_ + speedB) + speedC);
       }
       
       private function set _3373707name(param1:String) : void
@@ -481,6 +522,11 @@ package tibia.creatures
          return Boolean(this.isHuman) && (param1 == Type.REPORT_NAME || param1 == Type.REPORT_BOT);
       }
       
+      public function get position() : Vector3D
+      {
+         return this.m_Position.clone();
+      }
+      
       public function get type() : int
       {
          return this.m_Type;
@@ -494,23 +540,27 @@ package tibia.creatures
       
       function animateOutfit(param1:Number) : void
       {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
+         var _loc3_:Number = NaN;
+         var _loc2_:Number = Math.max(Math.abs(this.m_AnimationDelta.x),Math.abs(this.m_AnimationDelta.y));
+         _loc3_ = param1 - (this.m_AnimationEnd - this.m_AnimationSpeed.z);
+         var _loc4_:Number = Math.max(0,Math.min(_loc3_ / this.m_AnimationSpeed.z,1));
          if(this.m_Outfit != null && this.m_Outfit.m_Type != null)
          {
             if(this.m_Outfit.m_Type.isAnimateAlways)
             {
                this.m_Outfit.animate(param1);
             }
-            else if(!this.m_MovementRunning || param1 > this.m_AnimationEnd)
+            else if(!this.m_MovementRunning)
             {
                this.m_Outfit.ns_appearance_internal::m_Phase = 0;
             }
+            else if(this.m_Outfit.m_Type.phases == 3)
+            {
+               this.m_Outfit.ns_appearance_internal::m_Phase = 1 + Math.floor(_loc2_ / 8) % (this.m_Outfit.m_Type.phases - 1);
+            }
             else
             {
-               _loc2_ = this.m_Outfit.m_Type.phases;
-               _loc3_ = Math.max(Math.abs(this.m_AnimationDelta.x),Math.abs(this.m_AnimationDelta.y));
-               this.m_Outfit.ns_appearance_internal::m_Phase = 1 + _loc3_ * 4 / FIELD_SIZE % (_loc2_ - 1);
+               this.m_Outfit.ns_appearance_internal::m_Phase = 1 + Math.floor(_loc4_ * (this.m_Outfit.m_Type.phases - 1));
             }
          }
          if(this.m_MountOutfit != null && this.m_MountOutfit.m_Type != null)
@@ -519,15 +569,17 @@ package tibia.creatures
             {
                this.m_MountOutfit.animate(param1);
             }
-            else if(!this.m_MovementRunning || param1 > this.m_AnimationEnd)
+            else if(!this.m_MovementRunning)
             {
                this.m_MountOutfit.ns_appearance_internal::m_Phase = 0;
             }
+            else if(this.m_MountOutfit.m_Type.phases == 3)
+            {
+               this.m_MountOutfit.ns_appearance_internal::m_Phase = 1 + Math.floor(_loc2_ / 8) % (this.m_MountOutfit.m_Type.phases - 1);
+            }
             else
             {
-               _loc2_ = this.m_MountOutfit.m_Type.phases;
-               _loc3_ = Math.max(Math.abs(this.m_AnimationDelta.x),Math.abs(this.m_AnimationDelta.y));
-               this.m_MountOutfit.ns_appearance_internal::m_Phase = 1 + _loc3_ * 4 / FIELD_SIZE % (_loc2_ - 1);
+               this.m_MountOutfit.ns_appearance_internal::m_Phase = 1 + Math.floor(_loc4_ * (this.m_MountOutfit.m_Type.phases - 1));
             }
          }
       }
@@ -613,9 +665,9 @@ package tibia.creatures
       public function startMovementAnimation(param1:int, param2:int, param3:int) : void
       {
          var _loc4_:Connection = Tibia.s_GetConnection();
-         if(_loc4_ == null || !_loc4_.isGameRunning)
+         if(_loc4_ == null || !(Boolean(_loc4_.isGameRunning) || Boolean(_loc4_.isPending)))
          {
-            throw new Error("Creature.startMovementAnimation: Invalid state.");
+            throw new Error("Creature.startMovementAnimation: Invalid state." + _loc4_ == null?"(connection is null)":"(State: " + _loc4_.connectionState + ")");
          }
          if(param1 > 0)
          {
@@ -634,20 +686,21 @@ package tibia.creatures
             this.m_Direction = 2;
          }
          this.m_AnimationDirection = this.m_Direction;
-         var _loc5_:Number = this.getSkillValue(SKILL_GOSTRENGTH) > 0?Number(1000 * param3 / this.getSkillValue(SKILL_GOSTRENGTH)):Number(1000);
-         _loc5_ = Math.ceil(_loc5_ / _loc4_.beatDuration) * _loc4_.beatDuration;
          this.m_AnimationDelta.x = -param1 * FIELD_SIZE;
          this.m_AnimationDelta.y = -param2 * FIELD_SIZE;
          this.m_AnimationDelta.z = 0;
+         var _loc5_:Number = Math.max(1,this.getMovementSpeed());
+         var _loc6_:Number = Math.floor(1000 * param3 / _loc5_);
+         _loc6_ = Math.ceil(_loc6_ / _loc4_.beatDuration) * _loc4_.beatDuration;
          this.m_AnimationSpeed.x = -param1 * FIELD_SIZE;
          this.m_AnimationSpeed.y = -param2 * FIELD_SIZE;
-         this.m_AnimationSpeed.z = _loc5_;
-         this.m_AnimationEnd = Tibia.s_FrameTimestamp + _loc5_;
-         if(Math.abs(param1) + Math.abs(param2) > 1)
+         this.m_AnimationSpeed.z = _loc6_;
+         this.m_AnimationEnd = Tibia.s_FrameTimestamp + _loc6_;
+         if(param1 != 0 && param2 != 0)
          {
-            _loc5_ = _loc5_ * 3;
+            _loc6_ = Math.floor(1000 * param3 * 3 / _loc5_);
          }
-         this.m_MovementEnd = Tibia.s_FrameTimestamp + _loc5_;
+         this.m_MovementEnd = Tibia.s_FrameTimestamp + _loc6_;
          this.m_MovementRunning = true;
       }
       
@@ -759,15 +812,6 @@ package tibia.creatures
          return this.m_AnimationDelta;
       }
       
-      public function getSkillValue(param1:int) : Number
-      {
-         if(0 <= param1 && param1 < this.m_Skills.length)
-         {
-            return this.m_Skills[3 * param1 + 0];
-         }
-         return 0;
-      }
-      
       public function getPositionZ() : int
       {
          return this.m_Position.z;
@@ -776,6 +820,15 @@ package tibia.creatures
       public function set isUnpassable(param1:Boolean) : void
       {
          this.m_IsUnpassable = param1;
+      }
+      
+      public function getSkillValue(param1:int) : Number
+      {
+         if(0 <= param1 && param1 < this.m_Skills.length)
+         {
+            return this.m_Skills[3 * param1 + 0];
+         }
+         return 0;
       }
       
       public function getPosition(param1:Vector3D = null) : Vector3D
@@ -788,6 +841,17 @@ package tibia.creatures
          param1.y = this.m_Position.y;
          param1.z = this.m_Position.z;
          return param1;
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set type(param1:int) : void
+      {
+         var _loc2_:Object = this.type;
+         if(_loc2_ !== param1)
+         {
+            this._3575610type = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"type",_loc2_,param1));
+         }
       }
       
       public function set brightness(param1:int) : void
@@ -816,17 +880,6 @@ package tibia.creatures
       }
       
       [Bindable(event="propertyChange")]
-      public function set type(param1:int) : void
-      {
-         var _loc2_:Object = this.type;
-         if(_loc2_ !== param1)
-         {
-            this._3575610type = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"type",_loc2_,param1));
-         }
-      }
-      
-      [Bindable(event="propertyChange")]
       public function get markID() : uint
       {
          return this.m_MarkID & 255;
@@ -851,8 +904,8 @@ package tibia.creatures
             }
             else if(this.m_AnimationSpeed.z != 0)
             {
-               this.m_AnimationDelta.x = this.m_AnimationSpeed.x - Math.round(this.m_AnimationSpeed.x / this.m_AnimationSpeed.z * _loc2_);
-               this.m_AnimationDelta.y = this.m_AnimationSpeed.y - Math.round(this.m_AnimationSpeed.y / this.m_AnimationSpeed.z * _loc2_);
+               this.m_AnimationDelta.x = this.m_AnimationSpeed.x - Math.round(this.m_AnimationSpeed.x * _loc2_ / this.m_AnimationSpeed.z);
+               this.m_AnimationDelta.y = this.m_AnimationSpeed.y - Math.round(this.m_AnimationSpeed.y * _loc2_ / this.m_AnimationSpeed.z);
             }
          }
          this.m_MovementRunning = param1 < this.m_MovementEnd || this.m_AnimationDelta.x != 0 || this.m_AnimationDelta.y != 0;

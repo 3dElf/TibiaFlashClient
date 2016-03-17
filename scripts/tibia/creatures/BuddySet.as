@@ -117,7 +117,7 @@ package tibia.creatures
          {
             _loc2_ = Buddy(this.m_Buddies.getItemAt(_loc1_));
             _loc2_.name = null;
-            _loc2_.online = false;
+            _loc2_.status = Buddy.STATUS_OFFLINE;
             _loc2_.lastUpdate = Number.NEGATIVE_INFINITY;
             _loc1_--;
          }
@@ -135,9 +135,9 @@ package tibia.creatures
             if(_loc4_ > -1)
             {
                _loc3_ = Buddy(this.m_Buddies.getItemAt(_loc4_));
-               _loc3_.online = Boolean(rest[0]);
+               _loc3_.status = uint(rest[0]);
                _loc3_.lastUpdate = Tibia.s_FrameTimestamp;
-               if(Boolean(_loc3_.online) && Boolean(_loc3_.notify))
+               if(_loc3_.status == Buddy.STATUS_ONLINE && Boolean(_loc3_.notify))
                {
                   _loc5_ = ResourceManager.getInstance().getString(BUNDLE,"NOTIFICATION_MESSAGE",[_loc3_.name]);
                   _loc6_ = Tibia.s_GetWorldMapStorage();
@@ -171,7 +171,7 @@ package tibia.creatures
             _loc3_.description = String(rest[1]);
             _loc3_.icon = int(rest[2]);
             _loc3_.notify = Boolean(rest[3]);
-            _loc3_.online = Boolean(rest[4]);
+            _loc3_.status = uint(rest[4]);
             _loc3_.lastUpdate = Number.NEGATIVE_INFINITY;
          }
          else

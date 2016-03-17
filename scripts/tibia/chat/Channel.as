@@ -1,11 +1,12 @@
 package tibia.chat
 {
    import flash.events.EventDispatcher;
+   import tibia.chat.chatWidgetClasses.NicklistItem;
    import mx.collections.IList;
    import mx.events.PropertyChangeEvent;
    import mx.events.PropertyChangeEventKind;
-   import mx.events.CollectionEvent;
    import mx.collections.ArrayCollection;
+   import mx.events.CollectionEvent;
    import shared.utility.RingBuffer;
    import mx.core.EventPriority;
    
@@ -20,11 +21,9 @@ package tibia.chat
       
       protected var m_SendAllowed:Boolean = true;
       
-      protected var m_Subscribers:ArrayCollection = null;
+      protected var m_NicklistItems:ArrayCollection = null;
       
       protected var m_Closable:Boolean = true;
-      
-      protected var m_Invitees:ArrayCollection = null;
       
       protected var m_ID = null;
       
@@ -42,8 +41,7 @@ package tibia.chat
          this.m_Messages.addEventListener(CollectionEvent.COLLECTION_CHANGE,this.onMessagesEvent,false,EventPriority.DEFAULT_HANDLER,false);
          this.m_Closable = true;
          this.m_SendAllowed = true;
-         this.m_Subscribers = new ArrayCollection();
-         this.m_Invitees = new ArrayCollection();
+         this.m_NicklistItems = new ArrayCollection();
       }
       
       public static function s_NormaliseIdentifier(param1:Object) : Object
@@ -85,8 +83,14 @@ package tibia.chat
       
       public function playerLeft(param1:String) : void
       {
-         this.addNick(this.m_Invitees,param1);
-         this.removeNick(this.m_Subscribers,param1);
+         var _loc2_:NicklistItem = this.getNicklistItem(param1,true);
+         _loc2_.state = NicklistItem.STATE_INVITED;
+      }
+      
+      public function playerJoined(param1:String) : void
+      {
+         var _loc2_:NicklistItem = this.getNicklistItem(param1,true);
+         _loc2_.state = NicklistItem.STATE_SUBSCRIBER;
       }
       
       public function get name() : String
@@ -117,15 +121,9 @@ package tibia.chat
          }
       }
       
-      public function playerJoined(param1:String) : void
+      public function get sendMode() : int
       {
-         this.removeNick(this.m_Invitees,param1);
-         this.addNick(this.m_Subscribers,param1);
-      }
-      
-      public function playerInvited(param1:String) : void
-      {
-         this.addNick(this.m_Invitees,param1);
+         return this.m_SendMode;
       }
       
       public function set closable(param1:Boolean) : void
@@ -149,9 +147,41 @@ package tibia.chat
          }
       }
       
-      public function get sendMode() : int
+      private function getNicklistItemIndex(param1:String) : int
       {
-         return this.m_SendMode;
+         var _loc2_:String = param1.toLowerCase();
+         var _loc3_:String = null;
+         var _loc4_:int = 0;
+         var _loc5_:int = this.m_NicklistItems.length - 1;
+         var _loc6_:int = 0;
+         while(_loc4_ <= _loc5_)
+         {
+            _loc6_ = _loc4_ + _loc5_ >>> 1;
+            _loc3_ = NicklistItem(this.m_NicklistItems.getItemAt(_loc6_)).name.toLowerCase();
+            if(_loc3_ < _loc2_)
+            {
+               _loc4_ = _loc6_ + 1;
+               continue;
+            }
+            if(_loc3_ > _loc2_)
+            {
+               _loc5_ = _loc6_ - 1;
+               continue;
+            }
+            return _loc6_;
+         }
+         return -_loc4_ - 1;
+      }
+      
+      private function removeNicklistItem(param1:String) : Boolean
+      {
+         var _loc2_:int = this.getNicklistItemIndex(param1);
+         if(_loc2_ > -1)
+         {
+            this.m_NicklistItems.removeItemAt(_loc2_);
+            return true;
+         }
+         return false;
       }
       
       public function get isRestorable() : Boolean
@@ -172,13 +202,9 @@ package tibia.chat
             this.m_Messages.removeEventListener(CollectionEvent.COLLECTION_CHANGE,this.onMessagesEvent);
             this.m_Messages.removeAll();
          }
-         if(this.m_Subscribers != null)
+         if(this.m_NicklistItems != null)
          {
-            this.m_Subscribers.removeAll();
-         }
-         if(this.m_Invitees != null)
-         {
-            this.m_Invitees.removeAll();
+            this.m_NicklistItems.removeAll();
          }
       }
       
@@ -187,46 +213,9 @@ package tibia.chat
          return this.m_ID;
       }
       
-      public function get subscribers() : IList
+      public function playerExcluded(param1:String) : void
       {
-         return this.m_Subscribers;
-      }
-      
-      private function addNick(param1:IList, param2:String) : Boolean
-      {
-         var _loc3_:int = this.getNickIndex(param1,param2);
-         if(_loc3_ < 0)
-         {
-            param1.addItemAt(param2,-_loc3_ - 1);
-            return true;
-         }
-         return false;
-      }
-      
-      private function getNickIndex(param1:IList, param2:String) : int
-      {
-         var _loc3_:String = param2.toLowerCase();
-         var _loc4_:String = null;
-         var _loc5_:int = 0;
-         var _loc6_:int = param1.length - 1;
-         var _loc7_:int = 0;
-         while(_loc5_ <= _loc6_)
-         {
-            _loc7_ = _loc5_ + _loc6_ >>> 1;
-            _loc4_ = String(param1.getItemAt(_loc7_)).toLowerCase();
-            if(_loc4_ < _loc3_)
-            {
-               _loc5_ = _loc7_ + 1;
-               continue;
-            }
-            if(_loc4_ > _loc3_)
-            {
-               _loc6_ = _loc7_ - 1;
-               continue;
-            }
-            return _loc7_;
-         }
-         return -_loc5_ - 1;
+         this.removeNicklistItem(param1);
       }
       
       public function get closable() : Boolean
@@ -234,37 +223,53 @@ package tibia.chat
          return this.m_Closable;
       }
       
+      public function playerInvited(param1:String) : void
+      {
+         var _loc2_:NicklistItem = this.getNicklistItem(param1,true);
+         _loc2_.state = NicklistItem.STATE_INVITED;
+      }
+      
+      private function getNicklistItem(param1:String, param2:Boolean = false) : NicklistItem
+      {
+         var _loc4_:NicklistItem = null;
+         var _loc3_:int = this.getNicklistItemIndex(param1);
+         if(_loc3_ < 0)
+         {
+            if(param2 == true)
+            {
+               _loc4_ = new NicklistItem(param1);
+               this.m_NicklistItems.addItemAt(_loc4_,-_loc3_ - 1);
+               return _loc4_;
+            }
+            return null;
+         }
+         return this.m_NicklistItems.getItemAt(_loc3_) as NicklistItem;
+      }
+      
       public function clearNicklist() : void
       {
-         this.m_Invitees.removeAll();
-         this.m_Subscribers.removeAll();
+         this.m_NicklistItems.removeAll();
       }
       
-      private function removeNick(param1:IList, param2:String) : Boolean
+      private function isNicklistItemExisting(param1:String) : Boolean
       {
-         var _loc3_:int = this.getNickIndex(param1,param2);
-         if(_loc3_ > -1)
-         {
-            param1.removeItemAt(_loc3_);
-            return true;
-         }
-         return false;
+         return this.getNicklistItem(param1) != null;
       }
       
-      public function get invitees() : IList
+      public function playerPending(param1:String) : void
       {
-         return this.m_Invitees;
-      }
-      
-      public function playerExcluded(param1:String) : void
-      {
-         this.removeNick(this.m_Invitees,param1);
-         this.removeNick(this.m_Subscribers,param1);
+         var _loc2_:NicklistItem = this.getNicklistItem(param1,true);
+         _loc2_.state = NicklistItem.STATE_PENDING;
       }
       
       public function get isPrivate() : Boolean
       {
          return ChatStorage.ns_chat_internal::s_IsPrivateChannel(this.m_ID);
+      }
+      
+      public function get nicklistItems() : IList
+      {
+         return this.m_NicklistItems;
       }
    }
 }

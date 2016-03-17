@@ -152,7 +152,7 @@ package tibia.market
       
       private var m_SelectedView:uint = 0;
       
-      private var m_AccountBalance:uint = 0;
+      private var m_AccountBalance:Number = 0;
       
       private var m_ResponsePending:Boolean = false;
       
@@ -556,7 +556,7 @@ package tibia.market
          super.commitProperties();
       }
       
-      public function set accountBalance(param1:uint) : void
+      public function set accountBalance(param1:Number) : void
       {
          if(this.m_AccountBalance != param1)
          {
@@ -674,7 +674,7 @@ package tibia.market
          return this.m_SelectedType;
       }
       
-      public function get accountBalance() : uint
+      public function get accountBalance() : Number
       {
          return this.m_AccountBalance;
       }

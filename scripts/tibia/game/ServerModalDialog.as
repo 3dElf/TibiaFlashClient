@@ -8,7 +8,7 @@ package tibia.game
    import shared.controls.CustomButton;
    import mx.controls.Button;
    import shared.controls.CustomList;
-   import mx.events.ItemClickEvent;
+   import mx.events.ListEvent;
    import mx.collections.ArrayList;
    import flash.events.Event;
    import mx.events.CloseEvent;
@@ -16,7 +16,6 @@ package tibia.game
    import flash.errors.IllegalOperationError;
    import tibia.network.Connection;
    import mx.controls.List;
-   import mx.events.ListEvent;
    import flash.events.KeyboardEvent;
    import flash.ui.Keyboard;
    
@@ -110,7 +109,7 @@ package tibia.game
                   this.m_UIChoices.minHeight = 150;
                   this.m_UIChoices.percentHeight = 100;
                   this.m_UIChoices.percentWidth = 75;
-                  this.m_UIChoices.addEventListener(ItemClickEvent.ITEM_CLICK,this.onChoiceChange);
+                  this.m_UIChoices.addEventListener(ListEvent.CHANGE,this.onChoiceChange);
                   this.m_UIChoices.addEventListener(MouseEvent.DOUBLE_CLICK,this.onChoiceDoubleClick);
                   addChild(this.m_UIChoices);
                }
@@ -310,7 +309,10 @@ package tibia.game
       
       private function onChoiceChange(param1:ListEvent) : void
       {
-         this.selectedChoice = param1.rowIndex;
+         if(param1 != null)
+         {
+            this.selectedChoice = this.m_UIChoices.selectedIndex;
+         }
       }
       
       public function get defaultEnterButton() : uint

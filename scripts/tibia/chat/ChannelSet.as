@@ -2,7 +2,8 @@ package tibia.chat
 {
    import flash.events.EventDispatcher;
    import shared.utility.XMLHelper;
-   import flash.events.Event;
+   import mx.events.PropertyChangeEvent;
+   import mx.events.PropertyChangeEventKind;
    
    public class ChannelSet extends EventDispatcher
    {
@@ -58,7 +59,7 @@ package tibia.chat
          var _loc4_:Boolean = false;
          var _loc5_:int = 0;
          var _loc6_:int = 0;
-         var _loc7_:Event = null;
+         var _loc7_:PropertyChangeEvent = null;
          var _loc3_:int = this.m_Channels.indexOf(param1);
          if(param2 < 0 || _loc3_ < 0 && param2 > this.m_Channels.length || _loc3_ > -1 && param2 >= this.m_Channels.length)
          {
@@ -86,7 +87,9 @@ package tibia.chat
             }
             if(_loc4_)
             {
-               _loc7_ = new Event(Event.CHANGE);
+               _loc7_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+               _loc7_.kind = PropertyChangeEventKind.UPDATE;
+               _loc7_.property = "channels";
                dispatchEvent(_loc7_);
             }
          }
@@ -94,7 +97,7 @@ package tibia.chat
       
       public function setItemAt(param1:uint, param2:int) : int
       {
-         var _loc4_:Event = null;
+         var _loc4_:PropertyChangeEvent = null;
          if(param2 < 0 || param2 >= this.m_Channels.length)
          {
             throw new RangeError("ChannelSet.setItemAt: Index " + param2 + " is out of range.");
@@ -103,7 +106,9 @@ package tibia.chat
          if(ChatStorage.ns_chat_internal::s_IsRestorableChannel(param1))
          {
             this.m_Channels[param2] = param1;
-            _loc4_ = new Event(Event.CHANGE);
+            _loc4_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc4_.kind = PropertyChangeEventKind.UPDATE;
+            _loc4_.property = "channels";
             dispatchEvent(_loc4_);
          }
          return _loc3_;
@@ -121,14 +126,16 @@ package tibia.chat
             throw new RangeError("ChannelSet.removeItemAt: Index " + param1 + " is out of range.");
          }
          var _loc2_:int = int(this.m_Channels.splice(param1,1));
-         var _loc3_:Event = new Event(Event.CHANGE);
+         var _loc3_:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+         _loc3_.kind = PropertyChangeEventKind.UPDATE;
+         _loc3_.property = "channels";
          dispatchEvent(_loc3_);
          return _loc2_;
       }
       
       public function set length(param1:int) : void
       {
-         var _loc2_:Event = null;
+         var _loc2_:PropertyChangeEvent = null;
          if(param1 < 0 || param1 > this.m_Channels.length)
          {
             throw new RangeError("ChannelSet.set length: Length " + param1 + " is invalid.");
@@ -136,7 +143,9 @@ package tibia.chat
          if(this.m_Channels.length != param1)
          {
             this.m_Channels.length = param1;
-            _loc2_ = new Event(Event.CHANGE);
+            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc2_.kind = PropertyChangeEventKind.UPDATE;
+            _loc2_.property = "channels";
             dispatchEvent(_loc2_);
          }
       }
@@ -155,11 +164,13 @@ package tibia.chat
       
       public function addItem(param1:int) : void
       {
-         var _loc2_:Event = null;
+         var _loc2_:PropertyChangeEvent = null;
          if(Boolean(ChatStorage.ns_chat_internal::s_IsRestorableChannel(param1)) && this.m_Channels.indexOf(param1) < 0)
          {
             this.m_Channels.push(param1);
-            _loc2_ = new Event(Event.CHANGE);
+            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc2_.kind = PropertyChangeEventKind.UPDATE;
+            _loc2_.property = "channels";
             dispatchEvent(_loc2_);
          }
       }
@@ -181,7 +192,9 @@ package tibia.chat
       public function removeAll() : void
       {
          this.m_Channels.length = 0;
-         var _loc1_:Event = new Event(Event.CHANGE);
+         var _loc1_:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+         _loc1_.kind = PropertyChangeEventKind.UPDATE;
+         _loc1_.property = "channels";
          dispatchEvent(_loc1_);
       }
    }

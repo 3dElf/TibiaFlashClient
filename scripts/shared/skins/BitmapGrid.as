@@ -598,14 +598,13 @@ package shared.skins
 
 import flash.display.Bitmap;
 import flash.geom.Matrix;
-import shared.skins.EBitmap;
 
 class BitmapGridCell
 {
     
    private var m_Bitmap:Bitmap = null;
    
-   private var m_ID:int;
+   private var m_ID:int = -2;
    
    private var m_Matrix:Matrix = null;
    
@@ -616,7 +615,6 @@ class BitmapGridCell
    function BitmapGridCell(param1:int, param2:*)
    {
       var _loc3_:Class = null;
-      this.m_ID = EBitmap.NONE;
       super();
       this.m_ID = param1;
       if(param2 is Bitmap)
