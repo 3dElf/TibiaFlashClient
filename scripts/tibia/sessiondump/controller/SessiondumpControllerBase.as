@@ -26,7 +26,7 @@ package tibia.sessiondump.controller
       
       protected static const CSHAREEXPERIENCE:int = 168;
       
-      public static const PROTOCOL_VERSION:int = 1074;
+      public static const PROTOCOL_VERSION:int = 1075;
       
       protected static const CROTATEWEST:int = 114;
       

@@ -220,7 +220,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 2019;
+      public static const CLIENT_VERSION:uint = 2023;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -480,7 +480,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1074;
+      public static const PROTOCOL_VERSION:int = 1075;
       
       protected static const CEDITGUILDMESSAGE:int = 156;
       
