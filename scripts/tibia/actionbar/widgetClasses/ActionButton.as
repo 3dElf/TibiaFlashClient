@@ -444,6 +444,7 @@ package tibia.actionbar.widgetClasses
             this.m_OverlayText = param1;
             this.m_OverlayPosition = OVERLAY_BOTTOM;
             this.m_UncommittedOverlayText = true;
+            invalidateDisplayList();
             invalidateProperties();
          }
       }

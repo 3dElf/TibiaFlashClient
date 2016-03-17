@@ -486,9 +486,8 @@ package tibia.game
       
       override protected function measure() : void
       {
-         var _loc1_:EdgeMetrics = null;
          super.measure();
-         _loc1_ = this.viewMetricsAndPadding;
+         var _loc1_:EdgeMetrics = this.viewMetricsAndPadding;
          var _loc2_:int = 0;
          var _loc3_:int = this.m_Items.length;
          var _loc4_:Number = 0;
