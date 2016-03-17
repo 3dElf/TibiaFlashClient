@@ -14,10 +14,10 @@ package tibia.input
    import mx.controls.TextInput;
    import shared.cryptography.Random;
    import flash.utils.getTimer;
+   import tibia.options.OptionsStorage;
    import flash.geom.Point;
    import tibia.input.staticaction.PlayerMove;
    import flash.ui.Keyboard;
-   import tibia.options.OptionsStorage;
    import tibia.input.mapping.MouseBinding;
    import mx.events.PropertyChangeEvent;
    import flash.utils.Timer;
@@ -104,6 +104,8 @@ package tibia.input
       protected var m_MouseEventCode:uint = 0;
       
       protected var m_MouseRepeatTimer:Timer = null;
+      
+      protected var m_Numlock:Boolean = false;
       
       private var m_UncommittedOptions:Boolean = false;
       
@@ -383,25 +385,9 @@ package tibia.input
          }
       }
       
-      public function dispose() : void
+      public function get options() : OptionsStorage
       {
-         this.captureKeyboard = false;
-         this.unregisterSandboxListeners();
-         Tibia.s_GetSecondaryTimer().removeEventListener(TimerEvent.TIMER,this.onKeyboardRepeatTimer);
-         var _loc1_:int = 0;
-         _loc1_ = this.m_KeyPressed.length - 1;
-         while(_loc1_ >= 0)
-         {
-            this.m_KeyPressed[_loc1_] = 0;
-            _loc1_--;
-         }
-         _loc1_ = this.m_MouseDown.length - 1;
-         while(_loc1_ >= 0)
-         {
-            this.m_MouseDown[_loc1_] = false;
-            _loc1_--;
-         }
-         this.m_MovementBindings = null;
+         return this.m_Options;
       }
       
       protected function onKeyboardRepeatTimer(param1:TimerEvent) : void
@@ -418,11 +404,6 @@ package tibia.input
                }
             }
          }
-      }
-      
-      public function get options() : OptionsStorage
-      {
-         return this.m_Options;
       }
       
       private function internalMouseDown(param1:MouseEvent) : void
@@ -503,18 +484,25 @@ package tibia.input
          }
       }
       
-      public function clearPressedKeys() : void
+      public function dispose() : void
       {
+         this.captureKeyboard = false;
+         this.unregisterSandboxListeners();
+         Tibia.s_GetSecondaryTimer().removeEventListener(TimerEvent.TIMER,this.onKeyboardRepeatTimer);
          var _loc1_:int = 0;
-         if(this.m_KeyPressed != null)
+         _loc1_ = this.m_KeyPressed.length - 1;
+         while(_loc1_ >= 0)
          {
-            _loc1_ = this.m_KeyPressed.length - 1;
-            while(_loc1_ >= 0)
-            {
-               this.m_KeyPressed[_loc1_] = 0;
-               _loc1_--;
-            }
+            this.m_KeyPressed[_loc1_] = 0;
+            _loc1_--;
          }
+         _loc1_ = this.m_MouseDown.length - 1;
+         while(_loc1_ >= 0)
+         {
+            this.m_MouseDown[_loc1_] = false;
+            _loc1_--;
+         }
+         this.m_MovementBindings = null;
       }
       
       protected function onSandboxText(param1:TextEvent) : void
@@ -588,13 +576,18 @@ package tibia.input
          }
       }
       
-      public function isModifierKeyPressed(param1:MouseEvent = null) : Boolean
+      public function clearPressedKeys() : void
       {
-         if(param1 != null)
+         var _loc1_:int = 0;
+         if(this.m_KeyPressed != null)
          {
-            return Boolean(param1.ctrlKey) || Boolean(param1.shiftKey) || Boolean(param1.altKey);
+            _loc1_ = this.m_KeyPressed.length - 1;
+            while(_loc1_ >= 0)
+            {
+               this.m_KeyPressed[_loc1_] = 0;
+               _loc1_--;
+            }
          }
-         return Boolean(this.isKeyPressed(Keyboard.CONTROL)) || Boolean(this.isKeyPressed(Keyboard.SHIFT)) || Boolean(this.isKeyPressed(Keyboard.ALTERNATE));
       }
       
       private function updateMapping() : void
@@ -651,6 +644,15 @@ package tibia.input
             }
          }
          this.clearPressedKeys();
+      }
+      
+      public function isModifierKeyPressed(param1:MouseEvent = null) : Boolean
+      {
+         if(param1 != null)
+         {
+            return Boolean(param1.ctrlKey) || Boolean(param1.shiftKey) || Boolean(param1.altKey);
+         }
+         return Boolean(this.isKeyPressed(Keyboard.CONTROL)) || Boolean(this.isKeyPressed(Keyboard.SHIFT)) || Boolean(this.isKeyPressed(Keyboard.ALTERNATE));
       }
       
       private function unregisterSandboxListeners() : void
@@ -759,6 +761,11 @@ package tibia.input
          {
             _loc2_ = this.m_KeyPressed[param1.keyCode] != 0;
             this.m_KeyPressed[param1.keyCode] = 0;
+            if(Keyboard.numLock != this.m_Numlock)
+            {
+               this.clearPressedKeys();
+               this.m_Numlock = Keyboard.numLock;
+            }
          }
          if(Boolean(this.m_CaptureKeyboard) && this.m_Mapping != null && !(Boolean(param1.altKey) && Boolean(param1.ctrlKey)))
          {
