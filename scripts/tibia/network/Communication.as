@@ -201,7 +201,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1328;
+      public static const CLIENT_VERSION:uint = 1337;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -441,7 +441,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1011;
+      public static const PROTOCOL_VERSION:int = 1012;
       
       protected static const CROTATEWEST:int = 114;
       

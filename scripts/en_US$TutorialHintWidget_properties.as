@@ -7,35 +7,35 @@ package
       
       private static var _embed_properties_______images_help_hint_37_spellactionbarhealing_png_1837077039:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_37_spellactionbarhealing_png_1837077039;
       
-      private static var _embed_properties_______images_help_hint_36_dragspellhealing_png_34579771:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_36_dragspellhealing_png_34579771;
+      private static var _embed_properties_______images_help_hint_06_usetorch_png_460526675:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_06_usetorch_png_460526675;
       
       private static var _embed_properties_______images_help_hint_39_lootcorpse_png_60494195:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_39_lootcorpse_png_60494195;
       
       private static var _embed_properties_______images_help_hint_05_dragcoat_png_1219482221:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_05_dragcoat_png_1219482221;
       
-      private static var _embed_properties_______images_help_hint_06_usetorch_png_460526675:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_06_usetorch_png_460526675;
+      private static var _embed_properties_______images_help_hint_36_dragspellhealing_png_34579771:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_36_dragspellhealing_png_34579771;
       
       private static var _embed_properties_______images_help_hint_16_whiteskull_png_1749033747:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_whiteskull_png_1749033747;
       
       private static var _embed_properties_______images_help_hint_13_npctradeupper_png_506330351:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_13_npctradeupper_png_506330351;
       
-      private static var _embed_properties_______images_help_hint_20_premium_png_1580403449:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_20_premium_png_1580403449;
-      
       private static var _embed_properties_______images_help_hint_31_spellactionbar_png_327220307:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_31_spellactionbar_png_327220307;
       
       private static var _embed_properties_______images_help_hint_35_knownspellshealing_png_1397242389:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_35_knownspellshealing_png_1397242389;
       
-      private static var _embed_properties_______images_help_hint_32_userunebattlelist_png_1647774901:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_32_userunebattlelist_png_1647774901;
-      
-      private static var _embed_properties_______images_help_hint_04_openchest_png_182332747:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_04_openchest_png_182332747;
+      private static var _embed_properties_______images_help_hint_20_premium_png_1580403449:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_20_premium_png_1580403449;
       
       private static var _embed_properties_______images_help_hint_23_ladder_png_1834556147:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_23_ladder_png_1834556147;
       
       private static var _embed_properties_______images_help_hint_10_useshovel_png_1882499503:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_10_useshovel_png_1882499503;
       
-      private static var _embed_properties_______images_help_hint_02_automap_png_1321208085:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_02_automap_png_1321208085;
+      private static var _embed_properties_______images_help_hint_32_userunebattlelist_png_1647774901:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_32_userunebattlelist_png_1647774901;
       
       private static var _embed_properties_______images_help_hint_01_arrowkeys_png_595354315:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_01_arrowkeys_png_595354315;
+      
+      private static var _embed_properties_______images_help_hint_04_openchest_png_182332747:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_04_openchest_png_182332747;
+      
+      private static var _embed_properties_______images_help_hint_02_automap_png_1321208085:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_02_automap_png_1321208085;
       
       private static var _embed_properties_______images_help_hint_16_redskull_png_1284502413:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_redskull_png_1284502413;
       
