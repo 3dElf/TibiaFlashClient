@@ -64,6 +64,22 @@ package tibia.options
          this.m_UIOptionsEditor[NAME_FILTER] = new NameFilterOptions();
       }
       
+      override public function hide(param1:Boolean = false) : void
+      {
+         var _loc2_:int = 0;
+         if(param1)
+         {
+            _loc2_ = 0;
+            while(_loc2_ < this.m_UIOptionsEditor.length)
+            {
+               this.m_UIOptionsEditor[_loc2_].close(param1);
+               _loc2_++;
+            }
+            Tibia.s_SetOptions(this.options);
+         }
+         super.hide(param1);
+      }
+      
       override protected function commitProperties() : void
       {
          var _loc1_:int = 0;
@@ -164,22 +180,6 @@ package tibia.options
       public function get selectedIndex() : int
       {
          return this.m_SelectedIndex;
-      }
-      
-      override public function close(param1:Boolean) : void
-      {
-         var _loc2_:int = 0;
-         if(param1)
-         {
-            _loc2_ = 0;
-            while(_loc2_ < this.m_UIOptionsEditor.length)
-            {
-               this.m_UIOptionsEditor[_loc2_].close(param1);
-               _loc2_++;
-            }
-            Tibia.s_SetOptions(this.options);
-         }
-         super.close(param1);
       }
       
       public function set options(param1:tibia.options.OptionsStorage) : void

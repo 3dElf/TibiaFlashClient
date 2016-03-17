@@ -68,7 +68,7 @@ package tibia.minimap
          title = resourceManager.getString(BUNDLE,"TITLE");
       }
       
-      override public function close(param1:Boolean) : void
+      override public function hide(param1:Boolean = false) : void
       {
          if(param1)
          {
@@ -77,7 +77,7 @@ package tibia.minimap
                this.m_MiniMapStorage.setMark(this.m_PositionX,this.m_PositionY,this.m_PositionZ,this.m_Mark,this.m_Description);
             }
          }
-         super.close(param1);
+         super.hide(param1);
       }
       
       override protected function commitProperties() : void

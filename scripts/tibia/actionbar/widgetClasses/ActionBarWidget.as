@@ -14,8 +14,8 @@ package tibia.actionbar.widgetClasses
    import mx.events.DragEvent;
    import tibia.input.MappingSet;
    import tibia.input.mapping.Mapping;
-   import mx.core.DragSource;
    import tibia.input.mapping.Binding;
+   import mx.core.DragSource;
    import mx.managers.DragManager;
    import tibia.options.OptionsStorage;
    import mx.events.ToolTipEvent;
@@ -190,10 +190,11 @@ package tibia.actionbar.widgetClasses
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
+         var _loc5_:Number = NaN;
          layoutChrome(param1,param2);
          var _loc3_:Number = 0;
          var _loc4_:Number = 0;
-         var _loc5_:Number = 0;
+         _loc5_ = 0;
          var _loc6_:Number = 0;
          var _loc7_:int = 0;
          var _loc8_:int = 0;
@@ -387,9 +388,7 @@ package tibia.actionbar.widgetClasses
          var _loc12_:int = 0;
          var _loc13_:IAction = null;
          var _loc14_:Array = null;
-         var _loc15_:uint = 0;
-         var _loc16_:uint = 0;
-         var _loc17_:uint = 0;
+         var _loc15_:Binding = null;
          var _loc2_:IActionButton = null;
          var _loc3_:DragSource = null;
          var _loc4_:ActionBar = null;
@@ -433,20 +432,15 @@ package tibia.actionbar.widgetClasses
                   {
                      _loc14_.push(new Binding(_loc13_,0,0,0,null,true));
                   }
-                  _loc15_ = 0;
-                  _loc16_ = 0;
-                  _loc17_ = 0;
                   _loc11_ = _loc10_.length;
                   _loc12_ = 0;
                   while(_loc12_ < _loc11_)
                   {
                      if(!(!_loc10_[_loc12_].editable || !_loc14_[_loc12_].editable))
                      {
-                        _loc15_ = _loc10_[_loc12_].charCode;
-                        _loc16_ = _loc10_[_loc12_].keyCode;
-                        _loc17_ = _loc10_[_loc12_].modifierCode;
-                        _loc10_[_loc12_].update(_loc14_[_loc12_].charCode,_loc14_[_loc12_].keyCode,_loc14_[_loc12_].modifierCode);
-                        _loc14_[_loc12_].update(_loc15_,_loc16_,_loc17_);
+                        _loc15_ = _loc10_[_loc12_].clone();
+                        _loc10_[_loc12_].update(_loc14_[_loc12_]);
+                        _loc14_[_loc12_].update(_loc15_);
                         if(_loc10_[_loc12_].keyCode != 0)
                         {
                            _loc8_.addItem(_loc10_[_loc12_]);
@@ -967,9 +961,11 @@ package tibia.actionbar.widgetClasses
       
       override protected function measure() : void
       {
+         var _loc1_:EdgeMetrics = null;
+         var _loc2_:Number = NaN;
          super.measure();
-         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
-         var _loc2_:Number = this.m_Direction == DIRECTION_HORIZONTAL?Number(getStyle("horizontalGap")):Number(getStyle("verticalGap"));
+         _loc1_ = viewMetricsAndPadding;
+         _loc2_ = this.m_Direction == DIRECTION_HORIZONTAL?Number(getStyle("horizontalGap")):Number(getStyle("verticalGap"));
          var _loc3_:Number = this.m_UIToggleButton.getExplicitOrMeasuredHeight();
          var _loc4_:Number = this.m_UIToggleButton.getExplicitOrMeasuredWidth();
          var _loc5_:Number = this.m_UIScrollUpButton.getExplicitOrMeasuredHeight() + this.m_UIScrollDownButton.getExplicitOrMeasuredHeight();

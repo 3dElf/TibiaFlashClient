@@ -1,7 +1,7 @@
 package tibia.creatures.buddylistWidgetClasses
 {
    import tibia.game.ContextMenuBase;
-   import tibia.creatures.BuddySet;
+   import tibia.creatures.BuddylistWidget;
    import mx.core.IUIComponent;
    import tibia.creatures.EditBuddyWidget;
    import tibia.input.gameaction.BuddylistActionImpl;
@@ -11,6 +11,7 @@ package tibia.creatures.buddylistWidgetClasses
    import tibia.reporting.ReportWidget;
    import flash.system.System;
    import tibia.creatures.buddylistClasses.Buddy;
+   import tibia.creatures.BuddySet;
    
    public class BuddylistItemContextMenu extends ContextMenuBase
    {
@@ -18,33 +19,35 @@ package tibia.creatures.buddylistWidgetClasses
       private static const BUNDLE:String = "BuddylistWidget";
       
       private static const SORT_MODE:Array = [{
-         "value":BuddySet.SORT_NAME,
+         "value":BuddylistWidget.SORT_BY_NAME,
          "label":"CTX_SORT_NAME"
       },{
-         "value":BuddySet.SORT_ICON,
+         "value":BuddylistWidget.SORT_BY_ICON,
          "label":"CTX_SORT_ICON"
       },{
-         "value":BuddySet.SORT_STATUS,
+         "value":BuddylistWidget.SORT_BY_STATUS,
          "label":"CTX_SORT_STATUS"
       }];
        
-      protected var m_Buddy:Buddy = null;
+      private var m_Buddy:Buddy = null;
       
-      protected var m_BuddySet:BuddySet = null;
+      private var m_BuddySet:BuddySet = null;
       
       public function BuddylistItemContextMenu(param1:BuddySet, param2:Buddy)
       {
          super();
-         if(param1 == null)
-         {
-            throw new ArgumentError("BuddylistItemContextmenu.BuddylistItemContextmenu: Invalid buddy set.");
-         }
          this.m_BuddySet = param1;
+         if(this.m_BuddySet == null)
+         {
+            throw new ArgumentError("BuddylistItemContextMenu.BuddylistItemContextMenu: Invalid buddy set.");
+         }
          this.m_Buddy = param2;
       }
       
       override public function display(param1:IUIComponent, param2:Number, param3:Number) : void
       {
+         var _Widget:BuddylistWidget = null;
+         var i:int = 0;
          var a_Owner:IUIComponent = param1;
          var a_StageX:Number = param2;
          var a_StageY:Number = param3;
@@ -75,22 +78,26 @@ package tibia.creatures.buddylistWidgetClasses
          {
             new BuddylistActionImpl(BuddylistActionImpl.ADD_ASK_NAME,null).perform();
          });
-         var i:int = 0;
-         while(i < SORT_MODE.length)
+         if(a_Owner is BuddylistWidgetView && BuddylistWidgetView(a_Owner).widgetInstance is BuddylistWidget)
          {
-            if(this.m_BuddySet.sortOrder != SORT_MODE[i].value)
+            _Widget = BuddylistWidget(BuddylistWidgetView(a_Owner).widgetInstance);
+            i = 0;
+            while(i < SORT_MODE.length)
             {
-               createTextItem(resourceManager.getString(BUNDLE,SORT_MODE[i].label),closure(null,function(param1:BuddySet, param2:int, param3:*):void
+               if(_Widget.sortOrder != SORT_MODE[i].value)
                {
-                  param1.sortOrder = param2;
-               },this.m_BuddySet,SORT_MODE[i].value));
+                  createTextItem(resourceManager.getString(BUNDLE,SORT_MODE[i].label),closure(null,function(param1:BuddylistWidget, param2:int, param3:*):void
+                  {
+                     param1.sortOrder = param2;
+                  },_Widget,SORT_MODE[i].value));
+               }
+               i++;
             }
-            i++;
+            createTextItem(resourceManager.getString(BUNDLE,!!_Widget.showOffline?"CTX_HIDE_OFFLINE":"CTX_SHOW_OFFLINE"),function(param1:*):void
+            {
+               _Widget.showOffline = !_Widget.showOffline;
+            });
          }
-         createTextItem(resourceManager.getString(BUNDLE,!!this.m_BuddySet.showOffline?"CTX_HIDE_OFFLINE":"CTX_SHOW_OFFLINE"),function(param1:*):void
-         {
-            m_BuddySet.showOffline = !m_BuddySet.showOffline;
-         });
          createSeparatorItem();
          if(this.m_Buddy != null && Boolean(this.m_Buddy.isReportTypeAllowed(Type.REPORT_NAME)))
          {

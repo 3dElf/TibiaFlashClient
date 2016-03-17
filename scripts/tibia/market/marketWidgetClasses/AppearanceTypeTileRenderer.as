@@ -138,7 +138,7 @@ package tibia.market.marketWidgetClasses
       private function onCrationComplete(param1:Event) : void
       {
          removeEventListener(FlexEvent.CREATION_COMPLETE,this.onCrationComplete);
-         this.market = PopUpBase.s_GetParentPopUp(this) as MarketWidget;
+         this.market = PopUpBase.getParentPopUp(this) as MarketWidget;
       }
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void

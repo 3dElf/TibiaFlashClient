@@ -88,6 +88,16 @@ package tibia.game
          }
       }
       
+      override public function hide(param1:Boolean = false) : void
+      {
+         super.hide(param1);
+         if(this.m_ShowTimestamp > -1)
+         {
+            this.m_ShowTimestamp = -1;
+            Tibia.s_GetSecondaryTimer().removeEventListener(TimerEvent.TIMER,this.onTimer);
+         }
+      }
+      
       override protected function commitProperties() : void
       {
          super.commitProperties();
@@ -115,16 +125,6 @@ package tibia.game
             super.message = param1;
             this.m_UncommittedMessage = true;
             invalidateProperties();
-         }
-      }
-      
-      override public function close(param1:Boolean) : void
-      {
-         super.close(param1);
-         if(this.m_ShowTimestamp > -1)
-         {
-            this.m_ShowTimestamp = -1;
-            Tibia.s_GetSecondaryTimer().removeEventListener(TimerEvent.TIMER,this.onTimer);
          }
       }
       

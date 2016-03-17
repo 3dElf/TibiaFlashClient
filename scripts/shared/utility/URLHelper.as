@@ -1,7 +1,5 @@
 package shared.utility
 {
-   import flash.utils.getTimer;
-   
    public class URLHelper
    {
        
@@ -12,12 +10,19 @@ package shared.utility
       
       public static function s_NoCache(param1:String) : String
       {
-         var _loc2_:String = getTimer().toString(16);
+         var _loc2_:String = "0123456789abcdef";
+         var _loc3_:String = "";
+         var _loc4_:int = 0;
+         while(_loc4_ < 32)
+         {
+            _loc3_ = _loc3_ + _loc2_.charAt(int(Math.random() * _loc2_.length));
+            _loc4_++;
+         }
          if(param1.indexOf("?") > 0)
          {
-            return param1 + "&__nocache=" + _loc2_;
+            return param1 + "&nocache=" + _loc3_;
          }
-         return param1 + "?" + _loc2_;
+         return param1 + "?nocache=" + _loc3_;
       }
       
       public static function s_GetBasename(param1:String) : String

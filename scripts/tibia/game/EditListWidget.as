@@ -1,12 +1,12 @@
 package tibia.game
 {
    import flash.events.Event;
+   import tibia.network.Connection;
    import shared.utility.StringHelper;
    import mx.controls.TextArea;
    import flash.events.KeyboardEvent;
    import tibia.input.PreventWhitespaceInput;
    import flash.events.TextEvent;
-   import tibia.network.Connection;
    
    public class EditListWidget extends PopUpBase
    {
@@ -61,6 +61,20 @@ package tibia.game
       public function get text() : String
       {
          return this.m_Text;
+      }
+      
+      override public function hide(param1:Boolean = false) : void
+      {
+         var _loc2_:Connection = null;
+         if(param1)
+         {
+            _loc2_ = Tibia.s_GetConnection();
+            if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
+            {
+               _loc2_.sendCEDITLIST(this.m_Type,this.m_ID,StringHelper.s_CleanNewline(this.m_UIText.text));
+            }
+         }
+         super.hide(param1);
       }
       
       override protected function commitProperties() : void
@@ -168,20 +182,6 @@ package tibia.game
             this.m_UncommittedID = true;
             invalidateProperties();
          }
-      }
-      
-      override public function close(param1:Boolean) : void
-      {
-         var _loc2_:Connection = null;
-         if(param1)
-         {
-            _loc2_ = Tibia.s_GetConnection();
-            if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
-            {
-               _loc2_.sendCEDITLIST(this.m_Type,this.m_ID,StringHelper.s_CleanNewline(this.m_UIText.text));
-            }
-         }
-         super.close(param1);
       }
       
       public function get type() : int

@@ -1,7 +1,5 @@
 package tibia.trade.npcTradeWidgetClasses
 {
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
    import mx.controls.Label;
    import mx.events.CollectionEvent;
    import tibia.trade.TradeObjectRef;
@@ -46,11 +44,7 @@ package tibia.trade.npcTradeWidgetClasses
          "infoPaddingRight":"paddingRight",
          "infoPaddingTop":"paddingTop"
       };
-      
-      {
-         s_InitializeStyle();
-      }
-      
+       
       protected var m_UIProperties:Label = null;
       
       private var m_InvalidObjectRenderer:Boolean = false;
@@ -72,26 +66,6 @@ package tibia.trade.npcTradeWidgetClasses
       public function GridObjectRefSelector()
       {
          super();
-      }
-      
-      private static function s_InitializeStyle() : void
-      {
-         var Selector:String = "GridObjectRefSelector";
-         var Decl:CSSStyleDeclaration = StyleManager.getStyleDeclaration(Selector);
-         if(Decl == null)
-         {
-            Decl = new CSSStyleDeclaration();
-         }
-         Decl.defaultFactory = function():void
-         {
-            GridObjectRefSelector.horizontalGap = 0;
-            GridObjectRefSelector.verticalGap = 0;
-            GridObjectRefSelector.paddingBottom = 0;
-            GridObjectRefSelector.paddingLeft = 0;
-            GridObjectRefSelector.paddingRight = 0;
-            GridObjectRefSelector.paddingTop = 0;
-         };
-         StyleManager.setStyleDeclaration(Selector,Decl,true);
       }
       
       protected function onDataProviderChange(param1:CollectionEvent) : void
@@ -258,15 +232,14 @@ package tibia.trade.npcTradeWidgetClasses
       
       override protected function measure() : void
       {
-         var _loc6_:Number = NaN;
-         var _loc7_:Number = NaN;
+         var _loc3_:Number = NaN;
          var _loc8_:IUIComponent = null;
          var _loc9_:Number = NaN;
          var _loc10_:Number = NaN;
          super.measure();
          var _loc1_:Number = 0;
          var _loc2_:Number = 0;
-         var _loc3_:Number = 0;
+         _loc3_ = 0;
          var _loc4_:Number = 0;
          var _loc5_:int = numChildren - 1;
          while(_loc5_ >= 0)
@@ -280,8 +253,8 @@ package tibia.trade.npcTradeWidgetClasses
             _loc3_ = _loc3_ + (!isNaN(_loc8_.minHeight)?_loc8_.minHeight:_loc10_);
             _loc5_--;
          }
-         _loc6_ = getStyle("paddingTop") + Math.max(numChildren - 1,0) * getStyle("verticalGap") + getStyle("paddingBottom");
-         _loc7_ = getStyle("paddingLeft") + getStyle("paddingRight");
+         var _loc6_:Number = getStyle("paddingTop") + Math.max(numChildren - 1,0) * getStyle("verticalGap") + getStyle("paddingBottom");
+         var _loc7_:Number = getStyle("paddingLeft") + getStyle("paddingRight");
          measuredWidth = _loc2_ + _loc7_;
          measuredMinWidth = _loc1_ + _loc7_;
          measuredHeight = _loc4_ + _loc6_;

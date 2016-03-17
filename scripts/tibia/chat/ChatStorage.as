@@ -289,14 +289,20 @@ package tibia.chat
             return "";
          }
          var _loc7_:int = param3 != MessageMode.MESSAGE_NONE?int(param3):int(param2.sendMode);
-         var _loc8_:Object = param2.ID;
-         var _loc9_:String = null;
-         var _loc10_:Object = null;
-         var _loc11_:String = null;
-         if((_loc10_ = /^#([sywbixc])\s+(.*)/i.exec(_loc6_)) != null)
+         var _loc8_:Object = null;
+         if(param2.ID !== DEBUG_CHANNEL_ID && param2.ID !== LOCAL_CHANNEL_ID && param2.ID !== SERVER_CHANNEL_ID && Boolean(param2.sendAllowed))
          {
-            _loc11_ = String(_loc10_[1]).toLowerCase();
-            switch(_loc11_)
+            _loc8_ = param2.ID;
+         }
+         var _loc9_:String = null;
+         var _loc10_:RegExp = /^#([sywbixc])\s+(.*)/i;
+         var _loc11_:RegExp = /^([*@$])([^\1]+)\1\s*(.*)/;
+         var _loc12_:Object = null;
+         var _loc13_:String = null;
+         if((_loc12_ = _loc10_.exec(_loc6_)) != null)
+         {
+            _loc13_ = String(_loc12_[1]).toLowerCase();
+            switch(_loc13_)
             {
                case "b":
                   _loc7_ = MessageMode.MESSAGE_GAMEMASTER_BROADCAST;
@@ -319,12 +325,12 @@ package tibia.chat
                case "y":
                   _loc7_ = MessageMode.MESSAGE_YELL;
             }
-            _loc6_ = _loc10_[2];
+            _loc6_ = _loc12_[2];
          }
-         else if((_loc10_ = /^([*@$])([^\1]+)\1\s*(.*)/.exec(_loc6_)) != null)
+         else if((_loc12_ = _loc11_.exec(_loc6_)) != null)
          {
-            _loc11_ = String(_loc10_[1]).toLowerCase();
-            switch(_loc11_)
+            _loc13_ = String(_loc12_[1]).toLowerCase();
+            switch(_loc13_)
             {
                case "*":
                   _loc7_ = MessageMode.MESSAGE_PRIVATE_TO;
@@ -332,24 +338,24 @@ package tibia.chat
                case "@":
                   _loc7_ = MessageMode.MESSAGE_GAMEMASTER_PRIVATE_TO;
             }
-            _loc9_ = String(_loc10_[2]).substr(0,Channel.MAX_NAME_LENGTH);
-            _loc8_ = Channel.s_NormaliseIdentifier(_loc10_[2]);
-            _loc6_ = _loc10_[3];
+            _loc9_ = String(_loc12_[2]).substr(0,Channel.MAX_NAME_LENGTH);
+            _loc8_ = Channel.s_NormaliseIdentifier(_loc12_[2]);
+            _loc6_ = _loc12_[3];
          }
-         if((_loc8_ is String || _loc8_ === NPC_CHANNEL_ID) && _loc7_ == MessageMode.MESSAGE_GAMEMASTER_CHANNEL)
+         if(_loc7_ == MessageMode.MESSAGE_GAMEMASTER_CHANNEL && (_loc8_ == null || _loc8_ is String || _loc8_ === NPC_CHANNEL_ID))
          {
             Tibia.s_GetWorldMapStorage().addOnscreenMessage(MessageMode.MESSAGE_FAILURE,MSG_CHANNEL_NO_ANONYMOUS);
             return "";
          }
          if(this.hasOwnPrivateChannel)
          {
-            switch(_loc11_)
+            if(_loc13_ == "i")
             {
-               case "i":
-                  _loc4_.sendCINVITETOCHANNEL(_loc6_);
-                  break;
-               case "x":
-                  _loc4_.sendCEXCLUDEFROMCHANNEL(_loc6_);
+               _loc4_.sendCINVITETOCHANNEL(_loc6_);
+            }
+            else if(_loc13_ == "x")
+            {
+               _loc4_.sendCEXCLUDEFROMCHANNEL(_loc6_);
             }
          }
          switch(_loc7_)

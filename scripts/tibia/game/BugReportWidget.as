@@ -1,8 +1,8 @@
 package tibia.game
 {
+   import tibia.network.Connection;
    import flash.events.Event;
    import shared.utility.StringHelper;
-   import tibia.network.Connection;
    import mx.controls.TextArea;
    import mx.controls.Text;
    import flash.events.KeyboardEvent;
@@ -37,15 +37,7 @@ package tibia.game
          keyboardFlags = PopUpBase.KEY_ESCAPE;
       }
       
-      protected function onTextChange(param1:Event) : void
-      {
-         if(param1 != null)
-         {
-            this.m_UserMessage = StringHelper.s_Trim(this.m_UIUserMessage.text);
-         }
-      }
-      
-      override public function close(param1:Boolean) : void
+      override public function hide(param1:Boolean = false) : void
       {
          var _loc2_:Connection = null;
          if(param1)
@@ -56,7 +48,15 @@ package tibia.game
                _loc2_.sendCBUGREPORT(this.m_UserMessage,this.m_SystemMessage);
             }
          }
-         super.close(param1);
+         super.hide(param1);
+      }
+      
+      protected function onTextChange(param1:Event) : void
+      {
+         if(param1 != null)
+         {
+            this.m_UserMessage = StringHelper.s_Trim(this.m_UIUserMessage.text);
+         }
       }
       
       override protected function commitProperties() : void

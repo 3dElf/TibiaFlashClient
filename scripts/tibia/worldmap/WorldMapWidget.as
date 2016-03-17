@@ -168,7 +168,7 @@ package tibia.worldmap
       
       private function onMouseMove(param1:MouseEvent) : void
       {
-         if(this.m_UIRendererImpl != null && this.m_Options != null && this.m_Options.rendererHighlight > 0 && ContextMenuBase.s_GetInstance() == null && PopUpBase.s_GetInstance() == null)
+         if(this.m_UIRendererImpl != null && this.m_Options != null && this.m_Options.rendererHighlight > 0 && ContextMenuBase.getCurrent() == null && PopUpBase.getCurrent() == null)
          {
             if(param1.type != MouseEvent.ROLL_OUT)
             {
@@ -352,7 +352,7 @@ package tibia.worldmap
          var _loc2_:Vector3D = null;
          var _loc3_:Vector3D = null;
          var _loc4_:Connection = null;
-         if(this.m_UIRendererImpl != null && this.m_Options != null && this.m_Options.rendererHighlight > 0 && ContextMenuBase.s_GetInstance() == null && PopUpBase.s_GetInstance() == null)
+         if(this.m_UIRendererImpl != null && this.m_Options != null && this.m_Options.rendererHighlight > 0 && ContextMenuBase.getCurrent() == null && PopUpBase.getCurrent() == null)
          {
             _loc2_ = this.m_UIRendererImpl.highlightTile;
             _loc3_ = this.m_UIRendererImpl.pointToMap(this.m_UIRendererImpl.mouseX,this.m_UIRendererImpl.mouseY,false);

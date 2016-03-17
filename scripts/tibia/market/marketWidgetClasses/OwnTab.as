@@ -20,13 +20,12 @@ package tibia.market.marketWidgetClasses
       
       private var m_UncommittedSelectedView:Boolean = true;
       
-      private var m_SelectedView:uint;
+      private var m_SelectedView:uint = 3;
       
       private var m_UIViewOffers:tibia.market.marketWidgetClasses.OwnOffersView = null;
       
       public function OwnTab(param1:MarketWidget)
       {
-         this.m_SelectedView = MarketWidget.VIEW_OWN_OFFERS;
          super(param1);
          direction = BoxDirection.VERTICAL;
          label = resourceManager.getString(BUNDLE,"OWN_OFFERS_LABEL");

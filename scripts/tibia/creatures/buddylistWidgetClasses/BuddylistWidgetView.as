@@ -1,47 +1,93 @@
 package tibia.creatures.buddylistWidgetClasses
 {
    import tibia.sidebar.sideBarWidgetClasses.WidgetView;
-   import tibia.creatures.BuddySet;
-   import shared.controls.SmoothList;
    import flash.events.MouseEvent;
-   import mx.controls.listClasses.IListItemRenderer;
+   import mx.collections.Sort;
+   import mx.collections.ListCollectionView;
+   import mx.collections.ICollectionView;
+   import tibia.creatures.BuddySet;
    import tibia.creatures.buddylistClasses.Buddy;
+   import mx.controls.listClasses.IListItemRenderer;
    import tibia.input.gameaction.PrivateChatActionImpl;
-   import mx.collections.IList;
+   import shared.controls.SmoothList;
    import mx.containers.HBox;
+   import mx.collections.IList;
+   import tibia.creatures.BuddylistWidget;
    import mx.core.ScrollPolicy;
    
    public class BuddylistWidgetView extends WidgetView
    {
       
-      private static const ACTION_NONE:int = 1;
-      
       private static const BUNDLE:String = "BuddylistWidget";
-      
-      private static const ACTION_UNDEF:int = 0;
-      
-      private static const ACTION_CONTEXT_MENU:int = 3;
-      
-      private static const ACTION_OPEN_MESSAGE_CHANNEL:int = 2;
        
-      protected var m_UIList:SmoothList = null;
+      private var m_UncommittedShowOffline:Boolean = false;
+      
+      private var m_SortOrder:int;
+      
+      private var m_UIList:SmoothList = null;
       
       private var m_UncommittedBuddySet:Boolean = false;
       
-      protected var m_BuddySet:BuddySet = null;
+      private var m_BuddySet:BuddySet = null;
       
-      private var m_UIConstructed:Boolean = false;
+      private var m_ShowOffline:Boolean = true;
+      
+      private var m_BuddiesView:IList = null;
+      
+      private var m_UncommittedSortOrder:Boolean = false;
       
       public function BuddylistWidgetView()
       {
+         this.m_SortOrder = BuddylistWidget.SORT_BY_NAME;
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          verticalScrollPolicy = ScrollPolicy.OFF;
          horizontalScrollPolicy = ScrollPolicy.OFF;
          maxHeight = int.MAX_VALUE;
-         addEventListener(MouseEvent.CLICK,this.onBuddiesClick);
          addEventListener(MouseEvent.RIGHT_CLICK,this.onBuddiesClick);
          addEventListener(MouseEvent.DOUBLE_CLICK,this.onBuddiesClick);
+      }
+      
+      override function releaseInstance() : void
+      {
+         super.releaseInstance();
+         removeEventListener(MouseEvent.DOUBLE_CLICK,this.onBuddiesClick);
+         removeEventListener(MouseEvent.RIGHT_CLICK,this.onBuddiesClick);
+      }
+      
+      override protected function commitProperties() : void
+      {
+         var _loc1_:Sort = null;
+         super.commitProperties();
+         if(this.m_UncommittedBuddySet)
+         {
+            if(this.buddySet != null)
+            {
+               this.m_BuddiesView = new ListCollectionView(this.buddySet.buddies);
+               if(this.m_BuddiesView is ICollectionView)
+               {
+                  ICollectionView(this.m_BuddiesView).filterFunction = this.buddyFilter;
+                  _loc1_ = new Sort();
+                  _loc1_.compareFunction = this.buddyComparator;
+                  ICollectionView(this.m_BuddiesView).sort = _loc1_;
+               }
+            }
+            else
+            {
+               this.m_BuddiesView = null;
+            }
+            this.m_UIList.dataProvider = this.m_BuddiesView;
+            this.m_UncommittedBuddySet = false;
+         }
+         if(Boolean(this.m_UncommittedShowOffline) || Boolean(this.m_UncommittedSortOrder))
+         {
+            if(this.m_BuddiesView is ICollectionView)
+            {
+               ICollectionView(this.m_BuddiesView).refresh();
+            }
+            this.m_UncommittedShowOffline = false;
+            this.m_UncommittedSortOrder = false;
+         }
       }
       
       function get buddySet() : BuddySet
@@ -49,56 +95,86 @@ package tibia.creatures.buddylistWidgetClasses
          return this.m_BuddySet;
       }
       
-      protected function onBuddiesClick(param1:MouseEvent) : void
+      function set showOffline(param1:Boolean) : void
       {
-         var _loc2_:IListItemRenderer = null;
-         var _loc3_:Buddy = null;
-         var _loc4_:int = 0;
-         if(this.m_BuddySet != null && param1 != null)
+         if(this.m_ShowOffline != param1)
          {
-            _loc2_ = this.m_UIList.mouseEventToItemRenderer(param1);
-            _loc3_ = null;
-            if(_loc2_ != null)
+            this.m_ShowOffline = param1;
+            this.m_UncommittedShowOffline = true;
+            invalidateProperties();
+         }
+      }
+      
+      function get sortOrder() : int
+      {
+         return this.m_SortOrder;
+      }
+      
+      private function onBuddiesClick(param1:MouseEvent) : void
+      {
+         var _loc2_:Buddy = null;
+         var _loc3_:IListItemRenderer = null;
+         if(this.buddySet != null)
+         {
+            _loc2_ = null;
+            _loc3_ = this.m_UIList.mouseEventToItemRenderer(param1);
+            if(_loc3_ != null)
             {
-               _loc3_ = _loc2_.data as Buddy;
+               _loc2_ = _loc3_.data as Buddy;
             }
-            _loc4_ = ACTION_UNDEF;
             if(param1.type == MouseEvent.DOUBLE_CLICK)
             {
-               _loc4_ = ACTION_OPEN_MESSAGE_CHANNEL;
+               if(_loc2_ != null)
+               {
+                  new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,_loc2_.name).perform();
+               }
             }
             else if(param1.type == MouseEvent.RIGHT_CLICK)
             {
-               _loc4_ = ACTION_CONTEXT_MENU;
-            }
-            else
-            {
-               _loc4_ = ACTION_NONE;
-            }
-            switch(_loc4_)
-            {
-               case ACTION_NONE:
-                  break;
-               case ACTION_OPEN_MESSAGE_CHANNEL:
-                  if(_loc3_ != null)
-                  {
-                     new PrivateChatActionImpl(PrivateChatActionImpl.OPEN_MESSAGE_CHANNEL,_loc3_.name).perform();
-                  }
-                  break;
-               case ACTION_CONTEXT_MENU:
-                  new BuddylistItemContextMenu(this.m_BuddySet,_loc3_).display(this,stage.mouseX,stage.mouseY);
+               new BuddylistItemContextMenu(this.buddySet,_loc2_).display(this,stage.mouseX,stage.mouseY);
             }
          }
       }
       
-      override protected function commitProperties() : void
+      override protected function createChildren() : void
       {
-         super.commitProperties();
-         if(this.m_UncommittedBuddySet)
+         super.createChildren();
+         this.m_UIList = new SmoothList(BuddylistItemRenderer,BuddylistItemRenderer.HEIGHT_HINT);
+         this.m_UIList.defaultItemCount = 3;
+         this.m_UIList.doubleClickEnabled = true;
+         this.m_UIList.followTailPolicy = SmoothList.FOLLOW_TAIL_OFF;
+         this.m_UIList.minItemCount = 3;
+         this.m_UIList.percentWidth = 100;
+         this.m_UIList.percentHeight = 100;
+         this.m_UIList.selectable = false;
+         this.m_UIList.styleName = getStyle("listStyle");
+         var _loc1_:HBox = new HBox();
+         _loc1_.percentHeight = 100;
+         _loc1_.percentWidth = 100;
+         _loc1_.styleName = getStyle("listBoxStyle");
+         _loc1_.addChild(this.m_UIList);
+         addChild(_loc1_);
+      }
+      
+      function set sortOrder(param1:int) : void
+      {
+         if(this.m_SortOrder != param1)
          {
-            this.m_UIList.dataProvider = this.m_BuddySet != null?this.m_BuddySet.buddies:null;
-            this.m_UncommittedBuddySet = false;
+            this.m_SortOrder = param1;
+            this.m_UncommittedSortOrder = true;
+            invalidateProperties();
          }
+      }
+      
+      protected function buddyFilter(param1:Object) : Boolean
+      {
+         var _loc2_:Buddy = param1 as Buddy;
+         return _loc2_ != null && (Boolean(this.showOffline) || Boolean(_loc2_.online));
+      }
+      
+      function get showOffline() : Boolean
+      {
+         return this.m_ShowOffline;
       }
       
       function set buddySet(param1:BuddySet) : void
@@ -107,42 +183,68 @@ package tibia.creatures.buddylistWidgetClasses
          {
             this.m_BuddySet = param1;
             this.m_UncommittedBuddySet = true;
+            this.m_UncommittedShowOffline = true;
+            this.m_UncommittedSortOrder = true;
             invalidateProperties();
          }
       }
       
-      override protected function createChildren() : void
+      protected function buddyComparator(param1:Object, param2:Object, param3:Array = null) : int
       {
-         var _loc1_:HBox = null;
-         if(!this.m_UIConstructed)
+         var _loc7_:String = null;
+         var _loc8_:String = null;
+         var _loc4_:Buddy = param1 as Buddy;
+         var _loc5_:Buddy = param2 as Buddy;
+         var _loc6_:int = 0;
+         if(_loc4_ != null && _loc5_ != null)
          {
-            super.createChildren();
-            _loc1_ = new HBox();
-            _loc1_.percentHeight = 100;
-            _loc1_.percentWidth = 100;
-            _loc1_.styleName = getStyle("listBoxStyle");
-            this.m_UIList = new SmoothList(BuddylistItemRenderer,BuddylistItemRenderer.HEIGHT_HINT);
-            this.m_UIList.dataProvider = this.m_BuddySet != null?this.m_BuddySet.buddies:null;
-            this.m_UIList.defaultItemCount = 3;
-            this.m_UIList.doubleClickEnabled = true;
-            this.m_UIList.followTailPolicy = SmoothList.FOLLOW_TAIL_OFF;
-            this.m_UIList.minItemCount = 3;
-            this.m_UIList.percentWidth = 100;
-            this.m_UIList.percentHeight = 100;
-            this.m_UIList.selectable = false;
-            this.m_UIList.styleName = getStyle("listStyle");
-            _loc1_.addChild(this.m_UIList);
-            addChild(_loc1_);
-            this.m_UIConstructed = true;
+            switch(this.sortOrder)
+            {
+               case BuddylistWidget.SORT_BY_NAME:
+                  break;
+               case BuddylistWidget.SORT_BY_ICON:
+                  if(_loc4_.icon < _loc5_.icon)
+                  {
+                     _loc6_ = -1;
+                  }
+                  else if(_loc4_.icon > _loc5_.icon)
+                  {
+                     _loc6_ = 1;
+                  }
+                  break;
+               case BuddylistWidget.SORT_BY_STATUS:
+                  if(Boolean(_loc4_.online) && !_loc5_.online)
+                  {
+                     _loc6_ = -1;
+                  }
+                  else if(!_loc4_.online && Boolean(_loc5_.online))
+                  {
+                     _loc6_ = 1;
+                  }
+            }
+            if(_loc6_ == 0)
+            {
+               _loc7_ = _loc4_.name;
+               if(_loc7_ != null)
+               {
+                  _loc7_ = _loc7_.toLowerCase();
+               }
+               _loc8_ = _loc5_.name;
+               if(_loc8_ != null)
+               {
+                  _loc8_ = _loc8_.toLowerCase();
+               }
+               if(_loc7_ < _loc8_)
+               {
+                  _loc6_ = -1;
+               }
+               else if(_loc7_ > _loc8_)
+               {
+                  _loc6_ = 1;
+               }
+            }
          }
-      }
-      
-      override function releaseInstance() : void
-      {
-         super.releaseInstance();
-         removeEventListener(MouseEvent.CLICK,this.onBuddiesClick);
-         removeEventListener(MouseEvent.DOUBLE_CLICK,this.onBuddiesClick);
-         removeEventListener(MouseEvent.RIGHT_CLICK,this.onBuddiesClick);
+         return _loc6_;
       }
    }
 }

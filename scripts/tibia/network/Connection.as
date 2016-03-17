@@ -66,6 +66,7 @@ package tibia.network
    import tibia.appearances.AppearanceType;
    import tibia.creatures.SelectOutfitWidget;
    import tibia.appearances.MissileInstance;
+   import tibia.game.serverModalDialogClasses.Choice;
    import tibia.game.ServerModalDialog;
    
    public class Connection extends EventDispatcher
@@ -409,7 +410,7 @@ package tibia.network
       
       protected static const SSPELLDELAY:int = 164;
       
-      protected static const TERMINAL_VERSION:int = 962;
+      protected static const TERMINAL_VERSION:int = 970;
       
       protected static const SDELETEONMAP:int = 108;
       
@@ -1434,10 +1435,10 @@ package tibia.network
       protected function readSMARKETLEAVE(param1:ByteArray) : void
       {
          var _loc2_:MarketWidget = null;
-         _loc2_ = PopUpBase.s_GetInstance() as MarketWidget;
+         _loc2_ = PopUpBase.getCurrent() as MarketWidget;
          if(_loc2_ != null)
          {
-            _loc2_.close(true);
+            _loc2_.hide(true);
          }
       }
       
@@ -1750,7 +1751,7 @@ package tibia.network
             _loc4_.push(new InventoryTypeInfo(_loc7_,0,_loc8_));
             _loc5_--;
          }
-         _loc6_ = PopUpBase.s_GetInstance() as MarketWidget;
+         _loc6_ = PopUpBase.getCurrent() as MarketWidget;
          if(_loc6_ == null)
          {
             _loc6_ = new MarketWidget();
@@ -2435,7 +2436,7 @@ package tibia.network
          }
          if(this.m_PendingQuestLine == _loc2_)
          {
-            _loc8_ = PopUpBase.s_GetInstance() as QuestLogWidget;
+            _loc8_ = PopUpBase.getCurrent() as QuestLogWidget;
             if(_loc8_ != null)
             {
                _loc8_.questFlags = _loc4_;
@@ -3188,7 +3189,7 @@ package tibia.network
             {
                Message = Message + a_UserMessage.substr(0,BugReportWidget.MAX_USER_MESSAGE_LENGTH);
             }
-            Message = Message + ("\nBuild=" + "release;vanilla;2012-08-29;09:22:20;branches/bugfixes;920");
+            Message = Message + ("\nBuild=" + "release;vanilla;2012-10-08;14:19:50;branches/bugfixes;973");
             Message = Message + ("\nBrowser=" + BrowserHelper.s_GetBrowserString());
             Message = Message + ("\nFlash=" + Capabilities.serverString);
             SystemMessage = null;
@@ -3228,17 +3229,19 @@ package tibia.network
          }
       }
       
-      public function sendCANSWERMODALDIALOG(param1:uint, param2:uint) : void
+      public function sendCANSWERMODALDIALOG(param1:uint, param2:int, param3:int) : void
       {
          var b:ByteArray = null;
          var a_ID:uint = param1;
-         var a_Answer:uint = param2;
+         var a_Button:int = param2;
+         var a_Choice:int = param3;
          try
          {
             b = this.createPacket();
             b.writeByte(CANSWERMODALDIALOG);
             b.writeUnsignedInt(a_ID);
-            b.writeByte(a_Answer);
+            b.writeByte(a_Button);
+            b.writeByte(a_Choice);
             this.sendPacket(true);
             return;
          }
@@ -3899,7 +3902,7 @@ package tibia.network
             _loc11_.push(new OfferStatistics(_loc6_,Offer.SELL_OFFER,_loc7_,_loc8_,_loc9_,_loc10_));
             _loc4_--;
          }
-         _loc12_ = PopUpBase.s_GetInstance() as MarketWidget;
+         _loc12_ = PopUpBase.getCurrent() as MarketWidget;
          if(_loc12_ != null)
          {
             _loc12_.mergeBrowseDetail(_loc2_,_loc3_,_loc11_);
@@ -3951,7 +3954,7 @@ package tibia.network
             _loc2_.push(new QuestLine(_loc6_,_loc7_,_loc8_));
             _loc4_++;
          }
-         _loc5_ = PopUpBase.s_GetInstance() as QuestLogWidget;
+         _loc5_ = PopUpBase.getCurrent() as QuestLogWidget;
          if(_loc5_ == null)
          {
             _loc5_ = new QuestLogWidget();
@@ -4613,7 +4616,7 @@ package tibia.network
             _loc4_.push(this.readMarketOffer(param1,Offer.SELL_OFFER,_loc2_));
             _loc3_--;
          }
-         _loc5_ = PopUpBase.s_GetInstance() as MarketWidget;
+         _loc5_ = PopUpBase.getCurrent() as MarketWidget;
          if(_loc5_ != null)
          {
             _loc5_.mergeBrowseOffers(_loc2_,_loc4_);
@@ -4712,7 +4715,7 @@ package tibia.network
                   break;
                case MessageMode.MESSAGE_MARKET:
                   Text = StringHelper.s_ReadFromByteArray(a_Bytes);
-                  _MarketWidget = PopUpBase.s_GetInstance() as MarketWidget;
+                  _MarketWidget = PopUpBase.getCurrent() as MarketWidget;
                   if(_MarketWidget != null)
                   {
                      _MarketWidget.serverResponsePending = false;
@@ -4778,37 +4781,51 @@ package tibia.network
          var _loc2_:uint = 0;
          var _loc3_:String = null;
          var _loc4_:String = null;
-         var _loc5_:Array = null;
-         var _loc6_:int = 0;
-         var _loc7_:uint = 0;
-         var _loc8_:uint = 0;
-         var _loc9_:ServerModalDialog = null;
-         var _loc10_:String = null;
+         var _loc5_:Vector.<Choice> = null;
+         var _loc6_:String = null;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
+         var _loc9_:Vector.<Choice> = null;
+         var _loc10_:uint = 0;
          var _loc11_:uint = 0;
+         var _loc12_:Boolean = false;
+         var _loc13_:ServerModalDialog = null;
          _loc2_ = param1.readUnsignedInt();
          _loc3_ = StringHelper.s_ReadFromByteArray(param1);
          _loc4_ = StringHelper.s_ReadFromByteArray(param1);
-         _loc5_ = [];
-         _loc6_ = param1.readUnsignedByte();
-         while(_loc6_ > 0)
-         {
-            _loc10_ = StringHelper.s_ReadFromByteArray(param1);
-            _loc11_ = param1.readUnsignedByte();
-            _loc5_.push({
-               "label":_loc10_,
-               "value":_loc11_
-            });
-            _loc6_--;
-         }
-         _loc7_ = param1.readUnsignedByte();
+         _loc5_ = new Vector.<Choice>();
+         _loc6_ = null;
+         _loc7_ = 0;
+         _loc8_ = 0;
          _loc8_ = param1.readUnsignedByte();
-         _loc9_ = new ServerModalDialog(_loc2_);
-         _loc9_.title = _loc3_;
-         _loc9_.message = _loc4_;
-         _loc9_.buttons = _loc5_;
-         _loc9_.defaultEscapeButton = _loc7_;
-         _loc9_.defaultEnterButton = _loc8_;
-         _loc9_.show();
+         while(_loc8_ > 0)
+         {
+            _loc6_ = StringHelper.s_ReadFromByteArray(param1);
+            _loc7_ = param1.readUnsignedByte();
+            _loc5_.push(new Choice(_loc6_,_loc7_));
+            _loc8_--;
+         }
+         _loc9_ = new Vector.<Choice>();
+         _loc8_ = param1.readUnsignedByte();
+         while(_loc8_ > 0)
+         {
+            _loc6_ = StringHelper.s_ReadFromByteArray(param1);
+            _loc7_ = param1.readUnsignedByte();
+            _loc9_.push(new Choice(_loc6_,_loc7_));
+            _loc8_--;
+         }
+         _loc10_ = param1.readUnsignedByte();
+         _loc11_ = param1.readUnsignedByte();
+         _loc12_ = param1.readBoolean();
+         _loc13_ = new ServerModalDialog(_loc2_);
+         _loc13_.buttons = _loc5_;
+         _loc13_.choices = _loc9_;
+         _loc13_.defaultEnterButton = _loc11_;
+         _loc13_.defaultEscapeButton = _loc10_;
+         _loc13_.message = _loc4_;
+         _loc13_.priority = PopUpBase.DEFAULT_PRIORITY + (!!_loc12_?1:0);
+         _loc13_.title = _loc3_;
+         _loc13_.show();
       }
       
       protected function readSPINGBACK(param1:ByteArray) : void

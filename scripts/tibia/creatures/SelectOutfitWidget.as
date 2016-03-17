@@ -292,6 +292,16 @@ package tibia.creatures
          }
       }
       
+      override public function hide(param1:Boolean = false) : void
+      {
+         var _loc2_:Connection = null;
+         if(Boolean(param1) && (_loc2_ = Tibia.s_GetConnection()) != null)
+         {
+            _loc2_.sendCSETOUTFIT(this.m_PlayerType,this.m_PlayerColours[0],this.m_PlayerColours[1],this.m_PlayerColours[2],this.m_PlayerColours[3],this.m_PlayerAddons,this.m_MountType);
+         }
+         super.hide(param1);
+      }
+      
       protected function onPlayerTypeChange(param1:PropertyChangeEvent) : void
       {
          if(param1 != null)
@@ -388,16 +398,6 @@ package tibia.creatures
       public function get mountOutfits() : IList
       {
          return this.m_MountOutfits;
-      }
-      
-      override public function close(param1:Boolean) : void
-      {
-         var _loc2_:Connection = null;
-         if(Boolean(param1) && (_loc2_ = Tibia.s_GetConnection()) != null)
-         {
-            _loc2_.sendCSETOUTFIT(this.m_PlayerType,this.m_PlayerColours[0],this.m_PlayerColours[1],this.m_PlayerColours[2],this.m_PlayerColours[3],this.m_PlayerAddons,this.m_MountType);
-         }
-         super.close(param1);
       }
       
       protected function onPlayerColoursChange(param1:PropertyChangeEvent) : void

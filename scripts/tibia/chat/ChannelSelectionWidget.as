@@ -56,30 +56,7 @@ package tibia.chat
          }
       }
       
-      protected function onChannelEnter(param1:FlexEvent) : void
-      {
-         var _loc2_:* = false;
-         var _loc3_:CloseEvent = null;
-         if(param1 != null)
-         {
-            _loc2_ = this.m_UIInput.text.length > 0;
-            _loc3_ = new CloseEvent(CloseEvent.CLOSE,false,true);
-            _loc3_.detail = !!_loc2_?int(PopUpBase.BUTTON_OKAY):int(PopUpBase.BUTTON_CANCEL);
-            dispatchEvent(_loc3_);
-            if(!_loc3_.cancelable || !_loc3_.isDefaultPrevented())
-            {
-               this.m_UIInput.removeEventListener(FlexEvent.ENTER,this.onChannelEnter);
-               this.close(_loc2_);
-            }
-         }
-      }
-      
-      public function get channels() : IList
-      {
-         return this.m_Channels;
-      }
-      
-      override public function close(param1:Boolean) : void
+      override public function hide(param1:Boolean = false) : void
       {
          var _loc2_:ChatStorage = Tibia.s_GetChatStorage();
          if(Boolean(param1) && _loc2_ != null)
@@ -93,7 +70,30 @@ package tibia.chat
                _loc2_.joinChannel(this.m_UIList.selectedItem.ID);
             }
          }
-         super.close(param1);
+         super.hide(param1);
+      }
+      
+      protected function onChannelEnter(param1:FlexEvent) : void
+      {
+         var _loc2_:* = false;
+         var _loc3_:CloseEvent = null;
+         if(param1 != null)
+         {
+            _loc2_ = this.m_UIInput.text.length > 0;
+            _loc3_ = new CloseEvent(CloseEvent.CLOSE,false,true);
+            _loc3_.detail = !!_loc2_?int(PopUpBase.BUTTON_OKAY):int(PopUpBase.BUTTON_CANCEL);
+            dispatchEvent(_loc3_);
+            if(!_loc3_.cancelable || !_loc3_.isDefaultPrevented())
+            {
+               this.m_UIInput.removeEventListener(FlexEvent.ENTER,this.onChannelEnter);
+               this.hide(_loc2_);
+            }
+         }
+      }
+      
+      public function get channels() : IList
+      {
+         return this.m_Channels;
       }
       
       protected function onChannelDoubleClick(param1:MouseEvent) : void
@@ -111,7 +111,7 @@ package tibia.chat
                if(!_loc3_.cancelable || !_loc3_.isDefaultPrevented())
                {
                   this.m_UIList.removeEventListener(MouseEvent.DOUBLE_CLICK,this.onChannelDoubleClick);
-                  this.close(true);
+                  this.hide(true);
                }
             }
          }

@@ -88,7 +88,7 @@ package tibia.options.configurationWidgetClasses
             _loc2_.text = resourceManager.getString(ConfigurationWidget.BUNDLE,"MESSAGE_DLG_RESET_TEXT");
             _loc2_.title = resourceManager.getString(ConfigurationWidget.BUNDLE,"MESSAGE_DLG_RESET_TITLE");
             _loc2_.addEventListener(CloseEvent.CLOSE,this.onConfirmReset);
-            PopUpBase.s_GetInstance().embeddedDialog = _loc2_;
+            PopUpBase.getCurrent().embeddedDialog = _loc2_;
          }
       }
       

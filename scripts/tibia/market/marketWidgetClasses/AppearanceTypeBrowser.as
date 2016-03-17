@@ -112,7 +112,7 @@ package tibia.market.marketWidgetClasses
             this.filterEditor = _loc3_.marketBrowserEditor;
             this.filterDepot = _loc3_.marketBrowserDepot;
          }
-         var _loc4_:MarketWidget = PopUpBase.s_GetInstance() as MarketWidget;
+         var _loc4_:MarketWidget = PopUpBase.getCurrent() as MarketWidget;
          if(_loc4_ != null)
          {
             _loc4_.addEventListener(MarketWidget.DEPOT_CONTENT_CHANGE,this.onFilterChange,false,EventPriority.DEFAULT,true);
@@ -527,7 +527,7 @@ package tibia.market.marketWidgetClasses
          {
             return;
          }
-         var _loc2_:MarketWidget = PopUpBase.s_GetInstance() as MarketWidget;
+         var _loc2_:MarketWidget = PopUpBase.getCurrent() as MarketWidget;
          this.filterDepot = Boolean(this.filterDepot) && (_loc2_ != null && _loc2_.getDepotAmount(param1) > 0);
       }
       
@@ -570,7 +570,7 @@ package tibia.market.marketWidgetClasses
             Market = null;
             if(this.filterDepot)
             {
-               Market = PopUpBase.s_GetInstance() as MarketWidget;
+               Market = PopUpBase.getCurrent() as MarketWidget;
             }
             Filter = null;
             if(this.filterEditor > -1)

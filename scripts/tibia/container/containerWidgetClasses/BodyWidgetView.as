@@ -413,9 +413,8 @@ package tibia.container.containerWidgetClasses
       
       override protected function measure() : void
       {
-         var _loc1_:EdgeMetrics = null;
          super.measure();
-         _loc1_ = viewMetricsAndPadding;
+         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
          measuredMinWidth = measuredWidth = _loc1_.left + WIDGET_VIEW_WIDTH + _loc1_.right;
          measuredMinHeight = measuredHeight = _loc1_.top + WIDGET_VIEW_HEIGHT + _loc1_.bottom;
       }

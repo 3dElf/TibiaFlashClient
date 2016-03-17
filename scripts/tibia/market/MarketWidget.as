@@ -215,21 +215,6 @@ package tibia.market
          return _loc2_.getMarketObjectType(param1) != null;
       }
       
-      override public function close(param1:Boolean) : void
-      {
-         var _loc2_:Connection = null;
-         if(!param1)
-         {
-            _loc2_ = Tibia.s_GetConnection();
-            if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
-            {
-               _loc2_.sendCMARKETLEAVE();
-            }
-         }
-         this.m_PendingDelay.reset();
-         super.close(param1);
-      }
-      
       public function cancelOffer(param1:Offer) : void
       {
          if(Boolean(this.serverResponsePending) || param1 == null)
@@ -452,9 +437,19 @@ package tibia.market
          }
       }
       
-      private function onTypeChange(param1:Event) : void
+      override public function hide(param1:Boolean = false) : void
       {
-         this.selectedType = ITypeComponent(param1.target).selectedType;
+         var _loc2_:Connection = null;
+         if(!param1)
+         {
+            _loc2_ = Tibia.s_GetConnection();
+            if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
+            {
+               _loc2_.sendCMARKETLEAVE();
+            }
+         }
+         this.m_PendingDelay.reset();
+         super.hide(param1);
       }
       
       public function set depotContent(param1:Array) : void
@@ -512,6 +507,11 @@ package tibia.market
       public function get serverResponsePending() : Boolean
       {
          return this.m_ResponsePending;
+      }
+      
+      private function onTypeChange(param1:Event) : void
+      {
+         this.selectedType = ITypeComponent(param1.target).selectedType;
       }
       
       override protected function commitProperties() : void

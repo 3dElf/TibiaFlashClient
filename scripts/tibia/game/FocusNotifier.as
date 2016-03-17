@@ -2,7 +2,9 @@ package tibia.game
 {
    import mx.core.UIComponent;
    import mx.managers.ISystemManager;
+   import flash.utils.setTimeout;
    import flash.events.Event;
+   import flash.events.MouseEvent;
    import mx.controls.Label;
    
    public class FocusNotifier extends UIComponent
@@ -11,12 +13,12 @@ package tibia.game
       private static var s_Instance:tibia.game.FocusNotifier = null;
       
       private static const BUNDLE:String = "Global";
-      
-      private static var s_Visible:Boolean = false;
        
-      private var m_UIConstructed:Boolean = false;
-      
       private var m_UILabel:Label = null;
+      
+      private var m_CaptureMouse:Boolean = false;
+      
+      private var m_IsShown:Boolean = false;
       
       public function FocusNotifier()
       {
@@ -24,45 +26,13 @@ package tibia.game
          mouseEnabled = false;
       }
       
-      public static function s_Show() : void
+      public static function getInstance() : tibia.game.FocusNotifier
       {
-         var _loc1_:ISystemManager = null;
          if(s_Instance == null)
          {
             s_Instance = new tibia.game.FocusNotifier();
          }
-         if(!s_Visible)
-         {
-            if(Tibia.s_GetInputHandler() != null)
-            {
-               Tibia.s_GetInputHandler().captureKeyboard = false;
-            }
-            _loc1_ = Tibia.s_GetInstance().systemManager;
-            _loc1_.addChildToSandboxRoot("popUpChildren",s_Instance);
-            _loc1_.addEventListener(Event.RESIZE,s_Instance.onResize);
-            s_Visible = true;
-         }
-      }
-      
-      public static function s_Hide() : void
-      {
-         var _loc1_:ISystemManager = null;
-         if(s_Visible)
-         {
-            s_Visible = false;
-            _loc1_ = Tibia.s_GetInstance().systemManager;
-            _loc1_.removeChildFromSandboxRoot("popUpChildren",s_Instance);
-            _loc1_.removeEventListener(Event.RESIZE,s_Instance.onResize);
-            if(Tibia.s_GetInputHandler() != null)
-            {
-               Tibia.s_GetInputHandler().captureKeyboard = true;
-            }
-            if(PopUpBase.s_GetInstance() != null)
-            {
-               PopUpBase.s_GetInstance().setFocus();
-               PopUpBase.s_GetInstance().drawFocus(false);
-            }
-         }
+         return s_Instance;
       }
       
       override protected function measure() : void
@@ -70,8 +40,50 @@ package tibia.game
          super.measure();
          if(stage != null)
          {
-            measuredMinHeight = measuredHeight = stage.stageHeight;
-            measuredMinWidth = measuredWidth = stage.stageWidth;
+            measuredMinHeight = Math.max(measuredMinHeight,stage.stageHeight);
+            measuredHeight = Math.max(measuredHeight,stage.stageHeight);
+            measuredMinWidth = Math.max(measuredMinWidth,stage.stageWidth);
+            measuredWidth = Math.max(measuredWidth,stage.stageWidth);
+         }
+      }
+      
+      public function get isShown() : Boolean
+      {
+         return this.m_IsShown;
+      }
+      
+      public function hide(param1:Boolean = true) : void
+      {
+         var _loc2_:ISystemManager = null;
+         if(Boolean(this.captureMouse) && Boolean(param1))
+         {
+            setTimeout(this.hide,50,false);
+         }
+         else if(this.m_IsShown)
+         {
+            _loc2_ = Tibia.s_GetInstance().systemManager;
+            _loc2_.removeEventListener(Event.RESIZE,this.onResize);
+            _loc2_.removeEventListener(MouseEvent.MOUSE_DOWN,this.onMouseEvent);
+            _loc2_.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN,this.onMouseEvent);
+            _loc2_.removeChildFromSandboxRoot("popUpChildren",this);
+            this.m_IsShown = false;
+            if(Tibia.s_GetInputHandler() != null)
+            {
+               Tibia.s_GetInputHandler().captureKeyboard = true;
+            }
+            if(PopUpBase.getCurrent() != null)
+            {
+               PopUpBase.getCurrent().setFocus();
+               PopUpBase.getCurrent().drawFocus(false);
+            }
+         }
+      }
+      
+      private function onMouseEvent(param1:MouseEvent) : void
+      {
+         if(Boolean(this.isShown) && Boolean(this.captureMouse))
+         {
+            param1.preventDefault();
          }
       }
       
@@ -108,15 +120,39 @@ package tibia.game
       
       override protected function createChildren() : void
       {
-         if(!this.m_UIConstructed)
+         super.createChildren();
+         this.m_UILabel = new Label();
+         this.m_UILabel.styleName = this;
+         this.m_UILabel.text = resourceManager.getString(BUNDLE,"MSG_CLICK_TO_ACTIVATE");
+         addChild(this.m_UILabel);
+      }
+      
+      public function show() : void
+      {
+         var _loc1_:ISystemManager = null;
+         if(!this.m_IsShown)
          {
-            super.createChildren();
-            this.m_UILabel = new Label();
-            this.m_UILabel.styleName = this;
-            this.m_UILabel.text = resourceManager.getString(BUNDLE,"MSG_CLICK_TO_ACTIVATE");
-            addChild(this.m_UILabel);
-            this.m_UIConstructed = true;
+            if(Tibia.s_GetInputHandler() != null)
+            {
+               Tibia.s_GetInputHandler().captureKeyboard = false;
+            }
+            _loc1_ = Tibia.s_GetInstance().systemManager;
+            _loc1_.addChildToSandboxRoot("popUpChildren",this);
+            _loc1_.addEventListener(Event.RESIZE,this.onResize);
+            _loc1_.addEventListener(MouseEvent.MOUSE_DOWN,this.onMouseEvent);
+            _loc1_.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,this.onMouseEvent);
+            this.m_IsShown = true;
          }
+      }
+      
+      public function set captureMouse(param1:Boolean) : void
+      {
+         this.m_CaptureMouse = param1;
+      }
+      
+      public function get captureMouse() : Boolean
+      {
+         return this.m_CaptureMouse;
       }
    }
 }

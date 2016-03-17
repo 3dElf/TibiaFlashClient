@@ -1,8 +1,6 @@
 package tibia.game
 {
    import tibia.appearances.widgetClasses.SkinnedAppearanceRenderer;
-   import tibia.network.Connection;
-   import shared.utility.StringHelper;
    import flash.events.Event;
    import mx.containers.HBox;
    import mx.controls.Text;
@@ -10,7 +8,9 @@ package tibia.game
    import flash.events.KeyboardEvent;
    import tibia.input.PreventWhitespaceInput;
    import flash.events.TextEvent;
+   import shared.utility.StringHelper;
    import tibia.appearances.AppearanceTypeRef;
+   import tibia.network.Connection;
    import tibia.appearances.AppearanceStorage;
    import tibia.appearances.AppearanceType;
    
@@ -66,20 +66,6 @@ package tibia.game
          height = 300;
          this.invalidateReadOnly();
          this.invalidateHeading();
-      }
-      
-      override public function close(param1:Boolean) : void
-      {
-         var _loc2_:Connection = null;
-         if(param1)
-         {
-            _loc2_ = null;
-            if(!this.m_ReadOnly && (_loc2_ = Tibia.s_GetConnection()) != null && Boolean(_loc2_.isGameRunning))
-            {
-               _loc2_.sendCEDITTEXT(this.m_ID,StringHelper.s_CleanNewline(this.m_UIText.text));
-            }
-         }
-         super.close(param1);
       }
       
       public function get author() : String
@@ -184,6 +170,20 @@ package tibia.game
       public function get object() : AppearanceTypeRef
       {
          return this.m_ObjectRef;
+      }
+      
+      override public function hide(param1:Boolean = false) : void
+      {
+         var _loc2_:Connection = null;
+         if(param1)
+         {
+            _loc2_ = null;
+            if(!this.m_ReadOnly && (_loc2_ = Tibia.s_GetConnection()) != null && Boolean(_loc2_.isGameRunning))
+            {
+               _loc2_.sendCEDITTEXT(this.m_ID,StringHelper.s_CleanNewline(this.m_UIText.text));
+            }
+         }
+         super.hide(param1);
       }
       
       protected function invalidateHeading() : void

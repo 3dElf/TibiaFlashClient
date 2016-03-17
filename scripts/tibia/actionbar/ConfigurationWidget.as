@@ -136,6 +136,20 @@ package tibia.actionbar
          return this.m_SlotIndex;
       }
       
+      override public function hide(param1:Boolean = false) : void
+      {
+         if(Boolean(param1) && this.actionBar != null && this.slotIndex >= 0 && this.slotIndex < tibia.actionbar.ActionBar.NUM_ACTIONS)
+         {
+            this.m_ActionBar.setAction(this.slotIndex,this.m_UIActionEditor.action);
+         }
+         super.hide(param1);
+      }
+      
+      public function get actionBar() : tibia.actionbar.ActionBar
+      {
+         return this.m_ActionBar;
+      }
+      
       override protected function createChildren() : void
       {
          var _loc1_:HRule = null;
@@ -177,20 +191,6 @@ package tibia.actionbar
             addChild(_loc2_);
             this.m_UIConstructed = true;
          }
-      }
-      
-      public function get actionBar() : tibia.actionbar.ActionBar
-      {
-         return this.m_ActionBar;
-      }
-      
-      override public function close(param1:Boolean) : void
-      {
-         if(Boolean(param1) && this.actionBar != null && this.slotIndex >= 0 && this.slotIndex < tibia.actionbar.ActionBar.NUM_ACTIONS)
-         {
-            this.m_ActionBar.setAction(this.slotIndex,this.m_UIActionEditor.action);
-         }
-         super.close(param1);
       }
    }
 }

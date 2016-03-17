@@ -22,7 +22,7 @@ package tibia.game
    public class ContextMenuBase extends VBox
    {
       
-      protected static var s_CurrentContextMenu:tibia.game.ContextMenuBase = null;
+      protected static var s_Current:tibia.game.ContextMenuBase = null;
        
       public function ContextMenuBase()
       {
@@ -35,18 +35,9 @@ package tibia.game
          addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE,this.onChildExistenceChanged);
       }
       
-      public static function s_HideInstance() : void
+      public static function getCurrent() : tibia.game.ContextMenuBase
       {
-         if(s_CurrentContextMenu != null)
-         {
-            s_CurrentContextMenu.hide();
-            s_CurrentContextMenu = null;
-         }
-      }
-      
-      public static function s_GetInstance() : tibia.game.ContextMenuBase
-      {
-         return s_CurrentContextMenu;
+         return s_Current;
       }
       
       public function hide() : void
@@ -75,7 +66,7 @@ package tibia.game
          }
          ToolTipManager.currentTarget = null;
          ToolTipManager.enabled = true;
-         s_CurrentContextMenu = null;
+         s_Current = null;
       }
       
       private function onMouseHide(param1:MouseEvent) : void
@@ -133,11 +124,11 @@ package tibia.game
          }
          ToolTipManager.currentTarget = null;
          ToolTipManager.enabled = false;
-         if(s_CurrentContextMenu != null)
+         if(s_Current != null)
          {
-            s_CurrentContextMenu.hide();
+            s_Current.hide();
          }
-         s_CurrentContextMenu = this;
+         s_Current = this;
       }
       
       protected function createTextItem(param1:String, param2:Function) : TextItem

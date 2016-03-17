@@ -3,6 +3,9 @@ package tibia.reporting
    import tibia.game.PopUpBase;
    import flash.events.MouseEvent;
    import mx.controls.Button;
+   import tibia.network.Connection;
+   import tibia.chat.ChannelMessage;
+   import tibia.reporting.reportType.Type;
    import shared.controls.CustomButton;
    import tibia.reporting.reportWidgetClasses.ConfirmView;
    import tibia.reporting.reportWidgetClasses.ReasonView;
@@ -13,9 +16,6 @@ package tibia.reporting
    import mx.resources.ResourceManager;
    import tibia.chat.MessageMode;
    import flash.display.DisplayObjectContainer;
-   import tibia.network.Connection;
-   import tibia.chat.ChannelMessage;
-   import tibia.reporting.reportType.Type;
    
    public class ReportWidget extends PopUpBase
    {
@@ -151,10 +151,43 @@ package tibia.reporting
                case EXTRA_BUTTON_SUBMIT:
                   if(this.m_Step == STEP_CONFIRM && Boolean(this.m_UIStepConfirm.isDataValid))
                   {
-                     this.close(true);
+                     this.hide(true);
                   }
             }
          }
+      }
+      
+      override public function hide(param1:Boolean = false) : void
+      {
+         var _loc3_:Connection = null;
+         var _loc4_:int = 0;
+         var _loc2_:int = footer.numChildren - 1;
+         while(_loc2_ >= 0)
+         {
+            footer.getChildAt(_loc2_).removeEventListener(MouseEvent.CLICK,this.onExtraButton);
+            _loc2_--;
+         }
+         if(param1)
+         {
+            _loc3_ = Tibia.s_GetConnection();
+            if(_loc3_ != null && Boolean(_loc3_.isGameRunning))
+            {
+               switch(this.m_Type)
+               {
+                  case Type.REPORT_BOT:
+                     _loc3_.sendBotCRULEVIOLATIONREPORT(this.m_UIStepReason.selectedReason.value,this.m_Reportable.characterName,this.m_UIStepComment.comment);
+                     break;
+                  case Type.REPORT_NAME:
+                     _loc3_.sendNameCRULEVIOLATIONREPORT(this.m_UIStepReason.selectedReason.value,this.m_Reportable.characterName,this.m_UIStepComment.comment,this.m_UIStepComment.translation);
+                     break;
+                  case Type.REPORT_STATEMENT:
+                     _loc4_ = ChannelMessage(this.m_Reportable).ID;
+                     _loc3_.sendStatementCRULEVIOLATIONREPORT(this.m_UIStepReason.selectedReason.value,this.m_Reportable.characterName,this.m_UIStepComment.comment,this.m_UIStepComment.translation,_loc4_);
+               }
+               s_ReportTimestamp = Tibia.s_FrameTimestamp;
+            }
+         }
+         super.hide(param1);
       }
       
       override protected function commitProperties() : void
@@ -312,39 +345,6 @@ package tibia.reporting
       override public function get buttonFlags() : uint
       {
          return super.buttonFlags | this.m_ExtraButtonFlags;
-      }
-      
-      override public function close(param1:Boolean) : void
-      {
-         var _loc3_:Connection = null;
-         var _loc4_:int = 0;
-         var _loc2_:int = footer.numChildren - 1;
-         while(_loc2_ >= 0)
-         {
-            footer.getChildAt(_loc2_).removeEventListener(MouseEvent.CLICK,this.onExtraButton);
-            _loc2_--;
-         }
-         if(param1)
-         {
-            _loc3_ = Tibia.s_GetConnection();
-            if(_loc3_ != null && Boolean(_loc3_.isGameRunning))
-            {
-               switch(this.m_Type)
-               {
-                  case Type.REPORT_BOT:
-                     _loc3_.sendBotCRULEVIOLATIONREPORT(this.m_UIStepReason.selectedReason.value,this.m_Reportable.characterName,this.m_UIStepComment.comment);
-                     break;
-                  case Type.REPORT_NAME:
-                     _loc3_.sendNameCRULEVIOLATIONREPORT(this.m_UIStepReason.selectedReason.value,this.m_Reportable.characterName,this.m_UIStepComment.comment,this.m_UIStepComment.translation);
-                     break;
-                  case Type.REPORT_STATEMENT:
-                     _loc4_ = ChannelMessage(this.m_Reportable).ID;
-                     _loc3_.sendStatementCRULEVIOLATIONREPORT(this.m_UIStepReason.selectedReason.value,this.m_Reportable.characterName,this.m_UIStepComment.comment,this.m_UIStepComment.translation,_loc4_);
-               }
-               s_ReportTimestamp = Tibia.s_FrameTimestamp;
-            }
-         }
-         super.close(param1);
       }
       
       public function get type() : int

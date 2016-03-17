@@ -27,25 +27,27 @@ package
    import tibia.game.OptionsAsset;
    import tibia.controls.GridContainer;
    import mx.core.IUIComponent;
+   import mx.events.CloseEvent;
+   import tibia.game.PopUpBase;
    import tibia.worldmap.WorldMapWidget;
    import tibia.game.FocusNotifier;
    import tibia.sidebar.ToggleBar;
    import tibia.controls.GameWindowContainer;
    import tibia.sidebar.SideBarWidget;
-   import tibia.game.MessageWidget;
-   import tibia.game.PopUpBase;
-   import mx.events.CloseEvent;
    import tibia.network.ConnectionEvent;
+   import tibia.game.MessageWidget;
+   import tibia.game.GameEvent;
+   import tibia.game.CharacterSelectionWidget;
    import flash.utils.getTimer;
-   import tibia.game.ContextMenuBase;
+   import tibia.game.LoginWaitWidget;
    import mx.managers.CursorManager;
+   import tibia.game.ContextMenuBase;
+   import tibia.game.PopUpQueue;
    import mx.binding.Binding;
    import tibia.sidebar.SideBarSet;
    import mx.containers.BoxDirection;
    import tibia.actionbar.ActionBarSet;
-   import tibia.game.CharacterSelectionWidget;
    import flash.events.ErrorEvent;
-   import tibia.game.GameEvent;
    import shared.controls.CustomDividedBox;
    import tibia.game.Asset;
    import tibia.game.AccountCharacter;
@@ -73,7 +75,6 @@ package
    import flash.display.StageAlign;
    import flash.display.StageScaleMode;
    import flash.events.MouseEvent;
-   import tibia.game.LoginWaitWidget;
    import mx.containers.HBox;
    import flash.utils.getDefinitionByName;
    import flash.events.IOErrorEvent;
@@ -179,13 +180,13 @@ package
       
       private var _embed_css_images_Slot_InventoryNecklace_png_2014202173:Class;
       
+      protected var m_ContainerStorage:ContainerStorage = null;
+      
       private var _embed_css_images_BarsHealth_compact_RedLow2_png_337611332:Class;
       
       private var _embed_css_images_Icons_Conditions_Drowning_png_404373814:Class;
       
       private var _embed_css_images_slot_Hotkey_Disabled_png_1031923524:Class;
-      
-      protected var m_ContainerStorage:ContainerStorage = null;
       
       private var _embed_css_images_Icons_WidgetMenu_BattleList_active_png_1257186516:Class;
       
@@ -221,8 +222,6 @@ package
       
       private var _embed_css_images_Icons_WidgetMenu_Minimap_active_over_png_114313384:Class;
       
-      private var _embed_css_images_Icons_ProgressBars_MagicLevel_png_1295886286:Class;
-      
       private var _embed_css_images_Icons_CombatControls_AutochaseOn_over_png_892669907:Class;
       
       private var _embed_css_images_Icons_Conditions_PZ_png_2092078262:Class;
@@ -241,7 +240,7 @@ package
       
       protected var m_DefaultOptionsAsset:OptionsAsset = null;
       
-      private var _embed_css_images_Minimap_ZoomIn_over_png_1945098751:Class;
+      private var _embed_css_images_Icons_ProgressBars_MagicLevel_png_1295886286:Class;
       
       private var _embed_css_images_Button_Standard_tileable_end_gold_idle_png_1541494231:Class;
       
@@ -261,6 +260,8 @@ package
       
       private var _embed_css_images_Icons_CombatControls_DefensiveOn_active_png_1775522369:Class;
       
+      private var _embed_css_images_Minimap_ZoomIn_over_png_1945098751:Class;
+      
       private var _embed_css_images_Icons_CombatControls_Unmounted_over_png_1217894830:Class;
       
       protected var m_CurrentOptionsDirty:Boolean = false;
@@ -273,7 +274,7 @@ package
       
       private var _embed_css_images_slot_container_disabled_png_1870894953:Class;
       
-      private var _embed_css_images_Icons_WidgetMenu_Inventory_idle_over_png_1027989551:Class;
+      private var _embed_css_images_Arrow_ScrollTabs_over_png_1661840144:Class;
       
       private var _embed_css_images_BG_Bars_default_enpieceOrnamented_png_1634799741:Class;
       
@@ -287,9 +288,9 @@ package
       
       private var _embed_css_images_BuySellTab_active_png_1120145002:Class;
       
-      private var _embed_css_images_Icons_CombatControls_DefensiveOff_over_png_516849533:Class;
+      private var _embed_css_images_Icons_WidgetMenu_Inventory_idle_over_png_1027989551:Class;
       
-      private var _embed_css_images_Arrow_ScrollTabs_over_png_1661840144:Class;
+      private var _embed_css_images_Icons_CombatControls_DefensiveOff_over_png_516849533:Class;
       
       private var _embed_css_images_Icons_CombatControls_Mounted_idle_png_606771065:Class;
       
@@ -385,13 +386,13 @@ package
       
       private var _embed_css_images_Icons_TradeLists_ListDisplay_over_png_1148474522:Class;
       
-      private var _embed_css_images_Icons_BattleList_HideMonsters_idle_png_1444013376:Class;
+      private var _2043305115m_UIActionBarRight:VActionBarWidget;
       
       private var _embed_css_images_Icons_BattleList_HidePlayers_active_png_816743815:Class;
       
       private var _embed_css_images_Icons_CombatControls_Mounted_over_png_280680839:Class;
       
-      private var _2043305115m_UIActionBarRight:VActionBarWidget;
+      private var _embed_css_images_Icons_BattleList_HideMonsters_idle_png_1444013376:Class;
       
       private var _embed_css_images_Icons_ProgressBars_CompactStyle_png_1657348297:Class;
       
@@ -406,8 +407,6 @@ package
       private var _embed_css_images_Minimap_ZoomIn_idle_png_148060927:Class;
       
       private var _embed_css_images_Icons_BattleList_HideMonsters_active_over_png_844353547:Class;
-      
-      private var _embed_css_images_Icons_CombatControls_MediumOn_idle_png_2006950715:Class;
       
       private var _1404294856m_UIGameWindow:GridContainer;
       
@@ -429,7 +428,7 @@ package
       
       private var _embed_css_images_Icons_WidgetMenu_VipList_active_over_png_458955390:Class;
       
-      private var _embed_css_images_Slot_container_png_459286860:Class;
+      private var _embed_css_images_Icons_CombatControls_MediumOn_idle_png_2006950715:Class;
       
       private var _embed_css_images_Slot_Statusicon_png_1205487926:Class;
       
@@ -437,21 +436,21 @@ package
       
       private var _embed_css_images_Icons_BattleList_HideSkulled_idle_png_703329883:Class;
       
-      private var _embed_css_images_Scrollbar_Arrow_up_over_png_1190877289:Class;
+      private var _embed_css_images_Slot_container_png_459286860:Class;
       
-      private var _embed_css_images_Button_LockHotkeys_UnLocked_over_png_465865258:Class;
+      private var _embed_css_images_Scrollbar_Arrow_up_over_png_1190877289:Class;
       
       private var _embed_css_images_BarsHealth_compact_Mana_png_1978403468:Class;
       
       mx_internal var _bindingsBeginWithWord:Object;
+      
+      private var _embed_css_images_Button_LockHotkeys_UnLocked_over_png_465865258:Class;
       
       private var _embed_css_images_Icons_CombatControls_AttackYes_over_png_576765842:Class;
       
       private var _embed_css_images_ChatWindow_Mover_png_1586722714:Class;
       
       private var _64278965m_UISideBarA:SideBarWidget;
-      
-      private var _embed_css_images_BarsHealth_default_GreenLow_png_1424547504:Class;
       
       public var _Tibia_Array1:Array;
       
@@ -468,6 +467,8 @@ package
       private var _embed_css_images_Scrollbar_Arrow_down_over_png_2029736576:Class;
       
       private var _embed_css_images_Button_Standard_tileable_end_pressed_png_511008536:Class;
+      
+      private var _embed_css_images_BarsHealth_default_GreenLow_png_1424547504:Class;
       
       private var _embed_css_images_Arrow_Minimap_LevelUpDown_idle_png_472129902:Class;
       
@@ -505,13 +506,13 @@ package
       
       private var _embed_css_images_Slot_InventoryAmmo_png_1349976539:Class;
       
+      private var _embed_css_images_ChatTab_tileable_EndpieceRound_png_1454831582:Class;
+      
       private var _embed_css_images_Scrollbar_Handler_png_494656513:Class;
       
       private var _748017946m_UIInputHandler:InputHandler;
       
       private var _embed_css_images_Minimap_ZoomOut_pressed_png_896595726:Class;
-      
-      private var _embed_css_images_ChatTab_tileable_EndpieceRound_png_1454831582:Class;
       
       private var _embed_css_images_BarsHealth_compact_GreenLow_png_884103854:Class;
       
@@ -577,11 +578,13 @@ package
       
       private var _embed_css_images_Icons_BattleList_PartyMembers_active_over_png_1973139:Class;
       
+      private var _embed_css_images_Button_Standard_tileable_end_gold_over_png_1419162327:Class;
+      
       protected var m_SpellStorage:SpellStorage = null;
       
       private var _embed_css_images_BarsHealth_default_RedLow_png_1926040274:Class;
       
-      private var _embed_css_images_Button_Standard_tileable_end_gold_over_png_1419162327:Class;
+      private var _embed_css_images_Icons_ProgressBars_AxeFighting_png_785395263:Class;
       
       private var _embed_css_images_Slot_InventoryRing_png_675224537:Class;
       
@@ -596,8 +599,6 @@ package
       private var _embed_css_images_Button_Standard_tileable_end_disabled_png_1963201312:Class;
       
       private var _embed_css_images_Icons_ProgressBars_DefaultStyle_png_2075786565:Class;
-      
-      private var _embed_css_images_Icons_ProgressBars_AxeFighting_png_785395263:Class;
       
       private var _embed_css_images_Arrow_ScrollTabs_disabled_png_1547955240:Class;
       
@@ -1391,14 +1392,15 @@ package
          }
       }
       
-      public function set m_UIChatWidget(param1:ChatWidget) : void
+      private function onCloseLogoutCharacter(param1:CloseEvent) : void
       {
-         var _loc2_:Object = null;
-         _loc2_ = this._883427326m_UIChatWidget;
-         if(_loc2_ !== param1)
+         if(param1.detail == PopUpBase.BUTTON_YES)
          {
-            this._883427326m_UIChatWidget = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UIChatWidget",_loc2_,param1));
+            this.m_CharacterPending = -1;
+            if(this.m_Connection != null)
+            {
+               this.m_Connection.disconnect(false);
+            }
          }
       }
       
@@ -1416,11 +1418,22 @@ package
       {
          if(param1.type == Event.ACTIVATE)
          {
-            FocusNotifier.s_Hide();
+            FocusNotifier.getInstance().hide();
          }
          else
          {
-            FocusNotifier.s_Show();
+            FocusNotifier.getInstance().show();
+         }
+      }
+      
+      public function set m_UIChatWidget(param1:ChatWidget) : void
+      {
+         var _loc2_:Object = null;
+         _loc2_ = this._883427326m_UIChatWidget;
+         if(_loc2_ !== param1)
+         {
+            this._883427326m_UIChatWidget = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UIChatWidget",_loc2_,param1));
          }
       }
       
@@ -1494,9 +1507,20 @@ package
          }
       }
       
+      private function onConnectionConnecting(param1:ConnectionEvent) : void
+      {
+         visible = false;
+         var _loc2_:MessageWidget = new MessageWidget();
+         _loc2_.buttonFlags = PopUpBase.BUTTON_CANCEL;
+         _loc2_.keyboardFlags = PopUpBase.KEY_ESCAPE;
+         _loc2_.message = resourceManager.getString(BUNDLE,"DLG_CONNECTING_TEXT",[param1.message]);
+         _loc2_.title = resourceManager.getString(BUNDLE,"DLG_CONNECTING_TITLE");
+         _loc2_.addEventListener(CloseEvent.CLOSE,this.onCloseLoginCharacter);
+         _loc2_.show();
+      }
+      
       public function saveLocalData() : void
       {
-         this.m_ChatStorage.saveChannels();
          this.m_MiniMapStorage.saveSectors(true);
       }
       
@@ -1506,13 +1530,11 @@ package
          {
             throw new Error("Tibia.logoutCharacter: Not connected.");
          }
-         this.saveLocalData();
-         this.saveOptions();
          var _loc1_:MessageWidget = new MessageWidget();
          _loc1_.buttonFlags = PopUpBase.BUTTON_YES | PopUpBase.BUTTON_NO;
          _loc1_.message = resourceManager.getString(BUNDLE,"DLG_LOGOUT_TEXT");
          _loc1_.title = resourceManager.getString(BUNDLE,"DLG_LOGOUT_TITLE");
-         _loc1_.addEventListener(CloseEvent.CLOSE,this.onConfirmLogoutClose);
+         _loc1_.addEventListener(CloseEvent.CLOSE,this.onCloseLogoutCharacter);
          _loc1_.show();
       }
       
@@ -1520,6 +1542,32 @@ package
       public function get m_UIWorldMapWidget() : WorldMapWidget
       {
          return this._1314206572m_UIWorldMapWidget;
+      }
+      
+      private function onCloseChangeCharacter(param1:CloseEvent) : void
+      {
+         var _loc2_:GameEvent = null;
+         if(param1.detail == PopUpBase.BUTTON_OKAY && Boolean(this.m_Connection.isConnected))
+         {
+            this.m_CharacterPending = CharacterSelectionWidget(param1.currentTarget).selectedCharacter;
+            if(this.m_Connection != null)
+            {
+               this.m_Connection.disconnect(false);
+            }
+         }
+         else if(param1.detail == PopUpBase.BUTTON_OKAY && !this.m_Connection.isConnected)
+         {
+            this.m_CharacterPending = CharacterSelectionWidget(param1.currentTarget).selectedCharacter;
+            this.loginCharacter();
+         }
+         else if(!(param1.detail != PopUpBase.BUTTON_OKAY && Boolean(this.m_Connection.isConnected)))
+         {
+            if(param1.detail != PopUpBase.BUTTON_OKAY && !this.m_Connection.isConnected)
+            {
+               _loc2_ = new GameEvent(GameEvent.CLOSE,true,false);
+               dispatchEvent(_loc2_);
+            }
+         }
       }
       
       public function set m_UISideBarC(param1:SideBarWidget) : void
@@ -1539,28 +1587,25 @@ package
          invalidateProperties();
       }
       
+      private function onConnectionDisconnected(param1:ConnectionEvent) : void
+      {
+         visible = false;
+         this.saveLocalData();
+         this.saveOptions();
+         if(this.m_CharacterPending == -1)
+         {
+            this.changeCharacter();
+         }
+         else
+         {
+            this.loginCharacter();
+         }
+      }
+      
       [Bindable(event="propertyChange")]
       public function get m_UIActionBarTop() : HActionBarWidget
       {
          return this._1423351586m_UIActionBarTop;
-      }
-      
-      protected function onConnectionDisconnected(param1:ConnectionEvent) : void
-      {
-         if(param1 != null)
-         {
-            visible = false;
-            this.resetLocalData();
-            this.resetOptions();
-            if(this.m_CharacterPending == -1)
-            {
-               this.changeCharacter();
-            }
-            else
-            {
-               this.loginCharacter();
-            }
-         }
       }
       
       private function onUploadOptionsComplete(param1:Event) : void
@@ -1570,8 +1615,71 @@ package
          this.m_CurrentOptionsUploading = false;
       }
       
-      public function resetLocalData() : void
+      private function onCloseLoginWait(param1:CloseEvent) : void
       {
+         if(param1.detail == LoginWaitWidget.TIMOUT_EXPIRED)
+         {
+            this.m_CharacterPending = this.m_CharacterCurrent;
+         }
+         else
+         {
+            this.m_CharacterPending = -1;
+         }
+         if(this.m_Connection != null)
+         {
+            this.m_Connection.disconnect(false);
+         }
+      }
+      
+      public function set m_UISideBarToggleRight(param1:ToggleBar) : void
+      {
+         var _loc2_:Object = null;
+         _loc2_ = this._665607314m_UISideBarToggleRight;
+         if(_loc2_ !== param1)
+         {
+            this._665607314m_UISideBarToggleRight = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UISideBarToggleRight",_loc2_,param1));
+         }
+      }
+      
+      public function get isRunning() : Boolean
+      {
+         return this.m_Connection != null && Boolean(this.m_Connection.isGameRunning) || Boolean(this.m_CurrentOptionsUploading);
+      }
+      
+      public function set m_UIWorldMapWidget(param1:WorldMapWidget) : void
+      {
+         var _loc2_:Object = null;
+         _loc2_ = this._1314206572m_UIWorldMapWidget;
+         if(_loc2_ !== param1)
+         {
+            this._1314206572m_UIWorldMapWidget = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UIWorldMapWidget",_loc2_,param1));
+         }
+      }
+      
+      public function set options(param1:OptionsStorage) : void
+      {
+         if(this.m_Options != param1)
+         {
+            if(this.m_Options != null)
+            {
+               this.m_Options.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
+               this.m_Options.unload();
+            }
+            this.m_Options = param1;
+            this.m_UncommittedOptions = true;
+            invalidateProperties();
+            if(this.m_Options != null)
+            {
+               this.m_Options.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
+            }
+         }
+      }
+      
+      public function reset() : void
+      {
+         var _loc1_:int = 0;
          if(this.m_ChatStorage != null)
          {
             this.m_ChatStorage.reset();
@@ -1629,56 +1737,25 @@ package
             this.m_UIWorldMapWidget.player = this.m_Player;
             this.m_UIWorldMapWidget.worldMapStorage = this.m_WorldMapStorage;
          }
-         ContextMenuBase.s_HideInstance();
-         CursorManager.getInstance().removeAllCursors();
-         PopUpBase.s_HideInstance();
+         if(this.options != null)
+         {
+            _loc1_ = 0;
+            for each(_loc1_ in this.options.getSideBarSetIDs())
+            {
+               this.options.getSideBarSet(_loc1_).closeVolatileWidgets();
+            }
+            for each(_loc1_ in this.options.getBuddySetIDs())
+            {
+               this.options.getBuddySet(_loc1_).markBuddiesOffline();
+            }
+         }
          this.invalidateOptions();
-      }
-      
-      public function set m_UISideBarToggleRight(param1:ToggleBar) : void
-      {
-         var _loc2_:Object = null;
-         _loc2_ = this._665607314m_UISideBarToggleRight;
-         if(_loc2_ !== param1)
+         CursorManager.getInstance().removeAllCursors();
+         if(ContextMenuBase.getCurrent() != null)
          {
-            this._665607314m_UISideBarToggleRight = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UISideBarToggleRight",_loc2_,param1));
+            ContextMenuBase.getCurrent().hide();
          }
-      }
-      
-      public function get isRunning() : Boolean
-      {
-         return this.m_Connection != null && Boolean(this.m_Connection.isGameRunning) || Boolean(this.m_CurrentOptionsUploading);
-      }
-      
-      public function set m_UIWorldMapWidget(param1:WorldMapWidget) : void
-      {
-         var _loc2_:Object = null;
-         _loc2_ = this._1314206572m_UIWorldMapWidget;
-         if(_loc2_ !== param1)
-         {
-            this._1314206572m_UIWorldMapWidget = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UIWorldMapWidget",_loc2_,param1));
-         }
-      }
-      
-      public function set options(param1:OptionsStorage) : void
-      {
-         if(this.m_Options != param1)
-         {
-            if(this.m_Options != null)
-            {
-               this.m_Options.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
-               this.m_Options.unload();
-            }
-            this.m_Options = param1;
-            this.m_UncommittedOptions = true;
-            invalidateProperties();
-            if(this.m_Options != null)
-            {
-               this.m_Options.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
-            }
-         }
+         PopUpQueue.getInstance().hideByPriority(PopUpBase.DEFAULT_PRIORITY);
       }
       
       private function _Tibia_bindingsSetup() : Array
@@ -1796,34 +1873,30 @@ package
       
       public function changeCharacter() : void
       {
-         if(this.m_Connection != null && Boolean(this.m_Connection.isConnected))
-         {
-            this.saveLocalData();
-         }
          var _loc1_:CharacterSelectionWidget = new CharacterSelectionWidget();
          _loc1_.characters = this.m_CharacterList;
          _loc1_.selectedCharacter = this.m_CharacterCurrent;
-         _loc1_.addEventListener(CloseEvent.CLOSE,this.onConfirmChangeClose);
+         _loc1_.addEventListener(CloseEvent.CLOSE,this.onCloseChangeCharacter);
          _loc1_.show();
       }
       
-      protected function onConnectionConnected(param1:ConnectionEvent) : void
+      private function onConnectionConnected(param1:ConnectionEvent) : void
       {
-         if(param1 != null)
+         visible = true;
+         PopUpQueue.getInstance().hideByPriority(PopUpBase.DEFAULT_PRIORITY);
+         if(ContextMenuBase.getCurrent() != null)
          {
-            visible = true;
-            ContextMenuBase.s_HideInstance();
-            PopUpBase.s_HideInstance();
-            if(this.m_UIWorldMapWidget != null)
-            {
-               this.m_UIWorldMapWidget.player = this.m_Player;
-            }
-            if(this.m_UIStatusWidget != null)
-            {
-               this.m_UIStatusWidget.player = this.m_Player;
-            }
-            this.updateCombatTactics();
+            ContextMenuBase.getCurrent().hide();
          }
+         if(this.m_UIWorldMapWidget != null)
+         {
+            this.m_UIWorldMapWidget.player = this.m_Player;
+         }
+         if(this.m_UIStatusWidget != null)
+         {
+            this.m_UIStatusWidget.player = this.m_Player;
+         }
+         this.updateCombatTactics();
       }
       
       protected function onAppearancesLoadError(param1:ErrorEvent) : void
@@ -1842,31 +1915,14 @@ package
          }
       }
       
-      protected function onConfirmChangeClose(param1:CloseEvent) : void
+      private function onCloseLoginCharacter(param1:CloseEvent) : void
       {
-         var _loc2_:GameEvent = null;
-         if(param1 != null && param1.currentTarget is CharacterSelectionWidget)
+         if(param1.detail == PopUpBase.BUTTON_CANCEL)
          {
-            if(param1.detail == PopUpBase.BUTTON_OKAY && Boolean(this.m_Connection.isConnected))
+            this.m_CharacterPending = -1;
+            if(this.m_Connection != null)
             {
-               this.m_CharacterPending = CharacterSelectionWidget(param1.currentTarget).selectedCharacter;
-               if(this.m_Connection != null)
-               {
-                  this.m_Connection.disconnect(false);
-               }
-            }
-            else if(param1.detail == PopUpBase.BUTTON_OKAY && !this.m_Connection.isConnected)
-            {
-               this.m_CharacterPending = CharacterSelectionWidget(param1.currentTarget).selectedCharacter;
-               this.loginCharacter();
-            }
-            else if(!(param1.detail != PopUpBase.BUTTON_OKAY && Boolean(this.m_Connection.isConnected)))
-            {
-               if(param1.detail != PopUpBase.BUTTON_OKAY && !this.m_Connection.isConnected)
-               {
-                  _loc2_ = new GameEvent(GameEvent.CLOSE,true,false);
-                  dispatchEvent(_loc2_);
-               }
+               this.m_Connection.disconnect(false);
             }
          }
       }
@@ -1911,18 +1967,6 @@ package
       public function get m_UIActionBarLeft() : VActionBarWidget
       {
          return this._1174474338m_UIActionBarLeft;
-      }
-      
-      protected function onCancelLogin(param1:CloseEvent) : void
-      {
-         if(param1 != null && param1.detail == PopUpBase.BUTTON_CANCEL)
-         {
-            this.m_CharacterPending = -1;
-            if(this.m_Connection != null)
-            {
-               this.m_Connection.disconnect(false);
-            }
-         }
       }
       
       public function setContent(param1:Vector.<Asset>) : void
@@ -1971,8 +2015,7 @@ package
          {
             throw new ArgumentError("Tibia.loginCharacter: Invalid pending character.");
          }
-         this.resetLocalData();
-         this.resetOptions();
+         this.reset();
          this.m_CharacterCurrent = this.m_CharacterPending;
          this.m_CharacterPending = -1;
          var _loc1_:AccountCharacter = AccountCharacter(this.m_CharacterList[this.m_CharacterCurrent]);
@@ -2061,6 +2104,20 @@ package
          }
       }
       
+      private function onConnectionError(param1:ConnectionEvent) : void
+      {
+         visible = false;
+         this.saveLocalData();
+         this.saveOptions();
+         var _loc2_:MessageWidget = new MessageWidget();
+         _loc2_.buttonFlags = PopUpBase.BUTTON_OKAY;
+         _loc2_.keyboardFlags = PopUpBase.KEY_ENTER;
+         _loc2_.message = resourceManager.getString(BUNDLE,"DLG_ERROR_TEXT_GENERAL",[param1.message]);
+         _loc2_.title = resourceManager.getString(BUNDLE,"DLG_ERROR_TITLE");
+         _loc2_.addEventListener(CloseEvent.CLOSE,this.onCloseError);
+         _loc2_.show();
+      }
+      
       private function onSecondaryTimer(param1:TimerEvent) : void
       {
          var _loc2_:int = getTimer();
@@ -2088,15 +2145,15 @@ package
          this.m_SpellStorage = new SpellStorage();
          this.m_WorldMapStorage = new WorldMapStorage();
          this.m_Connection = new Connection(this.m_AppearanceStorage,this.m_ChatStorage,this.m_ContainerStorage,this.m_CreatureStorage,this.m_MiniMapStorage,this.m_Player,this.m_SpellStorage,this.m_WorldMapStorage);
-         this.m_Connection.addEventListener(ConnectionEvent.ERROR,this.onConnectionEvent);
-         this.m_Connection.addEventListener(ConnectionEvent.CONNECTING,this.onConnectionEvent);
-         this.m_Connection.addEventListener(ConnectionEvent.LOGINERROR,this.onConnectionEvent);
-         this.m_Connection.addEventListener(ConnectionEvent.LOGINADVICE,this.onConnectionEvent);
-         this.m_Connection.addEventListener(ConnectionEvent.LOGINWAIT,this.onConnectionLoginWait);
          this.m_Connection.addEventListener(ConnectionEvent.CONNECTED,this.onConnectionConnected);
+         this.m_Connection.addEventListener(ConnectionEvent.CONNECTING,this.onConnectionConnecting);
+         this.m_Connection.addEventListener(ConnectionEvent.CONNECTION_LOST,this.onConnectionLost);
          this.m_Connection.addEventListener(ConnectionEvent.DEAD,this.onConnectionDeath);
          this.m_Connection.addEventListener(ConnectionEvent.DISCONNECTED,this.onConnectionDisconnected);
-         this.m_Connection.addEventListener(ConnectionEvent.CONNECTION_LOST,this.onConnectionLost);
+         this.m_Connection.addEventListener(ConnectionEvent.ERROR,this.onConnectionError);
+         this.m_Connection.addEventListener(ConnectionEvent.LOGINADVICE,this.onConnectionLoginAdvice);
+         this.m_Connection.addEventListener(ConnectionEvent.LOGINERROR,this.onConnectionLoginError);
+         this.m_Connection.addEventListener(ConnectionEvent.LOGINWAIT,this.onConnectionLoginWait);
          this.m_SeconaryTimer = new Timer(50);
          this.m_SeconaryTimer.addEventListener(TimerEvent.TIMER,this.onSecondaryTimer);
          this.m_SeconaryTimer.start();
@@ -2106,6 +2163,20 @@ package
       public function get m_UIActionBarBottom() : HActionBarWidget
       {
          return this._629924354m_UIActionBarBottom;
+      }
+      
+      private function onConnectionLoginError(param1:ConnectionEvent) : void
+      {
+         visible = false;
+         this.saveLocalData();
+         this.saveOptions();
+         var _loc2_:MessageWidget = new MessageWidget();
+         _loc2_.buttonFlags = PopUpBase.BUTTON_OKAY;
+         _loc2_.keyboardFlags = PopUpBase.KEY_ENTER;
+         _loc2_.message = resourceManager.getString(BUNDLE,"DLG_LOGINERROR_TEXT",[param1.message]);
+         _loc2_.title = resourceManager.getString(BUNDLE,"DLG_LOGINERROR_TITLE");
+         _loc2_.addEventListener(CloseEvent.CLOSE,this.onCloseError);
+         _loc2_.show();
       }
       
       public function __m_UIGameWindow_resize(param1:ResizeEvent) : void
@@ -2123,6 +2194,12 @@ package
             _loc1_.document = this;
          }
          return _loc1_;
+      }
+      
+      private function onCloseError(param1:CloseEvent) : void
+      {
+         var _loc2_:GameEvent = new GameEvent(GameEvent.CLOSE,true,false);
+         dispatchEvent(_loc2_);
       }
       
       public function set m_UIInputHandler(param1:InputHandler) : void
@@ -2155,7 +2232,8 @@ package
          {
             updateClientSize();
          });
-         FocusNotifier.s_Show();
+         FocusNotifier.getInstance().captureMouse = true;
+         FocusNotifier.getInstance().show();
          if(this.m_UICenterColumn != null && this.m_UICenterColumn.numDividers > 0 && this.m_UICenterColumn.getDividerAt(0) != null)
          {
             this.m_UICenterColumn.getDividerAt(0).doubleClickEnabled = true;
@@ -2170,24 +2248,6 @@ package
          return this._64278965m_UISideBarA;
       }
       
-      private function resetOptions() : void
-      {
-         var _loc1_:int = 0;
-         if(this.options != null)
-         {
-            _loc1_ = 0;
-            for each(_loc1_ in this.options.getSideBarSetIDs())
-            {
-               this.options.getSideBarSet(_loc1_).closeVolatileWidgets();
-            }
-            for each(_loc1_ in this.options.getBuddySetIDs())
-            {
-               this.options.getBuddySet(_loc1_).markBuddiesOffline();
-            }
-            this.invalidateOptions();
-         }
-      }
-      
       [Bindable(event="propertyChange")]
       public function get m_UISideBarB() : SideBarWidget
       {
@@ -2200,27 +2260,22 @@ package
          return this._64278962m_UISideBarD;
       }
       
-      protected function onConnectionDeath(param1:ConnectionEvent) : void
+      private function onConnectionDeath(param1:ConnectionEvent) : void
       {
-         var _loc2_:Number = NaN;
-         var _loc3_:MessageWidget = null;
-         if(param1 != null)
+         visible = true;
+         var _loc2_:Number = param1.data is Number?Number(Number(param1.data)):Number(100);
+         var _loc3_:MessageWidget = new MessageWidget();
+         _loc3_.title = resourceManager.getString(BUNDLE,"DLG_DEAD_TITLE");
+         if(_loc2_ < 100)
          {
-            visible = true;
-            _loc2_ = param1.data is Number?Number(Number(param1.data)):Number(100);
-            _loc3_ = new MessageWidget();
-            _loc3_.title = resourceManager.getString(BUNDLE,"DLG_DEAD_TITLE");
-            if(_loc2_ < 100)
-            {
-               _loc3_.message = resourceManager.getString(BUNDLE,"DLG_DEAD_TEXT_UNFAIR",[_loc2_]);
-            }
-            else
-            {
-               _loc3_.message = resourceManager.getString(BUNDLE,"DLG_DEAD_TEXT_FAIR");
-            }
-            _loc3_.addEventListener(CloseEvent.CLOSE,this.onConfirmDeathClose);
-            _loc3_.show();
+            _loc3_.message = resourceManager.getString(BUNDLE,"DLG_DEAD_TEXT_UNFAIR",[_loc2_]);
          }
+         else
+         {
+            _loc3_.message = resourceManager.getString(BUNDLE,"DLG_DEAD_TEXT_FAIR");
+         }
+         _loc3_.addEventListener(CloseEvent.CLOSE,this.onCloseDeath);
+         _loc3_.show();
       }
       
       public function ___Tibia_Application1_deactivate(param1:Event) : void
@@ -2236,15 +2291,6 @@ package
          }
       }
       
-      public function saveOptions() : void
-      {
-         if(!this.m_CurrentOptionsUploading && Boolean(this.m_CurrentOptionsDirty))
-         {
-            this.m_CurrentOptionsAsset.upload(this.options.marshall());
-            this.m_CurrentOptionsUploading = true;
-         }
-      }
-      
       public function ___Tibia_Application1_applicationComplete(param1:FlexEvent) : void
       {
          this.onApplicationComplete(param1);
@@ -2255,6 +2301,16 @@ package
          this.onPreinitialise(param1);
       }
       
+      public function saveOptions() : void
+      {
+         this.m_ChatStorage.saveChannels();
+         if(!this.m_CurrentOptionsUploading && Boolean(this.m_CurrentOptionsDirty))
+         {
+            this.m_CurrentOptionsAsset.upload(this.options.marshall());
+            this.m_CurrentOptionsUploading = true;
+         }
+      }
+      
       public function set m_UISideBarToggleLeft(param1:ToggleBar) : void
       {
          var _loc2_:Object = null;
@@ -2263,57 +2319,6 @@ package
          {
             this._2056921391m_UISideBarToggleLeft = param1;
             this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"m_UISideBarToggleLeft",_loc2_,param1));
-         }
-      }
-      
-      protected function onConnectionEvent(param1:ConnectionEvent) : void
-      {
-         var _loc2_:MessageWidget = null;
-         if(param1 != null)
-         {
-            visible = false;
-            _loc2_ = null;
-            switch(param1.type)
-            {
-               case ConnectionEvent.ERROR:
-                  this.resetLocalData();
-                  this.resetOptions();
-                  _loc2_ = new MessageWidget();
-                  _loc2_.buttonFlags = PopUpBase.BUTTON_OKAY;
-                  _loc2_.keyboardFlags = PopUpBase.KEY_ENTER;
-                  _loc2_.message = resourceManager.getString(BUNDLE,"DLG_ERROR_TEXT_GENERAL",[param1.message]);
-                  _loc2_.title = resourceManager.getString(BUNDLE,"DLG_ERROR_TITLE");
-                  _loc2_.addEventListener(CloseEvent.CLOSE,this.onCloseErrorMessage);
-                  break;
-               case ConnectionEvent.CONNECTING:
-                  _loc2_ = new MessageWidget();
-                  _loc2_.buttonFlags = PopUpBase.BUTTON_CANCEL;
-                  _loc2_.keyboardFlags = PopUpBase.KEY_ESCAPE;
-                  _loc2_.message = resourceManager.getString(BUNDLE,"DLG_CONNECTING_TEXT",[param1.message]);
-                  _loc2_.title = resourceManager.getString(BUNDLE,"DLG_CONNECTING_TITLE");
-                  _loc2_.addEventListener(CloseEvent.CLOSE,this.onCancelLogin);
-                  break;
-               case ConnectionEvent.LOGINADVICE:
-                  _loc2_ = new MessageWidget();
-                  _loc2_.buttonFlags = PopUpBase.BUTTON_OKAY;
-                  _loc2_.keyboardFlags = PopUpBase.KEY_ENTER;
-                  _loc2_.message = resourceManager.getString(BUNDLE,"DLG_LOGINADVICE_TEXT",[param1.message]);
-                  _loc2_.title = resourceManager.getString(BUNDLE,"DLG_LOGINADVICE_TITLE");
-                  break;
-               case ConnectionEvent.LOGINERROR:
-                  this.resetLocalData();
-                  this.resetOptions();
-                  _loc2_ = new MessageWidget();
-                  _loc2_.buttonFlags = PopUpBase.BUTTON_OKAY;
-                  _loc2_.keyboardFlags = PopUpBase.KEY_ENTER;
-                  _loc2_.message = resourceManager.getString(BUNDLE,"DLG_LOGINERROR_TEXT",[param1.message]);
-                  _loc2_.title = resourceManager.getString(BUNDLE,"DLG_LOGINERROR_TITLE");
-                  _loc2_.addEventListener(CloseEvent.CLOSE,this.onCloseErrorMessage);
-            }
-            if(_loc2_ != null)
-            {
-               _loc2_.show();
-            }
          }
       }
       
@@ -2342,47 +2347,25 @@ package
          return _loc1_;
       }
       
+      private function onCloseDeath(param1:CloseEvent) : void
+      {
+         if(param1.detail == PopUpBase.BUTTON_OKAY)
+         {
+            this.m_CharacterPending = this.m_CharacterCurrent;
+         }
+         else
+         {
+            this.m_CharacterPending = -1;
+         }
+         if(this.m_Connection != null)
+         {
+            this.m_Connection.disconnect(false);
+         }
+      }
+      
       public function get options() : OptionsStorage
       {
          return this.m_Options;
-      }
-      
-      protected function onConfirmWaitClose(param1:CloseEvent) : void
-      {
-         if(param1 != null)
-         {
-            if(param1.detail == LoginWaitWidget.TIMOUT_EXPIRED)
-            {
-               this.m_CharacterPending = this.m_CharacterCurrent;
-            }
-            else
-            {
-               this.m_CharacterPending = -1;
-            }
-            if(this.m_Connection != null)
-            {
-               this.m_Connection.disconnect(false);
-            }
-         }
-      }
-      
-      protected function onConfirmDeathClose(param1:CloseEvent) : void
-      {
-         if(param1 != null)
-         {
-            if(param1.detail == PopUpBase.BUTTON_OKAY)
-            {
-               this.m_CharacterPending = this.m_CharacterCurrent;
-            }
-            else
-            {
-               this.m_CharacterPending = -1;
-            }
-            if(this.m_Connection != null)
-            {
-               this.m_Connection.disconnect(false);
-            }
-         }
       }
       
       private function updateGameWindowSize() : void
@@ -2413,16 +2396,6 @@ package
          }
       }
       
-      protected function onCloseErrorMessage(param1:CloseEvent) : void
-      {
-         var _loc2_:GameEvent = null;
-         if(param1 != null)
-         {
-            _loc2_ = new GameEvent(GameEvent.CLOSE,true,false);
-            dispatchEvent(_loc2_);
-         }
-      }
-      
       private function loadOptions() : void
       {
          if(this.options == null)
@@ -2431,18 +2404,16 @@ package
          }
       }
       
-      protected function onConnectionLoginWait(param1:ConnectionEvent) : void
+      private function onConnectionLoginWait(param1:ConnectionEvent) : void
       {
-         var _loc2_:LoginWaitWidget = null;
-         if(param1 != null)
-         {
-            visible = false;
-            _loc2_ = new LoginWaitWidget();
-            _loc2_.message = param1.message;
-            _loc2_.timeout = Number(param1.data);
-            _loc2_.addEventListener(CloseEvent.CLOSE,this.onConfirmWaitClose);
-            _loc2_.show();
-         }
+         visible = false;
+         this.saveLocalData();
+         this.saveOptions();
+         var _loc2_:LoginWaitWidget = new LoginWaitWidget();
+         _loc2_.message = param1.message;
+         _loc2_.timeout = Number(param1.data);
+         _loc2_.addEventListener(CloseEvent.CLOSE,this.onCloseLoginWait);
+         _loc2_.show();
       }
       
       [Bindable(event="propertyChange")]
@@ -2451,12 +2422,12 @@ package
          return this._748017946m_UIInputHandler;
       }
       
-      protected function onConnectionLost(param1:ConnectionEvent) : void
+      private function onConnectionLost(param1:ConnectionEvent) : void
       {
          var a_Event:ConnectionEvent = param1;
          visible = false;
-         this.resetLocalData();
-         this.resetOptions();
+         this.saveLocalData();
+         this.saveOptions();
          var Dialog:MessageWidget = new MessageWidget();
          Dialog.buttonFlags = PopUpBase.BUTTON_OKAY;
          Dialog.keyboardFlags = PopUpBase.KEY_ENTER;
@@ -2535,15 +2506,15 @@ package
          }
          if(this.m_Connection != null)
          {
-            this.m_Connection.removeEventListener(ConnectionEvent.ERROR,this.onConnectionEvent);
-            this.m_Connection.removeEventListener(ConnectionEvent.CONNECTING,this.onConnectionEvent);
-            this.m_Connection.removeEventListener(ConnectionEvent.LOGINERROR,this.onConnectionEvent);
-            this.m_Connection.removeEventListener(ConnectionEvent.LOGINADVICE,this.onConnectionEvent);
-            this.m_Connection.removeEventListener(ConnectionEvent.LOGINWAIT,this.onConnectionLoginWait);
             this.m_Connection.removeEventListener(ConnectionEvent.CONNECTED,this.onConnectionConnected);
+            this.m_Connection.removeEventListener(ConnectionEvent.CONNECTING,this.onConnectionConnecting);
+            this.m_Connection.removeEventListener(ConnectionEvent.CONNECTION_LOST,this.onConnectionLost);
             this.m_Connection.removeEventListener(ConnectionEvent.DEAD,this.onConnectionDeath);
             this.m_Connection.removeEventListener(ConnectionEvent.DISCONNECTED,this.onConnectionDisconnected);
-            this.m_Connection.removeEventListener(ConnectionEvent.CONNECTION_LOST,this.onConnectionLost);
+            this.m_Connection.removeEventListener(ConnectionEvent.ERROR,this.onConnectionError);
+            this.m_Connection.removeEventListener(ConnectionEvent.LOGINADVICE,this.onConnectionLoginAdvice);
+            this.m_Connection.removeEventListener(ConnectionEvent.LOGINERROR,this.onConnectionLoginError);
+            this.m_Connection.removeEventListener(ConnectionEvent.LOGINWAIT,this.onConnectionLoginWait);
             this.m_Connection.disconnect(true);
          }
          if(this.m_SeconaryTimer != null)
@@ -2554,10 +2525,13 @@ package
          {
             this.m_UIInputHandler.dispose();
          }
-         ContextMenuBase.s_HideInstance();
          CursorManager.getInstance().removeAllCursors();
-         FocusNotifier.s_Hide();
-         PopUpBase.s_HideInstance();
+         if(ContextMenuBase.getCurrent() != null)
+         {
+            ContextMenuBase.getCurrent().hide();
+         }
+         FocusNotifier.getInstance().hide();
+         PopUpQueue.getInstance().hideByPriority(int.MAX_VALUE);
          this.invalidateOptions();
       }
       
@@ -2601,6 +2575,18 @@ package
             _loc1_.document = this;
          }
          return _loc1_;
+      }
+      
+      private function onConnectionLoginAdvice(param1:ConnectionEvent) : void
+      {
+         visible = false;
+         var _loc2_:MessageWidget = new MessageWidget();
+         _loc2_.buttonFlags = PopUpBase.BUTTON_OKAY;
+         _loc2_.keyboardFlags = PopUpBase.KEY_ENTER;
+         _loc2_.message = resourceManager.getString(BUNDLE,"DLG_LOGINADVICE_TEXT",[param1.message]);
+         _loc2_.priority = PopUpBase.DEFAULT_PRIORITY + 1;
+         _loc2_.title = resourceManager.getString(BUNDLE,"DLG_LOGINADVICE_TITLE");
+         _loc2_.show();
       }
       
       [Bindable(event="propertyChange")]
@@ -2717,18 +2703,6 @@ package
       public function get m_UIRootContainer() : HBox
       {
          return this._1494180935m_UIRootContainer;
-      }
-      
-      protected function onConfirmLogoutClose(param1:CloseEvent) : void
-      {
-         if(param1 != null && param1.detail == PopUpBase.BUTTON_YES)
-         {
-            this.m_CharacterPending = -1;
-            if(this.m_Connection != null)
-            {
-               this.m_Connection.disconnect(false);
-            }
-         }
       }
       
       private function _Tibia_bindingExprs() : void

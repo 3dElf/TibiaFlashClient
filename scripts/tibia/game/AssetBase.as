@@ -145,7 +145,7 @@ package tibia.game
       
       protected function makeDownloadRequest() : URLRequest
       {
-         var _loc1_:URLRequest = new URLRequest(this.url);
+         var _loc1_:URLRequest = new URLRequest(URLHelper.s_NoCache(this.url));
          return _loc1_;
       }
       

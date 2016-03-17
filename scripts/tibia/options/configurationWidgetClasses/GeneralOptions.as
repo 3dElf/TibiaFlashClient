@@ -72,7 +72,7 @@ package tibia.options.configurationWidgetClasses
       private function showEmbeddedDialog(param1:int, param2:String = null) : void
       {
          var _loc3_:EmbeddedDialog = null;
-         if(param1 != DIALOG_NONE && (_loc3_ = PopUpBase.s_GetInstance().embeddedDialog) == null)
+         if(param1 != DIALOG_NONE && (_loc3_ = PopUpBase.getCurrent().embeddedDialog) == null)
          {
             _loc3_ = new EmbeddedDialog();
             _loc3_.addEventListener(CloseEvent.CLOSE,this.onCloseEmbeddedDialog,false,EventPriority.DEFAULT,true);
@@ -88,7 +88,7 @@ package tibia.options.configurationWidgetClasses
                _loc3_.title = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_OPTIONS_DLG_RESET_TITLE");
                _loc3_.text = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_OPTIONS_DLG_RESET_TEXT");
          }
-         PopUpBase.s_GetInstance().embeddedDialog = _loc3_;
+         PopUpBase.getCurrent().embeddedDialog = _loc3_;
       }
       
       private function onButtonClick(param1:MouseEvent) : void
@@ -179,7 +179,7 @@ package tibia.options.configurationWidgetClasses
             if(param1.detail == EmbeddedDialog.YES)
             {
                this.m_Options.reset();
-               _loc3_ = PopUpBase.s_GetParentPopUp(this) as ConfigurationWidget;
+               _loc3_ = PopUpBase.getParentPopUp(this) as ConfigurationWidget;
                if(_loc3_ != null)
                {
                   _loc3_.options = _loc3_.options;

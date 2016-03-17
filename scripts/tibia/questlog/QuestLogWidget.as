@@ -80,6 +80,17 @@ package tibia.questlog
          }
       }
       
+      override public function hide(param1:Boolean = false) : void
+      {
+         var _loc2_:int = footer.numChildren - 1;
+         while(_loc2_ >= 0)
+         {
+            footer.getChildAt(_loc2_).removeEventListener(MouseEvent.CLICK,this.onExtraButton);
+            _loc2_--;
+         }
+         super.hide(param1);
+      }
+      
       protected function onExtraButton(param1:MouseEvent) : void
       {
          var _loc2_:Button = null;
@@ -101,7 +112,7 @@ package tibia.questlog
                      dispatchEvent(_loc3_);
                      if(!_loc3_.cancelable || !_loc3_.isDefaultPrevented())
                      {
-                        this.close(false);
+                        this.hide(false);
                      }
                   }
                   else
@@ -272,17 +283,6 @@ package tibia.questlog
             this.m_UncommittedExtraButtonFlags = true;
             invalidateProperties();
          }
-      }
-      
-      override public function close(param1:Boolean) : void
-      {
-         var _loc2_:int = footer.numChildren - 1;
-         while(_loc2_ >= 0)
-         {
-            footer.getChildAt(_loc2_).removeEventListener(MouseEvent.CLICK,this.onExtraButton);
-            _loc2_--;
-         }
-         super.close(param1);
       }
       
       override public function get buttonFlags() : uint

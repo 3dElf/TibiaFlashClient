@@ -51,6 +51,24 @@ package tibia.game
          }
       }
       
+      override public function hide(param1:Boolean = false) : void
+      {
+         if(this.m_Timeout != null)
+         {
+            this.m_Timeout.stop();
+         }
+         super.hide(param1);
+      }
+      
+      private function scrollToSelectedCharacter() : void
+      {
+         if(this.m_UIList != null)
+         {
+            this.m_UIList.validateNow();
+            this.m_UIList.scrollToIndex(this.m_SelectedCharacter);
+         }
+      }
+      
       private function onTimeout(param1:TimerEvent) : void
       {
          var _loc2_:CloseEvent = null;
@@ -61,17 +79,8 @@ package tibia.game
             dispatchEvent(_loc2_);
             if(!_loc2_.cancelable || !_loc2_.isDefaultPrevented())
             {
-               this.close(false);
+               this.hide(false);
             }
-         }
-      }
-      
-      private function scrollToSelectedCharacter() : void
-      {
-         if(this.m_UIList != null)
-         {
-            this.m_UIList.validateNow();
-            this.m_UIList.scrollToIndex(this.m_SelectedCharacter);
          }
       }
       
@@ -199,15 +208,6 @@ package tibia.game
          {
             this.selectedCharacter = this.m_UIList.selectedIndex;
          }
-      }
-      
-      override public function close(param1:Boolean) : void
-      {
-         if(this.m_Timeout != null)
-         {
-            this.m_Timeout.stop();
-         }
-         super.close(param1);
       }
    }
 }

@@ -113,7 +113,7 @@ package tibia.options.configurationWidgetClasses
       private function onFinishEditBinding(param1:CloseEvent) : void
       {
          var _loc3_:OptionsEditorEvent = null;
-         var _loc2_:PopUpBase = PopUpBase.s_GetInstance();
+         var _loc2_:PopUpBase = PopUpBase.getCurrent();
          if(_loc2_ != null)
          {
             _loc2_.keyboardFlags = PopUpBase.KEY_ENTER | PopUpBase.KEY_ESCAPE;
@@ -200,7 +200,7 @@ package tibia.options.configurationWidgetClasses
          var _loc6_:String = null;
          var _loc7_:Array = null;
          var _loc8_:int = 0;
-         var _loc2_:PopUpBase = PopUpBase.s_GetInstance();
+         var _loc2_:PopUpBase = PopUpBase.getCurrent();
          var _loc3_:EmbeddedDialog = null;
          var _loc4_:String = null;
          if(param1.currentTarget == this.m_UINextSet)
@@ -475,7 +475,7 @@ package tibia.options.configurationWidgetClasses
       {
          var _loc7_:Array = null;
          var _loc8_:Object = null;
-         var _loc3_:PopUpBase = PopUpBase.s_GetInstance();
+         var _loc3_:PopUpBase = PopUpBase.getCurrent();
          if(_loc3_ == null || _loc3_.embeddedDialog != null)
          {
             return;
@@ -882,7 +882,7 @@ package tibia.options.configurationWidgetClasses
       
       private function onSelectionChange(param1:IndexChangedEvent) : void
       {
-         var _loc2_:PopUpBase = PopUpBase.s_GetInstance();
+         var _loc2_:PopUpBase = PopUpBase.getCurrent();
          if(_loc2_ != null && param1.currentTarget is ViewStack && ViewStack(param1.currentTarget).selectedChild != this)
          {
             _loc2_.embeddedDialog = null;

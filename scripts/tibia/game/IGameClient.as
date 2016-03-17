@@ -13,6 +13,8 @@ package tibia.game
       
       function setContent(param1:Vector.<Asset>) : void;
       
+      function saveLocalData() : void;
+      
       function setOptions(param1:OptionsAsset, param2:OptionsAsset) : void;
       
       function unload() : void;
