@@ -33,6 +33,8 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
+      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       public static const CREATURE_ICON_SIZE:int = 24;
@@ -99,8 +101,6 @@ package tibia.creatures.battlelistWidgetClasses
       
       static var s_Rect:Rectangle = new Rectangle();
       
-      private static var s_BattlelistMarksView:MarksView = null;
-      
       protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
       
       protected static const SKILL_HITPOINTS_PERCENT:int = 3;
@@ -118,6 +118,10 @@ package tibia.creatures.battlelistWidgetClasses
       protected static const SUMMON_OTHERS:int = 2;
       
       protected static const SKILL_NONE:int = -1;
+      
+      private static var s_BattlelistMarksView:MarksView = null;
+      
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       protected static const GUILD_MEMBER:int = 4;
       
@@ -165,6 +169,8 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
       
+      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
+      
       protected static const GUILD_WAR_ALLY:int = 1;
       
       protected static const PK_NONE:int = 0;
@@ -179,9 +185,9 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const SUMMON_OWN:int = 1;
       
-      protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
-      
       protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
+      protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
       
@@ -193,11 +199,11 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const PROFESSION_KNIGHT:int = 1;
       
-      protected static const UNDERGROUND_LAYER:int = 2;
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
-      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
+      protected static const UNDERGROUND_LAYER:int = 2;
       
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
@@ -263,9 +269,7 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const GUILD_WAR_ENEMY:int = 2;
       
-      protected static const MAPSIZE_W:int = 10;
-      
-      protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
+      protected static const SKILL_LEVEL:int = 1;
       
       protected static const STATE_STRENGTHENED:int = 12;
       
@@ -275,7 +279,7 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
       
-      protected static const SKILL_LEVEL:int = 1;
+      protected static const SUMMON_NONE:int = 0;
       
       protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
       
@@ -283,13 +287,19 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const STATE_FIGHTING:int = 7;
       
-      protected static const SUMMON_NONE:int = 0;
+      protected static const NPC_SPEECH_QUEST:uint = 3;
       
-      protected static const SKILL_GOSTRENGTH:int = 6;
+      protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      protected static const MAPSIZE_W:int = 10;
+      
+      protected static const NPC_SPEECH_NONE:uint = 0;
       
       protected static const PK_MAX_FLASHING_TIME:uint = 5000;
       
-      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      protected static const SKILL_GOSTRENGTH:int = 6;
       
       {
          s_InitialiseStyle();

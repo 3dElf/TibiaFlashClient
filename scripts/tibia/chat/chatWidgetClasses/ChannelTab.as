@@ -139,6 +139,13 @@ package tibia.chat.chatWidgetClasses
          }
       }
       
+      public function forceHighlight() : void
+      {
+         this.m_Highlight = true;
+         this.m_UncomittedHighlight = true;
+         invalidateProperties();
+      }
+      
       public function get highlight() : Boolean
       {
          return this.m_Highlight;

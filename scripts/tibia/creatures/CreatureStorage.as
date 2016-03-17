@@ -19,6 +19,8 @@ package tibia.creatures
       
       protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
+      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       public static const SORT_DISTANCE_ASC:int = 2;
@@ -47,6 +49,8 @@ package tibia.creatures
       
       protected static const FIELD_HEIGHT:int = 24;
       
+      public static const FILTER_PLAYER:int = 1;
+      
       protected static const PARTY_MEMBER:int = 2;
       
       protected static const STATE_DRUNK:int = 3;
@@ -60,6 +64,8 @@ package tibia.creatures
       protected static const TYPE_SUMMON_OTHERS:int = 4;
       
       protected static const SKILL_STAMINA:int = 17;
+      
+      private static const SPEECH_FLAG_CLASS:Class = CreatureStorage_SPEECH_FLAG_CLASS;
       
       protected static const TYPE_NPC:int = 2;
       
@@ -106,6 +112,8 @@ package tibia.creatures
       protected static const SUMMON_OTHERS:int = 2;
       
       protected static const SKILL_NONE:int = -1;
+      
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       protected static const GUILD_MEMBER:int = 4;
       
@@ -159,6 +167,8 @@ package tibia.creatures
       
       protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
       
+      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
+      
       protected static const GUILD_WAR_ALLY:int = 1;
       
       protected static const PK_NONE:int = 0;
@@ -173,9 +183,9 @@ package tibia.creatures
       
       protected static const SUMMON_OWN:int = 1;
       
-      protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
-      
       protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
+      protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
       
@@ -187,17 +197,17 @@ package tibia.creatures
       
       protected static const PROFESSION_KNIGHT:int = 1;
       
-      protected static const UNDERGROUND_LAYER:int = 2;
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
       public static const MARK_UNMARKED:uint = 0;
       
-      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
-      
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
+      protected static const UNDERGROUND_LAYER:int = 2;
       
       public static const FILTER_PARTY:int = 16;
+      
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       protected static const PROFESSION_PALADIN:int = 2;
       
@@ -236,6 +246,8 @@ package tibia.creatures
       public static const FILTER_NPC:int = 2;
       
       protected static const GUILD_OTHER:int = 5;
+      
+      private static const SPEECH_FLAG_BITMAP:BitmapData = (new SPEECH_FLAG_CLASS() as BitmapAsset).bitmapData;
       
       protected static const TYPE_PLAYER:int = 0;
       
@@ -283,9 +295,7 @@ package tibia.creatures
       
       protected static const GUILD_WAR_ENEMY:int = 2;
       
-      protected static const MAPSIZE_W:int = 10;
-      
-      protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
+      protected static const SKILL_LEVEL:int = 1;
       
       protected static const STATE_STRENGTHENED:int = 12;
       
@@ -295,7 +305,7 @@ package tibia.creatures
       
       protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
       
-      protected static const SKILL_LEVEL:int = 1;
+      protected static const SUMMON_NONE:int = 0;
       
       protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
       
@@ -305,19 +315,25 @@ package tibia.creatures
       
       public static const SORT_HITPOINTS_DESC:int = 5;
       
-      protected static const SUMMON_NONE:int = 0;
+      protected static const NPC_SPEECH_QUEST:uint = 3;
       
-      public static const FILTER_PLAYER:int = 1;
+      protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      protected static const MAPSIZE_W:int = 10;
+      
+      public static const SPEECH_FLAG_SIZE:int = 18;
       
       public static const FILTER_MONSTER:int = 4;
       
-      protected static const SKILL_GOSTRENGTH:int = 6;
+      protected static const NPC_SPEECH_NONE:uint = 0;
       
       public static const MARK_ATTACK:uint = MARK_NUM_COLOURS + 4;
       
       protected static const PK_MAX_FLASHING_TIME:uint = 5000;
       
-      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      protected static const SKILL_GOSTRENGTH:int = 6;
        
       protected var m_OpponentsSort:Sort = null;
       
@@ -421,6 +437,19 @@ package tibia.creatures
          param2.width = STATE_FLAG_SIZE;
          param2.height = STATE_FLAG_SIZE;
          return STATE_FLAG_BITMAP;
+      }
+      
+      public static function s_GetNpcSpeechFlag(param1:uint, param2:Rectangle) : BitmapData
+      {
+         if(param1 < NPC_SPEECH_NONE || param1 > NPC_SPEECH_QUESTTRADER)
+         {
+            throw new ArgumentError("CreatureStorage.s_GetNpcSpeechFlag: Invalid flag.");
+         }
+         param2.x = param1 * SPEECH_FLAG_SIZE;
+         param2.y = 0;
+         param2.width = SPEECH_FLAG_SIZE;
+         param2.height = SPEECH_FLAG_SIZE;
+         return SPEECH_FLAG_BITMAP;
       }
       
       public static function s_GetPKFlag(param1:int, param2:Rectangle) : BitmapData

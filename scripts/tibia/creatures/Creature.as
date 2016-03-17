@@ -20,6 +20,8 @@ package tibia.creatures
       
       protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
+      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       protected static const STATE_PZ_BLOCK:int = 13;
@@ -104,6 +106,8 @@ package tibia.creatures
       
       protected static const SKILL_NONE:int = -1;
       
+      protected static const NPC_SPEECH_TRADER:uint = 2;
+      
       protected static const GUILD_MEMBER:int = 4;
       
       protected static const PROFESSION_NONE:int = 0;
@@ -144,6 +148,8 @@ package tibia.creatures
       
       protected static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
       
+      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
+      
       protected static const GUILD_WAR_ALLY:int = 1;
       
       protected static const PK_NONE:int = 0;
@@ -158,9 +164,9 @@ package tibia.creatures
       
       protected static const SUMMON_OWN:int = 1;
       
-      protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
-      
       protected static const FIELD_ENTER_POSSIBLE:uint = 0;
+      
+      protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
       
@@ -172,13 +178,13 @@ package tibia.creatures
       
       protected static const PROFESSION_KNIGHT:int = 1;
       
-      protected static const UNDERGROUND_LAYER:int = 2;
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
       public static const MAX_NAME_LENGHT:int = 30;
       
-      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
+      protected static const UNDERGROUND_LAYER:int = 2;
       
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
@@ -244,9 +250,7 @@ package tibia.creatures
       
       protected static const GUILD_WAR_ENEMY:int = 2;
       
-      protected static const MAPSIZE_W:int = 10;
-      
-      protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
+      protected static const SKILL_LEVEL:int = 1;
       
       protected static const STATE_STRENGTHENED:int = 12;
       
@@ -256,7 +260,7 @@ package tibia.creatures
       
       protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
       
-      protected static const SKILL_LEVEL:int = 1;
+      protected static const SUMMON_NONE:int = 0;
       
       protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
       
@@ -264,13 +268,19 @@ package tibia.creatures
       
       protected static const STATE_FIGHTING:int = 7;
       
-      protected static const SUMMON_NONE:int = 0;
+      protected static const NPC_SPEECH_QUEST:uint = 3;
       
-      protected static const SKILL_GOSTRENGTH:int = 6;
+      protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      protected static const MAPSIZE_W:int = 10;
+      
+      protected static const NPC_SPEECH_NONE:uint = 0;
       
       protected static const PK_MAX_FLASHING_TIME:uint = 5000;
       
-      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      protected static const SKILL_GOSTRENGTH:int = 6;
        
       protected var m_IsUnpassable:Boolean = false;
       
@@ -283,6 +293,8 @@ package tibia.creatures
       protected var m_MovementRunning:Boolean = false;
       
       protected var m_ID:int = 0;
+      
+      protected var m_SpeechCategory:uint = 0;
       
       var m_Outfit:AppearanceInstance = null;
       
@@ -492,7 +504,7 @@ package tibia.creatures
       
       public function get hasFlag() : Boolean
       {
-         return this.pkFlag != PK_NONE || this.partyFlag != PARTY_NONE || this.summonFlag != SUMMON_NONE || this.guildFlag != GUILD_NONE || this.riskinessFlag != RISKINESS_NONE;
+         return this.pkFlag != PK_NONE || this.partyFlag != PARTY_NONE || this.summonFlag != SUMMON_NONE || this.guildFlag != GUILD_NONE || this.riskinessFlag != RISKINESS_NONE || this.speechCategory != NPC_SPEECH_NONE;
       }
       
       private function set _3575610type(param1:int) : void
@@ -771,19 +783,9 @@ package tibia.creatures
          this.m_MovementEnd = param1;
       }
       
-      public function setSkill(param1:int, param2:Number, param3:Number, param4:Number) : void
+      public function get speechCategory() : uint
       {
-         var _loc5_:PropertyChangeEvent = null;
-         if(0 <= param1 && param1 < this.m_Skills.length)
-         {
-            this.m_Skills[3 * param1 + 0] = param2;
-            this.m_Skills[3 * param1 + 1] = param3;
-            this.m_Skills[3 * param1 + 2] = param4;
-            _loc5_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-            _loc5_.kind = PropertyChangeEventKind.UPDATE;
-            _loc5_.property = "skill";
-            dispatchEvent(_loc5_);
-         }
+         return this.m_SpeechCategory;
       }
       
       function set knownSince(param1:int) : void
@@ -807,6 +809,15 @@ package tibia.creatures
       public function get partyFlag() : int
       {
          return this.m_PartyFlag;
+      }
+      
+      public function set speechCategory(param1:uint) : void
+      {
+         if(param1 < NPC_SPEECH_NONE || param1 > NPC_SPEECH_QUESTTRADER)
+         {
+            throw new ArgumentError("Creature.speechFlag: Invalid speech flag: " + param1);
+         }
+         this.m_SpeechCategory = param1;
       }
       
       function get visible() : Boolean
@@ -849,19 +860,19 @@ package tibia.creatures
          this.m_IsTrapper = param1;
       }
       
-      public function get animationDelta() : Vector3D
-      {
-         return this.m_AnimationDelta;
-      }
-      
       public function get isPartyMember() : Boolean
       {
          return this.m_PartyFlag == PARTY_LEADER || Boolean(this.isConfirmedPartyMember);
       }
       
-      public function getPositionZ() : int
+      public function get animationDelta() : Vector3D
       {
-         return this.m_Position.z;
+         return this.m_AnimationDelta;
+      }
+      
+      public function set isUnpassable(param1:Boolean) : void
+      {
+         this.m_IsUnpassable = param1;
       }
       
       public function getSkillValue(param1:int) : Number
@@ -901,9 +912,19 @@ package tibia.creatures
          this.m_Brightness = param1;
       }
       
-      public function set isUnpassable(param1:Boolean) : void
+      public function setSkill(param1:int, param2:Number, param3:Number, param4:Number) : void
       {
-         this.m_IsUnpassable = param1;
+         var _loc5_:PropertyChangeEvent = null;
+         if(0 <= param1 && param1 < this.m_Skills.length)
+         {
+            this.m_Skills[3 * param1 + 0] = param2;
+            this.m_Skills[3 * param1 + 1] = param3;
+            this.m_Skills[3 * param1 + 2] = param4;
+            _loc5_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc5_.kind = PropertyChangeEventKind.UPDATE;
+            _loc5_.property = "skill";
+            dispatchEvent(_loc5_);
+         }
       }
       
       public function setSkillValue(param1:int, param2:Number) : void
@@ -960,14 +981,9 @@ package tibia.creatures
          this.m_ID = param1;
       }
       
-      public function stopMovementAnimation() : void
+      public function getPositionZ() : int
       {
-         this.m_AnimationDirection = this.m_Direction;
-         this.m_AnimationDelta.setZero();
-         this.m_AnimationSpeed.setZero();
-         this.m_AnimationEnd = 0;
-         this.m_MovementEnd = 0;
-         this.m_MovementRunning = false;
+         return this.m_Position.z;
       }
       
       function get knownSince() : int
@@ -982,6 +998,16 @@ package tibia.creatures
             throw new ArgumentError("Creature.set guildFlag: Invalid flag.");
          }
          this.m_GuildFlag = param1;
+      }
+      
+      public function stopMovementAnimation() : void
+      {
+         this.m_AnimationDirection = this.m_Direction;
+         this.m_AnimationDelta.setZero();
+         this.m_AnimationSpeed.setZero();
+         this.m_AnimationEnd = 0;
+         this.m_MovementEnd = 0;
+         this.m_MovementRunning = false;
       }
       
       public function setPosition(param1:int, param2:int, param3:int) : void

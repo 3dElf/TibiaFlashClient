@@ -28,6 +28,8 @@ package tibia.game
    public class ObjectContextMenu extends ContextMenuBase
    {
       
+      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       protected static const STATE_PZ_BLOCK:int = 13;
@@ -102,9 +104,11 @@ package tibia.game
       
       protected static const SKILL_NONE:int = -1;
       
-      protected static const GUILD_MEMBER:int = 4;
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       private static const BUNDLE:String = "ObjectContextMenu";
+      
+      protected static const GUILD_MEMBER:int = 4;
       
       protected static const PROFESSION_NONE:int = 0;
       
@@ -158,6 +162,8 @@ package tibia.game
       
       protected static const PROFESSION_KNIGHT:int = 1;
       
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
+      
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
       private static const ACTION_SMARTCLICK:int = 100;
@@ -208,21 +214,19 @@ package tibia.game
       
       private static const ACTION_AUTOWALK_HIGHLIGHT:int = 4;
       
-      private static const ACTION_USE_OR_OPEN:int = 101;
+      protected static const STATE_BURNING:int = 1;
       
       protected static const SKILL_FIGHTFIST:int = 13;
       
       private static const ACTION_UNSET:int = -1;
       
-      protected static const STATE_BURNING:int = 1;
+      protected static const PK_AGGRESSOR:int = 3;
       
       protected static const GUILD_WAR_ENEMY:int = 2;
       
       protected static const SKILL_LEVEL:int = 1;
       
       protected static const STATE_STRENGTHENED:int = 12;
-      
-      protected static const PK_AGGRESSOR:int = 3;
       
       protected static const STATE_HUNGRY:int = 31;
       
@@ -238,11 +242,17 @@ package tibia.game
       
       private static const ACTION_AUTOWALK:int = 3;
       
-      protected static const SKILL_GOSTRENGTH:int = 6;
+      protected static const NPC_SPEECH_QUEST:uint = 3;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      private static const ACTION_USE_OR_OPEN:int = 101;
+      
+      protected static const NPC_SPEECH_NONE:uint = 0;
       
       protected static const PK_MAX_FLASHING_TIME:uint = 5000;
       
-      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      protected static const SKILL_GOSTRENGTH:int = 6;
        
       private var m_LookTarget:Object = null;
       

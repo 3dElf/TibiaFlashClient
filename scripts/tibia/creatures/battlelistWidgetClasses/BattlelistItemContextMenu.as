@@ -40,6 +40,8 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
+      protected static const NPC_SPEECH_NONE:uint = 0;
+      
       protected static const RISKINESS_DANGEROUS:int = 1;
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
@@ -53,6 +55,8 @@ package tibia.creatures.battlelistWidgetClasses
       protected static const TYPE_SUMMON_OWN:int = 3;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
@@ -112,6 +116,8 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const GUILD_OTHER:int = 5;
       
+      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
+      
       protected static const SKILL_NONE:int = -1;
       
       protected static const SKILL_HITPOINTS:int = 4;
@@ -125,6 +131,8 @@ package tibia.creatures.battlelistWidgetClasses
       protected static const PK_PLAYERKILLER:int = 4;
       
       protected static const STATE_MANA_SHIELD:int = 4;
+      
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       protected static const SKILL_MANA:int = 5;
       
@@ -184,11 +192,23 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const PROFESSION_NONE:int = 0;
       
-      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
+      protected static const NPC_SPEECH_QUEST:uint = 3;
       
       protected static const SUMMON_NONE:int = 0;
       
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      protected static const SKILL_GOSTRENGTH:int = 6;
+      
+      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
+      
+      protected static const PK_MAX_FLASHING_TIME:uint = 5000;
+      
+      protected static const PK_NONE:int = 0;
+      
+      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       private static const SORT_OPTIONS:Array = [{
          "value":CreatureStorage.SORT_KNOWN_SINCE_ASC,
@@ -215,16 +235,6 @@ package tibia.creatures.battlelistWidgetClasses
          "value":CreatureStorage.SORT_NAME_DESC,
          "label":"CTX_SORT_NAME_DESC"
       }];
-      
-      protected static const SKILL_GOSTRENGTH:int = 6;
-      
-      protected static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
-      
-      protected static const PK_MAX_FLASHING_TIME:uint = 5000;
-      
-      protected static const PK_NONE:int = 0;
-      
-      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
        
       protected var m_Creature:Creature = null;
       

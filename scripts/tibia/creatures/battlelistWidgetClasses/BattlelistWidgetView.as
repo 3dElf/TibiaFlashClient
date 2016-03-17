@@ -378,9 +378,12 @@ package tibia.creatures.battlelistWidgetClasses
             if(_loc2_ != null)
             {
                _loc3_ = _loc2_.data as Creature;
-               this.m_CreatureStorage.setAim(_loc3_);
-               this.m_RolloverCreature = _loc3_;
-               this.determineAction(null,false,true);
+               if(_loc3_ != this.m_RolloverCreature)
+               {
+                  this.m_CreatureStorage.setAim(_loc3_);
+                  this.m_RolloverCreature = _loc3_;
+                  this.determineAction(null,false,true);
+               }
             }
          }
       }

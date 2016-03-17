@@ -589,7 +589,7 @@ package shared.controls
          var _loc5_:ListEvent = null;
          if(Boolean(param3) || this.m_RollOverItem != _loc4_)
          {
-            if(this.m_RollOverItem > -1)
+            if(this.m_RollOverItem > -1 && this.m_RollOverItem != _loc4_)
             {
                _loc5_ = new ListEvent(ListEvent.ITEM_ROLL_OUT);
                _loc5_.columnIndex = 0;

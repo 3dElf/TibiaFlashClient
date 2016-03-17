@@ -32,6 +32,8 @@ package tibia.creatures.statusWidgetClasses
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
+      protected static const NPC_SPEECH_NONE:uint = 0;
+      
       protected static const RISKINESS_DANGEROUS:int = 1;
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
@@ -45,6 +47,8 @@ package tibia.creatures.statusWidgetClasses
       protected static const TYPE_SUMMON_OWN:int = 3;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
@@ -106,13 +110,15 @@ package tibia.creatures.statusWidgetClasses
       
       protected static const GUILD_OTHER:int = 5;
       
-      private static var s_ChildWidth:Number = NaN;
+      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
       
       protected static const SKILL_NONE:int = -1;
       
       protected static const SKILL_HITPOINTS:int = 4;
       
       protected static const TYPE_PLAYER:int = 0;
+      
+      private static var s_ChildWidth:Number = NaN;
       
       protected static const SKILL_OFFLINETRAINING:int = 18;
       
@@ -121,6 +127,8 @@ package tibia.creatures.statusWidgetClasses
       protected static const PK_PLAYERKILLER:int = 4;
       
       protected static const STATE_MANA_SHIELD:int = 4;
+      
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       protected static const SKILL_MANA:int = 5;
       
@@ -250,11 +258,13 @@ package tibia.creatures.statusWidgetClasses
       
       protected static const PROFESSION_NONE:int = 0;
       
-      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
+      protected static const NPC_SPEECH_QUEST:uint = 3;
       
       protected static const SUMMON_NONE:int = 0;
       
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
       
       protected static const SKILL_GOSTRENGTH:int = 6;
       
@@ -466,6 +476,7 @@ package tibia.creatures.statusWidgetClasses
       override protected function measure() : void
       {
          var _loc3_:EdgeMetrics = null;
+         var _loc5_:Number = NaN;
          var _loc7_:Number = NaN;
          super.measure();
          this.m_ChildColumns = this.m_MinColumns;
@@ -496,7 +507,7 @@ package tibia.creatures.statusWidgetClasses
          }
          _loc3_ = this.viewMetricsAndPadding;
          var _loc4_:Number = getStyle("horizontalGap");
-         var _loc5_:Number = _loc3_.left + _loc3_.right;
+         _loc5_ = _loc3_.left + _loc3_.right;
          measuredMinWidth = this.m_MinColumns * s_ChildWidth + (this.m_MinColumns - 1) * _loc4_ + _loc5_;
          measuredWidth = Math.max(measuredMinWidth,this.m_ChildColumns * s_ChildWidth + (this.m_ChildColumns - 1) * _loc4_ + _loc5_);
          var _loc6_:Number = getStyle("verticalGap");

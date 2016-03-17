@@ -84,13 +84,13 @@ package tibia.chat
             _loc5_ = _loc5_ + ": ";
          }
          var _loc6_:String = StringHelper.s_HTMLSpecialChars(this.m_RawText);
-         if(this.m_Mode == MessageMode.MESSAGE_NPC_FROM)
+         if(this.m_Mode == MessageMode.MESSAGE_NPC_FROM || Boolean(MessageMode.MESSAGE_NPC_FROM_START_BLOCK))
          {
             _loc6_ = StringHelper.s_HilightToHTML(_loc6_,param4 & 16777215);
          }
          this.m_HTMLText = "<p><font color=\"#" + (param3 & 16777215).toString(16) + "\">" + _loc5_ + _loc6_ + "</font></p>";
          _loc6_ = this.m_RawText;
-         if(this.m_Mode == MessageMode.MESSAGE_NPC_FROM)
+         if(this.m_Mode == MessageMode.MESSAGE_NPC_FROM || Boolean(MessageMode.MESSAGE_NPC_FROM_START_BLOCK))
          {
             _loc6_ = StringHelper.s_RemoveHilight(_loc6_);
          }

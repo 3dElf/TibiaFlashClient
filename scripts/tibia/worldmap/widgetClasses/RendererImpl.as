@@ -45,8 +45,6 @@ package tibia.worldmap.widgetClasses
       
       protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
-      private static var CREATURE_FLAGS_BITMAP_CACHE_SIZE:uint = 100;
-      
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       private static const TILE_CURSOR:BitmapData = Bitmap(new TILE_CURSOR_CLASS()).bitmapData;
@@ -60,6 +58,8 @@ package tibia.worldmap.widgetClasses
       protected static const PK_REVENGE:int = 6;
       
       protected static const SKILL_FIGHTCLUB:int = 10;
+      
+      protected static const NPC_SPEECH_NONE:uint = 0;
       
       protected static const RISKINESS_DANGEROUS:int = 1;
       
@@ -76,6 +76,8 @@ package tibia.worldmap.widgetClasses
       protected static const RISKINESS_NONE:int = 0;
       
       protected static const FIELD_HEIGHT:int = 24;
+      
+      private static var CREATURE_FLAGS_BITMAP_CACHE_SIZE:uint = 100;
       
       protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
@@ -152,6 +154,8 @@ package tibia.worldmap.widgetClasses
       protected static const PATH_COST_UNDEFINED:int = 254;
       
       protected static const HUD_ARC_ORIENTATION_RIGHT:int = 1;
+      
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       protected static const MAX_NAME_LENGTH:int = 29;
       
@@ -254,6 +258,8 @@ package tibia.worldmap.widgetClasses
       protected static const TYPE_SUMMON_OWN:int = 3;
       
       protected static const PROFESSION_KNIGHT:int = 1;
+      
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const ONSCREEN_MESSAGE_GAP:Number = 10;
       
@@ -367,9 +373,13 @@ package tibia.worldmap.widgetClasses
       
       protected static const HUD_ARC_STYLE_RADIAL:int = 2;
       
+      protected static const NPC_SPEECH_QUEST:uint = 3;
+      
       protected static const SUMMON_NONE:int = 0;
       
       protected static const STATE_STRENGTHENED:int = 12;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
       
       protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
       
@@ -1162,10 +1172,10 @@ package tibia.worldmap.widgetClasses
          }
       }
       
-      private function drawCreatureStatusClassic(param1:Creature, param2:int, param3:int, param4:Boolean, param5:Boolean, param6:Boolean, param7:Boolean, param8:Boolean) : void
+      private function drawCreatureStatusClassic(param1:Creature, param2:int, param3:int, param4:Boolean, param5:Boolean, param6:Boolean, param7:Boolean, param8:Boolean, param9:Boolean) : void
       {
-         var _loc13_:Number = NaN;
-         var _loc9_:* = param1.ID == this.m_Player.ID;
+         var _loc14_:Number = NaN;
+         var _loc10_:* = param1.ID == this.m_Player.ID;
          if(param4)
          {
             this.m_TempHealthColour.ARGB = Creature.s_GetHealthColourARGB(param1.hitpointsPercent);
@@ -1178,61 +1188,61 @@ package tibia.worldmap.widgetClasses
          }
          if(this.m_OptionsLightEnabled)
          {
-            _loc13_ = this.m_TiledLightmapRenderer.calculateCreatureHudBrightnessFactor(param1,_loc9_);
-            this.m_TempHealthColour.mulFloatToSelf(_loc13_,false);
-            this.m_TempManaColour.mulFloatToSelf(_loc13_,false);
+            _loc14_ = this.m_TiledLightmapRenderer.calculateCreatureHudBrightnessFactor(param1,_loc10_);
+            this.m_TempHealthColour.mulFloatToSelf(_loc14_,false);
+            this.m_TempManaColour.mulFloatToSelf(_loc14_,false);
          }
-         var _loc10_:Number = 0;
-         var _loc11_:Number = -1;
-         var _loc12_:Rectangle = null;
+         var _loc11_:Number = 0;
+         var _loc12_:Number = -1;
+         var _loc13_:Rectangle = null;
          if(param5)
          {
-            _loc12_ = this.m_CreatureNameCache.getItem(param1.name + this.m_TempHealthColour.toString(),param1.name,this.m_TempHealthColour.RGB);
-            _loc11_ = _loc11_ + (_loc12_.height + 1);
+            _loc13_ = this.m_CreatureNameCache.getItem(param1.name + this.m_TempHealthColour.toString(),param1.name,this.m_TempHealthColour.RGB);
+            _loc12_ = _loc12_ + (_loc13_.height + 1);
          }
          if(param6)
          {
-            _loc11_ = _loc11_ + (4 + 1);
+            _loc12_ = _loc12_ + (4 + 1);
          }
          if(param7)
          {
-            _loc11_ = _loc11_ + (4 + 1);
+            _loc12_ = _loc12_ + (4 + 1);
          }
          this.m_HelperPoint.x = param2 - FIELD_SIZE / 2;
          this.m_HelperPoint.y = param3 - FIELD_SIZE;
          this.m_HelperPoint = this.m_Transform.transformPoint(this.m_HelperPoint);
-         this.m_HelperPoint.y = Math.max(0,Math.min(this.m_HelperPoint.y - _loc11_,unscaledHeight - _loc11_));
+         this.m_HelperPoint.y = Math.max(0,Math.min(this.m_HelperPoint.y - _loc12_,unscaledHeight - _loc12_));
          if(param5)
          {
-            _loc10_ = Math.max(1,Math.min(this.m_HelperPoint.x - _loc12_.width / 2,unscaledWidth - _loc12_.width - 1));
-            _loc11_ = this.m_HelperPoint.y;
-            this.m_HelperTrans.tx = _loc10_ - _loc12_.x;
-            this.m_HelperTrans.ty = _loc11_ - _loc12_.y;
+            _loc11_ = Math.max(1,Math.min(this.m_HelperPoint.x - _loc13_.width / 2,unscaledWidth - _loc13_.width - 1));
+            _loc12_ = this.m_HelperPoint.y;
+            this.m_HelperTrans.tx = _loc11_ - _loc13_.x;
+            this.m_HelperTrans.ty = _loc12_ - _loc13_.y;
             graphics.beginBitmapFill(this.m_CreatureNameCache,this.m_HelperTrans,false,false);
-            graphics.drawRect(_loc10_,_loc11_,_loc12_.width,_loc12_.height);
-            this.m_HelperPoint.y = this.m_HelperPoint.y + (_loc12_.height + 1);
+            graphics.drawRect(_loc11_,_loc12_,_loc13_.width,_loc13_.height);
+            this.m_HelperPoint.y = this.m_HelperPoint.y + (_loc13_.height + 1);
          }
          if(param6)
          {
-            _loc10_ = Math.max(1,Math.min(this.m_HelperPoint.x - 14,unscaledWidth - 27 - 1));
-            _loc11_ = this.m_HelperPoint.y;
+            _loc11_ = Math.max(1,Math.min(this.m_HelperPoint.x - 14,unscaledWidth - 27 - 1));
+            _loc12_ = this.m_HelperPoint.y;
             graphics.beginFill(0,1);
-            graphics.drawRect(_loc10_,_loc11_,27,4);
+            graphics.drawRect(_loc11_,_loc12_,27,4);
             graphics.beginFill(this.m_TempHealthColour.RGB,1);
-            graphics.drawRect(_loc10_ + 1,_loc11_ + 1,param1.hitpointsPercent / 4,2);
+            graphics.drawRect(_loc11_ + 1,_loc12_ + 1,param1.hitpointsPercent / 4,2);
             this.m_HelperPoint.y = this.m_HelperPoint.y + (4 + 1);
          }
          if(param7)
          {
-            _loc10_ = Math.max(1,Math.min(this.m_HelperPoint.x - 14,unscaledWidth - 27 - 1));
-            _loc11_ = this.m_HelperPoint.y;
+            _loc11_ = Math.max(1,Math.min(this.m_HelperPoint.x - 14,unscaledWidth - 27 - 1));
+            _loc12_ = this.m_HelperPoint.y;
             graphics.beginFill(0,1);
-            graphics.drawRect(_loc10_,_loc11_,27,4);
+            graphics.drawRect(_loc11_,_loc12_,27,4);
             graphics.beginFill(this.m_TempManaColour.RGB,1);
-            graphics.drawRect(_loc10_ + 1,_loc11_ + 1,param1.manaPercent / 4,2);
+            graphics.drawRect(_loc11_ + 1,_loc12_ + 1,param1.manaPercent / 4,2);
             this.m_HelperPoint.y = this.m_HelperPoint.y + (4 + 1);
          }
-         if(param8)
+         if(Boolean(param8) && !param1.isNPC || Boolean(param9) && Boolean(param1.isNPC))
          {
             this.drawCreatureFlags(param1,param2 - FIELD_SIZE / 2,param3 - FIELD_SIZE,param4);
          }
@@ -1295,10 +1305,10 @@ package tibia.worldmap.widgetClasses
                      case STATUS_STYLE_OFF:
                         break;
                      case STATUS_STYLE_HUD:
-                        this.drawCreatureStatusHUD(_loc1_,this.m_DrawnCreatures[_loc4_].x,this.m_DrawnCreatures[_loc4_].y,_loc7_,this.m_Options.statusCreatureName,this.m_Options.statusCreatureHealth,false,this.m_Options.statusCreatureFlags);
+                        this.drawCreatureStatusHUD(_loc1_,this.m_DrawnCreatures[_loc4_].x,this.m_DrawnCreatures[_loc4_].y,_loc7_,this.m_Options.statusCreatureName,Boolean(this.m_Options.statusCreatureHealth) && !_loc1_.isNPC,false,this.m_Options.statusCreatureFlags);
                         break;
                      case STATUS_STYLE_CLASSIC:
-                        this.drawCreatureStatusClassic(_loc1_,this.m_DrawnCreatures[_loc4_].x,this.m_DrawnCreatures[_loc4_].y,_loc7_,this.m_Options.statusCreatureName,this.m_Options.statusCreatureHealth,false,this.m_Options.statusCreatureFlags);
+                        this.drawCreatureStatusClassic(_loc1_,this.m_DrawnCreatures[_loc4_].x,this.m_DrawnCreatures[_loc4_].y,_loc7_,this.m_Options.statusCreatureName,Boolean(this.m_Options.statusCreatureHealth) && !_loc1_.isNPC,false,this.m_Options.statusCreatureFlags,this.m_Options.statusCreatureIcons);
                   }
                }
             }
@@ -1316,7 +1326,7 @@ package tibia.worldmap.widgetClasses
                   this.drawCreatureStatusHUD(_loc1_,this.m_DrawnCreatures[_loc2_].x,this.m_DrawnCreatures[_loc2_].y,true,this.m_Options.statusPlayerName,this.m_Options.statusPlayerHealth,this.m_Options.statusPlayerMana,this.m_Options.statusPlayerFlags);
                   break;
                case STATUS_STYLE_CLASSIC:
-                  this.drawCreatureStatusClassic(_loc1_,this.m_DrawnCreatures[_loc2_].x,this.m_DrawnCreatures[_loc2_].y,true,this.m_Options.statusPlayerName,this.m_Options.statusPlayerHealth,this.m_Options.statusPlayerMana,this.m_Options.statusPlayerFlags);
+                  this.drawCreatureStatusClassic(_loc1_,this.m_DrawnCreatures[_loc2_].x,this.m_DrawnCreatures[_loc2_].y,true,this.m_Options.statusPlayerName,this.m_Options.statusPlayerHealth,this.m_Options.statusPlayerMana,this.m_Options.statusPlayerFlags,false);
             }
          }
       }
@@ -1642,7 +1652,7 @@ package tibia.worldmap.widgetClasses
       
       private function drawCreatureFlags(param1:Creature, param2:int, param3:int, param4:Boolean) : void
       {
-         if(!(Boolean(param1.isHuman) || Boolean(param1.isSummon)))
+         if(!(Boolean(param1.isHuman) || Boolean(param1.isSummon) || Boolean(param1.isNPC)))
          {
             return;
          }
@@ -1796,113 +1806,121 @@ package tibia.worldmap.widgetClasses
       
       private function getCreatureFlagsCachedBitmap(param1:Creature) : BitmapData
       {
-         var _loc2_:uint = 0;
-         var _loc3_:uint = 0;
-         var _loc4_:uint = 0;
-         var _loc5_:uint = 0;
-         var _loc6_:uint = 0;
-         var _loc8_:Object = null;
-         var _loc9_:Rectangle = null;
+         var _loc9_:Object = null;
          var _loc10_:Rectangle = null;
-         var _loc11_:Number = NaN;
+         var _loc11_:Rectangle = null;
          var _loc12_:Number = NaN;
-         var _loc13_:Point = null;
-         var _loc14_:BitmapData = null;
+         var _loc13_:Number = NaN;
+         var _loc14_:Point = null;
          var _loc15_:BitmapData = null;
-         var _loc16_:Object = null;
+         var _loc16_:BitmapData = null;
          var _loc17_:Object = null;
-         var _loc18_:uint = 0;
-         var _loc19_:* = null;
-         var _loc20_:Object = null;
-         _loc2_ = param1.pkFlag;
-         _loc3_ = param1.partyFlag;
-         _loc4_ = param1.summonFlag;
-         _loc5_ = param1.guildFlag;
-         _loc6_ = param1.riskinessFlag;
-         var _loc7_:Object = _loc2_ + "," + _loc3_ + "," + _loc4_ + "," + _loc5_ + "," + _loc6_;
-         if(this.m_CreatureFlagsBitmapCache.hasOwnProperty(_loc7_))
+         var _loc18_:Object = null;
+         var _loc19_:uint = 0;
+         var _loc20_:* = null;
+         var _loc21_:Object = null;
+         var _loc2_:uint = param1.pkFlag;
+         var _loc3_:uint = param1.partyFlag;
+         var _loc4_:uint = param1.summonFlag;
+         var _loc5_:uint = param1.guildFlag;
+         var _loc6_:uint = param1.riskinessFlag;
+         var _loc7_:uint = param1.speechCategory;
+         if(_loc7_ == NPC_SPEECH_QUESTTRADER)
          {
-            _loc8_ = this.m_CreatureFlagsBitmapCache[_loc7_];
-            _loc8_["lastAccess"] = getTimer();
-            return _loc8_["bitmap"];
+            _loc7_ = getTimer() % 2048 > 1024?uint(NPC_SPEECH_TRADER):uint(NPC_SPEECH_QUEST);
          }
-         _loc9_ = this.m_HelperRect;
-         _loc10_ = this.m_HelperRect2;
+         var _loc8_:Object = _loc2_ + "," + _loc3_ + "," + _loc4_ + "," + _loc5_ + "," + _loc6_ + "," + _loc7_;
+         if(this.m_CreatureFlagsBitmapCache.hasOwnProperty(_loc8_))
+         {
+            _loc9_ = this.m_CreatureFlagsBitmapCache[_loc8_];
+            _loc9_["lastAccess"] = getTimer();
+            return _loc9_["bitmap"];
+         }
+         _loc10_ = this.m_HelperRect;
+         _loc11_ = this.m_HelperRect2;
          this.m_HelperCreatureFlagsBitmapData.fillRect(this.m_HelperCreatureFlagsBitmapData.rect,0);
-         _loc11_ = -2;
          _loc12_ = -2;
-         _loc13_ = new Point(0,0);
-         _loc9_.setTo(0,0,-CreatureStorage.STATE_FLAG_GAP,-CreatureStorage.STATE_FLAG_GAP);
-         _loc14_ = null;
+         _loc13_ = -2;
+         _loc14_ = new Point(0,0);
+         _loc10_.setTo(0,0,-CreatureStorage.STATE_FLAG_GAP,-CreatureStorage.STATE_FLAG_GAP);
+         _loc15_ = null;
          if(_loc3_ > PARTY_NONE)
          {
-            _loc14_ = CreatureStorage.s_GetPartyFlag(param1.partyFlag,_loc10_);
-            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc14_,_loc10_,_loc13_);
-            _loc13_.x = _loc13_.x + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
-            _loc9_.width = _loc9_.width + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc15_ = CreatureStorage.s_GetPartyFlag(param1.partyFlag,_loc11_);
+            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc15_,_loc11_,_loc14_);
+            _loc14_.x = _loc14_.x + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc10_.width = _loc10_.width + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
          }
          if(param1.pkFlag > PK_NONE)
          {
-            _loc14_ = CreatureStorage.s_GetPKFlag(param1.pkFlag,_loc10_);
-            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc14_,_loc10_,_loc13_);
-            _loc13_.x = _loc13_.x + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
-            _loc9_.width = _loc9_.width + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc15_ = CreatureStorage.s_GetPKFlag(param1.pkFlag,_loc11_);
+            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc15_,_loc11_,_loc14_);
+            _loc14_.x = _loc14_.x + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc10_.width = _loc10_.width + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
          }
          if(param1.summonFlag > SUMMON_NONE)
          {
-            _loc14_ = CreatureStorage.s_GetSummonFlag(param1.summonFlag,_loc10_);
-            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc14_,_loc10_,_loc13_);
-            _loc13_.x = _loc13_.x + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
-            _loc9_.width = _loc9_.width + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc15_ = CreatureStorage.s_GetSummonFlag(param1.summonFlag,_loc11_);
+            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc15_,_loc11_,_loc14_);
+            _loc14_.x = _loc14_.x + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc10_.width = _loc10_.width + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
          }
-         if(_loc13_.x > 0)
+         if(_loc7_ > NPC_SPEECH_NONE)
          {
-            _loc13_.x = _loc13_.x / 2 - CreatureStorage.STATE_FLAG_SIZE / 2;
-            _loc13_.y = _loc13_.y + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
-            _loc9_.height = _loc9_.height + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc15_ = CreatureStorage.s_GetNpcSpeechFlag(_loc7_,_loc11_);
+            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc15_,_loc11_,_loc14_);
+            _loc14_.x = _loc14_.x + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc10_.width = _loc10_.width + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.SPEECH_FLAG_SIZE);
+            _loc10_.height = _loc10_.height + CreatureStorage.SPEECH_FLAG_SIZE;
+         }
+         if(_loc14_.x > 0)
+         {
+            _loc14_.x = _loc14_.x / 2 - CreatureStorage.STATE_FLAG_SIZE / 2;
+            _loc14_.y = _loc14_.y + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc10_.height = _loc10_.height + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
          }
          if(param1.guildFlag > GUILD_NONE)
          {
-            _loc14_ = CreatureStorage.s_GetGuildFlag(param1.guildFlag,_loc10_);
-            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc14_,_loc10_,_loc13_);
-            _loc13_.y = _loc13_.y + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
-            _loc9_.height = _loc9_.height + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
-            _loc9_.width = Math.max(_loc9_.width,CreatureStorage.STATE_FLAG_SIZE);
+            _loc15_ = CreatureStorage.s_GetGuildFlag(param1.guildFlag,_loc11_);
+            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc15_,_loc11_,_loc14_);
+            _loc14_.y = _loc14_.y + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc10_.height = _loc10_.height + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc10_.width = Math.max(_loc10_.width,CreatureStorage.STATE_FLAG_SIZE);
          }
          if(param1.riskinessFlag > RISKINESS_NONE)
          {
-            _loc14_ = CreatureStorage.s_GetRiskinessFlag(param1.riskinessFlag,_loc10_);
-            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc14_,_loc10_,_loc13_);
-            _loc13_.y = _loc13_.y + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
-            _loc9_.height = _loc9_.height + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
-            _loc9_.width = Math.max(_loc9_.width,CreatureStorage.STATE_FLAG_SIZE);
+            _loc15_ = CreatureStorage.s_GetRiskinessFlag(param1.riskinessFlag,_loc11_);
+            this.m_HelperCreatureFlagsBitmapData.copyPixels(_loc15_,_loc11_,_loc14_);
+            _loc14_.y = _loc14_.y + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc10_.height = _loc10_.height + (CreatureStorage.STATE_FLAG_GAP + CreatureStorage.STATE_FLAG_SIZE);
+            _loc10_.width = Math.max(_loc10_.width,CreatureStorage.STATE_FLAG_SIZE);
          }
-         _loc15_ = new BitmapData(_loc9_.width,_loc9_.height);
+         _loc16_ = new BitmapData(_loc10_.width,_loc10_.height);
          this.m_HelperPoint.setTo(0,0);
-         _loc15_.copyPixels(this.m_HelperCreatureFlagsBitmapData,_loc9_,this.m_HelperPoint);
-         _loc16_ = null;
+         _loc16_.copyPixels(this.m_HelperCreatureFlagsBitmapData,_loc10_,this.m_HelperPoint);
          _loc17_ = null;
-         _loc18_ = 0;
-         for(_loc19_ in this.m_CreatureFlagsBitmapCache)
+         _loc18_ = null;
+         _loc19_ = 0;
+         for(_loc20_ in this.m_CreatureFlagsBitmapCache)
          {
-            _loc20_ = this.m_CreatureFlagsBitmapCache[_loc19_];
-            if(_loc16_ == null || _loc20_["lastAccess"] < _loc16_["lastAccess"])
+            _loc21_ = this.m_CreatureFlagsBitmapCache[_loc20_];
+            if(_loc17_ == null || _loc21_["lastAccess"] < _loc17_["lastAccess"])
             {
-               _loc16_ = _loc20_;
-               _loc17_ = _loc19_;
+               _loc17_ = _loc21_;
+               _loc18_ = _loc20_;
             }
-            _loc18_++;
+            _loc19_++;
          }
-         if(_loc18_ > CREATURE_FLAGS_BITMAP_CACHE_SIZE)
+         if(_loc19_ > CREATURE_FLAGS_BITMAP_CACHE_SIZE)
          {
-            delete this.m_CreatureFlagsBitmapCache[_loc17_];
+            delete this.m_CreatureFlagsBitmapCache[_loc18_];
          }
-         _loc16_ = {
+         _loc17_ = {
             "lastAccess":getTimer(),
-            "bitmap":_loc15_
+            "bitmap":_loc16_
          };
-         this.m_CreatureFlagsBitmapCache[_loc7_] = _loc16_;
-         return _loc16_["bitmap"];
+         this.m_CreatureFlagsBitmapCache[_loc8_] = _loc17_;
+         return _loc17_["bitmap"];
       }
       
       public function get fps() : Number

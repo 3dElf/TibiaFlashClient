@@ -346,7 +346,7 @@ package tibia.worldmap
          }
       }
       
-      public function addOnscreenMessage(... rest) : void
+      public function addOnscreenMessage(... rest) : tibia.worldmap.OnscreenMessageBox
       {
          var _loc14_:tibia.worldmap.OnscreenMessageBox = null;
          var _loc15_:OnscreenMessage = null;
@@ -445,8 +445,9 @@ package tibia.worldmap
                _loc15_.formatMessage(_loc11_.getOnscreenMessagePrefix(_loc4_,_loc5_),_loc11_.textARGB,_loc11_.highlightARGB);
                _loc14_.appendMessage(_loc15_);
                this.invalidateOnscreenMessages();
+               return _loc14_;
             }
-            else if(_loc13_ == ONSCREEN_TARGET_EFFECT_COORDINATE)
+            if(_loc13_ == ONSCREEN_TARGET_EFFECT_COORDINATE)
             {
                if(_loc2_ == null)
                {
@@ -460,6 +461,7 @@ package tibia.worldmap
                }
             }
          }
+         return null;
       }
       
       private function deleteEffect(param1:int) : void

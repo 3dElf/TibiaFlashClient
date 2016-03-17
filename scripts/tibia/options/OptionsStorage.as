@@ -1,10 +1,10 @@
 package tibia.options
 {
    import flash.events.EventDispatcher;
-   import shared.utility.XMLHelper;
    import tibia.chat.NameFilterSet;
    import tibia.chat.ChannelSet;
    import mx.events.PropertyChangeEvent;
+   import shared.utility.XMLHelper;
    import tibia.market.marketWidgetClasses.AppearanceTypeBrowser;
    import tibia.chat.MessageFilterSet;
    import tibia.help.TutorialHint;
@@ -29,6 +29,10 @@ package tibia.options
    {
       
       public static const COMBAT_PVP_MODE_WHITE_HAND:uint = 1;
+      
+      public static const COMBAT_PVP_MODE_YELLOW_HAND:uint = 2;
+      
+      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
@@ -106,9 +110,11 @@ package tibia.options
       
       protected static const SKILL_NONE:int = -1;
       
-      protected static const GUILD_MEMBER:int = 4;
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       public static const COMBAT_ATTACK_DEFENSIVE:int = 3;
+      
+      protected static const GUILD_MEMBER:int = 4;
       
       protected static const PROFESSION_NONE:int = 0;
       
@@ -209,6 +215,8 @@ package tibia.options
       
       protected static const PROFESSION_KNIGHT:int = 1;
       
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
+      
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
       protected static const PROFESSION_PALADIN:int = 2;
@@ -247,13 +255,9 @@ package tibia.options
       
       protected static const TYPE_MONSTER:int = 1;
       
-      public static const COMBAT_PVP_MODE_YELLOW_HAND:uint = 2;
-      
       protected static const STATE_BURNING:int = 1;
       
       protected static const SKILL_FIGHTFIST:int = 13;
-      
-      protected static const GUILD_WAR_ENEMY:int = 2;
       
       public static const COMBAT_CHASE_OFF:int = 0;
       
@@ -269,17 +273,23 @@ package tibia.options
       
       protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
       
-      protected static const SUMMON_NONE:int = 0;
+      protected static const GUILD_WAR_ENEMY:int = 2;
       
       protected static const PROFESSION_DRUID:int = 4;
       
       protected static const STATE_FIGHTING:int = 7;
       
-      protected static const SKILL_GOSTRENGTH:int = 6;
+      protected static const NPC_SPEECH_QUEST:uint = 3;
+      
+      protected static const SUMMON_NONE:int = 0;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      protected static const NPC_SPEECH_NONE:uint = 0;
       
       protected static const PK_MAX_FLASHING_TIME:uint = 5000;
       
-      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      protected static const SKILL_GOSTRENGTH:int = 6;
        
       private var m_MarketSelectedType:int = -1;
       
@@ -298,6 +308,8 @@ package tibia.options
       private var m_DefaultOptionsXml:XML = null;
       
       private var m_StatusPlayerName:Boolean = false;
+      
+      private var m_StatusCreatureIcons:Boolean = false;
       
       private var m_RendererLightEnabled:Boolean = false;
       
@@ -323,9 +335,9 @@ package tibia.options
       
       private var m_StatusCreatureHealth:Boolean = false;
       
-      private var m_NPCTradeSellKeepEquipped:Boolean = false;
-      
       private var m_MarketBrowserLevel:Boolean = false;
+      
+      private var m_NPCTradeSellKeepEquipped:Boolean = false;
       
       private var m_StatusPlayerHealth:Boolean = false;
       
@@ -449,48 +461,9 @@ package tibia.options
          dispatchEvent(_Event);
       }
       
-      private function unmarshallCombat(param1:XML, param2:Number) : void
+      private function set _747180215statusCreatureIcons(param1:Boolean) : void
       {
-         var _loc3_:XML = null;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         if(param1 == null || param1.localName() != "combat" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
-         {
-            throw new Error("OptionsStorage.unmarshallCombat: Invalid input.");
-         }
-         for each(_loc3_ in param1.elements())
-         {
-            switch(_loc3_.localName())
-            {
-               case "attackMode":
-                  _loc4_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc4_ == COMBAT_ATTACK_OFFENSIVE || _loc4_ == COMBAT_ATTACK_BALANCED || _loc4_ == COMBAT_ATTACK_DEFENSIVE)
-                  {
-                     this.m_CombatAttackMode = _loc4_;
-                  }
-                  continue;
-               case "chaseMode":
-                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc5_ == COMBAT_CHASE_OFF || _loc5_ == COMBAT_CHASE_ON)
-                  {
-                     this.m_CombatChaseMode = _loc5_;
-                  }
-                  continue;
-               case "autoChaseOff":
-                  this.m_CombatAutoChaseOff = XMLHelper.s_UnmarshallBoolean(_loc3_);
-                  continue;
-               case "secureMode":
-                  _loc6_ = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(_loc6_ == COMBAT_SECURE_OFF || _loc6_ == COMBAT_SECURE_ON)
-                  {
-                     this.m_CombatSecureMode = _loc6_;
-                  }
-                  continue;
-               default:
-                  continue;
-            }
-         }
+         this.m_StatusCreatureIcons = param1;
       }
       
       public function get statusPlayerStyle() : int
@@ -535,6 +508,50 @@ package tibia.options
          {
             this._1916522523generalUIGameWindowHeight = param1;
             this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"generalUIGameWindowHeight",_loc2_,param1));
+         }
+      }
+      
+      private function unmarshallCombat(param1:XML, param2:Number) : void
+      {
+         var _loc3_:XML = null;
+         var _loc4_:int = 0;
+         var _loc5_:int = 0;
+         var _loc6_:int = 0;
+         if(param1 == null || param1.localName() != "combat" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
+         {
+            throw new Error("OptionsStorage.unmarshallCombat: Invalid input.");
+         }
+         for each(_loc3_ in param1.elements())
+         {
+            switch(_loc3_.localName())
+            {
+               case "attackMode":
+                  _loc4_ = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  if(_loc4_ == COMBAT_ATTACK_OFFENSIVE || _loc4_ == COMBAT_ATTACK_BALANCED || _loc4_ == COMBAT_ATTACK_DEFENSIVE)
+                  {
+                     this.m_CombatAttackMode = _loc4_;
+                  }
+                  continue;
+               case "chaseMode":
+                  _loc5_ = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  if(_loc5_ == COMBAT_CHASE_OFF || _loc5_ == COMBAT_CHASE_ON)
+                  {
+                     this.m_CombatChaseMode = _loc5_;
+                  }
+                  continue;
+               case "autoChaseOff":
+                  this.m_CombatAutoChaseOff = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  continue;
+               case "secureMode":
+                  _loc6_ = XMLHelper.s_UnmarshallInteger(_loc3_);
+                  if(_loc6_ == COMBAT_SECURE_OFF || _loc6_ == COMBAT_SECURE_ON)
+                  {
+                     this.m_CombatSecureMode = _loc6_;
+                  }
+                  continue;
+               default:
+                  continue;
+            }
          }
       }
       
@@ -795,6 +812,7 @@ package tibia.options
                           <creatureName>{this.m_StatusCreatureName}</creatureName>
                           <creatureHealth>{this.m_StatusCreatureHealth}</creatureHealth>
                           <creatureFlags>{this.m_StatusCreatureFlags}</creatureFlags>
+                          <creatureIcons>{this.m_StatusCreatureIcons}</creatureIcons>
                         </status>);
       }
       
@@ -1030,11 +1048,6 @@ package tibia.options
          return ChannelSet(this.getListItem(this.m_ChannelSet,param1));
       }
       
-      public function get marketBrowserBodyPosition() : int
-      {
-         return this.m_MarketBrowserBodyPosition;
-      }
-      
       public function removeMappingSet(param1:int) : MappingSet
       {
          return MappingSet(this.removeListItem(this.m_MappingSet,param1,"mappingSet"));
@@ -1101,9 +1114,9 @@ package tibia.options
          return NameFilterSet(this.addListItem(this.m_NameFilterSet,param1,"nameFilterSet"));
       }
       
-      public function addActionBarSet(param1:ActionBarSet) : ActionBarSet
+      public function get marketBrowserBodyPosition() : int
       {
-         return ActionBarSet(this.addListItem(this.m_ActionBarSet,param1,"actionBarSet"));
+         return this.m_MarketBrowserBodyPosition;
       }
       
       private function set _2103194300statusWidgetVisible(param1:Boolean) : void
@@ -1127,6 +1140,11 @@ package tibia.options
             param1 = 1;
          }
          this.m_RendererLevelSeparator = param1;
+      }
+      
+      public function addActionBarSet(param1:ActionBarSet) : ActionBarSet
+      {
+         return ActionBarSet(this.addListItem(this.m_ActionBarSet,param1,"actionBarSet"));
       }
       
       public function removeBuddySet(param1:int) : BuddySet
@@ -1355,6 +1373,17 @@ package tibia.options
          this.m_KnownTutorialHint.length = 0;
       }
       
+      [Bindable(event="propertyChange")]
+      public function set statusCreatureIcons(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.statusCreatureIcons;
+         if(_loc2_ !== param1)
+         {
+            this._747180215statusCreatureIcons = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"statusCreatureIcons",_loc2_,param1));
+         }
+      }
+      
       public function get opponentSort() : int
       {
          return this.m_OpponentSort;
@@ -1417,17 +1446,6 @@ package tibia.options
       public function get statusWidgetLocation() : int
       {
          return this.m_StatusWidgetLocation;
-      }
-      
-      [Bindable(event="propertyChange")]
-      public function set rendererAntialiasing(param1:Boolean) : void
-      {
-         var _loc2_:Object = this.rendererAntialiasing;
-         if(_loc2_ !== param1)
-         {
-            this._1851025751rendererAntialiasing = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererAntialiasing",_loc2_,param1));
-         }
       }
       
       private function set _512938034combatSecureMode(param1:int) : void
@@ -1493,13 +1511,13 @@ package tibia.options
       }
       
       [Bindable(event="propertyChange")]
-      public function set marketBrowserBodyPosition(param1:int) : void
+      public function set rendererAntialiasing(param1:Boolean) : void
       {
-         var _loc2_:Object = this.marketBrowserBodyPosition;
+         var _loc2_:Object = this.rendererAntialiasing;
          if(_loc2_ !== param1)
          {
-            this._1191209559marketBrowserBodyPosition = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserBodyPosition",_loc2_,param1));
+            this._1851025751rendererAntialiasing = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererAntialiasing",_loc2_,param1));
          }
       }
       
@@ -1586,6 +1604,17 @@ package tibia.options
          return this.m_StatusWidgetVisible;
       }
       
+      [Bindable(event="propertyChange")]
+      public function set marketBrowserBodyPosition(param1:int) : void
+      {
+         var _loc2_:Object = this.marketBrowserBodyPosition;
+         if(_loc2_ !== param1)
+         {
+            this._1191209559marketBrowserBodyPosition = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserBodyPosition",_loc2_,param1));
+         }
+      }
+      
       private function getKnownTutorialHintIndex(param1:int) : int
       {
          var _loc2_:int = 0;
@@ -1620,11 +1649,6 @@ package tibia.options
          }
       }
       
-      private function set _456993208marketBrowserDepot(param1:Boolean) : void
-      {
-         this.m_MarketBrowserDepot = param1;
-      }
-      
       public function getDefaultActionBarSet() : ActionBarSet
       {
          var _loc2_:XML = null;
@@ -1642,6 +1666,11 @@ package tibia.options
             }
          }
          throw new Error("OptionsStorage.getDefaultActionBarSet: No actionbar set width ID 0 found in default options");
+      }
+      
+      private function set _456993208marketBrowserDepot(param1:Boolean) : void
+      {
+         this.m_MarketBrowserDepot = param1;
       }
       
       private function initialiseMappingSet() : void
@@ -1916,6 +1945,9 @@ package tibia.options
                   continue;
                case "creatureFlags":
                   this.m_StatusCreatureFlags = XMLHelper.s_UnmarshallBoolean(_loc3_);
+                  continue;
+               case "creatureIcons":
+                  this.m_StatusCreatureIcons = XMLHelper.s_UnmarshallBoolean(_loc3_);
                   continue;
                case "creatureHealth":
                   this.m_StatusCreatureHealth = XMLHelper.s_UnmarshallBoolean(_loc3_);
@@ -2231,13 +2263,9 @@ package tibia.options
          return this.m_GeneralUIChatLeftViewWidth;
       }
       
-      private function set _738874381npcTradeLayout(param1:int) : void
+      public function get statusCreatureIcons() : Boolean
       {
-         if(param1 != ObjectRefSelectorBase.LAYOUT_GRID && param1 != ObjectRefSelectorBase.LAYOUT_LIST)
-         {
-            throw new ArgumentError("OptionsStorage.set npcTradeLayout: Invalid value: " + param1 + ".");
-         }
-         this.m_NPCTradeLayout = param1;
+         return this.m_StatusCreatureIcons;
       }
       
       public function getBuddySet(param1:int) : BuddySet
@@ -2272,6 +2300,15 @@ package tibia.options
          this.initialiseNameFilterSet();
          this.initialiseSideBarSet();
          this.unmarshall(this.m_DefaultOptionsXml);
+      }
+      
+      private function set _738874381npcTradeLayout(param1:int) : void
+      {
+         if(param1 != ObjectRefSelectorBase.LAYOUT_GRID && param1 != ObjectRefSelectorBase.LAYOUT_LIST)
+         {
+            throw new ArgumentError("OptionsStorage.set npcTradeLayout: Invalid value: " + param1 + ".");
+         }
+         this.m_NPCTradeLayout = param1;
       }
       
       [Bindable(event="propertyChange")]
@@ -2440,6 +2477,7 @@ package tibia.options
       private function initialiseStatus() : void
       {
          this.m_StatusCreatureFlags = true;
+         this.m_StatusCreatureIcons = true;
          this.m_StatusCreatureHealth = true;
          this.m_StatusCreatureName = true;
          this.m_StatusPlayerFlags = true;

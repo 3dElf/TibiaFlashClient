@@ -42,6 +42,8 @@ package tibia.options.configurationWidgetClasses
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
+      protected static const NPC_SPEECH_NONE:uint = 0;
+      
       protected static const RISKINESS_DANGEROUS:int = 1;
       
       protected static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
@@ -57,6 +59,8 @@ package tibia.options.configurationWidgetClasses
       protected static const TYPE_SUMMON_OWN:int = 3;
       
       protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
@@ -118,6 +122,8 @@ package tibia.options.configurationWidgetClasses
       
       protected static const GUILD_OTHER:int = 5;
       
+      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
+      
       protected static const SKILL_NONE:int = -1;
       
       protected static const SKILL_HITPOINTS:int = 4;
@@ -131,6 +137,8 @@ package tibia.options.configurationWidgetClasses
       protected static const PK_PLAYERKILLER:int = 4;
       
       protected static const STATE_MANA_SHIELD:int = 4;
+      
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       protected static const SKILL_MANA:int = 5;
       
@@ -207,11 +215,13 @@ package tibia.options.configurationWidgetClasses
       
       protected static const PROFESSION_NONE:int = 0;
       
-      protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
+      protected static const NPC_SPEECH_QUEST:uint = 3;
       
       protected static const SUMMON_NONE:int = 0;
       
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
       
       protected static const SKILL_GOSTRENGTH:int = 6;
       
@@ -241,9 +251,11 @@ package tibia.options.configurationWidgetClasses
       
       protected var m_UICreatureStyle:ComboBox = null;
       
-      private var m_UIConstructed:Boolean = false;
+      protected var m_UIOtherIcons:CheckBox = null;
       
       protected var m_UIOtherName:CheckBox = null;
+      
+      private var m_UIConstructed:Boolean = false;
       
       protected var m_Options:OptionsStorage = null;
       
@@ -288,6 +300,7 @@ package tibia.options.configurationWidgetClasses
             this.m_Options.statusCreatureName = this.m_UIOtherName.selected;
             this.m_Options.statusCreatureHealth = this.m_UIOtherHealth.selected;
             this.m_Options.statusCreatureFlags = this.m_UIOtherFlags.selected;
+            this.m_Options.statusCreatureIcons = this.m_UIOtherIcons.selected;
             if(this.m_WidgetStyle == StatusWidget.STATUS_STYLE_OFF)
             {
                this.m_Options.statusWidgetVisible = false;
@@ -427,6 +440,14 @@ package tibia.options.configurationWidgetClasses
             this.m_UIOtherFlags.addEventListener(Event.CHANGE,this.onValueChange);
             Item.addChild(this.m_UIOtherFlags);
             Frm.addChild(Item);
+            Item = new FormItem();
+            Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_CREATURE_ICONS");
+            Item.percentHeight = NaN;
+            Item.percentWidth = 100;
+            this.m_UIOtherIcons = new CheckBox();
+            this.m_UIOtherIcons.addEventListener(Event.CHANGE,this.onValueChange);
+            Item.addChild(this.m_UIOtherIcons);
+            Frm.addChild(Item);
             Heading = new FormHeading();
             Heading.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"STATUS_WIDGET_HEADING");
             Heading.percentHeight = NaN;
@@ -552,6 +573,7 @@ package tibia.options.configurationWidgetClasses
                this.m_UIOtherName.selected = this.m_Options.statusCreatureName;
                this.m_UIOtherHealth.selected = this.m_Options.statusCreatureHealth;
                this.m_UIOtherFlags.selected = this.m_Options.statusCreatureFlags;
+               this.m_UIOtherIcons.selected = this.m_Options.statusCreatureIcons;
                this.m_WidgetStyle = !!this.m_Options.statusWidgetVisible?int(this.m_Options.statusWidgetStyle):int(StatusWidget.STATUS_STYLE_OFF);
                this.m_WidgetSkill = this.m_Options.statusWidgetSkill;
             }
@@ -566,6 +588,7 @@ package tibia.options.configurationWidgetClasses
                this.m_UIOtherName.selected = false;
                this.m_UIOtherHealth.selected = false;
                this.m_UIOtherFlags.selected = false;
+               this.m_UIOtherIcons.selected = false;
                this.m_WidgetStyle = StatusWidget.STATUS_STYLE_OFF;
                this.m_WidgetSkill = SKILL_EXPERIENCE;
             }
@@ -592,6 +615,7 @@ package tibia.options.configurationWidgetClasses
             this.m_UIOtherName.enabled = _loc1_;
             this.m_UIOtherHealth.enabled = _loc1_;
             this.m_UIOtherFlags.enabled = _loc1_;
+            this.m_UIOtherIcons.enabled = _loc1_;
             this.m_UncommittedOtherStyle = false;
          }
          if(this.m_UncommittedWidgetStyle)

@@ -1,6 +1,7 @@
 package tibia.input.gameaction
 {
    import shared.utility.Vector3D;
+   import tibia.chat.MessageStorage;
    import tibia.chat.MessageMode;
    import tibia.worldmap.WorldMapStorage;
    import tibia.creatures.Creature;
@@ -10,8 +11,6 @@ package tibia.input.gameaction
    {
       
       private static const GREET_TEXT:String = "Hi";
-      
-      private static const MAX_NPC_DISTANCE:uint = 3;
        
       protected var m_NPC:Creature = null;
       
@@ -33,7 +32,7 @@ package tibia.input.gameaction
       {
          var _loc1_:Vector3D = Tibia.s_GetPlayer().position;
          var _loc2_:Vector3D = this.m_NPC.position;
-         if(_loc1_.z == _loc2_.z && Math.abs(_loc1_.x - _loc2_.x) <= MAX_NPC_DISTANCE && Math.abs(_loc1_.y - _loc2_.y) <= MAX_NPC_DISTANCE)
+         if(_loc1_.z == _loc2_.z && Math.abs(_loc1_.x - _loc2_.x) <= MessageStorage.MAX_NPC_DISTANCE && Math.abs(_loc1_.y - _loc2_.y) <= MessageStorage.MAX_NPC_DISTANCE)
          {
             return true;
          }

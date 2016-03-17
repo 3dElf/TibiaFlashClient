@@ -8,6 +8,8 @@ package tibia.magic
    public class SpellListWidget extends Widget
    {
       
+      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       protected static const STATE_PZ_BLOCK:int = 13;
@@ -84,9 +86,11 @@ package tibia.magic
       
       protected static const SKILL_NONE:int = -1;
       
-      protected static const GUILD_MEMBER:int = 4;
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       public static const LAYOUT_LIST:int = 0;
+      
+      protected static const GUILD_MEMBER:int = 4;
       
       protected static const PROFESSION_NONE:int = 0;
       
@@ -147,6 +151,8 @@ package tibia.magic
       protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
       
       protected static const PROFESSION_KNIGHT:int = 1;
+      
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
@@ -216,11 +222,15 @@ package tibia.magic
       
       protected static const STATE_FIGHTING:int = 7;
       
-      protected static const SKILL_GOSTRENGTH:int = 6;
+      protected static const NPC_SPEECH_QUEST:uint = 3;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      protected static const NPC_SPEECH_NONE:uint = 0;
       
       protected static const PK_MAX_FLASHING_TIME:uint = 5000;
       
-      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      protected static const SKILL_GOSTRENGTH:int = 6;
        
       private var m_FilterProfession:int = -1;
       

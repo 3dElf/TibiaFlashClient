@@ -1,61 +1,62 @@
 package tibia.network
 {
    import flash.utils.ByteArray;
+   import tibia.creatures.Creature;
    import tibia.appearances.AppearanceStorage;
    import tibia.appearances.AppearanceInstance;
    import tibia.appearances.OutfitInstance;
-   import tibia.creatures.Creature;
-   import tibia.market.MarketWidget;
-   import tibia.chat.NameFilterSet;
-   import shared.utility.Vector3D;
    import shared.utility.StringHelper;
-   import tibia.game.PopUpBase;
-   import tibia.reporting.ReportWidget;
-   import tibia.chat.MessageMode;
-   import tibia.chat.ChatStorage;
-   import tibia.creatures.Player;
-   import tibia.trade.SafeTradeWidget;
-   import mx.collections.ArrayCollection;
-   import mx.collections.IList;
-   import tibia.options.OptionsStorage;
-   import tibia.sidebar.SideBarSet;
-   import tibia.sidebar.Widget;
+   import shared.utility.Vector3D;
+   import tibia.market.Offer;
+   import tibia.market.MarketWidget;
+   import tibia.market.OfferID;
    import tibia.reporting.reportType.Type;
+   import tibia.reporting.ReportWidget;
+   import tibia.game.EditListWidget;
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.Marks;
+   import tibia.game.PopUpBase;
+   import tibia.appearances.AppearanceTypeRef;
+   import mx.collections.ArrayCollection;
+   import mx.collections.IList;
+   import tibia.chat.Channel;
+   import tibia.chat.ChatStorage;
+   import tibia.chat.ChannelSelectionWidget;
+   import tibia.container.InventoryTypeInfo;
+   import tibia.container.ContainerStorage;
+   import tibia.options.OptionsStorage;
+   import tibia.creatures.BuddySet;
+   import tibia.container.ContainerView;
+   import mx.resources.ResourceManager;
+   import tibia.trade.NPCTradeWidget;
+   import tibia.trade.TradeObjectRef;
+   import tibia.sidebar.SideBarSet;
+   import tibia.sidebar.Widget;
+   import tibia.chat.MessageStorage;
+   import tibia.worldmap.WorldMapStorage;
+   import tibia.game.EditTextWidget;
+   import tibia.container.BodyContainerView;
+   import tibia.questlog.QuestLogWidget;
+   import tibia.questlog.QuestFlag;
+   import tibia.chat.MessageMode;
+   import tibia.help.TutorialHint;
+   import tibia.magic.SpellStorage;
+   import tibia.creatures.Player;
+   import tibia.trade.SafeTradeWidget;
+   import tibia.appearances.EffectInstance;
    import tibia.game.BugReportWidget;
    import shared.utility.BrowserHelper;
    import flash.system.Capabilities;
    import flash.events.ErrorEvent;
-   import tibia.appearances.EffectInstance;
-   import tibia.market.Offer;
-   import tibia.market.OfferID;
-   import tibia.container.BodyContainerView;
-   import tibia.game.EditListWidget;
-   import tibia.appearances.AppearanceTypeRef;
    import tibia.creatures.CreatureStorage;
-   import tibia.chat.Channel;
-   import tibia.chat.ChannelSelectionWidget;
-   import tibia.container.ContainerView;
    import shared.utility.Colour;
-   import tibia.container.InventoryTypeInfo;
    import tibia.minimap.MiniMapStorage;
-   import tibia.container.ContainerStorage;
-   import tibia.creatures.BuddySet;
-   import mx.resources.ResourceManager;
-   import tibia.trade.NPCTradeWidget;
-   import tibia.trade.TradeObjectRef;
    import tibia.market.OfferStatistics;
+   import tibia.questlog.QuestLine;
    import tibia.appearances.MissileInstance;
-   import tibia.worldmap.WorldMapStorage;
    import tibia.appearances.AppearanceType;
    import tibia.creatures.SelectOutfitWidget;
-   import tibia.game.EditTextWidget;
-   import tibia.magic.SpellStorage;
-   import tibia.help.TutorialHint;
-   import tibia.questlog.QuestLogWidget;
-   import tibia.questlog.QuestLine;
-   import tibia.questlog.QuestFlag;
+   import tibia.chat.NameFilterSet;
    import tibia.game.serverModalDialogClasses.Choice;
    import tibia.game.ServerModalDialog;
    
@@ -74,6 +75,8 @@ package tibia.network
       
       protected static const CMARKETACCEPT:int = 248;
       
+      protected static const SAUTOMAPFLAG:int = 221;
+      
       protected static const CGONORTHWEST:int = 109;
       
       protected static const PK_REVENGE:int = 6;
@@ -84,17 +87,15 @@ package tibia.network
       
       protected static const SOUTFIT:int = 200;
       
-      protected static const CADDBUDDY:int = 220;
-      
       protected static const SKILL_FIGHTCLUB:int = 10;
+      
+      protected static const SKILL_GOSTRENGTH:int = 6;
       
       protected static const RISKINESS_DANGEROUS:int = 1;
       
       protected static const CMARKETCREATE:int = 246;
       
-      protected static const CONNECTION_STATE_PENDING:int = 3;
-      
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
+      protected static const CADDBUDDY:int = 220;
       
       protected static const CGOSOUTH:int = 103;
       
@@ -105,6 +106,8 @@ package tibia.network
       protected static const PK_PARTYMODE:int = 2;
       
       protected static const PATH_COST_OBSTACLE:int = 255;
+      
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       protected static const FIELD_HEIGHT:int = 24;
       
@@ -172,6 +175,8 @@ package tibia.network
       
       public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
       
+      protected static const CONNECTION_STATE_PENDING:int = 3;
+      
       protected static const SKILL_HITPOINTS_PERCENT:int = 3;
       
       protected static const SCREATUREPARTY:int = 145;
@@ -200,9 +205,11 @@ package tibia.network
       
       protected static const PATH_EMPTY:int = 0;
       
+      protected static const NPC_SPEECH_TRADER:uint = 2;
+      
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1620;
+      public static const CLIENT_VERSION:uint = 1639;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -328,13 +335,15 @@ package tibia.network
       
       protected static const TYPE_SUMMON_OWN:int = 3;
       
-      protected static const STOPFLOOR:int = 190;
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
       protected static const SPRIVATECHANNEL:int = 173;
       
       protected static const SOPENCHANNEL:int = 172;
+      
+      protected static const STOPFLOOR:int = 190;
       
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
@@ -365,6 +374,8 @@ package tibia.network
       protected static const SNPCOFFER:int = 122;
       
       protected static const SWORLDENTERED:int = 15;
+      
+      protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
       
       protected static const CEXCLUDEFROMCHANNEL:int = 172;
       
@@ -422,13 +433,15 @@ package tibia.network
       
       protected static const GUILD_WAR_ENEMY:int = 2;
       
+      protected static const SCREATURESPEED:int = 143;
+      
       protected static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
       
       protected static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
       
       protected static const STATE_FIGHTING:int = 7;
       
-      protected static const SCREATURESPEED:int = 143;
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
       
       protected static const SSPELLDELAY:int = 164;
       
@@ -442,7 +455,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1035;
+      public static const PROTOCOL_VERSION:int = 1036;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -686,13 +699,11 @@ package tibia.network
       
       protected static const PAYLOADLENGTH_SIZE:int = 2;
       
-      protected static const CSHAREEXPERIENCE:int = 168;
-      
       protected static const SCLEARTARGET:int = 163;
       
-      protected static const SCREATURETYPE:int = 149;
+      protected static const CSHAREEXPERIENCE:int = 168;
       
-      protected static const PK_AGGRESSOR:int = 3;
+      protected static const SCREATURETYPE:int = 149;
       
       protected static const MAPSIZE_W:int = 10;
       
@@ -701,6 +712,8 @@ package tibia.network
       protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
       
       protected static const MAPSIZE_Z:int = 8;
+      
+      protected static const PK_AGGRESSOR:int = 3;
       
       protected static const STATE_HUNGRY:int = 31;
       
@@ -712,7 +725,7 @@ package tibia.network
       
       protected static const CSETOUTFIT:int = 211;
       
-      protected static const PACKETLENGTH_POS:int = HEADER_POS;
+      protected static const NPC_SPEECH_QUEST:uint = 3;
       
       protected static const SUMMON_NONE:int = 0;
       
@@ -720,7 +733,7 @@ package tibia.network
       
       protected static const SOWNOFFER:int = 125;
       
-      protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
+      protected static const PACKETLENGTH_POS:int = HEADER_POS;
       
       protected static const SCLOSECHANNEL:int = 179;
       
@@ -728,9 +741,7 @@ package tibia.network
       
       protected static const PAYLOADDATA_POSITION:int = PAYLOADLENGTH_POS + PAYLOADLENGTH_SIZE;
       
-      protected static const SAUTOMAPFLAG:int = 221;
-      
-      protected static const SKILL_GOSTRENGTH:int = 6;
+      protected static const NPC_SPEECH_NONE:uint = 0;
       
       protected static const CGETOUTFIT:int = 210;
       
@@ -742,33 +753,35 @@ package tibia.network
        
       private var m_AppearanceStorage:AppearanceStorage = null;
       
+      private var m_BeatDuration:int = 0;
+      
+      private var m_ServerConnection:tibia.network.IServerConnection = null;
+      
+      private var m_ContainerStorage:ContainerStorage = null;
+      
+      private var m_MessageStorage:MessageStorage = null;
+      
+      private var m_WorldMapStorage:WorldMapStorage = null;
+      
+      private var m_SpellStorage:SpellStorage = null;
+      
+      private var m_BugreportsAllowed:Boolean = false;
+      
       private var m_ChatStorage:ChatStorage = null;
       
       private var m_Player:Player = null;
       
       private var m_LastSnapback:Vector3D;
       
-      private var m_BeatDuration:int = 0;
-      
-      private var m_ServerConnection:tibia.network.IServerConnection = null;
-      
       private var m_CreatureStorage:CreatureStorage = null;
       
       private var m_MiniMapStorage:MiniMapStorage = null;
       
-      private var m_ContainerStorage:ContainerStorage = null;
-      
       private var m_SnapbackCount:int = 0;
-      
-      private var m_WorldMapStorage:WorldMapStorage = null;
       
       private var m_PendingQuestLog:Boolean = false;
       
       private var m_PendingQuestLine:int = -1;
-      
-      private var m_SpellStorage:SpellStorage = null;
-      
-      private var m_BugreportsAllowed:Boolean = false;
       
       public function Communication(param1:tibia.network.IServerConnection, param2:AppearanceStorage, param3:ChatStorage, param4:ContainerStorage, param5:CreatureStorage, param6:MiniMapStorage, param7:Player, param8:SpellStorage, param9:WorldMapStorage)
       {
@@ -820,50 +833,24 @@ package tibia.network
             throw new Error("Connection.Connection: Invalid world map.",2147483638);
          }
          this.m_WorldMapStorage = param9;
+         this.m_MessageStorage = new MessageStorage();
          this.m_LastSnapback.setComponents(0,0,0);
          this.m_SnapbackCount = 0;
          this.m_PendingQuestLog = false;
          this.m_PendingQuestLine = -1;
       }
       
-      public function sendCMARKETBROWSE(param1:int) : void
+      protected function readSCREATURESKULL(param1:ByteArray) : void
       {
-         var b:ByteArray = null;
-         var a_TypeID:int = param1;
-         try
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
+         var _loc3_:int = param1.readUnsignedByte();
+         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
+         if(_loc4_ != null)
          {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CMARKETBROWSE);
-            b.writeShort(a_TypeID);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
+            _loc4_.setPKFlag(_loc3_);
          }
-         catch(e:Error)
-         {
-            handleSendError(CMARKETBROWSE,e);
-            return;
-         }
-      }
-      
-      public function sendCINSPECTNPCTRADE(param1:int, param2:int) : void
-      {
-         var b:ByteArray = null;
-         var a_Type:int = param1;
-         var a_Data:int = param2;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CINSPECTNPCTRADE);
-            b.writeShort(a_Type);
-            b.writeByte(a_Data);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CINSPECTNPCTRADE,e);
-            return;
-         }
+         this.m_CreatureStorage.invalidateOpponents();
       }
       
       public function sendCCLOSECONTAINER(param1:int) : void
@@ -922,186 +909,10 @@ package tibia.network
          }
       }
       
-      protected function readSCREATURESKULL(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         _loc2_ = param1.readUnsignedInt();
-         var _loc3_:int = param1.readUnsignedByte();
-         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
-         if(_loc4_ != null)
-         {
-            _loc4_.setPKFlag(_loc3_);
-         }
-         this.m_CreatureStorage.invalidateOpponents();
-      }
-      
-      public function sendCINSPECTTRADE(param1:int, param2:int) : void
-      {
-         var b:ByteArray = null;
-         var a_Side:int = param1;
-         var a_Position:int = param2;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CINSPECTTRADE);
-            b.writeByte(a_Side);
-            b.writeByte(a_Position);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CINSPECTTRADE,e);
-            return;
-         }
-      }
-      
-      public function messageProcessingFinished(param1:Boolean = true) : void
-      {
-         this.m_WorldMapStorage.refreshFields();
-         if(param1)
-         {
-            this.m_MiniMapStorage.refreshSectors();
-         }
-         this.m_CreatureStorage.refreshOpponents();
-      }
-      
-      public function get isPending() : Boolean
-      {
-         return this.m_ServerConnection.isPending;
-      }
-      
-      protected function readDouble(param1:ByteArray) : Number
-      {
-         var _loc2_:uint = param1.readUnsignedByte();
-         var _loc3_:uint = param1.readUnsignedInt();
-         return (_loc3_ - int.MAX_VALUE) / Math.pow(10,_loc2_);
-      }
-      
       protected function readSCLOSECHANNEL(param1:ByteArray) : void
       {
          var _loc2_:int = param1.readUnsignedShort();
          this.m_ChatStorage.closeChannel(_loc2_);
-      }
-      
-      protected function readSMESSAGE(param1:ByteArray) : void
-      {
-         var SecondaryError:int = 0;
-         var Mode:int = 0;
-         var ChannelID:uint = 0;
-         var Text:String = null;
-         var Pos:Vector3D = null;
-         var Value:Number = NaN;
-         var Color:uint = 0;
-         var SpeakerMatch:Array = null;
-         var Speaker:String = null;
-         var NameFilter:NameFilterSet = null;
-         var _MarketWidget:MarketWidget = null;
-         var a_Bytes:ByteArray = param1;
-         try
-         {
-            SecondaryError = 0;
-            Mode = a_Bytes.readUnsignedByte();
-            ChannelID = 0;
-            Text = null;
-            Pos = null;
-            Value = NaN;
-            Color = 0;
-            switch(Mode)
-            {
-               case MessageMode.MESSAGE_CHANNEL_MANAGEMENT:
-                  ChannelID = a_Bytes.readUnsignedShort();
-                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
-                  SpeakerMatch = Text.match(/^(.+?) invites you to (his|her) private chat channel\.|^You have been excluded from ([^']+)'s channel\./);
-                  Speaker = SpeakerMatch != null?SpeakerMatch[1] != undefined?SpeakerMatch[1]:SpeakerMatch[3]:null;
-                  NameFilter = Tibia.s_GetOptions().getNameFilterSet(NameFilterSet.DEFAULT_SET);
-                  if(NameFilter != null && Boolean(NameFilter.acceptMessage(Mode,Speaker,Text)))
-                  {
-                     SecondaryError = 1;
-                     this.m_WorldMapStorage.addOnscreenMessage(null,-1,null,0,Mode,Text);
-                     SecondaryError = 2;
-                     this.m_ChatStorage.addChannelMessage(ChannelID,-1,null,0,Mode,Text);
-                  }
-                  break;
-               case MessageMode.MESSAGE_LOGIN:
-               case MessageMode.MESSAGE_ADMIN:
-               case MessageMode.MESSAGE_GAME:
-               case MessageMode.MESSAGE_FAILURE:
-               case MessageMode.MESSAGE_LOOK:
-               case MessageMode.MESSAGE_STATUS:
-               case MessageMode.MESSAGE_LOOT:
-               case MessageMode.MESSAGE_TRADE_NPC:
-               case MessageMode.MESSAGE_GUILD:
-               case MessageMode.MESSAGE_PARTY_MANAGEMENT:
-               case MessageMode.MESSAGE_PARTY:
-               case MessageMode.MESSAGE_HOTKEY_USE:
-                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
-                  SecondaryError = 3;
-                  this.m_WorldMapStorage.addOnscreenMessage(null,-1,null,0,Mode,Text);
-                  SecondaryError = 4;
-                  this.m_ChatStorage.addChannelMessage(-1,-1,null,0,Mode,Text);
-                  break;
-               case MessageMode.MESSAGE_MARKET:
-                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
-                  _MarketWidget = PopUpBase.getCurrent() as MarketWidget;
-                  if(_MarketWidget != null)
-                  {
-                     _MarketWidget.serverResponsePending = false;
-                     _MarketWidget.showMessage(Text);
-                  }
-                  break;
-               case MessageMode.MESSAGE_REPORT:
-                  ReportWidget.s_ReportTimestampReset();
-                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
-                  SecondaryError = 5;
-                  this.m_WorldMapStorage.addOnscreenMessage(null,-1,null,0,Mode,Text);
-                  SecondaryError = 6;
-                  this.m_ChatStorage.addChannelMessage(-1,-1,null,0,Mode,Text);
-                  break;
-               case MessageMode.MESSAGE_DAMAGE_DEALED:
-               case MessageMode.MESSAGE_DAMAGE_RECEIVED:
-               case MessageMode.MESSAGE_DAMAGE_OTHERS:
-                  Pos = this.readCoordinate(a_Bytes);
-                  Value = a_Bytes.readUnsignedInt();
-                  Color = a_Bytes.readUnsignedByte();
-                  SecondaryError = 7;
-                  if(Value > 0)
-                  {
-                     this.m_WorldMapStorage.addOnscreenMessage(Pos,-1,null,0,Mode,Value,Color);
-                  }
-                  Value = a_Bytes.readUnsignedInt();
-                  Color = a_Bytes.readUnsignedByte();
-                  SecondaryError = 8;
-                  if(Value > 0)
-                  {
-                     this.m_WorldMapStorage.addOnscreenMessage(Pos,-1,null,0,Mode,Value,Color);
-                  }
-                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
-                  SecondaryError = 9;
-                  this.m_ChatStorage.addChannelMessage(-1,-1,null,0,Mode,Text);
-                  break;
-               case MessageMode.MESSAGE_HEAL:
-               case MessageMode.MESSAGE_EXP:
-               case MessageMode.MESSAGE_HEAL_OTHERS:
-               case MessageMode.MESSAGE_EXP_OTHERS:
-                  Pos = this.readCoordinate(a_Bytes);
-                  Value = a_Bytes.readUnsignedInt();
-                  Color = a_Bytes.readUnsignedByte();
-                  SecondaryError = 10;
-                  this.m_WorldMapStorage.addOnscreenMessage(Pos,-1,null,0,Mode,Value,Color);
-                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
-                  SecondaryError = 11;
-                  this.m_ChatStorage.addChannelMessage(-1,-1,null,0,Mode,Text);
-                  break;
-               default:
-                  throw new Error("Connection.readSMESSAGE: Invalid message mode " + Mode + ".",0);
-            }
-            return;
-         }
-         catch(e:Error)
-         {
-            throw new Error("Connection.readSMESSAGE: Failed to add message of type " + Mode + ": " + e.message,SecondaryError);
-         }
       }
       
       public function sendCUSEOBJECT(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int) : void
@@ -1133,6 +944,61 @@ package tibia.network
          catch(e:Error)
          {
             handleSendError(CUSEOBJECT,e);
+            return;
+         }
+      }
+      
+      public function sendCCANCEL() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CCANCEL);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CCANCEL,e);
+            return;
+         }
+      }
+      
+      public function sendCPASSLEADERSHIP(param1:int) : void
+      {
+         var b:ByteArray = null;
+         var a_CreatureID:int = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CPASSLEADERSHIP);
+            b.writeInt(a_CreatureID);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CPASSLEADERSHIP,e);
+            return;
+         }
+      }
+      
+      public function sendCINVITETOCHANNEL(param1:String) : void
+      {
+         var b:ByteArray = null;
+         var a_Name:String = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CINVITETOCHANNEL);
+            StringHelper.s_WriteToByteArray(b,a_Name,Creature.MAX_NAME_LENGHT);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CINVITETOCHANNEL,e);
             return;
          }
       }
@@ -1230,49 +1096,35 @@ package tibia.network
          this.handleConnectionError(512 + param1,_loc3_,param2);
       }
       
-      protected function readSOWNOFFER(param1:ByteArray) : void
+      protected function readMarketOffer(param1:ByteArray, param2:int, param3:int) : Offer
       {
-         var _loc8_:SafeTradeWidget = null;
-         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
-         var _loc3_:int = param1.readUnsignedByte();
-         var _loc4_:IList = new ArrayCollection();
-         var _loc5_:int = 0;
-         while(_loc5_ < _loc3_)
+         var _loc4_:uint = param1.readUnsignedInt();
+         var _loc5_:uint = param1.readUnsignedShort();
+         var _loc6_:int = 0;
+         switch(param3)
          {
-            _loc4_.addItem(this.readObjectInstance(param1));
-            _loc5_++;
+            case MarketWidget.REQUEST_OWN_OFFERS:
+            case MarketWidget.REQUEST_OWN_HISTORY:
+               _loc6_ = param1.readUnsignedShort();
+               break;
+            default:
+               _loc6_ = param3;
          }
-         var _loc6_:OptionsStorage = Tibia.s_GetOptions();
-         var _loc7_:SideBarSet = null;
-         if(_loc6_ != null && (_loc7_ = _loc6_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null)
+         var _loc7_:int = param1.readUnsignedShort();
+         var _loc8_:uint = param1.readUnsignedInt();
+         var _loc9_:String = null;
+         var _loc10_:int = Offer.ACTIVE;
+         switch(param3)
          {
-            _loc8_ = _loc7_.getWidgetByType(Widget.TYPE_SAFETRADE) as SafeTradeWidget;
-            if(_loc8_ == null)
-            {
-               _loc8_ = _loc7_.showWidgetType(Widget.TYPE_SAFETRADE,-1,-1) as SafeTradeWidget;
-            }
-            _loc8_.ownName = _loc2_;
-            _loc8_.ownItems = _loc4_;
+            case MarketWidget.REQUEST_OWN_OFFERS:
+               break;
+            case MarketWidget.REQUEST_OWN_HISTORY:
+               _loc10_ = param1.readUnsignedByte();
+               break;
+            default:
+               _loc9_ = StringHelper.s_ReadLongStringFromByteArray(param1);
          }
-      }
-      
-      public function sendCMOUNT(param1:Boolean) : void
-      {
-         var b:ByteArray = null;
-         var a_Mount:Boolean = param1;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CMOUNT);
-            b.writeBoolean(a_Mount);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CMOUNT,e);
-            return;
-         }
+         return new Offer(new OfferID(_loc4_,_loc5_),param2,_loc6_,_loc7_,_loc8_,_loc9_,_loc10_);
       }
       
       public function dispose() : void
@@ -1280,21 +1132,9 @@ package tibia.network
          this.m_ServerConnection = null;
       }
       
-      public function sendCCLOSENPCTRADE() : void
+      protected function readSPENDINGSTATEENTERED(param1:ByteArray) : void
       {
-         var b:ByteArray = null;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CCLOSENPCTRADE);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CCLOSENPCTRADE,e);
-            return;
-         }
+         this.m_ServerConnection.setConnectionState(CONNECTION_STATE_PENDING);
       }
       
       public function sendStatementCRULEVIOLATIONREPORT(param1:int, param2:String, param3:String, param4:String, param5:int) : void
@@ -1329,154 +1169,13 @@ package tibia.network
          }
       }
       
-      protected function readSigned64BitValue(param1:ByteArray) : Number
+      protected function readSEDITLIST(param1:ByteArray) : void
       {
-         var _loc2_:uint = param1.readUnsignedInt();
-         var _loc3_:uint = param1.readUnsignedInt();
-         if((_loc3_ & 2145386496) != 0)
-         {
-            throw new RangeError("Connection.readSigned64BitValue: Value out of range.");
-         }
-         var _loc4_:Number = Number(_loc2_) + Number(_loc3_ & 2097151) * Math.pow(2,32);
-         if((_loc3_ & 2147483648) != 0)
-         {
-            return -_loc4_;
-         }
-         return Number(_loc4_);
-      }
-      
-      public function sendCSELLOBJECT(param1:int, param2:int, param3:int, param4:Boolean) : void
-      {
-         var b:ByteArray = null;
-         var a_Type:int = param1;
-         var a_Data:int = param2;
-         var a_Amount:int = param3;
-         var a_KeepEquipped:Boolean = param4;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CSELLOBJECT);
-            b.writeShort(a_Type);
-            b.writeByte(a_Data);
-            b.writeByte(a_Amount);
-            b.writeBoolean(a_KeepEquipped);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CSELLOBJECT,e);
-            return;
-         }
-      }
-      
-      protected function readSMOVECREATURE(param1:ByteArray) : void
-      {
-         var _loc10_:Vector3D = null;
-         var _loc15_:int = 0;
-         var _loc2_:int = param1.readUnsignedShort();
-         var _loc3_:Vector3D = null;
-         var _loc4_:Vector3D = null;
-         var _loc5_:int = -1;
-         var _loc6_:ObjectInstance = null;
-         var _loc7_:Creature = null;
-         if(_loc2_ != 65535)
-         {
-            _loc3_ = this.readCoordinate(param1,_loc2_);
-            if(!this.m_WorldMapStorage.isVisible(_loc3_.x,_loc3_.y,_loc3_.z,true))
-            {
-               throw new Error("Connection.readSMOVECREATURE: Start co-ordinate " + _loc3_ + " is invalid.",0);
-            }
-            _loc4_ = this.m_WorldMapStorage.toMap(_loc3_);
-            _loc5_ = param1.readUnsignedByte();
-            if((_loc6_ = this.m_WorldMapStorage.getObject(_loc4_.x,_loc4_.y,_loc4_.z,_loc5_)) == null || _loc6_.ID != AppearanceInstance.CREATURE || (_loc7_ = this.m_CreatureStorage.getCreature(_loc6_.data)) == null)
-            {
-               throw new Error("Connection.readSMOVECREATURE: No creature at position " + _loc3_ + ", index " + _loc5_ + ".",1);
-            }
-         }
-         else
-         {
-            _loc15_ = param1.readUnsignedInt();
-            _loc6_ = this.m_AppearanceStorage.createObjectInstance(AppearanceInstance.CREATURE,_loc15_);
-            if((_loc7_ = this.m_CreatureStorage.getCreature(_loc15_)) == null)
-            {
-               throw new Error("Connection.readSMOVECREATURE: Creature " + _loc15_ + " not found.",2);
-            }
-            _loc3_ = _loc7_.position;
-            if(!this.m_WorldMapStorage.isVisible(_loc3_.x,_loc3_.y,_loc3_.z,true))
-            {
-               throw new Error("Connection.readSMOVECREATURE: Start co-ordinate " + _loc3_ + " is invalid.",3);
-            }
-            _loc4_ = this.m_WorldMapStorage.toMap(_loc3_);
-         }
-         var _loc8_:Vector3D = this.readCoordinate(param1);
-         if(!this.m_WorldMapStorage.isVisible(_loc8_.x,_loc8_.y,_loc8_.z,true))
-         {
-            throw new Error("Connection.readSMOVECREATURE: Target co-ordinate " + _loc8_ + " is invalid.",4);
-         }
-         var _loc9_:Vector3D = this.m_WorldMapStorage.toMap(_loc8_);
-         _loc10_ = _loc8_.sub(_loc3_);
-         var _loc11_:Boolean = _loc10_.z != 0 || Math.abs(_loc10_.x) > 1 || Math.abs(_loc10_.y) > 1;
-         var _loc12_:ObjectInstance = null;
-         if(!_loc11_ && ((_loc12_ = this.m_WorldMapStorage.getObject(_loc9_.x,_loc9_.y,_loc9_.z,0)) == null || _loc12_.m_Type == null || !_loc12_.m_Type.isBank))
-         {
-            throw new Error("Connection.readSMOVECREATURE: Target field " + _loc8_ + " has no BANK.",5);
-         }
-         if(_loc2_ != 65535)
-         {
-            this.m_WorldMapStorage.deleteObject(_loc4_.x,_loc4_.y,_loc4_.z,_loc5_);
-         }
-         this.m_WorldMapStorage.putObject(_loc9_.x,_loc9_.y,_loc9_.z,_loc6_);
-         _loc7_.setPosition(_loc8_.x,_loc8_.y,_loc8_.z);
-         if(_loc11_)
-         {
-            if(_loc7_.ID == this.m_Player.ID)
-            {
-               Player(_loc7_).stopAutowalk(true);
-            }
-            if(_loc10_.x > 0)
-            {
-               _loc7_.direction = 1;
-            }
-            else if(_loc10_.x < 0)
-            {
-               _loc7_.direction = 3;
-            }
-            else if(_loc10_.y < 0)
-            {
-               _loc7_.direction = 0;
-            }
-            else if(_loc10_.y > 0)
-            {
-               _loc7_.direction = 2;
-            }
-            if(_loc7_.ID != this.m_Player.ID)
-            {
-               _loc7_.stopMovementAnimation();
-            }
-         }
-         else
-         {
-            _loc7_.startMovementAnimation(_loc10_.x,_loc10_.y,_loc12_.m_Type.waypoints);
-         }
-         this.m_CreatureStorage.markOpponentVisible(_loc7_,true);
-         this.m_CreatureStorage.invalidateOpponents();
-         var _loc13_:uint = 0;
-         var _loc14_:int = 0;
-         if(_loc3_.z == this.m_MiniMapStorage.getPositionZ())
-         {
-            this.m_WorldMapStorage.updateMiniMap(_loc4_.x,_loc4_.y,_loc4_.z);
-            _loc13_ = this.m_WorldMapStorage.getMiniMapColour(_loc4_.x,_loc4_.y,_loc4_.z);
-            _loc14_ = this.m_WorldMapStorage.getMiniMapCost(_loc4_.x,_loc4_.y,_loc4_.z);
-            this.m_MiniMapStorage.updateField(_loc3_.x,_loc3_.y,_loc3_.z,_loc13_,_loc14_,false);
-         }
-         if(_loc8_.z == this.m_MiniMapStorage.getPositionZ())
-         {
-            this.m_WorldMapStorage.updateMiniMap(_loc9_.x,_loc9_.y,_loc9_.z);
-            _loc13_ = this.m_WorldMapStorage.getMiniMapColour(_loc9_.x,_loc9_.y,_loc9_.z);
-            _loc14_ = this.m_WorldMapStorage.getMiniMapCost(_loc9_.x,_loc9_.y,_loc9_.z);
-            this.m_MiniMapStorage.updateField(_loc8_.x,_loc8_.y,_loc8_.z,_loc13_,_loc14_,false);
-         }
+         var _loc2_:EditListWidget = new EditListWidget();
+         _loc2_.type = param1.readUnsignedByte();
+         _loc2_.ID = param1.readUnsignedInt();
+         _loc2_.text = StringHelper.s_ReadLongStringFromByteArray(param1);
+         _loc2_.show();
       }
       
       public function sendCINVITETOPARTY(param1:int) : void
@@ -1498,23 +1197,15 @@ package tibia.network
          }
       }
       
-      public function sendCPASSLEADERSHIP(param1:int) : void
+      protected function readSTOPROW(param1:ByteArray) : void
       {
-         var b:ByteArray = null;
-         var a_CreatureID:int = param1;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CPASSLEADERSHIP);
-            b.writeInt(a_CreatureID);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CPASSLEADERSHIP,e);
-            return;
-         }
+         var _loc2_:Vector3D = this.m_WorldMapStorage.getPosition();
+         _loc2_.y--;
+         this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
+         this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
+         this.m_WorldMapStorage.scrollMap(0,1);
+         this.m_WorldMapStorage.invalidateOnscreenMessages();
+         this.readArea(param1,0,0,MAPSIZE_X - 1,0);
       }
       
       protected function readObjectInstance(param1:ByteArray, param2:int = -1) : ObjectInstance
@@ -1553,117 +1244,6 @@ package tibia.network
          return _loc3_;
       }
       
-      public function sendCFOLLOW(param1:int) : void
-      {
-         var b:ByteArray = null;
-         var a_CreatureID:int = param1;
-         try
-         {
-            if(a_CreatureID != 0)
-            {
-               this.m_Player.stopAutowalk(false);
-            }
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CFOLLOW);
-            b.writeInt(a_CreatureID);
-            b.writeInt(a_CreatureID);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CFOLLOW,e);
-            return;
-         }
-      }
-      
-      public function sendCBUGREPORT(param1:String, param2:* = null) : void
-      {
-         var Message:String = null;
-         var SystemMessage:String = null;
-         var b:ByteArray = null;
-         var a_UserMessage:String = param1;
-         var a_SystemMessage:* = param2;
-         try
-         {
-            Message = "";
-            if(a_UserMessage != null)
-            {
-               Message = Message + a_UserMessage.substr(0,BugReportWidget.MAX_USER_MESSAGE_LENGTH);
-            }
-            Message = Message + ("\nClient-Version=" + CLIENT_VERSION);
-            Message = Message + ("\nBrowser=" + BrowserHelper.s_GetBrowserString());
-            Message = Message + ("\nFlash=" + Capabilities.serverString);
-            SystemMessage = null;
-            if(a_SystemMessage is ErrorEvent && Boolean(a_SystemMessage.hasOwnProperty("error")))
-            {
-               Message = Message + ("\nInternal=" + Error(a_SystemMessage["error"]).getStackTrace());
-            }
-            else if(a_SystemMessage != null)
-            {
-               Message = Message + ("\nInternal=" + String(a_SystemMessage));
-            }
-            if(Message.length > BugReportWidget.MAX_TOTAL_MESSAGE_LENGTH)
-            {
-               Message = Message.substr(0,BugReportWidget.MAX_TOTAL_MESSAGE_LENGTH);
-            }
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CBUGREPORT);
-            StringHelper.s_WriteToByteArray(b,Message);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CBUGREPORT,e);
-            return;
-         }
-      }
-      
-      protected function readSGRAPHICALEFFECT(param1:ByteArray) : void
-      {
-         var _loc2_:Vector3D = this.readCoordinate(param1);
-         var _loc3_:EffectInstance = this.m_AppearanceStorage.createEffectInstance(param1.readUnsignedByte());
-         this.m_WorldMapStorage.appendEffect(_loc2_.x,_loc2_.y,_loc2_.z,_loc3_);
-      }
-      
-      protected function readSPENDINGSTATEENTERED(param1:ByteArray) : void
-      {
-         this.m_ServerConnection.setConnectionState(CONNECTION_STATE_PENDING);
-      }
-      
-      protected function readSFULLMAP(param1:ByteArray) : void
-      {
-         var _loc2_:Vector3D = this.readCoordinate(param1);
-         this.m_Player.stopAutowalk(true);
-         this.m_CreatureStorage.markAllOpponentsVisible(false);
-         this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         this.m_WorldMapStorage.resetMap();
-         this.m_WorldMapStorage.invalidateOnscreenMessages();
-         this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         this.readArea(param1,0,0,MAPSIZE_X - 1,MAPSIZE_Y - 1);
-         this.m_WorldMapStorage.valid = true;
-      }
-      
-      public function sendCINVITETOCHANNEL(param1:String) : void
-      {
-         var b:ByteArray = null;
-         var a_Name:String = param1;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CINVITETOCHANNEL);
-            StringHelper.s_WriteToByteArray(b,a_Name,Creature.MAX_NAME_LENGHT);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CINVITETOCHANNEL,e);
-            return;
-         }
-      }
-      
       protected function readUnsigned64BitValue(param1:ByteArray) : Number
       {
          var _loc2_:uint = param1.readUnsignedInt();
@@ -1700,130 +1280,6 @@ package tibia.network
          this.m_Player.abortAutowalk(_loc2_);
       }
       
-      protected function readSLEFTROW(param1:ByteArray) : void
-      {
-         var _loc2_:Vector3D = this.m_WorldMapStorage.getPosition();
-         _loc2_.x--;
-         this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         this.m_WorldMapStorage.scrollMap(1,0);
-         this.m_WorldMapStorage.invalidateOnscreenMessages();
-         this.readArea(param1,0,0,0,MAPSIZE_Y - 1);
-      }
-      
-      protected function readMarketOffer(param1:ByteArray, param2:int, param3:int) : Offer
-      {
-         var _loc4_:uint = param1.readUnsignedInt();
-         var _loc5_:uint = param1.readUnsignedShort();
-         var _loc6_:int = 0;
-         switch(param3)
-         {
-            case MarketWidget.REQUEST_OWN_OFFERS:
-            case MarketWidget.REQUEST_OWN_HISTORY:
-               _loc6_ = param1.readUnsignedShort();
-               break;
-            default:
-               _loc6_ = param3;
-         }
-         var _loc7_:int = param1.readUnsignedShort();
-         var _loc8_:uint = param1.readUnsignedInt();
-         var _loc9_:String = null;
-         var _loc10_:int = Offer.ACTIVE;
-         switch(param3)
-         {
-            case MarketWidget.REQUEST_OWN_OFFERS:
-               break;
-            case MarketWidget.REQUEST_OWN_HISTORY:
-               _loc10_ = param1.readUnsignedByte();
-               break;
-            default:
-               _loc9_ = StringHelper.s_ReadLongStringFromByteArray(param1);
-         }
-         return new Offer(new OfferID(_loc4_,_loc5_),param2,_loc6_,_loc7_,_loc8_,_loc9_,_loc10_);
-      }
-      
-      public function sendCANSWERMODALDIALOG(param1:uint, param2:int, param3:int) : void
-      {
-         var b:ByteArray = null;
-         var a_ID:uint = param1;
-         var a_Button:int = param2;
-         var a_Choice:int = param3;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CANSWERMODALDIALOG);
-            b.writeUnsignedInt(a_ID);
-            b.writeByte(a_Button);
-            b.writeByte(a_Choice);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CANSWERMODALDIALOG,e);
-            return;
-         }
-      }
-      
-      public function sendCSTOP() : void
-      {
-         var b:ByteArray = null;
-         try
-         {
-            this.m_CreatureStorage.clearTargets();
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CSTOP);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CSTOP,e);
-            return;
-         }
-      }
-      
-      protected function readSSETINVENTORY(param1:ByteArray) : void
-      {
-         var _loc2_:int = param1.readUnsignedByte();
-         var _loc3_:ObjectInstance = this.readObjectInstance(param1);
-         var _loc4_:BodyContainerView = this.m_ContainerStorage.getBodyContainerView();
-         if(_loc4_ != null)
-         {
-            _loc4_.setObject(_loc2_,_loc3_);
-         }
-      }
-      
-      protected function readSCREATURESPEED(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         _loc2_ = param1.readUnsignedInt();
-         var _loc3_:int = param1.readUnsignedShort();
-         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
-         if(_loc4_ != null)
-         {
-            _loc4_.setSkillValue(SKILL_GOSTRENGTH,_loc3_);
-         }
-         this.m_CreatureStorage.invalidateOpponents();
-      }
-      
-      public function sendCMARKETLEAVE() : void
-      {
-         var b:ByteArray = null;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CMARKETLEAVE);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CMARKETLEAVE,e);
-            return;
-         }
-      }
-      
       protected function readSTRAPPERS(param1:ByteArray) : void
       {
          var _loc5_:int = 0;
@@ -1848,74 +1304,56 @@ package tibia.network
          this.m_CreatureStorage.setTrappers(_loc3_);
       }
       
-      protected function readArea(param1:ByteArray, param2:int, param3:int, param4:int, param5:int) : int
+      protected function readSFULLMAP(param1:ByteArray) : void
       {
-         var _loc15_:int = 0;
-         var _loc16_:int = 0;
-         var _loc6_:Vector3D = this.m_WorldMapStorage.getPosition();
-         var _loc7_:Vector3D = new Vector3D();
-         var _loc8_:Vector3D = new Vector3D();
-         var _loc9_:int = 0;
-         var _loc10_:int = 0;
-         var _loc11_:int = 0;
-         if(_loc6_.z <= GROUND_LAYER)
-         {
-            _loc9_ = 0;
-            _loc10_ = GROUND_LAYER + 1;
-            _loc11_ = 1;
-         }
-         else
-         {
-            _loc9_ = 2 * UNDERGROUND_LAYER;
-            _loc10_ = Math.max(-1,_loc6_.z - MAP_MAX_Z + 1);
-            _loc11_ = -1;
-         }
-         var _loc12_:int = 0;
-         var _loc13_:uint = 0;
-         var _loc14_:int = 0;
-         while(_loc9_ != _loc10_)
-         {
-            _loc15_ = param2;
-            while(_loc15_ <= param4)
-            {
-               _loc16_ = param3;
-               while(_loc16_ <= param5)
-               {
-                  if(_loc12_ > 0)
-                  {
-                     _loc12_--;
-                  }
-                  else
-                  {
-                     _loc12_ = this.readField(param1,_loc15_,_loc16_,_loc9_);
-                  }
-                  _loc7_.setComponents(_loc15_,_loc16_,_loc9_);
-                  this.m_WorldMapStorage.toAbsolute(_loc7_,_loc8_);
-                  if(_loc8_.z == this.m_MiniMapStorage.getPositionZ())
-                  {
-                     this.m_WorldMapStorage.updateMiniMap(_loc15_,_loc16_,_loc9_);
-                     _loc13_ = this.m_WorldMapStorage.getMiniMapColour(_loc15_,_loc16_,_loc9_);
-                     _loc14_ = this.m_WorldMapStorage.getMiniMapCost(_loc15_,_loc16_,_loc9_);
-                     this.m_MiniMapStorage.updateField(_loc8_.x,_loc8_.y,_loc8_.z,_loc13_,_loc14_,false);
-                  }
-                  _loc16_++;
-               }
-               _loc15_++;
-            }
-            _loc9_ = _loc9_ + _loc11_;
-         }
-         return _loc12_;
+         var _loc2_:Vector3D = this.readCoordinate(param1);
+         this.m_Player.stopAutowalk(true);
+         this.m_CreatureStorage.markAllOpponentsVisible(false);
+         this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
+         this.m_WorldMapStorage.resetMap();
+         this.m_WorldMapStorage.invalidateOnscreenMessages();
+         this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
+         this.readArea(param1,0,0,MAPSIZE_X - 1,MAPSIZE_Y - 1);
+         this.m_WorldMapStorage.valid = true;
       }
       
-      protected function readSTOPROW(param1:ByteArray) : void
+      protected function readSLEFTROW(param1:ByteArray) : void
       {
          var _loc2_:Vector3D = this.m_WorldMapStorage.getPosition();
-         _loc2_.y--;
+         _loc2_.x--;
          this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
          this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         this.m_WorldMapStorage.scrollMap(0,1);
+         this.m_WorldMapStorage.scrollMap(1,0);
          this.m_WorldMapStorage.invalidateOnscreenMessages();
-         this.readArea(param1,0,0,MAPSIZE_X - 1,0);
+         this.readArea(param1,0,0,0,MAPSIZE_Y - 1);
+      }
+      
+      public function sendCSTOP() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            this.m_CreatureStorage.clearTargets();
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CSTOP);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CSTOP,e);
+            return;
+         }
+      }
+      
+      protected function readSMARKETLEAVE(param1:ByteArray) : void
+      {
+         var _loc2_:MarketWidget = null;
+         _loc2_ = PopUpBase.getCurrent() as MarketWidget;
+         if(_loc2_ != null)
+         {
+            _loc2_.hide(true);
+         }
       }
       
       protected function readSCREATUREHEALTH(param1:ByteArray) : void
@@ -1937,15 +1375,6 @@ package tibia.network
       protected function readSCLOSECONTAINER(param1:ByteArray) : void
       {
          this.m_ContainerStorage.closeContainerView(param1.readUnsignedByte());
-      }
-      
-      protected function readSEDITLIST(param1:ByteArray) : void
-      {
-         var _loc2_:EditListWidget = new EditListWidget();
-         _loc2_.type = param1.readUnsignedByte();
-         _loc2_.ID = param1.readUnsignedInt();
-         _loc2_.text = StringHelper.s_ReadLongStringFromByteArray(param1);
-         _loc2_.show();
       }
       
       public function sendCGETOBJECTINFO(... rest) : void
@@ -2081,69 +1510,9 @@ package tibia.network
          _loc4_.show();
       }
       
-      public function sendCSHAREEXPERIENCE(param1:Boolean) : void
+      protected function readSSPELLGROUPDELAY(param1:ByteArray) : void
       {
-         var b:ByteArray = null;
-         var a_Enabled:Boolean = param1;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CSHAREEXPERIENCE);
-            b.writeBoolean(a_Enabled);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CSHAREEXPERIENCE,e);
-            return;
-         }
-      }
-      
-      protected function readSCHANGEINCONTAINER(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         _loc2_ = param1.readUnsignedByte();
-         var _loc3_:int = param1.readUnsignedShort();
-         var _loc4_:ObjectInstance = this.readObjectInstance(param1);
-         var _loc5_:ContainerView = this.m_ContainerStorage.getContainerView(_loc2_);
-         if(_loc5_ != null)
-         {
-            _loc5_.changeObject(_loc3_,_loc4_);
-         }
-      }
-      
-      protected function readSAMBIENTE(param1:ByteArray) : void
-      {
-         var _loc2_:int = param1.readUnsignedByte();
-         var _loc3_:Colour = Colour.s_FromEightBit(param1.readUnsignedByte());
-         this.m_WorldMapStorage.setAmbientLight(_loc3_,_loc2_);
-      }
-      
-      protected function readSOPENOWNCHANNEL(param1:ByteArray) : void
-      {
-         var _loc9_:String = null;
-         var _loc10_:String = null;
-         var _loc2_:int = param1.readUnsignedShort();
-         var _loc3_:String = StringHelper.s_ReadLongStringFromByteArray(param1,Channel.MAX_NAME_LENGTH);
-         var _loc4_:Channel = this.m_ChatStorage.addChannel(_loc2_,_loc3_,MessageMode.MESSAGE_CHANNEL);
-         this.m_ChatStorage.ownPrivateChannelID = _loc2_;
-         var _loc5_:int = param1.readUnsignedShort();
-         var _loc6_:int = 0;
-         while(_loc6_ < _loc5_)
-         {
-            _loc9_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
-            _loc4_.playerJoined(_loc9_);
-            _loc6_++;
-         }
-         var _loc7_:int = param1.readUnsignedShort();
-         var _loc8_:int = 0;
-         while(_loc8_ < _loc7_)
-         {
-            _loc10_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
-            _loc4_.playerInvited(_loc10_);
-            _loc8_++;
-         }
+         this.m_SpellStorage.setSpellGroupDelay(param1.readUnsignedByte(),param1.readUnsignedInt());
       }
       
       protected function readSTOPFLOOR(param1:ByteArray) : void
@@ -2200,63 +1569,6 @@ package tibia.network
             }
             _loc6_++;
          }
-      }
-      
-      protected function readSSPELLGROUPDELAY(param1:ByteArray) : void
-      {
-         this.m_SpellStorage.setSpellGroupDelay(param1.readUnsignedByte(),param1.readUnsignedInt());
-      }
-      
-      protected function readSPLAYERDATACURRENT(param1:ByteArray) : void
-      {
-         var _loc2_:Number = Tibia.s_FrameTibiaTimestamp;
-         var _loc3_:Number = 0;
-         var _loc4_:Number = 0;
-         var _loc5_:Number = 0;
-         _loc3_ = Math.max(0,param1.readShort());
-         _loc4_ = Math.max(0,param1.readShort());
-         _loc5_ = 0;
-         this.m_Player.setSkill(SKILL_HITPOINTS,_loc3_,_loc4_,_loc5_);
-         _loc3_ = Math.max(0,param1.readInt());
-         _loc4_ = Math.max(0,param1.readInt());
-         _loc5_ = 0;
-         this.m_Player.setSkill(SKILL_CARRYSTRENGTH,_loc3_,_loc4_,_loc5_);
-         _loc3_ = this.readSigned64BitValue(param1);
-         _loc4_ = 1;
-         _loc5_ = 0;
-         this.m_Player.setSkill(SKILL_EXPERIENCE,_loc3_,_loc4_,_loc5_);
-         _loc3_ = param1.readUnsignedShort();
-         _loc4_ = 1;
-         _loc5_ = param1.readUnsignedByte();
-         this.m_Player.setSkill(SKILL_LEVEL,_loc3_,_loc4_,_loc5_);
-         _loc3_ = Math.max(0,param1.readShort());
-         _loc4_ = Math.max(0,param1.readShort());
-         _loc5_ = 0;
-         this.m_Player.setSkill(SKILL_MANA,_loc3_,_loc4_,_loc5_);
-         _loc3_ = param1.readUnsignedByte();
-         _loc4_ = param1.readUnsignedByte();
-         _loc5_ = param1.readUnsignedByte();
-         this.m_Player.setSkill(SKILL_MAGLEVEL,_loc3_,_loc4_,_loc5_);
-         _loc3_ = param1.readUnsignedByte();
-         _loc4_ = 1;
-         _loc5_ = 0;
-         this.m_Player.setSkill(SKILL_SOULPOINTS,_loc3_,_loc4_,_loc5_);
-         _loc3_ = _loc2_ + 60 * 1000 * param1.readUnsignedShort();
-         _loc4_ = _loc2_;
-         _loc5_ = 0;
-         this.m_Player.setSkill(SKILL_STAMINA,_loc3_,_loc4_,_loc5_);
-         _loc3_ = this.m_Player.getSkillValue(SKILL_GOSTRENGTH);
-         _loc4_ = param1.readUnsignedShort();
-         _loc5_ = 0;
-         this.m_Player.setSkill(SKILL_GOSTRENGTH,_loc3_,_loc4_,_loc5_);
-         _loc3_ = _loc2_ + 1000 * param1.readUnsignedShort();
-         _loc4_ = _loc2_;
-         _loc5_ = 0;
-         this.m_Player.setSkill(SKILL_FED,_loc3_,_loc4_,_loc5_);
-         _loc3_ = _loc2_ + 60 * 1000 * param1.readUnsignedShort();
-         _loc4_ = _loc2_;
-         _loc5_ = 0;
-         this.m_Player.setSkill(SKILL_OFFLINETRAINING,_loc3_,_loc4_,_loc5_);
       }
       
       protected function readCreatureOutfit(param1:ByteArray, param2:AppearanceInstance) : AppearanceInstance
@@ -2336,39 +1648,56 @@ package tibia.network
          }
       }
       
-      public function sendCGETOUTFIT() : void
+      protected function readSPLAYERINVENTORY(param1:ByteArray) : void
       {
-         var b:ByteArray = null;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CGETOUTFIT);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CGETOUTFIT,e);
-            return;
-         }
-      }
-      
-      protected function readSPLAYERGOODS(param1:ByteArray) : void
-      {
+         var _loc2_:Vector.<InventoryTypeInfo> = null;
+         var _loc3_:int = 0;
+         var _loc4_:int = 0;
          var _loc5_:int = 0;
          var _loc6_:int = 0;
-         var _loc2_:Number = this.readSigned64BitValue(param1);
-         var _loc3_:Vector.<InventoryTypeInfo> = new Vector.<InventoryTypeInfo>();
-         var _loc4_:int = param1.readUnsignedByte() - 1;
-         while(_loc4_ >= 0)
+         _loc2_ = new Vector.<InventoryTypeInfo>();
+         _loc3_ = param1.readUnsignedShort() - 1;
+         while(_loc3_ >= 0)
          {
-            _loc5_ = param1.readUnsignedShort();
-            _loc6_ = param1.readUnsignedByte();
-            _loc3_.push(new InventoryTypeInfo(_loc5_,0,_loc6_));
-            _loc4_--;
+            _loc4_ = param1.readUnsignedShort();
+            _loc5_ = param1.readUnsignedByte();
+            _loc6_ = param1.readUnsignedShort();
+            _loc2_.push(new InventoryTypeInfo(_loc4_,_loc5_,_loc6_));
+            _loc3_--;
          }
-         this.m_ContainerStorage.setPlayerMoney(_loc2_);
-         this.m_ContainerStorage.setPlayerGoods(_loc3_);
+         this.m_ContainerStorage.setPlayerInventory(_loc2_);
+      }
+      
+      protected function readSMARKETENTER(param1:ByteArray) : void
+      {
+         var _loc2_:Number = NaN;
+         var _loc3_:uint = 0;
+         var _loc4_:Array = null;
+         var _loc5_:int = 0;
+         var _loc6_:MarketWidget = null;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
+         _loc2_ = this.readSigned64BitValue(param1);
+         _loc3_ = param1.readUnsignedByte();
+         _loc4_ = [];
+         _loc5_ = param1.readUnsignedShort() - 1;
+         while(_loc5_ >= 0)
+         {
+            _loc7_ = param1.readUnsignedShort();
+            _loc8_ = param1.readUnsignedShort();
+            _loc4_.push(new InventoryTypeInfo(_loc7_,0,_loc8_));
+            _loc5_--;
+         }
+         _loc6_ = PopUpBase.getCurrent() as MarketWidget;
+         if(_loc6_ == null)
+         {
+            _loc6_ = new MarketWidget();
+            _loc6_.show();
+         }
+         _loc6_.serverResponsePending = false;
+         _loc6_.accountBalance = _loc2_;
+         _loc6_.activeOffers = _loc3_;
+         _loc6_.depotContent = _loc4_;
       }
       
       protected function readSPLAYERSKILLS(param1:ByteArray) : void
@@ -2387,13 +1716,18 @@ package tibia.network
          }
       }
       
-      protected function readSDEAD(param1:ByteArray) : void
+      protected function readSCLEARTARGET(param1:ByteArray) : void
       {
-         var _loc2_:Number = param1.readUnsignedByte();
-         var _loc3_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.DEAD);
-         _loc3_.message = null;
-         _loc3_.data = _loc2_;
-         this.m_ServerConnection.dispatchEvent(_loc3_);
+         var _loc2_:int = param1.readUnsignedInt();
+         var _loc3_:Creature = null;
+         if((_loc3_ = this.m_CreatureStorage.getAttackTarget()) != null && _loc2_ == _loc3_.ID)
+         {
+            this.m_CreatureStorage.setAttackTarget(null,false);
+         }
+         else if((_loc3_ = this.m_CreatureStorage.getFollowTarget()) != null && _loc2_ == _loc3_.ID)
+         {
+            this.m_CreatureStorage.setFollowTarget(null,false);
+         }
       }
       
       public function sendCEDITLIST(param1:int, param2:int, param3:String) : void
@@ -2419,24 +1753,779 @@ package tibia.network
          }
       }
       
-      protected function readSPLAYERINVENTORY(param1:ByteArray) : void
+      public function sendCREJECTTRADE() : void
       {
-         var _loc2_:Vector.<InventoryTypeInfo> = null;
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CREJECTTRADE);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CREJECTTRADE,e);
+            return;
+         }
+      }
+      
+      public function sendCGETCHANNELS() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CGETCHANNELS);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CGETCHANNELS,e);
+            return;
+         }
+      }
+      
+      protected function readSWAIT(param1:ByteArray) : void
+      {
+         this.m_Player.earliestMoveTime = this.m_Player.earliestMoveTime + param1.readUnsignedShort();
+      }
+      
+      protected function readSBUDDYDATA(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         var _loc3_:String = null;
+         var _loc4_:String = null;
+         var _loc5_:uint = 0;
+         var _loc6_:Boolean = false;
+         var _loc7_:uint = 0;
+         var _loc8_:OptionsStorage = null;
+         var _loc9_:BuddySet = null;
+         _loc2_ = param1.readUnsignedInt();
+         _loc3_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
+         _loc4_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_DESCRIPTION_LENGHT);
+         _loc5_ = param1.readUnsignedInt();
+         _loc6_ = param1.readBoolean();
+         _loc7_ = param1.readByte();
+         _loc8_ = Tibia.s_GetOptions();
+         _loc9_ = null;
+         if(_loc8_ != null && (_loc9_ = _loc8_.getBuddySet(BuddySet.DEFAULT_SET)) != null)
+         {
+            _loc9_.updateBuddy(_loc2_,_loc3_,_loc4_,_loc5_,_loc6_,_loc7_);
+         }
+      }
+      
+      protected function readSDELETEINCONTAINER(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedByte();
+         var _loc3_:int = param1.readUnsignedShort();
+         var _loc4_:ObjectInstance = this.readObjectInstance(param1);
+         var _loc5_:ContainerView = this.m_ContainerStorage.getContainerView(_loc2_);
+         if(_loc5_ != null)
+         {
+            _loc5_.removeObject(_loc3_,_loc4_);
+         }
+      }
+      
+      protected function readSLOGINSUCCESS(param1:ByteArray) : void
+      {
+         this.m_Player.ID = param1.readUnsignedInt();
+         this.m_BeatDuration = param1.readUnsignedShort();
+         Creature.speedA = this.readDouble(param1);
+         Creature.speedB = this.readDouble(param1);
+         Creature.speedC = this.readDouble(param1);
+         this.m_BugreportsAllowed = param1.readUnsignedByte() == 1;
+      }
+      
+      public function sendBotCRULEVIOLATIONREPORT(param1:int, param2:String, param3:String) : void
+      {
+         var b:ByteArray = null;
+         var a_Reason:int = param1;
+         var a_CharacterName:String = param2;
+         var a_Comment:String = param3;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CRULEVIOLATIONREPORT);
+            b.writeByte(Type.REPORT_BOT);
+            b.writeByte(a_Reason);
+            StringHelper.s_WriteToByteArray(b,a_CharacterName,Creature.MAX_NAME_LENGHT);
+            StringHelper.s_WriteToByteArray(b,a_Comment,ReportWidget.MAX_COMMENT_LENGTH);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CRULEVIOLATIONREPORT,e);
+            return;
+         }
+      }
+      
+      public function sendCGETQUESTLINE(param1:int) : void
+      {
+         var b:ByteArray = null;
+         var a_QuestLine:int = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CGETQUESTLINE);
+            b.writeShort(a_QuestLine);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            this.m_PendingQuestLine = a_QuestLine;
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CGETQUESTLINE,e);
+            return;
+         }
+      }
+      
+      protected function readSAUTOMAPFLAG(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
          var _loc3_:int = 0;
          var _loc4_:int = 0;
          var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         _loc2_ = new Vector.<InventoryTypeInfo>();
-         _loc3_ = param1.readUnsignedShort() - 1;
-         while(_loc3_ >= 0)
+         var _loc6_:String = null;
+         _loc2_ = param1.readUnsignedShort();
+         _loc3_ = param1.readUnsignedShort();
+         _loc4_ = param1.readUnsignedByte();
+         _loc5_ = param1.readUnsignedByte();
+         _loc6_ = StringHelper.s_ReadLongStringFromByteArray(param1);
+         this.m_MiniMapStorage.setMark(_loc2_,_loc3_,_loc4_,_loc5_,_loc6_);
+         this.m_MiniMapStorage.highlightMarks();
+      }
+      
+      public function sendCJOINPARTY(param1:int) : void
+      {
+         var b:ByteArray = null;
+         var a_CreatureID:int = param1;
+         try
          {
-            _loc4_ = param1.readUnsignedShort();
-            _loc5_ = param1.readUnsignedByte();
-            _loc6_ = param1.readUnsignedShort();
-            _loc2_.push(new InventoryTypeInfo(_loc4_,_loc5_,_loc6_));
-            _loc3_--;
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CJOINPARTY);
+            b.writeInt(a_CreatureID);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
          }
-         this.m_ContainerStorage.setPlayerInventory(_loc2_);
+         catch(e:Error)
+         {
+            handleSendError(CJOINPARTY,e);
+            return;
+         }
+      }
+      
+      private function handleConnectionError(param1:int, param2:int = 0, param3:Object = null) : void
+      {
+         this.m_ServerConnection.disconnect(false);
+         var _loc4_:String = null;
+         switch(param1)
+         {
+            case ERR_INTERNAL:
+         }
+         _loc4_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_INTERNAL_ERROR",[param1,param2]);
+         var _loc5_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.ERROR);
+         _loc5_.message = _loc4_;
+         _loc5_.data = null;
+         this.m_ServerConnection.dispatchEvent(_loc5_);
+      }
+      
+      protected function readSCREATEINCONTAINER(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedByte();
+         var _loc3_:int = param1.readUnsignedShort();
+         var _loc4_:ObjectInstance = this.readObjectInstance(param1);
+         var _loc5_:ContainerView = this.m_ContainerStorage.getContainerView(_loc2_);
+         if(_loc5_ != null)
+         {
+            _loc5_.addObject(_loc3_,_loc4_);
+         }
+      }
+      
+      public function sendCLEAVEPARTY() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CLEAVEPARTY);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CLEAVEPARTY,e);
+            return;
+         }
+      }
+      
+      protected function readSPLAYERSTATE(param1:ByteArray) : void
+      {
+         var _loc2_:uint = param1.readUnsignedShort();
+         this.m_Player.stateFlags = _loc2_;
+      }
+      
+      protected function readSDELETEONMAP(param1:ByteArray) : void
+      {
+         var _loc9_:uint = 0;
+         var _loc10_:int = 0;
+         var _loc2_:int = param1.readUnsignedShort();
+         var _loc3_:int = 0;
+         var _loc4_:int = 0;
+         var _loc5_:Vector3D = null;
+         var _loc6_:Vector3D = null;
+         var _loc7_:ObjectInstance = null;
+         var _loc8_:Creature = null;
+         if(_loc2_ != 65535)
+         {
+            _loc5_ = this.readCoordinate(param1,_loc2_);
+            if(!this.m_WorldMapStorage.isVisible(_loc5_.x,_loc5_.y,_loc5_.z,true))
+            {
+               throw new Error("Connection.readSDELETEONMAP: Co-ordinate " + _loc5_ + " is out of range.",0);
+            }
+            _loc6_ = this.m_WorldMapStorage.toMap(_loc5_);
+            _loc4_ = param1.readUnsignedByte();
+            if((_loc7_ = this.m_WorldMapStorage.getObject(_loc6_.x,_loc6_.y,_loc6_.z,_loc4_)) == null)
+            {
+               throw new Error("Connection.readSDELETEONMAP: Object not found.",1);
+            }
+            if(_loc7_.ID == AppearanceInstance.CREATURE && (_loc8_ = this.m_CreatureStorage.getCreature(_loc7_.data)) == null)
+            {
+               throw new Error("Connection.readSDELETEONMAP: Creature not found: " + _loc7_.data,2);
+            }
+            this.m_WorldMapStorage.deleteObject(_loc6_.x,_loc6_.y,_loc6_.z,_loc4_);
+         }
+         else
+         {
+            _loc3_ = param1.readUnsignedInt();
+            if((_loc8_ = this.m_CreatureStorage.getCreature(_loc3_)) == null)
+            {
+               throw new Error("Connection.readSDELETEONMAP: Creature not found: " + _loc3_,3);
+            }
+            _loc5_ = _loc8_.position;
+            if(!this.m_WorldMapStorage.isVisible(_loc5_.x,_loc5_.y,_loc5_.z,true))
+            {
+               throw new Error("Connection.readSDELETEONMAP: Co-ordinate " + _loc5_ + " is out of range.",4);
+            }
+            _loc6_ = this.m_WorldMapStorage.toMap(_loc5_);
+         }
+         if(_loc8_ != null)
+         {
+            this.m_CreatureStorage.markOpponentVisible(_loc8_,false);
+         }
+         if(_loc5_.z == this.m_MiniMapStorage.getPositionZ())
+         {
+            this.m_WorldMapStorage.updateMiniMap(_loc6_.x,_loc6_.y,_loc6_.z);
+            _loc9_ = this.m_WorldMapStorage.getMiniMapColour(_loc6_.x,_loc6_.y,_loc6_.z);
+            _loc10_ = this.m_WorldMapStorage.getMiniMapCost(_loc6_.x,_loc6_.y,_loc6_.z);
+            this.m_MiniMapStorage.updateField(_loc5_.x,_loc5_.y,_loc5_.z,_loc9_,_loc10_,false);
+         }
+      }
+      
+      public function sendCROTATESOUTH() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CROTATESOUTH);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CROTATESOUTH,e);
+            return;
+         }
+      }
+      
+      protected function readSNPCOFFER(param1:ByteArray) : void
+      {
+         var _loc9_:int = 0;
+         var _loc10_:int = 0;
+         var _loc11_:String = null;
+         var _loc12_:uint = 0;
+         var _loc13_:uint = 0;
+         var _loc14_:uint = 0;
+         var _loc15_:NPCTradeWidget = null;
+         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
+         var _loc3_:IList = new ArrayCollection();
+         var _loc4_:IList = new ArrayCollection();
+         var _loc5_:int = param1.readUnsignedShort();
+         var _loc6_:int = 0;
+         while(_loc6_ < _loc5_)
+         {
+            _loc9_ = param1.readUnsignedShort();
+            _loc10_ = param1.readUnsignedByte();
+            _loc11_ = StringHelper.s_ReadLongStringFromByteArray(param1,NPCTradeWidget.MAX_WARE_NAME_LENGTH);
+            _loc12_ = param1.readUnsignedInt();
+            _loc13_ = param1.readUnsignedInt();
+            _loc14_ = param1.readUnsignedInt();
+            if(_loc13_ > 0)
+            {
+               _loc3_.addItem(new TradeObjectRef(_loc9_,_loc10_,_loc11_,_loc13_,_loc12_));
+            }
+            if(_loc14_ > 0)
+            {
+               _loc4_.addItem(new TradeObjectRef(_loc9_,_loc10_,_loc11_,_loc14_,_loc12_));
+            }
+            _loc6_++;
+         }
+         var _loc7_:OptionsStorage = Tibia.s_GetOptions();
+         var _loc8_:SideBarSet = null;
+         if(_loc7_ != null && (_loc8_ = _loc7_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null)
+         {
+            _loc15_ = _loc8_.getWidgetByType(Widget.TYPE_NPCTRADE) as NPCTradeWidget;
+            if(_loc15_ == null)
+            {
+               _loc15_ = _loc8_.showWidgetType(Widget.TYPE_NPCTRADE,-1,-1) as NPCTradeWidget;
+            }
+            _loc15_.npcName = _loc2_;
+            _loc15_.buyObjects = _loc3_;
+            _loc15_.sellObjects = _loc4_;
+            _loc15_.categories = null;
+         }
+      }
+      
+      public function sendCPRIVATECHANNEL(param1:String) : void
+      {
+         var b:ByteArray = null;
+         var a_Name:String = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CPRIVATECHANNEL);
+            StringHelper.s_WriteToByteArray(b,a_Name,Creature.MAX_NAME_LENGHT);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CPRIVATECHANNEL,e);
+            return;
+         }
+      }
+      
+      public function disconnect(param1:Boolean) : void
+      {
+         if((Boolean(this.m_ServerConnection.isGameRunning) || Boolean(this.m_ServerConnection.isPending)) && !param1)
+         {
+            this.sendCQUITGAME();
+         }
+         else
+         {
+            this.m_ServerConnection.disconnect();
+         }
+      }
+      
+      protected function readSCLOSENPCTRADE(param1:ByteArray) : void
+      {
+         var _loc2_:OptionsStorage = Tibia.s_GetOptions();
+         var _loc3_:SideBarSet = null;
+         var _loc4_:NPCTradeWidget = null;
+         if(_loc2_ != null && (_loc3_ = _loc2_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null && (_loc4_ = _loc3_.getWidgetByType(Widget.TYPE_NPCTRADE) as NPCTradeWidget) != null)
+         {
+            _loc4_.buyObjects = null;
+            _loc4_.sellObjects = null;
+            _loc4_.categories = null;
+            _loc3_.hideWidgetType(Widget.TYPE_NPCTRADE,-1);
+         }
+      }
+      
+      protected function readSSPELLDELAY(param1:ByteArray) : void
+      {
+         this.m_SpellStorage.setSpellDelay(param1.readUnsignedByte(),param1.readUnsignedInt());
+      }
+      
+      public function sendCACCEPTTRADE() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CACCEPTTRADE);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CACCEPTTRADE,e);
+            return;
+         }
+      }
+      
+      protected function readSFIELDDATA(param1:ByteArray) : void
+      {
+         var _loc4_:uint = 0;
+         var _loc5_:int = 0;
+         var _loc2_:Vector3D = this.readCoordinate(param1);
+         if(!this.m_WorldMapStorage.isVisible(_loc2_.x,_loc2_.y,_loc2_.z,true))
+         {
+            throw new Error("Connection.readSFIELDDATA: Co-ordinate " + _loc2_ + " is out of range.",0);
+         }
+         var _loc3_:Vector3D = this.m_WorldMapStorage.toMap(_loc2_);
+         this.m_WorldMapStorage.resetField(_loc3_.x,_loc3_.y,_loc3_.z,true,false);
+         this.readField(param1,_loc3_.x,_loc3_.y,_loc3_.z);
+         if(_loc2_.z == this.m_MiniMapStorage.getPositionZ())
+         {
+            this.m_WorldMapStorage.updateMiniMap(_loc3_.x,_loc3_.y,_loc3_.z);
+            _loc4_ = this.m_WorldMapStorage.getMiniMapColour(_loc3_.x,_loc3_.y,_loc3_.z);
+            _loc5_ = this.m_WorldMapStorage.getMiniMapCost(_loc3_.x,_loc3_.y,_loc3_.z);
+            this.m_MiniMapStorage.updateField(_loc2_.x,_loc2_.y,_loc2_.z,_loc4_,_loc5_,false);
+         }
+      }
+      
+      public function sendCEQUIPOBJECT(param1:int, param2:int) : void
+      {
+         var b:ByteArray = null;
+         var a_TypeID:int = param1;
+         var a_Data:int = param2;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CEQUIPOBJECT);
+            b.writeShort(a_TypeID);
+            b.writeByte(a_Data);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CEQUIPOBJECT,e);
+            return;
+         }
+      }
+      
+      protected function readSRIGHTROW(param1:ByteArray) : void
+      {
+         var _loc2_:Vector3D = this.m_WorldMapStorage.getPosition();
+         _loc2_.x++;
+         this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
+         this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
+         this.m_WorldMapStorage.scrollMap(-1,0);
+         this.m_WorldMapStorage.invalidateOnscreenMessages();
+         this.readArea(param1,MAPSIZE_X - 1,0,MAPSIZE_X - 1,MAPSIZE_Y - 1);
+      }
+      
+      public function sendCOPENCHANNEL() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(COPENCHANNEL);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(COPENCHANNEL,e);
+            return;
+         }
+      }
+      
+      protected function readSEDITTEXT(param1:ByteArray) : void
+      {
+         var _loc2_:EditTextWidget = new EditTextWidget();
+         _loc2_.ID = param1.readUnsignedInt();
+         var _loc3_:ObjectInstance = this.readObjectInstance(param1);
+         _loc2_.object = new AppearanceTypeRef(_loc3_.ID,_loc3_.data);
+         _loc2_.maxChars = param1.readUnsignedShort();
+         _loc2_.text = StringHelper.s_ReadLongStringFromByteArray(param1);
+         _loc2_.author = StringHelper.s_ReadLongStringFromByteArray(param1);
+         _loc2_.date = StringHelper.s_ReadLongStringFromByteArray(param1);
+         _loc2_.show();
+      }
+      
+      private function handleReadError(param1:int, param2:Error) : void
+      {
+         var _loc3_:int = param2 != null?int(param2.errorID):-1;
+         this.handleConnectionError(256 + param1,_loc3_,param2);
+      }
+      
+      protected function readSBOTTOMROW(param1:ByteArray) : void
+      {
+         var _loc2_:Vector3D = this.m_WorldMapStorage.getPosition();
+         _loc2_.y++;
+         this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
+         this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
+         this.m_WorldMapStorage.scrollMap(0,-1);
+         this.m_WorldMapStorage.invalidateOnscreenMessages();
+         this.readArea(param1,0,MAPSIZE_Y - 1,MAPSIZE_X - 1,MAPSIZE_Y - 1);
+      }
+      
+      protected function readSDELETEINVENTORY(param1:ByteArray) : void
+      {
+         var _loc2_:int = param1.readUnsignedByte();
+         var _loc3_:BodyContainerView = this.m_ContainerStorage.getBodyContainerView();
+         if(_loc3_ != null)
+         {
+            _loc3_.setObject(_loc2_,null);
+         }
+      }
+      
+      protected function readSSETTACTICS(param1:ByteArray) : void
+      {
+         var _loc2_:uint = param1.readUnsignedByte();
+         var _loc3_:uint = param1.readUnsignedByte();
+         var _loc4_:uint = param1.readUnsignedByte();
+         var _loc5_:uint = param1.readUnsignedByte();
+         var _loc6_:OptionsStorage = Tibia.s_GetOptions();
+         if(_loc6_ != null)
+         {
+            _loc6_.combatAttackMode = _loc2_;
+            _loc6_.combatChaseMode = _loc3_;
+            _loc6_.combatSecureMode = _loc4_;
+            _loc6_.combatPVPMode = _loc5_;
+         }
+      }
+      
+      protected function readSQUESTLINE(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         var _loc3_:int = 0;
+         var _loc4_:Array = null;
+         var _loc5_:int = 0;
+         var _loc6_:String = null;
+         var _loc7_:String = null;
+         var _loc8_:QuestLogWidget = null;
+         _loc2_ = param1.readUnsignedShort();
+         _loc3_ = param1.readUnsignedByte();
+         _loc4_ = new Array();
+         _loc5_ = 0;
+         while(_loc5_ < _loc3_)
+         {
+            _loc6_ = StringHelper.s_ReadLongStringFromByteArray(param1,QuestFlag.MAX_NAME_LENGTH);
+            _loc7_ = StringHelper.s_ReadLongStringFromByteArray(param1,QuestFlag.MAX_DESCRIPTION_LENGTH);
+            _loc4_.push(new QuestFlag(_loc6_,_loc7_));
+            _loc5_++;
+         }
+         if(this.m_PendingQuestLine == _loc2_)
+         {
+            _loc8_ = PopUpBase.getCurrent() as QuestLogWidget;
+            if(_loc8_ != null)
+            {
+               _loc8_.questFlags = _loc4_;
+            }
+            this.m_PendingQuestLine = -1;
+         }
+      }
+      
+      public function sendCLOOK(param1:int, param2:int, param3:int, param4:int, param5:int) : void
+      {
+         var b:ByteArray = null;
+         var a_X:int = param1;
+         var a_Y:int = param2;
+         var a_Z:int = param3;
+         var a_TypeID:int = param4;
+         var a_Position:int = param5;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CLOOK);
+            b.writeShort(a_X);
+            b.writeShort(a_Y);
+            b.writeByte(a_Z);
+            b.writeShort(a_TypeID);
+            b.writeByte(a_Position);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CLOOK,e);
+            return;
+         }
+      }
+      
+      protected function readSPRIVATECHANNEL(param1:ByteArray) : void
+      {
+         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
+         this.m_ChatStorage.addChannel(_loc2_,_loc2_,MessageMode.MESSAGE_PRIVATE_TO);
+      }
+      
+      protected function readSUSEDELAY(param1:ByteArray) : void
+      {
+         this.m_ContainerStorage.setMultiUseDelay(param1.readUnsignedInt());
+      }
+      
+      protected function readSTUTORIALHINT(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         var _loc3_:TutorialHint = null;
+         _loc2_ = param1.readUnsignedByte();
+         _loc3_ = new TutorialHint(_loc2_);
+         _loc3_.known = true;
+         _loc3_.perform();
+      }
+      
+      public function sendCTALK(param1:int, ... rest) : void
+      {
+         var b:ByteArray = null;
+         var a_Mode:int = param1;
+         var a_Parameters:Array = rest;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CTALK);
+            b.writeByte(a_Mode);
+            if(a_Parameters.length == 1 && a_Parameters[0] is String)
+            {
+               StringHelper.s_WriteToByteArray(b,a_Parameters[0] as String,ChatStorage.MAX_TALK_LENGTH);
+            }
+            else if(a_Parameters.length == 2 && a_Parameters[0] is String && a_Parameters[1] is String)
+            {
+               StringHelper.s_WriteToByteArray(b,a_Parameters[0] as String,Creature.MAX_NAME_LENGHT);
+               StringHelper.s_WriteToByteArray(b,a_Parameters[1] as String,ChatStorage.MAX_TALK_LENGTH);
+            }
+            else if(a_Parameters.length == 2 && a_Parameters[0] is Number && a_Parameters[1] is String)
+            {
+               b.writeShort(a_Parameters[0] as Number);
+               StringHelper.s_WriteToByteArray(b,a_Parameters[1] as String,ChatStorage.MAX_TALK_LENGTH);
+            }
+            else
+            {
+               throw new Error("Connection.sendCTALK: Invalid overloaded call.",0);
+            }
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CTALK,e);
+            return;
+         }
+      }
+      
+      public function sendCTRADEOBJECT(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int) : void
+      {
+         var b:ByteArray = null;
+         var a_X:int = param1;
+         var a_Y:int = param2;
+         var a_Z:int = param3;
+         var a_ObjectType:int = param4;
+         var a_Position:int = param5;
+         var a_TradePartner:int = param6;
+         try
+         {
+            this.m_Player.stopAutowalk(false);
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CTRADEOBJECT);
+            b.writeShort(a_X);
+            b.writeShort(a_Y);
+            b.writeByte(a_Z);
+            b.writeShort(a_ObjectType);
+            b.writeByte(a_Position);
+            b.writeUnsignedInt(a_TradePartner);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CTRADEOBJECT,e);
+            return;
+         }
+      }
+      
+      protected function readSCREATURESPEED(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
+         var _loc3_:int = param1.readUnsignedShort();
+         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
+         if(_loc4_ != null)
+         {
+            _loc4_.setSkillValue(SKILL_GOSTRENGTH,_loc3_);
+         }
+         this.m_CreatureStorage.invalidateOpponents();
+      }
+      
+      public function sendCMARKETCANCEL(param1:Offer) : void
+      {
+         var b:ByteArray = null;
+         var a_Offer:Offer = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CMARKETCANCEL);
+            b.writeUnsignedInt(a_Offer.offerID.timestamp);
+            b.writeShort(a_Offer.offerID.counter);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CMARKETCANCEL,e);
+            return;
+         }
+      }
+      
+      public function get allowBugreports() : Boolean
+      {
+         return this.m_BugreportsAllowed;
+      }
+      
+      public function sendCEDITTEXT(param1:int, param2:String) : void
+      {
+         var b:ByteArray = null;
+         var a_ID:int = param1;
+         var a_Text:String = param2;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CEDITTEXT);
+            b.writeUnsignedInt(a_ID);
+            StringHelper.s_WriteToByteArray(b,a_Text);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CEDITTEXT,e);
+            return;
+         }
+      }
+      
+      public function sendCEXCLUDEFROMCHANNEL(param1:String) : void
+      {
+         var b:ByteArray = null;
+         var a_Name:String = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CEXCLUDEFROMCHANNEL);
+            StringHelper.s_WriteToByteArray(b,a_Name,Creature.MAX_NAME_LENGHT);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CEXCLUDEFROMCHANNEL,e);
+            return;
+         }
+      }
+      
+      public function sendCMARKETBROWSE(param1:int) : void
+      {
+         var b:ByteArray = null;
+         var a_TypeID:int = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CMARKETBROWSE);
+            b.writeShort(a_TypeID);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CMARKETBROWSE,e);
+            return;
+         }
       }
       
       protected function readField(param1:ByteArray, param2:int, param3:int, param4:int) : int
@@ -2492,6 +2581,665 @@ package tibia.network
          return _loc9_;
       }
       
+      protected function readDouble(param1:ByteArray) : Number
+      {
+         var _loc2_:uint = param1.readUnsignedByte();
+         var _loc3_:uint = param1.readUnsignedInt();
+         return (_loc3_ - int.MAX_VALUE) / Math.pow(10,_loc2_);
+      }
+      
+      public function sendCINSPECTTRADE(param1:int, param2:int) : void
+      {
+         var b:ByteArray = null;
+         var a_Side:int = param1;
+         var a_Position:int = param2;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CINSPECTTRADE);
+            b.writeByte(a_Side);
+            b.writeByte(a_Position);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CINSPECTTRADE,e);
+            return;
+         }
+      }
+      
+      public function messageProcessingFinished(param1:Boolean = true) : void
+      {
+         this.m_WorldMapStorage.refreshFields();
+         if(param1)
+         {
+            this.m_MiniMapStorage.refreshSectors();
+         }
+         this.m_CreatureStorage.refreshOpponents();
+      }
+      
+      public function get isPending() : Boolean
+      {
+         return this.m_ServerConnection.isPending;
+      }
+      
+      protected function readSigned64BitValue(param1:ByteArray) : Number
+      {
+         var _loc2_:uint = param1.readUnsignedInt();
+         var _loc3_:uint = param1.readUnsignedInt();
+         if((_loc3_ & 2145386496) != 0)
+         {
+            throw new RangeError("Connection.readSigned64BitValue: Value out of range.");
+         }
+         var _loc4_:Number = Number(_loc2_) + Number(_loc3_ & 2097151) * Math.pow(2,32);
+         if((_loc3_ & 2147483648) != 0)
+         {
+            return -_loc4_;
+         }
+         return Number(_loc4_);
+      }
+      
+      protected function readSPLAYERDATACURRENT(param1:ByteArray) : void
+      {
+         var _loc2_:Number = Tibia.s_FrameTibiaTimestamp;
+         var _loc3_:Number = 0;
+         var _loc4_:Number = 0;
+         var _loc5_:Number = 0;
+         _loc3_ = Math.max(0,param1.readShort());
+         _loc4_ = Math.max(0,param1.readShort());
+         _loc5_ = 0;
+         this.m_Player.setSkill(SKILL_HITPOINTS,_loc3_,_loc4_,_loc5_);
+         _loc3_ = Math.max(0,param1.readInt());
+         _loc4_ = Math.max(0,param1.readInt());
+         _loc5_ = 0;
+         this.m_Player.setSkill(SKILL_CARRYSTRENGTH,_loc3_,_loc4_,_loc5_);
+         _loc3_ = this.readSigned64BitValue(param1);
+         _loc4_ = 1;
+         _loc5_ = 0;
+         this.m_Player.setSkill(SKILL_EXPERIENCE,_loc3_,_loc4_,_loc5_);
+         _loc3_ = param1.readUnsignedShort();
+         _loc4_ = 1;
+         _loc5_ = param1.readUnsignedByte();
+         this.m_Player.setSkill(SKILL_LEVEL,_loc3_,_loc4_,_loc5_);
+         _loc3_ = Math.max(0,param1.readShort());
+         _loc4_ = Math.max(0,param1.readShort());
+         _loc5_ = 0;
+         this.m_Player.setSkill(SKILL_MANA,_loc3_,_loc4_,_loc5_);
+         _loc3_ = param1.readUnsignedByte();
+         _loc4_ = param1.readUnsignedByte();
+         _loc5_ = param1.readUnsignedByte();
+         this.m_Player.setSkill(SKILL_MAGLEVEL,_loc3_,_loc4_,_loc5_);
+         _loc3_ = param1.readUnsignedByte();
+         _loc4_ = 1;
+         _loc5_ = 0;
+         this.m_Player.setSkill(SKILL_SOULPOINTS,_loc3_,_loc4_,_loc5_);
+         _loc3_ = _loc2_ + 60 * 1000 * param1.readUnsignedShort();
+         _loc4_ = _loc2_;
+         _loc5_ = 0;
+         this.m_Player.setSkill(SKILL_STAMINA,_loc3_,_loc4_,_loc5_);
+         _loc3_ = this.m_Player.getSkillValue(SKILL_GOSTRENGTH);
+         _loc4_ = param1.readUnsignedShort();
+         _loc5_ = 0;
+         this.m_Player.setSkill(SKILL_GOSTRENGTH,_loc3_,_loc4_,_loc5_);
+         _loc3_ = _loc2_ + 1000 * param1.readUnsignedShort();
+         _loc4_ = _loc2_;
+         _loc5_ = 0;
+         this.m_Player.setSkill(SKILL_FED,_loc3_,_loc4_,_loc5_);
+         _loc3_ = _loc2_ + 60 * 1000 * param1.readUnsignedShort();
+         _loc4_ = _loc2_;
+         _loc5_ = 0;
+         this.m_Player.setSkill(SKILL_OFFLINETRAINING,_loc3_,_loc4_,_loc5_);
+      }
+      
+      protected function readSOWNOFFER(param1:ByteArray) : void
+      {
+         var _loc8_:SafeTradeWidget = null;
+         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
+         var _loc3_:int = param1.readUnsignedByte();
+         var _loc4_:IList = new ArrayCollection();
+         var _loc5_:int = 0;
+         while(_loc5_ < _loc3_)
+         {
+            _loc4_.addItem(this.readObjectInstance(param1));
+            _loc5_++;
+         }
+         var _loc6_:OptionsStorage = Tibia.s_GetOptions();
+         var _loc7_:SideBarSet = null;
+         if(_loc6_ != null && (_loc7_ = _loc6_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null)
+         {
+            _loc8_ = _loc7_.getWidgetByType(Widget.TYPE_SAFETRADE) as SafeTradeWidget;
+            if(_loc8_ == null)
+            {
+               _loc8_ = _loc7_.showWidgetType(Widget.TYPE_SAFETRADE,-1,-1) as SafeTradeWidget;
+            }
+            _loc8_.ownName = _loc2_;
+            _loc8_.ownItems = _loc4_;
+         }
+      }
+      
+      protected function readSMOVECREATURE(param1:ByteArray) : void
+      {
+         var _loc10_:Vector3D = null;
+         var _loc15_:int = 0;
+         var _loc2_:int = param1.readUnsignedShort();
+         var _loc3_:Vector3D = null;
+         var _loc4_:Vector3D = null;
+         var _loc5_:int = -1;
+         var _loc6_:ObjectInstance = null;
+         var _loc7_:Creature = null;
+         if(_loc2_ != 65535)
+         {
+            _loc3_ = this.readCoordinate(param1,_loc2_);
+            if(!this.m_WorldMapStorage.isVisible(_loc3_.x,_loc3_.y,_loc3_.z,true))
+            {
+               throw new Error("Connection.readSMOVECREATURE: Start co-ordinate " + _loc3_ + " is invalid.",0);
+            }
+            _loc4_ = this.m_WorldMapStorage.toMap(_loc3_);
+            _loc5_ = param1.readUnsignedByte();
+            if((_loc6_ = this.m_WorldMapStorage.getObject(_loc4_.x,_loc4_.y,_loc4_.z,_loc5_)) == null || _loc6_.ID != AppearanceInstance.CREATURE || (_loc7_ = this.m_CreatureStorage.getCreature(_loc6_.data)) == null)
+            {
+               throw new Error("Connection.readSMOVECREATURE: No creature at position " + _loc3_ + ", index " + _loc5_ + ".",1);
+            }
+         }
+         else
+         {
+            _loc15_ = param1.readUnsignedInt();
+            _loc6_ = this.m_AppearanceStorage.createObjectInstance(AppearanceInstance.CREATURE,_loc15_);
+            if((_loc7_ = this.m_CreatureStorage.getCreature(_loc15_)) == null)
+            {
+               throw new Error("Connection.readSMOVECREATURE: Creature " + _loc15_ + " not found.",2);
+            }
+            _loc3_ = _loc7_.position;
+            if(!this.m_WorldMapStorage.isVisible(_loc3_.x,_loc3_.y,_loc3_.z,true))
+            {
+               throw new Error("Connection.readSMOVECREATURE: Start co-ordinate " + _loc3_ + " is invalid.",3);
+            }
+            _loc4_ = this.m_WorldMapStorage.toMap(_loc3_);
+         }
+         var _loc8_:Vector3D = this.readCoordinate(param1);
+         if(!this.m_WorldMapStorage.isVisible(_loc8_.x,_loc8_.y,_loc8_.z,true))
+         {
+            throw new Error("Connection.readSMOVECREATURE: Target co-ordinate " + _loc8_ + " is invalid.",4);
+         }
+         var _loc9_:Vector3D = this.m_WorldMapStorage.toMap(_loc8_);
+         _loc10_ = _loc8_.sub(_loc3_);
+         var _loc11_:Boolean = _loc10_.z != 0 || Math.abs(_loc10_.x) > 1 || Math.abs(_loc10_.y) > 1;
+         var _loc12_:ObjectInstance = null;
+         if(!_loc11_ && ((_loc12_ = this.m_WorldMapStorage.getObject(_loc9_.x,_loc9_.y,_loc9_.z,0)) == null || _loc12_.m_Type == null || !_loc12_.m_Type.isBank))
+         {
+            throw new Error("Connection.readSMOVECREATURE: Target field " + _loc8_ + " has no BANK.",5);
+         }
+         if(_loc2_ != 65535)
+         {
+            this.m_WorldMapStorage.deleteObject(_loc4_.x,_loc4_.y,_loc4_.z,_loc5_);
+         }
+         this.m_WorldMapStorage.putObject(_loc9_.x,_loc9_.y,_loc9_.z,_loc6_);
+         _loc7_.setPosition(_loc8_.x,_loc8_.y,_loc8_.z);
+         if(_loc11_)
+         {
+            if(_loc7_.ID == this.m_Player.ID)
+            {
+               Player(_loc7_).stopAutowalk(true);
+            }
+            if(_loc10_.x > 0)
+            {
+               _loc7_.direction = 1;
+            }
+            else if(_loc10_.x < 0)
+            {
+               _loc7_.direction = 3;
+            }
+            else if(_loc10_.y < 0)
+            {
+               _loc7_.direction = 0;
+            }
+            else if(_loc10_.y > 0)
+            {
+               _loc7_.direction = 2;
+            }
+            if(_loc7_.ID != this.m_Player.ID)
+            {
+               _loc7_.stopMovementAnimation();
+            }
+         }
+         else
+         {
+            _loc7_.startMovementAnimation(_loc10_.x,_loc10_.y,_loc12_.m_Type.waypoints);
+         }
+         this.m_CreatureStorage.markOpponentVisible(_loc7_,true);
+         this.m_CreatureStorage.invalidateOpponents();
+         var _loc13_:uint = 0;
+         var _loc14_:int = 0;
+         if(_loc3_.z == this.m_MiniMapStorage.getPositionZ())
+         {
+            this.m_WorldMapStorage.updateMiniMap(_loc4_.x,_loc4_.y,_loc4_.z);
+            _loc13_ = this.m_WorldMapStorage.getMiniMapColour(_loc4_.x,_loc4_.y,_loc4_.z);
+            _loc14_ = this.m_WorldMapStorage.getMiniMapCost(_loc4_.x,_loc4_.y,_loc4_.z);
+            this.m_MiniMapStorage.updateField(_loc3_.x,_loc3_.y,_loc3_.z,_loc13_,_loc14_,false);
+         }
+         if(_loc8_.z == this.m_MiniMapStorage.getPositionZ())
+         {
+            this.m_WorldMapStorage.updateMiniMap(_loc9_.x,_loc9_.y,_loc9_.z);
+            _loc13_ = this.m_WorldMapStorage.getMiniMapColour(_loc9_.x,_loc9_.y,_loc9_.z);
+            _loc14_ = this.m_WorldMapStorage.getMiniMapCost(_loc9_.x,_loc9_.y,_loc9_.z);
+            this.m_MiniMapStorage.updateField(_loc8_.x,_loc8_.y,_loc8_.z,_loc13_,_loc14_,false);
+         }
+      }
+      
+      public function sendCMOUNT(param1:Boolean) : void
+      {
+         var b:ByteArray = null;
+         var a_Mount:Boolean = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CMOUNT);
+            b.writeBoolean(a_Mount);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CMOUNT,e);
+            return;
+         }
+      }
+      
+      public function sendCCLOSENPCTRADE() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CCLOSENPCTRADE);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CCLOSENPCTRADE,e);
+            return;
+         }
+      }
+      
+      public function sendCSELLOBJECT(param1:int, param2:int, param3:int, param4:Boolean) : void
+      {
+         var b:ByteArray = null;
+         var a_Type:int = param1;
+         var a_Data:int = param2;
+         var a_Amount:int = param3;
+         var a_KeepEquipped:Boolean = param4;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CSELLOBJECT);
+            b.writeShort(a_Type);
+            b.writeByte(a_Data);
+            b.writeByte(a_Amount);
+            b.writeBoolean(a_KeepEquipped);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CSELLOBJECT,e);
+            return;
+         }
+      }
+      
+      protected function readSBOTTOMFLOOR(param1:ByteArray) : void
+      {
+         var _loc2_:Vector3D = null;
+         var _loc3_:Vector3D = null;
+         var _loc4_:int = 0;
+         var _loc5_:int = 0;
+         var _loc6_:int = 0;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
+         var _loc9_:int = 0;
+         _loc2_ = this.m_WorldMapStorage.getPosition();
+         _loc2_.x--;
+         _loc2_.y--;
+         _loc2_.z++;
+         this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
+         this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
+         if(_loc2_.z > GROUND_LAYER + 1)
+         {
+            this.m_WorldMapStorage.scrollMap(0,0,1);
+            if(_loc2_.z <= MAP_MAX_Z - UNDERGROUND_LAYER)
+            {
+               this.readFloor(param1,0);
+            }
+         }
+         else if(_loc2_.z == GROUND_LAYER + 1)
+         {
+            this.m_WorldMapStorage.scrollMap(0,0,UNDERGROUND_LAYER + 1);
+            _loc7_ = 0;
+            _loc8_ = UNDERGROUND_LAYER;
+            while(_loc8_ >= 0)
+            {
+               _loc7_ = this.readFloor(param1,_loc8_,_loc7_);
+               _loc8_--;
+            }
+         }
+         this.m_Player.stopAutowalk(true);
+         this.m_WorldMapStorage.invalidateOnscreenMessages();
+         _loc3_ = this.m_WorldMapStorage.toMap(_loc2_);
+         _loc4_ = 0;
+         _loc5_ = 0;
+         _loc6_ = 0;
+         while(_loc6_ < MAPSIZE_X)
+         {
+            _loc9_ = 0;
+            while(_loc9_ < MAPSIZE_Y)
+            {
+               _loc3_.x = _loc6_;
+               _loc3_.y = _loc9_;
+               _loc2_ = this.m_WorldMapStorage.toAbsolute(_loc3_,_loc2_);
+               this.m_WorldMapStorage.updateMiniMap(_loc3_.x,_loc3_.y,_loc3_.z);
+               _loc4_ = this.m_WorldMapStorage.getMiniMapColour(_loc3_.x,_loc3_.y,_loc3_.z);
+               _loc5_ = this.m_WorldMapStorage.getMiniMapCost(_loc3_.x,_loc3_.y,_loc3_.z);
+               this.m_MiniMapStorage.updateField(_loc2_.x,_loc2_.y,_loc2_.z,_loc4_,_loc5_,false);
+               _loc9_++;
+            }
+            _loc6_++;
+         }
+      }
+      
+      protected function readSGRAPHICALEFFECT(param1:ByteArray) : void
+      {
+         var _loc2_:Vector3D = this.readCoordinate(param1);
+         var _loc3_:EffectInstance = this.m_AppearanceStorage.createEffectInstance(param1.readUnsignedByte());
+         this.m_WorldMapStorage.appendEffect(_loc2_.x,_loc2_.y,_loc2_.z,_loc3_);
+      }
+      
+      public function sendCFOLLOW(param1:int) : void
+      {
+         var b:ByteArray = null;
+         var a_CreatureID:int = param1;
+         try
+         {
+            if(a_CreatureID != 0)
+            {
+               this.m_Player.stopAutowalk(false);
+            }
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CFOLLOW);
+            b.writeInt(a_CreatureID);
+            b.writeInt(a_CreatureID);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CFOLLOW,e);
+            return;
+         }
+      }
+      
+      public function sendCBUGREPORT(param1:String, param2:* = null) : void
+      {
+         var Message:String = null;
+         var SystemMessage:String = null;
+         var b:ByteArray = null;
+         var a_UserMessage:String = param1;
+         var a_SystemMessage:* = param2;
+         try
+         {
+            Message = "";
+            if(a_UserMessage != null)
+            {
+               Message = Message + a_UserMessage.substr(0,BugReportWidget.MAX_USER_MESSAGE_LENGTH);
+            }
+            Message = Message + ("\nClient-Version=" + CLIENT_VERSION);
+            Message = Message + ("\nBrowser=" + BrowserHelper.s_GetBrowserString());
+            Message = Message + ("\nFlash=" + Capabilities.serverString);
+            SystemMessage = null;
+            if(a_SystemMessage is ErrorEvent && Boolean(a_SystemMessage.hasOwnProperty("error")))
+            {
+               Message = Message + ("\nInternal=" + Error(a_SystemMessage["error"]).getStackTrace());
+            }
+            else if(a_SystemMessage != null)
+            {
+               Message = Message + ("\nInternal=" + String(a_SystemMessage));
+            }
+            if(Message.length > BugReportWidget.MAX_TOTAL_MESSAGE_LENGTH)
+            {
+               Message = Message.substr(0,BugReportWidget.MAX_TOTAL_MESSAGE_LENGTH);
+            }
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CBUGREPORT);
+            StringHelper.s_WriteToByteArray(b,Message);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CBUGREPORT,e);
+            return;
+         }
+      }
+      
+      protected function readSSETINVENTORY(param1:ByteArray) : void
+      {
+         var _loc2_:int = param1.readUnsignedByte();
+         var _loc3_:ObjectInstance = this.readObjectInstance(param1);
+         var _loc4_:BodyContainerView = this.m_ContainerStorage.getBodyContainerView();
+         if(_loc4_ != null)
+         {
+            _loc4_.setObject(_loc2_,_loc3_);
+         }
+      }
+      
+      public function sendCANSWERMODALDIALOG(param1:uint, param2:int, param3:int) : void
+      {
+         var b:ByteArray = null;
+         var a_ID:uint = param1;
+         var a_Button:int = param2;
+         var a_Choice:int = param3;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CANSWERMODALDIALOG);
+            b.writeUnsignedInt(a_ID);
+            b.writeByte(a_Button);
+            b.writeByte(a_Choice);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CANSWERMODALDIALOG,e);
+            return;
+         }
+      }
+      
+      public function sendCMARKETLEAVE() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CMARKETLEAVE);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CMARKETLEAVE,e);
+            return;
+         }
+      }
+      
+      protected function readArea(param1:ByteArray, param2:int, param3:int, param4:int, param5:int) : int
+      {
+         var _loc15_:int = 0;
+         var _loc16_:int = 0;
+         var _loc6_:Vector3D = this.m_WorldMapStorage.getPosition();
+         var _loc7_:Vector3D = new Vector3D();
+         var _loc8_:Vector3D = new Vector3D();
+         var _loc9_:int = 0;
+         var _loc10_:int = 0;
+         var _loc11_:int = 0;
+         if(_loc6_.z <= GROUND_LAYER)
+         {
+            _loc9_ = 0;
+            _loc10_ = GROUND_LAYER + 1;
+            _loc11_ = 1;
+         }
+         else
+         {
+            _loc9_ = 2 * UNDERGROUND_LAYER;
+            _loc10_ = Math.max(-1,_loc6_.z - MAP_MAX_Z + 1);
+            _loc11_ = -1;
+         }
+         var _loc12_:int = 0;
+         var _loc13_:uint = 0;
+         var _loc14_:int = 0;
+         while(_loc9_ != _loc10_)
+         {
+            _loc15_ = param2;
+            while(_loc15_ <= param4)
+            {
+               _loc16_ = param3;
+               while(_loc16_ <= param5)
+               {
+                  if(_loc12_ > 0)
+                  {
+                     _loc12_--;
+                  }
+                  else
+                  {
+                     _loc12_ = this.readField(param1,_loc15_,_loc16_,_loc9_);
+                  }
+                  _loc7_.setComponents(_loc15_,_loc16_,_loc9_);
+                  this.m_WorldMapStorage.toAbsolute(_loc7_,_loc8_);
+                  if(_loc8_.z == this.m_MiniMapStorage.getPositionZ())
+                  {
+                     this.m_WorldMapStorage.updateMiniMap(_loc15_,_loc16_,_loc9_);
+                     _loc13_ = this.m_WorldMapStorage.getMiniMapColour(_loc15_,_loc16_,_loc9_);
+                     _loc14_ = this.m_WorldMapStorage.getMiniMapCost(_loc15_,_loc16_,_loc9_);
+                     this.m_MiniMapStorage.updateField(_loc8_.x,_loc8_.y,_loc8_.z,_loc13_,_loc14_,false);
+                  }
+                  _loc16_++;
+               }
+               _loc15_++;
+            }
+            _loc9_ = _loc9_ + _loc11_;
+         }
+         return _loc12_;
+      }
+      
+      protected function readSOPENOWNCHANNEL(param1:ByteArray) : void
+      {
+         var _loc9_:String = null;
+         var _loc10_:String = null;
+         var _loc2_:int = param1.readUnsignedShort();
+         var _loc3_:String = StringHelper.s_ReadLongStringFromByteArray(param1,Channel.MAX_NAME_LENGTH);
+         var _loc4_:Channel = this.m_ChatStorage.addChannel(_loc2_,_loc3_,MessageMode.MESSAGE_CHANNEL);
+         this.m_ChatStorage.ownPrivateChannelID = _loc2_;
+         var _loc5_:int = param1.readUnsignedShort();
+         var _loc6_:int = 0;
+         while(_loc6_ < _loc5_)
+         {
+            _loc9_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
+            _loc4_.playerJoined(_loc9_);
+            _loc6_++;
+         }
+         var _loc7_:int = param1.readUnsignedShort();
+         var _loc8_:int = 0;
+         while(_loc8_ < _loc7_)
+         {
+            _loc10_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
+            _loc4_.playerInvited(_loc10_);
+            _loc8_++;
+         }
+      }
+      
+      public function sendCSHAREEXPERIENCE(param1:Boolean) : void
+      {
+         var b:ByteArray = null;
+         var a_Enabled:Boolean = param1;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CSHAREEXPERIENCE);
+            b.writeBoolean(a_Enabled);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CSHAREEXPERIENCE,e);
+            return;
+         }
+      }
+      
+      protected function readSCHANGEINCONTAINER(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedByte();
+         var _loc3_:int = param1.readUnsignedShort();
+         var _loc4_:ObjectInstance = this.readObjectInstance(param1);
+         var _loc5_:ContainerView = this.m_ContainerStorage.getContainerView(_loc2_);
+         if(_loc5_ != null)
+         {
+            _loc5_.changeObject(_loc3_,_loc4_);
+         }
+      }
+      
+      protected function readSAMBIENTE(param1:ByteArray) : void
+      {
+         var _loc2_:int = param1.readUnsignedByte();
+         var _loc3_:Colour = Colour.s_FromEightBit(param1.readUnsignedByte());
+         this.m_WorldMapStorage.setAmbientLight(_loc3_,_loc2_);
+      }
+      
+      protected function readSPLAYERGOODS(param1:ByteArray) : void
+      {
+         var _loc5_:int = 0;
+         var _loc6_:int = 0;
+         var _loc2_:Number = this.readSigned64BitValue(param1);
+         var _loc3_:Vector.<InventoryTypeInfo> = new Vector.<InventoryTypeInfo>();
+         var _loc4_:int = param1.readUnsignedByte() - 1;
+         while(_loc4_ >= 0)
+         {
+            _loc5_ = param1.readUnsignedShort();
+            _loc6_ = param1.readUnsignedByte();
+            _loc3_.push(new InventoryTypeInfo(_loc5_,0,_loc6_));
+            _loc4_--;
+         }
+         this.m_ContainerStorage.setPlayerMoney(_loc2_);
+         this.m_ContainerStorage.setPlayerGoods(_loc3_);
+      }
+      
+      public function sendCGETOUTFIT() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CGETOUTFIT);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CGETOUTFIT,e);
+            return;
+         }
+      }
+      
+      protected function readSDEAD(param1:ByteArray) : void
+      {
+         var _loc2_:Number = param1.readUnsignedByte();
+         var _loc3_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.DEAD);
+         _loc3_.message = null;
+         _loc3_.data = _loc2_;
+         this.m_ServerConnection.dispatchEvent(_loc3_);
+      }
+      
       public function sendCSETOUTFIT(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int, param7:int) : void
       {
          var b:ByteArray = null;
@@ -2523,133 +3271,9 @@ package tibia.network
          }
       }
       
-      public function sendCGETCHANNELS() : void
-      {
-         var b:ByteArray = null;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CGETCHANNELS);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CGETCHANNELS,e);
-            return;
-         }
-      }
-      
-      protected function readSMARKETENTER(param1:ByteArray) : void
-      {
-         var _loc2_:Number = NaN;
-         var _loc3_:uint = 0;
-         var _loc4_:Array = null;
-         var _loc5_:int = 0;
-         var _loc6_:MarketWidget = null;
-         var _loc7_:int = 0;
-         var _loc8_:int = 0;
-         _loc2_ = this.readSigned64BitValue(param1);
-         _loc3_ = param1.readUnsignedByte();
-         _loc4_ = [];
-         _loc5_ = param1.readUnsignedShort() - 1;
-         while(_loc5_ >= 0)
-         {
-            _loc7_ = param1.readUnsignedShort();
-            _loc8_ = param1.readUnsignedShort();
-            _loc4_.push(new InventoryTypeInfo(_loc7_,0,_loc8_));
-            _loc5_--;
-         }
-         _loc6_ = PopUpBase.getCurrent() as MarketWidget;
-         if(_loc6_ == null)
-         {
-            _loc6_ = new MarketWidget();
-            _loc6_.show();
-         }
-         _loc6_.serverResponsePending = false;
-         _loc6_.accountBalance = _loc2_;
-         _loc6_.activeOffers = _loc3_;
-         _loc6_.depotContent = _loc4_;
-      }
-      
-      protected function readSBUDDYSTATUSCHANGE(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:uint = 0;
-         var _loc4_:OptionsStorage = null;
-         var _loc5_:BuddySet = null;
-         _loc2_ = param1.readUnsignedInt();
-         _loc3_ = param1.readByte();
-         _loc4_ = Tibia.s_GetOptions();
-         _loc5_ = null;
-         if(_loc4_ != null && (_loc5_ = _loc4_.getBuddySet(BuddySet.DEFAULT_SET)) != null)
-         {
-            _loc5_.updateBuddy(_loc2_,_loc3_);
-         }
-      }
-      
-      protected function readSCLEARTARGET(param1:ByteArray) : void
-      {
-         var _loc2_:int = param1.readUnsignedInt();
-         var _loc3_:Creature = null;
-         if((_loc3_ = this.m_CreatureStorage.getAttackTarget()) != null && _loc2_ == _loc3_.ID)
-         {
-            this.m_CreatureStorage.setAttackTarget(null,false);
-         }
-         else if((_loc3_ = this.m_CreatureStorage.getFollowTarget()) != null && _loc2_ == _loc3_.ID)
-         {
-            this.m_CreatureStorage.setFollowTarget(null,false);
-         }
-      }
-      
       public function get beatDuration() : int
       {
          return this.m_BeatDuration;
-      }
-      
-      protected function readSWAIT(param1:ByteArray) : void
-      {
-         this.m_Player.earliestMoveTime = this.m_Player.earliestMoveTime + param1.readUnsignedShort();
-      }
-      
-      protected function readSDELETEINCONTAINER(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         _loc2_ = param1.readUnsignedByte();
-         var _loc3_:int = param1.readUnsignedShort();
-         var _loc4_:ObjectInstance = this.readObjectInstance(param1);
-         var _loc5_:ContainerView = this.m_ContainerStorage.getContainerView(_loc2_);
-         if(_loc5_ != null)
-         {
-            _loc5_.removeObject(_loc3_,_loc4_);
-         }
-      }
-      
-      protected function readSLOGINSUCCESS(param1:ByteArray) : void
-      {
-         this.m_Player.ID = param1.readUnsignedInt();
-         this.m_BeatDuration = param1.readUnsignedShort();
-         Creature.speedA = this.readDouble(param1);
-         Creature.speedB = this.readDouble(param1);
-         Creature.speedC = this.readDouble(param1);
-         this.m_BugreportsAllowed = param1.readUnsignedByte() == 1;
-      }
-      
-      public function sendCREJECTTRADE() : void
-      {
-         var b:ByteArray = null;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CREJECTTRADE);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CREJECTTRADE,e);
-            return;
-         }
       }
       
       public function sendCMARKETCREATE(param1:int, param2:int, param3:int, param4:uint, param5:Boolean) : void
@@ -2679,40 +3303,53 @@ package tibia.network
          }
       }
       
-      public function sendCGETQUESTLINE(param1:int) : void
+      protected function readSCHANNELEVENT(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         var _loc3_:Channel = null;
+         var _loc4_:String = null;
+         var _loc5_:int = 0;
+         _loc2_ = param1.readUnsignedShort();
+         _loc3_ = this.m_ChatStorage.getChannel(_loc2_);
+         _loc4_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
+         _loc5_ = param1.readUnsignedByte();
+         if(_loc3_ != null && _loc4_ != null)
+         {
+            switch(_loc5_)
+            {
+               case 0:
+                  _loc3_.playerJoined(_loc4_);
+                  break;
+               case 1:
+                  _loc3_.playerLeft(_loc4_);
+                  break;
+               case 2:
+                  _loc3_.playerInvited(_loc4_);
+                  break;
+               case 3:
+                  _loc3_.playerExcluded(_loc4_);
+                  break;
+               case 4:
+                  _loc3_.playerPending(_loc4_);
+            }
+         }
+      }
+      
+      protected function sendCQUITGAME() : void
       {
          var b:ByteArray = null;
-         var a_QuestLine:int = param1;
          try
          {
             b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CGETQUESTLINE);
-            b.writeShort(a_QuestLine);
+            b.writeByte(CQUITGAME);
             this.m_ServerConnection.messageWriter.finishMessage();
-            this.m_PendingQuestLine = a_QuestLine;
             return;
          }
          catch(e:Error)
          {
-            handleSendError(CGETQUESTLINE,e);
+            handleSendError(CQUITGAME,e);
             return;
          }
-      }
-      
-      protected function readSAUTOMAPFLAG(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:String = null;
-         _loc2_ = param1.readUnsignedShort();
-         _loc3_ = param1.readUnsignedShort();
-         _loc4_ = param1.readUnsignedByte();
-         _loc5_ = param1.readUnsignedByte();
-         _loc6_ = StringHelper.s_ReadLongStringFromByteArray(param1);
-         this.m_MiniMapStorage.setMark(_loc2_,_loc3_,_loc4_,_loc5_,_loc6_);
-         this.m_MiniMapStorage.highlightMarks();
       }
       
       public function sendCMARKETACCEPT(param1:Offer, param2:int) : void
@@ -2756,50 +3393,28 @@ package tibia.network
          }
       }
       
-      public function sendCJOINPARTY(param1:int) : void
+      public function sendCEDITBUDDY(param1:int, param2:String, param3:uint, param4:Boolean) : void
       {
          var b:ByteArray = null;
-         var a_CreatureID:int = param1;
+         var a_ID:int = param1;
+         var a_Description:String = param2;
+         var a_Icon:uint = param3;
+         var a_Notify:Boolean = param4;
          try
          {
             b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CJOINPARTY);
-            b.writeInt(a_CreatureID);
+            b.writeByte(CEDITBUDDY);
+            b.writeUnsignedInt(a_ID);
+            StringHelper.s_WriteToByteArray(b,a_Description,Creature.MAX_DESCRIPTION_LENGHT);
+            b.writeUnsignedInt(a_Icon);
+            b.writeBoolean(a_Notify);
             this.m_ServerConnection.messageWriter.finishMessage();
             return;
          }
          catch(e:Error)
          {
-            handleSendError(CJOINPARTY,e);
+            handleSendError(CEDITBUDDY,e);
             return;
-         }
-      }
-      
-      private function handleConnectionError(param1:int, param2:int = 0, param3:Object = null) : void
-      {
-         this.m_ServerConnection.disconnect(false);
-         var _loc4_:String = null;
-         switch(param1)
-         {
-            case ERR_INTERNAL:
-         }
-         _loc4_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_INTERNAL_ERROR",[param1,param2]);
-         var _loc5_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.ERROR);
-         _loc5_.message = _loc4_;
-         _loc5_.data = null;
-         this.m_ServerConnection.dispatchEvent(_loc5_);
-      }
-      
-      protected function readSCREATEINCONTAINER(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         _loc2_ = param1.readUnsignedByte();
-         var _loc3_:int = param1.readUnsignedShort();
-         var _loc4_:ObjectInstance = this.readObjectInstance(param1);
-         var _loc5_:ContainerView = this.m_ContainerStorage.getContainerView(_loc2_);
-         if(_loc5_ != null)
-         {
-            _loc5_.addObject(_loc3_,_loc4_);
          }
       }
       
@@ -2855,46 +3470,17 @@ package tibia.network
          }
       }
       
-      public function sendCEDITBUDDY(param1:int, param2:String, param3:uint, param4:Boolean) : void
+      protected function readSCREATUREPARTY(param1:ByteArray) : void
       {
-         var b:ByteArray = null;
-         var a_ID:int = param1;
-         var a_Description:String = param2;
-         var a_Icon:uint = param3;
-         var a_Notify:Boolean = param4;
-         try
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
+         var _loc3_:int = param1.readUnsignedByte();
+         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
+         if(_loc4_ != null)
          {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CEDITBUDDY);
-            b.writeUnsignedInt(a_ID);
-            StringHelper.s_WriteToByteArray(b,a_Description,Creature.MAX_DESCRIPTION_LENGHT);
-            b.writeUnsignedInt(a_Icon);
-            b.writeBoolean(a_Notify);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
+            _loc4_.setPartyFlag(_loc3_);
          }
-         catch(e:Error)
-         {
-            handleSendError(CEDITBUDDY,e);
-            return;
-         }
-      }
-      
-      public function sendCLEAVEPARTY() : void
-      {
-         var b:ByteArray = null;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CLEAVEPARTY);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CLEAVEPARTY,e);
-            return;
-         }
+         this.m_CreatureStorage.invalidateOpponents();
       }
       
       public function sendCUPCONTAINER(param1:int) : void
@@ -2913,38 +3499,6 @@ package tibia.network
          {
             handleSendError(CUPCONTAINER,e);
             return;
-         }
-      }
-      
-      protected function readSCHANNELEVENT(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:Channel = null;
-         var _loc4_:String = null;
-         var _loc5_:int = 0;
-         _loc2_ = param1.readUnsignedShort();
-         _loc3_ = this.m_ChatStorage.getChannel(_loc2_);
-         _loc4_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
-         _loc5_ = param1.readUnsignedByte();
-         if(_loc3_ != null && _loc4_ != null)
-         {
-            switch(_loc5_)
-            {
-               case 0:
-                  _loc3_.playerJoined(_loc4_);
-                  break;
-               case 1:
-                  _loc3_.playerLeft(_loc4_);
-                  break;
-               case 2:
-                  _loc3_.playerInvited(_loc4_);
-                  break;
-               case 3:
-                  _loc3_.playerExcluded(_loc4_);
-                  break;
-               case 4:
-                  _loc3_.playerPending(_loc4_);
-            }
          }
       }
       
@@ -3312,302 +3866,6 @@ package tibia.network
          }
       }
       
-      protected function readSMARKETLEAVE(param1:ByteArray) : void
-      {
-         var _loc2_:MarketWidget = null;
-         _loc2_ = PopUpBase.getCurrent() as MarketWidget;
-         if(_loc2_ != null)
-         {
-            _loc2_.hide(true);
-         }
-      }
-      
-      protected function readSPLAYERSTATE(param1:ByteArray) : void
-      {
-         var _loc2_:uint = param1.readUnsignedShort();
-         this.m_Player.stateFlags = _loc2_;
-      }
-      
-      protected function readSDELETEONMAP(param1:ByteArray) : void
-      {
-         var _loc9_:uint = 0;
-         var _loc10_:int = 0;
-         var _loc2_:int = param1.readUnsignedShort();
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc5_:Vector3D = null;
-         var _loc6_:Vector3D = null;
-         var _loc7_:ObjectInstance = null;
-         var _loc8_:Creature = null;
-         if(_loc2_ != 65535)
-         {
-            _loc5_ = this.readCoordinate(param1,_loc2_);
-            if(!this.m_WorldMapStorage.isVisible(_loc5_.x,_loc5_.y,_loc5_.z,true))
-            {
-               throw new Error("Connection.readSDELETEONMAP: Co-ordinate " + _loc5_ + " is out of range.",0);
-            }
-            _loc6_ = this.m_WorldMapStorage.toMap(_loc5_);
-            _loc4_ = param1.readUnsignedByte();
-            if((_loc7_ = this.m_WorldMapStorage.getObject(_loc6_.x,_loc6_.y,_loc6_.z,_loc4_)) == null)
-            {
-               throw new Error("Connection.readSDELETEONMAP: Object not found.",1);
-            }
-            if(_loc7_.ID == AppearanceInstance.CREATURE && (_loc8_ = this.m_CreatureStorage.getCreature(_loc7_.data)) == null)
-            {
-               throw new Error("Connection.readSDELETEONMAP: Creature not found: " + _loc7_.data,2);
-            }
-            this.m_WorldMapStorage.deleteObject(_loc6_.x,_loc6_.y,_loc6_.z,_loc4_);
-         }
-         else
-         {
-            _loc3_ = param1.readUnsignedInt();
-            if((_loc8_ = this.m_CreatureStorage.getCreature(_loc3_)) == null)
-            {
-               throw new Error("Connection.readSDELETEONMAP: Creature not found: " + _loc3_,3);
-            }
-            _loc5_ = _loc8_.position;
-            if(!this.m_WorldMapStorage.isVisible(_loc5_.x,_loc5_.y,_loc5_.z,true))
-            {
-               throw new Error("Connection.readSDELETEONMAP: Co-ordinate " + _loc5_ + " is out of range.",4);
-            }
-            _loc6_ = this.m_WorldMapStorage.toMap(_loc5_);
-         }
-         if(_loc8_ != null)
-         {
-            this.m_CreatureStorage.markOpponentVisible(_loc8_,false);
-         }
-         if(_loc5_.z == this.m_MiniMapStorage.getPositionZ())
-         {
-            this.m_WorldMapStorage.updateMiniMap(_loc6_.x,_loc6_.y,_loc6_.z);
-            _loc9_ = this.m_WorldMapStorage.getMiniMapColour(_loc6_.x,_loc6_.y,_loc6_.z);
-            _loc10_ = this.m_WorldMapStorage.getMiniMapCost(_loc6_.x,_loc6_.y,_loc6_.z);
-            this.m_MiniMapStorage.updateField(_loc5_.x,_loc5_.y,_loc5_.z,_loc9_,_loc10_,false);
-         }
-      }
-      
-      public function sendCROTATESOUTH() : void
-      {
-         var b:ByteArray = null;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CROTATESOUTH);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CROTATESOUTH,e);
-            return;
-         }
-      }
-      
-      protected function readSCREATUREPARTY(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         _loc2_ = param1.readUnsignedInt();
-         var _loc3_:int = param1.readUnsignedByte();
-         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
-         if(_loc4_ != null)
-         {
-            _loc4_.setPartyFlag(_loc3_);
-         }
-         this.m_CreatureStorage.invalidateOpponents();
-      }
-      
-      protected function readSBOTTOMFLOOR(param1:ByteArray) : void
-      {
-         var _loc2_:Vector3D = null;
-         var _loc3_:Vector3D = null;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc8_:int = 0;
-         var _loc9_:int = 0;
-         _loc2_ = this.m_WorldMapStorage.getPosition();
-         _loc2_.x--;
-         _loc2_.y--;
-         _loc2_.z++;
-         this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         if(_loc2_.z > GROUND_LAYER + 1)
-         {
-            this.m_WorldMapStorage.scrollMap(0,0,1);
-            if(_loc2_.z <= MAP_MAX_Z - UNDERGROUND_LAYER)
-            {
-               this.readFloor(param1,0);
-            }
-         }
-         else if(_loc2_.z == GROUND_LAYER + 1)
-         {
-            this.m_WorldMapStorage.scrollMap(0,0,UNDERGROUND_LAYER + 1);
-            _loc7_ = 0;
-            _loc8_ = UNDERGROUND_LAYER;
-            while(_loc8_ >= 0)
-            {
-               _loc7_ = this.readFloor(param1,_loc8_,_loc7_);
-               _loc8_--;
-            }
-         }
-         this.m_Player.stopAutowalk(true);
-         this.m_WorldMapStorage.invalidateOnscreenMessages();
-         _loc3_ = this.m_WorldMapStorage.toMap(_loc2_);
-         _loc4_ = 0;
-         _loc5_ = 0;
-         _loc6_ = 0;
-         while(_loc6_ < MAPSIZE_X)
-         {
-            _loc9_ = 0;
-            while(_loc9_ < MAPSIZE_Y)
-            {
-               _loc3_.x = _loc6_;
-               _loc3_.y = _loc9_;
-               _loc2_ = this.m_WorldMapStorage.toAbsolute(_loc3_,_loc2_);
-               this.m_WorldMapStorage.updateMiniMap(_loc3_.x,_loc3_.y,_loc3_.z);
-               _loc4_ = this.m_WorldMapStorage.getMiniMapColour(_loc3_.x,_loc3_.y,_loc3_.z);
-               _loc5_ = this.m_WorldMapStorage.getMiniMapCost(_loc3_.x,_loc3_.y,_loc3_.z);
-               this.m_MiniMapStorage.updateField(_loc2_.x,_loc2_.y,_loc2_.z,_loc4_,_loc5_,false);
-               _loc9_++;
-            }
-            _loc6_++;
-         }
-      }
-      
-      public function sendCPRIVATECHANNEL(param1:String) : void
-      {
-         var b:ByteArray = null;
-         var a_Name:String = param1;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CPRIVATECHANNEL);
-            StringHelper.s_WriteToByteArray(b,a_Name,Creature.MAX_NAME_LENGHT);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CPRIVATECHANNEL,e);
-            return;
-         }
-      }
-      
-      public function disconnect(param1:Boolean) : void
-      {
-         if((Boolean(this.m_ServerConnection.isGameRunning) || Boolean(this.m_ServerConnection.isPending)) && !param1)
-         {
-            this.sendCQUITGAME();
-         }
-         else
-         {
-            this.m_ServerConnection.disconnect();
-         }
-      }
-      
-      protected function readSCLOSENPCTRADE(param1:ByteArray) : void
-      {
-         var _loc2_:OptionsStorage = Tibia.s_GetOptions();
-         var _loc3_:SideBarSet = null;
-         var _loc4_:NPCTradeWidget = null;
-         if(_loc2_ != null && (_loc3_ = _loc2_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null && (_loc4_ = _loc3_.getWidgetByType(Widget.TYPE_NPCTRADE) as NPCTradeWidget) != null)
-         {
-            _loc4_.buyObjects = null;
-            _loc4_.sellObjects = null;
-            _loc4_.categories = null;
-            _loc3_.hideWidgetType(Widget.TYPE_NPCTRADE,-1);
-         }
-      }
-      
-      protected function readSNPCOFFER(param1:ByteArray) : void
-      {
-         var _loc9_:int = 0;
-         var _loc10_:int = 0;
-         var _loc11_:String = null;
-         var _loc12_:uint = 0;
-         var _loc13_:uint = 0;
-         var _loc14_:uint = 0;
-         var _loc15_:NPCTradeWidget = null;
-         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
-         var _loc3_:IList = new ArrayCollection();
-         var _loc4_:IList = new ArrayCollection();
-         var _loc5_:int = param1.readUnsignedShort();
-         var _loc6_:int = 0;
-         while(_loc6_ < _loc5_)
-         {
-            _loc9_ = param1.readUnsignedShort();
-            _loc10_ = param1.readUnsignedByte();
-            _loc11_ = StringHelper.s_ReadLongStringFromByteArray(param1,NPCTradeWidget.MAX_WARE_NAME_LENGTH);
-            _loc12_ = param1.readUnsignedInt();
-            _loc13_ = param1.readUnsignedInt();
-            _loc14_ = param1.readUnsignedInt();
-            if(_loc13_ > 0)
-            {
-               _loc3_.addItem(new TradeObjectRef(_loc9_,_loc10_,_loc11_,_loc13_,_loc12_));
-            }
-            if(_loc14_ > 0)
-            {
-               _loc4_.addItem(new TradeObjectRef(_loc9_,_loc10_,_loc11_,_loc14_,_loc12_));
-            }
-            _loc6_++;
-         }
-         var _loc7_:OptionsStorage = Tibia.s_GetOptions();
-         var _loc8_:SideBarSet = null;
-         if(_loc7_ != null && (_loc8_ = _loc7_.getSideBarSet(SideBarSet.DEFAULT_SET)) != null)
-         {
-            _loc15_ = _loc8_.getWidgetByType(Widget.TYPE_NPCTRADE) as NPCTradeWidget;
-            if(_loc15_ == null)
-            {
-               _loc15_ = _loc8_.showWidgetType(Widget.TYPE_NPCTRADE,-1,-1) as NPCTradeWidget;
-            }
-            _loc15_.npcName = _loc2_;
-            _loc15_.buyObjects = _loc3_;
-            _loc15_.sellObjects = _loc4_;
-            _loc15_.categories = null;
-         }
-      }
-      
-      protected function readSBUDDYDATA(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:String = null;
-         var _loc4_:String = null;
-         var _loc5_:uint = 0;
-         var _loc6_:Boolean = false;
-         var _loc7_:uint = 0;
-         var _loc8_:OptionsStorage = null;
-         var _loc9_:BuddySet = null;
-         _loc2_ = param1.readUnsignedInt();
-         _loc3_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
-         _loc4_ = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_DESCRIPTION_LENGHT);
-         _loc5_ = param1.readUnsignedInt();
-         _loc6_ = param1.readBoolean();
-         _loc7_ = param1.readByte();
-         _loc8_ = Tibia.s_GetOptions();
-         _loc9_ = null;
-         if(_loc8_ != null && (_loc9_ = _loc8_.getBuddySet(BuddySet.DEFAULT_SET)) != null)
-         {
-            _loc9_.updateBuddy(_loc2_,_loc3_,_loc4_,_loc5_,_loc6_,_loc7_);
-         }
-      }
-      
-      public function sendCACCEPTTRADE() : void
-      {
-         var b:ByteArray = null;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CACCEPTTRADE);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CACCEPTTRADE,e);
-            return;
-         }
-      }
-      
       public function sendCSETTACTICS(param1:int, param2:int, param3:int, param4:uint) : void
       {
          var b:ByteArray = null;
@@ -3633,28 +3891,97 @@ package tibia.network
          }
       }
       
-      public function sendBotCRULEVIOLATIONREPORT(param1:int, param2:String, param3:String) : void
+      protected function readSMARKETDETAIL(param1:ByteArray) : void
       {
-         var b:ByteArray = null;
-         var a_Reason:int = param1;
-         var a_CharacterName:String = param2;
-         var a_Comment:String = param3;
-         try
+         var _loc2_:int = 0;
+         var _loc3_:Array = null;
+         var _loc4_:int = 0;
+         var _loc5_:uint = 0;
+         var _loc6_:uint = 0;
+         var _loc7_:uint = 0;
+         var _loc8_:uint = 0;
+         var _loc9_:uint = 0;
+         var _loc10_:uint = 0;
+         var _loc11_:Array = null;
+         var _loc12_:MarketWidget = null;
+         var _loc13_:String = null;
+         _loc2_ = param1.readUnsignedShort();
+         _loc3_ = [];
+         _loc4_ = 0;
+         _loc4_ = 0;
+         while(_loc4_ <= MarketWidget.DETAIL_FIELD_WEIGHT)
          {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CRULEVIOLATIONREPORT);
-            b.writeByte(Type.REPORT_BOT);
-            b.writeByte(a_Reason);
-            StringHelper.s_WriteToByteArray(b,a_CharacterName,Creature.MAX_NAME_LENGHT);
-            StringHelper.s_WriteToByteArray(b,a_Comment,ReportWidget.MAX_COMMENT_LENGTH);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
+            _loc13_ = StringHelper.s_ReadLongStringFromByteArray(param1);
+            _loc3_.push(_loc13_);
+            _loc4_++;
          }
-         catch(e:Error)
+         _loc5_ = new Date().time / 1000 * OfferStatistics.SECONDS_PER_DAY;
+         _loc6_ = 0;
+         _loc7_ = 0;
+         _loc8_ = 0;
+         _loc9_ = 0;
+         _loc10_ = 0;
+         _loc11_ = [];
+         _loc6_ = _loc5_;
+         _loc4_ = param1.readUnsignedByte() - 1;
+         while(_loc4_ >= 0)
          {
-            handleSendError(CRULEVIOLATIONREPORT,e);
-            return;
+            _loc6_ = _loc6_ - OfferStatistics.SECONDS_PER_DAY;
+            _loc7_ = param1.readUnsignedInt();
+            _loc8_ = param1.readUnsignedInt();
+            _loc9_ = param1.readUnsignedInt();
+            _loc10_ = param1.readUnsignedInt();
+            _loc11_.push(new OfferStatistics(_loc6_,Offer.BUY_OFFER,_loc7_,_loc8_,_loc9_,_loc10_));
+            _loc4_--;
          }
+         _loc6_ = _loc5_;
+         _loc4_ = param1.readUnsignedByte() - 1;
+         while(_loc4_ >= 0)
+         {
+            _loc6_ = _loc6_ - OfferStatistics.SECONDS_PER_DAY;
+            _loc7_ = param1.readUnsignedInt();
+            _loc8_ = param1.readUnsignedInt();
+            _loc9_ = param1.readUnsignedInt();
+            _loc10_ = param1.readUnsignedInt();
+            _loc11_.push(new OfferStatistics(_loc6_,Offer.SELL_OFFER,_loc7_,_loc8_,_loc9_,_loc10_));
+            _loc4_--;
+         }
+         _loc12_ = PopUpBase.getCurrent() as MarketWidget;
+         if(_loc12_ != null)
+         {
+            _loc12_.mergeBrowseDetail(_loc2_,_loc3_,_loc11_);
+         }
+      }
+      
+      protected function readSQUESTLOG(param1:ByteArray) : void
+      {
+         var _loc2_:Array = null;
+         var _loc3_:int = 0;
+         var _loc4_:int = 0;
+         var _loc5_:QuestLogWidget = null;
+         var _loc6_:int = 0;
+         var _loc7_:String = null;
+         var _loc8_:* = false;
+         this.m_PendingQuestLine = -1;
+         this.m_PendingQuestLog = false;
+         _loc2_ = new Array();
+         _loc3_ = param1.readUnsignedShort();
+         _loc4_ = 0;
+         while(_loc4_ < _loc3_)
+         {
+            _loc6_ = param1.readUnsignedShort();
+            _loc7_ = StringHelper.s_ReadLongStringFromByteArray(param1,QuestLine.MAX_NAME_LENGTH);
+            _loc8_ = param1.readUnsignedByte() == 1;
+            _loc2_.push(new QuestLine(_loc6_,_loc7_,_loc8_));
+            _loc4_++;
+         }
+         _loc5_ = PopUpBase.getCurrent() as QuestLogWidget;
+         if(_loc5_ == null)
+         {
+            _loc5_ = new QuestLogWidget();
+         }
+         _loc5_.questLines = _loc2_;
+         _loc5_.show();
       }
       
       public function sendCLEAVECHANNEL(param1:int) : void
@@ -3738,6 +4065,7 @@ package tibia.network
                   _loc7_.setPartyFlag(param1.readUnsignedByte());
                   _loc7_.guildFlag = param1.readUnsignedByte();
                   _loc7_.type = param1.readUnsignedByte();
+                  _loc7_.speechCategory = param1.readUnsignedByte();
                   _loc7_.marks.setMark(Marks.MARK_TYPE_PERMANENT,param1.readUnsignedByte());
                   _loc7_.numberOfPVPHelpers = param1.readUnsignedShort();
                   _loc7_.isUnpassable = param1.readUnsignedByte() != 0;
@@ -3759,6 +4087,7 @@ package tibia.network
                   _loc7_.setPKFlag(param1.readUnsignedByte());
                   _loc7_.setPartyFlag(param1.readUnsignedByte());
                   _loc7_.type = param1.readUnsignedByte();
+                  _loc7_.speechCategory = param1.readUnsignedByte();
                   _loc7_.marks.setMark(Marks.MARK_TYPE_PERMANENT,param1.readUnsignedByte());
                   _loc7_.numberOfPVPHelpers = param1.readUnsignedShort();
                   _loc7_.isUnpassable = param1.readUnsignedByte() != 0;
@@ -3783,68 +4112,6 @@ package tibia.network
          this.m_CreatureStorage.markOpponentVisible(_loc7_,true);
          this.m_CreatureStorage.invalidateOpponents();
          return _loc7_;
-      }
-      
-      protected function readSMARKETDETAIL(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:Array = null;
-         var _loc4_:int = 0;
-         var _loc5_:uint = 0;
-         var _loc6_:uint = 0;
-         var _loc7_:uint = 0;
-         var _loc8_:uint = 0;
-         var _loc9_:uint = 0;
-         var _loc10_:uint = 0;
-         var _loc11_:Array = null;
-         var _loc12_:MarketWidget = null;
-         var _loc13_:String = null;
-         _loc2_ = param1.readUnsignedShort();
-         _loc3_ = [];
-         _loc4_ = 0;
-         _loc4_ = 0;
-         while(_loc4_ <= MarketWidget.DETAIL_FIELD_WEIGHT)
-         {
-            _loc13_ = StringHelper.s_ReadLongStringFromByteArray(param1);
-            _loc3_.push(_loc13_);
-            _loc4_++;
-         }
-         _loc5_ = new Date().time / 1000 * OfferStatistics.SECONDS_PER_DAY;
-         _loc6_ = 0;
-         _loc7_ = 0;
-         _loc8_ = 0;
-         _loc9_ = 0;
-         _loc10_ = 0;
-         _loc11_ = [];
-         _loc6_ = _loc5_;
-         _loc4_ = param1.readUnsignedByte() - 1;
-         while(_loc4_ >= 0)
-         {
-            _loc6_ = _loc6_ - OfferStatistics.SECONDS_PER_DAY;
-            _loc7_ = param1.readUnsignedInt();
-            _loc8_ = param1.readUnsignedInt();
-            _loc9_ = param1.readUnsignedInt();
-            _loc10_ = param1.readUnsignedInt();
-            _loc11_.push(new OfferStatistics(_loc6_,Offer.BUY_OFFER,_loc7_,_loc8_,_loc9_,_loc10_));
-            _loc4_--;
-         }
-         _loc6_ = _loc5_;
-         _loc4_ = param1.readUnsignedByte() - 1;
-         while(_loc4_ >= 0)
-         {
-            _loc6_ = _loc6_ - OfferStatistics.SECONDS_PER_DAY;
-            _loc7_ = param1.readUnsignedInt();
-            _loc8_ = param1.readUnsignedInt();
-            _loc9_ = param1.readUnsignedInt();
-            _loc10_ = param1.readUnsignedInt();
-            _loc11_.push(new OfferStatistics(_loc6_,Offer.SELL_OFFER,_loc7_,_loc8_,_loc9_,_loc10_));
-            _loc4_--;
-         }
-         _loc12_ = PopUpBase.getCurrent() as MarketWidget;
-         if(_loc12_ != null)
-         {
-            _loc12_.mergeBrowseDetail(_loc2_,_loc3_,_loc11_);
-         }
       }
       
       public function readCoordinate(param1:ByteArray, param2:int = -1, param3:int = -1, param4:int = -1) : Vector3D
@@ -3900,27 +4167,6 @@ package tibia.network
          }
       }
       
-      public function sendCEQUIPOBJECT(param1:int, param2:int) : void
-      {
-         var b:ByteArray = null;
-         var a_TypeID:int = param1;
-         var a_Data:int = param2;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CEQUIPOBJECT);
-            b.writeShort(a_TypeID);
-            b.writeByte(a_Data);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CEQUIPOBJECT,e);
-            return;
-         }
-      }
-      
       public function sendCENTERWORLD() : void
       {
          var b:ByteArray = null;
@@ -3935,27 +4181,6 @@ package tibia.network
          {
             handleSendError(CENTERWORLD,e);
             return;
-         }
-      }
-      
-      protected function readSFIELDDATA(param1:ByteArray) : void
-      {
-         var _loc4_:uint = 0;
-         var _loc5_:int = 0;
-         var _loc2_:Vector3D = this.readCoordinate(param1);
-         if(!this.m_WorldMapStorage.isVisible(_loc2_.x,_loc2_.y,_loc2_.z,true))
-         {
-            throw new Error("Connection.readSFIELDDATA: Co-ordinate " + _loc2_ + " is out of range.",0);
-         }
-         var _loc3_:Vector3D = this.m_WorldMapStorage.toMap(_loc2_);
-         this.m_WorldMapStorage.resetField(_loc3_.x,_loc3_.y,_loc3_.z,true,false);
-         this.readField(param1,_loc3_.x,_loc3_.y,_loc3_.z);
-         if(_loc2_.z == this.m_MiniMapStorage.getPositionZ())
-         {
-            this.m_WorldMapStorage.updateMiniMap(_loc3_.x,_loc3_.y,_loc3_.z);
-            _loc4_ = this.m_WorldMapStorage.getMiniMapColour(_loc3_.x,_loc3_.y,_loc3_.z);
-            _loc5_ = this.m_WorldMapStorage.getMiniMapCost(_loc3_.x,_loc3_.y,_loc3_.z);
-            this.m_MiniMapStorage.updateField(_loc2_.x,_loc2_.y,_loc2_.z,_loc4_,_loc5_,false);
          }
       }
       
@@ -4065,17 +4290,6 @@ package tibia.network
          this.m_WorldMapStorage.appendEffect(_loc2_.x,_loc2_.y,_loc2_.z,_loc5_);
       }
       
-      protected function readSRIGHTROW(param1:ByteArray) : void
-      {
-         var _loc2_:Vector3D = this.m_WorldMapStorage.getPosition();
-         _loc2_.x++;
-         this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         this.m_WorldMapStorage.scrollMap(-1,0);
-         this.m_WorldMapStorage.invalidateOnscreenMessages();
-         this.readArea(param1,MAPSIZE_X - 1,0,MAPSIZE_X - 1,MAPSIZE_Y - 1);
-      }
-      
       protected function readSOPENCHANNEL(param1:ByteArray) : void
       {
          var _loc9_:String = null;
@@ -4123,19 +4337,19 @@ package tibia.network
          }
       }
       
-      public function sendCOPENCHANNEL() : void
+      public function sendCCLOSENPCCHANNEL() : void
       {
          var b:ByteArray = null;
          try
          {
             b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(COPENCHANNEL);
+            b.writeByte(CCLOSENPCCHANNEL);
             this.m_ServerConnection.messageWriter.finishMessage();
             return;
          }
          catch(e:Error)
          {
-            handleSendError(COPENCHANNEL,e);
+            handleSendError(CCLOSENPCCHANNEL,e);
             return;
          }
       }
@@ -4230,23 +4444,6 @@ package tibia.network
          this.m_CreatureStorage.invalidateOpponents();
       }
       
-      protected function sendCQUITGAME() : void
-      {
-         var b:ByteArray = null;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CQUITGAME);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CQUITGAME,e);
-            return;
-         }
-      }
-      
       public function sendCATTACK(param1:int) : void
       {
          var b:ByteArray = null;
@@ -4271,32 +4468,18 @@ package tibia.network
          }
       }
       
-      protected function readSSPELLDELAY(param1:ByteArray) : void
+      protected function readSPLAYERDATABASIC(param1:ByteArray) : void
       {
-         this.m_SpellStorage.setSpellDelay(param1.readUnsignedByte(),param1.readUnsignedInt());
-      }
-      
-      public function sendCCLOSENPCCHANNEL() : void
-      {
-         var b:ByteArray = null;
-         try
+         this.m_Player.premium = param1.readBoolean();
+         this.m_Player.profession = param1.readUnsignedByte();
+         var _loc2_:Array = [];
+         var _loc3_:int = param1.readUnsignedShort() - 1;
+         while(_loc3_ >= 0)
          {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CCLOSENPCCHANNEL);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
+            _loc2_.push(param1.readUnsignedByte());
+            _loc3_--;
          }
-         catch(e:Error)
-         {
-            handleSendError(CCLOSENPCCHANNEL,e);
-            return;
-         }
-      }
-      
-      private function handleReadError(param1:int, param2:Error) : void
-      {
-         var _loc3_:int = param2 != null?int(param2.errorID):-1;
-         this.handleConnectionError(256 + param1,_loc3_,param2);
+         this.m_Player.knownSpells = _loc2_;
       }
       
       protected function readSTALK(param1:ByteArray) : void
@@ -4329,9 +4512,10 @@ package tibia.network
                Pos = this.readCoordinate(a_Bytes);
                ChannelID = ChatStorage.LOCAL_CHANNEL_ID;
                break;
-            case MessageMode.MESSAGE_NPC_FROM:
+            case MessageMode.MESSAGE_NPC_FROM_START_BLOCK:
                Pos = this.readCoordinate(a_Bytes);
-               ChannelID = ChatStorage.NPC_CHANNEL_ID;
+               break;
+            case MessageMode.MESSAGE_NPC_FROM:
                break;
             case MessageMode.MESSAGE_GAMEMASTER_BROADCAST:
                Pos = null;
@@ -4354,22 +4538,32 @@ package tibia.network
                throw new Error("Connection.readSTALK: Invalid message mode " + Mode + ".",0);
          }
          var Text:String = StringHelper.s_ReadLongStringFromByteArray(a_Bytes,ChatStorage.MAX_TALK_LENGTH);
-         try
+         if(Mode != MessageMode.MESSAGE_NPC_FROM_START_BLOCK && Mode != MessageMode.MESSAGE_NPC_FROM)
          {
-            this.m_WorldMapStorage.addOnscreenMessage(Pos,StatementID,Speaker,SpeakerLevel,Mode,Text);
+            try
+            {
+               this.m_WorldMapStorage.addOnscreenMessage(Pos,StatementID,Speaker,SpeakerLevel,Mode,Text);
+            }
+            catch(e:Error)
+            {
+               throw new Error("Connection.readSTALK: Failed to add message: " + e.message,1);
+            }
+            try
+            {
+               this.m_ChatStorage.addChannelMessage(ChannelID,StatementID,Speaker,SpeakerLevel,Mode,Text);
+            }
+            catch(e:Error)
+            {
+               throw new Error("Connection.readSTALK: Failed to add message: " + e.message,2);
+            }
          }
-         catch(e:Error)
+         else if(Mode == MessageMode.MESSAGE_NPC_FROM_START_BLOCK)
          {
-            throw new Error("Connection.readSTALK: Failed to add message: " + e.message,1);
+            this.m_MessageStorage.startMessageBlock(Speaker,Pos,Text);
          }
-         try
+         else if(Mode == MessageMode.MESSAGE_NPC_FROM)
          {
-            this.m_ChatStorage.addChannelMessage(ChannelID,StatementID,Speaker,SpeakerLevel,Mode,Text);
-            return;
-         }
-         catch(e:Error)
-         {
-            throw new Error("Connection.readSTALK: Failed to add message: " + e.message,2);
+            this.m_MessageStorage.addTextToBlock(Speaker,Text);
          }
       }
       
@@ -4390,20 +4584,6 @@ package tibia.network
             handleSendError(CLOOKATCREATURE,e);
             return;
          }
-      }
-      
-      protected function readSPLAYERDATABASIC(param1:ByteArray) : void
-      {
-         this.m_Player.premium = param1.readBoolean();
-         this.m_Player.profession = param1.readUnsignedByte();
-         var _loc2_:Array = [];
-         var _loc3_:int = param1.readUnsignedShort() - 1;
-         while(_loc3_ >= 0)
-         {
-            _loc2_.push(param1.readUnsignedByte());
-            _loc3_--;
-         }
-         this.m_Player.knownSpells = _loc2_;
       }
       
       protected function readSCREATUREOUTFIT(param1:ByteArray) : void
@@ -4438,80 +4618,29 @@ package tibia.network
          }
       }
       
-      protected function readSBOTTOMROW(param1:ByteArray) : void
-      {
-         var _loc2_:Vector3D = this.m_WorldMapStorage.getPosition();
-         _loc2_.y++;
-         this.m_WorldMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         this.m_MiniMapStorage.setPosition(_loc2_.x,_loc2_.y,_loc2_.z);
-         this.m_WorldMapStorage.scrollMap(0,-1);
-         this.m_WorldMapStorage.invalidateOnscreenMessages();
-         this.readArea(param1,0,MAPSIZE_Y - 1,MAPSIZE_X - 1,MAPSIZE_Y - 1);
-      }
-      
-      public function sendCROTATEEAST() : void
+      public function sendCBUYOBJECT(param1:int, param2:int, param3:int, param4:Boolean, param5:Boolean) : void
       {
          var b:ByteArray = null;
+         var a_Type:int = param1;
+         var a_Data:int = param2;
+         var a_Amount:int = param3;
+         var a_IgnoreCapacity:Boolean = param4;
+         var a_WithBackpacks:Boolean = param5;
          try
          {
             b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CROTATEEAST);
+            b.writeByte(CBUYOBJECT);
+            b.writeShort(a_Type);
+            b.writeByte(a_Data);
+            b.writeByte(a_Amount);
+            b.writeBoolean(a_IgnoreCapacity);
+            b.writeBoolean(a_WithBackpacks);
             this.m_ServerConnection.messageWriter.finishMessage();
             return;
          }
          catch(e:Error)
          {
-            handleSendError(CROTATEEAST,e);
-            return;
-         }
-      }
-      
-      protected function readSDELETEINVENTORY(param1:ByteArray) : void
-      {
-         var _loc2_:int = param1.readUnsignedByte();
-         var _loc3_:BodyContainerView = this.m_ContainerStorage.getBodyContainerView();
-         if(_loc3_ != null)
-         {
-            _loc3_.setObject(_loc2_,null);
-         }
-      }
-      
-      protected function readSCREATUREPVPHELPERS(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         _loc2_ = param1.readUnsignedInt();
-         var _loc3_:uint = param1.readUnsignedShort();
-         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
-         if(_loc4_ != null)
-         {
-            _loc4_.numberOfPVPHelpers = _loc3_;
-         }
-         this.m_CreatureStorage.invalidateOpponents();
-      }
-      
-      public function sendCLOOK(param1:int, param2:int, param3:int, param4:int, param5:int) : void
-      {
-         var b:ByteArray = null;
-         var a_X:int = param1;
-         var a_Y:int = param2;
-         var a_Z:int = param3;
-         var a_TypeID:int = param4;
-         var a_Position:int = param5;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CLOOK);
-            b.writeShort(a_X);
-            b.writeShort(a_Y);
-            b.writeByte(a_Z);
-            b.writeShort(a_TypeID);
-            b.writeByte(a_Position);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CLOOK,e);
+            handleSendError(CBUYOBJECT,e);
             return;
          }
       }
@@ -4542,6 +4671,208 @@ package tibia.network
          {
             _loc5_.mergeBrowseOffers(_loc2_,_loc4_);
          }
+      }
+      
+      public function sendCROTATEEAST() : void
+      {
+         var b:ByteArray = null;
+         try
+         {
+            b = this.m_ServerConnection.messageWriter.createMessage();
+            b.writeByte(CROTATEEAST);
+            this.m_ServerConnection.messageWriter.finishMessage();
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CROTATEEAST,e);
+            return;
+         }
+      }
+      
+      protected function readSCREATUREPVPHELPERS(param1:ByteArray) : void
+      {
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedInt();
+         var _loc3_:uint = param1.readUnsignedShort();
+         var _loc4_:Creature = this.m_CreatureStorage.getCreature(_loc2_);
+         if(_loc4_ != null)
+         {
+            _loc4_.numberOfPVPHelpers = _loc3_;
+         }
+         this.m_CreatureStorage.invalidateOpponents();
+      }
+      
+      protected function readSMESSAGE(param1:ByteArray) : void
+      {
+         var SecondaryError:int = 0;
+         var Mode:int = 0;
+         var ChannelID:uint = 0;
+         var Text:String = null;
+         var Pos:Vector3D = null;
+         var Value:Number = NaN;
+         var Color:uint = 0;
+         var SpeakerMatch:Array = null;
+         var Speaker:String = null;
+         var NameFilter:NameFilterSet = null;
+         var _MarketWidget:MarketWidget = null;
+         var a_Bytes:ByteArray = param1;
+         try
+         {
+            SecondaryError = 0;
+            Mode = a_Bytes.readUnsignedByte();
+            ChannelID = 0;
+            Text = null;
+            Pos = null;
+            Value = NaN;
+            Color = 0;
+            switch(Mode)
+            {
+               case MessageMode.MESSAGE_CHANNEL_MANAGEMENT:
+                  ChannelID = a_Bytes.readUnsignedShort();
+                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
+                  SpeakerMatch = Text.match(/^(.+?) invites you to (his|her) private chat channel\.|^You have been excluded from ([^']+)'s channel\./);
+                  Speaker = SpeakerMatch != null?SpeakerMatch[1] != undefined?SpeakerMatch[1]:SpeakerMatch[3]:null;
+                  NameFilter = Tibia.s_GetOptions().getNameFilterSet(NameFilterSet.DEFAULT_SET);
+                  if(NameFilter != null && Boolean(NameFilter.acceptMessage(Mode,Speaker,Text)))
+                  {
+                     SecondaryError = 1;
+                     this.m_WorldMapStorage.addOnscreenMessage(null,-1,null,0,Mode,Text);
+                     SecondaryError = 2;
+                     this.m_ChatStorage.addChannelMessage(ChannelID,-1,null,0,Mode,Text);
+                  }
+                  break;
+               case MessageMode.MESSAGE_LOGIN:
+               case MessageMode.MESSAGE_ADMIN:
+               case MessageMode.MESSAGE_GAME:
+               case MessageMode.MESSAGE_FAILURE:
+               case MessageMode.MESSAGE_LOOK:
+               case MessageMode.MESSAGE_STATUS:
+               case MessageMode.MESSAGE_LOOT:
+               case MessageMode.MESSAGE_TRADE_NPC:
+               case MessageMode.MESSAGE_GUILD:
+               case MessageMode.MESSAGE_PARTY_MANAGEMENT:
+               case MessageMode.MESSAGE_PARTY:
+               case MessageMode.MESSAGE_HOTKEY_USE:
+                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
+                  SecondaryError = 3;
+                  this.m_WorldMapStorage.addOnscreenMessage(null,-1,null,0,Mode,Text);
+                  SecondaryError = 4;
+                  this.m_ChatStorage.addChannelMessage(-1,-1,null,0,Mode,Text);
+                  break;
+               case MessageMode.MESSAGE_MARKET:
+                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
+                  _MarketWidget = PopUpBase.getCurrent() as MarketWidget;
+                  if(_MarketWidget != null)
+                  {
+                     _MarketWidget.serverResponsePending = false;
+                     _MarketWidget.showMessage(Text);
+                  }
+                  break;
+               case MessageMode.MESSAGE_REPORT:
+                  ReportWidget.s_ReportTimestampReset();
+                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
+                  SecondaryError = 5;
+                  this.m_WorldMapStorage.addOnscreenMessage(null,-1,null,0,Mode,Text);
+                  SecondaryError = 6;
+                  this.m_ChatStorage.addChannelMessage(-1,-1,null,0,Mode,Text);
+                  break;
+               case MessageMode.MESSAGE_DAMAGE_DEALED:
+               case MessageMode.MESSAGE_DAMAGE_RECEIVED:
+               case MessageMode.MESSAGE_DAMAGE_OTHERS:
+                  Pos = this.readCoordinate(a_Bytes);
+                  Value = a_Bytes.readUnsignedInt();
+                  Color = a_Bytes.readUnsignedByte();
+                  SecondaryError = 7;
+                  if(Value > 0)
+                  {
+                     this.m_WorldMapStorage.addOnscreenMessage(Pos,-1,null,0,Mode,Value,Color);
+                  }
+                  Value = a_Bytes.readUnsignedInt();
+                  Color = a_Bytes.readUnsignedByte();
+                  SecondaryError = 8;
+                  if(Value > 0)
+                  {
+                     this.m_WorldMapStorage.addOnscreenMessage(Pos,-1,null,0,Mode,Value,Color);
+                  }
+                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
+                  SecondaryError = 9;
+                  this.m_ChatStorage.addChannelMessage(-1,-1,null,0,Mode,Text);
+                  break;
+               case MessageMode.MESSAGE_HEAL:
+               case MessageMode.MESSAGE_EXP:
+               case MessageMode.MESSAGE_HEAL_OTHERS:
+               case MessageMode.MESSAGE_EXP_OTHERS:
+                  Pos = this.readCoordinate(a_Bytes);
+                  Value = a_Bytes.readUnsignedInt();
+                  Color = a_Bytes.readUnsignedByte();
+                  SecondaryError = 10;
+                  this.m_WorldMapStorage.addOnscreenMessage(Pos,-1,null,0,Mode,Value,Color);
+                  Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
+                  SecondaryError = 11;
+                  this.m_ChatStorage.addChannelMessage(-1,-1,null,0,Mode,Text);
+                  break;
+               default:
+                  throw new Error("Connection.readSMESSAGE: Invalid message mode " + Mode + ".",0);
+            }
+            return;
+         }
+         catch(e:Error)
+         {
+            throw new Error("Connection.readSMESSAGE: Failed to add message of type " + Mode + ": " + e.message,SecondaryError);
+         }
+      }
+      
+      protected function readSSHOWMODALDIALOG(param1:ByteArray) : void
+      {
+         var _loc2_:uint = 0;
+         var _loc3_:String = null;
+         var _loc4_:String = null;
+         var _loc5_:Vector.<Choice> = null;
+         var _loc6_:String = null;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
+         var _loc9_:Vector.<Choice> = null;
+         var _loc10_:uint = 0;
+         var _loc11_:uint = 0;
+         var _loc12_:Boolean = false;
+         var _loc13_:ServerModalDialog = null;
+         _loc2_ = param1.readUnsignedInt();
+         _loc3_ = StringHelper.s_ReadLongStringFromByteArray(param1);
+         _loc4_ = StringHelper.s_ReadLongStringFromByteArray(param1);
+         _loc5_ = new Vector.<Choice>();
+         _loc6_ = null;
+         _loc7_ = 0;
+         _loc8_ = 0;
+         _loc8_ = param1.readUnsignedByte();
+         while(_loc8_ > 0)
+         {
+            _loc6_ = StringHelper.s_ReadLongStringFromByteArray(param1);
+            _loc7_ = param1.readUnsignedByte();
+            _loc5_.push(new Choice(_loc6_,_loc7_));
+            _loc8_--;
+         }
+         _loc9_ = new Vector.<Choice>();
+         _loc8_ = param1.readUnsignedByte();
+         while(_loc8_ > 0)
+         {
+            _loc6_ = StringHelper.s_ReadLongStringFromByteArray(param1);
+            _loc7_ = param1.readUnsignedByte();
+            _loc9_.push(new Choice(_loc6_,_loc7_));
+            _loc8_--;
+         }
+         _loc10_ = param1.readUnsignedByte();
+         _loc11_ = param1.readUnsignedByte();
+         _loc12_ = param1.readBoolean();
+         _loc13_ = new ServerModalDialog(_loc2_);
+         _loc13_.buttons = _loc5_;
+         _loc13_.choices = _loc9_;
+         _loc13_.defaultEnterButton = _loc11_;
+         _loc13_.defaultEscapeButton = _loc10_;
+         _loc13_.message = _loc4_;
+         _loc13_.priority = PopUpBase.DEFAULT_PRIORITY + (!!_loc12_?1:0);
+         _loc13_.title = _loc3_;
+         _loc13_.show();
       }
       
       protected function readSCOUNTEROFFER(param1:ByteArray) : void
@@ -4585,51 +4916,6 @@ package tibia.network
          catch(e:Error)
          {
             handleSendError(CJOINCHANNEL,e);
-            return;
-         }
-      }
-      
-      protected function readSUSEDELAY(param1:ByteArray) : void
-      {
-         this.m_ContainerStorage.setMultiUseDelay(param1.readUnsignedInt());
-      }
-      
-      protected function readSEDITTEXT(param1:ByteArray) : void
-      {
-         var _loc2_:EditTextWidget = new EditTextWidget();
-         _loc2_.ID = param1.readUnsignedInt();
-         var _loc3_:ObjectInstance = this.readObjectInstance(param1);
-         _loc2_.object = new AppearanceTypeRef(_loc3_.ID,_loc3_.data);
-         _loc2_.maxChars = param1.readUnsignedShort();
-         _loc2_.text = StringHelper.s_ReadLongStringFromByteArray(param1);
-         _loc2_.author = StringHelper.s_ReadLongStringFromByteArray(param1);
-         _loc2_.date = StringHelper.s_ReadLongStringFromByteArray(param1);
-         _loc2_.show();
-      }
-      
-      public function sendCBUYOBJECT(param1:int, param2:int, param3:int, param4:Boolean, param5:Boolean) : void
-      {
-         var b:ByteArray = null;
-         var a_Type:int = param1;
-         var a_Data:int = param2;
-         var a_Amount:int = param3;
-         var a_IgnoreCapacity:Boolean = param4;
-         var a_WithBackpacks:Boolean = param5;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CBUYOBJECT);
-            b.writeShort(a_Type);
-            b.writeByte(a_Data);
-            b.writeByte(a_Amount);
-            b.writeBoolean(a_IgnoreCapacity);
-            b.writeBoolean(a_WithBackpacks);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CBUYOBJECT,e);
             return;
          }
       }
@@ -4703,84 +4989,6 @@ package tibia.network
          }
       }
       
-      public function sendCTALK(param1:int, ... rest) : void
-      {
-         var b:ByteArray = null;
-         var a_Mode:int = param1;
-         var a_Parameters:Array = rest;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CTALK);
-            b.writeByte(a_Mode);
-            if(a_Parameters.length == 1 && a_Parameters[0] is String)
-            {
-               StringHelper.s_WriteToByteArray(b,a_Parameters[0] as String,ChatStorage.MAX_TALK_LENGTH);
-            }
-            else if(a_Parameters.length == 2 && a_Parameters[0] is String && a_Parameters[1] is String)
-            {
-               StringHelper.s_WriteToByteArray(b,a_Parameters[0] as String,Creature.MAX_NAME_LENGHT);
-               StringHelper.s_WriteToByteArray(b,a_Parameters[1] as String,ChatStorage.MAX_TALK_LENGTH);
-            }
-            else if(a_Parameters.length == 2 && a_Parameters[0] is Number && a_Parameters[1] is String)
-            {
-               b.writeShort(a_Parameters[0] as Number);
-               StringHelper.s_WriteToByteArray(b,a_Parameters[1] as String,ChatStorage.MAX_TALK_LENGTH);
-            }
-            else
-            {
-               throw new Error("Connection.sendCTALK: Invalid overloaded call.",0);
-            }
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CTALK,e);
-            return;
-         }
-      }
-      
-      public function sendCTRADEOBJECT(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int) : void
-      {
-         var b:ByteArray = null;
-         var a_X:int = param1;
-         var a_Y:int = param2;
-         var a_Z:int = param3;
-         var a_ObjectType:int = param4;
-         var a_Position:int = param5;
-         var a_TradePartner:int = param6;
-         try
-         {
-            this.m_Player.stopAutowalk(false);
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CTRADEOBJECT);
-            b.writeShort(a_X);
-            b.writeShort(a_Y);
-            b.writeByte(a_Z);
-            b.writeShort(a_ObjectType);
-            b.writeByte(a_Position);
-            b.writeUnsignedInt(a_TradePartner);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CTRADEOBJECT,e);
-            return;
-         }
-      }
-      
-      protected function readSTUTORIALHINT(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:TutorialHint = null;
-         _loc2_ = param1.readUnsignedByte();
-         _loc3_ = new TutorialHint(_loc2_);
-         _loc3_.known = true;
-         _loc3_.perform();
-      }
-      
       public function sendCGO(param1:Array) : void
       {
          var Type:int = 0;
@@ -4848,25 +5056,19 @@ package tibia.network
          }
       }
       
-      protected function readSPRIVATECHANNEL(param1:ByteArray) : void
+      protected function readSBUDDYSTATUSCHANGE(param1:ByteArray) : void
       {
-         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1,Creature.MAX_NAME_LENGHT);
-         this.m_ChatStorage.addChannel(_loc2_,_loc2_,MessageMode.MESSAGE_PRIVATE_TO);
-      }
-      
-      protected function readSSETTACTICS(param1:ByteArray) : void
-      {
-         var _loc2_:uint = param1.readUnsignedByte();
-         var _loc3_:uint = param1.readUnsignedByte();
-         var _loc4_:uint = param1.readUnsignedByte();
-         var _loc5_:uint = param1.readUnsignedByte();
-         var _loc6_:OptionsStorage = Tibia.s_GetOptions();
-         if(_loc6_ != null)
+         var _loc2_:int = 0;
+         var _loc3_:uint = 0;
+         var _loc4_:OptionsStorage = null;
+         var _loc5_:BuddySet = null;
+         _loc2_ = param1.readUnsignedInt();
+         _loc3_ = param1.readByte();
+         _loc4_ = Tibia.s_GetOptions();
+         _loc5_ = null;
+         if(_loc4_ != null && (_loc5_ = _loc4_.getBuddySet(BuddySet.DEFAULT_SET)) != null)
          {
-            _loc6_.combatAttackMode = _loc2_;
-            _loc6_.combatChaseMode = _loc3_;
-            _loc6_.combatSecureMode = _loc4_;
-            _loc6_.combatPVPMode = _loc5_;
+            _loc5_.updateBuddy(_loc2_,_loc3_);
          }
       }
       
@@ -4898,63 +5100,6 @@ package tibia.network
             handleSendError(CUSEONCREATURE,e);
             return;
          }
-      }
-      
-      public function sendCEDITTEXT(param1:int, param2:String) : void
-      {
-         var b:ByteArray = null;
-         var a_ID:int = param1;
-         var a_Text:String = param2;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CEDITTEXT);
-            b.writeUnsignedInt(a_ID);
-            StringHelper.s_WriteToByteArray(b,a_Text);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CEDITTEXT,e);
-            return;
-         }
-      }
-      
-      protected function readSQUESTLOG(param1:ByteArray) : void
-      {
-         var _loc2_:Array = null;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc5_:QuestLogWidget = null;
-         var _loc6_:int = 0;
-         var _loc7_:String = null;
-         var _loc8_:* = false;
-         this.m_PendingQuestLine = -1;
-         this.m_PendingQuestLog = false;
-         _loc2_ = new Array();
-         _loc3_ = param1.readUnsignedShort();
-         _loc4_ = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc6_ = param1.readUnsignedShort();
-            _loc7_ = StringHelper.s_ReadLongStringFromByteArray(param1,QuestLine.MAX_NAME_LENGTH);
-            _loc8_ = param1.readUnsignedByte() == 1;
-            _loc2_.push(new QuestLine(_loc6_,_loc7_,_loc8_));
-            _loc4_++;
-         }
-         _loc5_ = PopUpBase.getCurrent() as QuestLogWidget;
-         if(_loc5_ == null)
-         {
-            _loc5_ = new QuestLogWidget();
-         }
-         _loc5_.questLines = _loc2_;
-         _loc5_.show();
-      }
-      
-      public function get allowBugreports() : Boolean
-      {
-         return this.m_BugreportsAllowed;
       }
       
       public function sendCBROWSEFIELD(param1:int, param2:int, param3:int) : void
@@ -5020,26 +5165,6 @@ package tibia.network
          }
       }
       
-      public function sendCMARKETCANCEL(param1:Offer) : void
-      {
-         var b:ByteArray = null;
-         var a_Offer:Offer = param1;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CMARKETCANCEL);
-            b.writeUnsignedInt(a_Offer.offerID.timestamp);
-            b.writeShort(a_Offer.offerID.counter);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CMARKETCANCEL,e);
-            return;
-         }
-      }
-      
       protected function readSCREATUREMARKS(param1:ByteArray) : void
       {
          var _loc2_:int = 0;
@@ -5061,123 +5186,25 @@ package tibia.network
          this.m_CreatureStorage.invalidateOpponents();
       }
       
-      public function sendCEXCLUDEFROMCHANNEL(param1:String) : void
+      public function sendCINSPECTNPCTRADE(param1:int, param2:int) : void
       {
          var b:ByteArray = null;
-         var a_Name:String = param1;
+         var a_Type:int = param1;
+         var a_Data:int = param2;
          try
          {
             b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CEXCLUDEFROMCHANNEL);
-            StringHelper.s_WriteToByteArray(b,a_Name,Creature.MAX_NAME_LENGHT);
+            b.writeByte(CINSPECTNPCTRADE);
+            b.writeShort(a_Type);
+            b.writeByte(a_Data);
             this.m_ServerConnection.messageWriter.finishMessage();
             return;
          }
          catch(e:Error)
          {
-            handleSendError(CEXCLUDEFROMCHANNEL,e);
+            handleSendError(CINSPECTNPCTRADE,e);
             return;
          }
-      }
-      
-      protected function readSQUESTLINE(param1:ByteArray) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:Array = null;
-         var _loc5_:int = 0;
-         var _loc6_:String = null;
-         var _loc7_:String = null;
-         var _loc8_:QuestLogWidget = null;
-         _loc2_ = param1.readUnsignedShort();
-         _loc3_ = param1.readUnsignedByte();
-         _loc4_ = new Array();
-         _loc5_ = 0;
-         while(_loc5_ < _loc3_)
-         {
-            _loc6_ = StringHelper.s_ReadLongStringFromByteArray(param1,QuestFlag.MAX_NAME_LENGTH);
-            _loc7_ = StringHelper.s_ReadLongStringFromByteArray(param1,QuestFlag.MAX_DESCRIPTION_LENGTH);
-            _loc4_.push(new QuestFlag(_loc6_,_loc7_));
-            _loc5_++;
-         }
-         if(this.m_PendingQuestLine == _loc2_)
-         {
-            _loc8_ = PopUpBase.getCurrent() as QuestLogWidget;
-            if(_loc8_ != null)
-            {
-               _loc8_.questFlags = _loc4_;
-            }
-            this.m_PendingQuestLine = -1;
-         }
-      }
-      
-      public function sendCCANCEL() : void
-      {
-         var b:ByteArray = null;
-         try
-         {
-            b = this.m_ServerConnection.messageWriter.createMessage();
-            b.writeByte(CCANCEL);
-            this.m_ServerConnection.messageWriter.finishMessage();
-            return;
-         }
-         catch(e:Error)
-         {
-            handleSendError(CCANCEL,e);
-            return;
-         }
-      }
-      
-      protected function readSSHOWMODALDIALOG(param1:ByteArray) : void
-      {
-         var _loc2_:uint = 0;
-         var _loc3_:String = null;
-         var _loc4_:String = null;
-         var _loc5_:Vector.<Choice> = null;
-         var _loc6_:String = null;
-         var _loc7_:int = 0;
-         var _loc8_:int = 0;
-         var _loc9_:Vector.<Choice> = null;
-         var _loc10_:uint = 0;
-         var _loc11_:uint = 0;
-         var _loc12_:Boolean = false;
-         var _loc13_:ServerModalDialog = null;
-         _loc2_ = param1.readUnsignedInt();
-         _loc3_ = StringHelper.s_ReadLongStringFromByteArray(param1);
-         _loc4_ = StringHelper.s_ReadLongStringFromByteArray(param1);
-         _loc5_ = new Vector.<Choice>();
-         _loc6_ = null;
-         _loc7_ = 0;
-         _loc8_ = 0;
-         _loc8_ = param1.readUnsignedByte();
-         while(_loc8_ > 0)
-         {
-            _loc6_ = StringHelper.s_ReadLongStringFromByteArray(param1);
-            _loc7_ = param1.readUnsignedByte();
-            _loc5_.push(new Choice(_loc6_,_loc7_));
-            _loc8_--;
-         }
-         _loc9_ = new Vector.<Choice>();
-         _loc8_ = param1.readUnsignedByte();
-         while(_loc8_ > 0)
-         {
-            _loc6_ = StringHelper.s_ReadLongStringFromByteArray(param1);
-            _loc7_ = param1.readUnsignedByte();
-            _loc9_.push(new Choice(_loc6_,_loc7_));
-            _loc8_--;
-         }
-         _loc10_ = param1.readUnsignedByte();
-         _loc11_ = param1.readUnsignedByte();
-         _loc12_ = param1.readBoolean();
-         _loc13_ = new ServerModalDialog(_loc2_);
-         _loc13_.buttons = _loc5_;
-         _loc13_.choices = _loc9_;
-         _loc13_.defaultEnterButton = _loc11_;
-         _loc13_.defaultEscapeButton = _loc10_;
-         _loc13_.message = _loc4_;
-         _loc13_.priority = PopUpBase.DEFAULT_PRIORITY + (!!_loc12_?1:0);
-         _loc13_.title = _loc3_;
-         _loc13_.show();
       }
    }
 }

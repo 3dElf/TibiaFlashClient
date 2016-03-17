@@ -1,10 +1,10 @@
 package tibia.chat.chatWidgetClasses
 {
    import tibia.controls.DynamicTabBar;
-   import mx.collections.IList;
-   import mx.collections.ArrayCollection;
    import tibia.controls.dynamicTabBarClasses.DynamicTab;
    import tibia.chat.Channel;
+   import mx.collections.IList;
+   import mx.collections.ArrayCollection;
    import mx.core.EventPriority;
    import mx.core.ClassFactory;
    
@@ -23,6 +23,13 @@ package tibia.chat.chatWidgetClasses
          navItemFactory = new ClassFactory(ChannelTab);
       }
       
+      override protected function createNavItem(param1:Object) : DynamicTab
+      {
+         var _loc2_:ChannelTab = ChannelTab(super.createNavItem(param1));
+         _loc2_.channel = param1 as Channel;
+         return _loc2_;
+      }
+      
       private function updateNavItemHighlight(param1:ChannelTab) : void
       {
          if(param1 != null)
@@ -35,28 +42,6 @@ package tibia.chat.chatWidgetClasses
             {
                param1.styleName = getStyle("navItemStyle");
             }
-         }
-      }
-      
-      override protected function commitProperties() : void
-      {
-         var _loc1_:ChannelTab = null;
-         super.commitProperties();
-         if(this.m_UncomittedScrollPosition)
-         {
-            callLater(this.updateScrollButtonHighlights);
-            this.m_UncomittedScrollPosition = false;
-         }
-         if(this.m_UncomittedSelectedIndex)
-         {
-            if(m_SelectedIndex > -1)
-            {
-               _loc1_ = ChannelTab(getChildAt(m_SelectedIndex));
-               _loc1_.highlight = false;
-               this.updateNavItemHighlight(_loc1_);
-            }
-            callLater(this.updateScrollButtonHighlights);
-            this.m_UncomittedSelectedIndex = false;
          }
       }
       
@@ -88,6 +73,28 @@ package tibia.chat.chatWidgetClasses
             super.selectedIndex = param1;
             this.m_UncomittedSelectedIndex = true;
             invalidateProperties();
+         }
+      }
+      
+      override protected function commitProperties() : void
+      {
+         var _loc1_:ChannelTab = null;
+         super.commitProperties();
+         if(this.m_UncomittedScrollPosition)
+         {
+            callLater(this.updateScrollButtonHighlights);
+            this.m_UncomittedScrollPosition = false;
+         }
+         if(this.m_UncomittedSelectedIndex)
+         {
+            if(m_SelectedIndex > -1)
+            {
+               _loc1_ = ChannelTab(getChildAt(m_SelectedIndex));
+               _loc1_.highlight = false;
+               this.updateNavItemHighlight(_loc1_);
+            }
+            callLater(this.updateScrollButtonHighlights);
+            this.m_UncomittedSelectedIndex = false;
          }
       }
       
@@ -152,11 +159,13 @@ package tibia.chat.chatWidgetClasses
          }
       }
       
-      override protected function createNavItem(param1:Object) : DynamicTab
+      public function get selectedTab() : ChannelTab
       {
-         var _loc2_:ChannelTab = ChannelTab(super.createNavItem(param1));
-         _loc2_.channel = param1 as Channel;
-         return _loc2_;
+         if(selectedIndex > -1)
+         {
+            return getChildAt(m_SelectedIndex) as ChannelTab;
+         }
+         return null;
       }
       
       override public function set scrollPosition(param1:int) : void

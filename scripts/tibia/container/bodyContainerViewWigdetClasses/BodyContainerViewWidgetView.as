@@ -38,6 +38,8 @@ package tibia.container.bodyContainerViewWigdetClasses
    public class BodyContainerViewWidgetView extends WidgetView implements IUseWidget, IMoveWidget
    {
       
+      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
       protected static const STATE_PZ_BLOCK:int = 13;
@@ -114,13 +116,15 @@ package tibia.container.bodyContainerViewWigdetClasses
       
       protected static const SKILL_NONE:int = -1;
       
-      protected static const GUILD_MEMBER:int = 4;
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       private static const BUNDLE:String = "BodyContainerViewWidget";
       
-      private static const WIDGET_VIEW_HEIGHT:Number = 154;
+      protected static const GUILD_MEMBER:int = 4;
       
       protected static const PROFESSION_NONE:int = 0;
+      
+      private static const WIDGET_VIEW_HEIGHT:Number = 154;
       
       protected static const MAX_NAME_LENGTH:int = 29;
       
@@ -171,6 +175,8 @@ package tibia.container.bodyContainerViewWigdetClasses
       protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
       
       protected static const PROFESSION_KNIGHT:int = 1;
+      
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
@@ -224,21 +230,19 @@ package tibia.container.bodyContainerViewWigdetClasses
       
       private static const ACTION_AUTOWALK_HIGHLIGHT:int = 4;
       
-      private static const ACTION_USE_OR_OPEN:int = 101;
+      protected static const STATE_BURNING:int = 1;
       
       protected static const SKILL_FIGHTFIST:int = 13;
       
       private static const ACTION_UNSET:int = -1;
       
-      protected static const STATE_BURNING:int = 1;
+      protected static const PK_AGGRESSOR:int = 3;
       
       protected static const GUILD_WAR_ENEMY:int = 2;
       
       protected static const SKILL_LEVEL:int = 1;
       
       protected static const STATE_STRENGTHENED:int = 12;
-      
-      protected static const PK_AGGRESSOR:int = 3;
       
       protected static const STATE_HUNGRY:int = 31;
       
@@ -253,6 +257,12 @@ package tibia.container.bodyContainerViewWigdetClasses
       protected static const STATE_FIGHTING:int = 7;
       
       private static const ACTION_AUTOWALK:int = 3;
+      
+      protected static const NPC_SPEECH_QUEST:uint = 3;
+      
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
+      private static const ACTION_USE_OR_OPEN:int = 101;
       
       private static const WIDGET_COMPONENTS:Array = [{
          "slot":-1,
@@ -352,11 +362,11 @@ package tibia.container.bodyContainerViewWigdetClasses
          "tooltip":"TOOLTIP_PURSE"
       }];
       
-      protected static const SKILL_GOSTRENGTH:int = 6;
+      protected static const NPC_SPEECH_NONE:uint = 0;
       
       protected static const PK_MAX_FLASHING_TIME:uint = 5000;
       
-      protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
+      protected static const SKILL_GOSTRENGTH:int = 6;
        
       private var m_UICapacity:TextField = null;
       

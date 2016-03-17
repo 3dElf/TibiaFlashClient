@@ -668,6 +668,11 @@ package tibia.chat
          return Math.round(100 * this.m_UILeftView.width / (this.m_UILeftView.width + this.m_UIRightView.width));
       }
       
+      public function get tabBar() : ChannelTabBar
+      {
+         return this.m_UITabBar;
+      }
+      
       protected function onMappingModeClick(param1:MouseEvent) : void
       {
          if(param1 != null)

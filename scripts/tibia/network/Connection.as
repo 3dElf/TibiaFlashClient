@@ -31,7 +31,7 @@ package tibia.network
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 1035;
+      public static const PROTOCOL_VERSION:int = 1036;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -83,7 +83,7 @@ package tibia.network
       
       protected static const CBUYOBJECT:int = 122;
       
-      public static const CLIENT_VERSION:uint = 1620;
+      public static const CLIENT_VERSION:uint = 1639;
       
       protected static const SPING:int = 29;
       
@@ -712,6 +712,7 @@ package tibia.network
             if(param2)
             {
                _loc3_ = new ConnectionEvent(ConnectionEvent.CONNECTING);
+               _loc3_.data = this.m_CharacterName;
                dispatchEvent(_loc3_);
             }
          }

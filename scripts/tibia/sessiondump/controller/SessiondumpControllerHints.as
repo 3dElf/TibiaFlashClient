@@ -5,8 +5,10 @@ package tibia.sessiondump.controller
    import tibia.tutorial.TutorialProgressServiceAsset;
    import flash.events.Event;
    import tibia.sessiondump.SessiondumpEvent;
+   import tibia.help.TransparentHintLayer;
    import flash.events.EventDispatcher;
    import flash.events.MouseEvent;
+   import tibia.chat.MessageStorage;
    import flash.utils.ByteArray;
    import shared.utility.Vector3D;
    import shared.utility.StringHelper;
@@ -15,7 +17,6 @@ package tibia.sessiondump.controller
    import tibia.chat.MessageMode;
    import tibia.sessiondump.Sessiondump;
    import tibia.sessiondump.SessiondumpReader;
-   import tibia.help.TransparentHintLayer;
    import tibia.chat.log;
    import tibia.sessiondump.hints.SessiondumpHintsAsset;
    import loader.asset.IAssetProvider;
@@ -25,6 +26,8 @@ package tibia.sessiondump.controller
    {
        
       private var m_SessiondumpHints:SessiondumpHints = null;
+      
+      private var m_MessageStorage:MessageStorage = null;
       
       private var m_CurrentHint:SessiondumpHintBase = null;
       
@@ -46,6 +49,7 @@ package tibia.sessiondump.controller
             if(_loc2_.length == 1)
             {
                this.m_TutorialProgressServiceAsset = _loc2_[0] as TutorialProgressServiceAsset;
+               this.m_MessageStorage = new MessageStorage();
                return;
             }
             throw new Error("SessiondumpControllerHints.SessiondumpControllerHints: No tutorial progress service asset");
@@ -120,6 +124,39 @@ package tibia.sessiondump.controller
          super.playSpeedFactor = param1;
       }
       
+      private function onSessiondumpPacketReceived(param1:SessiondumpEvent) : void
+      {
+         var _loc2_:Boolean = this.processSessiondumpHints(m_SessiondumpReader.packetReader.packetTimestamp);
+         if(_loc2_)
+         {
+            param1.preventDefault();
+            this.playSpeedFactor = 1;
+         }
+      }
+      
+      override public function disconnect() : void
+      {
+         TransparentHintLayer.getInstance().hide();
+         if(m_Sessiondump != null)
+         {
+            m_Sessiondump.removeEventListener(SessiondumpEvent.PACKET_AVAILABLE,this.onSessiondumpPacketReceived);
+            m_Sessiondump.removeEventListener(SessiondumpEvent.MESSAGE_AVAILABLE,this.onSessiondumpMesageAvailable);
+            m_Sessiondump.removeEventListener(SessiondumpEvent.MESSAGE_PROCESSED,this.onSessiondumpMessageProcessed);
+            m_Sessiondump.removeEventListener(Event.COMPLETE,this.onSessiondumpComplete);
+         }
+         if(m_SessiondumpReader != null)
+         {
+            m_SessiondumpReader.removeEventListener(SessiondumpEvent.HEADER_READ,this.onSessiondumpHeaderRead);
+         }
+         this.unregisterSandboxListeners();
+         super.disconnect();
+      }
+      
+      public function get sessiondumpHints() : SessiondumpHints
+      {
+         return this.m_SessiondumpHints;
+      }
+      
       private function unregisterSandboxListeners() : void
       {
          var _loc1_:EventDispatcher = Tibia.s_GetInstance().systemManager.getSandboxRoot();
@@ -133,21 +170,6 @@ package tibia.sessiondump.controller
             _loc1_.removeEventListener(MouseEvent.MIDDLE_MOUSE_UP,this.onSandboxMouseFilter,true);
             _loc1_.removeEventListener(MouseEvent.MIDDLE_MOUSE_DOWN,this.onSandboxMouseFilter,true);
             _loc1_.removeEventListener(MouseEvent.MOUSE_WHEEL,this.onSandboxMouseFilter,true);
-         }
-      }
-      
-      public function get sessiondumpHints() : SessiondumpHints
-      {
-         return this.m_SessiondumpHints;
-      }
-      
-      private function onSessiondumpPacketReceived(param1:SessiondumpEvent) : void
-      {
-         var _loc2_:Boolean = this.processSessiondumpHints(m_SessiondumpReader.packetReader.packetTimestamp);
-         if(_loc2_)
-         {
-            param1.preventDefault();
-            this.playSpeedFactor = 1;
          }
       }
       
@@ -185,8 +207,11 @@ package tibia.sessiondump.controller
                Pos = Tibia.s_GetCommunication().readCoordinate(a_Bytes);
                ChannelID = ChatStorage.LOCAL_CHANNEL_ID;
                break;
-            case MessageMode.MESSAGE_NPC_FROM:
+            case MessageMode.MESSAGE_NPC_FROM_START_BLOCK:
                Pos = Tibia.s_GetCommunication().readCoordinate(a_Bytes);
+               ChannelID = ChatStorage.NPC_CHANNEL_ID;
+               break;
+            case MessageMode.MESSAGE_NPC_FROM:
                ChannelID = ChatStorage.NPC_CHANNEL_ID;
                break;
             case MessageMode.MESSAGE_GAMEMASTER_BROADCAST:
@@ -210,22 +235,32 @@ package tibia.sessiondump.controller
                throw new Error("Connection.readSTALK: Invalid message mode " + Mode + ".",0);
          }
          var Text:String = StringHelper.s_ReadLongStringFromByteArray(a_Bytes,ChatStorage.MAX_TALK_LENGTH);
-         try
+         if(Mode != MessageMode.MESSAGE_NPC_FROM_START_BLOCK && Mode != MessageMode.MESSAGE_NPC_FROM)
          {
-            Tibia.s_GetWorldMapStorage().addOnscreenMessage(Pos,StatementID,Speaker,SpeakerLevel,Mode,Text);
+            try
+            {
+               Tibia.s_GetWorldMapStorage().addOnscreenMessage(Pos,StatementID,Speaker,SpeakerLevel,Mode,Text);
+            }
+            catch(e:Error)
+            {
+               throw new Error("Connection.readSTALK: Failed to add message: " + e.message,1);
+            }
+            try
+            {
+               Tibia.s_GetChatStorage().addChannelMessage(ChannelID,StatementID,Speaker,SpeakerLevel,Mode,Text);
+            }
+            catch(e:Error)
+            {
+               throw new Error("Connection.readSTALK: Failed to add message: " + e.message,2);
+            }
          }
-         catch(e:Error)
+         else if(Mode == MessageMode.MESSAGE_NPC_FROM_START_BLOCK)
          {
-            throw new Error("Connection.readSTALK: Failed to add message: " + e.message,1);
+            this.m_MessageStorage.startMessageBlock(Speaker,Pos,Text);
          }
-         try
+         else if(Mode == MessageMode.MESSAGE_NPC_FROM)
          {
-            Tibia.s_GetChatStorage().addChannelMessage(ChannelID,StatementID,Speaker,SpeakerLevel,Mode,Text);
-            return;
-         }
-         catch(e:Error)
-         {
-            throw new Error("Connection.readSTALK: Failed to add message: " + e.message,2);
+            this.m_MessageStorage.addTextToBlock(Speaker,Text);
          }
       }
       
@@ -245,24 +280,6 @@ package tibia.sessiondump.controller
          param2.addEventListener(SessiondumpEvent.HEADER_READ,this.onSessiondumpHeaderRead);
          param1.addEventListener(SessiondumpEvent.MESSAGE_PROCESSED,this.onSessiondumpMessageProcessed);
          param1.addEventListener(Event.COMPLETE,this.onSessiondumpComplete);
-      }
-      
-      override public function disconnect() : void
-      {
-         TransparentHintLayer.getInstance().hide();
-         if(m_Sessiondump != null)
-         {
-            m_Sessiondump.removeEventListener(SessiondumpEvent.PACKET_AVAILABLE,this.onSessiondumpPacketReceived);
-            m_Sessiondump.removeEventListener(SessiondumpEvent.MESSAGE_AVAILABLE,this.onSessiondumpMesageAvailable);
-            m_Sessiondump.removeEventListener(SessiondumpEvent.MESSAGE_PROCESSED,this.onSessiondumpMessageProcessed);
-            m_Sessiondump.removeEventListener(Event.COMPLETE,this.onSessiondumpComplete);
-         }
-         if(m_SessiondumpReader != null)
-         {
-            m_SessiondumpReader.removeEventListener(SessiondumpEvent.HEADER_READ,this.onSessiondumpHeaderRead);
-         }
-         this.unregisterSandboxListeners();
-         super.disconnect();
       }
       
       private function processSessiondumpHints(param1:uint) : Boolean

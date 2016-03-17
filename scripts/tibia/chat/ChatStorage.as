@@ -102,7 +102,7 @@ package tibia.chat
          return this.m_OwnPrivateChannelID;
       }
       
-      public function addChannelMessage(param1:Object, param2:int, param3:String, param4:int, param5:int, param6:String) : void
+      public function addChannelMessage(param1:Object, param2:int, param3:String, param4:int, param5:int, param6:String) : ChannelMessage
       {
          var _loc10_:Boolean = false;
          var _loc11_:* = false;
@@ -162,6 +162,7 @@ package tibia.chat
                   _loc13_.setReportTypeAllowed(Type.REPORT_NAME,_loc10_);
                   _loc12_ = this.getChannel(LOCAL_CHANNEL_ID);
                   break;
+               case MessageMode.MESSAGE_NPC_FROM_START_BLOCK:
                case MessageMode.MESSAGE_NPC_FROM:
                case MessageMode.MESSAGE_NPC_TO:
                   _loc12_ = this.addChannel(NPC_CHANNEL_ID,NPC_CHANNEL_LABEL,MessageMode.MESSAGE_NPC_TO);
@@ -218,8 +219,10 @@ package tibia.chat
             if(_loc12_ != null)
             {
                _loc12_.appendMessage(_loc13_);
+               return _loc13_;
             }
          }
+         return null;
       }
       
       public function set ownPrivateChannelID(param1:int) : void

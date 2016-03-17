@@ -47,6 +47,8 @@ package tibia.sessiondump
       
       protected static const SKILL_FIGHTCLUB:int = 10;
       
+      protected static const NPC_SPEECH_NONE:uint = 0;
+      
       protected static const CSETTACTICS:int = 160;
       
       protected static const PK_REVENGE:int = 6;
@@ -123,6 +125,8 @@ package tibia.sessiondump
       
       protected static const SKILL_FED:int = 15;
       
+      protected static const NPC_SPEECH_QUEST:uint = 3;
+      
       protected static const TYPE_SUMMON_OTHERS:int = 4;
       
       protected static const CBROWSEFIELD:int = 203;
@@ -162,6 +166,8 @@ package tibia.sessiondump
       protected static const PARTY_LEADER:int = 1;
       
       protected static const SMISSILEEFFECT:int = 133;
+      
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       protected static const CGOWEST:int = 104;
       
@@ -255,6 +261,8 @@ package tibia.sessiondump
       
       protected static const TYPE_SUMMON_OWN:int = 3;
       
+      protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
+      
       protected static const SPRIVATECHANNEL:int = 173;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
@@ -339,6 +347,8 @@ package tibia.sessiondump
       
       protected static const STATE_FIGHTING:int = 7;
       
+      protected static const NPC_SPEECH_NORMAL:uint = 1;
+      
       protected static const SSPELLDELAY:int = 164;
       
       protected static const CEDITBUDDY:int = 222;
@@ -349,7 +359,7 @@ package tibia.sessiondump
       
       protected static const CROTATEWEST:int = 114;
       
-      public static const PROTOCOL_VERSION:int = 1035;
+      public static const PROTOCOL_VERSION:int = 1036;
       
       protected static const SCREATUREOUTFIT:int = 142;
       
@@ -1073,6 +1083,7 @@ package tibia.sessiondump
             _loc5_.setPartyFlag(param1.readUnsignedByte());
             _loc5_.guildFlag = param1.readUnsignedByte();
             _loc5_.type = param1.readUnsignedByte();
+            _loc5_.speechCategory = param1.readUnsignedByte();
             _loc5_.marks.setMark(Marks.MARK_TYPE_PERMANENT,param1.readUnsignedByte());
             _loc5_.numberOfPVPHelpers = param1.readUnsignedShort();
             _loc5_.isUnpassable = param1.readUnsignedByte() != 0;

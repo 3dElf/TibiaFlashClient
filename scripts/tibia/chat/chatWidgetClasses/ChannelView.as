@@ -6,6 +6,7 @@ package tibia.chat.chatWidgetClasses
    import shared.controls.SmoothList;
    import mx.collections.Sort;
    import mx.collections.ListCollectionView;
+   import tibia.chat.ChatStorage;
    import mx.collections.ICollectionView;
    import flash.events.MouseEvent;
    import mx.controls.listClasses.IListItemRenderer;
@@ -75,6 +76,7 @@ package tibia.chat.chatWidgetClasses
             if(this.m_Channel != null)
             {
                this.m_UINicklistItemView = new ListCollectionView(this.m_Channel.nicklistItems);
+               this.m_UIChannel.stopsScrollingOnLargeBlocks = this.m_Channel.ID == ChatStorage.NPC_CHANNEL_ID;
                this.m_UIChannel.dataProvider = this.m_Channel.messages;
                this.m_UINicklist.dataProvider = this.m_UINicklistItemView;
                if(this.m_UINicklistItemView is ICollectionView)
