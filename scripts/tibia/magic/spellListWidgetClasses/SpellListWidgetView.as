@@ -256,11 +256,11 @@ package tibia.magic.spellListWidgetClasses
       
       private var m_UncommittedFilterGroup:Boolean = true;
       
-      private var m_SortMode:int;
+      private var m_SortMode:int = 4;
       
       private var m_UncommittedFilterLevel:Boolean = true;
       
-      private var m_LayoutMode:int;
+      private var m_LayoutMode:int = 0;
       
       private var m_UIConstructed:Boolean = false;
       
@@ -340,8 +340,6 @@ package tibia.magic.spellListWidgetClasses
       
       public function SpellListWidgetView()
       {
-         this.m_LayoutMode = SpellListWidget.LAYOUT_LIST;
-         this.m_SortMode = SpellListWidget.SORT_NAME;
          super();
          horizontalScrollPolicy = ScrollPolicy.OFF;
          verticalScrollPolicy = ScrollPolicy.OFF;

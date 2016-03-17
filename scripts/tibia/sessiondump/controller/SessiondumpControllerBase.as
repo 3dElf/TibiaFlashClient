@@ -22,7 +22,7 @@ package tibia.sessiondump.controller
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 1040;
+      public static const PROTOCOL_VERSION:int = 1041;
       
       protected static const CROTATEWEST:int = 114;
       
