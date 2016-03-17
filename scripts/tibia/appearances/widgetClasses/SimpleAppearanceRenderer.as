@@ -136,12 +136,12 @@ package tibia.appearances.widgetClasses
             {
                s_Trans.a = _loc2_;
                s_Trans.d = _loc2_;
-               s_Trans.tx = (-s_Rect.right + _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize) * _loc2_;
-               s_Trans.ty = (-s_Rect.bottom + _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize) * _loc2_;
+               s_Trans.tx = (-s_Rect.right + _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize - _loc1_.displacementX) * _loc2_;
+               s_Trans.ty = (-s_Rect.bottom + _loc1_.FrameGroups[FrameGroup.FRAME_GROUP_DEFAULT].exactSize - _loc1_.displacementY) * _loc2_;
                s_Rect.width = Math.min(_loc3_,s_Rect.width * _loc2_);
                s_Rect.height = Math.min(_loc3_,s_Rect.height * _loc2_);
-               s_Rect.x = _loc3_ - s_Rect.width;
-               s_Rect.y = _loc3_ - s_Rect.height;
+               s_Rect.x = _loc3_ - s_Rect.width - _loc1_.displacementX * _loc2_;
+               s_Rect.y = _loc3_ - s_Rect.height - _loc1_.displacementY * _loc2_;
                graphics.beginBitmapFill(_loc5_,s_Trans,true,this.m_Smooth);
                graphics.drawRect(s_Rect.x,s_Rect.y,s_Rect.width,s_Rect.height);
             }

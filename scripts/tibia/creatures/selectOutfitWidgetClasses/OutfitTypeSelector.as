@@ -111,8 +111,8 @@ package tibia.creatures.selectOutfitWidgetClasses
          {
             super.createChildren();
             _loc1_ = new ShapeWrapper();
-            _loc1_.width = 128;
-            _loc1_.height = 128;
+            _loc1_.width = 140;
+            _loc1_.height = 140;
             _loc1_.setStyle("horizontalAlign","right");
             _loc1_.setStyle("verticalAlign","bottom");
             this.m_UIAppearance = new SimpleAppearanceRenderer();
