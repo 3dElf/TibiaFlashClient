@@ -38,23 +38,23 @@ package tibia.game
       
       protected static const DRAG_TYPE_ACTION:String = "action";
        
-      protected var m_DragObject:ObjectInstance = null;
+      private var m_DragObject:ObjectInstance = null;
       
-      protected var m_DragPosition:int = -1;
+      private var m_DragPosition:int = -1;
       
-      protected var m_DragStart:Vector3D = null;
+      private var m_DragStart:Vector3D = null;
       
       public function ObjectDragImpl()
       {
          super();
       }
       
-      protected function onMouseUp(param1:Event) : void
+      private function onMouseUp(param1:Event) : void
       {
          this.removeDragInitListeners(InteractiveObject(param1.currentTarget));
       }
       
-      protected function onDragDrop(param1:DragEvent) : void
+      private function onDragDrop(param1:DragEvent) : void
       {
          var _loc3_:* = undefined;
          var _loc4_:Vector3D = null;
@@ -98,7 +98,7 @@ package tibia.game
          }
       }
       
-      protected function onMouseDown(param1:MouseEvent) : void
+      private function onMouseDown(param1:MouseEvent) : void
       {
          this.m_DragStart = null;
          this.m_DragPosition = -1;
@@ -131,16 +131,16 @@ package tibia.game
          }
       }
       
-      protected function onDragEnter(param1:DragEvent) : void
+      private function onDragEnter(param1:DragEvent) : void
       {
          var _loc2_:DragSource = null;
-         if((_loc2_ = param1.dragSource) != null && Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_OBJECT && param1.target is UIComponent)
+         if((_loc2_ = param1.dragSource) != null && Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_OBJECT && param1.target is UIComponent && !(Boolean(param1.cancelable) && Boolean(param1.isDefaultPrevented())))
          {
             DragManager.acceptDragDrop(UIComponent(param1.currentTarget));
          }
       }
       
-      protected function removeDragInitListeners(param1:InteractiveObject) : void
+      private function removeDragInitListeners(param1:InteractiveObject) : void
       {
          var _loc2_:DisplayObject = null;
          if(param1 != null)
@@ -155,7 +155,7 @@ package tibia.game
          }
       }
       
-      protected function addDragInitListeners(param1:InteractiveObject) : void
+      private function addDragInitListeners(param1:InteractiveObject) : void
       {
          var _loc2_:DisplayObject = null;
          if(param1 != null)
@@ -170,7 +170,7 @@ package tibia.game
          }
       }
       
-      protected function onMouseMove(param1:MouseEvent) : void
+      private function onMouseMove(param1:MouseEvent) : void
       {
          var _loc2_:DragSource = null;
          var _loc3_:Image = null;

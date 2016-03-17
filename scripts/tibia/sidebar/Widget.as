@@ -3,16 +3,17 @@ package tibia.sidebar
    import flash.events.EventDispatcher;
    import tibia.creatures.BattlelistWidget;
    import tibia.creatures.BuddylistWidget;
-   import tibia.container.ContainerWidget;
+   import tibia.container.ContainerViewWidget;
+   import tibia.container.BodyContainerViewWidget;
    import tibia.minimap.MiniMapWidget;
    import tibia.trade.NPCTradeWidget;
    import tibia.trade.SafeTradeWidget;
    import tibia.magic.SpellListWidget;
    import tibia.creatures.battlelistWidgetClasses.BattlelistWidgetView;
    import tibia.creatures.buddylistWidgetClasses.BuddylistWidgetView;
-   import tibia.container.containerWidgetClasses.ContainerWidgetView;
+   import tibia.container.containerViewWidgetClasses.ContainerViewWidgetView;
    import tibia.sidebar.sideBarWidgetClasses.GeneralButtonsWidgetView;
-   import tibia.container.containerWidgetClasses.BodyWidgetView;
+   import tibia.container.bodyContainerViewWigdetClasses.BodyContainerViewWidgetView;
    import tibia.minimap.miniMapWidgetClasses.MiniMapWidgetView;
    import tibia.sidebar.sideBarWidgetClasses.CombatControlWidgetView;
    import tibia.trade.npcTradeWidgetClasses.NPCTradeWidgetView;
@@ -73,7 +74,7 @@ package tibia.sidebar
          "closable":true,
          "collapsible":true,
          "resizable":true,
-         "viewClass":ContainerWidgetView
+         "viewClass":ContainerViewWidgetView
       },{
          "type":TYPE_GENERALBUTTONS,
          "unique":true,
@@ -89,7 +90,7 @@ package tibia.sidebar
          "closable":true,
          "collapsible":true,
          "resizable":false,
-         "viewClass":BodyWidgetView
+         "viewClass":BodyContainerViewWidgetView
       },{
          "type":TYPE_MINIMAP,
          "unique":true,
@@ -199,13 +200,13 @@ package tibia.sidebar
                _loc3_ = new BuddylistWidget();
                break;
             case TYPE_CONTAINER:
-               _loc3_ = new ContainerWidget();
+               _loc3_ = new ContainerViewWidget();
                break;
             case TYPE_GENERALBUTTONS:
                _loc3_ = new Widget();
                break;
             case TYPE_BODY:
-               _loc3_ = new ContainerWidget();
+               _loc3_ = new BodyContainerViewWidget();
                break;
             case TYPE_MINIMAP:
                _loc3_ = new MiniMapWidget();

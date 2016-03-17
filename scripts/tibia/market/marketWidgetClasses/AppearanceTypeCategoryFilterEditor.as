@@ -3,7 +3,7 @@ package tibia.market.marketWidgetClasses
    import mx.containers.VBox;
    import mx.controls.ComboBox;
    import mx.controls.Button;
-   import tibia.container.ContainerStorage;
+   import tibia.container.BodyContainerView;
    import flash.events.Event;
    import tibia.market.MarketWidget;
    import tibia.options.OptionsStorage;
@@ -82,7 +82,7 @@ package tibia.market.marketWidgetClasses
       
       private function set filterBodyPosition(param1:int) : void
       {
-         if(param1 != ContainerStorage.BODY_BOTH_HANDS && param1 != ContainerStorage.BODY_LEFT_HAND)
+         if(param1 != BodyContainerView.BOTH_HANDS && param1 != BodyContainerView.LEFT_HAND)
          {
             param1 = -1;
          }
@@ -353,10 +353,10 @@ package tibia.market.marketWidgetClasses
                "value":-1,
                "label":resourceManager.getString(BUNDLE,"RESTRICT_ANY_HAND_LABEL")
             },{
-               "value":ContainerStorage.BODY_LEFT_HAND,
+               "value":BodyContainerView.LEFT_HAND,
                "label":resourceManager.getString(BUNDLE,"RESTRICT_ONE_HANDED_LABEL")
             },{
-               "value":ContainerStorage.BODY_BOTH_HANDS,
+               "value":BodyContainerView.BOTH_HANDS,
                "label":resourceManager.getString(BUNDLE,"RESTRICT_TWO_HANDED_LABEL")
             }];
             this.m_UIBodyPosition.dropdownFactory = new ClassFactory(CustomList);

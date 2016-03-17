@@ -31,6 +31,7 @@ package
             "CTX_PARTY_PASS_LEADERSHIP":"Pass Leadership to {0}",
             "CTX_PARTY_EXCLUDE":"Revoke {0}\'s Invitation",
             "CTX_OBJECT_MOVE_UP":"Move up",
+            "CTX_OBJECT_BROWSE_FIELD":"Browse Field",
             "CTX_OBJECT_OPEN_NEW_WINDOW":"Open in New Window ",
             "CTX_CREATURE_FOLLOW_STOP":"Stop Follow",
             "CTX_CREATURE_FOLLOW_START":"Follow",

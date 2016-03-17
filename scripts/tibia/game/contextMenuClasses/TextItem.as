@@ -147,13 +147,12 @@ package tibia.game.contextMenuClasses
       
       override protected function measure() : void
       {
-         var _loc4_:Number = NaN;
          var _loc5_:EdgeMetrics = null;
          super.measure();
          var _loc1_:Number = !isNaN(this.m_UICaption.explicitMinWidth)?Number(this.m_UICaption.explicitMinWidth):Number(this.m_UICaption.measuredMinWidth);
          var _loc2_:Number = this.m_UICaption.getExplicitOrMeasuredWidth();
          var _loc3_:Number = !isNaN(this.m_UICaption.explicitMinHeight)?Number(this.m_UICaption.explicitMinHeight):Number(this.m_UICaption.measuredMinHeight);
-         _loc4_ = this.m_UICaption.getExplicitOrMeasuredHeight();
+         var _loc4_:Number = this.m_UICaption.getExplicitOrMeasuredHeight();
          if(this.m_UIIcon != null)
          {
             this.measuredIconWidth = this.m_UIIcon.getExplicitOrMeasuredWidth();

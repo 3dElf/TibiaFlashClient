@@ -4,13 +4,15 @@ package tibia.game
    import tibia.creatures.Creature;
    import mx.core.IUIComponent;
    import tibia.appearances.ObjectInstance;
+   import tibia.worldmap.WorldMapStorage;
+   import tibia.creatures.CreatureStorage;
    import tibia.creatures.Player;
    import tibia.container.ContainerStorage;
-   import tibia.creatures.CreatureStorage;
    import tibia.input.gameaction.PartyActionImpl;
    import tibia.input.gameaction.LookActionImpl;
    import tibia.input.gameaction.UseActionImpl;
    import tibia.input.gameaction.TurnActionImpl;
+   import tibia.input.gameaction.BrowseFieldActionImpl;
    import tibia.appearances.AppearanceInstance;
    import tibia.input.gameaction.SafeTradeActionImpl;
    import tibia.input.gameaction.MoveActionImpl;
@@ -281,6 +283,16 @@ package tibia.game
                }
             });
          }
+         var _WorldMapStorage:WorldMapStorage = Tibia.s_GetWorldMapStorage();
+         var Map:Vector3D = null;
+         var FirstObj:ObjectInstance = null;
+         if(this.m_Absolute.x != 65535 && _WorldMapStorage != null && (Map = _WorldMapStorage.toMap(this.m_Absolute)) != null && (FirstObj = _WorldMapStorage.getObject(Map.x,Map.y,Map.z,0)) != null && Boolean(FirstObj.type.isBank))
+         {
+            createTextItem(resourceManager.getString(BUNDLE,"CTX_OBJECT_BROWSE_FIELD"),function(param1:*):void
+            {
+               new BrowseFieldActionImpl(m_Absolute).perform();
+            });
+         }
          createSeparatorItem();
          if(LookObj != null && LookObj.ID != AppearanceInstance.CREATURE && !LookObj.type.isUnmoveable && Boolean(LookObj.type.isTakeable))
          {
@@ -293,7 +305,7 @@ package tibia.game
             });
          }
          var _ContainerStorage:ContainerStorage = Tibia.s_GetContainerStorage();
-         if(_ContainerStorage != null && LookObj != null && this.m_Absolute.x == 65535 && this.m_Absolute.y >= 64 && Boolean(_ContainerStorage.getOpenContainer(this.m_Absolute.y - 64).isSubContainer))
+         if(_ContainerStorage != null && LookObj != null && this.m_Absolute.x == 65535 && this.m_Absolute.y >= 64 && Boolean(_ContainerStorage.getContainerView(this.m_Absolute.y - 64).isSubContainer))
          {
             createTextItem(resourceManager.getString(BUNDLE,"CTX_OBJECT_MOVE_UP"),function(param1:*):void
             {

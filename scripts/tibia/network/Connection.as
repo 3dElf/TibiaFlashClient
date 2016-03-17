@@ -31,7 +31,7 @@ package tibia.network
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 975;
+      public static const PROTOCOL_VERSION:int = 976;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -81,15 +81,13 @@ package tibia.network
       
       protected static const CBUYOBJECT:int = 122;
       
-      public static const CLIENT_VERSION:uint = 1155;
+      public static const CLIENT_VERSION:uint = 1178;
       
       protected static const SPING:int = 29;
       
       public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
       
       protected static const SWAIT:int = 182;
-      
-      protected static const CREFRESHCONTAINER:int = 202;
       
       protected static const CONNECTION_STATE_DISCONNECTED:int = 0;
       
@@ -141,7 +139,7 @@ package tibia.network
       
       protected static const SQUESTLOG:int = 240;
       
-      protected static const ERR_INVALID_MESSAGE:int = 3;
+      protected static const CBROWSEFIELD:int = 203;
       
       protected static const CTURNOBJECT:int = 133;
       
@@ -169,6 +167,8 @@ package tibia.network
       
       protected static const SMISSILEEFFECT:int = 133;
       
+      protected static const ERR_INVALID_MESSAGE:int = 3;
+      
       protected static const CGOWEST:int = 104;
       
       protected static const CCANCEL:int = 190;
@@ -191,6 +191,8 @@ package tibia.network
       
       protected static const SBOTTOMROW:int = 103;
       
+      protected static const CSEEKINCONTAINER:int = 204;
+      
       protected static const SPLAYERGOODS:int = 123;
       
       protected static const CSTOP:int = 105;
@@ -211,8 +213,6 @@ package tibia.network
       
       protected static const CHECKSUM_SIZE:int = 4;
       
-      protected static const CRULEVIOLATIONREPORT:int = 242;
-      
       protected static const CREJECTTRADE:int = 128;
       
       protected static const CLOGIN:int = 10;
@@ -232,6 +232,8 @@ package tibia.network
       protected static const CEDITLIST:int = 138;
       
       protected static const SPLAYERDATACURRENT:int = 160;
+      
+      protected static const CRULEVIOLATIONREPORT:int = 242;
       
       protected static const SCLOSETRADE:int = 127;
       
@@ -285,6 +287,8 @@ package tibia.network
       
       protected static const SDELETEINVENTORY:int = 121;
       
+      private static const PING_RETRY_INTERVAL:uint = 5;
+      
       protected static const PAYLOADLENGTH_POS:int = PAYLOAD_POS;
       
       protected static const SCHANNELEVENT:int = 243;
@@ -311,8 +315,6 @@ package tibia.network
       
       protected static const CTRADEOBJECT:int = 125;
       
-      private static const PING_RETRY_INTERVAL:uint = 5;
-      
       protected static const SCONTAINER:int = 110;
       
       protected static const CTALK:int = 150;
@@ -328,8 +330,6 @@ package tibia.network
       protected static const CEXCLUDEFROMCHANNEL:int = 172;
       
       protected static const SCLOSENPCTRADE:int = 124;
-      
-      protected static const CMARKETBROWSE:int = 245;
       
       protected static const SPENDINGSTATEENTERED:int = 10;
       
@@ -354,6 +354,8 @@ package tibia.network
       protected static const CCLOSENPCTRADE:int = 124;
       
       protected static const SMARKETBROWSE:int = 249;
+      
+      protected static const CMARKETBROWSE:int = 245;
       
       protected static const CBUGREPORT:int = 230;
       

@@ -4,7 +4,7 @@ package tibia.trade.safeTradeWidgetClasses
    import mx.controls.Button;
    import mx.collections.IList;
    import mx.core.Container;
-   import tibia.container.containerWidgetClasses.ContainerSlot;
+   import tibia.container.containerViewWidgetClasses.ContainerSlot;
    import flash.events.MouseEvent;
    import tibia.appearances.AppearanceInstance;
    import mx.containers.HBox;

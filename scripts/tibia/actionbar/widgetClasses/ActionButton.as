@@ -31,6 +31,7 @@ package tibia.actionbar.widgetClasses
    import tibia.magic.Rune;
    import tibia.input.IAction;
    import flash.display.DisplayObjectContainer;
+   import tibia.container.BodyContainerView;
    import tibia.container.ContainerStorage;
    import tibia.creatures.Player;
    
@@ -543,7 +544,8 @@ package tibia.actionbar.widgetClasses
       {
          var _loc4_:AppearanceType = null;
          var _loc5_:int = 0;
-         var _loc6_:Delay = null;
+         var _loc6_:BodyContainerView = null;
+         var _loc7_:Delay = null;
          var _loc1_:ContainerStorage = Tibia.s_GetContainerStorage();
          var _loc2_:Player = Tibia.s_GetPlayer();
          var _loc3_:SpellStorage = Tibia.s_GetSpellStorage();
@@ -559,14 +561,15 @@ package tibia.actionbar.widgetClasses
                this.drawActionIcon();
             }
             _loc5_ = _loc1_.getAvailableInventory(this.m_ActionObject.ID,this.m_ActionObject.data);
+            _loc6_ = _loc1_.getBodyContainerView();
             this.available = (_loc5_ == -1 || _loc5_ > 0) && (this.m_ActionRune == null || _loc2_.getRuneUses(this.m_ActionRune) > 0);
-            this.highlight = this.action is EquipAction && Boolean(_loc1_.isEquipped(this.m_ActionObject.ID));
-            _loc6_ = null;
+            this.highlight = this.action is EquipAction && _loc6_ != null && Boolean(_loc6_.isEquipped(this.m_ActionObject.ID));
+            _loc7_ = null;
             if(this.action is UseAction && Boolean(_loc4_.isMultiUse))
             {
-               _loc6_ = Delay.merge(_loc1_.getMultiUseDelay(),this.m_ActionRune != null?_loc3_.getRuneDelay(this.m_ActionRune.ID):null);
+               _loc7_ = Delay.merge(_loc1_.getMultiUseDelay(),this.m_ActionRune != null?_loc3_.getRuneDelay(this.m_ActionRune.ID):null);
             }
-            this.cooldownDelay = _loc6_;
+            this.cooldownDelay = _loc7_;
             if(_loc5_ >= 10000)
             {
                this.overlayText = String(int(_loc5_ / 1000)) + "k+";

@@ -11,7 +11,7 @@ package tibia.options
    import mx.events.PropertyChangeEventKind;
    import tibia.input.MappingSet;
    import tibia.trade.npcTradeWidgetClasses.ObjectRefSelectorBase;
-   import tibia.container.ContainerStorage;
+   import tibia.container.BodyContainerView;
    import tibia.market.MarketWidget;
    import tibia.actionbar.ActionBarSet;
    import tibia.creatures.BuddySet;
@@ -816,7 +816,7 @@ package tibia.options
       
       private function set _1191209559marketBrowserBodyPosition(param1:int) : void
       {
-         if(param1 != ContainerStorage.BODY_BOTH_HANDS && param1 != ContainerStorage.BODY_LEFT_HAND)
+         if(param1 != BodyContainerView.BOTH_HANDS && param1 != BodyContainerView.LEFT_HAND)
          {
             param1 = -1;
          }
@@ -2030,7 +2030,7 @@ package tibia.options
                   continue;
                case "browserBodyPosition":
                   this.m_MarketBrowserBodyPosition = XMLHelper.s_UnmarshallInteger(_loc3_);
-                  if(this.m_MarketBrowserBodyPosition != ContainerStorage.BODY_BOTH_HANDS && this.m_MarketBrowserBodyPosition != ContainerStorage.BODY_LEFT_HAND)
+                  if(this.m_MarketBrowserBodyPosition != BodyContainerView.BOTH_HANDS && this.m_MarketBrowserBodyPosition != BodyContainerView.LEFT_HAND)
                   {
                      this.m_MarketBrowserBodyPosition = -1;
                   }

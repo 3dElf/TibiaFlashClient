@@ -1,7 +1,6 @@
-package tibia.container.containerWidgetClasses
+package tibia.container.bodyContainerViewWigdetClasses
 {
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
+   import tibia.container.containerViewWidgetClasses.ContainerSlot;
    import flash.display.Graphics;
    import flash.display.BitmapData;
    import flash.display.Bitmap;
@@ -10,11 +9,7 @@ package tibia.container.containerWidgetClasses
    
    public class BodySlot extends ContainerSlot
    {
-      
-      {
-         s_InitializeStyle();
-      }
-      
+       
       protected var m_StyleEmptyBackgroundValue:Object = null;
       
       protected var m_UIMouseOver:Boolean = false;
@@ -29,34 +24,6 @@ package tibia.container.containerWidgetClasses
          invalidateStyle();
       }
       
-      private static function s_InitializeStyle() : void
-      {
-         var Selector:String = "BodySlot";
-         var Style:CSSStyleDeclaration = StyleManager.getStyleDeclaration(Selector);
-         if(Style == null)
-         {
-            Style = new CSSStyleDeclaration(Selector);
-         }
-         Style.defaultFactory = function():void
-         {
-            BodySlot.backgroundImage = undefined;
-            BodySlot.backgroundColor = 65280;
-            BodySlot.backgroundAlpha = 1;
-            BodySlot.backgroundOutAlpha = 0.5;
-            BodySlot.backgroundOverAlpha = 1;
-            BodySlot.emptyBackgroundImage = undefined;
-            BodySlot.emptyBackgroundColor = 16711680;
-            BodySlot.emptyBackgroundAlpha = 1;
-            BodySlot.emptyBackgroundOutAlpha = 0.5;
-            BodySlot.emptyBackgroundOverAlpha = 1;
-            BodySlot.paddingBottom = 0;
-            BodySlot.paddingLeft = 0;
-            BodySlot.paddingRight = 0;
-            BodySlot.paddingTop = 0;
-         };
-         StyleManager.setStyleDeclaration(Selector,Style,true);
-      }
-      
       override protected function layoutChrome(param1:Graphics, param2:Number, param3:Number) : void
       {
          var _loc8_:BitmapData = null;
@@ -69,14 +36,14 @@ package tibia.container.containerWidgetClasses
             _loc4_ = m_StyleBackgroundImage;
             _loc5_ = getStyle("backgroundColor") !== undefined;
             _loc6_ = getStyle("backgroundColor");
-            _loc7_ = this.getSafeNumbericStyle(!!this.m_UIMouseOver?"backgroundOverAlpha":"backgroundOutAlpha","backgroundAlpha");
+            _loc7_ = this.getSafeNumericStyle(!!this.m_UIMouseOver?"backgroundOverAlpha":"backgroundOutAlpha","backgroundAlpha");
          }
          else
          {
             _loc4_ = this.m_StyleEmptyBackgroundImage;
             _loc5_ = getStyle("emptyBackgroundColor") !== undefined;
             _loc6_ = getStyle("emptyBackgroundColor");
-            _loc7_ = this.getSafeNumbericStyle(!!this.m_UIMouseOver?"emptyBackgroundOverAlpha":"emptyBackgroundOutAlpha","emptyBackgroundAlpha");
+            _loc7_ = this.getSafeNumericStyle(!!this.m_UIMouseOver?"emptyBackgroundOverAlpha":"emptyBackgroundOutAlpha","emptyBackgroundAlpha");
          }
          if(_loc4_ != null)
          {
@@ -96,7 +63,7 @@ package tibia.container.containerWidgetClasses
          }
       }
       
-      private function getSafeNumbericStyle(... rest) : Number
+      private function getSafeNumericStyle(... rest) : Number
       {
          var _loc4_:Number = NaN;
          var _loc2_:int = 0;

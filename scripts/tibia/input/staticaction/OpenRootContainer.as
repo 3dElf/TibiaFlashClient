@@ -1,7 +1,7 @@
 package tibia.input.staticaction
 {
    import tibia.container.ContainerStorage;
-   import tibia.container.Container;
+   import tibia.container.BodyContainerView;
    import tibia.appearances.AppearanceInstance;
    import tibia.input.gameaction.UseActionImpl;
    import shared.utility.Vector3D;
@@ -17,11 +17,11 @@ package tibia.input.staticaction
       override public function perform(param1:Boolean = false) : void
       {
          var _loc2_:ContainerStorage = Tibia.s_GetContainerStorage();
-         var _loc3_:Container = null;
+         var _loc3_:BodyContainerView = null;
          var _loc4_:AppearanceInstance = null;
-         if(_loc2_ != null && (_loc3_ = _loc2_.getBodyContainer()) != null && (_loc4_ = _loc3_.getItemAt(ContainerStorage.BODY_BACK - ContainerStorage.BODY_HEAD)) != null && _loc4_.type != null && Boolean(_loc4_.type.isContainer))
+         if(_loc2_ != null && (_loc3_ = _loc2_.getBodyContainerView()) != null && (_loc4_ = _loc3_.getObject(BodyContainerView.BACK)) != null && _loc4_.type != null && Boolean(_loc4_.type.isContainer))
          {
-            new UseActionImpl(new Vector3D(65535,ContainerStorage.BODY_BACK,0),_loc4_,ContainerStorage.BODY_BACK,UseActionImpl.TARGET_NEW_WINDOW).perform();
+            new UseActionImpl(new Vector3D(65535,BodyContainerView.BACK,0),_loc4_,BodyContainerView.BACK,UseActionImpl.TARGET_NEW_WINDOW).perform();
          }
       }
    }

@@ -10,7 +10,7 @@ package tibia.trade.npcTradeWidgetClasses
    import mx.collections.IList;
    import tibia.trade.TradeObjectRef;
    import tibia.appearances.AppearanceType;
-   import tibia.container.Container;
+   import tibia.container.BodyContainerView;
    import tibia.appearances.ObjectInstance;
    import tibia.§sidebar:ns_sidebar_internal§.options;
    import tibia.trade.NPCTradeWidget;
@@ -341,7 +341,7 @@ package tibia.trade.npcTradeWidgetClasses
          var _loc3_:AppearanceType = null;
          var _loc4_:Boolean = false;
          var _loc5_:Boolean = false;
-         var _loc6_:Container = null;
+         var _loc6_:BodyContainerView = null;
          var _loc7_:int = 0;
          var _loc8_:ObjectInstance = null;
          var _loc2_:int = 0;
@@ -353,16 +353,16 @@ package tibia.trade.npcTradeWidgetClasses
             _loc2_ = this.m_ContainerStorage.getAvailableGoods(param1.ID,param1.data);
             if(_loc2_ > 0 && Boolean(options.npcTradeSellKeepEquipped))
             {
-               _loc6_ = this.m_ContainerStorage.getBodyContainer();
-               _loc7_ = _loc6_.length - 1;
-               while(_loc7_ >= 0)
+               _loc6_ = this.m_ContainerStorage.getBodyContainerView();
+               _loc7_ = BodyContainerView.FIRST_SLOT;
+               while(_loc7_ <= BodyContainerView.LAST_SLOT)
                {
-                  _loc8_ = _loc6_.getItemAt(_loc7_) as ObjectInstance;
+                  _loc8_ = _loc6_.getObject(_loc7_) as ObjectInstance;
                   if(_loc8_ != null && _loc8_.ID == param1.ID && (!_loc5_ || _loc8_.data == param1.data))
                   {
                      _loc2_ = _loc2_ - (!!_loc4_?_loc8_.data:1);
                   }
-                  _loc7_--;
+                  _loc7_++;
                }
             }
          }

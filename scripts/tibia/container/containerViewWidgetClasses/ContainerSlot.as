@@ -1,22 +1,16 @@
-package tibia.container.containerWidgetClasses
+package tibia.container.containerViewWidgetClasses
 {
    import mx.core.UIComponent;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
    import flash.display.Bitmap;
    import flash.display.Graphics;
    import tibia.appearances.widgetClasses.SimpleAppearanceRenderer;
    import tibia.appearances.AppearanceInstance;
    
-   public class ContainerSlot extends UIComponent implements IContainerSlot
+   public class ContainerSlot extends UIComponent
    {
       
       private static const DEFAULT_ICON_SIZE:int = 32;
-      
-      {
-         s_InitialiseStyle();
-      }
-      
+       
       protected var m_UIAppearanceRenderer:SimpleAppearanceRenderer = null;
       
       protected var m_StyleBackgroundImage:Bitmap = null;
@@ -39,27 +33,6 @@ package tibia.container.containerWidgetClasses
       {
          super();
          this.invalidateStyle();
-      }
-      
-      private static function s_InitialiseStyle() : void
-      {
-         var Selector:String = "ContainerSlot";
-         var Decl:CSSStyleDeclaration = StyleManager.getStyleDeclaration(Selector);
-         if(Decl == null)
-         {
-            Decl = new CSSStyleDeclaration(Selector);
-         }
-         Decl.defaultFactory = function():void
-         {
-            ContainerSlot.backgroundImage = undefined;
-            ContainerSlot.backgroundColor = 0;
-            ContainerSlot.backgroundAlpha = 1;
-            ContainerSlot.paddingBottom = 0;
-            ContainerSlot.paddingLeft = 0;
-            ContainerSlot.paddingRight = 0;
-            ContainerSlot.paddingTop = 0;
-         };
-         StyleManager.setStyleDeclaration(Selector,Decl,true);
       }
       
       protected function validateStyle() : void
@@ -182,12 +155,6 @@ package tibia.container.containerWidgetClasses
          return this.m_Appearance;
       }
       
-      protected function invalidateStyle() : void
-      {
-         this.m_InvalidStyle = true;
-         invalidateProperties();
-      }
-      
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
          this.validateStyle();
@@ -201,6 +168,12 @@ package tibia.container.containerWidgetClasses
          this.m_UIAppearanceRenderer.y = _loc4_ + (_loc6_ - _loc7_) / 2;
          this.m_UIAppearanceRenderer.size = _loc7_;
          this.m_UIAppearanceRenderer.draw();
+      }
+      
+      protected function invalidateStyle() : void
+      {
+         this.m_InvalidStyle = true;
+         invalidateProperties();
       }
    }
 }

@@ -14,6 +14,7 @@ package tibia.input.gameaction
    import tibia.appearances.AppearanceInstance;
    import tibia.creatures.Player;
    import tibia.magic.SpellStorage;
+   import tibia.container.BodyContainerView;
    import tibia.appearances.AppearanceType;
    import flash.events.Event;
    import mx.core.EventPriority;
@@ -167,11 +168,11 @@ package tibia.input.gameaction
             if(this.m_Type.isContainer)
             {
                _loc6_ = 0;
-               if(this.m_Target == TARGET_NEW_WINDOW || this.m_Absolute.x < 65535 || this.m_Absolute.y >= ContainerStorage.BODY_HEAD && this.m_Absolute.y <= ContainerStorage.BODY_PURSE)
+               if(this.m_Target == TARGET_NEW_WINDOW || this.m_Absolute.x < 65535 || this.m_Absolute.y >= BodyContainerView.FIRST_SLOT && this.m_Absolute.y <= BodyContainerView.LAST_SLOT)
                {
-                  _loc6_ = _loc4_.getFreeContainer();
+                  _loc6_ = _loc4_.getFreeContainerViewID();
                }
-               else if(64 <= this.m_Absolute.y && this.m_Absolute.y < 64 + ContainerStorage.OPEN_CONTAINERS)
+               else if(64 <= this.m_Absolute.y && this.m_Absolute.y < 64 + ContainerStorage.MAX_CONTAINER_VIEWS)
                {
                   _loc6_ = this.m_Absolute.y - 64;
                }

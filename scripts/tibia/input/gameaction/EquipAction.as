@@ -7,6 +7,7 @@ package tibia.input.gameaction
    import tibia.appearances.AppearanceType;
    import mx.resources.ResourceManager;
    import mx.resources.IResourceManager;
+   import tibia.container.BodyContainerView;
    import tibia.appearances.ObjectInstance;
    
    public class EquipAction implements IAction
@@ -58,7 +59,7 @@ package tibia.input.gameaction
          }
          if(this.m_Type.clothSlot == 0)
          {
-            this.m_Target = ContainerStorage.BODY_LEFT_HAND;
+            this.m_Target = BodyContainerView.LEFT_HAND;
          }
          else
          {
@@ -132,11 +133,11 @@ package tibia.input.gameaction
       
       public function toString() : String
       {
-         var _loc1_:AppearanceStorage = Tibia.s_GetAppearanceStorage();
-         var _loc2_:ContainerStorage = Tibia.s_GetContainerStorage();
-         var _loc3_:IResourceManager = ResourceManager.getInstance();
+         var _loc1_:IResourceManager = ResourceManager.getInstance();
+         var _loc2_:ContainerStorage = null;
+         var _loc3_:BodyContainerView = null;
          var _loc4_:String = null;
-         if(_loc2_ != null && Boolean(_loc2_.isEquipped(this.m_Type.ID)))
+         if((_loc2_ = Tibia.s_GetContainerStorage()) != null && (_loc3_ = _loc2_.getBodyContainerView()) != null && Boolean(_loc3_.isEquipped(this.m_Type.ID)))
          {
             _loc4_ = "GAME_EQUIP_UNEQUIP";
          }
@@ -144,12 +145,13 @@ package tibia.input.gameaction
          {
             _loc4_ = "GAME_EQUIP_EQUIP";
          }
-         var _loc5_:String = null;
-         if(_loc1_ == null || (_loc5_ = _loc1_.getCachedObjectTypeName(this.m_Type.ID,this.m_Data)) == null)
+         var _loc5_:AppearanceStorage = null;
+         var _loc6_:String = null;
+         if((_loc5_ = Tibia.s_GetAppearanceStorage()) == null || (_loc6_ = _loc5_.getCachedObjectTypeName(this.m_Type.ID,this.m_Data)) == null)
          {
-            _loc5_ = _loc3_.getString(BUNDLE,"GAME_EQUIP_GENERIC_OBJECT");
+            _loc6_ = _loc1_.getString(BUNDLE,"GAME_EQUIP_GENERIC_OBJECT");
          }
-         return _loc3_.getString(BUNDLE,_loc4_,[_loc5_]);
+         return _loc1_.getString(BUNDLE,_loc4_,[_loc6_]);
       }
       
       public function clone() : IAction
