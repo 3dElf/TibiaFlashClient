@@ -1,5 +1,10 @@
 package tibia.game
 {
+   import tibia.appearances.AppearancesAsset;
+   import tibia.options.OptionsAsset;
+   import tibia.sessiondump.SessiondumpAsset;
+   import tibia.sessiondump.hints.SessiondumpHintsAsset;
+   import tibia.tutorial.TutorialProgressServiceAsset;
    import flash.system.System;
    import flash.utils.ByteArray;
    import shared.utility.SharedObjectManager;
@@ -12,6 +17,8 @@ package tibia.game
    {
        
       private var m_RawBytes:ByteArray = null;
+      
+      protected var m_SaveAsLSO:Boolean = true;
       
       public function Asset(param1:String, param2:int)
       {
@@ -30,7 +37,7 @@ package tibia.game
          var _loc11_:int = 0;
          var _loc2_:String = param1 != null?param1.localName():null;
          var _loc3_:XMLList = null;
-         if(_loc2_ == "appearances" || _loc2_ == "binary" || _loc2_ == "currentOptions" || _loc2_ == "defaultOptions" || _loc2_ == "sprites")
+         if(_loc2_ == "appearances" || _loc2_ == "binary" || _loc2_ == "currentOptions" || _loc2_ == "defaultOptions" || _loc2_ == "tutorialProgressService" || _loc2_ == "sprites" || _loc2_ == "tutorialSessiondump" || _loc2_ == "tutorialSessiondumpHints" || _loc2_ == "tutorialProgressService")
          {
             if((_loc3_ = param1.url) == null || _loc3_.length() != 1)
             {
@@ -42,7 +49,7 @@ package tibia.game
             {
                _loc5_ = int(_loc3_[0].toString());
             }
-            if(_loc2_ != "currentOptions" && _loc2_ != "defaultOptions" && _loc5_ < 1)
+            if(_loc2_ != "currentOptions" && _loc2_ != "defaultOptions" && _loc2_ != "tutorialProgressService" && _loc5_ < 1)
             {
                return null;
             }
@@ -95,6 +102,18 @@ package tibia.game
                }
                return new SpritesAsset(_loc4_,_loc5_,_loc6_,_loc7_,_loc8_,_loc9_);
             }
+            if(_loc2_ == "tutorialSessiondump")
+            {
+               return new SessiondumpAsset(_loc4_,_loc5_);
+            }
+            if(_loc2_ == "tutorialSessiondumpHints")
+            {
+               return new SessiondumpHintsAsset(_loc4_,_loc5_);
+            }
+            if(_loc2_ == "tutorialProgressService")
+            {
+               return new TutorialProgressServiceAsset(_loc4_,_loc5_,"application/json");
+            }
             return null;
          }
          return null;
@@ -111,35 +130,47 @@ package tibia.game
          return this.m_RawBytes;
       }
       
-      override public function get loaded() : Boolean
-      {
-         return this.m_RawBytes != null;
-      }
-      
       override public function load() : void
       {
+         var _SharedObjectManager:SharedObjectManager = null;
          var _SharedObject:SharedObject = null;
          this.resetDownloadedData();
-         var _SharedObjectManager:SharedObjectManager = SharedObjectManager.s_GetInstance();
-         if(Boolean(SharedObjectManager.s_SharedObjectsAvailable()) && _SharedObjectManager != null)
+         if(this.m_SaveAsLSO)
          {
-            try
+            _SharedObjectManager = SharedObjectManager.s_GetInstance();
+            if(Boolean(SharedObjectManager.s_SharedObjectsAvailable()) && _SharedObjectManager != null)
             {
-               _SharedObject = _SharedObjectManager.getLocal(name);
-               this.m_RawBytes = _SharedObject.data.RAW_BYTES;
+               try
+               {
+                  _SharedObject = _SharedObjectManager.getLocal(name);
+                  this.m_RawBytes = _SharedObject.data.RAW_BYTES;
+               }
+               catch(e:*)
+               {
+               }
             }
-            catch(e:*)
+            if(this.optional)
             {
+               setTimeout(dispatchEvent,0,new Event(Event.COMPLETE,false,false));
             }
-         }
-         if(this.m_RawBytes != null && (size == 0 || this.m_RawBytes.length == size))
-         {
-            setTimeout(dispatchEvent,0,new Event(Event.COMPLETE,false,false));
+            else if(this.m_RawBytes != null && (size == 0 || this.m_RawBytes.length == size))
+            {
+               setTimeout(dispatchEvent,0,new Event(Event.COMPLETE,false,false));
+            }
+            else
+            {
+               super.load();
+            }
          }
          else
          {
             super.load();
          }
+      }
+      
+      override public function get loaded() : Boolean
+      {
+         return this.m_RawBytes != null || optional == true;
       }
       
       override protected function processDownloadedData(param1:URLLoader) : Boolean
@@ -148,7 +179,7 @@ package tibia.game
          var a_Loader:URLLoader = param1;
          this.m_RawBytes = a_Loader.data;
          var _SharedObjectManager:SharedObjectManager = SharedObjectManager.s_GetInstance();
-         if(Boolean(SharedObjectManager.s_SharedObjectsAvailable()) && _SharedObjectManager != null)
+         if(Boolean(this.m_SaveAsLSO) && Boolean(SharedObjectManager.s_SharedObjectsAvailable()) && _SharedObjectManager != null)
          {
             try
             {

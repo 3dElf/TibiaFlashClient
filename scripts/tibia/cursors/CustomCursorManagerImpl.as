@@ -51,6 +51,9 @@ package tibia.cursors
          var _loc2_:String = DefaultCursor.CURSOR_NAME;
          switch(param1)
          {
+            case DefaultRejectCursor:
+               _loc2_ = DefaultRejectCursor.CURSOR_NAME;
+               break;
             case CrosshairCursor:
                _loc2_ = CrosshairCursor.CURSOR_NAME;
                break;
@@ -195,24 +198,17 @@ package tibia.cursors
       
       private function showCurrentCursor() : void
       {
-         var _loc2_:CursorQueueItem = null;
-         var _loc3_:CursorQueueItem = null;
+         var _loc1_:CursorQueueItem = null;
          if(this.m_CursorList.length > 0)
          {
-            _loc3_ = this.m_CursorList[0];
-            Mouse.cursor = _loc3_.m_CursorName;
-            this.m_CursorID = _loc3_.m_CursorID;
+            _loc1_ = this.m_CursorList[0];
+            Mouse.cursor = _loc1_.m_CursorName;
+            this.m_CursorID = _loc1_.m_CursorID;
          }
          else
          {
             Mouse.cursor = DefaultCursor.CURSOR_NAME;
          }
-         var _loc1_:String = "";
-         for each(_loc2_ in this.m_CursorList)
-         {
-            _loc1_ = _loc1_ + (", " + _loc2_.m_CursorName + "(" + _loc2_.m_CursorID + ") ");
-         }
-         trace("Cursor List: " + _loc1_);
       }
       
       public function showCursor() : void

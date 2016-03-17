@@ -140,7 +140,7 @@ package tibia.appearances.widgetClasses
          var _loc2_:SpritesAsset = param1.asset as SpritesAsset;
          if(_loc2_ != null)
          {
-            if(_loc2_.loaded)
+            if(Boolean(_loc2_.loaded) && _loc2_.optional == false)
             {
                this.m_AsyncCompressedImageCache.addCompressedImage(_loc2_.firstSpriteID,_loc2_.rawBytes);
                this.m_AssetProvider.removeAsset(_loc2_);

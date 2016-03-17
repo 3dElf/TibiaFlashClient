@@ -355,6 +355,7 @@ package tibia.creatures
          this.m_Opponents = new ArrayCollection();
          this.m_Opponents.filterFunction = this.opponentFilter;
          this.m_Opponents.sort = this.m_OpponentsSort;
+         this.options = Tibia.s_GetOptions();
          this.m_Trappers = null;
       }
       
@@ -580,6 +581,19 @@ package tibia.creatures
             this.m_AttackTarget = null;
             this.updateExtendedMark(_loc5_);
          }
+      }
+      
+      public function getCreatureByName(param1:String) : tibia.creatures.Creature
+      {
+         var _loc2_:tibia.creatures.Creature = null;
+         for each(_loc2_ in this.m_Creature)
+         {
+            if(_loc2_.name == param1)
+            {
+               return _loc2_;
+            }
+         }
+         return null;
       }
       
       public function getFollowTarget() : tibia.creatures.Creature

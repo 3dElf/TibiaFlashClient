@@ -45,17 +45,6 @@ package tibia.creatures.buddylistClasses
       }
       
       [Bindable(event="propertyChange")]
-      public function set icon(param1:int) : void
-      {
-         var _loc2_:Object = this.icon;
-         if(_loc2_ !== param1)
-         {
-            this._3226745icon = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"icon",_loc2_,param1));
-         }
-      }
-      
-      [Bindable(event="propertyChange")]
       public function set name(param1:String) : void
       {
          var _loc2_:Object = this.name;
@@ -155,14 +144,20 @@ package tibia.creatures.buddylistClasses
          this.m_Icon = Math.max(0,Math.min(param1,BuddyIcon.NUM_ICONS - 1));
       }
       
+      [Bindable(event="propertyChange")]
+      public function set icon(param1:int) : void
+      {
+         var _loc2_:Object = this.icon;
+         if(_loc2_ !== param1)
+         {
+            this._3226745icon = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"icon",_loc2_,param1));
+         }
+      }
+      
       private function set _1039689911notify(param1:Boolean) : void
       {
          this.m_Notify = param1;
-      }
-      
-      public function get ID() : int
-      {
-         return this.m_ID;
       }
       
       private function set _1992879871lastUpdate(param1:Number) : void
@@ -178,6 +173,11 @@ package tibia.creatures.buddylistClasses
       public function get status() : uint
       {
          return this.m_Status;
+      }
+      
+      public function get ID() : int
+      {
+         return this.m_ID;
       }
       
       public function get highlight() : Boolean

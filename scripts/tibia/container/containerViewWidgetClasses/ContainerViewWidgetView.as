@@ -25,6 +25,7 @@ package tibia.container.containerViewWidgetClasses
    import shared.utility.Vector3D;
    import mx.core.UIComponent;
    import tibia.input.ModifierKeyEvent;
+   import tibia.help.UIEffectsRetrieveComponentCommandEvent;
    import tibia.appearances.widgetClasses.SimpleAppearanceRenderer;
    import shared.utility.StringHelper;
    import mx.controls.Button;
@@ -36,6 +37,7 @@ package tibia.container.containerViewWidgetClasses
    import tibia.input.gameaction.UseActionImpl;
    import tibia.input.gameaction.LookActionImpl;
    import tibia.game.ObjectContextMenu;
+   import build.ObjectDragImplFactory;
    import mx.managers.CursorManagerPriority;
    import mx.containers.BoxDirection;
    
@@ -109,7 +111,7 @@ package tibia.container.containerViewWidgetClasses
       
       private static const VALID_ACTIONS:Vector.<uint> = Vector.<uint>([ACTION_USE,ACTION_OPEN,ACTION_LOOK,ACTION_CONTEXT_MENU]);
        
-      private const m_DragHandler:ObjectDragImpl = new ObjectDragImpl();
+      private const m_DragHandler:ObjectDragImpl = ObjectDragImplFactory.s_CreateObjectDragImpl();
       
       private var m_Container:ContainerView = null;
       
@@ -142,6 +144,7 @@ package tibia.container.containerViewWidgetClasses
          titleIcon = null;
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          Tibia.s_GetInputHandler().addEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
+         Tibia.s_GetUIEffectsManager().addEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
       }
       
       function get container() : ContainerView
@@ -322,6 +325,7 @@ package tibia.container.containerViewWidgetClasses
          }
          this.m_UIUpButton.removeEventListener(MouseEvent.CLICK,this.onUpButtonClick);
          Tibia.s_GetInputHandler().removeEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
+         Tibia.s_GetUIEffectsManager().removeEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
       }
       
       private function onUpButtonClick(param1:MouseEvent) : void
@@ -372,6 +376,10 @@ package tibia.container.containerViewWidgetClasses
          if(this.container != null && (_loc2_ = getClassInstanceUnderPoint(stage,param1,tibia.container.containerViewWidgetClasses.ContainerSlot)) != null)
          {
             return new Vector3D(65535,64 + this.container.ID,_loc2_.position);
+         }
+         if(this.container != null && getClassInstanceUnderPoint(stage,param1,tibia.container.containerViewWidgetClasses.ContainerSlotHolder) != null)
+         {
+            return new Vector3D(65535,64 + this.container.ID,255);
          }
          return null;
       }
@@ -607,7 +615,7 @@ package tibia.container.containerViewWidgetClasses
             {
                case ACTION_USE:
                case ACTION_OPEN:
-                  new UseActionImpl(_loc8_,_loc6_,_loc8_.z,UseActionImpl.TARGET_AUTO).perform();
+                  Tibia.s_GameActionFactory.createUseAction(_loc8_,_loc6_,_loc8_.z,UseActionImpl.TARGET_AUTO).perform();
                   break;
                case ACTION_LOOK:
                   new LookActionImpl(_loc8_,_loc6_,_loc8_.z).perform();
@@ -629,6 +637,26 @@ package tibia.container.containerViewWidgetClasses
          if(param1.dragSource == null || !param1.dragSource.hasFormat("dragType") || param1.dragSource.dataForFormat("dragType") != DRAG_TYPE_OBJECT || this.container == null || !this.container.isDragAndDropEnabled)
          {
             param1.preventDefault();
+         }
+      }
+      
+      private function onUIEffectsCommandEvent(param1:UIEffectsRetrieveComponentCommandEvent) : void
+      {
+         var _loc2_:Object = null;
+         var _loc3_:uint = 0;
+         var _loc4_:uint = 0;
+         if(param1.type == UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT && param1.identifier == ContainerViewWidgetView)
+         {
+            _loc2_ = param1.subIdentifier as Object;
+            if("id" in _loc2_ && "slot" in _loc2_)
+            {
+               _loc3_ = _loc2_["id"] as uint;
+               _loc4_ = _loc2_["slot"] as uint;
+               if(_loc3_ == this.container.ID)
+               {
+                  param1.resultUIComponent = this.m_UISlotHolder.getChildAt(_loc4_) as tibia.container.containerViewWidgetClasses.ContainerSlot;
+               }
+            }
          }
       }
    }

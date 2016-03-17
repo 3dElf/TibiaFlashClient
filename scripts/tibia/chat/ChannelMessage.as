@@ -107,11 +107,6 @@ package tibia.chat
          return this.m_ID;
       }
       
-      public function get reportableText() : String
-      {
-         return StringHelper.s_RemoveHilight(this.m_RawText);
-      }
-      
       public function get mode() : int
       {
          return this.m_Mode;
@@ -130,6 +125,11 @@ package tibia.chat
       public function get htmlText() : String
       {
          return this.m_HTMLText;
+      }
+      
+      public function get reportableText() : String
+      {
+         return StringHelper.s_RemoveHilight(this.m_RawText);
       }
       
       public function get speaker() : String

@@ -533,6 +533,16 @@ package tibia.sidebar
          }
       }
       
+      public function insertOrphanWidget(param1:tibia.sidebar.Widget, param2:int, param3:int) : void
+      {
+         if(param1 == null)
+         {
+            return;
+         }
+         this.poolAddWidget(param1);
+         this.showWidgetByID(param1.ID,param2,param3);
+      }
+      
       public function getDefaultLocation(param1:int) : int
       {
          return this.m_DefaultLocations[param1];

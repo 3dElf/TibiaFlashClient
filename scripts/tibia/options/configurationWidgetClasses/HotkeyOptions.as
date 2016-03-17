@@ -519,6 +519,7 @@ package tibia.options.configurationWidgetClasses
          _loc6_.mapping = _loc7_;
          _loc6_.addEventListener(CloseEvent.CLOSE,this.onFinishEditBinding,false,EventPriority.DEFAULT,true);
          _loc3_.embeddedDialog = _loc6_;
+         stage.focus = _loc6_;
          _loc3_.keyboardFlags = PopUpBase.KEY_NONE;
       }
       
@@ -800,6 +801,7 @@ package tibia.options.configurationWidgetClasses
          var _loc4_:Array = null;
          var _loc5_:Array = null;
          var _loc6_:OptionsEditorEvent = null;
+         var _loc7_:MappingSet = null;
          if(param1.detail == EmbeddedDialog.OKAY && this.countSets() < Math.max(ActionBarSet.NUM_SETS,MappingSet.NUM_SETS))
          {
             _loc2_ = AddMappingSetDialog(param1.currentTarget);
@@ -817,8 +819,9 @@ package tibia.options.configurationWidgetClasses
             }
             else
             {
-               _loc4_ = this.createMapping(MappingSet.CHAT_MODE_OFF_DEFAULT_BINDINGS);
-               _loc5_ = this.createMapping(MappingSet.CHAT_MODE_ON_DEFAULT_BINDINGS);
+               _loc7_ = this.m_Options.getDefaultMappingSet();
+               _loc4_ = this.createMapping(_loc7_.chatModeOff.binding);
+               _loc5_ = this.createMapping(_loc7_.chatModeOn.binding);
             }
             this.m_Index = Math.max(0,this.m_Index + 1);
             this.m_UncommittedIndex = true;
@@ -953,8 +956,8 @@ package tibia.options.configurationWidgetClasses
                   this.m_Options.addMappingSet(_loc7_);
                   if(_loc6_.oldID == -1)
                   {
-                     _loc8_ = new ActionBarSet(_loc6_.newID);
-                     _loc8_.initialiseDefaultActionBars();
+                     _loc8_ = this.m_Options.getDefaultActionBarSet();
+                     _loc8_.changeID(_loc6_.newID);
                      this.m_Options.addActionBarSet(_loc8_);
                   }
                }

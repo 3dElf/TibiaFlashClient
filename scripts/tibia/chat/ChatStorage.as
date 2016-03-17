@@ -46,13 +46,17 @@ package tibia.chat
       
       public static const LOCAL_CHANNEL_ID:int = 131071;
       
-      public static const DEBUG_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_DEBUG_CHANNEL");
+      public static const SESSIONDUMP_CHANNEL_ID:int = 131068;
+      
+      public static const SESSIONDUMP_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_SESSIONDUMP_CHANNEL");
       
       public static const SERVER_CHANNEL_ID:int = 131070;
       
       public static const NPC_CHANNEL_ID:int = 65534;
       
       public static const NPC_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_NPC_CHANNEL");
+      
+      public static const DEBUG_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE,"LBL_DEBUG_CHANNEL");
       
       public static const HELP_CHANNEL_ID:int = 7;
       

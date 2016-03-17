@@ -46,6 +46,8 @@ package tibia.market
       
       public static const CATEGORY_TOOLS:int = 14;
       
+      public static const OFFER_MAX_AMOUNT_CUMULATIVE:int = 64000;
+      
       public static const CATEGORY_VALUABLES:int = 15;
       
       public static const DETAIL_FIELD_EXPIRE:int = 5;
@@ -68,9 +70,11 @@ package tibia.market
       
       public static const DETAIL_FIELD_RUNE_SPELL:int = 10;
       
-      public static const CATEGORY_SWORDS:int = 20;
+      public static const OFFER_MAX_AMOUNT_NONCUMULATIVE:int = 2000;
       
       public static const DETAIL_FIELD_ATTACK:int = 1;
+      
+      public static const CATEGORY_SWORDS:int = 20;
       
       private static const BUNDLE:String = "MarketWidget";
       
@@ -87,8 +91,6 @@ package tibia.market
       public static const REQUEST_DELAY:int = 300;
       
       public static const DETAIL_FIELD_PROTECTION:int = 6;
-      
-      public static const OFFER_MAX_AMOUNT:int = 64000;
       
       public static const CATEGORY_AMULETS:int = 2;
       
@@ -346,7 +348,8 @@ package tibia.market
          var _loc5_:AppearanceStorage = null;
          _loc5_ = Tibia.s_GetAppearanceStorage();
          var _loc6_:AppearanceType = _loc5_ != null?_loc5_.getMarketObjectType(param2):null;
-         return !this.serverResponsePending && (param1 == Offer.BUY_OFFER || param1 == Offer.SELL_OFFER) && _loc6_ != null && param3 > 0 && param3 <= OFFER_MAX_AMOUNT && param4 > 0 && param3 * param4 <= OFFER_MAX_TOTALPRICE && this.activeOffers < OFFER_MAX_ACTIVE && this.getOfferTotalPrice(param1,param3,param4) <= this.accountBalance && (param1 != Offer.SELL_OFFER || this.getDepotAmount(_loc6_) >= param3);
+         var _loc7_:int = !!_loc6_.isCumulative?int(OFFER_MAX_AMOUNT_CUMULATIVE):int(OFFER_MAX_AMOUNT_NONCUMULATIVE);
+         return !this.serverResponsePending && (param1 == Offer.BUY_OFFER || param1 == Offer.SELL_OFFER) && _loc6_ != null && param3 > 0 && param3 <= _loc7_ && param4 > 0 && param3 * param4 <= OFFER_MAX_TOTALPRICE && this.activeOffers < OFFER_MAX_ACTIVE && this.getOfferTotalPrice(param1,param3,param4) <= this.accountBalance && (param1 != Offer.SELL_OFFER || this.getDepotAmount(_loc6_) >= param3);
       }
       
       public function get depotContent() : Array
@@ -402,7 +405,7 @@ package tibia.market
       
       public function acceptOffer(param1:Offer, param2:int) : void
       {
-         if(Boolean(this.serverResponsePending) || param1 == null || param2 < 1 || param2 > Math.min(param1.amount,OFFER_MAX_AMOUNT))
+         if(Boolean(this.serverResponsePending) || param1 == null || param2 < 1 || param2 > Math.min(param1.amount,Math.max(OFFER_MAX_AMOUNT_NONCUMULATIVE,OFFER_MAX_AMOUNT_CUMULATIVE)))
          {
             return;
          }

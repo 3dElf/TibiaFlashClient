@@ -37,14 +37,17 @@ package tibia.appearances
       public function Marks()
       {
          super();
-         this.m_CurrentMarks = new Dictionary();
       }
       
       public function getMarkColor(param1:uint) : uint
       {
-         if(this.m_CurrentMarks[param1] as MarkBase != null)
+         if(this.m_CurrentMarks == null)
          {
-            return (this.m_CurrentMarks[param1] as MarkBase).m_MarkColor;
+            return MARK_UNMARKED;
+         }
+         if(this.m_CurrentMarks[param1] as Marks != null)
+         {
+            return (this.m_CurrentMarks[param1] as Marks).m_MarkColor;
          }
          return MARK_UNMARKED;
       }
@@ -52,6 +55,10 @@ package tibia.appearances
       public function areAnyMarksSet(param1:Vector.<uint>) : Boolean
       {
          var _loc3_:uint = 0;
+         if(this.m_CurrentMarks == null)
+         {
+            return false;
+         }
          var _loc2_:Boolean = false;
          for each(_loc3_ in param1)
          {
@@ -63,6 +70,10 @@ package tibia.appearances
       public function areAllMarksSet(param1:Vector.<uint>) : Boolean
       {
          var _loc3_:uint = 0;
+         if(this.m_CurrentMarks == null)
+         {
+            return false;
+         }
          var _loc2_:Boolean = true;
          for each(_loc3_ in param1)
          {
@@ -73,16 +84,54 @@ package tibia.appearances
       
       public function isMarkSet(param1:uint) : Boolean
       {
-         if(this.m_CurrentMarks[param1] as MarkBase != null)
+         if(this.m_CurrentMarks == null)
          {
-            return (this.m_CurrentMarks[param1] as MarkBase).isSet;
+            return false;
+         }
+         if(this.m_CurrentMarks[param1] as Marks != null)
+         {
+            return (this.m_CurrentMarks[param1] as Marks).isSet;
          }
          return false;
+      }
+      
+      public function clear() : void
+      {
+         var _loc2_:uint = 0;
+         var _loc3_:PropertyChangeEvent = null;
+         if(this.m_CurrentMarks == null)
+         {
+            return;
+         }
+         var _loc1_:Boolean = false;
+         for each(_loc2_ in this.m_CurrentMarks)
+         {
+            delete this.m_CurrentMarks[_loc2_];
+            _loc1_ = true;
+         }
+         if(_loc1_)
+         {
+            _loc3_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc3_.kind = PropertyChangeEventKind.DELETE;
+            _loc3_.property = "marks";
+            dispatchEvent(_loc3_);
+         }
       }
       
       public function setMark(param1:uint, param2:uint) : void
       {
          var _loc4_:PropertyChangeEvent = null;
+         if(this.m_CurrentMarks == null)
+         {
+            if(param2 != MARK_UNMARKED)
+            {
+               this.m_CurrentMarks = new Dictionary();
+            }
+            else
+            {
+               return;
+            }
+         }
          if(this.m_CurrentMarks.hasOwnProperty(param1) == false)
          {
             switch(param1)
@@ -97,7 +146,7 @@ package tibia.appearances
          var _loc3_:uint = this.getMarkColor(param1);
          if(this.isMarkSet(param1) == false || this.getMarkColor(param1) != param2)
          {
-            (this.m_CurrentMarks[param1] as MarkBase).set(param2);
+            (this.m_CurrentMarks[param1] as Marks).set(param2);
             _loc4_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
             _loc4_.kind = PropertyChangeEventKind.UPDATE;
             _loc4_.property = "marks";
@@ -108,8 +157,6 @@ package tibia.appearances
       }
    }
 }
-
-import tibia.appearances.Marks;
 
 class MarkBase
 {
@@ -128,7 +175,7 @@ class MarkBase
    
    public function get isSet() : Boolean
    {
-      return this.m_MarkColor != Marks.MARK_UNMARKED;
+      return this.m_MarkColor != MarkBase.MARK_UNMARKED;
    }
 }
 

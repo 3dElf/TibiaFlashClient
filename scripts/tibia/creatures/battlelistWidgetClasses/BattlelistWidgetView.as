@@ -5,6 +5,7 @@ package tibia.creatures.battlelistWidgetClasses
    import tibia.creatures.CreatureStorage;
    import mx.controls.Button;
    import flash.events.MouseEvent;
+   import tibia.help.UIEffectsRetrieveComponentCommandEvent;
    import tibia.input.ModifierKeyEvent;
    import mx.events.ListEvent;
    import mx.collections.IList;
@@ -26,7 +27,6 @@ package tibia.creatures.battlelistWidgetClasses
    import tibia.options.OptionsStorage;
    import tibia.input.MouseClickBothEvent;
    import tibia.input.MouseActionHelper;
-   import tibia.input.gameaction.GreetAction;
    import mx.containers.HBox;
    import shared.controls.CustomButton;
    import mx.core.ScrollPolicy;
@@ -128,6 +128,7 @@ package tibia.creatures.battlelistWidgetClasses
          addEventListener(MouseEvent.CLICK,this.onItemClick);
          addEventListener(MouseEvent.RIGHT_CLICK,this.onItemClick);
          addEventListener(MouseEvent.MIDDLE_CLICK,this.onItemClick);
+         Tibia.s_GetUIEffectsManager().addEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
          Tibia.s_GetInputHandler().addEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
       }
       
@@ -146,6 +147,7 @@ package tibia.creatures.battlelistWidgetClasses
          removeEventListener(MouseEvent.CLICK,this.onItemClick);
          removeEventListener(MouseEvent.RIGHT_CLICK,this.onItemClick);
          removeEventListener(MouseEvent.MIDDLE_CLICK,this.onItemClick);
+         Tibia.s_GetUIEffectsManager().removeEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
          Tibia.s_GetInputHandler().removeEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
          for each(_loc1_ in this.m_UIFilterButtons)
          {
@@ -330,13 +332,13 @@ package tibia.creatures.battlelistWidgetClasses
                case ACTION_ATTACK:
                   if(_loc4_ != null)
                   {
-                     this.m_CreatureStorage.toggleAttackTarget(_loc4_,true);
+                     Tibia.s_GameActionFactory.createToggleAttackTargetAction(_loc4_,true).perform();
                   }
                   break;
                case ACTION_TALK:
                   if(_loc4_ != null)
                   {
-                     new GreetAction(_loc4_).perform();
+                     Tibia.s_GameActionFactory.createGreetAction(_loc4_).perform();
                   }
                   break;
                case ACTION_LOOK:
@@ -472,6 +474,26 @@ package tibia.creatures.battlelistWidgetClasses
             _loc1_.addChild(this.m_UIList);
             addChild(_loc1_);
             this.m_UIConstructed = true;
+         }
+      }
+      
+      private function onUIEffectsCommandEvent(param1:UIEffectsRetrieveComponentCommandEvent) : void
+      {
+         var _loc2_:Creature = null;
+         var _loc3_:uint = 0;
+         if(param1.type == UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT && param1.identifier == BattlelistWidgetView)
+         {
+            _loc2_ = param1.subIdentifier as Creature;
+            _loc3_ = 0;
+            while(_loc3_ < this.m_Opponents.length)
+            {
+               if(this.m_Opponents[_loc3_] == _loc2_)
+               {
+                  param1.resultUIComponent = this.m_UIList.itemIndexToItemRenderer(_loc3_) as BattlelistItemRenderer;
+                  break;
+               }
+               _loc3_++;
+            }
          }
       }
    }

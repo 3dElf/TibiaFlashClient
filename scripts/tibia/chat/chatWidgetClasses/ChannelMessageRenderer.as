@@ -4,14 +4,15 @@ package tibia.chat.chatWidgetClasses
    import mx.core.IDataRenderer;
    import mx.controls.listClasses.IListItemRenderer;
    import flash.text.StyleSheet;
-   import mx.core.UITextField;
+   import shared.controls.UIHyperlinksTextField;
    import flash.events.Event;
    import tibia.chat.ChannelMessage;
+   import shared.controls.UIHyperlinksTextFieldHyperlinkInfo;
+   import tibia.help.UIEffectsRetrieveComponentCommandEvent;
    import flash.geom.Rectangle;
    import flash.events.MouseEvent;
-   import flash.text.TextFormat;
-   import tibia.chat.ChatWidget;
-   import tibia.chat.ns_chat_internal;
+   import flash.geom.Point;
+   import flash.geom.Matrix;
    
    public class ChannelMessageRenderer extends UIComponent implements ISelectionProxy, IDataRenderer, IListItemRenderer
    {
@@ -26,11 +27,13 @@ package tibia.chat.chatWidgetClasses
          s_InitialiseStyleSheet();
       }
       
-      protected var m_Label:UITextField = null;
+      protected var m_Label:UIHyperlinksTextField = null;
       
       protected var m_Data:ChannelMessage = null;
       
       private var m_UncommittedData:Boolean = false;
+      
+      private var m_HasUIEffectsCommandEventListener:Boolean = false;
       
       public function ChannelMessageRenderer()
       {
@@ -39,12 +42,22 @@ package tibia.chat.chatWidgetClasses
       
       private static function s_InitialiseStyleSheet() : void
       {
-         TEXT_STYLESHEET.parseCSS("p {" + "font-family: Verdana;" + "font-size: 10;" + "margin-left: 15;" + "text-indent: -15;" + "}");
+         TEXT_STYLESHEET.parseCSS("p {" + "font-family: Verdana;" + "font-size: 10;" + "margin-left: 15;" + "text-indent: -15;" + "}" + "a {" + "color:#36b0d9;" + "font-weight:bold;" + "}" + "a:hover {" + "text-decoration:underline;" + "}");
       }
       
       public function selectAll() : void
       {
          this.m_Label.setSelection(0,this.m_Label.length);
+      }
+      
+      public function clearSelection() : void
+      {
+         this.m_Label.setSelection(-1,-1);
+      }
+      
+      public function get containsHyperlink() : Boolean
+      {
+         return this.m_Label.containsHyperlink;
       }
       
       protected function onLabelScroll(param1:Event) : void
@@ -64,9 +77,38 @@ package tibia.chat.chatWidgetClasses
          return "";
       }
       
+      public function get hyperlinkInfos() : Vector.<UIHyperlinksTextFieldHyperlinkInfo>
+      {
+         var _loc1_:Vector.<UIHyperlinksTextFieldHyperlinkInfo> = this.m_Label.hyperlinkInfos;
+         if(_loc1_ == null || _loc1_.length == 0)
+         {
+            Tibia.s_GetUIEffectsManager().removeEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
+            this.m_HasUIEffectsCommandEventListener = false;
+         }
+         return this.m_Label.hyperlinkInfos;
+      }
+      
       public function setSelection(param1:int, param2:int) : void
       {
          this.m_Label.setSelection(param1,param2);
+      }
+      
+      private function onUIEffectsCommandEvent(param1:UIEffectsRetrieveComponentCommandEvent) : void
+      {
+         var _loc2_:String = null;
+         var _loc3_:UIHyperlinksTextFieldHyperlinkInfo = null;
+         if(param1.type == UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT && param1.identifier == ChannelMessageRenderer)
+         {
+            _loc2_ = param1.subIdentifier as String;
+            if(_loc2_ != null)
+            {
+               _loc3_ = this.m_Label.findHyperlinkInfo(_loc2_);
+               if(_loc3_ != null)
+               {
+                  param1.resultUIComponent = this;
+               }
+            }
+         }
       }
       
       override protected function commitProperties() : void
@@ -76,10 +118,20 @@ package tibia.chat.chatWidgetClasses
          {
             if(this.m_Data != null)
             {
+               if(!this.m_HasUIEffectsCommandEventListener)
+               {
+                  Tibia.s_GetUIEffectsManager().addEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
+                  this.m_HasUIEffectsCommandEventListener = true;
+               }
                this.m_Label.htmlText = this.m_Data.htmlText;
             }
             else
             {
+               if(this.m_HasUIEffectsCommandEventListener)
+               {
+                  Tibia.s_GetUIEffectsManager().removeEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
+                  this.m_HasUIEffectsCommandEventListener = false;
+               }
                this.m_Label.htmlText = "";
             }
             this.m_Label.setSelection(-1,-1);
@@ -161,26 +213,19 @@ package tibia.chat.chatWidgetClasses
       
       protected function onLabelClick(param1:MouseEvent) : void
       {
-         var _loc2_:int = 0;
-         var _loc3_:TextFormat = null;
-         var _loc4_:ChatWidget = null;
+         var _loc2_:Point = null;
+         var _loc3_:UIHyperlinksTextFieldHyperlinkInfo = null;
          if(param1 != null)
          {
-            _loc2_ = this.m_Label.getCharIndexAtPoint(param1.localX,param1.localY);
-            if(_loc2_ < 0)
+            _loc2_ = new Point(param1.localX,param1.localY);
+            _loc2_ = this.transformTextFieldCoordinates(_loc2_);
+            for each(_loc3_ in this.m_Label.hyperlinkInfos)
             {
-               return;
-            }
-            _loc3_ = this.m_Label.getTextFormat(_loc2_);
-            if(_loc3_.url == null)
-            {
-               return;
-            }
-            _loc4_ = Tibia.s_GetChatWidget();
-            if(_loc4_ != null)
-            {
-               _loc4_.text = _loc3_.url.substr(6);
-               _loc4_.ns_chat_internal::onChatSend();
+               if(_loc3_.contains(_loc2_.x,_loc2_.y))
+               {
+                  Tibia.s_GameActionFactory.createTalkAction(_loc3_.hyperlinkText,true).perform();
+                  break;
+               }
             }
          }
       }
@@ -195,25 +240,26 @@ package tibia.chat.chatWidgetClasses
          }
       }
       
+      public function transformTextFieldCoordinates(param1:Point) : Point
+      {
+         var _loc2_:Matrix = this.m_Label.transform.matrix;
+         return _loc2_.transformPoint(param1);
+      }
+      
       override protected function createChildren() : void
       {
          super.createChildren();
          if(this.m_Label == null)
          {
-            this.m_Label = createInFontContext(UITextField) as UITextField;
+            this.m_Label = createInFontContext(UIHyperlinksTextField) as UIHyperlinksTextField;
             this.m_Label.alwaysShowSelection = true;
             this.m_Label.selectable = true;
             this.m_Label.styleSheet = TEXT_STYLESHEET;
             this.m_Label.wordWrap = true;
+            addChild(this.m_Label);
             this.m_Label.addEventListener(Event.SCROLL,this.onLabelScroll);
             this.m_Label.addEventListener(MouseEvent.CLICK,this.onLabelClick);
-            addChild(this.m_Label);
          }
-      }
-      
-      public function clearSelection() : void
-      {
-         this.m_Label.setSelection(-1,-1);
       }
    }
 }

@@ -65,13 +65,31 @@ package shared.utility
          return param1;
       }
       
-      public static function s_HTMLSpecialChars(param1:String) : String
+      public static function s_TrimFront(param1:String) : String
       {
          if(param1 != null)
          {
-            param1 = param1.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
+            param1 = param1.replace(/^\s+/,"");
          }
          return param1;
+      }
+      
+      public static function s_RemoveHilight(param1:String) : String
+      {
+         if(param1 != null)
+         {
+            param1 = param1.replace(/[{}]/g,"");
+         }
+         return param1;
+      }
+      
+      public static function s_EqualsIgnoreCase(param1:String, param2:String) : Boolean
+      {
+         if(param1 == null || param2 == null)
+         {
+            return param1 == param2;
+         }
+         return param1.toUpperCase() == param2.toUpperCase();
       }
       
       public static function s_Trim(param1:String) : String
@@ -159,11 +177,11 @@ package shared.utility
          return _loc4_.substr(0,param2);
       }
       
-      public static function s_TrimFront(param1:String) : String
+      public static function s_HTMLSpecialChars(param1:String) : String
       {
          if(param1 != null)
          {
-            param1 = param1.replace(/^\s+/,"");
+            param1 = param1.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
          }
          return param1;
       }
@@ -181,15 +199,6 @@ package shared.utility
          }
          var _loc4_:String = param1.readMultiByte(_loc3_,STRING_SERIALISATION_CHARSET);
          return _loc4_.substr(0,param2);
-      }
-      
-      public static function s_RemoveHilight(param1:String) : String
-      {
-         if(param1 != null)
-         {
-            param1 = param1.replace(/[{}]/g,"");
-         }
-         return param1;
       }
       
       public static function s_CleanNewline(param1:String) : String

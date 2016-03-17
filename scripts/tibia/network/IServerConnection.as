@@ -27,7 +27,7 @@ package tibia.network
       
       function get messageWriter() : IMessageWriter;
       
-      function disconnect() : void;
+      function disconnect(param1:Boolean = true) : void;
       
       function get latency() : uint;
       

@@ -17,7 +17,7 @@ package shared.utility
       
       protected var m_Alpha:uint = 0;
       
-      public function Colour(param1:uint, param2:uint, param3:uint, param4:uint = 255)
+      public function Colour(param1:uint = 0, param2:uint = 0, param3:uint = 0, param4:uint = 255)
       {
          super();
          this.red = param1;

@@ -18,9 +18,12 @@ package tibia.actionbar.widgetClasses
    import mx.core.DragSource;
    import mx.managers.DragManager;
    import tibia.options.OptionsStorage;
-   import mx.events.ToolTipEvent;
+   import tibia.help.UIEffectsRetrieveComponentCommandEvent;
+   import tibia.appearances.AppearanceType;
    import tibia.input.gameaction.UseAction;
    import tibia.input.gameaction.EquipAction;
+   import mx.core.UIComponent;
+   import mx.events.ToolTipEvent;
    import tibia.container.ContainerStorage;
    import mx.events.FlexEvent;
    import tibia.network.IServerConnection;
@@ -31,12 +34,10 @@ package tibia.actionbar.widgetClasses
    import flash.display.Bitmap;
    import mx.graphics.ImageSnapshot;
    import tibia.appearances.ObjectInstance;
-   import tibia.appearances.AppearanceType;
    import tibia.appearances.AppearanceStorage;
    import tibia.network.Communication;
    import tibia.appearances.AppearanceTypeRef;
    import mx.core.EdgeMetrics;
-   import mx.core.UIComponent;
    import mx.controls.Button;
    import mx.events.SandboxMouseEvent;
    import tibia.magic.Spell;
@@ -493,6 +494,50 @@ package tibia.actionbar.widgetClasses
          return this.m_Options;
       }
       
+      private function onUIEffectsCommandEvent(param1:UIEffectsRetrieveComponentCommandEvent) : void
+      {
+         var _loc2_:AppearanceType = null;
+         var _loc3_:int = 0;
+         var _loc4_:int = 0;
+         var _loc5_:IActionButton = null;
+         var _loc6_:IAction = null;
+         var _loc7_:int = 0;
+         if(param1.type == UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT && param1.identifier == ActionBarWidget)
+         {
+            _loc2_ = param1.subIdentifier as AppearanceType;
+            if(_loc2_ != null)
+            {
+               _loc3_ = Math.min(ActionBar.NUM_ACTIONS,numChildren);
+               _loc4_ = 0;
+               while(_loc4_ < _loc3_)
+               {
+                  _loc5_ = getChildAt(_loc4_) as IActionButton;
+                  if(_loc5_ != null)
+                  {
+                     _loc6_ = _loc5_.action;
+                     if(_loc6_ != null)
+                     {
+                        _loc7_ = -1;
+                        if(_loc6_ is UseAction)
+                        {
+                           _loc7_ = UseAction(_loc6_).type.ID;
+                        }
+                        else if(_loc6_ is EquipAction)
+                        {
+                           _loc7_ = EquipAction(_loc6_).type.ID;
+                        }
+                        if(_loc7_ == _loc2_.ID)
+                        {
+                           param1.resultUIComponent = _loc5_ as UIComponent;
+                        }
+                     }
+                  }
+                  _loc4_++;
+               }
+            }
+         }
+      }
+      
       public function get scrollPosition() : int
       {
          return this.m_ScrollPosition;
@@ -706,6 +751,7 @@ package tibia.actionbar.widgetClasses
          {
             _loc2_.addEventListener(ConnectionEvent.GAME,this.onConnectionEstablished,false,EventPriority.DEFAULT,true);
          }
+         Tibia.s_GetUIEffectsManager().addEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
       }
       
       private function onConnectionEstablished(param1:ConnectionEvent) : void
@@ -961,9 +1007,10 @@ package tibia.actionbar.widgetClasses
       
       override protected function measure() : void
       {
+         var _loc1_:EdgeMetrics = null;
          var _loc2_:Number = NaN;
          super.measure();
-         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
+         _loc1_ = viewMetricsAndPadding;
          _loc2_ = this.m_Direction == DIRECTION_HORIZONTAL?Number(getStyle("horizontalGap")):Number(getStyle("verticalGap"));
          var _loc3_:Number = this.m_UIToggleButton.getExplicitOrMeasuredHeight();
          var _loc4_:Number = this.m_UIToggleButton.getExplicitOrMeasuredWidth();

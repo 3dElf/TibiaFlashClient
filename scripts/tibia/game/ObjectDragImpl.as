@@ -55,7 +55,7 @@ package tibia.game
          this.removeDragInitListeners(InteractiveObject(param1.currentTarget));
       }
       
-      private function onDragDrop(param1:DragEvent) : void
+      protected function onDragDrop(param1:DragEvent) : void
       {
          var _loc3_:* = undefined;
          var _loc4_:Vector3D = null;
@@ -84,7 +84,7 @@ package tibia.game
                {
                   _loc5_ = MoveActionImpl.MOVE_ALL;
                }
-               new MoveActionImpl(_loc2_.dataForFormat("dragStart") as Vector3D,_loc2_.dataForFormat("dragObject") as ObjectInstance,_loc2_.dataForFormat("dragPosition") as Number,_loc4_,_loc5_).perform();
+               Tibia.s_GameActionFactory.createMoveAction(_loc2_.dataForFormat("dragStart") as Vector3D,_loc2_.dataForFormat("dragObject") as ObjectInstance,_loc2_.dataForFormat("dragPosition") as Number,_loc4_,_loc5_).perform();
             }
          }
       }
@@ -105,7 +105,7 @@ package tibia.game
          this.m_DragPosition = -1;
          this.m_DragObject = null;
          this.removeDragInitListeners(InteractiveObject(param1.currentTarget));
-         var _loc2_:* = param1.target;
+         var _loc2_:* = param1.currentTarget;
          while(_loc2_ != null && !(_loc2_ is IMoveWidget) && !(_loc2_ is Stage))
          {
             _loc2_ = _loc2_.parent;

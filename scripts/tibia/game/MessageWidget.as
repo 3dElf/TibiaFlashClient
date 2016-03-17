@@ -67,6 +67,7 @@ package tibia.game
             _loc1_ = borderMetrics;
             this.m_UIMessageScrollBox.maxHeight = this.parent.height - _loc1_.top - _loc1_.bottom;
             this.m_UIMessageScrollBox.setStyle("paddingRight","20");
+            this.m_UIMessage.maxWidth = this.parent.width - _loc1_.left - _loc1_.right - 20;
             addChild(this.m_UIMessageScrollBox);
             this.m_UIConstructed = true;
          }

@@ -1,18 +1,15 @@
 package tibia.input.gameaction
 {
    import tibia.input.IAction;
-   import tibia.chat.ChatWidget;
-   import tibia.network.Communication;
-   import tibia.chat.ns_chat_internal;
    import mx.resources.ResourceManager;
    import mx.resources.IResourceManager;
    
-   public class TalkAction implements IAction
+   public class TalkAction extends TalkActionImpl implements IAction
    {
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
-      
       private static const BUNDLE:String = "StaticAction";
+      
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
       
@@ -20,15 +17,9 @@ package tibia.input.gameaction
        
       private var m_PerformTimestamp:Number = 0;
       
-      private var m_AutoSend:Boolean = false;
-      
-      private var m_Text:String = null;
-      
       public function TalkAction(param1:String, param2:Boolean)
       {
-         super();
-         this.m_Text = param1.replace("/^s+/","").replace("/s+$/"," ");
-         this.m_AutoSend = param2;
+         super(param1,param2,TalkActionImpl.CURRENT_CHANNEL_ID);
       }
       
       public static function s_Unmarshall(param1:XML, param2:Number) : TalkAction
@@ -63,39 +54,24 @@ package tibia.input.gameaction
          return null;
       }
       
-      public function perform(param1:Boolean = false) : void
+      override public function perform(param1:Boolean = false) : void
       {
-         var _loc2_:ChatWidget = Tibia.s_GetChatWidget();
-         if(_loc2_ == null)
+         if(Boolean(param1) && Boolean(m_AutoSend) && this.m_PerformTimestamp + MIN_TALK_DELAY > Tibia.s_FrameTibiaTimestamp)
          {
             return;
          }
-         var _loc3_:Communication = Tibia.s_GetCommunication();
-         if(_loc3_ != null && Boolean(param1) && Boolean(this.m_AutoSend) && this.m_PerformTimestamp + MIN_TALK_DELAY > Tibia.s_FrameTibiaTimestamp)
-         {
-            return;
-         }
-         _loc2_.text = this.m_Text;
-         if(this.m_AutoSend)
-         {
-            _loc2_.ns_chat_internal::onChatSend();
-            this.m_PerformTimestamp = Tibia.s_FrameTibiaTimestamp;
-         }
-      }
-      
-      public function clone() : IAction
-      {
-         return new TalkAction(this.m_Text,this.m_AutoSend);
-      }
-      
-      public function equals(param1:IAction) : Boolean
-      {
-         return param1 is TalkAction && TalkAction(param1).m_AutoSend == this.m_AutoSend && TalkAction(param1).m_Text == this.m_Text;
+         super.perform(param1);
+         this.m_PerformTimestamp = Tibia.s_FrameTibiaTimestamp;
       }
       
       public function get text() : String
       {
-         return this.m_Text;
+         return m_Text;
+      }
+      
+      public function marshall() : XML
+      {
+         return <action type="talk" autoSend="{m_AutoSend}" text="{m_Text}"/>;
       }
       
       public function get hidden() : Boolean
@@ -103,20 +79,25 @@ package tibia.input.gameaction
          return true;
       }
       
-      public function marshall() : XML
-      {
-         return <action type="talk" autoSend="{this.m_AutoSend}" text="{this.m_Text}"/>;
-      }
-      
       public function get autoSend() : Boolean
       {
-         return this.m_AutoSend;
+         return m_AutoSend;
       }
       
       public function toString() : String
       {
          var _loc1_:IResourceManager = ResourceManager.getInstance();
-         return _loc1_.getString(BUNDLE,"GAME_TALK",[this.m_Text]);
+         return _loc1_.getString(BUNDLE,"GAME_TALK",[m_Text]);
+      }
+      
+      public function clone() : IAction
+      {
+         return new TalkAction(m_Text,m_AutoSend);
+      }
+      
+      public function equals(param1:IAction) : Boolean
+      {
+         return param1 is TalkAction && TalkAction(param1).m_AutoSend == m_AutoSend && TalkAction(param1).m_Text == m_Text;
       }
    }
 }

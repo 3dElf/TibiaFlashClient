@@ -5,9 +5,9 @@ package tibia.network
    import tibia.appearances.AppearanceInstance;
    import tibia.appearances.OutfitInstance;
    import tibia.creatures.Creature;
-   import build.BuildConstants;
-   import shared.utility.Vector3D;
    import tibia.market.MarketWidget;
+   import tibia.chat.NameFilterSet;
+   import shared.utility.Vector3D;
    import shared.utility.StringHelper;
    import tibia.game.PopUpBase;
    import tibia.reporting.ReportWidget;
@@ -202,7 +202,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1468;
+      public static const CLIENT_VERSION:uint = 1551;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -442,7 +442,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1030;
+      public static const PROTOCOL_VERSION:int = 1032;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -956,10 +956,10 @@ package tibia.network
          }
       }
       
-      public function messageProcessingFinished() : void
+      public function messageProcessingFinished(param1:Boolean = true) : void
       {
          this.m_WorldMapStorage.refreshFields();
-         if(BuildConstants.MINI_MAP_STORAGE_REFRESH_SECTORS)
+         if(param1)
          {
             this.m_MiniMapStorage.refreshSectors();
          }
@@ -993,6 +993,9 @@ package tibia.network
          var Pos:Vector3D = null;
          var Value:Number = NaN;
          var Color:uint = 0;
+         var SpeakerMatch:Array = null;
+         var Speaker:String = null;
+         var NameFilter:NameFilterSet = null;
          var _MarketWidget:MarketWidget = null;
          var a_Bytes:ByteArray = param1;
          try
@@ -1009,10 +1012,16 @@ package tibia.network
                case MessageMode.MESSAGE_CHANNEL_MANAGEMENT:
                   ChannelID = a_Bytes.readUnsignedShort();
                   Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
-                  SecondaryError = 1;
-                  this.m_WorldMapStorage.addOnscreenMessage(null,-1,null,0,Mode,Text);
-                  SecondaryError = 2;
-                  this.m_ChatStorage.addChannelMessage(ChannelID,-1,null,0,Mode,Text);
+                  SpeakerMatch = Text.match(/^(.+?) invites you to (his|her) private chat channel\.|^You have been excluded from ([^']+)'s channel\./);
+                  Speaker = SpeakerMatch != null?SpeakerMatch[1] != undefined?SpeakerMatch[1]:SpeakerMatch[3]:null;
+                  NameFilter = Tibia.s_GetOptions().getNameFilterSet(NameFilterSet.DEFAULT_SET);
+                  if(NameFilter != null && Boolean(NameFilter.acceptMessage(Mode,Speaker,Text)))
+                  {
+                     SecondaryError = 1;
+                     this.m_WorldMapStorage.addOnscreenMessage(null,-1,null,0,Mode,Text);
+                     SecondaryError = 2;
+                     this.m_ChatStorage.addChannelMessage(ChannelID,-1,null,0,Mode,Text);
+                  }
                   break;
                case MessageMode.MESSAGE_LOGIN:
                case MessageMode.MESSAGE_ADMIN:
@@ -2768,7 +2777,7 @@ package tibia.network
       
       private function handleConnectionError(param1:int, param2:int = 0, param3:Object = null) : void
       {
-         this.disconnect(true);
+         this.m_ServerConnection.disconnect(false);
          var _loc4_:String = null;
          switch(param1)
          {
@@ -3838,7 +3847,7 @@ package tibia.network
          }
       }
       
-      protected function readCoordinate(param1:ByteArray, param2:int = -1, param3:int = -1, param4:int = -1) : Vector3D
+      public function readCoordinate(param1:ByteArray, param2:int = -1, param3:int = -1, param4:int = -1) : Vector3D
       {
          if(param2 == -1)
          {

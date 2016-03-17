@@ -4,14 +4,14 @@ package tibia.network
    import flash.utils.ByteArray;
    import flash.utils.Endian;
    import flash.net.Socket;
+   import flash.utils.Timer;
    import flash.events.ProgressEvent;
    import flash.events.Event;
    import flash.events.IOErrorEvent;
    import flash.events.SecurityErrorEvent;
-   import shared.cryptography.XTEA;
    import flash.events.TimerEvent;
+   import shared.cryptography.XTEA;
    import flash.utils.getTimer;
-   import flash.utils.Timer;
    import shared.utility.StringHelper;
    import tibia.creatures.Creature;
    import shared.cryptography.RSAPublicKey;
@@ -31,7 +31,7 @@ package tibia.network
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 1030;
+      public static const PROTOCOL_VERSION:int = 1032;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -83,7 +83,7 @@ package tibia.network
       
       protected static const CBUYOBJECT:int = 122;
       
-      public static const CLIENT_VERSION:uint = 1468;
+      public static const CLIENT_VERSION:uint = 1551;
       
       protected static const SPING:int = 29;
       
@@ -439,13 +439,15 @@ package tibia.network
       
       private var m_LastEvent:int = 0;
       
+      private var m_Port:int = 2.147483647E9;
+      
+      protected var m_SecondaryTimestamp:int = 0;
+      
       private var m_PingLatestTime:uint = 0;
       
       private var m_PingLatency:uint = 0;
       
       private var m_MessageReader:tibia.network.NetworkMessageReader = null;
-      
-      private var m_Port:int = 2.147483647E9;
       
       private var m_PingCount:int = 0;
       
@@ -534,6 +536,7 @@ package tibia.network
       
       protected function removeListeners(param1:Socket) : void
       {
+         var _loc2_:Timer = null;
          if(param1 != null)
          {
             param1.removeEventListener(ProgressEvent.SOCKET_DATA,this.onSocketData);
@@ -541,6 +544,8 @@ package tibia.network
             param1.removeEventListener(Event.CONNECT,this.onSocketConnect);
             param1.removeEventListener(IOErrorEvent.IO_ERROR,this.onSocketError);
             param1.removeEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onSocketError);
+            _loc2_ = Tibia.s_GetSecondaryTimer();
+            _loc2_.removeEventListener(TimerEvent.TIMER,this.onSecondaryTimer);
          }
       }
       
@@ -587,17 +592,6 @@ package tibia.network
          return this.m_ConnectionState;
       }
       
-      protected function readSLOGINWAIT(param1:ByteArray) : void
-      {
-         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
-         var _loc3_:int = param1.readUnsignedByte() * 1000;
-         this.disconnect();
-         var _loc4_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.LOGINWAIT);
-         _loc4_.message = _loc2_;
-         _loc4_.data = _loc3_;
-         dispatchEvent(_loc4_);
-      }
-      
       public function get messageWriter() : IMessageWriter
       {
          return this.m_MessageWriter;
@@ -641,10 +635,21 @@ package tibia.network
          this.sendCPINGBACK();
       }
       
+      protected function readSLOGINWAIT(param1:ByteArray) : void
+      {
+         var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
+         var _loc3_:int = param1.readUnsignedByte() * 1000;
+         this.disconnect(false);
+         var _loc4_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.LOGINWAIT);
+         _loc4_.message = _loc2_;
+         _loc4_.data = _loc3_;
+         dispatchEvent(_loc4_);
+      }
+      
       protected function readSLOGINERROR(param1:ByteArray) : void
       {
          var _loc2_:String = StringHelper.s_ReadLongStringFromByteArray(param1);
-         this.disconnect();
+         this.disconnect(false);
          var _loc3_:ConnectionEvent = new ConnectionEvent(ConnectionEvent.LOGINERROR);
          _loc3_.message = _loc2_;
          dispatchEvent(_loc3_);
@@ -652,7 +657,7 @@ package tibia.network
       
       private function handleConnectionError(param1:int, param2:int = 0, param3:Object = null) : void
       {
-         this.disconnect();
+         this.disconnect(false);
          var _loc4_:String = null;
          switch(param1)
          {
@@ -726,8 +731,9 @@ package tibia.network
          return 0;
       }
       
-      public function disconnect() : void
+      public function disconnect(param1:Boolean = true) : void
       {
+         var a_SendEvent:Boolean = param1;
          if(this.m_Socket != null)
          {
             this.removeListeners(this.m_Socket);
@@ -771,11 +777,12 @@ package tibia.network
          this.m_PingSent = 0;
          this.m_PingLatency = 0;
          this.m_CurrentConnectionData = null;
-         this.setConnectionState(CONNECTION_STATE_DISCONNECTED);
+         this.setConnectionState(CONNECTION_STATE_DISCONNECTED,a_SendEvent);
       }
       
       protected function addListeners(param1:Socket) : void
       {
+         var _loc2_:Timer = null;
          if(param1 != null)
          {
             param1.addEventListener(ProgressEvent.SOCKET_DATA,this.onSocketData);
@@ -783,6 +790,8 @@ package tibia.network
             param1.addEventListener(Event.CONNECT,this.onSocketConnect);
             param1.addEventListener(IOErrorEvent.IO_ERROR,this.onSocketError);
             param1.addEventListener(SecurityErrorEvent.SECURITY_ERROR,this.onSocketError);
+            _loc2_ = Tibia.s_GetSecondaryTimer();
+            _loc2_.addEventListener(TimerEvent.TIMER,this.onSecondaryTimer);
          }
       }
       
@@ -1016,6 +1025,16 @@ package tibia.network
                }
             }
          }
+      }
+      
+      private function onSecondaryTimer(param1:TimerEvent) : void
+      {
+         var _loc2_:int = Tibia.s_GetTibiaTimer();
+         if(_loc2_ > this.m_SecondaryTimestamp)
+         {
+            this.readCommunicationData();
+         }
+         this.m_SecondaryTimestamp = _loc2_;
       }
       
       public function connect(param1:tibia.network.IConnectionData) : void

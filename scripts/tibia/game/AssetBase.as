@@ -1,8 +1,8 @@
 package tibia.game
 {
    import flash.events.EventDispatcher;
-   import flash.net.URLLoader;
    import flash.net.URLLoaderDataFormat;
+   import flash.net.URLLoader;
    import flash.events.Event;
    import flash.events.ErrorEvent;
    import flash.net.URLRequest;
@@ -17,6 +17,8 @@ package tibia.game
       private var m_URL:String = null;
       
       private var m_Loader:URLLoader = null;
+      
+      private var m_Optional:Boolean = false;
       
       private var m_Priority:int = 0;
       
@@ -49,9 +51,9 @@ package tibia.game
          }
       }
       
-      protected function processDownloadedData(param1:URLLoader) : Boolean
+      public function set optional(param1:Boolean) : void
       {
-         return false;
+         this.m_Optional = param1;
       }
       
       public function get size() : int
@@ -66,6 +68,11 @@ package tibia.game
             return URLLoaderDataFormat.TEXT;
          }
          return URLLoaderDataFormat.BINARY;
+      }
+      
+      protected function processDownloadedData(param1:URLLoader) : Boolean
+      {
+         return false;
       }
       
       public function set priority(param1:int) : void
@@ -124,6 +131,11 @@ package tibia.game
       private function onLoaderProgress(param1:ProgressEvent) : void
       {
          dispatchEvent(param1);
+      }
+      
+      public function get optional() : Boolean
+      {
+         return this.m_Optional;
       }
       
       protected function resetDownloadedData() : void

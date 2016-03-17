@@ -223,12 +223,13 @@ package tibia.sidebar
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
+         var _loc7_:Number = NaN;
          layoutChrome(param1,unscaledHeight);
          var _loc3_:EdgeMetrics = viewMetricsAndPadding;
          var _loc4_:Number = Math.max(0,getStyle("verticalGap"));
          var _loc5_:Number = 0;
          var _loc6_:Number = 0;
-         var _loc7_:Number = 0;
+         _loc7_ = 0;
          var _loc8_:Number = 0;
          var _loc9_:Number = getStyle("paddingLeft");
          var _loc10_:Number = 0;
@@ -870,17 +871,26 @@ package tibia.sidebar
       
       public function resetWidgets() : void
       {
-         var _loc4_:SideBar = null;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
+         var _loc5_:* = false;
+         var _loc6_:WidgetViewWithIndex = null;
+         var _loc7_:SideBar = null;
+         var _loc8_:int = 0;
+         var _loc9_:int = 0;
          var _loc1_:Widget = null;
          var _loc2_:WidgetView = null;
-         var _loc3_:int = numChildren - 1;
-         while(_loc3_ >= 0)
+         var _loc3_:Vector.<WidgetViewWithIndex> = new Vector.<WidgetViewWithIndex>();
+         var _loc4_:int = numChildren - 1;
+         while(_loc4_ >= 0)
          {
             _loc1_ = null;
-            _loc2_ = removeChildAt(_loc3_) as WidgetView;
-            if(_loc2_ != null)
+            _loc2_ = removeChildAt(_loc4_) as WidgetView;
+            _loc5_ = !(_loc2_ != null && _loc2_.widgetInstance != null && !Widget.s_GetRestorable(_loc2_.widgetInstance.type));
+            if(!_loc5_)
+            {
+               _loc6_ = new WidgetViewWithIndex(_loc2_,_loc4_);
+               _loc3_.push(_loc6_);
+            }
+            else if(_loc2_ != null && Boolean(_loc5_))
             {
                _loc2_.removeEventListener(MouseEvent.MOUSE_DOWN,this.onWidgetDragInit);
                _loc2_.removeEventListener(MouseEvent.MOUSE_MOVE,this.onWidgetMouseResizeInit);
@@ -889,20 +899,20 @@ package tibia.sidebar
                _loc2_.removeEventListener(MouseEvent.MOUSE_DOWN,this.onWidgetMouseResizeInit);
                _loc1_ = _loc2_.widgetInstance;
             }
-            if(_loc1_ != null)
+            if(_loc1_ != null && Boolean(_loc5_))
             {
                _loc1_.releaseViewInstance();
             }
-            _loc3_--;
+            _loc4_--;
          }
          if(this.m_SideBarSet != null)
          {
-            _loc4_ = this.m_SideBarSet.getSideBar(this.m_Location);
-            _loc5_ = 0;
-            _loc6_ = _loc4_.length;
-            while(_loc5_ < _loc6_)
+            _loc7_ = this.m_SideBarSet.getSideBar(this.m_Location);
+            _loc8_ = 0;
+            _loc9_ = _loc7_.length;
+            while(_loc8_ < _loc9_)
             {
-               _loc2_ = _loc4_.getWidgetInstanceAt(_loc5_).acquireViewInstance(true);
+               _loc2_ = _loc7_.getWidgetInstanceAt(_loc8_).acquireViewInstance(true);
                _loc2_.addEventListener(MouseEvent.MOUSE_DOWN,this.onWidgetDragInit);
                _loc2_.addEventListener(MouseEvent.MOUSE_MOVE,this.onWidgetMouseResizeInit);
                _loc2_.addEventListener(MouseEvent.MOUSE_OVER,this.onWidgetMouseResizeInit);
@@ -910,8 +920,23 @@ package tibia.sidebar
                _loc2_.addEventListener(MouseEvent.MOUSE_DOWN,this.onWidgetMouseResizeInit);
                _loc2_.invalidateWidgetInstance();
                addChild(_loc2_);
-               _loc5_++;
+               _loc8_++;
             }
+         }
+         _loc4_ = _loc3_.length - 1;
+         while(_loc4_ >= 0)
+         {
+            _loc6_ = _loc3_[_loc4_];
+            if(_loc6_.Index >= 0 && _loc6_.Index < numChildren)
+            {
+               addChildAt(_loc6_.WidgetViewObj,_loc6_.Index);
+            }
+            else
+            {
+               addChild(_loc6_.WidgetViewObj);
+            }
+            this.m_SideBarSet.insertOrphanWidget(_loc6_.WidgetViewObj.widgetInstance,this.m_Location,_loc6_.Index);
+            _loc4_--;
          }
          this.widgetSetProtected(null);
       }
@@ -934,5 +959,22 @@ package tibia.sidebar
          }
          return super.borderMetrics;
       }
+   }
+}
+
+import tibia.sidebar.sideBarWidgetClasses.WidgetView;
+
+class WidgetViewWithIndex
+{
+    
+   public var Index:int;
+   
+   public var WidgetViewObj:WidgetView;
+   
+   function WidgetViewWithIndex(param1:WidgetView, param2:int)
+   {
+      super();
+      this.WidgetViewObj = param1;
+      this.Index = param2;
    }
 }

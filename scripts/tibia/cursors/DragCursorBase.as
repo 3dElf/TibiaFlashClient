@@ -12,6 +12,8 @@ package tibia.cursors
    public class DragCursorBase
    {
       
+      public static const CURSOR_RESIZE_VERTICAL_NAME:String = "resizeVertical";
+      
       public static const CURSOR_LOOK_NAME:String = "look";
       
       public static const CURSOR_RESIZE_HORIZONTAL_NAME:String = "resizeHorizontal";
@@ -38,6 +40,8 @@ package tibia.cursors
       
       protected static const DRAG_OPACITY:Number = 0.75;
       
+      public static const CURSOR_DEFAULT_REJECT_NAME:String = "defaultReject";
+      
       public static const CURSOR_USE_NAME:String = "use";
       
       private static const CROSSHAIR_REJECT_CLASS:Class = DragCursorBase_CROSSHAIR_REJECT_CLASS;
@@ -51,8 +55,6 @@ package tibia.cursors
       protected static const DRAG_TYPE_WIDGETBASE:String = "widgetBase";
       
       public static const CURSOR_OPEN_NAME:String = "open";
-      
-      public static const CURSOR_RESIZE_VERTICAL_NAME:String = "resizeVertical";
       
       {
          s_RegisterNative();

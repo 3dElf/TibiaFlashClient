@@ -1,6 +1,7 @@
 package tibia.input.staticaction
 {
    import shared.utility.Vector3D;
+   import tibia.input.gameaction.AutowalkActionImpl;
    import tibia.network.Communication;
    import tibia.creatures.Player;
    
@@ -79,6 +80,7 @@ package tibia.input.staticaction
       {
          var _loc4_:Vector3D = null;
          var _loc5_:* = false;
+         var _loc6_:AutowalkActionImpl = null;
          var _loc2_:Communication = Tibia.s_GetCommunication();
          var _loc3_:Player = Tibia.s_GetPlayer();
          if(_loc2_ != null && Boolean(_loc2_.isGameRunning) && _loc3_ != null)
@@ -91,7 +93,8 @@ package tibia.input.staticaction
             {
                _loc4_ = _loc3_.anticipatedPosition;
                _loc5_ = Math.abs(this.m_DeltaX) + Math.abs(this.m_DeltaY) > 1;
-               _loc3_.startAutowalk(_loc4_.x + this.m_DeltaX,_loc4_.y + this.m_DeltaY,_loc4_.z,_loc5_,true);
+               _loc6_ = Tibia.s_GameActionFactory.createAutowalkAction(_loc4_.x + this.m_DeltaX,_loc4_.y + this.m_DeltaY,_loc4_.z,_loc5_,true);
+               _loc6_.perform();
             }
          }
       }

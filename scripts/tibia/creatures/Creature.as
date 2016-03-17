@@ -504,11 +504,6 @@ package tibia.creatures
          this.m_Type = param1;
       }
       
-      public function get numberOfPVPHelpers() : uint
-      {
-         return this.m_NumberOfPVPHelpers;
-      }
-      
       [Bindable(event="propertyChange")]
       public function set guildFlag(param1:int) : void
       {
@@ -654,6 +649,11 @@ package tibia.creatures
          return 0;
       }
       
+      public function get numberOfPVPHelpers() : uint
+      {
+         return this.m_NumberOfPVPHelpers;
+      }
+      
       public function get isUnpassable() : Boolean
       {
          return this.m_IsUnpassable;
@@ -685,9 +685,7 @@ package tibia.creatures
          this.m_Type = TYPE_MONSTER;
          this.m_Visible = false;
          this.m_GuildFlag = GUILD_NONE;
-         this.m_Marks.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onMarksDataChange);
-         this.m_Marks = new Marks();
-         this.m_Marks.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onMarksDataChange);
+         this.m_Marks.clear();
          this.m_MountOutfit = null;
          this.m_Outfit = null;
          this.m_Position.setZero();

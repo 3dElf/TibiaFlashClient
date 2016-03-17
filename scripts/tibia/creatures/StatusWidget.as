@@ -20,6 +20,7 @@ package tibia.creatures
    import mx.events.PropertyChangeEvent;
    import flash.events.MouseEvent;
    import tibia.creatures.statusWidgetClasses.StatusWidgetContextMenu;
+   import mx.events.ToolTipEvent;
    import tibia.creatures.statusWidgetClasses.SkillProgressBar;
    import tibia.controls.GridContainer;
    import tibia.creatures.statusWidgetClasses.DefaultStatusWidgetStyle;
@@ -445,8 +446,6 @@ package tibia.creatures
          var _loc6_:int = 0;
          var _loc7_:DragProxy = null;
          var _loc8_:IFlexDisplayObject = null;
-         var _loc9_:Number = NaN;
-         var _loc10_:Number = NaN;
          var _loc2_:DragSource = null;
          var _loc3_:IUIComponent = null;
          if((_loc2_ = param1.dragSource) != null && Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_STATUSWIDGET && (_loc3_ = param1.currentTarget as IUIComponent) != null)
@@ -495,41 +494,29 @@ package tibia.creatures
                   _loc8_ = null;
                   if(_loc7_ != null && (_loc8_ = _loc7_.getChildAt(0) as IFlexDisplayObject) != null)
                   {
-                     _loc9_ = 0;
-                     _loc10_ = 0;
-                     if(this.m_Location == LOCATION_TOP || this.m_Location == LOCATION_BOTTOM)
-                     {
-                        _loc9_ = unscaledWidth;
-                        _loc10_ = unscaledHeight;
-                     }
-                     else
-                     {
-                        _loc9_ = unscaledHeight;
-                        _loc10_ = unscaledWidth;
-                     }
                      if(_loc6_ == LOCATION_TOP)
                      {
                         _loc7_.move(_loc5_.left,_loc5_.top);
-                        _loc7_.setActualSize(_loc5_.width,_loc10_);
-                        _loc8_.setActualSize(_loc5_.width,_loc10_);
+                        _loc7_.setActualSize(_loc5_.width,unscaledHeight);
+                        _loc8_.setActualSize(_loc5_.width,unscaledHeight);
                      }
                      else if(_loc6_ == LOCATION_BOTTOM)
                      {
-                        _loc7_.move(_loc5_.left,_loc5_.bottom - _loc10_);
-                        _loc7_.setActualSize(_loc5_.width,_loc10_);
-                        _loc8_.setActualSize(_loc5_.width,_loc10_);
+                        _loc7_.move(_loc5_.left,_loc5_.bottom - unscaledHeight);
+                        _loc7_.setActualSize(_loc5_.width,unscaledHeight);
+                        _loc8_.setActualSize(_loc5_.width,unscaledHeight);
                      }
                      else if(_loc6_ == LOCATION_LEFT)
                      {
                         _loc7_.move(_loc5_.left,_loc5_.top);
-                        _loc7_.setActualSize(_loc10_,_loc5_.height);
-                        _loc8_.setActualSize(_loc10_,_loc5_.height);
+                        _loc7_.setActualSize(unscaledHeight,_loc5_.height);
+                        _loc8_.setActualSize(unscaledHeight,_loc5_.height);
                      }
                      else if(_loc6_ == LOCATION_RIGHT)
                      {
-                        _loc7_.move(_loc5_.right - _loc10_,_loc5_.top);
-                        _loc7_.setActualSize(_loc10_,_loc5_.height);
-                        _loc8_.setActualSize(_loc10_,_loc5_.height);
+                        _loc7_.move(_loc5_.right - unscaledHeight,_loc5_.top);
+                        _loc7_.setActualSize(unscaledHeight,_loc5_.height);
+                        _loc8_.setActualSize(unscaledHeight,_loc5_.height);
                      }
                      else
                      {
@@ -629,6 +616,8 @@ package tibia.creatures
             this.m_UIHitpoints.percentHeight = NaN;
             this.m_UIHitpoints.percentWidth = 100;
             this.m_UIHitpoints.styleName = getStyle("hitpointsStyle");
+            this.m_UIHitpoints.addEventListener(ToolTipEvent.TOOL_TIP_SHOW,this.onTooltipShow);
+            this.m_UIHitpoints.toolTip = " ";
             this.updateHitpoints();
             addChild(this.m_UIHitpoints);
             this.m_UIMana = new BitmapProgressBar();
@@ -638,6 +627,8 @@ package tibia.creatures
             this.m_UIMana.percentHeight = NaN;
             this.m_UIMana.percentWidth = 100;
             this.m_UIMana.styleName = getStyle("manaStyle");
+            this.m_UIMana.addEventListener(ToolTipEvent.TOOL_TIP_SHOW,this.onTooltipShow);
+            this.m_UIMana.toolTip = " ";
             this.updateMana();
             addChild(this.m_UIMana);
             this.m_UISkill = new SkillProgressBar();
@@ -668,7 +659,6 @@ package tibia.creatures
             this.m_UIHitpoints.maxValue = 100;
             this.m_UIHitpoints.value = 100;
          }
-         this.m_UIHitpoints.toolTip = this.m_UIHitpoints.value + "/" + this.m_UIHitpoints.maxValue;
       }
       
       private function updateMana() : void
@@ -683,7 +673,6 @@ package tibia.creatures
             this.m_UIMana.maxValue = 100;
             this.m_UIMana.value = 100;
          }
-         this.m_UIMana.toolTip = this.m_UIMana.value + "/" + this.m_UIMana.maxValue;
       }
       
       public function set player(param1:tibia.creatures.Player) : void
@@ -862,6 +851,18 @@ package tibia.creatures
                this.skill = this.m_Options.statusWidgetSkill;
                this.style = this.m_Options.statusWidgetStyle;
                this.visible = this.m_Options.statusWidgetVisible;
+         }
+      }
+      
+      private function onTooltipShow(param1:ToolTipEvent) : void
+      {
+         if(param1.target == this.m_UIMana)
+         {
+            param1.toolTip.text = this.m_UIMana.value + "/" + this.m_UIMana.maxValue;
+         }
+         else if(param1.target == this.m_UIHitpoints)
+         {
+            param1.toolTip.text = this.m_UIHitpoints.value + "/" + this.m_UIHitpoints.maxValue;
          }
       }
       

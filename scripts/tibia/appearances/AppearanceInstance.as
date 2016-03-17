@@ -10,6 +10,8 @@ package tibia.appearances
       
       protected static const s_TempRect:Rectangle = new Rectangle(0,0,0,0);
       
+      public static const CREATURE:int = 99;
+      
       public static const OUTDATEDCREATURE:int = 98;
       
       public static const UNKNOWNCREATURE:int = 97;
@@ -20,7 +22,7 @@ package tibia.appearances
       
       public static const PHASE_RANDOM:int = 254;
       
-      public static const CREATURE:int = 99;
+      public static const PURSE:int = 16087;
        
       var mapField:int = -1;
       

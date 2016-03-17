@@ -6,6 +6,7 @@ package tibia.container.bodyContainerViewWigdetClasses
    import tibia.container.BodyContainerView;
    import flash.text.TextField;
    import tibia.game.ObjectDragImpl;
+   import mx.events.PropertyChangeEvent;
    import flash.events.MouseEvent;
    import tibia.creatures.Player;
    import mx.controls.Button;
@@ -17,8 +18,8 @@ package tibia.container.bodyContainerViewWigdetClasses
    import tibia.container.containerViewWidgetClasses.ContainerSlot;
    import shared.utility.getClassInstanceUnderPoint;
    import shared.utility.Vector3D;
-   import mx.events.PropertyChangeEvent;
    import tibia.input.ModifierKeyEvent;
+   import tibia.help.UIEffectsRetrieveComponentCommandEvent;
    import flash.text.TextFormat;
    import tibia.cursors.CursorHelper;
    import mx.core.EdgeMetrics;
@@ -30,6 +31,7 @@ package tibia.container.bodyContainerViewWigdetClasses
    import tibia.game.ObjectContextMenu;
    import tibia.§sidebar:ns_sidebar_internal§.widgetClosed;
    import tibia.§sidebar:ns_sidebar_internal§.widgetCollapsed;
+   import build.ObjectDragImplFactory;
    import mx.managers.CursorManagerPriority;
    import mx.core.ScrollPolicy;
    
@@ -358,7 +360,7 @@ package tibia.container.bodyContainerViewWigdetClasses
        
       private var m_UICapacity:TextField = null;
       
-      private const m_DragHandler:ObjectDragImpl = new ObjectDragImpl();
+      private const m_DragHandler:ObjectDragImpl = ObjectDragImplFactory.s_CreateObjectDragImpl();
       
       private var m_BodyContainer:BodyContainerView = null;
       
@@ -386,6 +388,27 @@ package tibia.container.bodyContainerViewWigdetClasses
          verticalScrollPolicy = ScrollPolicy.OFF;
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          Tibia.s_GetInputHandler().addEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
+         Tibia.s_GetUIEffectsManager().addEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
+      }
+      
+      function set bodyContainer(param1:BodyContainerView) : void
+      {
+         if(param1 != this.m_BodyContainer)
+         {
+            if(this.m_BodyContainer != null)
+            {
+               this.m_BodyContainer.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onBodyContainerChange);
+            }
+            this.m_BodyContainer = param1;
+            if(this.m_BodyContainer != null)
+            {
+               this.m_BodyContainer.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onBodyContainerChange);
+            }
+            this.m_UncommittedBodyContainer = true;
+            invalidateDisplayList();
+            invalidateProperties();
+            invalidateSize();
+         }
       }
       
       private function onSlotClick(param1:MouseEvent) : void
@@ -522,6 +545,7 @@ package tibia.container.bodyContainerViewWigdetClasses
          this.m_UIPurse.removeEventListener(MouseEvent.MIDDLE_CLICK,this.onPurseClick);
          this.m_UIPurse.removeEventListener(MouseEvent.RIGHT_CLICK,this.onPurseClick);
          Tibia.s_GetInputHandler().removeEventListener(ModifierKeyEvent.MODIFIER_KEYS_CHANGED,this.onModifierKeyEvent);
+         Tibia.s_GetUIEffectsManager().removeEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
       }
       
       override public function styleChanged(param1:String) : void
@@ -676,7 +700,7 @@ package tibia.container.bodyContainerViewWigdetClasses
             {
                case ACTION_USE:
                case ACTION_OPEN:
-                  new UseActionImpl(_loc6_,_loc7_.type,_loc6_.z,UseActionImpl.TARGET_AUTO).perform();
+                  Tibia.s_GameActionFactory.createUseAction(_loc6_,_loc7_.type,_loc6_.z,UseActionImpl.TARGET_AUTO).perform();
                   break;
                case ACTION_LOOK:
                   new LookActionImpl(_loc6_,_loc7_.type,_loc6_.z).perform();
@@ -774,23 +798,36 @@ package tibia.container.bodyContainerViewWigdetClasses
          }
       }
       
-      function set bodyContainer(param1:BodyContainerView) : void
+      private function onUIEffectsCommandEvent(param1:UIEffectsRetrieveComponentCommandEvent) : void
       {
-         if(param1 != this.m_BodyContainer)
+         var _loc2_:int = 0;
+         var _loc3_:int = 0;
+         var _loc4_:BodySlot = null;
+         if(param1.type == UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT && param1.identifier == BodyContainerViewWidgetView)
          {
-            if(this.m_BodyContainer != null)
+            _loc2_ = param1.subIdentifier as int;
+            if(_loc2_ == -1)
             {
-               this.m_BodyContainer.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onBodyContainerChange);
+               param1.resultUIComponent = this;
             }
-            this.m_BodyContainer = param1;
-            if(this.m_BodyContainer != null)
+            else if(_loc2_ == BodyContainerView.PURSE)
             {
-               this.m_BodyContainer.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onBodyContainerChange);
+               param1.resultUIComponent = this.m_UIPurse;
             }
-            this.m_UncommittedBodyContainer = true;
-            invalidateDisplayList();
-            invalidateProperties();
-            invalidateSize();
+            else
+            {
+               _loc3_ = 0;
+               while(_loc3_ < numChildren)
+               {
+                  _loc4_ = BodySlot(getChildAt(_loc3_));
+                  if(_loc4_.position == _loc2_)
+                  {
+                     param1.resultUIComponent = _loc4_;
+                     break;
+                  }
+                  _loc3_++;
+               }
+            }
          }
       }
       

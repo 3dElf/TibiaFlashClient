@@ -5,7 +5,6 @@ package tibia.creatures.battlelistWidgetClasses
    import flash.events.MouseEvent;
    import tibia.creatures.Creature;
    import mx.core.IUIComponent;
-   import tibia.input.gameaction.GreetAction;
    import tibia.input.gameaction.PartyActionImpl;
    import tibia.input.gameaction.PrivateChatActionImpl;
    import tibia.input.gameaction.BuddylistActionImpl;
@@ -268,14 +267,14 @@ package tibia.creatures.battlelistWidgetClasses
             {
                createTextItem(resourceManager.getString(BUNDLE,"CTX_CREATURE_TALK"),function(param1:*):void
                {
-                  new GreetAction(m_Creature).perform();
+                  Tibia.s_GameActionFactory.createGreetAction(m_Creature).perform();
                });
             }
             else
             {
                createTextItem(resourceManager.getString(BUNDLE,this.m_CreatureStorage.getAttackTarget() == this.m_Creature?"CTX_STOP_ATTACK":"CTX_START_ATTACK"),function(param1:*):void
                {
-                  m_CreatureStorage.toggleAttackTarget(m_Creature,true);
+                  Tibia.s_GameActionFactory.createToggleAttackTargetAction(m_Creature,true).perform();
                });
             }
             createTextItem(resourceManager.getString(BUNDLE,this.m_CreatureStorage.getFollowTarget() == this.m_Creature?"CTX_STOP_FOLLOW":"CTX_START_FOLLOW"),function(param1:*):void

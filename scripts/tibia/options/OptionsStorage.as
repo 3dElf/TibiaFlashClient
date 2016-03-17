@@ -1625,15 +1625,23 @@ package tibia.options
          this.m_MarketBrowserDepot = param1;
       }
       
-      [Bindable(event="propertyChange")]
-      public function set marketBrowserProfession(param1:Boolean) : void
+      public function getDefaultActionBarSet() : ActionBarSet
       {
-         var _loc2_:Object = this.marketBrowserProfession;
-         if(_loc2_ !== param1)
+         var _loc2_:XML = null;
+         var _loc3_:ActionBarSet = null;
+         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("ActionBarSet");
+         if(_loc1_.length() > 0)
          {
-            this._273891688marketBrowserProfession = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserProfession",_loc2_,param1));
+            for each(_loc2_ in _loc1_)
+            {
+               _loc3_ = ActionBarSet.s_Unmarshall(_loc2_,this.m_Version);
+               if(_loc3_.ID == 0)
+               {
+                  return _loc3_;
+               }
+            }
          }
+         throw new Error("OptionsStorage.getDefaultActionBarSet: No actionbar set width ID 0 found in default options");
       }
       
       private function initialiseMappingSet() : void
@@ -1657,6 +1665,17 @@ package tibia.options
             return;
          }
          throw new ArgumentError("OptionsStorage.set statusPlayerStyle: Invalid style: " + param1);
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set marketBrowserProfession(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.marketBrowserProfession;
+         if(_loc2_ !== param1)
+         {
+            this._273891688marketBrowserProfession = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserProfession",_loc2_,param1));
+         }
       }
       
       public function get marketSelectedType() : int

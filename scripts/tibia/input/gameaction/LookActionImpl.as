@@ -24,7 +24,7 @@ package tibia.input.gameaction
          {
             throw new ArgumentError("LookActionImpl.LookActionImpl: Invalid co-ordinate.");
          }
-         this.m_Absolute = param1;
+         this.m_Absolute = param1.clone();
          if(param2 is AppearanceInstance)
          {
             this.m_Type = AppearanceInstance(param2).type;

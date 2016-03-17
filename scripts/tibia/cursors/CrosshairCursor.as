@@ -11,6 +11,8 @@ package tibia.cursors
       
       public static const CURSOR_ATTACK_NAME:String = "attack";
       
+      public static const CURSOR_RESIZE_VERTICAL_NAME:String = "resizeVertical";
+      
       public static const CURSOR_LOOK_NAME:String = "look";
       
       public static const CURSOR_RESIZE_HORIZONTAL_NAME:String = "resizeHorizontal";
@@ -21,6 +23,8 @@ package tibia.cursors
       
       public static const CURSOR_WALK_NAME:String = "walk";
       
+      public static const CURSOR_DEFAULT_REJECT_NAME:String = "defaultReject";
+      
       public static const CURSOR_USE_NAME:String = "use";
       
       private static const CURSOR_CLASS:Class = CrosshairCursor_CURSOR_CLASS;
@@ -30,8 +34,6 @@ package tibia.cursors
       public static const CURSOR_DEFAULT_NAME:String = "default";
       
       public static const CURSOR_OPEN_NAME:String = "open";
-      
-      public static const CURSOR_RESIZE_VERTICAL_NAME:String = "resizeVertical";
       
       {
          s_RegisterNative();

@@ -126,7 +126,7 @@ package tibia.input.gameaction
                return;
             }
          }
-         new UseActionImpl(ContainerStorage.INVENTORY_ANY,this.m_Type,this.m_Data,this.m_Target).perform(param1);
+         Tibia.s_GameActionFactory.createUseAction(ContainerStorage.INVENTORY_ANY,this.m_Type,this.m_Data,this.m_Target).perform(param1);
          this.m_LastPerform = Tibia.s_FrameTibiaTimestamp;
       }
       

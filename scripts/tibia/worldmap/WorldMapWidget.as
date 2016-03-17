@@ -6,12 +6,13 @@ package tibia.worldmap
    import flash.display.Bitmap;
    import flash.geom.Point;
    import tibia.game.ObjectDragImpl;
+   import tibia.help.UIEffectsRetrieveComponentCommandEvent;
+   import tibia.worldmap.widgetClasses.RendererImpl;
    import flash.events.MouseEvent;
    import tibia.game.ContextMenuBase;
    import tibia.game.PopUpBase;
    import tibia.creatures.Player;
    import mx.core.FlexShape;
-   import tibia.worldmap.widgetClasses.RendererImpl;
    import shared.controls.ShapeWrapper;
    import mx.controls.Label;
    import flash.events.Event;
@@ -27,16 +28,17 @@ package tibia.worldmap
    import tibia.creatures.Creature;
    import tibia.appearances.AppearanceInstance;
    import tibia.appearances.ObjectInstance;
+   import tibia.input.gameaction.AutowalkActionImpl;
    import tibia.network.Communication;
    import tibia.input.mapping.MouseBinding;
    import tibia.input.MouseActionHelper;
    import tibia.input.gameaction.UseActionImpl;
-   import tibia.input.gameaction.GreetAction;
    import tibia.input.gameaction.LookActionImpl;
    import tibia.game.ObjectContextMenu;
    import flash.display.Graphics;
    import mx.events.ResizeEvent;
    import mx.managers.CursorManagerPriority;
+   import build.ObjectDragImplFactory;
    
    public class WorldMapWidget extends UIComponent implements IUseWidget, IMoveWidget
    {
@@ -207,8 +209,17 @@ package tibia.worldmap
       {
          this.m_CursorHelper = new CursorHelper(CursorManagerPriority.MEDIUM);
          super();
-         this.m_DragHandler = new ObjectDragImpl();
+         this.m_DragHandler = ObjectDragImplFactory.s_CreateObjectDragImpl();
          addEventListener(ResizeEvent.RESIZE,this.onResize);
+         Tibia.s_GetUIEffectsManager().addEventListener(UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT,this.onUIEffectsCommandEvent);
+      }
+      
+      private function onUIEffectsCommandEvent(param1:UIEffectsRetrieveComponentCommandEvent) : void
+      {
+         if(param1.type == UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT && param1.identifier == WorldMapWidget && param1.subIdentifier == RendererImpl)
+         {
+            param1.resultUIComponent = this.m_UIRendererImpl;
+         }
       }
       
       private function onMouseMove(param1:MouseEvent) : void
@@ -332,7 +343,14 @@ package tibia.worldmap
                _loc3_.x = _loc2_.x;
                _loc3_.y = _loc2_.y;
             }
-            this.m_UIRendererImpl.highlightTile = _loc3_;
+            if(this.m_MouseCursorOverRenderer)
+            {
+               this.m_UIRendererImpl.highlightTile = _loc3_;
+            }
+            else
+            {
+               this.m_UIRendererImpl.highlightTile = null;
+            }
          }
          if(this.m_MouseCursorOverRenderer)
          {
@@ -523,7 +541,7 @@ package tibia.worldmap
          invalidateDisplayList();
       }
       
-      protected function determineAction(param1:MouseEvent, param2:Boolean = false, param3:Boolean = false, param4:Boolean = false) : void
+      public function determineAction(param1:MouseEvent, param2:Boolean = false, param3:Boolean = false, param4:Boolean = false) : uint
       {
          var _loc10_:Vector3D = null;
          var _loc11_:Creature = null;
@@ -534,6 +552,7 @@ package tibia.worldmap
          var _loc16_:AppearanceInstance = null;
          var _loc17_:Creature = null;
          var _loc18_:ObjectInstance = null;
+         var _loc19_:AutowalkActionImpl = null;
          var _loc5_:Communication = null;
          var _loc6_:uint = ACTION_NONE;
          var _loc7_:MouseBinding = null;
@@ -541,7 +560,7 @@ package tibia.worldmap
          var _loc9_:Point = null;
          if(this.m_Options == null)
          {
-            return;
+            return ACTION_NONE;
          }
          if(param1 != null)
          {
@@ -669,25 +688,26 @@ package tibia.worldmap
                case ACTION_AUTOWALK:
                case ACTION_AUTOWALK_HIGHLIGHT:
                   _loc10_ = this.m_UIRendererImpl.pointToAbsolute(s_TempPoint.x,s_TempPoint.y,true,_loc10_);
-                  this.m_Player.startAutowalk(_loc10_.x,_loc10_.y,_loc10_.z,false,true);
+                  _loc19_ = Tibia.s_GameActionFactory.createAutowalkAction(_loc10_.x,_loc10_.y,_loc10_.z,false,true);
+                  _loc19_.perform();
                   break;
                case ACTION_ATTACK:
                   if(_loc17_ != null && _loc17_ != this.m_Player)
                   {
-                     this.m_CreatureStorage.toggleAttackTarget(_loc17_,true);
+                     Tibia.s_GameActionFactory.createToggleAttackTargetAction(_loc17_,true).perform();
                   }
                   break;
                case ACTION_USE:
                case ACTION_OPEN:
                   if(_loc14_.object != null)
                   {
-                     new UseActionImpl(_loc10_,_loc14_.object,_loc14_.position,UseActionImpl.TARGET_AUTO).perform();
+                     Tibia.s_GameActionFactory.createUseAction(_loc10_,_loc14_.object,_loc14_.position,UseActionImpl.TARGET_AUTO).perform();
                   }
                   break;
                case ACTION_TALK:
                   if(_loc17_ != null && _loc17_ != this.m_Player)
                   {
-                     new GreetAction(_loc17_).perform();
+                     Tibia.s_GameActionFactory.createGreetAction(_loc17_).perform();
                   }
                   break;
                case ACTION_LOOK:
@@ -703,6 +723,7 @@ package tibia.worldmap
                case ACTION_UNSET:
             }
          }
+         return _loc6_;
       }
       
       public function getMultiUseObjectUnderPoint(param1:Point) : Object

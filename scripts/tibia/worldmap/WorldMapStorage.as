@@ -539,9 +539,14 @@ package tibia.worldmap
          return ((param3 + this.m_Origin.z) % MAPSIZE_Z * MAPSIZE_X + (param1 + this.m_Origin.x) % MAPSIZE_X) * MAPSIZE_Y + (param2 + this.m_Origin.y) % MAPSIZE_Y;
       }
       
-      public function getPosition() : Vector3D
+      public function getPosition(param1:Vector3D = null) : Vector3D
       {
-         return this.m_Position.clone();
+         if(param1 == null)
+         {
+            return this.m_Position.clone();
+         }
+         param1.setComponents(this.m_Position.x,this.m_Position.y,this.m_Position.z);
+         return param1;
       }
       
       public function setPosition(param1:int, param2:int, param3:int) : void

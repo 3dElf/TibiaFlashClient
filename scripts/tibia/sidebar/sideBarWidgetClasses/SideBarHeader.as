@@ -290,8 +290,9 @@ package tibia.sidebar.sideBarWidgetClasses
       
       override protected function measure() : void
       {
+         var _loc2_:Number = NaN;
          var _loc1_:Number = 0;
-         var _loc2_:Number = 0;
+         _loc2_ = 0;
          if(mx_internal::border != null)
          {
             if(!isNaN(mx_internal::border.measuredWidth))

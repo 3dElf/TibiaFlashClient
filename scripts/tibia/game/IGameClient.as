@@ -1,30 +1,32 @@
 package tibia.game
 {
    import flash.events.IEventDispatcher;
-   import loader.asset.IAssetProvider;
    import tibia.network.IConnectionData;
+   import loader.asset.IAssetProvider;
    
    public interface IGameClient extends IEventDispatcher
    {
        
-      function get isActive() : Boolean;
+      function set isActive(param1:Boolean) : void;
       
       function saveOptions() : void;
       
-      function get isRunning() : Boolean;
+      function unload() : void;
       
-      function setAssetProvider(param1:IAssetProvider) : void;
+      function setConnectionDataList(param1:Vector.<IConnectionData>, param2:uint) : void;
+      
+      function initializeGameClient(param1:Boolean, param2:Object = null) : void;
+      
+      function setClientSize(param1:uint, param2:uint) : void;
+      
+      function get isActive() : Boolean;
+      
+      function get isRunning() : Boolean;
       
       function get currentConnection() : Object;
       
       function saveLocalData() : void;
       
-      function setConnectionDataList(param1:Vector.<IConnectionData>, param2:uint) : void;
-      
-      function setClientSize(param1:uint, param2:uint) : void;
-      
-      function unload() : void;
-      
-      function set isActive(param1:Boolean) : void;
+      function setAssetProvider(param1:IAssetProvider) : void;
    }
 }

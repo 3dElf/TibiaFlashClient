@@ -1,5 +1,7 @@
-package tibia.game
+package tibia.appearances
 {
+   import tibia.game.Asset;
+   
    public class AppearancesAsset extends Asset
    {
        

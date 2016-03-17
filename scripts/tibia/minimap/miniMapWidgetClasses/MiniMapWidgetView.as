@@ -11,13 +11,13 @@ package tibia.minimap.miniMapWidgetClasses
    import tibia.game.ContextMenuBase;
    import tibia.game.PopUpBase;
    import tibia.input.ModifierKeyEvent;
-   import shared.utility.Vector3D;
-   import tibia.creatures.Player;
-   import tibia.network.Communication;
    import tibia.cursors.CursorHelper;
    import mx.core.EdgeMetrics;
+   import tibia.creatures.Player;
+   import tibia.input.gameaction.AutowalkActionImpl;
    import tibia.options.OptionsStorage;
    import tibia.input.InputHandler;
+   import shared.utility.Vector3D;
    import tibia.input.mapping.MouseBinding;
    import tibia.input.MouseClickBothEvent;
    import tibia.input.MouseActionHelper;
@@ -365,11 +365,6 @@ package tibia.minimap.miniMapWidgetClasses
       
       protected function onViewClick(param1:MouseEvent) : void
       {
-         var _loc2_:Object = null;
-         var _loc3_:Vector3D = null;
-         var _loc4_:Player = null;
-         var _loc5_:MiniMapStorage = null;
-         var _loc6_:Communication = null;
          this.determineAction(param1,true,false);
       }
       
@@ -462,6 +457,7 @@ package tibia.minimap.miniMapWidgetClasses
       {
          var _loc10_:Player = null;
          var _loc11_:MiniMapStorage = null;
+         var _loc12_:AutowalkActionImpl = null;
          if(this.m_MouseCursorOverWidget == false)
          {
             return;
@@ -539,7 +535,8 @@ package tibia.minimap.miniMapWidgetClasses
                   _loc10_ = Tibia.s_GetPlayer();
                   if(_loc10_ != null)
                   {
-                     _loc10_.startAutowalk(_loc6_.x,_loc6_.y,_loc6_.z,false,false);
+                     _loc12_ = Tibia.s_GameActionFactory.createAutowalkAction(_loc6_.x,_loc6_.y,_loc6_.z,false,false);
+                     _loc12_.perform();
                   }
                   break;
                case ACTION_CONTEXT_MENU:

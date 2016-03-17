@@ -326,7 +326,7 @@ package tibia.market.marketWidgetClasses
       
       private function set offerAmount(param1:int) : void
       {
-         var _loc2_:int = MarketWidget.OFFER_MAX_AMOUNT;
+         var _loc2_:int = Math.max(MarketWidget.OFFER_MAX_AMOUNT_NONCUMULATIVE,MarketWidget.OFFER_MAX_AMOUNT_CUMULATIVE);
          if(this.offerKind == Offer.SELL_OFFER)
          {
             _loc2_ = market.getDepotAmount(selectedType);

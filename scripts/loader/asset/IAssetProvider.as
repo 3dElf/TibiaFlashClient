@@ -2,9 +2,10 @@ package loader.asset
 {
    import flash.events.IEventDispatcher;
    import tibia.game.GameBinaryAsset;
-   import tibia.game.AppearancesAsset;
    import tibia.game.AssetBase;
-   import tibia.game.OptionsAsset;
+   import tibia.appearances.AppearancesAsset;
+   import tibia.options.OptionsAsset;
+   import tibia.sessiondump.SessiondumpAsset;
    import tibia.game.SpritesAsset;
    
    public interface IAssetProvider extends IEventDispatcher
@@ -16,19 +17,23 @@ package loader.asset
       
       function get loadQueueDelay() : uint;
       
-      function getAppearances() : AppearancesAsset;
+      function getAssetsByClass(param1:Class) : Vector.<AssetBase>;
       
       function get bytesLoadedMandatory() : uint;
       
       function removeAsset(param1:AssetBase) : void;
       
-      function get loadingFinished() : Boolean;
+      function getAssetByKey(param1:Object) : AssetBase;
       
       function get bytesLoaded() : uint;
+      
+      function getAppearances() : AppearancesAsset;
       
       function set concurrentLoaders(param1:uint) : void;
       
       function getDefaultOptions() : OptionsAsset;
+      
+      function get loadingFinished() : Boolean;
       
       function set loadQueueDelay(param1:uint) : void;
       
@@ -36,9 +41,9 @@ package loader.asset
       
       function get bytesTotal() : uint;
       
-      function getAsset(param1:Object) : AssetBase;
-      
       function getCurrentOptions() : OptionsAsset;
+      
+      function getSessiondumpAsset() : SessiondumpAsset;
       
       function getSpriteAssets() : Vector.<SpritesAsset>;
       

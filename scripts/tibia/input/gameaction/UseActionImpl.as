@@ -29,7 +29,7 @@ package tibia.input.gameaction
       
       public static const TARGET_NEW_WINDOW:int = 1;
       
-      private static var concurrentMultiUse:tibia.input.gameaction.UseActionImpl = null;
+      protected static var concurrentMultiUse:tibia.input.gameaction.UseActionImpl = null;
       
       public static const TARGET_CROSSHAIR:int = 4;
       
@@ -39,15 +39,15 @@ package tibia.input.gameaction
       
       public static const TARGET_AUTO:int = 0;
        
-      private var m_Target:int = -1;
+      protected var m_Target:int = -1;
       
-      private var m_PositionOrData:int = -1;
+      protected var m_PositionOrData:int = -1;
       
-      private var m_Absolute:Vector3D = null;
+      protected var m_Absolute:Vector3D = null;
       
       private var m_CursorHelper:CursorHelper;
       
-      private var m_Type:AppearanceType = null;
+      protected var m_Type:AppearanceType = null;
       
       public function UseActionImpl(param1:Vector3D, param2:*, param3:int, param4:int = 0)
       {
@@ -58,7 +58,7 @@ package tibia.input.gameaction
          {
             throw new ArgumentError("UseActionImpl.UseActionImpl: Invalid co-ordinate.");
          }
-         this.m_Absolute = param1;
+         this.m_Absolute = param1.clone();
          this.m_Type = null;
          if(param2 is ObjectInstance)
          {
@@ -99,7 +99,7 @@ package tibia.input.gameaction
          this.m_Target = param4;
       }
       
-      private function onUsePerform(param1:MouseEvent) : void
+      protected function onUsePerform(param1:MouseEvent) : void
       {
          var _loc11_:Creature = null;
          param1.preventDefault();
@@ -149,6 +149,7 @@ package tibia.input.gameaction
       public function perform(param1:Boolean = false) : void
       {
          var _loc6_:int = 0;
+         var _loc7_:AutowalkActionImpl = null;
          var _loc2_:Communication = Tibia.s_GetCommunication();
          var _loc3_:CreatureStorage = Tibia.s_GetCreatureStorage();
          var _loc4_:ContainerStorage = Tibia.s_GetContainerStorage();
@@ -195,7 +196,8 @@ package tibia.input.gameaction
             {
                if(this.m_Absolute.x < 65535)
                {
-                  Tibia.s_GetPlayer().startAutowalk(this.m_Absolute.x,this.m_Absolute.y,this.m_Absolute.z,false,false);
+                  _loc7_ = Tibia.s_GameActionFactory.createAutowalkAction(this.m_Absolute.x,this.m_Absolute.y,this.m_Absolute.z,false,false);
+                  _loc7_.perform();
                }
                if(concurrentMultiUse != null)
                {
@@ -219,7 +221,7 @@ package tibia.input.gameaction
          concurrentMultiUse = null;
       }
       
-      private function updateGlobalListeners(param1:Boolean) : void
+      protected function updateGlobalListeners(param1:Boolean) : void
       {
          var _loc2_:DisplayObject = null;
          var _loc3_:Tibia = Tibia.s_GetInstance();
@@ -260,7 +262,7 @@ package tibia.input.gameaction
          param1.stopImmediatePropagation();
       }
       
-      private function updateCursor(param1:Boolean) : void
+      protected function updateCursor(param1:Boolean) : void
       {
          if(param1)
          {

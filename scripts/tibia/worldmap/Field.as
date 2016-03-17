@@ -315,11 +315,11 @@ package tibia.worldmap
             this.m_CacheBitmapDirty = Boolean(this.m_CacheBitmapDirty) || Boolean(_loc5_.cacheDirty);
             this.m_CacheObjectsHeight = Math.min(this.m_CacheObjectsHeight + _loc6_.elevation,FIELD_HEIGHT);
             this.m_CacheLyingObject = Boolean(this.m_CacheLyingObject) || Boolean(_loc6_.isLyingObject);
-            this.m_CacheObjectsCount++;
             if(this.m_CacheBitmapDirty)
             {
                break;
             }
+            this.m_CacheObjectsCount++;
          }
       }
       

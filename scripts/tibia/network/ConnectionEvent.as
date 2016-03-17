@@ -7,15 +7,19 @@ package tibia.network
       
       public static const LOGINADVICE:String = "LOGINADVICE";
       
+      public static const LOGINWAIT:String = "LOGINWAIT";
+      
       public static const PACKET_RECEIVED:String = "PACKET_RECEIVED";
       
-      public static const DEAD:String = "DEAD";
+      public static const CONNECTION_RECOVERED:String = "CONNECTION_RECOVERED";
+      
+      public static const CREATED:String = "CREATED";
       
       public static const CONNECTION_LOST:String = "CONNECTION_LOST";
       
       public static const ERROR:String = "ERROR";
       
-      public static const CONNECTION_RECOVERED:String = "CONNECTION_RECOVERED";
+      public static const DEAD:String = "DEAD";
       
       public static const GAME:String = "GAME";
       
@@ -24,8 +28,6 @@ package tibia.network
       public static const CONNECTING:String = "CONNECTING";
       
       public static const DISCONNECTED:String = "DISCONNECTED";
-      
-      public static const LOGINWAIT:String = "LOGINWAIT";
       
       public static const LOGINERROR:String = "LOGINERROR";
        

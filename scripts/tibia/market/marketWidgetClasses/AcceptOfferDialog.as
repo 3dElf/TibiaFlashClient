@@ -181,7 +181,7 @@ package tibia.market.marketWidgetClasses
             {
                this.m_MaxAmount = Math.floor(this.market.accountBalance / this.offer.piecePrice);
             }
-            this.m_MaxAmount = Math.min(this.m_MaxAmount,this.offer.amount,MarketWidget.OFFER_MAX_AMOUNT);
+            this.m_MaxAmount = Math.min(this.m_MaxAmount,this.offer.amount,Math.max(MarketWidget.OFFER_MAX_AMOUNT_NONCUMULATIVE,MarketWidget.OFFER_MAX_AMOUNT_CUMULATIVE));
          }
          return this.m_MaxAmount;
       }

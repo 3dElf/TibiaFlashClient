@@ -4,7 +4,6 @@ package tibia.reporting
    import flash.events.MouseEvent;
    import mx.controls.Button;
    import tibia.network.Communication;
-   import tibia.chat.ChannelMessage;
    import tibia.reporting.reportType.Type;
    import shared.controls.CustomButton;
    import tibia.reporting.reportWidgetClasses.ConfirmView;
@@ -16,6 +15,7 @@ package tibia.reporting
    import mx.resources.ResourceManager;
    import tibia.chat.MessageMode;
    import flash.display.DisplayObjectContainer;
+   import tibia.reporting.reportType.ReportableClone;
    
    public class ReportWidget extends PopUpBase
    {
@@ -93,7 +93,7 @@ package tibia.reporting
          {
             throw new ArgumentError("ReportWidget.ReportWidget: Report type is not supported.");
          }
-         this.m_Reportable = param2;
+         this.m_Reportable = ReportableClone.s_CloneReportable(param2);
          height = 500;
          width = 500;
          this.buttonFlags = PopUpBase.BUTTON_NONE;
@@ -160,7 +160,6 @@ package tibia.reporting
       override public function hide(param1:Boolean = false) : void
       {
          var _loc3_:Communication = null;
-         var _loc4_:int = 0;
          var _loc2_:int = footer.numChildren - 1;
          while(_loc2_ >= 0)
          {
@@ -181,8 +180,7 @@ package tibia.reporting
                      _loc3_.sendNameCRULEVIOLATIONREPORT(this.m_UIStepReason.selectedReason.value,this.m_Reportable.characterName,this.m_UIStepComment.comment,this.m_UIStepComment.translation);
                      break;
                   case Type.REPORT_STATEMENT:
-                     _loc4_ = ChannelMessage(this.m_Reportable).ID;
-                     _loc3_.sendStatementCRULEVIOLATIONREPORT(this.m_UIStepReason.selectedReason.value,this.m_Reportable.characterName,this.m_UIStepComment.comment,this.m_UIStepComment.translation,_loc4_);
+                     _loc3_.sendStatementCRULEVIOLATIONREPORT(this.m_UIStepReason.selectedReason.value,this.m_Reportable.characterName,this.m_UIStepComment.comment,this.m_UIStepComment.translation,this.m_Reportable.ID);
                }
                s_ReportTimestamp = Tibia.s_FrameTibiaTimestamp;
             }

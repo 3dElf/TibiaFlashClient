@@ -5,6 +5,6 @@ package tibia.network
        
       function readMessage(param1:IMessageReader) : void;
       
-      function messageProcessingFinished() : void;
+      function messageProcessingFinished(param1:Boolean = true) : void;
    }
 }

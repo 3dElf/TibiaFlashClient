@@ -3,8 +3,8 @@ package tibia.input.staticaction
    import tibia.container.ContainerStorage;
    import tibia.container.BodyContainerView;
    import tibia.appearances.AppearanceInstance;
-   import tibia.input.gameaction.UseActionImpl;
    import shared.utility.Vector3D;
+   import tibia.input.gameaction.UseActionImpl;
    
    public class OpenRootContainer extends StaticAction
    {
@@ -21,7 +21,7 @@ package tibia.input.staticaction
          var _loc4_:AppearanceInstance = null;
          if(_loc2_ != null && (_loc3_ = _loc2_.getBodyContainerView()) != null && (_loc4_ = _loc3_.getObject(BodyContainerView.BACK)) != null && _loc4_.type != null && Boolean(_loc4_.type.isContainer))
          {
-            new UseActionImpl(new Vector3D(65535,BodyContainerView.BACK,0),_loc4_,BodyContainerView.BACK,UseActionImpl.TARGET_NEW_WINDOW).perform();
+            Tibia.s_GameActionFactory.createUseAction(new Vector3D(65535,BodyContainerView.BACK,0),_loc4_,BodyContainerView.BACK,UseActionImpl.TARGET_NEW_WINDOW).perform();
          }
       }
    }

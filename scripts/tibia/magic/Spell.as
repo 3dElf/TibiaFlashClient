@@ -5,7 +5,6 @@ package tibia.magic
    import flash.geom.Point;
    import flash.geom.Rectangle;
    import tibia.chat.ChatWidget;
-   import tibia.chat.ns_chat_internal;
    
    public class Spell extends Magic
    {
@@ -326,15 +325,7 @@ package tibia.magic
       
       public function cast(param1:ChatWidget = null, ... rest) : void
       {
-         if(param1 == null)
-         {
-            param1 = Tibia.s_GetChatWidget();
-         }
-         if(param1 != null)
-         {
-            param1.text = "#s " + this.getFormattedFormula(rest);
-            param1.ns_chat_internal::onChatSend();
-         }
+         Tibia.s_GameActionFactory.createTalkAction("#s " + this.getFormattedFormula(rest),true).perform();
       }
    }
 }

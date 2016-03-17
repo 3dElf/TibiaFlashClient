@@ -1,6 +1,5 @@
 package tibia.input.staticaction
 {
-   import tibia.chat.ChatWidget;
    import tibia.options.OptionsStorage;
    import tibia.input.MappingSet;
    
@@ -14,7 +13,6 @@ package tibia.input.staticaction
       
       override public function perform(param1:Boolean = false) : void
       {
-         var _loc3_:ChatWidget = null;
          var _loc2_:OptionsStorage = Tibia.s_GetOptions();
          if(_loc2_ == null)
          {
@@ -26,11 +24,7 @@ package tibia.input.staticaction
          }
          else
          {
-            _loc3_ = Tibia.s_GetChatWidget();
-            if(_loc3_ != null)
-            {
-               _loc3_.onChatSend();
-            }
+            Tibia.s_GameActionFactory.createTalkAction(null,true).perform();
             if(_loc2_.generalInputSetMode == MappingSet.CHAT_MODE_TEMPORARY)
             {
                _loc2_.generalInputSetMode = MappingSet.CHAT_MODE_OFF;

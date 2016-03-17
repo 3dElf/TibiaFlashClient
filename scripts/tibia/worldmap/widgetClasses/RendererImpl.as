@@ -1239,6 +1239,17 @@ package tibia.worldmap.widgetClasses
          graphics.endFill();
       }
       
+      function absoluteToRect(param1:Vector3D) : Rectangle
+      {
+         var _loc2_:Rectangle = new Rectangle();
+         param1.z = this.m_Player.position.z;
+         var _loc3_:Vector3D = this.m_WorldMapStorage.toMap(param1);
+         var _loc4_:int = _loc3_.x * FIELD_SIZE * this.m_Transform.a + this.m_Transform.tx;
+         var _loc5_:int = _loc3_.y * FIELD_SIZE * this.m_Transform.d + this.m_Transform.ty;
+         _loc2_.setTo(_loc4_,_loc5_,FIELD_SIZE * this.m_Transform.a,FIELD_SIZE * this.m_Transform.d);
+         return _loc2_;
+      }
+      
       private function onOptionsChange(param1:PropertyChangeEvent) : void
       {
          switch(param1.property)
@@ -1483,6 +1494,11 @@ package tibia.worldmap.widgetClasses
                      this.m_WorldMapStorage.toMapClosest(_loc3_[_loc1_].position,this.m_HelperCoordinate);
                      this.m_HelperPoint.x = (this.m_HelperCoordinate.x - 1) * _loc4_.width + _loc4_.width / 2;
                      this.m_HelperPoint.y = (this.m_HelperCoordinate.y - 1) * _loc4_.height - _loc3_[_loc1_].height / 2;
+                     if(!this.m_OptionsScaleMap)
+                     {
+                        this.m_HelperPoint.x = this.m_HelperPoint.x - Math.max(0,MAP_WIDTH * FIELD_SIZE - unscaledWidth) / 2;
+                        this.m_HelperPoint.y = this.m_HelperPoint.y - Math.max(0,MAP_HEIGHT * FIELD_SIZE - unscaledHeight) / 2;
+                     }
                }
                _loc7_[_loc1_] = new Point();
                _loc5_[_loc1_] = new Rectangle();

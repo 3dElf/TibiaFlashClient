@@ -1,24 +1,23 @@
 package tibia.input.gameaction
 {
    import shared.utility.Vector3D;
-   import tibia.chat.ChatStorage;
-   import tibia.chat.ChatWidget;
    import tibia.chat.MessageMode;
    import tibia.worldmap.WorldMapStorage;
    import tibia.creatures.Creature;
+   import tibia.chat.ChatStorage;
    
-   public class GreetAction extends TalkAction
+   public class GreetAction extends TalkActionImpl
    {
       
       private static const GREET_TEXT:String = "Hi";
       
       private static const MAX_NPC_DISTANCE:uint = 3;
        
-      private var m_NPC:Creature = null;
+      protected var m_NPC:Creature = null;
       
       public function GreetAction(param1:Creature)
       {
-         super(GREET_TEXT,true);
+         super(GREET_TEXT,true,ChatStorage.LOCAL_CHANNEL_ID);
          if(param1 == null)
          {
             throw new ArgumentError("GreetAction.GreetAction: NPC must not be null.");
@@ -43,21 +42,13 @@ package tibia.input.gameaction
       
       override public function perform(param1:Boolean = false) : void
       {
-         var _loc2_:ChatStorage = null;
-         var _loc3_:ChatWidget = null;
          if(!this.isNpcInReach)
          {
             Tibia.s_GetWorldMapStorage().addOnscreenMessage(MessageMode.MESSAGE_FAILURE,WorldMapStorage.MSG_NPC_TOO_FAR);
          }
          else
          {
-            _loc2_ = Tibia.s_GetChatStorage();
-            _loc3_ = Tibia.s_GetChatWidget();
-            if(_loc2_ != null && _loc3_ != null)
-            {
-               _loc3_.leftChannel = _loc2_.getChannel(ChatStorage.LOCAL_CHANNEL_ID);
-               super.perform(param1);
-            }
+            super.perform(param1);
          }
       }
    }

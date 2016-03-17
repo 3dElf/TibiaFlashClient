@@ -16,7 +16,6 @@ package tibia.game
    import tibia.appearances.AppearanceInstance;
    import tibia.input.gameaction.SafeTradeActionImpl;
    import tibia.input.gameaction.MoveActionImpl;
-   import tibia.input.gameaction.GreetAction;
    import shared.utility.closure;
    import tibia.input.gameaction.PrivateChatActionImpl;
    import tibia.input.gameaction.BuddylistActionImpl;
@@ -304,14 +303,14 @@ package tibia.game
                {
                   if(m_UseTarget.object != null)
                   {
-                     new UseActionImpl(m_Absolute,m_UseTarget.object,m_UseTarget.position,UseActionImpl.TARGET_AUTO).perform();
+                     Tibia.s_GameActionFactory.createUseAction(m_Absolute,m_UseTarget.object,m_UseTarget.position,UseActionImpl.TARGET_AUTO).perform();
                   }
                });
                createTextItem(resourceManager.getString(BUNDLE,"CTX_OBJECT_OPEN_NEW_WINDOW"),function(param1:*):void
                {
                   if(m_UseTarget.object != null)
                   {
-                     new UseActionImpl(m_Absolute,m_UseTarget.object,m_UseTarget.position,UseActionImpl.TARGET_NEW_WINDOW).perform();
+                     Tibia.s_GameActionFactory.createUseAction(m_Absolute,m_UseTarget.object,m_UseTarget.position,UseActionImpl.TARGET_NEW_WINDOW).perform();
                   }
                });
             }
@@ -321,7 +320,7 @@ package tibia.game
                {
                   if(m_UseTarget.object != null)
                   {
-                     new UseActionImpl(m_Absolute,m_UseTarget.object,m_UseTarget.position,UseActionImpl.TARGET_NEW_WINDOW).perform();
+                     Tibia.s_GameActionFactory.createUseAction(m_Absolute,m_UseTarget.object,m_UseTarget.position,UseActionImpl.TARGET_NEW_WINDOW).perform();
                   }
                });
             }
@@ -332,7 +331,7 @@ package tibia.game
             {
                if(m_UseTarget.object != null)
                {
-                  new UseActionImpl(m_Absolute,m_UseTarget.object,m_UseTarget.position,UseActionImpl.TARGET_AUTO).perform();
+                  Tibia.s_GameActionFactory.createUseAction(m_Absolute,m_UseTarget.object,m_UseTarget.position,UseActionImpl.TARGET_AUTO).perform();
                }
             });
          }
@@ -376,7 +375,7 @@ package tibia.game
                if(m_LookTarget.object != null)
                {
                   _loc2_ = new Vector3D(m_Absolute.x,m_Absolute.y,254);
-                  new MoveActionImpl(m_Absolute,m_LookTarget.object,m_LookTarget.position,_loc2_,MoveActionImpl.MOVE_ALL).perform();
+                  Tibia.s_GameActionFactory.createMoveAction(m_Absolute,m_LookTarget.object,m_LookTarget.position,_loc2_,MoveActionImpl.MOVE_ALL).perform();
                }
             });
          }
@@ -389,14 +388,14 @@ package tibia.game
             {
                createTextItem(resourceManager.getString(BUNDLE,"CTX_CREATURE_TALK"),function(param1:*):void
                {
-                  new GreetAction(m_CreatureTarget).perform();
+                  Tibia.s_GameActionFactory.createGreetAction(m_CreatureTarget).perform();
                });
             }
             else
             {
                createTextItem(resourceManager.getString(BUNDLE,_Creature != null && _Creature.ID == this.m_CreatureTarget.ID?"CTX_CREATURE_ATTACK_STOP":"CTX_CREATURE_ATTACK_START"),closure(null,function(param1:CreatureStorage, param2:Creature, param3:*):void
                {
-                  param1.toggleAttackTarget(param2,true);
+                  Tibia.s_GameActionFactory.createToggleAttackTargetAction(param2,true).perform();
                },_CreatureStorage,this.m_CreatureTarget));
             }
             _Creature = _CreatureStorage.getFollowTarget();

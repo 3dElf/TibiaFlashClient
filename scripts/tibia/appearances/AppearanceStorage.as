@@ -7,7 +7,6 @@ package tibia.appearances
    import flash.events.Event;
    import tibia.appearances.widgetClasses.AsyncCompressedSpriteProvider;
    import tibia.appearances.widgetClasses.AsyncSpriteCache;
-   import tibia.game.AppearancesAsset;
    import flash.system.System;
    import flash.events.ErrorEvent;
    import flash.utils.ByteArray;
@@ -237,6 +236,9 @@ package tibia.appearances
          _Type.isAvoid = true;
          _Type.isCachable = false;
          this.m_ObjectTypes[AppearanceInstance.CREATURE] = _Type;
+         _Type = this.m_ObjectTypes[AppearanceInstance.PURSE];
+         _Type.isUnmoveable = true;
+         _Type.isTakeable = false;
          _Type = new tibia.appearances.AppearanceType(OutfitInstance.INVISIBLE_OUTFIT_ID);
          _Type.width = 1;
          _Type.height = 1;
@@ -257,18 +259,21 @@ package tibia.appearances
          _Type.isAnimateAlways = true;
          _Type.isAnimation = true;
          _Type.isCachable = false;
-         i = 0;
-         while(i < 3)
+         if(this.m_EffectTypes[13].spriteIDs.length > 1)
          {
-            j = 0;
-            while(j < 4)
+            i = 0;
+            while(i < 3)
             {
-               _Type.spriteIDs[i * 4 + j] = this.m_EffectTypes[13].spriteIDs[i + 1];
-               j++;
+               j = 0;
+               while(j < 4)
+               {
+                  _Type.spriteIDs[i * 4 + j] = this.m_EffectTypes[13].spriteIDs[i + 1];
+                  j++;
+               }
+               i++;
             }
-            i++;
+            this.m_OutfitTypes[OutfitInstance.INVISIBLE_OUTFIT_ID] = _Type;
          }
-         this.m_OutfitTypes[OutfitInstance.INVISIBLE_OUTFIT_ID] = _Type;
          _Type = this.m_EffectTypes[34];
          i = 0;
          while(i < _Type.phases)

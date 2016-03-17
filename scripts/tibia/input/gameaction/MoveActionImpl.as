@@ -41,7 +41,7 @@ package tibia.input.gameaction
          {
             throw new ArgumentError("MoveActionImpl.MoveActionImpl: Invalid source co-ordinate.");
          }
-         this.m_SourceAbsolute = param1;
+         this.m_SourceAbsolute = param1.clone();
          if(param2 == null || param2.type == null)
          {
             throw new ArgumentError("MoveActionImpl.MoveActionImpl: Invalid object.");
@@ -60,7 +60,7 @@ package tibia.input.gameaction
          {
             throw new ArgumentError("MoveActionImpl.MoveActionImpl: Invalid destination co-ordinate.");
          }
-         this.m_DestAbsolute = param4;
+         this.m_DestAbsolute = param4.clone();
          if(param5 < MOVE_ALL || param5 > 100)
          {
             throw new ArgumentError("MoveActionImpl.MoveActionImpl: Invalid amount.");

@@ -7,7 +7,6 @@ package tibia.game
    import flash.events.Event;
    import flash.events.MouseEvent;
    import mx.controls.Label;
-   import build.BuildConstants;
    
    public class FocusNotifier extends UIComponent
    {
@@ -102,23 +101,16 @@ package tibia.game
          {
             _loc3_ = getStyle("modalTransparencyColor");
             _loc4_ = getStyle("modalTransparency");
-            if(BuildConstants.FOCUS_NOTIFIER_FULLY_TRANSPARENT)
-            {
-               _loc4_ = 0;
-            }
             graphics.beginFill(_loc3_,_loc4_);
             graphics.drawRect(0,0,param1,param2);
             graphics.endFill();
          }
-         if(BuildConstants.FOCUS_NOTIFIER_SHOW_HINT_LABEL)
+         if(this.m_UILabel != null)
          {
-            if(this.m_UILabel != null)
-            {
-               _loc5_ = this.m_UILabel.getExplicitOrMeasuredHeight();
-               _loc6_ = this.m_UILabel.getExplicitOrMeasuredWidth();
-               this.m_UILabel.move((param1 - _loc6_) / 2,(param2 - _loc5_) / 4);
-               this.m_UILabel.setActualSize(_loc6_,_loc5_);
-            }
+            _loc5_ = this.m_UILabel.getExplicitOrMeasuredHeight();
+            _loc6_ = this.m_UILabel.getExplicitOrMeasuredWidth();
+            this.m_UILabel.move((param1 - _loc6_) / 2,(param2 - _loc5_) / 4);
+            this.m_UILabel.setActualSize(_loc6_,_loc5_);
          }
       }
       
