@@ -63,27 +63,32 @@ package tibia.actionbar
          return _loc5_;
       }
       
+      public function initialiseDefaultActionBars() : void
+      {
+         var _loc1_:tibia.actionbar.ActionBar = new tibia.actionbar.ActionBar(LOCATION_BOTTOM);
+         _loc1_.visible = true;
+         this.setActionBar(_loc1_);
+         var _loc2_:tibia.actionbar.ActionBar = new tibia.actionbar.ActionBar(LOCATION_LEFT);
+         this.setActionBar(_loc2_);
+         var _loc3_:tibia.actionbar.ActionBar = new tibia.actionbar.ActionBar(LOCATION_RIGHT);
+         this.setActionBar(_loc3_);
+         var _loc4_:tibia.actionbar.ActionBar = new tibia.actionbar.ActionBar(LOCATION_TOP);
+         this.setActionBar(_loc4_);
+      }
+      
+      public function get ID() : int
+      {
+         return this.m_ID;
+      }
+      
+      public function getActionBar(param1:int) : tibia.actionbar.ActionBar
+      {
+         return this.m_ActionBars[param1];
+      }
+      
       function changeID(param1:int) : void
       {
          this.m_ID = param1;
-      }
-      
-      public function setActionBar(param1:tibia.actionbar.ActionBar) : void
-      {
-         if(param1 == null)
-         {
-            throw new ArgumentError("ActionBarSet.setActionBar: Invalid action bar.");
-         }
-         var _loc2_:int = param1.location;
-         if(this.m_ActionBars[_loc2_] != param1)
-         {
-            if(this.m_ActionBars[_loc2_] != null)
-            {
-               this.m_ActionBars[_loc2_].removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onActionBarChange);
-            }
-            this.m_ActionBars[_loc2_] = param1;
-            this.m_ActionBars[_loc2_].addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onActionBarChange,false,EventPriority.DEFAULT_HANDLER,false);
-         }
       }
       
       protected function onActionBarChange(param1:PropertyChangeEvent) : void
@@ -92,16 +97,6 @@ package tibia.actionbar
          {
             dispatchEvent(param1);
          }
-      }
-      
-      public function getActionBar(param1:int) : tibia.actionbar.ActionBar
-      {
-         return this.m_ActionBars[param1];
-      }
-      
-      public function get ID() : int
-      {
-         return this.m_ID;
       }
       
       public function marshall() : XML
@@ -122,17 +117,28 @@ package tibia.actionbar
          return _loc1_;
       }
       
-      public function initialiseDefaultActionBars() : void
+      public function setActionBar(param1:tibia.actionbar.ActionBar) : void
       {
-         var _loc1_:tibia.actionbar.ActionBar = new tibia.actionbar.ActionBar(LOCATION_BOTTOM);
-         _loc1_.visible = true;
-         this.setActionBar(_loc1_);
-         var _loc2_:tibia.actionbar.ActionBar = new tibia.actionbar.ActionBar(LOCATION_LEFT);
-         this.setActionBar(_loc2_);
-         var _loc3_:tibia.actionbar.ActionBar = new tibia.actionbar.ActionBar(LOCATION_RIGHT);
-         this.setActionBar(_loc3_);
-         var _loc4_:tibia.actionbar.ActionBar = new tibia.actionbar.ActionBar(LOCATION_TOP);
-         this.setActionBar(_loc4_);
+         if(param1 == null)
+         {
+            throw new ArgumentError("ActionBarSet.setActionBar: Invalid action bar.");
+         }
+         var _loc2_:int = param1.location;
+         if(this.m_ActionBars[_loc2_] != param1)
+         {
+            if(this.m_ActionBars[_loc2_] != null)
+            {
+               this.m_ActionBars[_loc2_].removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onActionBarChange);
+            }
+            this.m_ActionBars[_loc2_] = param1;
+            this.m_ActionBars[_loc2_].addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onActionBarChange,false,EventPriority.DEFAULT_HANDLER,false);
+         }
+      }
+      
+      public function clone() : ActionBarSet
+      {
+         var _loc1_:XML = this.marshall();
+         return s_Unmarshall(_loc1_,OPTIONS_MAX_COMPATIBLE_VERSION);
       }
    }
 }

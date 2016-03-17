@@ -228,7 +228,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 2177;
+      public static const CLIENT_VERSION:uint = 2191;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -504,7 +504,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1082;
+      public static const PROTOCOL_VERSION:int = 1090;
       
       protected static const CEDITGUILDMESSAGE:int = 156;
       
@@ -3750,6 +3750,13 @@ package tibia.network
          {
             _loc2_.data = {
                "type":ConnectionEvent.DEATH_BLESSED,
+               "fairFightFactor":0
+            };
+         }
+         else if(_loc3_ == 2)
+         {
+            _loc2_.data = {
+               "type":ConnectionEvent.DEATH_NOPENALTY,
                "fairFightFactor":0
             };
          }

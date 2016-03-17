@@ -22,6 +22,7 @@ package
             "DLG_CLIENT_CHANGE_TEXT":"This character lives on a world that needs a different client. Do you want to switch the client?",
             "DLG_CONNECTION_LOST_TEXT":"{0}\n\nWaiting another {1} before closing.",
             "DLG_CONNECTION_LOST_MESSAGE":"Game Server not responding.",
+            "DLG_DEAD_TEXT_NOPENALTY":"Alas! Brave adventurer, you have met a sad fate. But in this dark hour<br>fortune smiled on you and the gods will bring you back into the world<br>for free.<br><br>You lost the battle, but you did not lose any items, experience or skill<br>points. You also kept any possible blessings or an Amulet of Loss you<br>may have worn.<br><br>Simply click on \'<b>Okay</b>\' to resume your journeys in Tibia!",
             "DLG_CONNECTING_TITLE":"Please wait",
             "DLG_LOGINERROR_TEXT":"{0}",
             "DLG_ERROR_TEXT_INTERNAL":"An internal error has occurred (Code: {0}.{1}).",

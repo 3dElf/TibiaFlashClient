@@ -18,6 +18,8 @@ package tibia.premium
       
       private static const ICON_CLASS_PROMOTION_CLASS:Class = PremiumMessage_ICON_CLASS_PROMOTION_CLASS;
       
+      public static const ACCESS_ARENAS:tibia.premium.PremiumMessage = new tibia.premium.PremiumMessage("LBL_ACCESS_ARENAS",ICON_ACCESS_ARENAS_BITMAP);
+      
       private static const ICON_CLASS_PROMOTION_BITMAP:BitmapData = (new ICON_CLASS_PROMOTION_CLASS() as BitmapAsset).bitmapData;
       
       private static const ICON_DEATH_PENALTY_CLASS:Class = PremiumMessage_ICON_DEATH_PENALTY_CLASS;
@@ -72,6 +74,8 @@ package tibia.premium
       
       private static const ICON_RENEW_PREMIUM_BITMAP:BitmapData = (new ICON_RENEW_PREMIUM_CLASS() as BitmapAsset).bitmapData;
       
+      private static const ICON_ACCESS_ARENAS_CLASS:Class = PremiumMessage_ICON_ACCESS_ARENAS_CLASS;
+      
       private static const ICON_XP_BOOST_CLASS:Class = PremiumMessage_ICON_XP_BOOST_CLASS;
       
       private static const ICON_TRAVEL_FASTER_CLASS:Class = PremiumMessage_ICON_TRAVEL_FASTER_CLASS;
@@ -79,6 +83,8 @@ package tibia.premium
       public static const CLASS_PROMOTION:tibia.premium.PremiumMessage = new tibia.premium.PremiumMessage("LBL_CLASS_PROMOTION",ICON_CLASS_PROMOTION_BITMAP);
       
       public static const TRAIN_OFFLINE:tibia.premium.PremiumMessage = new tibia.premium.PremiumMessage("LBL_TRAIN_OFFLINE",ICON_TRAINING_BITMAP);
+      
+      private static const ICON_ACCESS_ARENAS_BITMAP:BitmapData = (new ICON_ACCESS_ARENAS_CLASS() as BitmapAsset).bitmapData;
       
       private static const ICON_TRAINING_BITMAP:BitmapData = (new ICON_TRAINING_CLASS() as BitmapAsset).bitmapData;
       

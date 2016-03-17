@@ -1009,13 +1009,14 @@ package tibia.actionbar.widgetClasses
       override protected function measure() : void
       {
          var _loc1_:EdgeMetrics = null;
+         var _loc5_:Number = NaN;
          var _loc6_:Number = NaN;
          super.measure();
          _loc1_ = viewMetricsAndPadding;
          var _loc2_:Number = this.m_Direction == DIRECTION_HORIZONTAL?Number(getStyle("horizontalGap")):Number(getStyle("verticalGap"));
          var _loc3_:Number = this.m_UIToggleButton.getExplicitOrMeasuredHeight();
          var _loc4_:Number = this.m_UIToggleButton.getExplicitOrMeasuredWidth();
-         var _loc5_:Number = this.m_UIScrollUpButton.getExplicitOrMeasuredHeight() + this.m_UIScrollDownButton.getExplicitOrMeasuredHeight();
+         _loc5_ = this.m_UIScrollUpButton.getExplicitOrMeasuredHeight() + this.m_UIScrollDownButton.getExplicitOrMeasuredHeight();
          _loc6_ = this.m_UIScrollUpButton.getExplicitOrMeasuredWidth() + this.m_UIScrollDownButton.getExplicitOrMeasuredWidth();
          var _loc7_:UIComponent = null;
          var _loc8_:Number = 0;

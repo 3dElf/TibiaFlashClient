@@ -29,6 +29,8 @@ package tibia.premium
       
       protected static const PREMIUM_TRIGGER_DEATH_PENALTY:uint = 7;
       
+      protected static const PREMIUM_TRIGGER_ACCESS_ARENAS:uint = 15;
+      
       public static const HIGHLIGHT_TIMEOUT:int = 1000 * 60 * 10;
       
       protected static const PREMIUM_TRIGGER_ALL_SPELLS:uint = 2;
@@ -152,6 +154,8 @@ package tibia.premium
                return tibia.premium.PremiumMessage.CLASS_PROMOTION;
             case PREMIUM_TRIGGER_RENEW_PREMIUM:
                return tibia.premium.PremiumMessage.RENEW_PREMIUM;
+            case PREMIUM_TRIGGER_ACCESS_ARENAS:
+               return tibia.premium.PremiumMessage.ACCESS_ARENAS;
             default:
                throw new ArgumentError("Invalid premium trigger ID: " + param1);
          }

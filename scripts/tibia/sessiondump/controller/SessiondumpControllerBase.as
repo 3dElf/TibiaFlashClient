@@ -240,7 +240,7 @@ package tibia.sessiondump.controller
       
       protected static const CROTATEWEST:int = 114;
       
-      public static const PROTOCOL_VERSION:int = 1082;
+      public static const PROTOCOL_VERSION:int = 1090;
       
       protected static const SCREATUREOUTFIT:int = 142;
       

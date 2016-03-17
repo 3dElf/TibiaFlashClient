@@ -116,7 +116,7 @@ package
       
       protected static const CONNECTION_STATE_PENDING:int = 3;
       
-      public static const PROTOCOL_VERSION:int = 1082;
+      public static const PROTOCOL_VERSION:int = 1090;
       
       public static var s_FrameTibiaTimestamp:Number = 0;
       
@@ -138,7 +138,7 @@ package
       
       protected static const CHECKSUM_POS:int = PACKETLENGTH_POS + PACKETLENGTH_SIZE;
       
-      public static const CLIENT_VERSION:uint = 2177;
+      public static const CLIENT_VERSION:uint = 2191;
       
       public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
       
@@ -3266,6 +3266,10 @@ package
          else if(_loc2_.type == ConnectionEvent.DEATH_BLESSED)
          {
             _loc3_.message = resourceManager.getString(BUNDLE,"DLG_DEAD_TEXT_BLESSED");
+         }
+         else if(_loc2_.type == ConnectionEvent.DEATH_NOPENALTY)
+         {
+            _loc3_.message = resourceManager.getString(BUNDLE,"DLG_DEAD_TEXT_NOPENALTY");
          }
          else
          {

@@ -627,6 +627,7 @@ package tibia.options.configurationWidgetClasses
                _loc5_ = {
                   "oldID":_loc4_.ID,
                   "newID":-1,
+                  "cloneID":-1,
                   "name":_loc4_.name,
                   "chatModeOn":this.createMapping(_loc4_.chatModeOn.binding),
                   "chatModeOff":this.createMapping(_loc4_.chatModeOff.binding),
@@ -800,14 +801,16 @@ package tibia.options.configurationWidgetClasses
          var _loc3_:int = 0;
          var _loc4_:Array = null;
          var _loc5_:Array = null;
-         var _loc6_:OptionsEditorEvent = null;
-         var _loc7_:MappingSet = null;
+         var _loc6_:int = 0;
+         var _loc7_:OptionsEditorEvent = null;
+         var _loc8_:MappingSet = null;
          if(param1.detail == EmbeddedDialog.OKAY && this.countSets() < Math.max(ActionBarSet.NUM_SETS,MappingSet.NUM_SETS))
          {
             _loc2_ = AddMappingSetDialog(param1.currentTarget);
             _loc3_ = -1;
             _loc4_ = null;
             _loc5_ = null;
+            _loc6_ = -1;
             if(_loc2_.mappingSets != null && _loc2_.selectedIndex >= 0 && _loc2_.selectedIndex < _loc2_.mappingSets.length)
             {
                _loc3_ = _loc2_.mappingSets[_loc2_.selectedIndex].index;
@@ -816,12 +819,20 @@ package tibia.options.configurationWidgetClasses
             {
                _loc4_ = this.cloneMapping(this.m_MappingSets[_loc3_].chatModeOff);
                _loc5_ = this.cloneMapping(this.m_MappingSets[_loc3_].chatModeOn);
+               if(this.m_MappingSets[_loc3_].oldID != -1)
+               {
+                  _loc6_ = this.m_MappingSets[_loc3_].oldID;
+               }
+               else
+               {
+                  _loc6_ = this.m_MappingSets[_loc3_].cloneID;
+               }
             }
             else
             {
-               _loc7_ = this.m_Options.getDefaultMappingSet();
-               _loc4_ = this.createMapping(_loc7_.chatModeOff.binding);
-               _loc5_ = this.createMapping(_loc7_.chatModeOn.binding);
+               _loc8_ = this.m_Options.getDefaultMappingSet();
+               _loc4_ = this.createMapping(_loc8_.chatModeOff.binding);
+               _loc5_ = this.createMapping(_loc8_.chatModeOn.binding);
             }
             this.m_Index = Math.max(0,this.m_Index + 1);
             this.m_UncommittedIndex = true;
@@ -829,13 +840,14 @@ package tibia.options.configurationWidgetClasses
             this.m_MappingSets.splice(this.m_Index,0,{
                "oldID":-1,
                "newID":-1,
+               "cloneID":_loc6_,
                "name":resourceManager.getString(ConfigurationWidget.BUNDLE,"HOTKEY_DLG_ADD_NEW_SET"),
                "chatModeOff":_loc4_,
                "chatModeOn":_loc5_,
                "state":STATE_CHANGED
             });
-            _loc6_ = new OptionsEditorEvent(OptionsEditorEvent.VALUE_CHANGE);
-            dispatchEvent(_loc6_);
+            _loc7_ = new OptionsEditorEvent(OptionsEditorEvent.VALUE_CHANGE);
+            dispatchEvent(_loc7_);
          }
       }
       
@@ -929,6 +941,7 @@ package tibia.options.configurationWidgetClasses
                   }
                   if(_loc6_.oldID != -1 && _loc6_.oldID != _loc6_.newID)
                   {
+                     _loc6_.cloneID = _loc6_.newID;
                      _loc7_ = this.m_Options.getMappingSet(_loc6_.oldID);
                      if(_loc7_ != null)
                      {
@@ -956,7 +969,14 @@ package tibia.options.configurationWidgetClasses
                   this.m_Options.addMappingSet(_loc7_);
                   if(_loc6_.oldID == -1)
                   {
-                     _loc8_ = this.m_Options.getDefaultActionBarSet();
+                     if(_loc6_.cloneID == -1)
+                     {
+                        _loc8_ = this.m_Options.getDefaultActionBarSet();
+                     }
+                     else
+                     {
+                        _loc8_ = this.m_Options.getActionBarSet(_loc6_.cloneID).clone();
+                     }
                      _loc8_.changeID(_loc6_.newID);
                      this.m_Options.addActionBarSet(_loc8_);
                   }
