@@ -5,63 +5,63 @@ package
    public class en_US$TutorialHintWidget_properties extends ResourceBundle
    {
       
-      private static var _embed_properties_______images_help_hint_35_knownspellshealing_png_2133130292:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_35_knownspellshealing_png_2133130292;
+      private static var _embed_properties_______images_help_hint_37_spellactionbarhealing_png_1837077039:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_37_spellactionbarhealing_png_1837077039;
       
-      private static var _embed_properties_______images_help_hint_32_userunebattlelist_png_14793200:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_32_userunebattlelist_png_14793200;
+      private static var _embed_properties_______images_help_hint_06_usetorch_png_460526675:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_06_usetorch_png_460526675;
       
-      private static var _embed_properties_______images_help_hint_29_knownspells_png_1920486602:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_29_knownspells_png_1920486602;
+      private static var _embed_properties_______images_help_hint_39_lootcorpse_png_60494195:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_39_lootcorpse_png_60494195;
       
-      private static var _embed_properties_______images_help_hint_37_spellactionbarhealing_png_1570695666:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_37_spellactionbarhealing_png_1570695666;
+      private static var _embed_properties_______images_help_hint_36_dragspellhealing_png_34579771:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_36_dragspellhealing_png_34579771;
       
-      private static var _embed_properties_______images_help_hint_31_spellactionbar_png_17527086:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_31_spellactionbar_png_17527086;
+      private static var _embed_properties_______images_help_hint_05_dragcoat_png_1219482221:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_05_dragcoat_png_1219482221;
       
-      private static var _embed_properties_______images_help_hint_24_multiuse_png_577805080:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_24_multiuse_png_577805080;
+      private static var _embed_properties_______images_help_hint_16_whiteskull_png_1749033747:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_whiteskull_png_1749033747;
       
-      private static var _embed_properties_______images_help_hint_04_openchest_png_2008762342:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_04_openchest_png_2008762342;
+      private static var _embed_properties_______images_help_hint_13_npctradeupper_png_506330351:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_13_npctradeupper_png_506330351;
       
-      private static var _embed_properties_______images_help_hint_30_dragspell_png_1808549870:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_30_dragspell_png_1808549870;
+      private static var _embed_properties_______images_help_hint_20_premium_png_1580403449:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_20_premium_png_1580403449;
       
-      private static var _embed_properties_______images_help_hint_28_spelllist_png_2004207108:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_28_spelllist_png_2004207108;
+      private static var _embed_properties_______images_help_hint_31_spellactionbar_png_327220307:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_31_spellactionbar_png_327220307;
       
-      private static var _embed_properties_______images_help_hint_16_redskull_png_1569832338:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_redskull_png_1569832338;
+      private static var _embed_properties_______images_help_hint_35_knownspellshealing_png_1397242389:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_35_knownspellshealing_png_1397242389;
       
-      private static var _embed_properties_______images_help_hint_22_hi_png_1269572030:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_22_hi_png_1269572030;
+      private static var _embed_properties_______images_help_hint_32_userunebattlelist_png_1647774901:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_32_userunebattlelist_png_1647774901;
       
-      private static var _embed_properties_______images_help_hint_02_automap_png_620065938:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_02_automap_png_620065938;
+      private static var _embed_properties_______images_help_hint_04_openchest_png_182332747:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_04_openchest_png_182332747;
       
-      private static var _embed_properties_______images_help_hint_06_usetorch_png_92316322:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_06_usetorch_png_92316322;
+      private static var _embed_properties_______images_help_hint_23_ladder_png_1834556147:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_23_ladder_png_1834556147;
       
-      private static var _embed_properties_______images_help_hint_26_distancefighting_png_421356606:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_26_distancefighting_png_421356606;
+      private static var _embed_properties_______images_help_hint_10_useshovel_png_1882499503:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_10_useshovel_png_1882499503;
       
-      private static var _embed_properties_______images_help_hint_01_mouse_png_512898032:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_01_mouse_png_512898032;
+      private static var _embed_properties_______images_help_hint_01_arrowkeys_png_595354315:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_01_arrowkeys_png_595354315;
       
-      private static var _embed_properties_______images_help_hint_05_dragcoat_png_1373641836:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_05_dragcoat_png_1373641836;
+      private static var _embed_properties_______images_help_hint_02_automap_png_1321208085:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_02_automap_png_1321208085;
       
-      private static var _embed_properties_______images_help_hint_01_arrowkeys_png_809121936:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_01_arrowkeys_png_809121936;
+      private static var _embed_properties_______images_help_hint_16_redskull_png_1284502413:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_redskull_png_1284502413;
       
-      private static var _embed_properties_______images_help_hint_36_dragspellhealing_png_1151202366:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_36_dragspellhealing_png_1151202366;
+      private static var _embed_properties_______images_help_hint_30_dragspell_png_47951055:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_30_dragspell_png_47951055;
       
-      private static var _embed_properties_______images_help_hint_20_premium_png_619699510:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_20_premium_png_619699510;
+      private static var _embed_properties_______images_help_hint_29_knownspells_png_999017593:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_29_knownspells_png_999017593;
       
-      private static var _embed_properties_______images_help_hint_08_openbody_png_25518584:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_08_openbody_png_25518584;
+      private static var _embed_properties_______images_help_hint_24_multiuse_png_290332715:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_24_multiuse_png_290332715;
       
-      private static var _embed_properties_______images_help_hint_25_closecombat_png_1311742162:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_25_closecombat_png_1311742162;
+      private static var _embed_properties_______images_help_hint_25_closecombat_png_108571605:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_25_closecombat_png_108571605;
       
-      private static var _embed_properties_______images_help_hint_39_lootcorpse_png_1312945716:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_39_lootcorpse_png_1312945716;
+      private static var _embed_properties_______images_help_hint_26_distancefighting_png_141617349:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_26_distancefighting_png_141617349;
       
-      private static var _embed_properties_______images_help_hint_16_whiteskull_png_718909022:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_16_whiteskull_png_718909022;
+      private static var _embed_properties_______images_help_hint_11_userope_png_1479404047:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_11_userope_png_1479404047;
       
-      private static var _embed_properties_______images_help_hint_38_attackbattlelist_png_812381198:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_38_attackbattlelist_png_812381198;
+      private static var _embed_properties_______images_help_hint_38_attackbattlelist_png_421681357:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_38_attackbattlelist_png_421681357;
       
-      private static var _embed_properties_______images_help_hint_10_useshovel_png_936132622:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_10_useshovel_png_936132622;
+      private static var _embed_properties_______images_help_hint_01_mouse_png_558362475:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_01_mouse_png_558362475;
       
-      private static var _embed_properties_______images_help_hint_13_npctradeupper_png_946836750:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_13_npctradeupper_png_946836750;
+      private static var _embed_properties_______images_help_hint_22_hi_png_540258419:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_22_hi_png_540258419;
       
-      private static var _embed_properties_______images_help_hint_11_userope_png_881929170:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_11_userope_png_881929170;
+      private static var _embed_properties_______images_help_hint_28_spelllist_png_870280359:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_28_spelllist_png_870280359;
       
-      private static var _embed_properties_______images_help_hint_13_npctradelower_png_138984500:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_13_npctradelower_png_138984500;
+      private static var _embed_properties_______images_help_hint_08_openbody_png_425251899:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_08_openbody_png_425251899;
       
-      private static var _embed_properties_______images_help_hint_23_ladder_png_1853277886:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_23_ladder_png_1853277886;
+      private static var _embed_properties_______images_help_hint_13_npctradelower_png_1993401551:Class = en_US$TutorialHintWidget_properties__embed_properties_______images_help_hint_13_npctradelower_png_1993401551;
        
       public function en_US$TutorialHintWidget_properties()
       {
@@ -71,20 +71,20 @@ package
       override protected function getContent() : Object
       {
          var _loc1_:Object = {
-            "HINT_35_IMG_KNOWNSPELLSHEALING":_embed_properties_______images_help_hint_35_knownspellshealing_png_2133130292,
-            "HINT_28_IMG_SPELLIST":_embed_properties_______images_help_hint_28_spelllist_png_2004207108,
+            "HINT_35_IMG_KNOWNSPELLSHEALING":_embed_properties_______images_help_hint_35_knownspellshealing_png_1397242389,
+            "HINT_28_IMG_SPELLIST":_embed_properties_______images_help_hint_28_spelllist_png_870280359,
             "HINT_13_IMAGES":"HINT_13_IMG_NPCTRADEUPPER, HINT_13_IMG_NPCTRADELOWER",
-            "HINT_01_IMG_ARROWKEYS":_embed_properties_______images_help_hint_01_arrowkeys_png_809121936,
+            "HINT_01_IMG_ARROWKEYS":_embed_properties_______images_help_hint_01_arrowkeys_png_595354315,
             "HINT_21_NAME":"Walking on Stairs",
-            "HINT_22_IMG_HI":_embed_properties_______images_help_hint_22_hi_png_1269572030,
+            "HINT_22_IMG_HI":_embed_properties_______images_help_hint_22_hi_png_540258419,
             "HINT_39_NAME":"Looting Monsters",
             "HINT_20_TEXT":"This area is limited to premium citizens only. Buy a premium account to access new areas and unique features in Tibia!",
             "HINT_38_TEXT":"Click on the <b>chase opponent</b> icon in the <b>combat controls</b>, then click on a cockroach in the <b>battle list</b>.",
-            "HINT_04_IMG_OPENCHEST":_embed_properties_______images_help_hint_04_openchest_png_2008762342,
-            "HINT_16_IMG_WHITESKULL":_embed_properties_______images_help_hint_16_whiteskull_png_718909022,
+            "HINT_04_IMG_OPENCHEST":_embed_properties_______images_help_hint_04_openchest_png_182332747,
+            "HINT_16_IMG_WHITESKULL":_embed_properties_______images_help_hint_16_whiteskull_png_1749033747,
             "HINT_22_IMAGES":"HINT_22_IMG_HI",
             "HINT_06_NAME":"Using Object",
-            "HINT_11_USEROPE":_embed_properties_______images_help_hint_11_userope_png_881929170,
+            "HINT_11_USEROPE":_embed_properties_______images_help_hint_11_userope_png_1479404047,
             "HINT_05_TEXT":"You now have a <b>bag</b> to carry items. There is also a <b>coat</b> inside. <b>Drag and drop</b> it from the <b>bag</b> to your <b>armor slot</b> to wear it after you closed this window.",
             "HINT_02_IMAGES":"HINT_02_IMG_AUTOMAP",
             "HINT_04_IMAGES":"HINT_04_IMG_OPENCHEST",
@@ -95,20 +95,20 @@ package
             "HINT_28_NAME":"Activate Spell List",
             "HINT_11_IMAGES":"HINT_11_USEROPE",
             "HINT_27_TEXT":"Keep your distance, your HP are lower, but your attack is higher.",
-            "HINT_32_IMG_USERUNEBATTLELIST":_embed_properties_______images_help_hint_32_userunebattlelist_png_14793200,
+            "HINT_32_IMG_USERUNEBATTLELIST":_embed_properties_______images_help_hint_32_userunebattlelist_png_1647774901,
             "HINT_11_NAME":"Climbing with Rope",
             "HINT_10_TEXT":"With your new <b>shovel</b> which you can find in your inventory now you can dig holes on certain spots. Follow the path to the east to find such a place! When there <b>right-click</b> the shovel, select \'<b>Use with</b>\' and then <b>left-click</b> on the <b>loose stone pile</b>.",
             "HINT_20_IMAGES":"HINT_20_IMG_PREMIUM",
             "HINT_22_NAME":"Saying Hello",
             "HINT_21_TEXT":"Use the <b>arrow keys</b> to walk on stairs.",
             "HINT_39_TEXT":"Open the <b>dead cockroach</b> by right-clicking it and choosing <b>\'Open\'</b>, then drag the cockroach leg to your bag.",
-            "HINT_10_USESHOVEL":_embed_properties_______images_help_hint_10_useshovel_png_936132622,
+            "HINT_10_USESHOVEL":_embed_properties_______images_help_hint_10_useshovel_png_1882499503,
             "HINT_07_NAME":"Battle List and Combat Controls",
-            "HINT_30_IMG_DRAGSPELL":_embed_properties_______images_help_hint_30_dragspell_png_1808549870,
+            "HINT_30_IMG_DRAGSPELL":_embed_properties_______images_help_hint_30_dragspell_png_47951055,
             "HINT_06_TEXT":"Light your <b>torch</b> by <b>right-clicking</b> it and selecting \'<b>Use</b>\' <b>while it is in your extra slot</b>. It will slowly burn down as long as it is lit. \'<b>Use</b>\' it again to turn it off once you leave the darkness. You can use many things in Tibia, just explore the room!",
-            "HINT_39_IMG_LOOTCORPSE":_embed_properties_______images_help_hint_39_lootcorpse_png_1312945716,
+            "HINT_39_IMG_LOOTCORPSE":_embed_properties_______images_help_hint_39_lootcorpse_png_60494195,
             "HINT_34_NAME":"Activate Spell List",
-            "HINT_24_IMG_MULTIUSE":_embed_properties_______images_help_hint_24_multiuse_png_577805080,
+            "HINT_24_IMG_MULTIUSE":_embed_properties_______images_help_hint_24_multiuse_png_290332715,
             "HINT_18_NAME":"Chase Opponent Button",
             "HINT_29_NAME":"Known Spells",
             "HINT_29_IMAGES":"HINT_29_IMG_KNOWNSPELLS",
@@ -117,11 +117,11 @@ package
             "HINT_12_NAME":"Selecting Outfit",
             "HINT_11_TEXT":"With your <b>rope</b> you can climb up a rope spot to exit this cave again. <b>Right-click</b> the rope, select \'<b>Use with</b>\' and then <b>left-click</b> on the <b>rope spot</b>.",
             "HINT_38_IMAGES":"HINT_38_IMG_ATTACKBATTLELIST",
-            "HINT_01_IMG_MOUSE":_embed_properties_______images_help_hint_01_mouse_png_512898032,
+            "HINT_01_IMG_MOUSE":_embed_properties_______images_help_hint_01_mouse_png_558362475,
             "HINT_23_NAME":"Climbing Ladders",
             "HINT_22_TEXT":"Type \'hi\' in your <b>Local Chat</b> window.",
             "HINT_08_NAME":"Looting Body",
-            "HINT_13_IMG_NPCTRADEUPPER":_embed_properties_______images_help_hint_13_npctradeupper_png_946836750,
+            "HINT_13_IMG_NPCTRADEUPPER":_embed_properties_______images_help_hint_13_npctradeupper_png_506330351,
             "HINT_27_IMAGES":"HINT_26_IMG_DISTANCEFIGHTING",
             "HINT_35_NAME":"Known Spells",
             "HINT_19_NAME":"Status Bars",
@@ -134,7 +134,7 @@ package
             "HINT_16_IMAGES":"HINT_16_IMG_WHITESKULL, HINT_16_IMG_REDSKULL",
             "HINT_13_NAME":"Trading with NPCs",
             "HINT_24_NAME":"Using Two Objects",
-            "HINT_02_IMG_AUTOMAP":_embed_properties_______images_help_hint_02_automap_png_620065938,
+            "HINT_02_IMG_AUTOMAP":_embed_properties_______images_help_hint_02_automap_png_1321208085,
             "HINT_23_IMAGES":"HINT_23_IMG_LADDER",
             "HINT_25_IMAGES":"HINT_25_IMG_CLOSECOMBAT",
             "HINT_23_TEXT":"<b>Right-click exactly</b> here to use <b>ladders</b>.",
@@ -142,10 +142,10 @@ package
             "HINT_30_IMAGES":"HINT_30_IMG_DRAGSPELL",
             "HINT_32_IMAGES":"HINT_32_IMG_USERUNEBATTLELIST",
             "HINT_09_NAME":"Taking Object from Body",
-            "HINT_29_IMG_KNOWNSPELLS":_embed_properties_______images_help_hint_29_knownspells_png_1920486602,
+            "HINT_29_IMG_KNOWNSPELLS":_embed_properties_______images_help_hint_29_knownspells_png_999017593,
             "HINT_08_TEXT":"Excellent fighting technique! You can loot the <b>bodies</b> of creatures which you have killed by <b>right-clicking</b> on them and selecting \'<b>Open</b>\' from the context menu.",
             "HINT_36_NAME":"Dragging Spells",
-            "HINT_37_IMG_SPELLACTIONBAR":_embed_properties_______images_help_hint_37_spellactionbarhealing_png_1570695666,
+            "HINT_37_IMG_SPELLACTIONBAR":_embed_properties_______images_help_hint_37_spellactionbarhealing_png_1837077039,
             "HINT_35_TEXT":"Click on <b>\'Known\'</b> to show spells you already know.",
             "HINT_03_NAME":"Quests Button",
             "HINT_02_TEXT":"Very good! You can also <b>left-click</b> on your <b>Minimap</b> to go to a certain spot. Try to click on the <b>new marker</b> on your Minimap after you closed this window.",
@@ -154,33 +154,33 @@ package
             "HINT_14_NAME":"Welcome to Rookgaard",
             "HINT_13_TEXT":"Look at the <b>NPC trade window</b> to your left. Left-click on the button \'Sell\' to see what you can sell to an NPC. The button \'Buy\' shows what you can buy from an NPC. To sell meat or ham to Carlos, <b>left-click</b> on \'<b>Sell</b>\' and choose either \'<b>meat</b>\' or \'<b>ham</b>\'. If you want to change the amount, left-click and hold the slide bar, then drag it to the desired amount. <b>Click</b> \'<b>Ok</b>\' to finish the trade.",
             "HINT_01_IMAGES":"HINT_01_IMG_ARROWKEYS, HINT_01_IMG_MOUSE",
-            "HINT_23_IMG_LADDER":_embed_properties_______images_help_hint_23_ladder_png_1853277886,
-            "HINT_31_IMG_SPELLACTIONBAR":_embed_properties_______images_help_hint_31_spellactionbar_png_17527086,
+            "HINT_23_IMG_LADDER":_embed_properties_______images_help_hint_23_ladder_png_1834556147,
+            "HINT_31_IMG_SPELLACTIONBAR":_embed_properties_______images_help_hint_31_spellactionbar_png_327220307,
             "HINT_25_NAME":"Close Combat",
             "HINT_24_TEXT":"Push the branch by <b>left-clicking</b> on it, then <b>hold</b> the left mouse button <b>and drag</b> the branch to its destination. <b>Right-click</b> and choose <b>\'Use with\'</b> cart.",
-            "HINT_26_IMG_DISTANCEFIGHTING":_embed_properties_______images_help_hint_26_distancefighting_png_421356606,
+            "HINT_26_IMG_DISTANCEFIGHTING":_embed_properties_______images_help_hint_26_distancefighting_png_141617349,
             "HINT_10_IMAGES":"HINT_10_USESHOVEL",
-            "HINT_06_IMG_USETORCH":_embed_properties_______images_help_hint_06_usetorch_png_92316322,
-            "HINT_16_IMG_REDSKULL":_embed_properties_______images_help_hint_16_redskull_png_1569832338,
+            "HINT_06_IMG_USETORCH":_embed_properties_______images_help_hint_06_usetorch_png_460526675,
+            "HINT_16_IMG_REDSKULL":_embed_properties_______images_help_hint_16_redskull_png_1284502413,
             "HINT_09_TEXT":"Do you see the <b>loot window</b> to your left? <b>Drag and drop</b> the <b>cockroach leg</b> into your <b>bag</b> to take it with you! Collect 3 cockroach legs for Santiago!",
-            "HINT_38_IMG_ATTACKBATTLELIST":_embed_properties_______images_help_hint_38_attackbattlelist_png_812381198,
+            "HINT_38_IMG_ATTACKBATTLELIST":_embed_properties_______images_help_hint_38_attackbattlelist_png_421681357,
             "HINT_37_NAME":"Casting Spells",
-            "HINT_25_IMG_CLOSECOMBAT":_embed_properties_______images_help_hint_25_closecombat_png_1311742162,
+            "HINT_25_IMG_CLOSECOMBAT":_embed_properties_______images_help_hint_25_closecombat_png_108571605,
             "HINT_36_TEXT":"Drag your new spell to an <b>action button</b>.",
             "TITLE":"Tutorial Hint",
-            "HINT_08_IMG_OPENBODY":_embed_properties_______images_help_hint_08_openbody_png_25518584,
+            "HINT_08_IMG_OPENBODY":_embed_properties_______images_help_hint_08_openbody_png_425251899,
             "HINT_04_NAME":"Opening Chest",
             "HINT_39_IMAGES":"HINT_39_IMG_LOOTCORPSE",
             "HINT_31_NAME":"Casting Spells",
-            "HINT_36_IMG_DRAGSPELLHEALING":_embed_properties_______images_help_hint_36_dragspellhealing_png_1151202366,
+            "HINT_36_IMG_DRAGSPELLHEALING":_embed_properties_______images_help_hint_36_dragspellhealing_png_34579771,
             "HINT_15_NAME":"Reaching Level 8",
             "HINT_30_TEXT":"Drag your new spell to an <b>action button</b>.",
             "HINT_14_TEXT":"Welcome to the village of Rookgaard! You are on your own now, but there are a few new <b>marks</b> on your <b>Minimap</b>. Check them out for important locations and NPCs to talk to. Fight monsters to earn money for better equipment and to level up! Once you have reached level 8, you are ready to become a knight, a paladin, a sorcerer or a druid. Have fun!",
             "HINT_26_NAME":"Magic",
             "HINT_25_TEXT":"Fight at close distance, but be careful not to let yourself be circled! Always have a health potion ready!",
-            "HINT_20_IMG_PREMIUM":_embed_properties_______images_help_hint_20_premium_png_619699510,
+            "HINT_20_IMG_PREMIUM":_embed_properties_______images_help_hint_20_premium_png_1580403449,
             "HINT_28_IMAGES":"HINT_28_IMG_SPELLIST",
-            "HINT_13_IMG_NPCTRADELOWER":_embed_properties_______images_help_hint_13_npctradelower_png_138984500,
+            "HINT_13_IMG_NPCTRADELOWER":_embed_properties_______images_help_hint_13_npctradelower_png_1993401551,
             "HINT_08_IMAGES":"HINT_08_IMG_OPENBODY",
             "HINT_20_NAME":"Premium Benefits",
             "HINT_38_NAME":"Attacking Monsters",
@@ -195,7 +195,7 @@ package
             "HINT_24_IMAGES":"HINT_24_IMG_MULTIUSE",
             "HINT_26_IMAGES":"HINT_26_IMG_DISTANCEFIGHTING",
             "HINT_27_NAME":"Distance Fighting",
-            "HINT_05_IMG_DRAGCOAT":_embed_properties_______images_help_hint_05_dragcoat_png_1373641836,
+            "HINT_05_IMG_DRAGCOAT":_embed_properties_______images_help_hint_05_dragcoat_png_1219482221,
             "HINT_26_TEXT":"Keep your distance, your HP are lower, but your attack is higher.",
             "HINT_06_IMAGES":"HINT_06_IMG_USETORCH",
             "HINT_10_NAME":"Digging with Shovel"

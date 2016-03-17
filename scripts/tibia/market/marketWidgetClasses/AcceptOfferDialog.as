@@ -4,8 +4,6 @@ package tibia.market.marketWidgetClasses
    import mx.controls.Button;
    import mx.controls.TextInput;
    import flash.events.MouseEvent;
-   import tibia.market.Offer;
-   import tibia.market.MarketWidget;
    import mx.containers.Box;
    import mx.containers.HBox;
    import shared.controls.CustomButton;
@@ -13,6 +11,10 @@ package tibia.market.marketWidgetClasses
    import flash.events.Event;
    import flash.events.KeyboardEvent;
    import flash.events.TextEvent;
+   import mx.controls.Label;
+   import tibia.market.Offer;
+   import shared.utility.i18n.i18nFormatNumber;
+   import tibia.market.MarketWidget;
    
    public class AcceptOfferDialog extends EmbeddedDialog
    {
@@ -29,15 +31,17 @@ package tibia.market.marketWidgetClasses
       
       private var m_UncommittedOffer:Boolean = false;
       
+      private var m_UITotalCostLabel:Label = null;
+      
       private var m_MaxAmount:int = -1;
+      
+      private var m_UIAmountDecrease:Button = null;
       
       private var m_UncommittedMarket:Boolean = false;
       
       private var m_Market:MarketWidget = null;
       
       private var m_Offer:Offer = null;
-      
-      private var m_UIAmountDecrease:Button = null;
       
       public function AcceptOfferDialog()
       {
@@ -55,6 +59,7 @@ package tibia.market.marketWidgetClasses
             this.m_UIAmountEdit.text = String(this.amount);
             this.m_UIAmountEdit.setFocus();
             this.m_UIAmountEdit.selectionBeginIndex = this.m_UIAmountEdit.selectionEndIndex = this.m_UIAmountEdit.length + 1;
+            this.updateTotalCost();
          }
          if(!this.m_UncommittedMarket)
          {
@@ -86,27 +91,6 @@ package tibia.market.marketWidgetClasses
       public function get amount() : int
       {
          return this.m_Amount;
-      }
-      
-      public function get maxAmount() : int
-      {
-         if(this.m_MaxAmount < 0)
-         {
-            if(this.market == null || this.offer == null)
-            {
-               this.m_MaxAmount = 0;
-            }
-            else if(this.offer.kind == Offer.BUY_OFFER)
-            {
-               this.m_MaxAmount = Math.min(this.market.getDepotAmount(this.offer.typeID),this.offer.amount);
-            }
-            else
-            {
-               this.m_MaxAmount = Math.floor(this.market.accountBalance / this.offer.piecePrice);
-            }
-            this.m_MaxAmount = Math.min(this.m_MaxAmount,this.offer.amount,MarketWidget.OFFER_MAX_AMOUNT);
-         }
-         return this.m_MaxAmount;
       }
       
       override protected function createContent(param1:Box) : void
@@ -141,6 +125,8 @@ package tibia.market.marketWidgetClasses
          this.m_UIAmountIncrease.addEventListener(MouseEvent.MOUSE_DOWN,this.onButtonDown);
          this.m_UIAmountIncrease.addEventListener(MouseRepeatEvent.REPEAT_MOUSE_DOWN,this.onButtonClick);
          Inner.addChild(this.m_UIAmountIncrease);
+         this.m_UITotalCostLabel = new Label();
+         Inner.addChild(this.m_UITotalCostLabel);
          Outer.addChild(Inner);
          a_Container.minHeight = 60;
          a_Container.addChild(Outer);
@@ -158,15 +144,46 @@ package tibia.market.marketWidgetClasses
          }
       }
       
+      private function updateTotalCost() : void
+      {
+         var _loc1_:uint = 0;
+         if(this.m_Offer != null)
+         {
+            _loc1_ = this.m_Offer.piecePrice;
+         }
+         this.m_UITotalCostLabel.text = "total " + i18nFormatNumber(_loc1_ * this.amount) + " gold";
+      }
+      
       public function set amount(param1:int) : void
       {
-         param1 = Math.max(1,Math.min(param1,this.maxAmount));
+         var _loc2_:int = Math.max(1,Math.min(param1,this.maxAmount));
          if(this.m_Amount != param1)
          {
-            this.m_Amount = param1;
+            this.m_Amount = _loc2_;
             this.m_UncommittedAmount = true;
             invalidateProperties();
          }
+      }
+      
+      public function get maxAmount() : int
+      {
+         if(this.m_MaxAmount < 0)
+         {
+            if(this.market == null || this.offer == null)
+            {
+               this.m_MaxAmount = 0;
+            }
+            else if(this.offer.kind == Offer.BUY_OFFER)
+            {
+               this.m_MaxAmount = Math.min(this.market.getDepotAmount(this.offer.typeID),this.offer.amount);
+            }
+            else
+            {
+               this.m_MaxAmount = Math.floor(this.market.accountBalance / this.offer.piecePrice);
+            }
+            this.m_MaxAmount = Math.min(this.m_MaxAmount,this.offer.amount,MarketWidget.OFFER_MAX_AMOUNT);
+         }
+         return this.m_MaxAmount;
       }
       
       private function onButtonDown(param1:MouseEvent) : void

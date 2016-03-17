@@ -201,7 +201,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1349;
+      public static const CLIENT_VERSION:uint = 1404;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -441,7 +441,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1020;
+      public static const PROTOCOL_VERSION:int = 1021;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -4027,6 +4027,10 @@ package tibia.network
             else
             {
                _loc7_ = this.readObjectInstance(param1,_loc9_);
+            }
+            if(_loc7_.m_Type.isAnimation)
+            {
+               _loc7_.phase = AppearanceInstance.PHASE_ASYNCHRONOUS;
             }
             this.m_WorldMapStorage.changeObject(_loc6_.x,_loc6_.y,_loc6_.z,_loc4_,_loc7_);
          }

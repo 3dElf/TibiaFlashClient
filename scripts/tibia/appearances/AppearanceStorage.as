@@ -40,6 +40,8 @@ package tibia.appearances
       
       protected static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
       
+      public static const FLAG_USABLE:int = 254;
+      
       public static const FLAG_WRITE:int = 8;
       
       public static const FLAG_BANK:int = 0;
@@ -60,6 +62,8 @@ package tibia.appearances
       
       protected static const FIELD_SIZE:int = 32;
       
+      public static const FLAG_DEFAULT_ACTION:int = 35;
+      
       protected static const PLAYER_OFFSET_X:int = 8;
       
       protected static const PLAYER_OFFSET_Y:int = 6;
@@ -68,7 +72,7 @@ package tibia.appearances
       
       protected static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
       
-      public static const FLAG_ANIMATION:int = 35;
+      public static const FLAG_ANIMATION:int = 16776961;
       
       public static const FLAG_CONTAINER:int = 4;
       
@@ -633,6 +637,8 @@ package tibia.appearances
                case FLAG_CUMULATIVE:
                   _loc5_.isCumulative = true;
                   continue;
+               case FLAG_USABLE:
+                  continue;
                case FLAG_FORCEUSE:
                   _loc5_.isForceUse = true;
                   continue;
@@ -726,6 +732,9 @@ package tibia.appearances
                case FLAG_CLOTHES:
                   _loc5_.isCloth = true;
                   _loc5_.clothSlot = param1.readUnsignedShort();
+                  continue;
+               case FLAG_DEFAULT_ACTION:
+                  param1.readUnsignedShort();
                   continue;
                case FLAG_MARKET:
                   _loc5_.isMarket = true;

@@ -19,7 +19,7 @@ package tibia.game
    public class CharacterSelectionWidget extends PopUpBase
    {
       
-      public static const CLIENT_VERSION:uint = 1349;
+      public static const CLIENT_VERSION:uint = 1404;
       
       public static const CLIENT_PREVIEW_STATE:uint = 0;
       
@@ -71,7 +71,7 @@ package tibia.game
       
       private function scrollToSelectedCharacter() : void
       {
-         if(this.m_UIList != null)
+         if(this.m_UIList != null && this.selectedCharacterIndex != -1)
          {
             this.m_UIList.validateNow();
             this.m_UIList.scrollToIndex(this.selectedCharacterIndex);
@@ -205,6 +205,8 @@ package tibia.game
             this.m_UIList.percentHeight = 100;
             this.m_UIList.addEventListener(ListEvent.CHANGE,this.onListChange);
             this.m_UIList.addEventListener(MouseEvent.DOUBLE_CLICK,this.onListDoubleClick);
+            this.m_UIList.allowMultipleSelection = false;
+            this.m_UIList.allowDragSelection = false;
             addChild(this.m_UIList);
             this.m_UIConstructed = true;
          }

@@ -13,8 +13,8 @@ package
       override protected function getContent() : Object
       {
          var _loc1_:Object = {
-            "DLG_ERROR_TITLE":"Error",
             "DLG_LOGINWAIT_TITLE":"Please wait",
+            "DLG_ERROR_TITLE":"Error",
             "DLG_CONNECTION_PENDING_TIMEOUT_SECONDS":"seconds",
             "DLG_DEAD_TITLE":"You are dead.",
             "TEXT_SECOND":"{0} second",
@@ -33,12 +33,14 @@ package
             "TEXT_SECONDS":"{0} seconds",
             "DLG_LOGOUT_TEXT":"Are you sure you want to leave Tibia?",
             "DLG_CONNECTING_TEXT":"Connecting to the game server.",
+            "DLG_CHANGE_CHARACTER_NO_SELECTION_TEXT":"You have to select a character first.",
+            "DLG_CHANGE_CHARACTER_NO_SELECTION_TITLE":"Error",
             "DLG_CONNECTION_LOST_TITLE":"Warning",
             "TEXT_MINUTES":"{0} minutes",
             "TEXT_MINUTE":"{0} minute",
             "DLG_DEAD_TEXT_FAIR":"Alas! Brave adventurer, you have met a sad fate. <br>But do not despair, for the gods will bring you back into the world in exchange for a small sacrifice.<br><br>Simply click on \'<b>Okay</b>\' to resume your journeys in Tibia!",
-            "DLG_CONNECTIONLOST_TEXT":"Connection to the game server was lost. Please try again later.",
             "DLG_LOGINWAIT_TEXT":"{0}\n\nTrying to reconnect in {1}.",
+            "DLG_CONNECTIONLOST_TEXT":"Connection to the game server was lost. Please try again later.",
             "DLG_LOGOUT_TITLE":"Warning",
             "DLG_LOGINADVICE_TITLE":"For Your Information"
          };
