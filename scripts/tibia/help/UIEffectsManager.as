@@ -149,12 +149,10 @@ package tibia.help
          try
          {
             _EffectInstance = Tibia.s_GetAppearanceStorage().createEffectInstance(56);
-            _EffectInstance.loopEffect = true;
             m_CreatedEffects.push(_EffectInstance);
             MapCoordinate = _WorldMapStorage.toMap(a_AbsolutePosition);
             _WorldMapStorage.appendEffect(a_AbsolutePosition.x,a_AbsolutePosition.y,a_AbsolutePosition.z,_EffectInstance);
             _EffectInstance = Tibia.s_GetAppearanceStorage().createEffectInstance(57);
-            _EffectInstance.loopEffect = true;
             m_CreatedEffects.push(_EffectInstance);
             _WorldMapStorage.appendEffect(a_AbsolutePosition.x,a_AbsolutePosition.y,a_AbsolutePosition.z,_EffectInstance);
             return;

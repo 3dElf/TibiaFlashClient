@@ -64,24 +64,31 @@ package tibia.container
       public function getAvailableGoods(param1:int, param2:int) : int
       {
          var _loc3_:int = 0;
-         var _loc4_:int = this.m_PlayerGoods.length - 1;
+         var _loc4_:int = 0;
          var _loc5_:int = 0;
          var _loc6_:int = 0;
-         while(_loc3_ <= _loc4_)
+         if(this.m_PlayerGoods != null)
          {
-            _loc5_ = _loc3_ + _loc4_ >>> 1;
-            _loc6_ = AppearanceTypeRef.s_CompareExternal(this.m_PlayerGoods[_loc5_],param1,param2);
-            if(_loc6_ < 0)
+            _loc3_ = 0;
+            _loc4_ = this.m_PlayerGoods.length - 1;
+            _loc5_ = 0;
+            _loc6_ = 0;
+            while(_loc3_ <= _loc4_)
             {
-               _loc3_ = _loc5_ + 1;
-               continue;
+               _loc5_ = _loc3_ + _loc4_ >>> 1;
+               _loc6_ = AppearanceTypeRef.s_CompareExternal(this.m_PlayerGoods[_loc5_],param1,param2);
+               if(_loc6_ < 0)
+               {
+                  _loc3_ = _loc5_ + 1;
+                  continue;
+               }
+               if(_loc6_ > 0)
+               {
+                  _loc4_ = _loc5_ - 1;
+                  continue;
+               }
+               return this.m_PlayerGoods[_loc5_].count;
             }
-            if(_loc6_ > 0)
-            {
-               _loc4_ = _loc5_ - 1;
-               continue;
-            }
-            return this.m_PlayerGoods[_loc5_].count;
          }
          return 0;
       }
@@ -144,24 +151,31 @@ package tibia.container
       public function getAvailableInventory(param1:int, param2:int) : int
       {
          var _loc3_:int = 0;
-         var _loc4_:int = this.m_PlayerInventory.length - 1;
+         var _loc4_:int = 0;
          var _loc5_:int = 0;
          var _loc6_:int = 0;
-         while(_loc3_ <= _loc4_)
+         if(this.m_PlayerInventory != null)
          {
-            _loc5_ = _loc3_ + _loc4_ >>> 1;
-            _loc6_ = AppearanceTypeRef.s_CompareExternal(this.m_PlayerInventory[_loc5_],param1,param2);
-            if(_loc6_ < 0)
+            _loc3_ = 0;
+            _loc4_ = this.m_PlayerInventory.length - 1;
+            _loc5_ = 0;
+            _loc6_ = 0;
+            while(_loc3_ <= _loc4_)
             {
-               _loc3_ = _loc5_ + 1;
-               continue;
+               _loc5_ = _loc3_ + _loc4_ >>> 1;
+               _loc6_ = AppearanceTypeRef.s_CompareExternal(this.m_PlayerInventory[_loc5_],param1,param2);
+               if(_loc6_ < 0)
+               {
+                  _loc3_ = _loc5_ + 1;
+                  continue;
+               }
+               if(_loc6_ > 0)
+               {
+                  _loc4_ = _loc5_ - 1;
+                  continue;
+               }
+               return this.m_PlayerInventory[_loc5_].count;
             }
-            if(_loc6_ > 0)
-            {
-               _loc4_ = _loc5_ - 1;
-               continue;
-            }
-            return this.m_PlayerInventory[_loc5_].count;
          }
          return 0;
       }

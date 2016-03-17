@@ -16,31 +16,25 @@ package tibia.appearances
       
       public static const UNKNOWNCREATURE:int = 97;
       
-      public static const PHASE_ASYNCHRONOUS:int = 255;
-      
       protected static const s_TempPoint:Point = new Point(0,0);
-      
-      public static const PHASE_RANDOM:int = 254;
       
       public static const PURSE:int = 16087;
        
-      var mapField:int = -1;
-      
-      var m_Phase:int = 0;
-      
       protected var m_LastPhase:int = -2.147483648E9;
       
       protected var m_LastInternalPhase:int = -2.147483648E9;
       
+      protected var m_Animator:tibia.appearances.AppearanceAnimator;
+      
       protected var m_CacheDirty:Boolean = false;
-      
-      protected var m_LastPhaseChange:Number = 0;
-      
-      var mapData:int = -1;
       
       protected var m_LastCachedSpriteIndex:uint = 4.294967295E9;
       
+      var mapData:int = -1;
+      
       var m_Type:tibia.appearances.AppearanceType = null;
+      
+      var m_ID:int = 0;
       
       protected var m_LastPatternX:int = -2.147483648E9;
       
@@ -48,7 +42,7 @@ package tibia.appearances
       
       protected var m_LastPatternZ:int = -2.147483648E9;
       
-      var m_ID:int = 0;
+      var mapField:int = -1;
       
       protected var m_TempAlternativePhases:Vector.<uint> = null;
       
@@ -60,6 +54,10 @@ package tibia.appearances
          if(this.m_Type != null && Boolean(this.m_Type.isAnimation))
          {
             this.m_TempAlternativePhases = new Vector.<uint>(this.m_Type.phases,true);
+         }
+         if(param2 != null && param2.animator != null)
+         {
+            this.m_Animator = param2.animator.clone();
          }
       }
       
@@ -94,19 +92,26 @@ package tibia.appearances
          return _loc7_;
       }
       
+      public function resetAnimation() : void
+      {
+         if(this.m_Animator != null)
+         {
+            this.m_Animator.reset();
+         }
+      }
+      
       public function getSpriteIndex(param1:int, param2:int, param3:int, param4:int) : uint
       {
-         if(param1 == this.m_LastPhase && this.m_Phase == this.m_LastInternalPhase && param2 == this.m_LastPatternX && param4 >= 0 && param3 == this.m_LastPatternY && param3 >= 0 && param4 == this.m_LastPatternZ && param2 >= 0)
+         if(this.phase == this.m_LastInternalPhase && param2 == this.m_LastPatternX && param4 >= 0 && param3 == this.m_LastPatternY && param3 >= 0 && param4 == this.m_LastPatternZ && param2 >= 0)
          {
             return this.m_LastCachedSpriteIndex;
          }
-         var _loc5_:int = (param1 >= 0?param1:this.m_Phase) % this.m_Type.phases;
+         var _loc5_:int = this.phase;
          var _loc6_:int = param4 >= 0?int(param4 % this.m_Type.patternDepth):0;
          var _loc7_:int = param3 >= 0?int(param3 % this.m_Type.patternHeight):0;
          var _loc8_:int = param2 >= 0?int(param2 % this.m_Type.patternWidth):0;
          var _loc9_:int = ((_loc5_ * this.m_Type.patternDepth + _loc6_) * this.m_Type.patternHeight + _loc7_) * this.m_Type.patternWidth + _loc8_;
-         this.m_LastPhase = param1;
-         this.m_LastInternalPhase = this.m_Phase;
+         this.m_LastInternalPhase = this.phase;
          this.m_LastPatternX = param2;
          this.m_LastPatternY = param3;
          this.m_LastPatternZ = param4;
@@ -131,43 +136,19 @@ package tibia.appearances
       
       public function animate(param1:Number) : Boolean
       {
-         if(!this.m_Type.isAnimation)
+         if(this.m_Animator != null)
          {
-            return false;
+            this.m_Animator.animate(param1);
+            return !this.m_Animator.finished;
          }
-         var _loc2_:Number = (param1 - this.m_LastPhaseChange) % this.m_Type.totalDuration;
-         var _loc3_:int = (this.m_Phase + 1) % this.m_Type.phases;
-         while(_loc2_ >= this.m_Type.phaseDuration[_loc3_])
-         {
-            _loc2_ = _loc2_ - this.m_Type.phaseDuration[_loc3_];
-            this.m_LastPhaseChange = this.m_LastPhaseChange + this.m_Type.phaseDuration[_loc3_];
-            this.m_Phase++;
-            _loc3_ = (_loc3_ + 1) % this.m_Type.phases;
-         }
-         return true;
+         return false;
       }
       
       public function set phase(param1:int) : void
       {
-         if(param1 == PHASE_ASYNCHRONOUS)
+         if(this.m_Animator != null)
          {
-            this.m_Phase = 0;
-            this.m_LastPhaseChange = Tibia.s_FrameTibiaTimestamp;
-         }
-         else if(param1 == PHASE_RANDOM)
-         {
-            this.m_Phase = int(Math.random() * this.m_Type.phases);
-            this.m_LastPhaseChange = 0;
-         }
-         else if(0 <= param1 && param1 < this.m_Type.phases)
-         {
-            this.m_Phase = param1;
-            this.m_LastPhaseChange = 0;
-         }
-         else
-         {
-            this.m_Phase = 0;
-            this.m_LastPhaseChange = 0;
+            this.m_Animator.phase = param1;
          }
       }
       
@@ -178,7 +159,11 @@ package tibia.appearances
       
       public function get phase() : int
       {
-         return this.m_Phase % this.m_Type.phases;
+         if(this.m_Animator != null)
+         {
+            return this.m_Animator.phase;
+         }
+         return 0;
       }
    }
 }

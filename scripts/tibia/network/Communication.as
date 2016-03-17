@@ -15,6 +15,7 @@ package tibia.network
    import tibia.game.EditListWidget;
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.Marks;
+   import tibia.appearances.AppearanceAnimator;
    import tibia.appearances.AppearanceTypeRef;
    import mx.collections.ArrayCollection;
    import mx.collections.IList;
@@ -211,7 +212,7 @@ package tibia.network
       
       protected static const CCANCEL:int = 190;
       
-      public static const CLIENT_VERSION:uint = 1729;
+      public static const CLIENT_VERSION:uint = 1769;
       
       protected static const SCLOSECONTAINER:int = 111;
       
@@ -457,7 +458,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 1041;
+      public static const PROTOCOL_VERSION:int = 1050;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -1214,6 +1215,7 @@ package tibia.network
       
       protected function readObjectInstance(param1:ByteArray, param2:int = -1) : ObjectInstance
       {
+         var _loc5_:uint = 0;
          if(param1 == null || param2 == -1 && param1.bytesAvailable < 2)
          {
             throw new Error("Connection.readObjectInstance: Not enough data.",2147483628);
@@ -1243,7 +1245,15 @@ package tibia.network
          }
          if(_loc3_.m_Type.isAnimation)
          {
-            _loc3_.phase = param1.readUnsignedByte();
+            _loc5_ = param1.readUnsignedByte();
+            if(_loc5_ == 0)
+            {
+               _loc3_.phase = AppearanceAnimator.PHASE_AUTOMATIC;
+            }
+            else
+            {
+               _loc3_.phase = _loc5_;
+            }
          }
          return _loc3_;
       }
@@ -3227,8 +3237,8 @@ package tibia.network
             _loc3_.push(new InventoryTypeInfo(_loc5_,0,_loc6_));
             _loc4_--;
          }
-         this.m_ContainerStorage.setPlayerMoney(_loc2_);
          this.m_ContainerStorage.setPlayerGoods(_loc3_);
+         this.m_ContainerStorage.setPlayerMoney(_loc2_);
       }
       
       public function sendCGETOUTFIT() : void
@@ -4248,10 +4258,6 @@ package tibia.network
             {
                _loc7_ = this.readObjectInstance(param1,_loc9_);
             }
-            if(_loc7_.m_Type.isAnimation)
-            {
-               _loc7_.phase = AppearanceInstance.PHASE_ASYNCHRONOUS;
-            }
             this.m_WorldMapStorage.changeObject(_loc6_.x,_loc6_.y,_loc6_.z,_loc4_,_loc7_);
          }
          else
@@ -4974,10 +4980,6 @@ package tibia.network
          else
          {
             _loc6_ = this.readObjectInstance(param1,_loc5_);
-         }
-         if(_loc6_.m_Type.isAnimation)
-         {
-            _loc6_.phase = AppearanceInstance.PHASE_ASYNCHRONOUS;
          }
          if(_loc4_ == 255)
          {

@@ -10,7 +10,7 @@ package tibia.creatures
    import mx.events.PropertyChangeEventKind;
    import shared.utility.Vector3D;
    import tibia.reporting.reportType.Type;
-   import tibia.appearances.ns_appearance_internal;
+   import tibia.appearances.ObjectInstance;
    import tibia.appearances.Marks;
    import tibia.network.IServerConnection;
    import tibia.network.Communication;
@@ -602,17 +602,17 @@ package tibia.creatures
          var _loc4_:Number = Math.max(0,_loc3_ / this.m_AnimationSpeed.z);
          if(this.m_Outfit != null && this.m_Outfit.m_Type != null)
          {
-            if(this.m_Outfit.m_Type.isAnimateAlways)
+            if(Boolean(this.m_Outfit.m_Type.isAnimateAlways) || this.m_Outfit is ObjectInstance)
             {
                this.m_Outfit.animate(param1);
             }
             else if(param1 >= this.m_AnimationEnd)
             {
-               this.m_Outfit.ns_appearance_internal::m_Phase = 0;
+               this.m_Outfit.resetAnimation();
             }
             else if(this.m_Outfit.m_Type.phases == 3)
             {
-               this.m_Outfit.ns_appearance_internal::m_Phase = 1 + Math.floor(_loc2_ / 8) % 2;
+               this.m_Outfit.phase = 1 + Math.floor(_loc2_ / 8) % 2;
             }
             else
             {
@@ -620,7 +620,7 @@ package tibia.creatures
                {
                   throw new Error("Creature.animateOutfit(): NormalizedTime " + _loc4_ + " is out of range [0..1[ (1).");
                }
-               this.m_Outfit.ns_appearance_internal::m_Phase = 1 + Math.floor(_loc4_ * (this.m_Outfit.m_Type.phases - 1));
+               this.m_Outfit.phase = 1 + Math.floor(_loc4_ * (this.m_Outfit.m_Type.phases - 1));
             }
          }
          if(this.m_MountOutfit != null && this.m_MountOutfit.m_Type != null)
@@ -631,11 +631,11 @@ package tibia.creatures
             }
             else if(param1 >= this.m_AnimationEnd)
             {
-               this.m_MountOutfit.ns_appearance_internal::m_Phase = 0;
+               this.m_MountOutfit.phase = 0;
             }
             else if(this.m_MountOutfit.m_Type.phases == 3)
             {
-               this.m_MountOutfit.ns_appearance_internal::m_Phase = 1 + Math.floor(_loc2_ / 8) % 2;
+               this.m_MountOutfit.phase = 1 + Math.floor(_loc2_ / 8) % 2;
             }
             else
             {
@@ -643,7 +643,7 @@ package tibia.creatures
                {
                   throw new Error("Creature.animateOutfit(): NormalizedTime " + _loc4_ + " is out of range [0..1[ (2).");
                }
-               this.m_MountOutfit.ns_appearance_internal::m_Phase = 1 + Math.floor(_loc4_ * (this.m_MountOutfit.m_Type.phases - 1));
+               this.m_MountOutfit.phase = 1 + Math.floor(_loc4_ * (this.m_MountOutfit.m_Type.phases - 1));
             }
          }
       }

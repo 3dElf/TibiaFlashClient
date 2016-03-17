@@ -11,7 +11,6 @@ package tibia.appearances
    import tibia.appearances.widgetClasses.ISpriteProvider;
    import shared.utility.Colour;
    import flash.display.BitmapDataChannel;
-   import tibia.§appearances:ns_appearance_internal§.m_Phase;
    import flash.geom.Point;
    import flash.display.ShaderJob;
    
@@ -120,6 +119,8 @@ package tibia.appearances
       
       private var m_SpriteProvider:ISpriteProvider = null;
       
+      var m_Phase:uint = 0;
+      
       private var m_InstanceSpriteIDs:Vector.<uint> = null;
       
       private var m_UncomittedCreateInstanceBitmap:Boolean = false;
@@ -192,6 +193,22 @@ package tibia.appearances
          }
       }
       
+      override public function getSprite(param1:int, param2:int, param3:int, param4:int, param5:Boolean = false) : CachedSpriteInformation
+      {
+         var _loc6_:int = 0;
+         if(m_Type.layers != 2)
+         {
+            return super.getSprite(param1,param2,param3,param4,param5);
+         }
+         if(Boolean(m_CacheDirty) || Boolean(this.m_UncomittedRebuildCache))
+         {
+            this.rebuildCache();
+         }
+         _loc6_ = this.getSpriteIndex(param1,param2,param3,param4);
+         this.m_TempSpriteInformation.setCachedSpriteInformationTo(m_Type.spriteIDs[_loc6_],this.m_InstanceBitmap,this.m_InstanceSprite[_loc6_],m_CacheDirty);
+         return this.m_TempSpriteInformation;
+      }
+      
       private function colouriseChannel(param1:BitmapData, param2:BitmapData, param3:uint, param4:Colour) : void
       {
          s_ColourBitmap.copyPixels(param1,param1.rect,s_ColourBitmap.rect.topLeft);
@@ -205,7 +222,7 @@ package tibia.appearances
       
       override public function getSpriteIndex(param1:int, param2:int, param3:int, param4:int) : uint
       {
-         var _loc5_:int = (param1 >= 0?param1:m_Phase) % m_Type.phases;
+         var _loc5_:int = (param1 >= 0?param1:this.m_Phase) % m_Type.phases;
          var _loc6_:int = param2 >= 0?int(param2 % m_Type.patternWidth):0;
          var _loc7_:int = param3 >= 0?int(param3 % m_Type.patternHeight):0;
          var _loc8_:int = param4 >= 0?int(param4 % m_Type.patternDepth):0;
@@ -242,9 +259,10 @@ package tibia.appearances
       
       override public function animate(param1:Number) : Boolean
       {
-         if(m_Type.isAnimateAlways)
+         if(Boolean(m_Type.isAnimateAlways) && m_Animator != null)
          {
             super.animate(param1);
+            this.m_Phase = m_Animator.phase;
          }
          return true;
       }
@@ -360,20 +378,20 @@ package tibia.appearances
          _loc8_.start(true);
       }
       
-      override public function getSprite(param1:int, param2:int, param3:int, param4:int, param5:Boolean = false) : CachedSpriteInformation
+      override public function resetAnimation() : void
       {
-         var _loc6_:int = 0;
-         if(m_Type.layers != 2)
-         {
-            return super.getSprite(param1,param2,param3,param4,param5);
-         }
-         if(Boolean(m_CacheDirty) || Boolean(this.m_UncomittedRebuildCache))
-         {
-            this.rebuildCache();
-         }
-         _loc6_ = this.getSpriteIndex(param1,param2,param3,param4);
-         this.m_TempSpriteInformation.setCachedSpriteInformationTo(m_Type.spriteIDs[_loc6_],this.m_InstanceBitmap,this.m_InstanceSprite[_loc6_],m_CacheDirty);
-         return this.m_TempSpriteInformation;
+         this.m_Phase = 0;
+      }
+      
+      override public function set phase(param1:int) : void
+      {
+         super.phase = param1;
+         this.m_Phase = param1;
+      }
+      
+      override public function get phase() : int
+      {
+         return this.m_Phase;
       }
    }
 }

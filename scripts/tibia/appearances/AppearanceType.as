@@ -68,8 +68,6 @@ package tibia.appearances
       
       public var isLight:Boolean = false;
       
-      public var phaseDuration:Vector.<int>;
-      
       public var clothSlot:int = 0;
       
       public var isDisplaced:Boolean = false;
@@ -158,17 +156,17 @@ package tibia.appearances
       
       public var spriteIDs:Vector.<uint>;
       
+      public var spriteProvider:ISpriteProvider = null;
+      
       public var isMultiUse:Boolean = false;
       
       public var marketTradeAs:int = 0;
-      
-      public var spriteProvider:ISpriteProvider = null;
       
       public var patternHeight:int = 0;
       
       public var isForceUse:Boolean = false;
       
-      public var marketName:String = null;
+      public var animator:tibia.appearances.AppearanceAnimator = null;
       
       public var numSprites:int = 0;
       
@@ -178,9 +176,9 @@ package tibia.appearances
       
       public var isBottom:Boolean = false;
       
-      public var maxTextLength:int = 0;
+      public var marketName:String = null;
       
-      public var totalDuration:int = 0;
+      public var maxTextLength:int = 0;
       
       public var cachedSpriteInformations:Vector.<CachedSpriteInformation>;
       
@@ -188,7 +186,6 @@ package tibia.appearances
       
       public function AppearanceType(param1:int)
       {
-         this.phaseDuration = new Vector.<int>();
          this.spriteIDs = new Vector.<uint>();
          this.spritesheetIDs = new Vector.<uint>();
          this.cachedSpriteInformations = new Vector.<CachedSpriteInformation>();

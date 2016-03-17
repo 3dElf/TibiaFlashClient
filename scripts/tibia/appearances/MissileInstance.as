@@ -2,7 +2,6 @@ package tibia.appearances
 {
    import shared.utility.Vector3D;
    import tibia.§appearances:ns_appearance_internal§.m_Type;
-   import tibia.§appearances:ns_appearance_internal§.m_Phase;
    
    public class MissileInstance extends AppearanceInstance
    {
@@ -89,7 +88,7 @@ package tibia.appearances
       {
          this.m_AnimationSpeed = new Vector3D();
          super(param1,param2);
-         phase = AppearanceInstance.PHASE_ASYNCHRONOUS;
+         phase = AppearanceAnimator.PHASE_ASYNCHRONOUS;
          this.m_AnimationDelta = param4.sub(param3);
          if(this.m_AnimationDelta.x == 0)
          {
@@ -212,7 +211,7 @@ package tibia.appearances
       {
          var _loc6_:int = 0;
          var _loc7_:int = 0;
-         var _loc5_:int = param1 >= 0?int(param1 % m_Type.phases):int(m_Phase);
+         var _loc5_:int = param1 >= 0?int(param1 % m_Type.phases):int(phase);
          _loc6_ = this.m_PatternY;
          _loc7_ = this.m_PatternX;
          var _loc8_:int = ((_loc5_ * m_Type.patternDepth + 0) * m_Type.patternHeight + _loc6_) * m_Type.patternWidth + _loc7_;
