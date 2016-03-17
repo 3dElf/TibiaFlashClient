@@ -20,9 +20,13 @@ package tibia.help
       
       private static const KEYWORD_MARGIN:uint = 8;
       
+      private static var m_CreatedTextHints:Vector.<tibia.help.TextHint> = new Vector.<tibia.help.TextHint>();
+      
       private static var m_CreatedMouseButtonHints:Vector.<tibia.help.MouseButtonHint> = new Vector.<tibia.help.MouseButtonHint>();
       
       private static var m_CreatedEffects:Vector.<EffectInstance> = new Vector.<EffectInstance>();
+      
+      private static const MOUSE_BUTTON_HINT_FULL_ALPHA:Number = 1;
       
       private static var m_CreatedArrowHints:Vector.<tibia.help.ArrowHint> = new Vector.<tibia.help.ArrowHint>();
       
@@ -191,7 +195,7 @@ package tibia.help
             _MouseButtonHint.visible = true;
             _MouseButtonHint.addMousePhaseChange(tibia.help.MouseButtonHint.DEFAULT_NO_MOUSE_BUTTON);
             _MouseButtonHint.addMove(SourceGUIRectangle.centerPoint,SourceGUIRectangle.centerPoint,0);
-            _MouseButtonHint.addFadeIn(0.7);
+            _MouseButtonHint.addFadeIn(MOUSE_BUTTON_HINT_FULL_ALPHA);
             _MouseButtonHint.addPause();
             _MouseButtonHint.addMousePhaseChange(tibia.help.MouseButtonHint.CROSSHAIR_LEFT_MOUSE_BUTTON);
             _MouseButtonHint.addHintTextChange("Drag",500);
@@ -203,7 +207,7 @@ package tibia.help
             _MouseButtonHint.addMousePhaseChange(tibia.help.MouseButtonHint.DEFAULT_NO_MOUSE_BUTTON);
             _MouseButtonHint.addPause();
             _MouseButtonHint.addHintTextChange(null,200);
-            _MouseButtonHint.addFadeOut(0.7);
+            _MouseButtonHint.addFadeOut(MOUSE_BUTTON_HINT_FULL_ALPHA);
             _MouseButtonHint.repeatCount = int.MAX_VALUE;
             _EventListenerInfo = new EventListenersInfo();
             _EventListenerInfo.m_EventDispatcher = Tibia.s_GetSecondaryTimer();
@@ -223,6 +227,24 @@ package tibia.help
          }
       }
       
+      private function calculateTextHintBasePosition(param1:Rectangle, param2:Vector3D) : Point
+      {
+         var _loc3_:Point = param1.topLeft.clone();
+         switch(param2.z)
+         {
+            case 1:
+               _loc3_.offset(param1.width,0);
+               break;
+            case 2:
+               _loc3_.offset(param1.width,param1.height);
+               break;
+            case 3:
+               _loc3_.offset(0,param1.height);
+         }
+         _loc3_.offset(param2.x,param2.y);
+         return _loc3_;
+      }
+      
       public function clearEffects() : void
       {
          var _loc1_:EventListenersInfo = null;
@@ -230,6 +252,7 @@ package tibia.help
          var _loc3_:tibia.help.MouseButtonHint = null;
          var _loc4_:tibia.help.ArrowHint = null;
          var _loc5_:UIComponent = null;
+         var _loc6_:tibia.help.TextHint = null;
          while(m_CreatedEventListeners.length > 0)
          {
             _loc1_ = m_CreatedEventListeners.pop();
@@ -261,6 +284,11 @@ package tibia.help
             _loc5_ = m_CreatedGlowElements.pop();
             TransparentHintLayer.getInstance().removeChild(_loc5_);
          }
+         while(m_CreatedTextHints.length > 0)
+         {
+            _loc6_ = m_CreatedTextHints.pop();
+            _loc6_.hide();
+         }
       }
       
       public function createGlowingRectangle(param1:Rectangle, param2:uint = 0) : UIComponent
@@ -286,21 +314,38 @@ package tibia.help
          return _loc3_;
       }
       
-      public function higlightUIElementByIdentifier(param1:Class, param2:*, param3:Boolean = true) : void
+      public function showTextHint(param1:String, param2:GUIRectangle, param3:Vector3D) : tibia.help.TextHint
       {
-         var _loc4_:UIComponent = null;
-         if(param1 == null)
+         var _TextHint:tibia.help.TextHint = null;
+         var TextHintPosition:Point = null;
+         var a_Text:String = param1;
+         var a_GUIRectangle:GUIRectangle = param2;
+         var a_Offset:Vector3D = param3;
+         _TextHint = null;
+         if(a_GUIRectangle.rectangle != null)
          {
-            this.clearEffects();
+            TextHintPosition = this.calculateTextHintBasePosition(a_GUIRectangle.rectangle,a_Offset);
+            _TextHint = new tibia.help.TextHint(TextHintPosition);
+            _TextHint.hintText = a_Text;
+            _TextHint.show();
+            m_CreatedTextHints.push(_TextHint);
          }
-         else
+         var _EventListenerInfo:EventListenersInfo = new EventListenersInfo();
+         _EventListenerInfo.m_EventDispatcher = Tibia.s_GetSecondaryTimer();
+         _EventListenerInfo.m_EventName = TimerEvent.TIMER;
+         _EventListenerInfo.m_EventFunction = function():void
          {
-            _loc4_ = this.findUIElementByIdentifier(param1,param2);
-            if(_loc4_ != null)
+            var _loc1_:Point = null;
+            a_GUIRectangle.refresh();
+            if(a_GUIRectangle.rectangle != null)
             {
-               this.addUIComponentGlowEffect(_loc4_,param3);
+               _loc1_ = calculateTextHintBasePosition(a_GUIRectangle.rectangle,a_Offset);
+               _TextHint.updateTextPosition(_loc1_);
             }
-         }
+         };
+         _EventListenerInfo.attach();
+         m_CreatedEventListeners.push(_EventListenerInfo);
+         return _TextHint;
       }
       
       public function showUseEffect(param1:Vector3D, param2:Vector3D) : void
@@ -326,23 +371,23 @@ package tibia.help
             _MouseButtonHint.phase = 0;
             _MouseButtonHint.addMousePhaseChange(tibia.help.MouseButtonHint.DEFAULT_NO_MOUSE_BUTTON);
             _MouseButtonHint.addMove(SourceGUIRectangle.centerPoint,SourceGUIRectangle.centerPoint,0);
-            _MouseButtonHint.addFadeIn(0.7);
+            _MouseButtonHint.addFadeIn(MOUSE_BUTTON_HINT_FULL_ALPHA);
             _MouseButtonHint.addHintTextChange("1st Click",500);
             _MouseButtonHint.addMousePhaseChange(tibia.help.MouseButtonHint.DEFAULT_LEFT_MOUSE_BUTTON);
             _MouseButtonHint.addPause();
             _MouseButtonHint.addMousePhaseChange(tibia.help.MouseButtonHint.CROSSHAIR_NO_MOUSE_BUTTON);
             _MouseButtonHint.addPause();
-            _MouseButtonHint.addFadeOut(0.7);
+            _MouseButtonHint.addFadeOut(MOUSE_BUTTON_HINT_FULL_ALPHA);
             _MouseButtonHint.addHintTextChange(null);
             _MouseButtonHint.addMove(DestinationGUIRectangle.centerPoint,DestinationGUIRectangle.centerPoint,0);
-            _MouseButtonHint.addFadeIn(0.7);
+            _MouseButtonHint.addFadeIn(MOUSE_BUTTON_HINT_FULL_ALPHA);
             _MouseButtonHint.addMousePhaseChange(tibia.help.MouseButtonHint.CROSSHAIR_NO_MOUSE_BUTTON);
             _MouseButtonHint.addHintTextChange("2nd Click",500);
             _MouseButtonHint.addMousePhaseChange(tibia.help.MouseButtonHint.CROSSHAIR_LEFT_MOUSE_BUTTON);
             _MouseButtonHint.addPause();
             _MouseButtonHint.addMousePhaseChange(tibia.help.MouseButtonHint.DEFAULT_NO_MOUSE_BUTTON);
             _MouseButtonHint.addPause();
-            _MouseButtonHint.addFadeOut(0.7);
+            _MouseButtonHint.addFadeOut(MOUSE_BUTTON_HINT_FULL_ALPHA);
             _MouseButtonHint.addHintTextChange(null);
             _MouseButtonHint.repeatCount = int.MAX_VALUE;
             _EventListenerInfo = new EventListenersInfo();
@@ -422,6 +467,23 @@ package tibia.help
          this.m_SequenceGlow.addChild(_loc1_);
          this.m_SequenceGlow.addChild(_loc2_);
          this.m_SequenceGlow.repeatCount = int.MAX_VALUE;
+      }
+      
+      public function higlightUIElementByIdentifier(param1:Class, param2:*, param3:Boolean = true) : void
+      {
+         var _loc4_:UIComponent = null;
+         if(param1 == null)
+         {
+            this.clearEffects();
+         }
+         else
+         {
+            _loc4_ = this.findUIElementByIdentifier(param1,param2);
+            if(_loc4_ != null)
+            {
+               this.addUIComponentGlowEffect(_loc4_,param3);
+            }
+         }
       }
    }
 }

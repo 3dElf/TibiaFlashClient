@@ -34,6 +34,7 @@ package tibia.container.bodyContainerViewWigdetClasses
    import mx.containers.Box;
    import tibia.§sidebar:ns_sidebar_internal§.widgetClosed;
    import tibia.§sidebar:ns_sidebar_internal§.widgetCollapsed;
+   import tibia.ingameshop.IngameShopManager;
    import build.ObjectDragImplFactory;
    import mx.managers.CursorManagerPriority;
    import mx.core.ScrollPolicy;
@@ -141,14 +142,14 @@ package tibia.container.bodyContainerViewWigdetClasses
          "blessedStyle":"bodySlotHipBlessedStyle",
          "tooltip":null
       },{
-         "slot":BodyContainerView.PURSE,
+         "slot":BodyContainerView.INGAMESHOP,
          "left":2,
          "top":1,
          "width":NaN,
          "height":NaN,
-         "style":"bodySlotPurseStyle",
+         "style":"bodySlotIngameShopStyle",
          "blessedStyle":null,
-         "tooltip":"TOOLTIP_PURSE"
+         "tooltip":"TOOLTIP_INGAMESHOP"
       },{
          "slot":BodyContainerView.PREMIUM,
          "left":156,
@@ -439,8 +440,6 @@ package tibia.container.bodyContainerViewWigdetClasses
       
       private var m_CursorHelper:CursorHelper;
       
-      private var m_TempPurseSlot:ContainerSlot;
-      
       private var m_UICapacityTooltipOverlay:Box = null;
       
       private var m_UncommittedBodyContainer:Boolean = false;
@@ -448,9 +447,7 @@ package tibia.container.bodyContainerViewWigdetClasses
       public function BodyContainerViewWidgetView()
       {
          this.m_CursorHelper = new CursorHelper(CursorManagerPriority.MEDIUM);
-         this.m_TempPurseSlot = new ContainerSlot();
          super();
-         this.m_TempPurseSlot.position = BodyContainerView.PURSE;
          horizontalScrollPolicy = ScrollPolicy.OFF;
          verticalScrollPolicy = ScrollPolicy.OFF;
          titleText = resourceManager.getString(BUNDLE,"TITLE");
@@ -465,14 +462,11 @@ package tibia.container.bodyContainerViewWigdetClasses
          var _loc4_:BodySlot = null;
          if(param1.type == UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT && param1.identifier == BodyContainerViewWidgetView)
          {
+            this.widgetCollapsed = false;
             _loc2_ = param1.subIdentifier as int;
             if(_loc2_ == -1)
             {
                param1.resultUIComponent = this;
-            }
-            else if(_loc2_ == BodyContainerView.PURSE)
-            {
-               param1.resultUIComponent = this.m_UIPurse;
             }
             else
             {
@@ -498,14 +492,7 @@ package tibia.container.bodyContainerViewWigdetClasses
       
       protected function onSlotRollOver(param1:MouseEvent) : void
       {
-         if(param1.target == this.m_UIPurse)
-         {
-            this.m_RolloverSlot = this.m_TempPurseSlot;
-         }
-         else
-         {
-            this.m_RolloverSlot = param1.target as BodySlot;
-         }
+         this.m_RolloverSlot = param1.target as BodySlot;
          this.determineAction(param1,false,true);
       }
       
@@ -537,17 +524,17 @@ package tibia.container.bodyContainerViewWigdetClasses
          this.m_UICapacityTooltipOverlay.toolTip = resourceManager.getString(BUNDLE,"TOOLTIP_CAPACITY");
          rawChildren.addChild(this.m_UICapacityTooltipOverlay);
          this.m_UIPurse = new CustomButton();
-         if(WIDGET_COMPONENTS[BodyContainerView.PURSE].style != null)
+         if(WIDGET_COMPONENTS[BodyContainerView.INGAMESHOP].style != null)
          {
-            this.m_UIPurse.styleName = getStyle(WIDGET_COMPONENTS[BodyContainerView.PURSE].style);
+            this.m_UIPurse.styleName = getStyle(WIDGET_COMPONENTS[BodyContainerView.INGAMESHOP].style);
          }
-         if(WIDGET_COMPONENTS[BodyContainerView.PURSE].tooltip != null)
+         if(WIDGET_COMPONENTS[BodyContainerView.INGAMESHOP].tooltip != null)
          {
-            this.m_UIPurse.toolTip = resourceManager.getString(BUNDLE,WIDGET_COMPONENTS[BodyContainerView.PURSE].tooltip);
+            this.m_UIPurse.toolTip = resourceManager.getString(BUNDLE,WIDGET_COMPONENTS[BodyContainerView.INGAMESHOP].tooltip);
          }
-         this.m_UIPurse.addEventListener(MouseEvent.CLICK,this.onPurseClick);
-         this.m_UIPurse.addEventListener(MouseEvent.MIDDLE_CLICK,this.onPurseClick);
-         this.m_UIPurse.addEventListener(MouseEvent.RIGHT_CLICK,this.onPurseClick);
+         this.m_UIPurse.addEventListener(MouseEvent.CLICK,this.onIngameShopClick);
+         this.m_UIPurse.addEventListener(MouseEvent.MIDDLE_CLICK,this.onIngameShopClick);
+         this.m_UIPurse.addEventListener(MouseEvent.RIGHT_CLICK,this.onIngameShopClick);
          this.m_UIPurse.addEventListener(MouseEvent.ROLL_OVER,this.onSlotRollOver);
          this.m_UIPurse.addEventListener(MouseEvent.ROLL_OUT,this.onSlotRollOut);
          rawChildren.addChild(this.m_UIPurse);
@@ -571,7 +558,7 @@ package tibia.container.bodyContainerViewWigdetClasses
          var _loc1_:int = BodyContainerView.FIRST_SLOT;
          while(_loc1_ <= BodyContainerView.LAST_SLOT)
          {
-            if(!(_loc1_ == BodyContainerView.PURSE || _loc1_ == BodyContainerView.PREMIUM || _loc1_ == BodyContainerView.BLESSINGS))
+            if(!(_loc1_ == BodyContainerView.INGAMESHOP || _loc1_ == BodyContainerView.PREMIUM || _loc1_ == BodyContainerView.BLESSINGS))
             {
                _loc2_ = new BodySlot();
                _loc2_.appearance = null;
@@ -656,9 +643,9 @@ package tibia.container.bodyContainerViewWigdetClasses
             this.m_DragHandler.removeDragComponent(_loc2_);
             _loc1_++;
          }
-         this.m_UIPurse.removeEventListener(MouseEvent.CLICK,this.onPurseClick);
-         this.m_UIPurse.removeEventListener(MouseEvent.MIDDLE_CLICK,this.onPurseClick);
-         this.m_UIPurse.removeEventListener(MouseEvent.RIGHT_CLICK,this.onPurseClick);
+         this.m_UIPurse.removeEventListener(MouseEvent.CLICK,this.onIngameShopClick);
+         this.m_UIPurse.removeEventListener(MouseEvent.MIDDLE_CLICK,this.onIngameShopClick);
+         this.m_UIPurse.removeEventListener(MouseEvent.RIGHT_CLICK,this.onIngameShopClick);
          this.m_UIPurse.removeEventListener(MouseEvent.ROLL_OVER,this.onSlotRollOver);
          this.m_UIPurse.removeEventListener(MouseEvent.ROLL_OUT,this.onSlotRollOut);
          this.m_UIPremium.removeEventListener(MouseEvent.CLICK,this.onPremiumClick);
@@ -730,6 +717,30 @@ package tibia.container.bodyContainerViewWigdetClasses
          super.commitProperties();
       }
       
+      public function getMultiUseObjectUnderPoint(param1:Point) : Object
+      {
+         return this.getUseObjectUnderPoint(param1);
+      }
+      
+      override protected function measure() : void
+      {
+         super.measure();
+         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
+         measuredMinWidth = measuredWidth = _loc1_.left + WIDGET_VIEW_WIDTH + _loc1_.right;
+         measuredMinHeight = measuredHeight = _loc1_.top + WIDGET_VIEW_HEIGHT + _loc1_.bottom;
+      }
+      
+      function get player() : Player
+      {
+         return this.m_Player;
+      }
+      
+      protected function onSlotRollOut(param1:MouseEvent) : void
+      {
+         this.m_RolloverSlot = null;
+         this.m_CursorHelper.resetCursor();
+      }
+      
       function set player(param1:Player) : void
       {
          if(this.m_Player != param1)
@@ -748,30 +759,6 @@ package tibia.container.bodyContainerViewWigdetClasses
          }
       }
       
-      public function getMultiUseObjectUnderPoint(param1:Point) : Object
-      {
-         return this.getUseObjectUnderPoint(param1);
-      }
-      
-      override protected function measure() : void
-      {
-         super.measure();
-         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
-         measuredMinWidth = measuredWidth = _loc1_.left + WIDGET_VIEW_WIDTH + _loc1_.right;
-         measuredMinHeight = measuredHeight = _loc1_.top + WIDGET_VIEW_HEIGHT + _loc1_.bottom;
-      }
-      
-      protected function onSlotRollOut(param1:MouseEvent) : void
-      {
-         this.m_RolloverSlot = null;
-         this.m_CursorHelper.resetCursor();
-      }
-      
-      function get player() : Player
-      {
-         return this.m_Player;
-      }
-      
       protected function determineAction(param1:MouseEvent, param2:Boolean = false, param3:Boolean = false) : void
       {
          var _loc10_:Object = null;
@@ -788,14 +775,7 @@ package tibia.container.bodyContainerViewWigdetClasses
          if(param1 != null)
          {
             _loc8_ = m_Options.mouseMapping.findBindingByMouseEvent(param1);
-            if(param1.target == this.m_UIPurse)
-            {
-               _loc4_ = this.m_TempPurseSlot;
-            }
-            else
-            {
-               _loc4_ = param1.target as BodySlot;
-            }
+            _loc4_ = param1.target as BodySlot;
          }
          else
          {
@@ -867,19 +847,6 @@ package tibia.container.bodyContainerViewWigdetClasses
             }
             _loc1_--;
          }
-         if(this.bodyContainer != null)
-         {
-            this.m_TempPurseSlot.appearance = this.bodyContainer.getObject(BodyContainerView.PURSE);
-         }
-         else
-         {
-            this.m_TempPurseSlot.appearance = null;
-         }
-      }
-      
-      private function onPurseClick(param1:MouseEvent) : void
-      {
-         this.determineAction(param1,true,false);
       }
       
       private function onPlayerChange(param1:PropertyChangeEvent) : void
@@ -914,7 +881,7 @@ package tibia.container.bodyContainerViewWigdetClasses
          this.m_UICapacity.width = this.m_UICapacityTooltipOverlay.width = WIDGET_COMPONENTS[0].width;
          this.m_UICapacity.height = this.m_UICapacityTooltipOverlay.height = WIDGET_COMPONENTS[0].height;
          this.m_UIPurse.visible = _loc3_;
-         this.m_UIPurse.move(_loc4_.left + WIDGET_COMPONENTS[BodyContainerView.PURSE].left,_loc4_.top + WIDGET_COMPONENTS[BodyContainerView.PURSE].top);
+         this.m_UIPurse.move(_loc4_.left + WIDGET_COMPONENTS[BodyContainerView.INGAMESHOP].left,_loc4_.top + WIDGET_COMPONENTS[BodyContainerView.INGAMESHOP].top);
          this.m_UIPurse.setActualSize(this.m_UIPurse.getExplicitOrMeasuredWidth(),this.m_UIPurse.getExplicitOrMeasuredHeight());
          this.m_UIPremium.visible = _loc3_;
          this.m_UIPremium.move(_loc4_.left + WIDGET_COMPONENTS[BodyContainerView.PREMIUM].left,_loc4_.top + WIDGET_COMPONENTS[BodyContainerView.PREMIUM].top);
@@ -952,6 +919,11 @@ package tibia.container.bodyContainerViewWigdetClasses
             _loc7_.setActualSize(_loc8_,_loc9_);
             _loc6_--;
          }
+      }
+      
+      private function onIngameShopClick(param1:MouseEvent) : void
+      {
+         IngameShopManager.getInstance().openShopWindow(true);
       }
       
       function set bodyContainer(param1:BodyContainerView) : void

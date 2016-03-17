@@ -29,8 +29,6 @@ package tibia.sessiondump
       
       protected static const CQUITGAME:int = 20;
       
-      protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
-      
       protected static const CMARKETACCEPT:int = 248;
       
       protected static const CONNECTION_STATE_PENDING:int = 3;
@@ -41,7 +39,9 @@ package tibia.sessiondump
       
       protected static const PARTY_MAX_FLASHING_TIME:uint = 5000;
       
-      protected static const SPLAYERSTATE:int = 162;
+      protected static const PK_MAX_FLASHING_TIME:uint = 5000;
+      
+      protected static const PK_REVENGE:int = 6;
       
       protected static const SOUTFIT:int = 200;
       
@@ -53,19 +53,15 @@ package tibia.sessiondump
       
       protected static const CPERFORMANCEMETRICS:int = 31;
       
-      protected static const PK_REVENGE:int = 6;
+      protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
       
       protected static const CADDBUDDY:int = 220;
       
       protected static const RISKINESS_DANGEROUS:int = 1;
       
-      protected static const GUILD_NONE:int = 0;
-      
       protected static const PK_PARTYMODE:int = 2;
       
       protected static const ERR_COULD_NOT_CONNECT:int = 5;
-      
-      protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
       
       protected static const NPC_SPEECH_TRAVEL:uint = 5;
       
@@ -85,19 +81,19 @@ package tibia.sessiondump
       
       protected static const STATE_DRUNK:int = 3;
       
-      protected static const CCLOSENPCCHANNEL:int = 158;
+      protected static const SCREDITBALANCE:int = 223;
       
       protected static const CHECKSUM_POS:int = PACKETLENGTH_POS + PACKETLENGTH_SIZE;
       
+      protected static const CGETQUESTLOG:int = 240;
+      
       protected static const CENTERWORLD:int = 15;
       
-      protected static const PARTY_OTHER:int = 11;
+      protected static const CCLOSENPCCHANNEL:int = 158;
       
       protected static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
       
       protected static const CBUYOBJECT:int = 122;
-      
-      protected static const TYPE_NPC:int = 2;
       
       protected static const SPING:int = 29;
       
@@ -109,7 +105,11 @@ package tibia.sessiondump
       
       protected static const SLOGINSUCCESS:int = 23;
       
+      protected static const PARTY_OTHER:int = 11;
+      
       protected static const SKILL_EXPERIENCE:int = 0;
+      
+      protected static const GUILD_NONE:int = 0;
       
       public static const STATE_DEFAULT:int = 0;
       
@@ -117,7 +117,7 @@ package tibia.sessiondump
       
       protected static const CJOINCHANNEL:int = 152;
       
-      protected static const CGETQUESTLOG:int = 240;
+      protected static const SKILL_FED:int = 15;
       
       protected static const CROTATEEAST:int = 112;
       
@@ -129,11 +129,7 @@ package tibia.sessiondump
       
       protected static const CUSEONCREATURE:int = 132;
       
-      protected static const SKILL_FED:int = 15;
-      
-      protected static const NPC_SPEECH_QUEST:uint = 3;
-      
-      protected static const TYPE_SUMMON_OTHERS:int = 4;
+      protected static const TYPE_NPC:int = 2;
       
       protected static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
       
@@ -145,11 +141,13 @@ package tibia.sessiondump
       
       protected static const ERR_INTERNAL:int = 0;
       
+      protected static const NPC_SPEECH_QUEST:uint = 3;
+      
       protected static const CCANCEL:int = 190;
       
       protected static const CGUILDMESSAGE:int = 155;
       
-      protected static const SUMMON_OTHERS:int = 2;
+      protected static const TYPE_SUMMON_OTHERS:int = 4;
       
       protected static const CREMOVEBUDDY:int = 221;
       
@@ -175,13 +173,13 @@ package tibia.sessiondump
       
       protected static const PARTY_LEADER:int = 1;
       
+      protected static const SUMMON_OTHERS:int = 2;
+      
       protected static const SMISSILEEFFECT:int = 133;
       
       protected static const CGOWEST:int = 104;
       
       protected static const PROFESSION_NONE:int = 0;
-      
-      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       protected static const STATE_PZ_ENTERED:int = 14;
       
@@ -207,11 +205,15 @@ package tibia.sessiondump
       
       protected static const GUILD_WAR_NEUTRAL:int = 3;
       
+      protected static const SUPDATINGSHOPBALANCE:int = 242;
+      
       private static const KEYFRAME_STATE_NONE:uint = 0;
       
       protected static const CGOSOUTHWEST:int = 108;
       
       protected static const SLOGINERROR:int = 20;
+      
+      protected static const NPC_SPEECH_TRADER:uint = 2;
       
       protected static const SCREATUREMARKS:int = 147;
       
@@ -220,6 +222,8 @@ package tibia.sessiondump
       protected static const CREJECTTRADE:int = 128;
       
       public static const SCREATUREDATA:int = 3;
+      
+      protected static const SREQUESTPURCHASEDATA:int = 225;
       
       protected static const CREVOKEINVITATION:int = 165;
       
@@ -269,11 +273,13 @@ package tibia.sessiondump
       
       protected static const TYPE_SUMMON_OWN:int = 3;
       
-      protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+      protected static const CBUYPREMIUMOFFER:int = 252;
       
       protected static const NPC_SPEECH_QUESTTRADER:uint = 4;
       
       protected static const SPRIVATECHANNEL:int = 173;
+      
+      protected static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
       
       protected static const SBLESSINGS:int = 156;
       
@@ -283,13 +289,17 @@ package tibia.sessiondump
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
+      protected static const SINGAMESHOPSUCCESS:int = 254;
+      
+      protected static const CPRIVATECHANNEL:int = 154;
+      
       protected static const PAYLOADLENGTH_POS:int = PAYLOAD_POS;
       
       protected static const SLOGINWAIT:int = 22;
       
       protected static const SCREATEONMAP:int = 106;
       
-      protected static const CPRIVATECHANNEL:int = 154;
+      protected static const CGETTRANSACTIONHISTORY:int = 254;
       
       public static const SKEYFRAMEEND:int = 2;
       
@@ -315,9 +325,11 @@ package tibia.sessiondump
       
       protected static const SKILL_HITPOINTS:int = 4;
       
-      protected static const CEXCLUDEFROMCHANNEL:int = 172;
+      protected static const STRANSACTIONHISTORY:int = 253;
       
       protected static const SKILL_OFFLINETRAINING:int = 18;
+      
+      protected static const SPREMIUMSHOPOFFERS:int = 252;
       
       protected static const STATE_MANA_SHIELD:int = 4;
       
@@ -325,21 +337,21 @@ package tibia.sessiondump
       
       protected static const CMOUNT:int = 212;
       
-      protected static const CMARKETBROWSE:int = 245;
+      protected static const CCLOSENPCTRADE:int = 124;
       
       protected static const SMARKETBROWSE:int = 249;
       
-      protected static const BLESSING_ADVENTURER:int = 1;
-      
-      protected static const CCLOSENPCTRADE:int = 124;
-      
       protected static const STATE_CURSED:int = 11;
+      
+      protected static const CMARKETBROWSE:int = 245;
       
       protected static const STATE_FREEZING:int = 9;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
       
       protected static const SMARKETLEAVE:int = 247;
+      
+      protected static const BLESSING_ADVENTURER:int = 1;
       
       protected static const SCOUNTEROFFER:int = 126;
       
@@ -351,6 +363,8 @@ package tibia.sessiondump
       
       protected static const STATE_BURNING:int = 1;
       
+      protected static const CEXCLUDEFROMCHANNEL:int = 172;
+      
       protected static const SMARKETENTER:int = 246;
       
       protected static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
@@ -360,6 +374,8 @@ package tibia.sessiondump
       protected static const GUILD_WAR_ENEMY:int = 2;
       
       protected static const SCREATURESPEED:int = 143;
+      
+      protected static const CREQUESTSHOPOFFERS:int = 251;
       
       protected static const SKILL_FIGHTFIST:int = 13;
       
@@ -383,7 +399,7 @@ package tibia.sessiondump
       
       protected static const CROTATEWEST:int = 114;
       
-      public static const PROTOCOL_VERSION:int = 1079;
+      public static const PROTOCOL_VERSION:int = 1082;
       
       protected static const SCREATUREOUTFIT:int = 142;
       
@@ -457,7 +473,7 @@ package tibia.sessiondump
       
       protected static const CTURNOBJECT:int = 133;
       
-      protected static const STATE_DAZZLED:int = 10;
+      protected static const COPENPREMIUMSHOP:int = 250;
       
       private static const ERROR_SESSIONDUMP_CONNECTION_ERROR:uint = 1;
       
@@ -467,15 +483,17 @@ package tibia.sessiondump
       
       protected static const SBOTTOMFLOOR:int = 191;
       
+      protected static const STATE_DAZZLED:int = 10;
+      
       protected static const CINVITETOCHANNEL:int = 171;
       
       protected static const CUSETWOOBJECTS:int = 131;
       
       protected static const ERR_INVALID_STATE:int = 4;
       
-      public static const STATE_DONE:int = 3;
-      
       protected static const SPREMIUMTRIGGER:int = 158;
+      
+      public static const STATE_DONE:int = 3;
       
       protected static const CINVITETOPARTY:int = 163;
       
@@ -515,8 +533,6 @@ package tibia.sessiondump
       
       protected static const CJOINPARTY:int = 164;
       
-      protected static const SEDITLIST:int = 151;
-      
       protected static const PK_NONE:int = 0;
       
       protected static const SCLOSETRADE:int = 127;
@@ -527,13 +543,15 @@ package tibia.sessiondump
       
       private static const KEYFRAME_STATE_SKIP:uint = 2;
       
+      protected static const SEDITLIST:int = 151;
+      
       protected static const SSETINVENTORY:int = 120;
       
       protected static const SUMMON_OWN:int = 1;
       
-      protected static const CLEAVEPARTY:int = 167;
-      
       protected static const CGOPATH:int = 100;
+      
+      protected static const CLEAVEPARTY:int = 167;
       
       protected static const SCHANGEONMAP:int = 107;
       
@@ -553,15 +571,19 @@ package tibia.sessiondump
       
       protected static const SDELETEINVENTORY:int = 121;
       
-      protected static const PROFESSION_KNIGHT:int = 1;
+      protected static const CTRANSFERCURRENCY:int = 239;
       
       protected static const PROFESSION_PALADIN:int = 2;
+      
+      protected static const SINGAMESHOPERROR:int = 224;
       
       protected static const SCHANNELEVENT:int = 243;
       
       protected static const SPVPSITUATIONS:int = 184;
       
       protected static const SLOGINADVICE:int = 21;
+      
+      protected static const PROFESSION_KNIGHT:int = 1;
       
       protected static const SKILL_FIGHTAXE:int = 12;
       
@@ -583,19 +605,21 @@ package tibia.sessiondump
       
       protected static const STATE_FAST:int = 6;
       
-      protected static const CEDITTEXT:int = 137;
+      protected static const SPREMIUMSHOP:int = 251;
       
       protected static const STALK:int = 170;
       
-      protected static const GUILD_OTHER:int = 5;
+      protected static const CEDITTEXT:int = 137;
       
-      protected static const TYPE_PLAYER:int = 0;
+      protected static const GUILD_OTHER:int = 5;
       
       protected static const SCLOSENPCTRADE:int = 124;
       
       protected static const SPENDINGSTATEENTERED:int = 10;
       
       protected static const PAYLOADLENGTH_SIZE:int = 2;
+      
+      protected static const TYPE_PLAYER:int = 0;
       
       protected static const SRIGHTROW:int = 102;
       
@@ -611,11 +635,15 @@ package tibia.sessiondump
       
       protected static const CBUGREPORT:int = 230;
       
+      protected static const BLESSING_NONE:int = 0;
+      
       protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
       
       protected static const TYPE_MONSTER:int = 1;
       
       protected static const CMARKETLEAVE:int = 244;
+      
+      protected static const COPENTRANSACTIONHISTORY:int = 253;
       
       protected static const CSHAREEXPERIENCE:int = 168;
       
@@ -651,11 +679,11 @@ package tibia.sessiondump
       
       protected static const PACKETLENGTH_POS:int = HEADER_POS;
       
-      protected static const BLESSING_NONE:int = 0;
-      
       protected static const SKILL_GOSTRENGTH:int = 6;
       
-      protected static const PK_MAX_FLASHING_TIME:uint = 5000;
+      protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
+      
+      protected static const SPLAYERSTATE:int = 162;
        
       private var m_ProcessNextKeyframe:Boolean = false;
       
@@ -916,6 +944,12 @@ package tibia.sessiondump
                         this.messageReader.finishMessage();
                         break;
                      case STUTORIALHINT:
+                        this.messageReader.finishMessage();
+                        break;
+                     case SPREMIUMSHOP:
+                        this.messageReader.finishMessage();
+                        break;
+                     case SPREMIUMSHOPOFFERS:
                         this.messageReader.finishMessage();
                         break;
                      default:

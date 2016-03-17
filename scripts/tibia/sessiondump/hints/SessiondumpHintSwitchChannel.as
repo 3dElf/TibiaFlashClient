@@ -6,13 +6,15 @@ package tibia.sessiondump.hints
    public class SessiondumpHintSwitchChannel extends SessiondumpHintBase
    {
       
-      private static var FIELD_CONDITIONDATA:String = "conditiondata";
+      private static var FIELD_TEXTHINT:String = "texthint";
       
       private static var FIELD_COORDINATE:String = "coordinate";
       
       private static var FIELD_SESSIONDUMP:String = "sessiondump";
       
       private static var FIELD_DESTINATION_COORDINATE:String = "destination";
+      
+      private static var FIELD_CONDITIONDATA:String = "conditiondata";
       
       private static var FIELD_CHANNEL:String = "channel";
       
@@ -27,6 +29,8 @@ package tibia.sessiondump.hints
       private static var FIELD_OBJECTTYPE:String = "objecttype";
       
       private static var CONDITION_TYPE_CLICK_CREATURE:String = "CLICK_CREATURE";
+      
+      private static var FIELD_OFFSET:String = "offset";
       
       private static var FIELD_OBJECTTYPEID:String = "objecttypeid";
       
@@ -65,6 +69,8 @@ package tibia.sessiondump.hints
       private static var FIELD_TIMESTAMP:String = "timestamp";
       
       public static const TYPE:String = "SWITCH_CHANNEL";
+      
+      private static var FIELD_USEDESTINATIONPOSITION:String = "usedestinationposition";
       
       private static var FIELD_PLAYER_OUTFIT_ADDONS:String = "add-ons";
       

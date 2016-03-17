@@ -125,7 +125,7 @@ package tibia.game
             this.m_Queue[_loc2_].removeEventListener(CloseEvent.CLOSE,this.onClose);
             if(_loc2_ == 0)
             {
-               this.hideInternal(this.m_Queue[_loc2_]);
+               this.m_Queue[_loc2_].hide();
             }
             _loc2_--;
          }

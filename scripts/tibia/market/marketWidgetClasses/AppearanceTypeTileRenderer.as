@@ -12,6 +12,7 @@ package tibia.market.marketWidgetClasses
    import flash.events.Event;
    import tibia.market.MarketWidget;
    import flash.display.Graphics;
+   import tibia.ingameshop.IngameShopManager;
    import mx.core.EventPriority;
    import mx.events.FlexEvent;
    import tibia.game.PopUpBase;
@@ -147,7 +148,7 @@ package tibia.market.marketWidgetClasses
             _loc3_.clear();
             _loc4_ = 0;
             _loc5_ = null;
-            if(this.appearance != null && this.market != null && (_loc4_ = this.market.getDepotAmount(this.appearance)) > 0 && (_loc5_ = s_TextCache.getItem(_loc4_,String(_loc4_),4294967295)) != null)
+            if(this.appearance != null && this.market != null && this.appearance.ID != IngameShopManager.TIBIA_COINS_APPEARANCE_TYPE_ID && (_loc4_ = this.market.getDepotAmount(this.appearance)) > 0 && (_loc5_ = s_TextCache.getItem(_loc4_,String(_loc4_),4294967295)) != null)
             {
                s_Rect.x = this.m_UIAppearance.getExplicitOrMeasuredWidth() - this.m_UIAppearance.getStyle("paddingRight") - _loc5_.width;
                s_Rect.y = this.m_UIAppearance.getExplicitOrMeasuredHeight() - this.m_UIAppearance.getStyle("paddingBottom") - _loc5_.height;

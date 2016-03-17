@@ -1,7 +1,7 @@
 package tibia.options.configurationWidgetClasses
 {
    import mx.containers.VBox;
-   import tibia.options.OptionsStorage;
+   import mx.controls.CheckBox;
    import shared.controls.EmbeddedDialog;
    import tibia.game.PopUpBase;
    import mx.events.CloseEvent;
@@ -11,10 +11,10 @@ package tibia.options.configurationWidgetClasses
    import mx.containers.Form;
    import mx.containers.FormItem;
    import mx.containers.FormHeading;
-   import mx.controls.CheckBox;
    import flash.events.Event;
    import mx.containers.FormItemDirection;
    import mx.controls.Button;
+   import tibia.options.OptionsStorage;
    
    public class GeneralOptions extends VBox implements IOptionsEditor
    {
@@ -25,9 +25,9 @@ package tibia.options.configurationWidgetClasses
        
       private var m_UncommittedOptions:Boolean = false;
       
-      private var m_UncommittedValues:Boolean = true;
+      protected var m_UIAskBeforeBuying:CheckBox = null;
       
-      protected var m_Options:OptionsStorage = null;
+      private var m_UncommittedValues:Boolean = true;
       
       protected var m_UIResetAllOptions:Button = null;
       
@@ -35,17 +35,12 @@ package tibia.options.configurationWidgetClasses
       
       protected var m_UIAutoChaseOff:CheckBox = null;
       
+      protected var m_Options:OptionsStorage = null;
+      
       public function GeneralOptions()
       {
          super();
          label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_LABEL");
-      }
-      
-      public function set options(param1:OptionsStorage) : void
-      {
-         this.m_Options = param1;
-         this.m_UncommittedOptions = true;
-         invalidateProperties();
       }
       
       override protected function commitProperties() : void
@@ -56,10 +51,12 @@ package tibia.options.configurationWidgetClasses
             if(this.m_Options != null)
             {
                this.m_UIAutoChaseOff.selected = this.m_Options.combatAutoChaseOff;
+               this.m_UIAskBeforeBuying.selected = this.m_Options.generalShopShowBuyConfirmation;
             }
             else
             {
                this.m_UIAutoChaseOff.selected = false;
+               this.m_UIAskBeforeBuying.selected = true;
             }
             this.m_UncommittedOptions = false;
          }
@@ -131,6 +128,20 @@ package tibia.options.configurationWidgetClasses
             Frm.addChild(Item);
             addChild(Frm);
             Heading = new FormHeading();
+            Heading.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"INGAMESHOP_HEADING");
+            Heading.percentHeight = NaN;
+            Heading.percentWidth = 100;
+            Frm.addChild(Heading);
+            Item = new FormItem();
+            Item.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"INGAMESHOP_ASK_BEFORE_BUYING");
+            Item.percentHeight = NaN;
+            Item.percentWidth = 100;
+            this.m_UIAskBeforeBuying = new CheckBox();
+            this.m_UIAskBeforeBuying.addEventListener(Event.CHANGE,this.onValueChange);
+            Item.addChild(this.m_UIAskBeforeBuying);
+            Frm.addChild(Item);
+            addChild(Frm);
+            Heading = new FormHeading();
             Heading.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"GENERAL_OPTIONS_RESET_HEADING");
             Heading.percentHeight = NaN;
             Heading.percentWidth = 100;
@@ -184,11 +195,19 @@ package tibia.options.configurationWidgetClasses
          }
       }
       
+      public function set options(param1:OptionsStorage) : void
+      {
+         this.m_Options = param1;
+         this.m_UncommittedOptions = true;
+         invalidateProperties();
+      }
+      
       public function close(param1:Boolean = false) : void
       {
          if(this.m_Options != null && Boolean(param1) && Boolean(this.m_UncommittedValues))
          {
             this.m_Options.combatAutoChaseOff = this.m_UIAutoChaseOff.selected;
+            this.m_Options.generalShopShowBuyConfirmation = this.m_UIAskBeforeBuying.selected;
             this.m_UncommittedValues = false;
          }
       }

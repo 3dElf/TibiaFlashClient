@@ -2,6 +2,7 @@ package tibia.market.marketWidgetClasses
 {
    import mx.controls.Button;
    import mx.collections.ArrayCollection;
+   import tibia.ingameshop.shopWidgetClasses.CoinWidget;
    import mx.containers.VBox;
    import mx.containers.HBox;
    import mx.controls.Spacer;
@@ -20,7 +21,9 @@ package tibia.market.marketWidgetClasses
    import mx.controls.CheckBox;
    import tibia.market.Offer;
    import tibia.market.MarketWidget;
+   import tibia.ingameshop.IngameShopManager;
    import shared.utility.i18n.i18nFormatNumber;
+   import tibia.ingameshop.IngameShopEvent;
    import mx.containers.BoxDirection;
    import mx.core.EventPriority;
    
@@ -32,6 +35,8 @@ package tibia.market.marketWidgetClasses
       private var m_UIAmountIncrease:Button = null;
       
       private var m_KindList:ArrayCollection = null;
+      
+      private var m_UICoinBalance:CoinWidget = null;
       
       private var m_Amount:int = 1;
       
@@ -71,9 +76,13 @@ package tibia.market.marketWidgetClasses
       
       private var m_UIAnonymous:CheckBox = null;
       
+      private var m_AmountStepping:int = 1;
+      
       private var m_UIPiecePriceEdit:TextInput = null;
       
       private var m_UncommittedPiecePrice:Boolean = true;
+      
+      private var m_UncommittedCoins:Boolean = true;
       
       private var m_Anonymous:Boolean = false;
       
@@ -100,6 +109,7 @@ package tibia.market.marketWidgetClasses
          this.m_KindList.refresh();
          market.addEventListener(MarketWidget.ACCOUNT_BALANCE_CHANGE,this.onMarketChange,false,EventPriority.DEFAULT,true);
          market.addEventListener(MarketWidget.ACTIVE_OFFERS_CHANGE,this.onMarketChange,false,EventPriority.DEFAULT,true);
+         IngameShopManager.getInstance().addEventListener(IngameShopEvent.CREDIT_BALANCE_CHANGED,this.onCoinBalanceChange);
       }
       
       private function get offerKind() : int
@@ -119,8 +129,10 @@ package tibia.market.marketWidgetClasses
          var _Content:HBox = null;
          var _Group:VBox = null;
          var _Row:HBox = null;
-         var _Footer:HBox = null;
+         var _Footer:VBox = null;
+         var _FirstLine:HBox = null;
          var _Spacer:Spacer = null;
+         var _SecondLine:HBox = null;
          if(!this.m_UIConstructed)
          {
             super.createChildren();
@@ -267,24 +279,36 @@ package tibia.market.marketWidgetClasses
             });
             _Group.addChild(this.m_UIAnonymous);
             _Content.addChild(_Group);
-            _Footer = new HBox();
+            _Footer = new VBox();
             _Footer.percentWidth = 100;
+            _Footer.setStyle("verticalGap",2);
+            _FirstLine = new HBox();
+            _FirstLine.percentWidth = 100;
+            _Footer.addChild(_FirstLine);
             _Label = new Label();
             _Label.text = resourceManager.getString(BUNDLE,"MARKET_EDIT_ACCOUNTBALANCE_LABEL");
-            _Footer.addChild(_Label);
+            _FirstLine.addChild(_Label);
             this.m_UIAccountBalance = new Label();
             this.m_UIAccountBalance.setStyle("fontWeight","bold");
-            _Footer.addChild(this.m_UIAccountBalance);
+            _FirstLine.addChild(this.m_UIAccountBalance);
             _Spacer = new Spacer();
             _Spacer.percentWidth = 100;
-            _Footer.addChild(_Spacer);
+            _FirstLine.addChild(_Spacer);
             _Label = new Label();
             _Label.text = resourceManager.getString(BUNDLE,"MARKET_EDIT_TOTALPRICE_LABEL");
-            _Footer.addChild(_Label);
+            _FirstLine.addChild(_Label);
             this.m_UITotalPrice = new Label();
             this.m_UITotalPrice.minWidth = 100;
             this.m_UITotalPrice.setStyle("fontWeight","bold");
-            _Footer.addChild(this.m_UITotalPrice);
+            _FirstLine.addChild(this.m_UITotalPrice);
+            _SecondLine = new HBox();
+            _SecondLine.percentWidth = 100;
+            _Footer.addChild(_SecondLine);
+            _Label = new Label();
+            _Label.text = resourceManager.getString(BUNDLE,"MARKET_EDIT_COINS_LABEL");
+            _SecondLine.addChild(_Label);
+            this.m_UICoinBalance = new CoinWidget();
+            _SecondLine.addChild(this.m_UICoinBalance);
             addChild(_Header);
             addChild(_Content);
             addChild(_Footer);
@@ -294,7 +318,7 @@ package tibia.market.marketWidgetClasses
       
       private function onButtonClick(param1:MouseEvent) : void
       {
-         this.offerAmount = this.offerAmount + (param1.currentTarget == this.m_UIAmountDecrease?-1:1) * (!!param1.shiftKey?10:1);
+         this.offerAmount = this.offerAmount + (param1.currentTarget == this.m_UIAmountDecrease?-this.m_AmountStepping:this.m_AmountStepping) * (!!param1.shiftKey?10:1);
       }
       
       private function set offerKind(param1:int) : void
@@ -326,15 +350,18 @@ package tibia.market.marketWidgetClasses
       
       private function set offerAmount(param1:int) : void
       {
+         var _loc5_:int = 0;
          var _loc2_:int = Math.max(MarketWidget.OFFER_MAX_AMOUNT_NONCUMULATIVE,MarketWidget.OFFER_MAX_AMOUNT_CUMULATIVE);
          if(this.offerKind == Offer.SELL_OFFER)
          {
-            _loc2_ = market.getDepotAmount(selectedType);
+            _loc5_ = market.getDepotAmount(selectedType);
+            _loc2_ = _loc5_ - _loc5_ % this.m_AmountStepping;
          }
-         var _loc3_:int = Math.max(0,Math.min(param1,_loc2_));
-         if(this.m_Amount != _loc3_ || param1 != _loc3_)
+         var _loc3_:int = param1 - param1 % this.m_AmountStepping;
+         var _loc4_:int = Math.max(this.m_AmountStepping,Math.min(_loc3_,_loc2_));
+         if(this.m_Amount != _loc4_ || param1 != _loc4_)
          {
-            this.m_Amount = _loc3_;
+            this.m_Amount = _loc4_;
             this.m_UncommittedAmount = true;
             if(this.m_Amount > 0)
             {
@@ -387,6 +414,18 @@ package tibia.market.marketWidgetClasses
          super.commitProperties();
          if(this.m_UncommittedSelectedType)
          {
+            if(selectedType != null && selectedType.marketTradeAs == IngameShopManager.TIBIA_COINS_APPEARANCE_TYPE_ID)
+            {
+               this.m_AmountStepping = IngameShopManager.getInstance().getCreditPackageSize();
+            }
+            else
+            {
+               this.m_AmountStepping = 1;
+            }
+            this.offerKind = -1;
+            this.offerAmount = this.m_AmountStepping;
+            this.offerPiecePrice = 1;
+            this.offerAnonymous = false;
             this.m_UncommittedSelectedType = false;
          }
          if(this.m_UncommittedKind)
@@ -400,14 +439,7 @@ package tibia.market.marketWidgetClasses
             this.m_UIAmountDecrease.enabled = _loc1_;
             this.m_UIAmountIncrease.enabled = _loc1_;
             this.m_UIAnonymous.enabled = _loc1_;
-            if(market.accountBalance > 0)
-            {
-               this.m_UIAccountBalance.text = i18nFormatNumber(market.accountBalance);
-            }
-            else
-            {
-               this.m_UIAccountBalance.text = null;
-            }
+            this.m_UIAccountBalance.text = i18nFormatNumber(market.accountBalance);
             this.m_UITotalPrice.text = null;
             this.m_UncommittedKind = false;
          }
@@ -447,6 +479,12 @@ package tibia.market.marketWidgetClasses
             }
             this.m_UncommittedOffer = false;
          }
+         if(this.m_UncommittedCoins)
+         {
+            this.m_UICoinBalance.coins = IngameShopManager.getInstance().getConfirmedCreditBalance();
+            this.m_UICoinBalance.coinsAreFinal = IngameShopManager.getInstance().creditsAreFinal();
+            this.m_UncommittedCoins = false;
+         }
       }
       
       private function onCreate(param1:MouseEvent) : void
@@ -484,12 +522,6 @@ package tibia.market.marketWidgetClasses
          }
       }
       
-      private function invalidateOffer() : void
-      {
-         this.m_UncommittedOffer = true;
-         invalidateProperties();
-      }
-      
       private function set offerPiecePrice(param1:uint) : void
       {
          var _loc2_:uint = MarketWidget.OFFER_MAX_TOTALPRICE;
@@ -522,20 +554,10 @@ package tibia.market.marketWidgetClasses
          invalidateProperties();
       }
       
-      override public function set selectedType(param1:*) : void
+      private function invalidateOffer() : void
       {
-         if(selectedType != param1)
-         {
-            super.selectedType = param1;
-            this.m_UncommittedSelectedType = true;
-            this.invalidateKind();
-            invalidateProperties();
-            this.invalidateOffer();
-            this.offerKind = -1;
-            this.offerAmount = 1;
-            this.offerPiecePrice = 1;
-            this.offerAnonymous = false;
-         }
+         this.m_UncommittedOffer = true;
+         invalidateProperties();
       }
       
       private function get offerPiecePrice() : uint
@@ -546,6 +568,24 @@ package tibia.market.marketWidgetClasses
       private function get offerAnonymous() : Boolean
       {
          return this.m_Anonymous;
+      }
+      
+      override public function set selectedType(param1:*) : void
+      {
+         if(selectedType != param1)
+         {
+            super.selectedType = param1;
+            this.m_UncommittedSelectedType = true;
+            this.invalidateKind();
+            invalidateProperties();
+            this.invalidateOffer();
+         }
+      }
+      
+      private function onCoinBalanceChange(param1:IngameShopEvent) : void
+      {
+         this.m_UncommittedCoins = true;
+         invalidateProperties();
       }
    }
 }

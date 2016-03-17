@@ -493,6 +493,7 @@ package tibia.creatures.battlelistWidgetClasses
          var _loc3_:uint = 0;
          if(param1.type == UIEffectsRetrieveComponentCommandEvent.GET_UI_COMPONENT && param1.identifier == BattlelistWidgetView)
          {
+            this.widgetCollapsed = false;
             _loc2_ = param1.subIdentifier as Creature;
             _loc3_ = 0;
             while(_loc3_ < this.m_Opponents.length)

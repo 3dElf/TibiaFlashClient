@@ -4,10 +4,11 @@ package tibia.market
    import tibia.market.marketWidgetClasses.ITypeComponent;
    import tibia.market.marketWidgetClasses.IViewContainer;
    import tibia.appearances.AppearanceStorage;
+   import tibia.ingameshop.IngameShopEvent;
+   import flash.events.Event;
    import tibia.network.Communication;
    import mx.containers.TabNavigator;
    import tibia.appearances.AppearanceType;
-   import flash.events.Event;
    import shared.controls.SimpleTabNavigator;
    import mx.events.IndexChangedEvent;
    import tibia.market.marketWidgetClasses.MarketTab;
@@ -18,6 +19,7 @@ package tibia.market
    import flash.display.DisplayObjectContainer;
    import flash.events.TimerEvent;
    import tibia.container.InventoryTypeInfo;
+   import tibia.ingameshop.IngameShopManager;
    
    public class MarketWidget extends PopUpBase implements ITypeComponent, IViewContainer
    {
@@ -70,13 +72,13 @@ package tibia.market
       
       public static const DETAIL_FIELD_RUNE_SPELL:int = 10;
       
-      public static const OFFER_MAX_AMOUNT_NONCUMULATIVE:int = 2000;
+      public static const CATEGORY_SWORDS:int = 20;
       
       public static const DETAIL_FIELD_ATTACK:int = 1;
       
-      public static const CATEGORY_SWORDS:int = 20;
-      
       private static const BUNDLE:String = "MarketWidget";
+      
+      public static const OFFER_MAX_AMOUNT_NONCUMULATIVE:int = 2000;
       
       public static const DETAIL_FIELD_DESCRIPTION:int = 4;
       
@@ -97,6 +99,8 @@ package tibia.market
       public static const CATEGORY_RINGS:int = 11;
       
       public static const DETAIL_FIELD_SKILLBOOST:int = 11;
+      
+      public static const CATEGORY_TIBIA_COINS:int = 23;
       
       public static const DETAIL_FIELD_WEIGHT:int = 14;
       
@@ -204,17 +208,23 @@ package tibia.market
          }
          addEventListener(SELECTED_TYPE_CHANGE,this.onTypeChange);
          addEventListener(SELECTED_VIEW_CHANGE,this.onViewChange);
+         IngameShopManager.getInstance().addEventListener(IngameShopEvent.CREDIT_BALANCE_CHANGED,this.onCoinBalanceChange);
       }
       
       public static function isValidCategoryID(param1:int) : Boolean
       {
-         return param1 > 0 && param1 <= CATEGORY_PREMIUM_SCROLLS;
+         return param1 > 0 && param1 <= CATEGORY_TIBIA_COINS;
       }
       
       public static function isValidTypeID(param1:int) : Boolean
       {
          var _loc2_:AppearanceStorage = Tibia.s_GetAppearanceStorage();
          return _loc2_.getMarketObjectType(param1) != null;
+      }
+      
+      private function onCoinBalanceChange(param1:IngameShopEvent) : void
+      {
+         dispatchEvent(new Event(DEPOT_CONTENT_CHANGE));
       }
       
       public function cancelOffer(param1:Offer) : void
@@ -503,7 +513,7 @@ package tibia.market
             _loc2_.buttonFlags = EmbeddedDialog.CLOSE;
             _loc2_.text = param1;
             _loc2_.title = resourceManager.getString(BUNDLE,"MARKET_DIALOG_GENERIC_TITLE");
-            embeddedDialog = _loc2_;
+            enqueueEmbeddedDialog(_loc2_);
          }
       }
       
@@ -717,6 +727,10 @@ package tibia.market
          else
          {
             return 0;
+         }
+         if(_loc2_ == IngameShopManager.TIBIA_COINS_APPEARANCE_TYPE_ID)
+         {
+            return IngameShopManager.getInstance().getConfirmedCreditBalance();
          }
          if(this.m_LastDepotTypeID == _loc2_)
          {

@@ -100,6 +100,7 @@ package tibia.controls.dynamicTabBarClasses
       
       override protected function drawRowBackgrounds() : void
       {
+         var _loc1_:Sprite = null;
          var _loc8_:Shape = null;
          var _loc9_:uint = 0;
          var _loc10_:Number = NaN;
@@ -108,7 +109,7 @@ package tibia.controls.dynamicTabBarClasses
          var _loc13_:Number = NaN;
          var _loc14_:Number = NaN;
          var _loc15_:Graphics = null;
-         var _loc1_:Sprite = Sprite(listContent.getChildByName("rowBGs"));
+         _loc1_ = Sprite(listContent.getChildByName("rowBGs"));
          if(_loc1_ == null)
          {
             _loc1_ = new FlexSprite();

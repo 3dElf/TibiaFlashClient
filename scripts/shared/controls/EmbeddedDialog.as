@@ -5,8 +5,8 @@ package shared.controls
    import mx.controls.Button;
    import flash.events.MouseEvent;
    import mx.controls.Label;
-   import mx.events.CloseEvent;
    import mx.containers.Box;
+   import mx.events.CloseEvent;
    import mx.containers.HBox;
    import mx.core.Container;
    import mx.core.ScrollPolicy;
@@ -33,22 +33,28 @@ package shared.controls
       
       private static const BUTTON_FLAGS:Array = [{
          "data":EmbeddedDialog.OKAY,
-         "label":"BTN_OKAY"
+         "label":"BTN_OKAY",
+         "styleName":"buttonOkayStyle"
       },{
          "data":EmbeddedDialog.YES,
-         "label":"BTN_YES"
+         "label":"BTN_YES",
+         "styleName":"buttonYesStyle"
       },{
          "data":EmbeddedDialog.CLOSE,
-         "label":"BTN_CLOSE"
+         "label":"BTN_CLOSE",
+         "styleName":"buttonCloseStyle"
       },{
          "data":EmbeddedDialog.NO,
-         "label":"BTN_NO"
+         "label":"BTN_NO",
+         "styleName":"buttonNoStyle"
       },{
          "data":EmbeddedDialog.CLEAR,
-         "label":"BTN_CLEAR"
+         "label":"BTN_CLEAR",
+         "styleName":"buttonClearStyle"
       },{
          "data":EmbeddedDialog.CANCEL,
-         "label":"BTN_CANCEL"
+         "label":"BTN_CANCEL",
+         "styleName":"buttonCancelStyle"
       }];
       
       public static const NONE:uint = 0;
@@ -132,8 +138,9 @@ package shared.controls
                   _loc2_ = new CustomButton();
                   _loc2_.label = resourceManager.getString(BUNDLE,BUTTON_FLAGS[_loc1_].label);
                   _loc2_.data = BUTTON_FLAGS[_loc1_].data;
-                  _loc2_.styleName = getStyle("buttonStyle");
+                  _loc2_.styleName = getStyle(BUTTON_FLAGS[_loc1_].styleName);
                   _loc2_.addEventListener(MouseEvent.CLICK,this.onButtonClick);
+                  _loc2_.minWidth = getStyle("minimumButtonWidth");
                   this.m_UIButtonBox.addChild(_loc2_);
                }
                _loc1_++;
@@ -142,6 +149,11 @@ package shared.controls
             this.m_UIButtonBox.visible = this.m_ButtonFlags != NONE;
             this.m_UncommittedButtonFlags = false;
          }
+      }
+      
+      public function get titleBox() : Box
+      {
+         return this.m_UITitleBox;
       }
       
       private function onButtonClick(param1:MouseEvent) : void
@@ -196,7 +208,6 @@ package shared.controls
       protected function createContent(param1:Box) : void
       {
          this.m_UIText = new Text();
-         this.m_UIText.percentHeight = 100;
          this.m_UIText.percentWidth = 100;
          this.m_UIText.styleName = getStyle("textStyle");
          param1.addChild(this.m_UIText);
@@ -249,6 +260,11 @@ package shared.controls
       public function get text() : String
       {
          return this.m_Text;
+      }
+      
+      public function get content() : Box
+      {
+         return this.m_UIContentBox;
       }
       
       public function set title(param1:String) : void

@@ -14,11 +14,13 @@ package tibia.container
       
       public static const LAST_SLOT:int = BLESSINGS;
       
-      public static const FIRST_SLOT:int = HEAD;
+      public static const INGAMESHOP:int = 11;
       
       public static const RIGHT_HAND:int = 5;
       
       public static const TORSO:int = 4;
+      
+      public static const FIRST_SLOT:int = HEAD;
       
       public static const NECK:int = 2;
       
@@ -39,8 +41,6 @@ package tibia.container
       public static const FEET:int = 8;
       
       public static const PREMIUM:int = 12;
-      
-      public static const PURSE:int = 11;
        
       private var m_Objects:Vector.<ObjectInstance> = null;
       

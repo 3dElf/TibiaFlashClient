@@ -4,6 +4,7 @@ package tibia.sidebar.sideBarWidgetClasses
    import flash.events.MouseEvent;
    import tibia.input.staticaction.StaticActionList;
    import tibia.premium.PremiumManager;
+   import tibia.ingameshop.IngameShopManager;
    import shared.controls.CustomButton;
    import mx.core.ScrollPolicy;
    
@@ -17,6 +18,8 @@ package tibia.sidebar.sideBarWidgetClasses
       protected var m_UIButtonLogout:Button = null;
       
       protected var m_UIButtonOptions:Button = null;
+      
+      protected var m_UIButtonStore:Button = null;
       
       protected var m_UIButtonSpellList:Button = null;
       
@@ -46,6 +49,7 @@ package tibia.sidebar.sideBarWidgetClasses
          this.m_UIButtonQuestLog.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
          this.m_UIButtonSpellList.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
          this.m_UIButtonPremium.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
+         this.m_UIButtonStore.removeEventListener(MouseEvent.CLICK,this.onButtonClick);
       }
       
       override protected function commitProperties() : void
@@ -77,6 +81,9 @@ package tibia.sidebar.sideBarWidgetClasses
                break;
             case this.m_UIButtonPremium:
                Tibia.s_GetPremiumManager().goToPaymentWebsite(PremiumManager.PREMIUM_BUTTON_GENERAL_CONTROLS);
+               break;
+            case this.m_UIButtonStore:
+               IngameShopManager.getInstance().openShopWindow(true);
          }
       }
       
@@ -120,6 +127,11 @@ package tibia.sidebar.sideBarWidgetClasses
             this.m_UIButtonPremium.label = resourceManager.getString(BUNDLE,"BTN_PREMIUM");
             this.m_UIButtonPremium.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             addChild(this.m_UIButtonPremium);
+            this.m_UIButtonStore = new CustomButton();
+            this.m_UIButtonStore.percentWidth = 100;
+            this.m_UIButtonStore.label = resourceManager.getString(BUNDLE,"BTN_STORE");
+            this.m_UIButtonStore.addEventListener(MouseEvent.CLICK,this.onButtonClick);
+            addChild(this.m_UIButtonStore);
             this.m_UIConstructed = true;
          }
       }

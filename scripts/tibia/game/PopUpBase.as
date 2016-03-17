@@ -3,8 +3,9 @@ package tibia.game
    import mx.containers.VBox;
    import flash.display.DisplayObject;
    import flash.display.Stage;
-   import flash.display.Sprite;
    import mx.core.Container;
+   import mx.core.EdgeMetrics;
+   import shared.controls.EmbeddedDialog;
    import mx.containers.HBox;
    import mx.core.ScrollPolicy;
    import flash.events.MouseEvent;
@@ -12,17 +13,16 @@ package tibia.game
    import flash.events.Event;
    import flash.events.KeyboardEvent;
    import mx.core.EventPriority;
-   import shared.controls.EmbeddedDialog;
    import mx.events.SandboxMouseEvent;
+   import mx.events.CloseEvent;
    import mx.controls.Button;
    import shared.controls.CustomButton;
    import shared.utility.loopDisplayList;
    import mx.managers.IFocusManagerComponent;
-   import mx.events.CloseEvent;
+   import flash.display.DisplayObjectContainer;
    import mx.core.IDataRenderer;
    import flash.ui.Keyboard;
-   import flash.display.DisplayObjectContainer;
-   import mx.core.EdgeMetrics;
+   import flash.display.Sprite;
    
    public class PopUpBase extends VBox
    {
@@ -83,8 +83,6 @@ package tibia.game
        
       private var m_ButtonFlags:uint = 0;
       
-      private var m_UIEmbeddedMouseShield:Sprite;
-      
       private var m_UncommittedButtonFlags:Boolean = true;
       
       private var m_UIEmbeddedDialog:EmbeddedDialog = null;
@@ -97,20 +95,27 @@ package tibia.game
       
       private var m_UITitleLabel:Label = null;
       
-      private var m_UIHeader:Container = null;
+      private var m_EnqueuedEmbeddedDialogs:Vector.<EmbeddedDialog>;
       
       private var m_Priority:int = 0;
       
       private var m_InvalidFocus:Boolean = false;
       
-      private var m_UIFooter:Container = null;
+      private var m_UIHeader:Container = null;
+      
+      private var m_StretchEmbeddedDialog:Boolean = true;
       
       private var m_Title:String = null;
       
+      private var m_UIFooter:Container = null;
+      
       private var m_KeyboardFlags:uint = 0;
+      
+      private var m_UIEmbeddedMouseShield:Sprite;
       
       public function PopUpBase()
       {
+         this.m_EnqueuedEmbeddedDialogs = new Vector.<EmbeddedDialog>();
          this.m_UIEmbeddedMouseShield = new Sprite();
          super();
          horizontalScrollPolicy = ScrollPolicy.OFF;
@@ -138,6 +143,62 @@ package tibia.game
       protected function get header() : Container
       {
          return this.m_UIHeader;
+      }
+      
+      override protected function updateDisplayList(param1:Number, param2:Number) : void
+      {
+         var a_UnscaledWidth:Number = param1;
+         var a_UnscaledHeight:Number = param2;
+         super.updateDisplayList(a_UnscaledWidth,a_UnscaledHeight);
+         var v:EdgeMetrics = this.borderMetrics;
+         var h:Number = 0;
+         var w:Number = a_UnscaledWidth - v.left - v.right;
+         h = this.m_UIHeader.getExplicitOrMeasuredHeight();
+         this.m_UIHeader.move(v.left,(v.top - h) / 2);
+         this.m_UIHeader.setActualSize(w,h);
+         h = this.m_UIFooter.getExplicitOrMeasuredHeight();
+         this.m_UIFooter.move(v.left,a_UnscaledHeight - (v.bottom + h) / 2);
+         this.m_UIFooter.setActualSize(w,h);
+         if(this.m_UIEmbeddedDialog != null)
+         {
+            if(this.m_UIEmbeddedMouseShield != null)
+            {
+               this.m_UIEmbeddedMouseShield.x = 0;
+               this.m_UIEmbeddedMouseShield.y = 0;
+               with(this.m_UIEmbeddedMouseShield.graphics)
+               {
+                  
+                  clear();
+                  beginFill(0,0.5);
+                  drawRect(0,0,a_UnscaledWidth,a_UnscaledHeight);
+                  endFill();
+               }
+            }
+            h = this.m_UIEmbeddedDialog.getExplicitOrMeasuredHeight();
+            if(this.m_StretchEmbeddedDialog)
+            {
+               this.m_UIEmbeddedDialog.move(v.left,v.top + (a_UnscaledHeight - v.top - v.bottom - h) / 2);
+            }
+            else
+            {
+               w = Math.min(w,this.m_UIEmbeddedDialog.getExplicitOrMeasuredWidth());
+               this.m_UIEmbeddedDialog.move(v.left + (a_UnscaledWidth - v.left - v.right - w) / 2,v.top + (a_UnscaledHeight - v.top - v.bottom - h) / 2);
+            }
+            this.m_UIEmbeddedDialog.setActualSize(w,h);
+            rawChildren.setChildIndex(this.m_UIEmbeddedDialog,rawChildren.numChildren - 1);
+         }
+      }
+      
+      public function enqueueEmbeddedDialog(param1:EmbeddedDialog) : void
+      {
+         if(this.embeddedDialog != null)
+         {
+            this.m_EnqueuedEmbeddedDialogs.push(param1);
+         }
+         else
+         {
+            this.embeddedDialog = param1;
+         }
       }
       
       protected function get footer() : Container
@@ -179,6 +240,15 @@ package tibia.game
          s_Current = this;
          addEventListener(KeyboardEvent.KEY_DOWN,this.onClose,false,EventPriority.DEFAULT_HANDLER,false);
          callLater(this.invalidateFocus);
+      }
+      
+      public function set stretchEmbeddedDialog(param1:Boolean) : void
+      {
+         if(param1 != this.m_StretchEmbeddedDialog)
+         {
+            this.m_StretchEmbeddedDialog = param1;
+            invalidateDisplayList();
+         }
       }
       
       public function set title(param1:String) : void
@@ -238,6 +308,34 @@ package tibia.game
          {
             this.m_KeyboardFlags = param1;
          }
+      }
+      
+      public function set priority(param1:int) : void
+      {
+         this.m_Priority = param1;
+      }
+      
+      private function onEmbeddedDialogClose(param1:CloseEvent) : void
+      {
+         if(!param1.cancelable || !param1.isDefaultPrevented())
+         {
+            this.embeddedDialog = null;
+         }
+      }
+      
+      public function hide(param1:Boolean = false) : void
+      {
+         PopUpQueue.getInstance().hide(this);
+      }
+      
+      public function get stretchEmbeddedDialog() : Boolean
+      {
+         return this.m_StretchEmbeddedDialog;
+      }
+      
+      public function get title() : String
+      {
+         return this.m_Title;
       }
       
       override protected function commitProperties() : void
@@ -301,61 +399,6 @@ package tibia.game
          }
       }
       
-      private function onEmbeddedDialogClose(param1:CloseEvent) : void
-      {
-         if(!param1.cancelable || !param1.isDefaultPrevented())
-         {
-            this.embeddedDialog = null;
-         }
-      }
-      
-      public function set priority(param1:int) : void
-      {
-         this.m_Priority = param1;
-      }
-      
-      public function hide(param1:Boolean = false) : void
-      {
-         PopUpQueue.getInstance().hide(this);
-      }
-      
-      public function get title() : String
-      {
-         return this.m_Title;
-      }
-      
-      private function onClose(param1:Event) : void
-      {
-         var _loc3_:IDataRenderer = null;
-         var _loc2_:CloseEvent = null;
-         if(param1 is KeyboardEvent && KeyboardEvent(param1).keyCode == Keyboard.ENTER && (this.m_KeyboardFlags & tibia.game.PopUpBase.KEY_ENTER) != 0)
-         {
-            _loc2_ = new CloseEvent(CloseEvent.CLOSE,false,true);
-            _loc2_.detail = tibia.game.PopUpBase.BUTTON_OKAY;
-            dispatchEvent(_loc2_);
-         }
-         else if(param1 is KeyboardEvent && KeyboardEvent(param1).keyCode == Keyboard.ESCAPE && (this.m_KeyboardFlags & tibia.game.PopUpBase.KEY_ESCAPE) != 0)
-         {
-            _loc2_ = new CloseEvent(CloseEvent.CLOSE,false,true);
-            _loc2_.detail = tibia.game.PopUpBase.BUTTON_CANCEL;
-            dispatchEvent(_loc2_);
-         }
-         else if(param1 is MouseEvent && param1.type == MouseEvent.CLICK)
-         {
-            _loc3_ = param1.currentTarget as IDataRenderer;
-            if(_loc3_ != null)
-            {
-               _loc2_ = new CloseEvent(CloseEvent.CLOSE,false,true);
-               _loc2_.detail = uint(_loc3_.data);
-               dispatchEvent(_loc2_);
-            }
-         }
-         if(_loc2_ != null && (!_loc2_.cancelable || !_loc2_.isDefaultPrevented()))
-         {
-            this.hide(_loc2_.detail == tibia.game.PopUpBase.BUTTON_OKAY || _loc2_.detail == tibia.game.PopUpBase.BUTTON_YES);
-         }
-      }
-      
       protected function invalidateFocus() : void
       {
          this.m_InvalidFocus = true;
@@ -388,6 +431,11 @@ package tibia.game
          return this.m_KeyboardFlags;
       }
       
+      protected function get focusRoot() : DisplayObjectContainer
+      {
+         return this;
+      }
+      
       public function set embeddedDialog(param1:EmbeddedDialog) : void
       {
          if(this.m_UIEmbeddedDialog != param1)
@@ -413,12 +461,11 @@ package tibia.game
                rawChildren.addChild(this.m_UIEmbeddedDialog);
                this.m_UIEmbeddedDialog.setFocus();
             }
+            else
+            {
+               this.showNextEmbeddedDialogInQueue();
+            }
          }
-      }
-      
-      protected function get focusRoot() : DisplayObjectContainer
-      {
-         return this;
       }
       
       public function set buttonFlags(param1:uint) : void
@@ -430,6 +477,38 @@ package tibia.game
             this.m_UncommittedButtonFlags = true;
             invalidateProperties();
             invalidateSize();
+         }
+      }
+      
+      private function onClose(param1:Event) : void
+      {
+         var _loc3_:IDataRenderer = null;
+         var _loc2_:CloseEvent = null;
+         if(param1 is KeyboardEvent && KeyboardEvent(param1).keyCode == Keyboard.ENTER && (this.m_KeyboardFlags & tibia.game.PopUpBase.KEY_ENTER) != 0)
+         {
+            _loc2_ = new CloseEvent(CloseEvent.CLOSE,false,true);
+            _loc2_.detail = tibia.game.PopUpBase.BUTTON_OKAY;
+            dispatchEvent(_loc2_);
+         }
+         else if(param1 is KeyboardEvent && KeyboardEvent(param1).keyCode == Keyboard.ESCAPE && (this.m_KeyboardFlags & tibia.game.PopUpBase.KEY_ESCAPE) != 0)
+         {
+            _loc2_ = new CloseEvent(CloseEvent.CLOSE,false,true);
+            _loc2_.detail = tibia.game.PopUpBase.BUTTON_CANCEL;
+            dispatchEvent(_loc2_);
+         }
+         else if(param1 is MouseEvent && param1.type == MouseEvent.CLICK)
+         {
+            _loc3_ = param1.currentTarget as IDataRenderer;
+            if(_loc3_ != null)
+            {
+               _loc2_ = new CloseEvent(CloseEvent.CLOSE,false,true);
+               _loc2_.detail = uint(_loc3_.data);
+               dispatchEvent(_loc2_);
+            }
+         }
+         if(_loc2_ != null && (!_loc2_.cancelable || !_loc2_.isDefaultPrevented()))
+         {
+            this.hide(_loc2_.detail == tibia.game.PopUpBase.BUTTON_OKAY || _loc2_.detail == tibia.game.PopUpBase.BUTTON_YES);
          }
       }
       
@@ -486,45 +565,17 @@ package tibia.game
          return _loc1_;
       }
       
+      private function showNextEmbeddedDialogInQueue() : void
+      {
+         if(this.m_EnqueuedEmbeddedDialogs.length > 0)
+         {
+            this.embeddedDialog = this.m_EnqueuedEmbeddedDialogs.shift();
+         }
+      }
+      
       public function show() : void
       {
          PopUpQueue.getInstance().show(this);
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var a_UnscaledWidth:Number = param1;
-         var a_UnscaledHeight:Number = param2;
-         super.updateDisplayList(a_UnscaledWidth,a_UnscaledHeight);
-         var v:EdgeMetrics = this.borderMetrics;
-         var h:Number = 0;
-         var w:Number = a_UnscaledWidth - v.left - v.right;
-         h = this.m_UIHeader.getExplicitOrMeasuredHeight();
-         this.m_UIHeader.move(v.left,(v.top - h) / 2);
-         this.m_UIHeader.setActualSize(w,h);
-         h = this.m_UIFooter.getExplicitOrMeasuredHeight();
-         this.m_UIFooter.move(v.left,a_UnscaledHeight - (v.bottom + h) / 2);
-         this.m_UIFooter.setActualSize(w,h);
-         if(this.m_UIEmbeddedDialog != null)
-         {
-            if(this.m_UIEmbeddedMouseShield != null)
-            {
-               this.m_UIEmbeddedMouseShield.x = 0;
-               this.m_UIEmbeddedMouseShield.y = 0;
-               with(this.m_UIEmbeddedMouseShield.graphics)
-               {
-                  
-                  clear();
-                  beginFill(65280,0);
-                  drawRect(0,0,a_UnscaledWidth,a_UnscaledHeight);
-                  endFill();
-               }
-            }
-            h = this.m_UIEmbeddedDialog.getExplicitOrMeasuredHeight();
-            this.m_UIEmbeddedDialog.move(v.left,v.top + (a_UnscaledHeight - v.top - v.bottom - h) / 2);
-            this.m_UIEmbeddedDialog.setActualSize(w,h);
-            rawChildren.setChildIndex(this.m_UIEmbeddedDialog,rawChildren.numChildren - 1);
-         }
       }
    }
 }

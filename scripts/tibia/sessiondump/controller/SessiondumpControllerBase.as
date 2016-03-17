@@ -12,9 +12,9 @@ package tibia.sessiondump.controller
    public class SessiondumpControllerBase implements ISessiondumpRemoteControl
    {
       
-      protected static const CEDITGUILDMESSAGE:int = 156;
-      
       protected static const CUPCONTAINER:int = 136;
+      
+      protected static const CQUITGAME:int = 20;
       
       protected static const CMARKETACCEPT:int = 248;
       
@@ -22,37 +22,19 @@ package tibia.sessiondump.controller
       
       protected static const CGONORTHWEST:int = 109;
       
-      protected static const CQUITGAME:int = 20;
-      
-      protected static const CSHAREEXPERIENCE:int = 168;
-      
-      public static const PROTOCOL_VERSION:int = 1079;
-      
-      protected static const CROTATEWEST:int = 114;
-      
-      protected static const SCREATUREOUTFIT:int = 142;
+      protected static const CMARKETCREATE:int = 246;
       
       protected static const SOUTFIT:int = 200;
-      
-      protected static const SEDITGUILDMESSAGE:int = 174;
-      
-      protected static const CEDITBUDDY:int = 222;
       
       protected static const CSETTACTICS:int = 160;
       
       protected static const CPERFORMANCEMETRICS:int = 31;
       
-      protected static const SAMBIENTE:int = 130;
-      
-      protected static const ERR_INVALID_SIZE:int = 1;
+      protected static const CADDBUDDY:int = 220;
       
       protected static const ERR_COULD_NOT_CONNECT:int = 5;
       
       protected static const SSETTACTICS:int = 167;
-      
-      protected static const SLOGINCHALLENGE:int = 31;
-      
-      protected static const CLEAVECHANNEL:int = 153;
       
       protected static const SPLAYERDATABASIC:int = 159;
       
@@ -60,21 +42,19 @@ package tibia.sessiondump.controller
       
       protected static const PACKETLENGTH_SIZE:int = 2;
       
+      protected static const SMESSAGE:int = 180;
+      
       protected static const CPING:int = 29;
       
-      protected static const SPLAYERSKILLS:int = 161;
-      
-      protected static const CCLOSENPCCHANNEL:int = 158;
+      protected static const SCREDITBALANCE:int = 223;
       
       protected static const CHECKSUM_POS:int = PACKETLENGTH_POS + PACKETLENGTH_SIZE;
       
-      protected static const SMESSAGE:int = 180;
-      
-      protected static const SCREATUREUNPASS:int = 146;
+      protected static const CGETQUESTLOG:int = 240;
       
       protected static const CENTERWORLD:int = 15;
       
-      protected static const CADDBUDDY:int = 220;
+      protected static const CCLOSENPCCHANNEL:int = 158;
       
       protected static const CBUYOBJECT:int = 122;
       
@@ -84,79 +64,39 @@ package tibia.sessiondump.controller
       
       protected static const SWAIT:int = 182;
       
-      protected static const CGETOUTFIT:int = 210;
-      
-      protected static const CONNECTION_STATE_DISCONNECTED:int = 0;
+      protected static const CATTACK:int = 161;
       
       protected static const SLOGINSUCCESS:int = 23;
       
-      protected static const CTHANKYOU:int = 231;
-      
-      protected static const CATTACK:int = 161;
+      protected static const CLOOKATCREATURE:int = 141;
       
       protected static const CJOINCHANNEL:int = 152;
-      
-      protected static const CGONORTHEAST:int = 106;
       
       protected static const CROTATEEAST:int = 112;
       
       protected static const SBUDDYDATA:int = 210;
       
-      protected static const SDELETEINCONTAINER:int = 114;
-      
       protected static const CUSEONCREATURE:int = 132;
       
-      protected static const CLOOKATCREATURE:int = 141;
-      
-      protected static const SSHOWMODALDIALOG:int = 250;
-      
-      protected static const SCREATEINCONTAINER:int = 112;
-      
-      protected static const CERRORFILEENTRY:int = 232;
-      
-      protected static const HEADER_SIZE:int = PACKETLENGTH_SIZE + CHECKSUM_SIZE;
+      protected static const CBROWSEFIELD:int = 203;
       
       protected static const SCREATUREPARTY:int = 145;
       
-      protected static const SCREATUREHEALTH:int = 140;
+      protected static const SQUESTLOG:int = 240;
       
       protected static const ERR_INTERNAL:int = 0;
       
-      protected static const STOPROW:int = 101;
-      
-      protected static const CINSPECTNPCTRADE:int = 121;
-      
-      protected static const CHECKSUM_SIZE:int = 4;
+      protected static const CCANCEL:int = 190;
       
       protected static const CGUILDMESSAGE:int = 155;
       
-      protected static const CUSEOBJECT:int = 130;
-      
-      protected static const SQUESTLOG:int = 240;
-      
-      protected static const ERR_INVALID_MESSAGE:int = 3;
-      
-      protected static const SBOTTOMFLOOR:int = 191;
-      
-      protected static const CGETQUESTLOG:int = 240;
-      
-      protected static const CUSETWOOBJECTS:int = 131;
-      
-      protected static const ERR_INVALID_STATE:int = 4;
-      
-      protected static const SFIELDDATA:int = 105;
+      protected static const CREMOVEBUDDY:int = 221;
       
       protected static const CCLOSECONTAINER:int = 135;
       
-      protected static const CCANCEL:int = 190;
+      protected static const SFIELDDATA:int = 105;
       
-      protected static const CTURNOBJECT:int = 133;
-      
-      protected static const SPREMIUMTRIGGER:int = 158;
-      
-      protected static const CINVITETOCHANNEL:int = 171;
-      
-      protected static const CINVITETOPARTY:int = 163;
+      protected static const SCLOSECONTAINER:int = 111;
       
       protected static const SLEFTROW:int = 104;
       
@@ -164,27 +104,211 @@ package tibia.sessiondump.controller
       
       protected static const SMISSILEEFFECT:int = 133;
       
-      protected static const CBROWSEFIELD:int = 203;
-      
       protected static const CGOWEST:int = 104;
       
-      protected static const SCLOSECONTAINER:int = 111;
-      
-      protected static const SPINGBACK:int = 30;
-      
       protected static const CPASSLEADERSHIP:int = 166;
-      
-      protected static const SCREATURELIGHT:int = 141;
-      
-      protected static const CPINGBACK:int = 30;
-      
-      protected static const STUTORIALHINT:int = 220;
       
       protected static const SSPELLGROUPDELAY:int = 165;
       
       protected static const SBOTTOMROW:int = 103;
       
+      protected static const CGETOBJECTINFO:int = 243;
+      
       protected static const CSEEKINCONTAINER:int = 204;
+      
+      protected static const SQUESTLINE:int = 241;
+      
+      protected static const SUPDATINGSHOPBALANCE:int = 242;
+      
+      protected static const CGOSOUTHWEST:int = 108;
+      
+      protected static const SLOGINERROR:int = 20;
+      
+      protected static const SCREATUREMARKS:int = 147;
+      
+      protected static const CREJECTTRADE:int = 128;
+      
+      protected static const SREQUESTPURCHASEDATA:int = 225;
+      
+      protected static const CREVOKEINVITATION:int = 165;
+      
+      protected static const SCREATURESKULL:int = 144;
+      
+      protected static const CLOGIN:int = 10;
+      
+      protected static const ERR_CONNECTION_LOST:int = 6;
+      
+      protected static const SUNJUSTIFIEDPOINTS:int = 183;
+      
+      protected static const SPLAYERDATACURRENT:int = 160;
+      
+      protected static const STRAPPERS:int = 135;
+      
+      protected static const SOBJECTINFO:int = 244;
+      
+      protected static const CGETQUESTLINE:int = 241;
+      
+      protected static const SSNAPBACK:int = 181;
+      
+      protected static const CROTATESOUTH:int = 113;
+      
+      protected static const CGETCHANNELS:int = 151;
+      
+      protected static const CACCEPTTRADE:int = 127;
+      
+      protected static const SCHANNELS:int = 171;
+      
+      protected static const SOPENCHANNEL:int = 172;
+      
+      protected static const STOPFLOOR:int = 190;
+      
+      protected static const CBUYPREMIUMOFFER:int = 252;
+      
+      protected static const SPRIVATECHANNEL:int = 173;
+      
+      protected static const SBLESSINGS:int = 156;
+      
+      protected static const SINGAMESHOPSUCCESS:int = 254;
+      
+      protected static const CPRIVATECHANNEL:int = 154;
+      
+      protected static const PAYLOADLENGTH_POS:int = PAYLOAD_POS;
+      
+      protected static const SLOGINWAIT:int = 22;
+      
+      protected static const SCREATEONMAP:int = 106;
+      
+      protected static const CGETTRANSACTIONHISTORY:int = 254;
+      
+      protected static const CTRADEOBJECT:int = 125;
+      
+      protected static const CLOOK:int = 140;
+      
+      protected static const ERR_INVALID_CHECKSUM:int = 2;
+      
+      protected static const SNPCOFFER:int = 122;
+      
+      protected static const SCONTAINER:int = 110;
+      
+      protected static const CMARKETCANCEL:int = 247;
+      
+      protected static const SWORLDENTERED:int = 15;
+      
+      protected static const HEADER_POS:int = 0;
+      
+      protected static const STRANSACTIONHISTORY:int = 253;
+      
+      protected static const SPREMIUMSHOPOFFERS:int = 252;
+      
+      protected static const CSELLOBJECT:int = 123;
+      
+      protected static const CMOUNT:int = 212;
+      
+      protected static const CCLOSENPCTRADE:int = 124;
+      
+      protected static const SMARKETBROWSE:int = 249;
+      
+      protected static const CMARKETBROWSE:int = 245;
+      
+      protected static const SMARKETLEAVE:int = 247;
+      
+      protected static const SCOUNTEROFFER:int = 126;
+      
+      protected static const CFOLLOW:int = 162;
+      
+      protected static const CANSWERMODALDIALOG:int = 249;
+      
+      protected static const CEXCLUDEFROMCHANNEL:int = 172;
+      
+      protected static const SMARKETENTER:int = 246;
+      
+      protected static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
+      
+      protected static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
+      
+      protected static const SCREATURESPEED:int = 143;
+      
+      protected static const CREQUESTSHOPOFFERS:int = 251;
+      
+      protected static const SSPELLDELAY:int = 164;
+      
+      protected static const CEDITBUDDY:int = 222;
+      
+      protected static const SDELETEONMAP:int = 108;
+      
+      protected static const CEDITGUILDMESSAGE:int = 156;
+      
+      protected static const CROTATEWEST:int = 114;
+      
+      public static const PROTOCOL_VERSION:int = 1082;
+      
+      protected static const SCREATUREOUTFIT:int = 142;
+      
+      protected static const SEDITGUILDMESSAGE:int = 174;
+      
+      protected static const SAMBIENTE:int = 130;
+      
+      protected static const ERR_INVALID_SIZE:int = 1;
+      
+      protected static const SLOGINCHALLENGE:int = 31;
+      
+      protected static const CLEAVECHANNEL:int = 153;
+      
+      protected static const SPLAYERSKILLS:int = 161;
+      
+      protected static const CTHANKYOU:int = 231;
+      
+      protected static const SCREATUREUNPASS:int = 146;
+      
+      protected static const SSHOWMODALDIALOG:int = 250;
+      
+      protected static const CONNECTION_STATE_DISCONNECTED:int = 0;
+      
+      protected static const CGONORTHEAST:int = 106;
+      
+      protected static const SDELETEINCONTAINER:int = 114;
+      
+      protected static const SCREATEINCONTAINER:int = 112;
+      
+      protected static const CERRORFILEENTRY:int = 232;
+      
+      protected static const HEADER_SIZE:int = PACKETLENGTH_SIZE + CHECKSUM_SIZE;
+      
+      protected static const CINSPECTNPCTRADE:int = 121;
+      
+      protected static const SCREATUREHEALTH:int = 140;
+      
+      protected static const STOPROW:int = 101;
+      
+      protected static const CHECKSUM_SIZE:int = 4;
+      
+      protected static const CTURNOBJECT:int = 133;
+      
+      protected static const COPENPREMIUMSHOP:int = 250;
+      
+      protected static const CUSEOBJECT:int = 130;
+      
+      protected static const ERR_INVALID_MESSAGE:int = 3;
+      
+      protected static const SBOTTOMFLOOR:int = 191;
+      
+      protected static const CINVITETOCHANNEL:int = 171;
+      
+      protected static const CUSETWOOBJECTS:int = 131;
+      
+      protected static const ERR_INVALID_STATE:int = 4;
+      
+      protected static const SPREMIUMTRIGGER:int = 158;
+      
+      protected static const CINVITETOPARTY:int = 163;
+      
+      protected static const SCREATURELIGHT:int = 141;
+      
+      protected static const CPINGBACK:int = 30;
+      
+      protected static const SPINGBACK:int = 30;
+      
+      protected static const STUTORIALHINT:int = 220;
       
       protected static const SPLAYERGOODS:int = 123;
       
@@ -192,89 +316,43 @@ package tibia.sessiondump.controller
       
       protected static const SPLAYERINVENTORY:int = 245;
       
-      protected static const CGETOBJECTINFO:int = 243;
-      
-      protected static const CGOSOUTHWEST:int = 108;
-      
-      protected static const SLOGINERROR:int = 20;
-      
       protected static const CMOVEOBJECT:int = 120;
       
-      protected static const SCREATUREMARKS:int = 147;
-      
-      protected static const SQUESTLINE:int = 241;
+      protected static const CRULEVIOLATIONREPORT:int = 242;
       
       protected static const CJOINAGGRESSION:int = 142;
       
-      protected static const CREJECTTRADE:int = 128;
-      
-      protected static const CREVOKEINVITATION:int = 165;
-      
       protected static const SMOVECREATURE:int = 109;
-      
-      protected static const SCREATURESKULL:int = 144;
       
       protected static const SSWITCHPRESET:int = 157;
       
       protected static const CGOEAST:int = 102;
       
-      protected static const ERR_CONNECTION_LOST:int = 6;
-      
-      protected static const CLOGIN:int = 10;
-      
-      protected static const SUNJUSTIFIEDPOINTS:int = 183;
+      protected static const CEDITLIST:int = 138;
       
       protected static const CJOINPARTY:int = 164;
       
-      protected static const SPLAYERDATACURRENT:int = 160;
-      
-      protected static const STRAPPERS:int = 135;
-      
       protected static const SCLOSETRADE:int = 127;
-      
-      protected static const SOBJECTINFO:int = 244;
       
       protected static const CONNECTION_STATE_GAME:int = 4;
       
       protected static const SMULTIUSEDELAY:int = 166;
       
-      protected static const CRULEVIOLATIONREPORT:int = 242;
-      
-      protected static const SSNAPBACK:int = 181;
+      protected static const SEDITLIST:int = 151;
       
       protected static const SSETINVENTORY:int = 120;
       
-      protected static const CROTATESOUTH:int = 113;
+      protected static const CGOPATH:int = 100;
       
       protected static const CLEAVEPARTY:int = 167;
       
-      protected static const SEDITLIST:int = 151;
-      
-      protected static const CGOPATH:int = 100;
-      
-      protected static const CACCEPTTRADE:int = 127;
-      
       protected static const SCHANGEONMAP:int = 107;
       
-      protected static const CGETCHANNELS:int = 151;
-      
       protected static const CGOSOUTHEAST:int = 107;
-      
-      protected static const SCHANNELS:int = 171;
-      
-      protected static const CEDITLIST:int = 138;
-      
-      protected static const CGETQUESTLINE:int = 241;
-      
-      protected static const SOPENCHANNEL:int = 172;
-      
-      protected static const STOPFLOOR:int = 190;
       
       protected static const CEQUIPOBJECT:int = 119;
       
       protected static const SCREATUREPVPHELPERS:int = 148;
-      
-      protected static const SPRIVATECHANNEL:int = 173;
       
       protected static const COPENCHANNEL:int = 170;
       
@@ -282,57 +360,33 @@ package tibia.sessiondump.controller
       
       protected static const SCHANGEINCONTAINER:int = 113;
       
-      protected static const CREMOVEBUDDY:int = 221;
-      
       protected static const SDELETEINVENTORY:int = 121;
       
-      protected static const PAYLOADLENGTH_POS:int = PAYLOAD_POS;
+      protected static const CTRANSFERCURRENCY:int = 239;
+      
+      protected static const SINGAMESHOPERROR:int = 224;
       
       protected static const SCHANNELEVENT:int = 243;
-      
-      protected static const SLOGINWAIT:int = 22;
       
       protected static const SPVPSITUATIONS:int = 184;
       
       protected static const SLOGINADVICE:int = 21;
       
-      protected static const SBLESSINGS:int = 156;
-      
-      protected static const SCREATEONMAP:int = 106;
-      
       protected static const CGONORTH:int = 101;
       
-      protected static const CPRIVATECHANNEL:int = 154;
-      
       protected static const SMARKETDETAIL:int = 248;
-      
-      protected static const CLOOK:int = 140;
-      
-      protected static const ERR_INVALID_CHECKSUM:int = 2;
-      
-      protected static const CTRADEOBJECT:int = 125;
-      
-      protected static const SNPCOFFER:int = 122;
       
       protected static const CTALK:int = 150;
       
       protected static const PAYLOADDATA_POSITION:int = PAYLOADLENGTH_POS + PAYLOADLENGTH_SIZE;
       
-      protected static const SCONTAINER:int = 110;
-      
-      protected static const CMARKETCANCEL:int = 247;
-      
-      protected static const CEDITTEXT:int = 137;
-      
-      protected static const SWORLDENTERED:int = 15;
-      
-      protected static const HEADER_POS:int = 0;
+      protected static const SPREMIUMSHOP:int = 251;
       
       protected static const STALK:int = 170;
       
-      protected static const SCLOSENPCTRADE:int = 124;
+      protected static const CEDITTEXT:int = 137;
       
-      protected static const CEXCLUDEFROMCHANNEL:int = 172;
+      protected static const SCLOSENPCTRADE:int = 124;
       
       protected static const SPENDINGSTATEENTERED:int = 10;
       
@@ -342,69 +396,43 @@ package tibia.sessiondump.controller
       
       protected static const CINSPECTTRADE:int = 126;
       
-      protected static const CSELLOBJECT:int = 123;
-      
       protected static const SEDITTEXT:int = 150;
       
       protected static const SOPENOWNCHANNEL:int = 178;
       
       protected static const SGRAPHICALEFFECT:int = 131;
       
-      protected static const CMARKETBROWSE:int = 245;
-      
-      protected static const CMOUNT:int = 212;
-      
-      protected static const CCLOSENPCTRADE:int = 124;
-      
-      protected static const SMARKETLEAVE:int = 247;
-      
-      protected static const SCOUNTEROFFER:int = 126;
-      
-      protected static const CFOLLOW:int = 162;
-      
-      protected static const CMARKETLEAVE:int = 244;
+      protected static const CBUGREPORT:int = 230;
       
       private static const CALCULATED_PLAYSPEED_FACTOR_SAMPLE_SIZE:uint = 3;
       
-      protected static const SMARKETBROWSE:int = 249;
+      protected static const CMARKETLEAVE:int = 244;
       
-      protected static const CBUGREPORT:int = 230;
+      protected static const COPENTRANSACTIONHISTORY:int = 253;
       
-      protected static const SMARKETENTER:int = 246;
-      
-      protected static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
-      
-      protected static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
-      
-      protected static const SCREATURETYPE:int = 149;
-      
-      protected static const SBUDDYSTATUSCHANGE:int = 211;
+      protected static const CSHAREEXPERIENCE:int = 168;
       
       protected static const SCLEARTARGET:int = 163;
       
-      protected static const CANSWERMODALDIALOG:int = 249;
+      protected static const SCREATURETYPE:int = 149;
       
-      protected static const CSETOUTFIT:int = 211;
+      protected static const CGETOUTFIT:int = 210;
       
-      protected static const PACKETLENGTH_POS:int = HEADER_POS;
-      
-      protected static const SCREATURESPEED:int = 143;
+      protected static const SBUDDYSTATUSCHANGE:int = 211;
       
       protected static const SCLOSECHANNEL:int = 179;
+      
+      protected static const CSETOUTFIT:int = 211;
       
       protected static const SAUTOMAPFLAG:int = 221;
       
       protected static const SOWNOFFER:int = 125;
       
+      protected static const PACKETLENGTH_POS:int = HEADER_POS;
+      
       protected static const PAYLOAD_POS:int = HEADER_POS + HEADER_SIZE;
       
-      protected static const SSPELLDELAY:int = 164;
-      
-      protected static const CMARKETCREATE:int = 246;
-      
       protected static const SPLAYERSTATE:int = 162;
-      
-      protected static const SDELETEONMAP:int = 108;
        
       private var m_CalculatedPlayspeedFactors:Vector.<uint> = null;
       

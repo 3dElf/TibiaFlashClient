@@ -2,7 +2,6 @@ package tibia.sessiondump.hints
 {
    import tibia.sessiondump.hints.condition.HintConditionBase;
    import tibia.worldmap.WorldMapStorage;
-   import tibia.sessiondump.controller.SessiondumpMouseShield;
    import tibia.sessiondump.controller.SessiondumpHintActionsController;
    import tibia.sessiondump.hints.condition.HintConditionAutowalk;
    import tibia.sessiondump.hints.condition.HintConditionMove;
@@ -14,6 +13,7 @@ package tibia.sessiondump.hints
    import tibia.creatures.CreatureStorage;
    import tibia.creatures.Creature;
    import tibia.help.GUIRectangle;
+   import tibia.sessiondump.controller.SessiondumpMouseShield;
    import tibia.creatures.battlelistWidgetClasses.BattlelistWidgetView;
    import tibia.actionbar.widgetClasses.ActionBarWidget;
    
@@ -52,6 +52,8 @@ package tibia.sessiondump.hints
       
       private static var FIELD_MULTIUSE_OBJECT_ID:String = "multiuseobjectid";
       
+      private static var FIELD_USEDESTINATIONPOSITION:String = "usedestinationposition";
+      
       private static var FIELD_PLAYER_OUTFIT_ADDONS:String = "add-ons";
       
       private static var FIELD_MULTIUSE_OBJECT_POSITION:String = "multiuseobjectposition";
@@ -87,6 +89,8 @@ package tibia.sessiondump.hints
       private static var FIELD_TARGET:String = "target";
       
       private static var CONDITION_TYPE_CLICK_CREATURE:String = "CLICK_CREATURE";
+      
+      private static var FIELD_OFFSET:String = "offset";
       
       private static const ACTION_NONE:int = 0;
       
@@ -132,6 +136,8 @@ package tibia.sessiondump.hints
       
       private static var FIELD_SOURCE_COORDINATE:String = "source";
       
+      private static var FIELD_TEXTHINT:String = "texthint";
+      
       private static var FIELD_COORDINATE:String = "coordinate";
        
       private var m_Condition:HintConditionBase = null;
@@ -161,7 +167,6 @@ package tibia.sessiondump.hints
          {
             if(this.m_Running == false)
             {
-               SessiondumpMouseShield.getInstance().startFadeAnimation();
                this.m_Running = true;
                this.showGraphicalHint();
                SessiondumpHintActionsController.getInstance().registerConditionListener(this.m_Condition,this.continueSessiondump);
@@ -177,72 +182,86 @@ package tibia.sessiondump.hints
       
       private function showGraphicalHint() : void
       {
-         var _loc4_:HintConditionAutowalk = null;
-         var _loc5_:HintConditionMove = null;
-         var _loc6_:HintConditionTalk = null;
-         var _loc7_:HintConditionAttack = null;
-         var _loc8_:HintConditionGreet = null;
-         var _loc9_:HintConditionUse = null;
-         var _loc10_:AppearanceType = null;
+         var _loc6_:HintConditionAutowalk = null;
+         var _loc7_:HintConditionMove = null;
+         var _loc8_:HintConditionTalk = null;
+         var _loc9_:HintConditionAttack = null;
+         var _loc10_:HintConditionGreet = null;
+         var _loc11_:HintConditionUse = null;
+         var _loc12_:AppearanceType = null;
          var _loc1_:CreatureStorage = Tibia.s_GetCreatureStorage();
          var _loc2_:WorldMapStorage = Tibia.s_GetWorldMapStorage();
          var _loc3_:Creature = null;
+         var _loc4_:GUIRectangle = null;
+         var _loc5_:GUIRectangle = null;
          if(this.m_Condition is HintConditionAutowalk)
          {
-            _loc4_ = this.m_Condition as HintConditionAutowalk;
-            Tibia.s_GetUIEffectsManager().showMapEffect(_loc4_.mapCoordinate);
+            _loc6_ = this.m_Condition as HintConditionAutowalk;
+            Tibia.s_GetUIEffectsManager().showMapEffect(_loc6_.mapCoordinate);
             SessiondumpMouseShield.getInstance().clearMouseHoles();
-            SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromCoordinate(_loc4_.mapCoordinate));
+            _loc4_ = GUIRectangle.s_FromCoordinate(_loc6_.mapCoordinate);
+            SessiondumpMouseShield.getInstance().addMouseHole(_loc4_);
          }
          else if(this.m_Condition is HintConditionMove)
          {
-            _loc5_ = this.m_Condition as HintConditionMove;
-            Tibia.s_GetUIEffectsManager().showDragDropEffect(_loc5_.sourcePosition,_loc5_.destinationPosition);
-            SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromCoordinate(_loc5_.sourcePosition));
-            SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromCoordinate(_loc5_.destinationPosition));
+            _loc7_ = this.m_Condition as HintConditionMove;
+            Tibia.s_GetUIEffectsManager().showDragDropEffect(_loc7_.sourcePosition,_loc7_.destinationPosition);
+            _loc4_ = GUIRectangle.s_FromCoordinate(_loc7_.sourcePosition);
+            _loc5_ = GUIRectangle.s_FromCoordinate(_loc7_.destinationPosition);
+            SessiondumpMouseShield.getInstance().addMouseHole(_loc4_);
+            SessiondumpMouseShield.getInstance().addMouseHole(_loc5_);
          }
          else if(this.m_Condition is HintConditionTalk)
          {
-            _loc6_ = this.m_Condition as HintConditionTalk;
-            Tibia.s_GetUIEffectsManager().showKeywordEffect(_loc6_.text);
-            SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromKeyword(_loc6_.text));
+            _loc8_ = this.m_Condition as HintConditionTalk;
+            Tibia.s_GetUIEffectsManager().showKeywordEffect(_loc8_.text);
+            _loc4_ = GUIRectangle.s_FromKeyword(_loc8_.text);
+            SessiondumpMouseShield.getInstance().addMouseHole(_loc4_);
          }
          else if(this.m_Condition is HintConditionAttack)
          {
-            _loc7_ = this.m_Condition as HintConditionAttack;
-            _loc3_ = _loc1_.getCreatureByName(_loc7_.creatureName);
+            _loc9_ = this.m_Condition as HintConditionAttack;
+            _loc3_ = _loc1_.getCreatureByName(_loc9_.creatureName);
             if(_loc3_ != null)
             {
                Tibia.s_GetUIEffectsManager().showMapEffect(_loc3_.position);
                Tibia.s_GetUIEffectsManager().higlightUIElementByIdentifier(BattlelistWidgetView,_loc3_,false);
-               SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromCoordinate(_loc3_.position));
+               _loc4_ = GUIRectangle.s_FromCoordinate(_loc3_.position);
+               SessiondumpMouseShield.getInstance().addMouseHole(_loc4_);
                SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromUIComponent(BattlelistWidgetView,_loc3_));
             }
          }
          else if(this.m_Condition is HintConditionGreet)
          {
-            _loc8_ = this.m_Condition as HintConditionGreet;
-            _loc3_ = _loc1_.getCreatureByName(_loc8_.creatureName);
+            _loc10_ = this.m_Condition as HintConditionGreet;
+            _loc3_ = _loc1_.getCreatureByName(_loc10_.creatureName);
             if(_loc3_ != null)
             {
                Tibia.s_GetUIEffectsManager().showMapEffect(_loc3_.position);
                Tibia.s_GetUIEffectsManager().higlightUIElementByIdentifier(BattlelistWidgetView,_loc3_,false);
-               SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromCoordinate(_loc3_.position));
+               _loc4_ = GUIRectangle.s_FromCoordinate(_loc3_.position);
+               SessiondumpMouseShield.getInstance().addMouseHole(_loc4_);
                SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromUIComponent(BattlelistWidgetView,_loc3_));
             }
          }
          else if(this.m_Condition is HintConditionUse)
          {
-            _loc9_ = this.m_Condition as HintConditionUse;
-            Tibia.s_GetUIEffectsManager().showUseEffect(_loc9_.absolutePosition,_loc9_.multiuseTarget);
-            SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromCoordinate(_loc9_.absolutePosition));
-            SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromCoordinate(_loc9_.multiuseTarget));
-            _loc10_ = Tibia.s_GetAppearanceStorage().getObjectType(_loc9_.useTypeID);
-            if(_loc10_ != null)
+            _loc11_ = this.m_Condition as HintConditionUse;
+            Tibia.s_GetUIEffectsManager().showUseEffect(_loc11_.absolutePosition,_loc11_.multiuseTarget);
+            _loc4_ = GUIRectangle.s_FromCoordinate(_loc11_.absolutePosition);
+            _loc5_ = GUIRectangle.s_FromCoordinate(_loc11_.multiuseTarget);
+            SessiondumpMouseShield.getInstance().addMouseHole(_loc4_);
+            SessiondumpMouseShield.getInstance().addMouseHole(_loc5_);
+            _loc12_ = Tibia.s_GetAppearanceStorage().getObjectType(_loc11_.useTypeID);
+            if(_loc12_ != null)
             {
-               Tibia.s_GetUIEffectsManager().higlightUIElementByIdentifier(ActionBarWidget,_loc10_);
-               SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromUIComponent(ActionBarWidget,_loc10_));
+               Tibia.s_GetUIEffectsManager().higlightUIElementByIdentifier(ActionBarWidget,_loc12_);
+               SessiondumpMouseShield.getInstance().addMouseHole(GUIRectangle.s_FromUIComponent(ActionBarWidget,_loc12_));
             }
+         }
+         if(this.m_Condition.hintText != null)
+         {
+            Tibia.s_GetUIEffectsManager().showTextHint(this.m_Condition.hintText,!!this.m_Condition.hintTextUseDestinationPosition?_loc5_:_loc4_,this.m_Condition.hintTextOffset);
          }
       }
       

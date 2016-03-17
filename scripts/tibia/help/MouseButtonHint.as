@@ -1,8 +1,8 @@
 package tibia.help
 {
    import mx.core.UIComponent;
-   import shared.utility.Colour;
    import flash.display.BitmapData;
+   import shared.utility.Colour;
    import flash.display.Bitmap;
    import flash.text.TextField;
    import mx.effects.Fade;
@@ -23,6 +23,8 @@ package tibia.help
    
    public class MouseButtonHint extends UIComponent
    {
+      
+      private static var SEMI_TRANSPARENT_MOUSE_BUTTON_BITMAP:BitmapData = null;
       
       public static const CROSSHAIR_LEFT_MOUSE_BUTTON:uint = 1;
       
@@ -48,7 +50,7 @@ package tibia.help
       
       private var m_UITextField:TextField;
       
-      private var m_GlowColor:uint = 4.294940962E9;
+      private var m_GlowColor:uint = 3.00309533E9;
       
       private var m_MouseGraphicsRectangle:Rectangle = null;
       
@@ -61,6 +63,11 @@ package tibia.help
          this.m_UITextField = new TextField();
          super();
          this.m_MouseGraphicsRectangle = new Rectangle(0,0,MOUSE_BUTTON_HINT.width / PHASES,MOUSE_BUTTON_HINT.height);
+         if(SEMI_TRANSPARENT_MOUSE_BUTTON_BITMAP == null)
+         {
+            SEMI_TRANSPARENT_MOUSE_BUTTON_BITMAP = new BitmapData(MOUSE_BUTTON_HINT.width,MOUSE_BUTTON_HINT.height,true,0);
+            SEMI_TRANSPARENT_MOUSE_BUTTON_BITMAP.merge(MOUSE_BUTTON_HINT,MOUSE_BUTTON_HINT.rect,MOUSE_BUTTON_HINT.rect.topLeft,255,255,255,255 * 0.7);
+         }
          cacheAsBitmap = true;
          mouseFocusEnabled = false;
          mouseEnabled = false;
@@ -300,7 +307,7 @@ package tibia.help
          graphics.clear();
          var _loc3_:Matrix = new Matrix();
          _loc3_.translate(this.m_MouseButtonPhase * this.m_MouseGraphicsRectangle.width * -1,0);
-         graphics.beginBitmapFill(MOUSE_BUTTON_HINT,_loc3_);
+         graphics.beginBitmapFill(SEMI_TRANSPARENT_MOUSE_BUTTON_BITMAP,_loc3_);
          graphics.drawRect(0,0,this.m_MouseGraphicsRectangle.width,this.m_MouseGraphicsRectangle.height);
          graphics.endFill();
          s_TempColor.ARGB = this.m_GlowColor;

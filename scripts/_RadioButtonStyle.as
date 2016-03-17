@@ -26,31 +26,31 @@ package
          {
             style.defaultFactory = function():void
             {
-               _RadioButtonStyle.icon = RadioButtonIcon;
                _RadioButtonStyle.downSkin = null;
-               _RadioButtonStyle.overSkin = null;
-               _RadioButtonStyle.selectedDisabledSkin = null;
-               _RadioButtonStyle.disabledIcon = null;
-               _RadioButtonStyle.upIcon = null;
-               _RadioButtonStyle.selectedDownIcon = null;
-               _RadioButtonStyle.cornerRadius = 7;
                _RadioButtonStyle.iconColor = 2831164;
+               _RadioButtonStyle.cornerRadius = 7;
+               _RadioButtonStyle.selectedDownIcon = null;
                _RadioButtonStyle.selectedUpSkin = null;
                _RadioButtonStyle.overIcon = null;
                _RadioButtonStyle.skin = null;
-               _RadioButtonStyle.paddingLeft = 0;
-               _RadioButtonStyle.paddingRight = 0;
                _RadioButtonStyle.upSkin = null;
-               _RadioButtonStyle.fontWeight = "normal";
                _RadioButtonStyle.selectedDownSkin = null;
-               _RadioButtonStyle.selectedUpIcon = null;
                _RadioButtonStyle.selectedOverIcon = null;
                _RadioButtonStyle.selectedDisabledIcon = null;
                _RadioButtonStyle.textAlign = "left";
-               _RadioButtonStyle.disabledSkin = null;
                _RadioButtonStyle.horizontalGap = 5;
-               _RadioButtonStyle.selectedOverSkin = null;
                _RadioButtonStyle.downIcon = null;
+               _RadioButtonStyle.icon = RadioButtonIcon;
+               _RadioButtonStyle.overSkin = null;
+               _RadioButtonStyle.disabledIcon = null;
+               _RadioButtonStyle.selectedDisabledSkin = null;
+               _RadioButtonStyle.upIcon = null;
+               _RadioButtonStyle.paddingLeft = 0;
+               _RadioButtonStyle.paddingRight = 0;
+               _RadioButtonStyle.fontWeight = "normal";
+               _RadioButtonStyle.selectedUpIcon = null;
+               _RadioButtonStyle.disabledSkin = null;
+               _RadioButtonStyle.selectedOverSkin = null;
             };
          }
       }

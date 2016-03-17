@@ -6,13 +6,15 @@ package tibia.sessiondump.hints.condition
    public class HintConditionBase
    {
       
-      private static var FIELD_CONDITIONDATA:String = "conditiondata";
+      private static var FIELD_TEXTHINT:String = "texthint";
       
       private static var FIELD_COORDINATE:String = "coordinate";
       
       private static var FIELD_SESSIONDUMP:String = "sessiondump";
       
       private static var FIELD_DESTINATION_COORDINATE:String = "destination";
+      
+      private static var FIELD_CONDITIONDATA:String = "conditiondata";
       
       private static var FIELD_CHANNEL:String = "channel";
       
@@ -27,6 +29,8 @@ package tibia.sessiondump.hints.condition
       private static var FIELD_OBJECTTYPE:String = "objecttype";
       
       private static var CONDITION_TYPE_CLICK_CREATURE:String = "CLICK_CREATURE";
+      
+      private static var FIELD_OFFSET:String = "offset";
       
       private static var FIELD_OBJECTTYPEID:String = "objecttypeid";
       
@@ -64,6 +68,8 @@ package tibia.sessiondump.hints.condition
       
       private static var FIELD_TIMESTAMP:String = "timestamp";
       
+      private static var FIELD_USEDESTINATIONPOSITION:String = "usedestinationposition";
+      
       private static var FIELD_PLAYER_OUTFIT_ADDONS:String = "add-ons";
       
       private static var FIELD_AMOUNT:String = "amount";
@@ -84,6 +90,12 @@ package tibia.sessiondump.hints.condition
       
       private static var FIELD_PLAYER_OUTFIT_COLOR_HEAD:String = "color-head";
        
+      protected var m_HintText:String = null;
+      
+      protected var m_HintTextUseDestinationPosition:Boolean = false;
+      
+      protected var m_HintTextOffset:Vector3D = null;
+      
       protected var m_Type:String = null;
       
       public function HintConditionBase()
@@ -95,6 +107,7 @@ package tibia.sessiondump.hints.condition
       {
          var _loc3_:String = null;
          var _loc4_:Object = null;
+         var _loc5_:Object = null;
          var _loc2_:HintConditionBase = null;
          if(FIELD_CONDITIONDATA in param1)
          {
@@ -125,21 +138,59 @@ package tibia.sessiondump.hints.condition
          {
             _loc2_ = new HintConditionBase();
          }
+         if(FIELD_TEXTHINT in _loc4_)
+         {
+            _loc5_ = _loc4_[FIELD_TEXTHINT] as Object;
+            if(_loc5_ != null && FIELD_TEXT in _loc5_ && FIELD_OFFSET in _loc5_)
+            {
+               if(FIELD_USEDESTINATIONPOSITION in _loc5_)
+               {
+                  _loc2_.m_HintTextUseDestinationPosition = _loc5_[FIELD_USEDESTINATIONPOSITION] as Boolean;
+               }
+               _loc2_.m_HintTextOffset = HintConditionBase.s_UnmarshallCoordinate(_loc5_[FIELD_OFFSET]);
+               _loc2_.m_HintText = _loc5_[FIELD_TEXT] as String;
+            }
+            else
+            {
+               throw new ArgumentError("HintConditionBase.s_Unmarshall: Invalid text hint data");
+            }
+         }
          return _loc2_;
       }
       
       public static function s_UnmarshallCoordinate(param1:Object) : Vector3D
       {
-         if(param1 == null || "x" in param1 == false || "y" in param1 == false || "z" in param1 == false)
+         var _loc2_:int = 0;
+         if(param1 == null || "x" in param1 == false || "y" in param1 == false)
          {
             throw new ArgumentError("SessiondumpHintBase.s_UnmarshallCoordinate: Invalid coordinate object");
          }
-         return new Vector3D(param1["x"],param1["y"],param1["z"]);
+         _loc2_ = 0;
+         if("z" in param1)
+         {
+            _loc2_ = param1["z"];
+         }
+         return new Vector3D(param1["x"],param1["y"],_loc2_);
+      }
+      
+      public function get hintTextUseDestinationPosition() : Boolean
+      {
+         return this.m_HintTextUseDestinationPosition;
+      }
+      
+      public function get hintTextOffset() : Vector3D
+      {
+         return this.m_HintTextOffset;
       }
       
       public function toString() : String
       {
          return getQualifiedClassName(this);
+      }
+      
+      public function get hintText() : String
+      {
+         return this.m_HintText;
       }
    }
 }

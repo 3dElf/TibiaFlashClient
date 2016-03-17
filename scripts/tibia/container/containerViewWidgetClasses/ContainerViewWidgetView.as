@@ -426,10 +426,8 @@ package tibia.container.containerViewWidgetClasses
       
       override protected function measure() : void
       {
-         var _loc1_:EdgeMetrics = null;
-         var _loc2_:Number = NaN;
-         _loc1_ = viewMetricsAndPadding;
-         _loc2_ = getStyle("verticalGap");
+         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
+         var _loc2_:Number = getStyle("verticalGap");
          measuredMaxWidth = DEFAULT_WIDGET_WIDTH;
          measuredMinWidth = DEFAULT_WIDGET_WIDTH;
          measuredWidth = DEFAULT_WIDGET_WIDTH;

@@ -15,6 +15,7 @@ package
          var _loc1_:Object = {
             "IGNORE_FILTEREDITOR_LBL_PATTERN_COLUMN":"Name",
             "HOTKEY_DLG_RESET_TITLE":"Attention!",
+            "INGAMESHOP_ASK_BEFORE_BUYING":"Ask Before Buying Services",
             "HOTKEY_DLG_ADD_NEW_SET":"New Set",
             "MOUSE_LABEL":"Mouse Control",
             "MESSAGE_DLG_RESET_TEXT":"Are you sure that you want to reset all message options to their respective default values?",
@@ -42,6 +43,7 @@ package
             "RENDERER_LIGHT_AMBIENT_BRIGHTNESS":"Ambient Brightness",
             "STATUS_WIDGET_STYLE":"Style",
             "IGNORE_LABEL":"Ignore List",
+            "INGAMESHOP_HEADING":"Store",
             "STATUS_CREATURE_FLAGS":"Show Marks",
             "IGNORE_FILTEREDITOR_BTN_ADD":"Add",
             "STATUS_CREATURE_PVPFRAMES":"Show PvP Frames",

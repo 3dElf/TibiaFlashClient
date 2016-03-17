@@ -334,6 +334,8 @@ package tibia.options
       
       private var m_GeneralInputMouseControls:int = -1;
       
+      private var m_GeneralShopShowBuyConfirmation:Boolean = true;
+      
       private var m_GeneralUIGameWindowHeight:Number = -1;
       
       private var m_KnownTutorialHint:Vector.<int>;
@@ -856,6 +858,7 @@ package tibia.options
          this.m_GeneralInputSetMode = MappingSet.CHAT_MODE_ON;
          this.m_GeneralUIGameWindowHeight = 7500;
          this.m_GeneralUIChatLeftViewWidth = 100;
+         this.m_GeneralShopShowBuyConfirmation = true;
       }
       
       [Bindable(event="propertyChange")]
@@ -943,6 +946,11 @@ package tibia.options
             this._251195935combatAttackMode = param1;
             this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"combatAttackMode",_loc2_,param1));
          }
+      }
+      
+      public function get generalShopShowBuyConfirmation() : Boolean
+      {
+         return this.m_GeneralShopShowBuyConfirmation;
       }
       
       [Bindable(event="propertyChange")]
@@ -1182,11 +1190,6 @@ package tibia.options
          return this.m_MarketBrowserCategory;
       }
       
-      private function set _789326636statusPlayerFlags(param1:Boolean) : void
-      {
-         this.m_StatusPlayerFlags = param1;
-      }
-      
       [Bindable(event="propertyChange")]
       public function set rendererScaleMap(param1:Boolean) : void
       {
@@ -1198,20 +1201,9 @@ package tibia.options
          }
       }
       
-      private function marshallMarket(param1:XML) : void
+      private function set _789326636statusPlayerFlags(param1:Boolean) : void
       {
-         param1.appendChild(<market>
-                          <browserLayout>{this.m_MarketBrowserLayout}</browserLayout>
-                          <browserEditor>{this.m_MarketBrowserEditor}</browserEditor>
-                          <browserDepot>{this.m_MarketBrowserDepot}</browserDepot>
-                          <browserCategory>{this.m_MarketBrowserCategory}</browserCategory>
-                          <browserLevel>{this.m_MarketBrowserLevel}</browserLevel>
-                          <browserProfession>{this.m_MarketBrowserProfession}</browserProfession>
-                          <browserBodyPosition>{this.m_MarketBrowserBodyPosition}</browserBodyPosition>
-                          <browserName>{this.m_MarketBrowserName}</browserName>
-                          <selectedView>{this.m_MarketSelectedView}</selectedView>
-                          <selectedType>{this.m_MarketSelectedType}</selectedType>
-                        </market>);
+         this.m_StatusPlayerFlags = param1;
       }
       
       private function marshallGeneral(param1:XML) : void
@@ -1233,6 +1225,7 @@ package tibia.options
                           <inputSetMode>{_loc2_}</inputSetMode>
                           <uiGameWindowHeight>{this.m_GeneralUIGameWindowHeight}</uiGameWindowHeight>
                           <uiChatLeftViewWidth>{this.m_GeneralUIChatLeftViewWidth}</uiChatLeftViewWidth>
+                          <shopBuyConfirmation>{this.m_GeneralShopShowBuyConfirmation}</shopBuyConfirmation>
                         </general>);
       }
       
@@ -1265,6 +1258,17 @@ package tibia.options
          {
             this._356338236marketSelectedView = param1;
             this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketSelectedView",_loc2_,param1));
+         }
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set generalShopShowBuyConfirmation(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.generalShopShowBuyConfirmation;
+         if(_loc2_ !== param1)
+         {
+            this._1775083584generalShopShowBuyConfirmation = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"generalShopShowBuyConfirmation",_loc2_,param1));
          }
       }
       
@@ -1399,15 +1403,20 @@ package tibia.options
          return _loc1_;
       }
       
-      [Bindable(event="propertyChange")]
-      public function set marketBrowserDepot(param1:Boolean) : void
+      private function marshallMarket(param1:XML) : void
       {
-         var _loc2_:Object = this.marketBrowserDepot;
-         if(_loc2_ !== param1)
-         {
-            this._456993208marketBrowserDepot = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserDepot",_loc2_,param1));
-         }
+         param1.appendChild(<market>
+                          <browserLayout>{this.m_MarketBrowserLayout}</browserLayout>
+                          <browserEditor>{this.m_MarketBrowserEditor}</browserEditor>
+                          <browserDepot>{this.m_MarketBrowserDepot}</browserDepot>
+                          <browserCategory>{this.m_MarketBrowserCategory}</browserCategory>
+                          <browserLevel>{this.m_MarketBrowserLevel}</browserLevel>
+                          <browserProfession>{this.m_MarketBrowserProfession}</browserProfession>
+                          <browserBodyPosition>{this.m_MarketBrowserBodyPosition}</browserBodyPosition>
+                          <browserName>{this.m_MarketBrowserName}</browserName>
+                          <selectedView>{this.m_MarketSelectedView}</selectedView>
+                          <selectedType>{this.m_MarketSelectedType}</selectedType>
+                        </market>);
       }
       
       public function get uiHints() : tibia.options.UiServerHints
@@ -1472,6 +1481,17 @@ package tibia.options
             throw new Error("OptionsStorage.unmarshallNameFilterSet: Too many sets.");
          }
          this.addListItem(this.m_NameFilterSet,_loc4_,null);
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set marketBrowserDepot(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.marketBrowserDepot;
+         if(_loc2_ !== param1)
+         {
+            this._456993208marketBrowserDepot = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserDepot",_loc2_,param1));
+         }
       }
       
       public function getMappingSet(param1:int) : MappingSet
@@ -1628,6 +1648,9 @@ package tibia.options
                   continue;
                case "uiChatLeftViewWidth":
                   this.m_GeneralUIChatLeftViewWidth = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc4_),100));
+                  continue;
+               case "shopBuyConfirmation":
+                  this.m_GeneralShopShowBuyConfirmation = XMLHelper.s_UnmarshallBoolean(_loc4_);
                   continue;
                default:
                   continue;
@@ -2052,6 +2075,11 @@ package tibia.options
       public function get npcTradeBuyWithBackpacks() : Boolean
       {
          return this.m_NPCTradeBuyWithBackpacks;
+      }
+      
+      private function set _1775083584generalShopShowBuyConfirmation(param1:Boolean) : void
+      {
+         this.m_GeneralShopShowBuyConfirmation = param1;
       }
       
       private function set _999334091opponentFilter(param1:int) : void

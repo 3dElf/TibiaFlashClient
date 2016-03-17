@@ -4,9 +4,9 @@ package tibia.premium
    import mx.events.PropertyChangeEvent;
    import mx.events.PropertyChangeEventKind;
    import tibia.sidebar.SideBarSet;
-   import tibia.options.OptionsStorage;
-   import tibia.sidebar.Widget;
    import tibia.creatures.Player;
+   import tibia.sidebar.Widget;
+   import tibia.options.OptionsStorage;
    import flash.net.URLRequest;
    import flash.net.navigateToURL;
    
@@ -16,6 +16,8 @@ package tibia.premium
       protected static const PREMIUM_TRIGGER_RIDE_MOUNTS:uint = 4;
       
       protected static const PREMIUM_TRIGGER_ALL_OUTFITS:uint = 5;
+      
+      protected static const PREMIUM_TRIGGER_RENEW_PREMIUM:uint = 14;
       
       protected static const PREMIUM_EXPIRY_THRESHOLD:uint = 3;
       
@@ -27,13 +29,15 @@ package tibia.premium
       
       protected static const PREMIUM_TRIGGER_DEATH_PENALTY:uint = 7;
       
-      public static const HIGHLIGHT_MINIBUTTON_TIMEOUT:int = 1000 * 5;
+      public static const HIGHLIGHT_TIMEOUT:int = 1000 * 60 * 10;
       
       protected static const PREMIUM_TRIGGER_ALL_SPELLS:uint = 2;
       
       protected static const PREMIUM_TRIGGER_MARKET:uint = 8;
       
-      public static const HIGHLIGHT_TIMEOUT:int = 1000 * 60 * 10;
+      public static const PREMIUM_BUTTON_SHOP:int = 2;
+      
+      public static const HIGHLIGHT_MINIBUTTON_TIMEOUT:int = 1000 * 5;
       
       protected static const PREMIUM_TRIGGER_TRAVEL_FASTER:uint = 3;
       
@@ -46,8 +50,6 @@ package tibia.premium
       protected static const PREMIUM_TRIGGER_VIP_LIST:uint = 10;
       
       protected static const PREMIUM_URL:String = "/account/index.php?subtopic=redirectlogin&clienttarget=payment&clientselection=FC";
-      
-      protected static const PREMIUM_TRIGGER_RENEW_PREMIUM:uint = 14;
       
       protected static const PREMIUM_TRIGGER_ALL_AREAS:uint = 0;
       
@@ -93,8 +95,7 @@ package tibia.premium
       {
          if(param1 != null && param1.kind == PropertyChangeEventKind.UPDATE && param1.property == "premium")
          {
-            this.showWidget();
-            this.m_Player.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onPlayerPropertyChange);
+            this.showOrHideWidgetBasedOnPremiumStatus();
          }
       }
       
@@ -110,25 +111,6 @@ package tibia.premium
             }
          }
          return SideBarSet.LOCATION_B;
-      }
-      
-      public function showWidget(param1:Boolean = false) : void
-      {
-         var _loc3_:SideBarSet = null;
-         var _loc4_:PremiumWidget = null;
-         var _loc2_:OptionsStorage = Tibia.s_GetOptions();
-         if(_loc2_ != null)
-         {
-            _loc3_ = _loc2_.getSideBarSet(SideBarSet.DEFAULT_SET);
-            if(_loc3_ != null)
-            {
-               _loc4_ = _loc3_.getWidgetByType(Widget.TYPE_PREMIUM) as PremiumWidget;
-               if(_loc4_ == null && (Boolean(param1) || Boolean(this.freePlayerLimitations) || Boolean(this.m_Player.premium) && this.premiumExpiryDays <= PREMIUM_EXPIRY_THRESHOLD))
-               {
-                  this.toggleWidget();
-               }
-            }
-         }
       }
       
       public function get freePlayerLimitations() : Boolean
@@ -215,6 +197,29 @@ package tibia.premium
          Event.highlight = a_TriggerNotification;
          Event.highlightExpiry = HIGHLIGHT_TIMEOUT;
          dispatchEvent(Event);
+      }
+      
+      public function showOrHideWidgetBasedOnPremiumStatus() : void
+      {
+         var _loc2_:SideBarSet = null;
+         var _loc3_:PremiumWidget = null;
+         var _loc4_:* = false;
+         var _loc5_:Boolean = false;
+         var _loc1_:OptionsStorage = Tibia.s_GetOptions();
+         if(_loc1_ != null)
+         {
+            _loc2_ = _loc1_.getSideBarSet(SideBarSet.DEFAULT_SET);
+            if(_loc2_ != null)
+            {
+               _loc3_ = _loc2_.getWidgetByType(Widget.TYPE_PREMIUM) as PremiumWidget;
+               _loc4_ = _loc3_ != null;
+               _loc5_ = Boolean(this.freePlayerLimitations) || Boolean(this.m_Player.premium) && this.premiumExpiryDays <= PREMIUM_EXPIRY_THRESHOLD;
+               if(Boolean(_loc4_) && !_loc5_ || !_loc4_ && Boolean(_loc5_))
+               {
+                  this.toggleWidget();
+               }
+            }
+         }
       }
       
       public function goToPaymentWebsite(param1:int) : void

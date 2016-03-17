@@ -1,58 +1,34 @@
 package tibia.help
 {
    import tibia.game.PopUpBase;
+   import mx.core.Container;
    import mx.controls.Image;
    import mx.controls.Text;
+   import mx.containers.VBox;
    import mx.containers.HBox;
-   import mx.core.Container;
    
    public class TutorialHintWidget extends PopUpBase
    {
       
       private static const BUNDLE:String = "TutorialHintWidget";
        
-      private var m_UncommittedText:Boolean = false;
+      private var m_UIImages:Container = null;
       
       private var m_UncommittedImages:Boolean = false;
       
       private var m_Images:Array = null;
       
+      private var m_UIConstructed:Boolean = false;
+      
       private var m_UIText:Text = null;
       
-      private var m_UIImages:Container = null;
-      
-      private var m_Text:String = null;
+      private var m_UncommittedText:Boolean = false;
       
       public function TutorialHintWidget()
       {
          super();
          title = resourceManager.getString(BUNDLE,"TITLE");
-         buttonFlags = PopUpBase.BUTTON_CLOSE;
-      }
-      
-      public function set text(param1:String) : void
-      {
-         if(this.m_Text != param1)
-         {
-            this.m_Text = param1;
-            this.m_UncommittedText = true;
-            invalidateProperties();
-         }
-      }
-      
-      public function get text() : String
-      {
-         return this.m_Text;
-      }
-      
-      public function set images(param1:Array) : void
-      {
-         if(this.m_Images != param1)
-         {
-            this.m_Images = param1;
-            this.m_UncommittedImages = true;
-            invalidateProperties();
-         }
+         buttonFlags = PopUpBase.BUTTON_OKAY;
       }
       
       override protected function commitProperties() : void
@@ -75,10 +51,15 @@ package tibia.help
             }
             this.m_UncommittedImages = false;
          }
-         if(this.m_UncommittedText)
+      }
+      
+      public function set images(param1:Array) : void
+      {
+         if(this.m_Images != param1)
          {
-            this.m_UIText.htmlText = this.text;
-            this.m_UncommittedText = false;
+            this.m_Images = param1;
+            this.m_UncommittedImages = true;
+            invalidateProperties();
          }
       }
       
@@ -89,16 +70,22 @@ package tibia.help
       
       override protected function createChildren() : void
       {
-         super.createChildren();
-         this.m_UIText = new Text();
-         this.m_UIText.maxWidth = 400;
-         this.m_UIText.minWidth = 200;
-         addChild(this.m_UIText);
-         this.m_UIImages = new HBox();
-         this.m_UIImages.percentWidth = 100;
-         this.m_UIImages.setStyle("horizontalAlign","center");
-         this.m_UIImages.setStyle("verticalAlign","middle");
-         addChild(this.m_UIImages);
+         var _loc1_:VBox = null;
+         if(!this.m_UIConstructed)
+         {
+            super.createChildren();
+            _loc1_ = new VBox();
+            _loc1_.percentWidth = 100;
+            _loc1_.percentHeight = 100;
+            _loc1_.setStyle("backgroundColor","0x000000");
+            _loc1_.setStyle("backgroundAlpha",0.5);
+            this.m_UIImages = new HBox();
+            this.m_UIImages.percentWidth = 100;
+            this.m_UIImages.setStyle("horizontalAlign","center");
+            this.m_UIImages.setStyle("verticalAlign","middle");
+            addChild(_loc1_);
+            _loc1_.addChild(this.m_UIImages);
+         }
       }
    }
 }

@@ -12,12 +12,12 @@ package tibia.controls
    import mx.styles.StyleProxy;
    import mx.events.SliderEvent;
    import mx.controls.sliderClasses.Slider;
-   import mx.core.UIComponent;
    import mx.core.EdgeMetrics;
+   import mx.core.UIComponent;
    import mx.controls.sliderClasses.SliderDirection;
-   import mx.controls.sliderClasses.SliderThumb;
    import mx.core.mx_internal;
    import flash.geom.Point;
+   import mx.controls.sliderClasses.SliderThumb;
    import mx.controls.HSlider;
    import shared.controls.CustomButton;
    
@@ -70,8 +70,6 @@ package tibia.controls
       protected var m_UIDecrease:Button = null;
       
       protected var m_TrackClickAmount:Number = 10.0;
-      
-      protected var m_ButtonClickAmount:Number = 1.0;
       
       public function CustomSlider()
       {
@@ -138,8 +136,9 @@ package tibia.controls
          this.m_UISlider.tickInterval = param1;
       }
       
-      public function set direction(param1:String) : void
+      public function set labels(param1:Array) : void
       {
+         this.m_UISlider.labels = param1;
       }
       
       public function set sliderThumbClass(param1:Class) : void
@@ -152,9 +151,9 @@ package tibia.controls
          return this.m_UISlider.minimum;
       }
       
-      public function get direction() : String
+      public function get labels() : Array
       {
-         return this.m_UISlider.direction;
+         return this.m_UISlider.labels;
       }
       
       override protected function createChildren() : void
@@ -198,11 +197,11 @@ package tibia.controls
             _loc2_ = !!param1.shiftKey?Number(10):Number(1);
             if(param1.currentTarget == this.m_UIDecrease)
             {
-               this.value = this.value - this.m_ButtonClickAmount * _loc2_;
+               this.value = this.value - this.m_UISlider.snapInterval * _loc2_;
             }
             else
             {
-               this.value = this.value + this.m_ButtonClickAmount * _loc2_;
+               this.value = this.value + this.m_UISlider.snapInterval * _loc2_;
             }
             _loc3_ = new SliderEvent(SliderEvent.CHANGE);
             _loc3_.clickTarget = String(param1.currentTarget);
@@ -335,13 +334,14 @@ package tibia.controls
       
       override protected function measure() : void
       {
+         var _loc1_:EdgeMetrics = null;
          var _loc10_:UIComponent = null;
          var _loc11_:Number = NaN;
          var _loc12_:Number = NaN;
          var _loc13_:Number = NaN;
          var _loc14_:Number = NaN;
          super.measure();
-         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
+         _loc1_ = viewMetricsAndPadding;
          var _loc2_:Number = getStyle("horizontalGap");
          var _loc3_:Number = getStyle("verticalGap");
          var _loc4_:Number = 0;
@@ -394,29 +394,14 @@ package tibia.controls
          measuredHeight = _loc4_ + _loc1_.top + _loc1_.bottom;
       }
       
-      public function get dataTipFormatFunction() : Function
-      {
-         return this.m_UISlider.dataTipFormatFunction;
-      }
-      
       public function get sliderDataTipClass() : Class
       {
          return this.m_UISlider.sliderDataTipClass;
       }
       
-      public function get value() : Number
+      public function set trackClickAmount(param1:Number) : void
       {
-         return this.m_UISlider.value;
-      }
-      
-      public function getThumbAt(param1:int) : SliderThumb
-      {
-         return this.m_UISlider.getThumbAt(param1);
-      }
-      
-      public function set allowThumbOverlap(param1:Boolean) : void
-      {
-         this.m_UISlider.allowThumbOverlap = param1;
+         this.m_TrackClickAmount = param1;
       }
       
       protected function onTrackDown(param1:MouseEvent) : void
@@ -443,6 +428,26 @@ package tibia.controls
             _loc4_.value = this.value;
             dispatchEvent(_loc4_);
          }
+      }
+      
+      public function get dataTipFormatFunction() : Function
+      {
+         return this.m_UISlider.dataTipFormatFunction;
+      }
+      
+      public function get value() : Number
+      {
+         return this.m_UISlider.value;
+      }
+      
+      public function getThumbAt(param1:int) : SliderThumb
+      {
+         return this.m_UISlider.getThumbAt(param1);
+      }
+      
+      public function set allowThumbOverlap(param1:Boolean) : void
+      {
+         this.m_UISlider.allowThumbOverlap = param1;
       }
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
@@ -501,14 +506,13 @@ package tibia.controls
          return this.m_UISlider.allowThumbOverlap;
       }
       
-      public function set labels(param1:Array) : void
+      public function set direction(param1:String) : void
       {
-         this.m_UISlider.labels = param1;
       }
       
-      public function get labels() : Array
+      public function get direction() : String
       {
-         return this.m_UISlider.labels;
+         return this.m_UISlider.direction;
       }
    }
 }

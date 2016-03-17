@@ -188,7 +188,7 @@ package tibia.creatures
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
       
-      public static const MAX_NAME_LENGHT:int = 30;
+      public static const MAX_NAME_LENGHT:int = 29;
       
       protected static const UNDERGROUND_LAYER:int = 2;
       

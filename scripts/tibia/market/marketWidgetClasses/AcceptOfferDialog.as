@@ -3,18 +3,19 @@ package tibia.market.marketWidgetClasses
    import shared.controls.EmbeddedDialog;
    import mx.controls.Button;
    import mx.controls.TextInput;
-   import flash.events.MouseEvent;
+   import tibia.ingameshop.IngameShopManager;
+   import mx.controls.Label;
    import mx.containers.Box;
    import mx.containers.HBox;
    import shared.controls.CustomButton;
+   import flash.events.MouseEvent;
    import tibia.input.MouseRepeatEvent;
    import flash.events.Event;
    import flash.events.KeyboardEvent;
    import flash.events.TextEvent;
-   import mx.controls.Label;
    import tibia.market.Offer;
-   import shared.utility.i18n.i18nFormatNumber;
    import tibia.market.MarketWidget;
+   import shared.utility.i18n.i18nFormatNumber;
    
    public class AcceptOfferDialog extends EmbeddedDialog
    {
@@ -32,6 +33,8 @@ package tibia.market.marketWidgetClasses
       private var m_UncommittedOffer:Boolean = false;
       
       private var m_UITotalCostLabel:Label = null;
+      
+      private var m_AmountStepping:int = 1;
       
       private var m_MaxAmount:int = -1;
       
@@ -54,6 +57,18 @@ package tibia.market.marketWidgetClasses
       override protected function commitProperties() : void
       {
          super.commitProperties();
+         if(this.m_UncommittedOffer)
+         {
+            if(this.m_Offer != null && this.m_Offer.typeID == IngameShopManager.TIBIA_COINS_APPEARANCE_TYPE_ID)
+            {
+               this.m_AmountStepping = IngameShopManager.getInstance().getCreditPackageSize();
+            }
+            else
+            {
+               this.m_AmountStepping = 1;
+            }
+            this.amount = this.m_AmountStepping;
+         }
          if(this.m_UncommittedAmount)
          {
             this.m_UIAmountEdit.text = String(this.amount);
@@ -62,9 +77,6 @@ package tibia.market.marketWidgetClasses
             this.updateTotalCost();
          }
          if(!this.m_UncommittedMarket)
-         {
-         }
-         if(!this.m_UncommittedOffer)
          {
          }
          if(Boolean(this.m_UncommittedAmount) || Boolean(this.m_UncommittedMarket) || Boolean(this.m_UncommittedOffer))
@@ -81,16 +93,6 @@ package tibia.market.marketWidgetClasses
             this.m_UncommittedMarket = false;
             this.m_UncommittedOffer = false;
          }
-      }
-      
-      private function onButtonClick(param1:MouseEvent) : void
-      {
-         this.amount = this.amount + (param1.currentTarget == this.m_UIAmountDecrease?-1:1) * (!!param1.shiftKey?10:1);
-      }
-      
-      public function get amount() : int
-      {
-         return this.m_Amount;
       }
       
       override protected function createContent(param1:Box) : void
@@ -132,6 +134,16 @@ package tibia.market.marketWidgetClasses
          a_Container.addChild(Outer);
       }
       
+      private function onButtonClick(param1:MouseEvent) : void
+      {
+         this.amount = this.amount + (param1.currentTarget == this.m_UIAmountDecrease?-this.m_AmountStepping:this.m_AmountStepping) * (!!param1.shiftKey?10:1);
+      }
+      
+      public function get amount() : int
+      {
+         return this.m_Amount;
+      }
+      
       public function set offer(param1:Offer) : void
       {
          if(this.m_Offer != param1)
@@ -140,7 +152,6 @@ package tibia.market.marketWidgetClasses
             this.m_MaxAmount = -1;
             this.m_UncommittedOffer = true;
             invalidateProperties();
-            this.amount = 1;
          }
       }
       
@@ -156,10 +167,12 @@ package tibia.market.marketWidgetClasses
       
       public function set amount(param1:int) : void
       {
-         var _loc2_:int = Math.max(1,Math.min(param1,this.maxAmount));
+         var _loc2_:int = 0;
+         _loc2_ = param1 - param1 % this.m_AmountStepping;
+         var _loc3_:int = Math.max(this.m_AmountStepping,Math.min(_loc2_,this.maxAmount));
          if(this.m_Amount != param1)
          {
-            this.m_Amount = _loc2_;
+            this.m_Amount = _loc3_;
             this.m_UncommittedAmount = true;
             invalidateProperties();
          }
@@ -167,21 +180,23 @@ package tibia.market.marketWidgetClasses
       
       public function get maxAmount() : int
       {
+         var _loc1_:int = 0;
          if(this.m_MaxAmount < 0)
          {
+            _loc1_ = this.offer != null?int(this.offer.amount - this.offer.amount % this.m_AmountStepping):0;
             if(this.market == null || this.offer == null)
             {
                this.m_MaxAmount = 0;
             }
             else if(this.offer.kind == Offer.BUY_OFFER)
             {
-               this.m_MaxAmount = Math.min(this.market.getDepotAmount(this.offer.typeID),this.offer.amount);
+               this.m_MaxAmount = Math.min(this.market.getDepotAmount(this.offer.typeID),_loc1_);
             }
             else
             {
                this.m_MaxAmount = Math.floor(this.market.accountBalance / this.offer.piecePrice);
             }
-            this.m_MaxAmount = Math.min(this.m_MaxAmount,this.offer.amount,Math.max(MarketWidget.OFFER_MAX_AMOUNT_NONCUMULATIVE,MarketWidget.OFFER_MAX_AMOUNT_CUMULATIVE));
+            this.m_MaxAmount = Math.min(this.m_MaxAmount,_loc1_,Math.max(MarketWidget.OFFER_MAX_AMOUNT_NONCUMULATIVE,MarketWidget.OFFER_MAX_AMOUNT_CUMULATIVE));
          }
          return this.m_MaxAmount;
       }
