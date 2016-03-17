@@ -1,7 +1,6 @@
 package tibia.options
 {
    import flash.events.EventDispatcher;
-   import tibia.creatures.StatusWidget;
    import tibia.chat.NameFilterSet;
    import tibia.chat.ChannelSet;
    import mx.events.PropertyChangeEvent;
@@ -16,6 +15,7 @@ package tibia.options
    import tibia.market.MarketWidget;
    import tibia.actionbar.ActionBarSet;
    import tibia.creatures.BuddySet;
+   import tibia.creatures.StatusWidget;
    import flash.events.IEventDispatcher;
    import mx.events.CollectionEvent;
    import tibia.appearances.AppearanceType;
@@ -31,7 +31,7 @@ package tibia.options
       
       protected static const STATE_PZ_BLOCK:int = 13;
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       protected static const PROFESSION_SORCERER:int = 3;
       
@@ -217,9 +217,6 @@ package tibia.options
          "XMLName":"namefilterset",
          "localName":"NameFilterSet"
       },{
-         "XMLName":"buddyset",
-         "localName":"BuddySet"
-      },{
          "XMLName":"market",
          "localName":"Market"
       }];
@@ -250,9 +247,13 @@ package tibia.options
       
       private var m_GeneralInputSetMode:int = -1;
       
+      private var m_RendererMaxFrameRate:int = -1;
+      
       private var m_CombatChaseMode:int = -1;
       
       private var m_NPCTradeLayout:int = -1;
+      
+      private var m_DefaultOptionsXml:XML = null;
       
       private var m_StatusPlayerName:Boolean = false;
       
@@ -287,6 +288,8 @@ package tibia.options
       private var m_StatusPlayerHealth:Boolean = false;
       
       private var m_MarketBrowserBodyPosition:int = -1;
+      
+      private var m_Version:Number = 5;
       
       private var m_MarketBrowserEditor:int = -1;
       
@@ -336,13 +339,15 @@ package tibia.options
       
       private var m_CombatAutoChaseOff:Boolean = false;
       
+      private var m_RendererHighlight:Number = -1;
+      
       private var m_StatusCreatureFlags:Boolean = false;
+      
+      private var m_StatusWidgetVisible:Boolean = false;
       
       private var m_CombatAttackMode:int = -1;
       
       private var m_ActionBarSet:Vector.<ActionBarSet>;
-      
-      private var m_StatusWidgetVisible:Boolean = false;
       
       private var m_MappingSet:Vector.<MappingSet>;
       
@@ -350,13 +355,10 @@ package tibia.options
       
       private var m_MarketBrowserCategory:int = -1;
       
-      private var m_RendererMaxFrameRate:int = -1;
-      
-      public function OptionsStorage()
+      public function OptionsStorage(param1:XML, param2:XML)
       {
-         var _loc1_:Object = null;
-         var _loc2_:PropertyChangeEvent = null;
-         var _loc3_:String = null;
+         var a_DefaultOptions:XML = param1;
+         var a_CurrentOptions:XML = param2;
          this.m_KnownTutorialHint = new Vector.<int>();
          this.m_SideBarSet = new Vector.<SideBarSet>();
          this.m_ActionBarSet = new Vector.<ActionBarSet>();
@@ -366,28 +368,43 @@ package tibia.options
          this.m_NameFilterSet = new Vector.<NameFilterSet>();
          this.m_BuddySet = new Vector.<BuddySet>();
          super();
-         for each(_loc1_ in OPTION_GROUPS)
+         if(a_DefaultOptions == null)
          {
-            _loc3_ = "initialise" + _loc1_.localName;
-            if(this.hasMethod(_loc3_))
+            throw new ArgumentError("OptionsStorage.OptionsStorage: Default options were not set.");
+         }
+         if(a_CurrentOptions == null)
+         {
+            throw new ArgumentError("OptionsStorage.OptionsStorage: Current options were not set.");
+         }
+         this.m_DefaultOptionsXml = a_DefaultOptions;
+         try
+         {
+            this.unmarshall(this.m_DefaultOptionsXml);
+         }
+         catch(e:Error)
+         {
+            throw new Error("OptionsStorage.OptionsStorage: Could not load default option set.");
+         }
+         if(a_CurrentOptions != null)
+         {
+            try
             {
-               this[_loc3_]();
+               this.unmarshall(a_CurrentOptions);
+            }
+            catch(e:Error)
+            {
             }
          }
-         _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-         _loc2_.kind = PropertyChangeEventKind.UPDATE;
-         _loc2_.property = "*";
-         dispatchEvent(_loc2_);
+         this.initialiseBuddySet();
+         var _Event:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+         _Event.kind = PropertyChangeEventKind.UPDATE;
+         _Event.property = "*";
+         dispatchEvent(_Event);
       }
       
-      private function set _1091413675statusWidgetLocation(param1:int) : void
+      public function get statusPlayerStyle() : int
       {
-         if(param1 == StatusWidget.LOCATION_TOP || param1 == StatusWidget.LOCATION_BOTTOM || param1 == StatusWidget.LOCATION_LEFT || param1 == StatusWidget.LOCATION_RIGHT)
-         {
-            this.m_StatusWidgetLocation = param1;
-            return;
-         }
-         throw new ArgumentError("OptionsStorage.set statusWidgetLocation: Invalid location: " + param1);
+         return this.m_StatusPlayerStyle;
       }
       
       private function initialiseNameFilterSet() : void
@@ -444,11 +461,6 @@ package tibia.options
             this._410094845generalInputSetMode = param1;
             this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"generalInputSetMode",_loc2_,param1));
          }
-      }
-      
-      public function get statusPlayerStyle() : int
-      {
-         return this.m_StatusPlayerStyle;
       }
       
       private function unmarshallHelp(param1:XML, param2:Number) : void
@@ -586,6 +598,9 @@ package tibia.options
                case "ambientBrightness":
                   this.m_RendererAmbientBrightness = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc3_),1));
                   continue;
+               case "highlight":
+                  this.m_RendererHighlight = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc3_),1));
+                  continue;
                case "levelSeparator":
                   this.m_RendererLevelSeparator = Math.max(0,Math.min(XMLHelper.s_UnmarshallDecimal(_loc3_),1));
                   continue;
@@ -630,10 +645,10 @@ package tibia.options
          {
             throw new Error("OptionsStorage.unmarshall: Invalid root element: " + _XML.localName());
          }
-         var Version:Number = _XML.@version;
-         if(Version < OPTIONS_MIN_COMPATIBLE_VERSION || Version > OPTIONS_MAX_COMPATIBLE_VERSION)
+         this.m_Version = _XML.@version;
+         if(this.m_Version < OPTIONS_MIN_COMPATIBLE_VERSION || this.m_Version > OPTIONS_MAX_COMPATIBLE_VERSION)
          {
-            throw new Error("OptionsStorage.unmarshall: Invalid version: " + Version);
+            throw new Error("OptionsStorage.unmarshall: Invalid version: " + this.m_Version);
          }
          var Group:Object = null;
          var UnmarshalledElements:Vector.<String> = new Vector.<String>();
@@ -648,7 +663,7 @@ package tibia.options
                   {
                      try
                      {
-                        this[UnmarshallFunctionName](XMLNode,Version);
+                        this[UnmarshallFunctionName](XMLNode,this.m_Version);
                         UnmarshalledElements.push(Group.localName);
                      }
                      catch(_Error:*)
@@ -826,9 +841,17 @@ package tibia.options
          return null;
       }
       
-      public function get marketBrowserDepot() : Boolean
+      private function searchDefaultXmlFirstLevelElements(param1:String) : XMLList
       {
-         return this.m_MarketBrowserDepot;
+         var _loc2_:Object = null;
+         for each(_loc2_ in OPTION_GROUPS)
+         {
+            if(_loc2_.localName == param1)
+            {
+               return this.m_DefaultOptionsXml[_loc2_.XMLName];
+            }
+         }
+         throw new Error("OptionsStorage.searchXmlFirstLevelElements: Invalid local name: " + param1);
       }
       
       public function getChannelSetIDs() : Array
@@ -841,9 +864,9 @@ package tibia.options
          return MessageFilterSet(this.addListItem(this.m_MessageFilterSet,param1,"messageFilterSet"));
       }
       
-      public function getNameFilterSetIDs() : Array
+      public function get marketBrowserDepot() : Boolean
       {
-         return this.getListIDs(this.m_NameFilterSet);
+         return this.m_MarketBrowserDepot;
       }
       
       private function unmarshallNPCTrade(param1:XML, param2:Number) : void
@@ -958,14 +981,25 @@ package tibia.options
          return ActionBarSet(this.addListItem(this.m_ActionBarSet,param1,"actionBarSet"));
       }
       
-      public function removeBuddySet(param1:int) : BuddySet
+      public function getNameFilterSetIDs() : Array
       {
-         return BuddySet(this.removeListItem(this.m_BuddySet,param1,"buddySet"));
+         return this.getListIDs(this.m_NameFilterSet);
       }
       
       private function set _2103194300statusWidgetVisible(param1:Boolean) : void
       {
          this.m_StatusWidgetVisible = param1;
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set rendererHighlight(param1:Number) : void
+      {
+         var _loc2_:Object = this.rendererHighlight;
+         if(_loc2_ !== param1)
+         {
+            this._498046769rendererHighlight = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererHighlight",_loc2_,param1));
+         }
       }
       
       private function set _1731192988rendererLevelSeparator(param1:Number) : void
@@ -981,15 +1015,9 @@ package tibia.options
          this.m_RendererLevelSeparator = param1;
       }
       
-      [Bindable(event="propertyChange")]
-      public function set statusPlayerStyle(param1:int) : void
+      public function removeBuddySet(param1:int) : BuddySet
       {
-         var _loc2_:Object = this.statusPlayerStyle;
-         if(_loc2_ !== param1)
-         {
-            this._777059330statusPlayerStyle = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"statusPlayerStyle",_loc2_,param1));
-         }
+         return BuddySet(this.removeListItem(this.m_BuddySet,param1,"buddySet"));
       }
       
       public function get marketBrowserCategory() : int
@@ -1002,15 +1030,20 @@ package tibia.options
          this.m_StatusPlayerFlags = param1;
       }
       
-      private function marshallBuddySet(param1:XML) : void
+      private function marshallMarket(param1:XML) : void
       {
-         var _loc2_:int = this.m_BuddySet.length;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            param1.appendChild(this.m_BuddySet[_loc3_].marshall());
-            _loc3_++;
-         }
+         param1.appendChild(<market>
+                          <browserLayout>{this.m_MarketBrowserLayout}</browserLayout>
+                          <browserEditor>{this.m_MarketBrowserEditor}</browserEditor>
+                          <browserDepot>{this.m_MarketBrowserDepot}</browserDepot>
+                          <browserCategory>{this.m_MarketBrowserCategory}</browserCategory>
+                          <browserLevel>{this.m_MarketBrowserLevel}</browserLevel>
+                          <browserProfession>{this.m_MarketBrowserProfession}</browserProfession>
+                          <browserBodyPosition>{this.m_MarketBrowserBodyPosition}</browserBodyPosition>
+                          <browserName>{this.m_MarketBrowserName}</browserName>
+                          <selectedView>{this.m_MarketSelectedView}</selectedView>
+                          <selectedType>{this.m_MarketSelectedType}</selectedType>
+                        </market>);
       }
       
       private function marshallGeneral(param1:XML) : void
@@ -1067,6 +1100,17 @@ package tibia.options
          }
       }
       
+      [Bindable(event="propertyChange")]
+      public function set statusPlayerStyle(param1:int) : void
+      {
+         var _loc2_:Object = this.statusPlayerStyle;
+         if(_loc2_ !== param1)
+         {
+            this._777059330statusPlayerStyle = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"statusPlayerStyle",_loc2_,param1));
+         }
+      }
+      
       private function set _1918651986rendererLightEnabled(param1:Boolean) : void
       {
          this.m_RendererLightEnabled = param1;
@@ -1104,17 +1148,6 @@ package tibia.options
          this.m_CombatAutoChaseOff = true;
          this.m_CombatChaseMode = COMBAT_CHASE_OFF;
          this.m_CombatSecureMode = COMBAT_SECURE_ON;
-      }
-      
-      [Bindable(event="propertyChange")]
-      public function set marketBrowserDepot(param1:Boolean) : void
-      {
-         var _loc2_:Object = this.marketBrowserDepot;
-         if(_loc2_ !== param1)
-         {
-            this._456993208marketBrowserDepot = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserDepot",_loc2_,param1));
-         }
       }
       
       private function addListItem(param1:*, param2:*, param3:String) : *
@@ -1186,20 +1219,15 @@ package tibia.options
          return _loc1_;
       }
       
-      private function marshallMarket(param1:XML) : void
+      [Bindable(event="propertyChange")]
+      public function set marketBrowserDepot(param1:Boolean) : void
       {
-         param1.appendChild(<market>
-                          <browserLayout>{this.m_MarketBrowserLayout}</browserLayout>
-                          <browserEditor>{this.m_MarketBrowserEditor}</browserEditor>
-                          <browserDepot>{this.m_MarketBrowserDepot}</browserDepot>
-                          <browserCategory>{this.m_MarketBrowserCategory}</browserCategory>
-                          <browserLevel>{this.m_MarketBrowserLevel}</browserLevel>
-                          <browserProfession>{this.m_MarketBrowserProfession}</browserProfession>
-                          <browserBodyPosition>{this.m_MarketBrowserBodyPosition}</browserBodyPosition>
-                          <browserName>{this.m_MarketBrowserName}</browserName>
-                          <selectedView>{this.m_MarketSelectedView}</selectedView>
-                          <selectedType>{this.m_MarketSelectedType}</selectedType>
-                        </market>);
+         var _loc2_:Object = this.marketBrowserDepot;
+         if(_loc2_ !== param1)
+         {
+            this._456993208marketBrowserDepot = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserDepot",_loc2_,param1));
+         }
       }
       
       private function initialiseHelp() : void
@@ -1230,6 +1258,7 @@ package tibia.options
       private function initialiseRenderer() : void
       {
          this.m_RendererAmbientBrightness = 0.25;
+         this.m_RendererHighlight = 0.75;
          this.m_RendererLevelSeparator = 0.33;
          this.m_RendererLightEnabled = false;
          this.m_RendererMaxFrameRate = 50;
@@ -1448,11 +1477,6 @@ package tibia.options
          }
       }
       
-      private function set _1823004292combatAutoChaseOff(param1:Boolean) : void
-      {
-         this.m_CombatAutoChaseOff = param1;
-      }
-      
       [Bindable(event="propertyChange")]
       public function set marketBrowserProfession(param1:Boolean) : void
       {
@@ -1464,20 +1488,22 @@ package tibia.options
          }
       }
       
-      public function get marketSelectedType() : int
+      private function set _456993208marketBrowserDepot(param1:Boolean) : void
       {
-         return this.m_MarketSelectedType;
+         this.m_MarketBrowserDepot = param1;
       }
       
-      private function marshallActionBarSet(param1:XML) : void
+      private function initialiseMappingSet() : void
       {
-         var _loc2_:int = this.m_ActionBarSet.length;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            param1.appendChild(this.m_ActionBarSet[_loc3_].marshall());
-            _loc3_++;
-         }
+         this.removeAllListItems(this.m_MappingSet,null);
+         var _loc1_:MappingSet = new MappingSet(MappingSet.DEFAULT_SET);
+         _loc1_.initialiseDefaultBindings();
+         this.addListItem(this.m_MappingSet,_loc1_,null);
+      }
+      
+      private function set _1823004292combatAutoChaseOff(param1:Boolean) : void
+      {
+         this.m_CombatAutoChaseOff = param1;
       }
       
       private function set _777059330statusPlayerStyle(param1:int) : void
@@ -1490,9 +1516,20 @@ package tibia.options
          throw new ArgumentError("OptionsStorage.set statusPlayerStyle: Invalid style: " + param1);
       }
       
-      private function set _456993208marketBrowserDepot(param1:Boolean) : void
+      public function get marketSelectedType() : int
       {
-         this.m_MarketBrowserDepot = param1;
+         return this.m_MarketSelectedType;
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set generalActionBarsLock(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.generalActionBarsLock;
+         if(_loc2_ !== param1)
+         {
+            this._259410793generalActionBarsLock = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"generalActionBarsLock",_loc2_,param1));
+         }
       }
       
       private function initialiseNPCTrade() : void
@@ -1514,23 +1551,15 @@ package tibia.options
          this.m_StatusPlayerHealth = param1;
       }
       
-      [Bindable(event="propertyChange")]
-      public function set generalActionBarsLock(param1:Boolean) : void
+      private function marshallActionBarSet(param1:XML) : void
       {
-         var _loc2_:Object = this.generalActionBarsLock;
-         if(_loc2_ !== param1)
+         var _loc2_:int = this.m_ActionBarSet.length;
+         var _loc3_:int = 0;
+         while(_loc3_ < _loc2_)
          {
-            this._259410793generalActionBarsLock = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"generalActionBarsLock",_loc2_,param1));
+            param1.appendChild(this.m_ActionBarSet[_loc3_].marshall());
+            _loc3_++;
          }
-      }
-      
-      private function initialiseMappingSet() : void
-      {
-         this.removeAllListItems(this.m_MappingSet,null);
-         var _loc1_:MappingSet = new MappingSet(MappingSet.DEFAULT_SET);
-         _loc1_.initialiseDefaultBindings();
-         this.addListItem(this.m_MappingSet,_loc1_,null);
       }
       
       private function marshallHelp(param1:XML) : void
@@ -1548,14 +1577,12 @@ package tibia.options
                         </help>);
       }
       
-      [Bindable(event="propertyChange")]
-      public function set rendererShowFrameRate(param1:Boolean) : void
+      public function resetMessageFilterSet() : void
       {
-         var _loc2_:Object = this.rendererShowFrameRate;
-         if(_loc2_ !== param1)
+         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("MessageFilterSet");
+         if(_loc1_.length() > 0)
          {
-            this._1621507731rendererShowFrameRate = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererShowFrameRate",_loc2_,param1));
+            this.unmarshallMessageFilterSet(_loc1_[0],this.m_Version);
          }
       }
       
@@ -1584,6 +1611,17 @@ package tibia.options
       public function getMessageFilterSet(param1:int) : MessageFilterSet
       {
          return MessageFilterSet(this.getListItem(this.m_MessageFilterSet,param1));
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set rendererShowFrameRate(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.rendererShowFrameRate;
+         if(_loc2_ !== param1)
+         {
+            this._1621507731rendererShowFrameRate = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"rendererShowFrameRate",_loc2_,param1));
+         }
       }
       
       [Bindable(event="propertyChange")]
@@ -1763,16 +1801,6 @@ package tibia.options
          return this.m_NPCTradeBuyWithBackpacks;
       }
       
-      private function unmarshallBuddySet(param1:XML, param2:Number) : void
-      {
-         var _loc3_:BuddySet = BuddySet.s_Unmarshall(param1,param2);
-         if(this.m_BuddySet.length >= BuddySet.NUM_SETS && this.getListItem(this.m_BuddySet,_loc3_.ID) == null)
-         {
-            throw new Error("OptionsStorage.unmarshallBuddySet: Too many sets.");
-         }
-         this.addListItem(this.m_BuddySet,_loc3_,null);
-      }
-      
       public function get npcTradeSellKeepEquipped() : Boolean
       {
          return this.m_NPCTradeSellKeepEquipped;
@@ -1853,6 +1881,25 @@ package tibia.options
          return SideBarSet(this.removeListItem(this.m_SideBarSet,param1,"sideBarSet"));
       }
       
+      public function getDefaultMappingSet() : MappingSet
+      {
+         var _loc2_:XML = null;
+         var _loc3_:MappingSet = null;
+         var _loc1_:XMLList = this.searchDefaultXmlFirstLevelElements("MappingSet");
+         if(_loc1_.length() > 0)
+         {
+            for each(_loc2_ in _loc1_)
+            {
+               _loc3_ = MappingSet.s_Unmarshall(_loc2_,this.m_Version);
+               if(_loc3_.ID == 0)
+               {
+                  return _loc3_;
+               }
+            }
+         }
+         throw new Error("OptionsStorage.getDefaultMappingSet: No mapping set width ID 0 found in default options");
+      }
+      
       [Bindable(event="propertyChange")]
       public function set marketBrowserLevel(param1:Boolean) : void
       {
@@ -1864,14 +1911,9 @@ package tibia.options
          }
       }
       
-      private function marshallCombat(param1:XML) : void
+      public function get rendererHighlight() : Number
       {
-         param1.appendChild(<combat>
-                          <attackMode>{this.m_CombatAttackMode}</attackMode>
-                          <chaseMode>{this.m_CombatChaseMode}</chaseMode>
-                          <autoChaseOff>{this.m_CombatAutoChaseOff}</autoChaseOff>
-                          <secureMode>{this.m_CombatSecureMode}</secureMode>
-                        </combat>);
+         return this.m_RendererHighlight;
       }
       
       private function set _120469519npcTradeBuyIgnoreCapacity(param1:Boolean) : void
@@ -2012,6 +2054,16 @@ package tibia.options
          }
       }
       
+      private function marshallCombat(param1:XML) : void
+      {
+         param1.appendChild(<combat>
+                          <attackMode>{this.m_CombatAttackMode}</attackMode>
+                          <chaseMode>{this.m_CombatChaseMode}</chaseMode>
+                          <autoChaseOff>{this.m_CombatAutoChaseOff}</autoChaseOff>
+                          <secureMode>{this.m_CombatSecureMode}</secureMode>
+                        </combat>);
+      }
+      
       public function get generalInputClassicControls() : Boolean
       {
          return this.m_GeneralInputClassicControls;
@@ -2045,6 +2097,17 @@ package tibia.options
       public function get rendererMaxFrameRate() : int
       {
          return this.m_RendererMaxFrameRate;
+      }
+      
+      public function reset() : void
+      {
+         this.initialiseActionBarSet();
+         this.initialiseChannelSet();
+         this.initialiseMappingSet();
+         this.initialiseMessageFilterSet();
+         this.initialiseNameFilterSet();
+         this.initialiseSideBarSet();
+         this.unmarshall(this.m_DefaultOptionsXml);
       }
       
       public function get generalUIChatLeftViewWidth() : Number
@@ -2126,6 +2189,7 @@ package tibia.options
          param1.appendChild(<renderer>
                           <lightEnabled>{this.m_RendererLightEnabled}</lightEnabled>
                           <ambientBrightness>{this.m_RendererAmbientBrightness}</ambientBrightness>
+                          <highlight>{this.m_RendererHighlight}</highlight>
                           <levelSeparator>{this.m_RendererLevelSeparator}</levelSeparator>
                           <scaleMap>{this.m_RendererScaleMap}</scaleMap>
                           <maxFrameRate>{this.m_RendererMaxFrameRate}</maxFrameRate>
@@ -2158,15 +2222,22 @@ package tibia.options
          this.m_MarketBrowserLayout = param1;
       }
       
-      [Bindable(event="propertyChange")]
-      public function set statusWidgetVisible(param1:Boolean) : void
+      public function clone() : OptionsStorage
       {
-         var _loc2_:Object = this.statusWidgetVisible;
-         if(_loc2_ !== param1)
+         var _loc1_:XML = null;
+         _loc1_ = this.marshall();
+         var _loc2_:OptionsStorage = new OptionsStorage(this.m_DefaultOptionsXml,_loc1_);
+         var _loc3_:BuddySet = null;
+         if((_loc3_ = this.getBuddySet(BuddySet.DEFAULT_SET)) != null)
          {
-            this._2103194300statusWidgetVisible = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"statusWidgetVisible",_loc2_,param1));
+            _loc2_.addBuddySet(_loc3_.clone());
          }
+         var _loc4_:NameFilterSet = null;
+         if((_loc4_ = this.getNameFilterSet(NameFilterSet.DEFAULT_SET)) != null)
+         {
+            _loc2_.addNameFilterSet(_loc4_.clone());
+         }
+         return _loc2_;
       }
       
       private function set _1252438854generalUIChatLeftViewWidth(param1:Number) : void
@@ -2221,6 +2292,17 @@ package tibia.options
          {
             param1.appendChild(this.m_ChannelSet[_loc3_].marshall());
             _loc3_++;
+         }
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set statusWidgetVisible(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.statusWidgetVisible;
+         if(_loc2_ !== param1)
+         {
+            this._2103194300statusWidgetVisible = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"statusWidgetVisible",_loc2_,param1));
          }
       }
       
@@ -2329,9 +2411,17 @@ package tibia.options
          this.m_GeneralActionBarsLock = param1;
       }
       
-      public function getActionBarSet(param1:int) : ActionBarSet
+      private function set _498046769rendererHighlight(param1:Number) : void
       {
-         return ActionBarSet(this.getListItem(this.m_ActionBarSet,param1));
+         if(param1 < 0)
+         {
+            param1 = 0;
+         }
+         if(param1 > 1)
+         {
+            param1 = 1;
+         }
+         this.m_RendererHighlight = param1;
       }
       
       private function set _251860638statusPlayerName(param1:Boolean) : void
@@ -2389,6 +2479,11 @@ package tibia.options
             this._1254385703marketBrowserEditor = param1;
             this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserEditor",_loc2_,param1));
          }
+      }
+      
+      public function getActionBarSet(param1:int) : ActionBarSet
+      {
+         return ActionBarSet(this.getListItem(this.m_ActionBarSet,param1));
       }
       
       [Bindable(event="propertyChange")]
@@ -2484,6 +2579,16 @@ package tibia.options
          this.m_NPCTradeSellKeepEquipped = param1;
       }
       
+      public function get combatSecureMode() : int
+      {
+         return this.m_CombatSecureMode;
+      }
+      
+      public function getNameFilterSet(param1:int) : NameFilterSet
+      {
+         return NameFilterSet(this.getListItem(this.m_NameFilterSet,param1));
+      }
+      
       private function initialiseMarket() : void
       {
          this.m_MarketBrowserLayout = AppearanceTypeBrowser.LAYOUT_TILE;
@@ -2496,16 +2601,6 @@ package tibia.options
          this.m_MarketBrowserName = "";
          this.m_MarketSelectedView = MarketWidget.VIEW_MARKET_OFFERS;
          this.m_MarketSelectedType = 0;
-      }
-      
-      public function get combatSecureMode() : int
-      {
-         return this.m_CombatSecureMode;
-      }
-      
-      public function getNameFilterSet(param1:int) : NameFilterSet
-      {
-         return NameFilterSet(this.getListItem(this.m_NameFilterSet,param1));
       }
       
       public function getMappingSetIDs() : Array
@@ -2633,6 +2728,16 @@ package tibia.options
             this._124099575marketBrowserName = param1;
             this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"marketBrowserName",_loc2_,param1));
          }
+      }
+      
+      private function set _1091413675statusWidgetLocation(param1:int) : void
+      {
+         if(param1 == StatusWidget.LOCATION_TOP || param1 == StatusWidget.LOCATION_BOTTOM || param1 == StatusWidget.LOCATION_LEFT || param1 == StatusWidget.LOCATION_RIGHT)
+         {
+            this.m_StatusWidgetLocation = param1;
+            return;
+         }
+         throw new ArgumentError("OptionsStorage.set statusWidgetLocation: Invalid location: " + param1);
       }
    }
 }

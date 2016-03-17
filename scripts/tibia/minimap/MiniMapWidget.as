@@ -9,9 +9,13 @@ package tibia.minimap
    public class MiniMapWidget extends Widget
    {
       
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const NUM_EFFECTS:int = 200;
       
       protected static const MAP_HEIGHT:int = 11;
+      
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
@@ -75,11 +79,15 @@ package tibia.minimap
       
       protected static const MAP_WIDTH:int = 15;
       
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
+      
       protected static const MM_SIDEBAR_VIEW_WIDTH:int = 106;
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
       
       protected static const GROUND_LAYER:int = 7;
+      
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
        
       protected var m_HighlightEnd:Number = 0;
       

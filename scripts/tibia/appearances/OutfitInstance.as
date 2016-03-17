@@ -6,19 +6,23 @@ package tibia.appearances
    import flash.geom.ColorTransform;
    import flash.filters.ColorMatrixFilter;
    import tibia.§appearances:ns_appearance_internal§.m_Type;
-   import tibia.§appearances:ns_appearance_internal§.m_Phase;
    import shared.utility.Colour;
    import flash.display.BitmapDataChannel;
    import flash.geom.Point;
+   import tibia.§appearances:ns_appearance_internal§.m_Phase;
    
    public class OutfitInstance extends AppearanceInstance
    {
+      
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
       private static const REPLACE_BLUE_WIDTH_YELLOW:BitmapFilter = new ColorMatrixFilter([1,-1,0,0,0,-1,1,0,0,0,1,1,0,0,-255,0,0,-1,1,0]);
       
       protected static const NUM_EFFECTS:int = 200;
       
       protected static const MAP_HEIGHT:int = 11;
+      
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
@@ -38,13 +42,13 @@ package tibia.appearances
       
       protected static const FIELD_HEIGHT:int = 24;
       
-      protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
-      
       private static const s_ColourRect:Rectangle = new Rectangle(0,0,s_ColourBitmap.width,s_ColourBitmap.height);
       
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       private static const s_ColourTransform:ColorTransform = new ColorTransform();
+      
+      protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
       private static const INSTANCE_CACHE_MAX_SPRITES:int = 2 * 3 * 4;
       
@@ -57,6 +61,8 @@ package tibia.appearances
       protected static const PLAYER_OFFSET_Y:int = 6;
       
       protected static const FIELD_SIZE:int = 32;
+      
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
       protected static const PLAYER_OFFSET_X:int = 8;
       
@@ -73,6 +79,8 @@ package tibia.appearances
       protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
       
       protected static const MAP_MAX_Z:int = 15;
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       private static const s_GreyRect:Rectangle = new Rectangle(0,0,s_GreyBitmap.width,s_GreyBitmap.height);
       
@@ -122,16 +130,6 @@ package tibia.appearances
             super.animate(param1);
          }
          return true;
-      }
-      
-      override public function draw(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
-      {
-         var _loc7_:int = 0;
-         _loc7_ = (((m_Phase % m_Type.phases * m_Type.patternDepth + param6 % m_Type.patternDepth) * m_Type.patternHeight + param5 % m_Type.patternHeight) * m_Type.patternWidth + param4 % m_Type.patternWidth) * m_Type.layers + 0;
-         var _loc8_:Rectangle = this.m_InstanceSprite[_loc7_];
-         s_Point.x = param2 - _loc8_.width - m_Type.displacementX;
-         s_Point.y = param3 - _loc8_.height - m_Type.displacementY;
-         param1.copyPixels(this.m_InstanceBitmap,_loc8_,s_Point,null,null,true);
       }
       
       private function rebuildCache() : void
@@ -247,7 +245,6 @@ package tibia.appearances
       
       override public function getSprite(param1:int, param2:int, param3:int, param4:int, param5:Rectangle = null) : BitmapData
       {
-         var _loc11_:Rectangle = null;
          var _loc6_:int = param1 >= 0?int(param1 % m_Type.phases):int(m_Phase);
          var _loc7_:int = param2 >= 0?int(param2 % m_Type.patternWidth):0;
          var _loc8_:int = param3 >= 0?int(param3 % m_Type.patternHeight):0;
@@ -255,13 +252,18 @@ package tibia.appearances
          var _loc10_:int = (((_loc6_ * m_Type.patternDepth + _loc9_) * m_Type.patternHeight + _loc8_) * m_Type.patternWidth + _loc7_) * m_Type.layers + 0;
          if(param5 != null)
          {
-            _loc11_ = this.m_InstanceSprite[_loc10_];
-            param5.x = _loc11_.x;
-            param5.y = _loc11_.y;
-            param5.width = _loc11_.width;
-            param5.height = _loc11_.height;
+            param5.copyFrom(this.m_InstanceSprite[_loc10_]);
          }
          return this.m_InstanceBitmap;
+      }
+      
+      override public function drawTo(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
+      {
+         var _loc7_:int = 0;
+         _loc7_ = (((m_Phase % m_Type.phases * m_Type.patternDepth + param6 % m_Type.patternDepth) * m_Type.patternHeight + param5 % m_Type.patternHeight) * m_Type.patternWidth + param4 % m_Type.patternWidth) * m_Type.layers + 0;
+         var _loc8_:Rectangle = this.m_InstanceSprite[_loc7_];
+         s_TempPoint.setTo(param2 - _loc8_.width - m_Type.displacementX,param3 - _loc8_.height - m_Type.displacementY);
+         param1.copyPixels(this.m_InstanceBitmap,_loc8_,s_TempPoint,null,null,true);
       }
    }
 }

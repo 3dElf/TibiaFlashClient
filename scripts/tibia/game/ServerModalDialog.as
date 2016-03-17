@@ -3,6 +3,7 @@ package tibia.game
    import mx.controls.Text;
    import flash.display.DisplayObject;
    import flash.events.MouseEvent;
+   import shared.controls.CustomButton;
    import mx.controls.Button;
    import flash.events.Event;
    import mx.events.CloseEvent;
@@ -75,7 +76,7 @@ package tibia.game
             _loc2_ = 0;
             while(_loc2_ < this.buttons.length)
             {
-               _loc1_ = new Button();
+               _loc1_ = new CustomButton();
                Button(_loc1_).label = this.buttons[_loc2_].label;
                Button(_loc1_).data = this.buttons[_loc2_].value;
                _loc1_.addEventListener(MouseEvent.CLICK,this.onClose);

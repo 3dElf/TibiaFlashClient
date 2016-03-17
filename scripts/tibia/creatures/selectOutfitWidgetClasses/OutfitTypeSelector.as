@@ -9,6 +9,7 @@ package tibia.creatures.selectOutfitWidgetClasses
    import shared.controls.ShapeWrapper;
    import mx.containers.HBox;
    import tibia.appearances.widgetClasses.SimpleAppearanceRenderer;
+   import shared.controls.CustomButton;
    import mx.controls.Label;
    import mx.collections.IList;
    import mx.core.EventPriority;
@@ -125,7 +126,7 @@ package tibia.creatures.selectOutfitWidgetClasses
             _loc2_.setStyle("horizontalGap",2);
             _loc2_.setStyle("verticalAlign","middle");
             _loc2_.setStyle("verticalGap",2);
-            this.m_UIButtonPrev = new Button();
+            this.m_UIButtonPrev = new CustomButton();
             this.m_UIButtonPrev.enabled = this.m_Outfits != null && this.m_Outfits.length > 0;
             this.m_UIButtonPrev.styleName = getStyle("prevButtonStyle");
             this.m_UIButtonPrev.addEventListener(MouseEvent.CLICK,this.onButtonClick);
@@ -137,7 +138,7 @@ package tibia.creatures.selectOutfitWidgetClasses
             this.m_UIName = new Label();
             _loc3_.addChild(this.m_UIName);
             _loc2_.addChild(_loc3_);
-            this.m_UIButtonNext = new Button();
+            this.m_UIButtonNext = new CustomButton();
             this.m_UIButtonNext.enabled = this.m_Outfits != null && this.m_Outfits.length > 0;
             this.m_UIButtonNext.styleName = getStyle("nextButtonStyle");
             this.m_UIButtonNext.addEventListener(MouseEvent.CLICK,this.onButtonClick);

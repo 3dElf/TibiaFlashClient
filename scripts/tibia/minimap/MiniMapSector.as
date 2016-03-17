@@ -5,15 +5,16 @@ package tibia.minimap
    import flash.geom.Rectangle;
    import flash.geom.Point;
    import flash.display.BitmapData;
-   import shared.utility.Colour;
-   import shared.utility.StringHelper;
+   import tibia.§minimap:ns_minimap_internal§.s_GetWaypointsSafe;
    import shared.utility.SharedObjectManager;
    import tibia.§minimap:ns_minimap_internal§.s_GetSectorName;
+   import shared.utility.Colour;
+   import shared.utility.StringHelper;
    
    public class MiniMapSector
    {
       
-      protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const NUM_EFFECTS:int = 200;
       
@@ -24,6 +25,8 @@ package tibia.minimap
       protected static const MM_SECTOR_SIZE:int = 256;
       
       protected static const MM_IE_TIMEOUT:Number = 50;
+      
+      protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
       
       protected static const PATH_NORTH_WEST:int = 4;
       
@@ -75,17 +78,19 @@ package tibia.minimap
       
       protected static const GROUND_LAYER:int = 7;
       
-      protected static const PATH_ERROR_TOO_FAR:int = -3;
-      
       protected static const PATH_WEST:int = 5;
       
       protected static const MAP_HEIGHT:int = 11;
       
       protected static const PATH_ERROR_INTERNAL:int = -5;
       
-      protected static const PATH_EMPTY:int = 0;
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const PATH_COST_UNDEFINED:int = 254;
+      
+      protected static const PATH_EMPTY:int = 0;
+      
+      protected static const PATH_ERROR_TOO_FAR:int = -3;
       
       protected static const PATH_MATRIX_SIZE:int = 2 * PATH_MAX_DISTANCE + 1;
       
@@ -101,8 +106,6 @@ package tibia.minimap
       
       protected static const PATH_MAX_STEPS:int = 128;
       
-      protected static const MM_STORAGE_MAX_VERSION:int = 1;
-      
       protected static const MM_CACHE_SIZE:int = 48;
       
       protected static const MM_SIDEBAR_HIGHLIGHT_DURATION:Number = 10000;
@@ -115,6 +118,10 @@ package tibia.minimap
       
       protected static const MAP_MIN_Z:int = 0;
       
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
+      protected static const MM_STORAGE_MAX_VERSION:int = 1;
+      
       protected static const MAPSIZE_W:int = 10;
       
       protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
@@ -122,6 +129,8 @@ package tibia.minimap
       protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
       
       protected static const MAPSIZE_Z:int = 8;
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       protected static const PATH_EAST:int = 1;
       
@@ -137,15 +146,15 @@ package tibia.minimap
       
       protected var m_SectorZ:int = 0;
       
-      protected var m_MinCost:int = 254;
+      var m_MinCost:int = 254;
       
-      protected var m_Cost:Vector.<int> = null;
+      var m_Cost:Vector.<int> = null;
       
-      protected var m_Marks:Array = null;
+      var m_Marks:Array = null;
       
       protected var m_Dirty:Boolean = false;
       
-      protected var m_BitmapData:BitmapData = null;
+      var m_BitmapData:BitmapData = null;
       
       public function MiniMapSector(param1:int, param2:int, param3:int)
       {
@@ -294,107 +303,13 @@ package tibia.minimap
          return s_LoadSharedObjectInternal(param1,null);
       }
       
-      private static function s_GetWaypointsSafe(param1:int) : int
+      static function s_GetWaypointsSafe(param1:int) : int
       {
          if(param1 >= 0 && param1 <= PATH_COST_MAX || param1 == PATH_COST_OBSTACLE)
          {
             return param1;
          }
          return PATH_COST_UNDEFINED;
-      }
-      
-      static function s_LoadByteArray(param1:ByteArray) : MiniMapSector
-      {
-         var Byte:uint = 0;
-         var RGB:int = 0;
-         var Waypoints:int = 0;
-         var Icon:int = 0;
-         var Text:String = null;
-         var a_ByteArray:ByteArray = param1;
-         var _MiniMapSector:MiniMapSector = null;
-         if(a_ByteArray == null || a_ByteArray.bytesAvailable < MIN_BYTES)
-         {
-            return null;
-         }
-         var x:int = a_ByteArray.readUnsignedShort();
-         var y:int = a_ByteArray.readUnsignedShort();
-         var z:int = a_ByteArray.readUnsignedByte();
-         if(x >= MAP_MIN_X && x <= MAP_MAX_X && x % MM_SECTOR_SIZE == 0 && y >= MAP_MIN_Y && y <= MAP_MAX_Y && y % MM_SECTOR_SIZE == 0 && z >= MAP_MIN_Z && z <= MAP_MAX_Z)
-         {
-            try
-            {
-               _MiniMapSector = new MiniMapSector(x,y,z);
-            }
-            catch(_Error:*)
-            {
-            }
-         }
-         y = 0;
-         while(y < MM_SECTOR_SIZE)
-         {
-            x = 0;
-            while(x < MM_SECTOR_SIZE)
-            {
-               Byte = a_ByteArray.readUnsignedByte();
-               RGB = Colour.s_RGBFromEightBit(Byte);
-               if(_MiniMapSector != null)
-               {
-                  _MiniMapSector.m_BitmapData.setPixel32(x,y,4278190080 | RGB);
-               }
-               x++;
-            }
-            y++;
-         }
-         if(_MiniMapSector != null)
-         {
-            _MiniMapSector.m_MinCost = PATH_COST_UNDEFINED;
-         }
-         y = 0;
-         while(y < MM_SECTOR_SIZE)
-         {
-            x = 0;
-            while(x < MM_SECTOR_SIZE)
-            {
-               Waypoints = s_GetWaypointsSafe(a_ByteArray.readUnsignedByte());
-               if(_MiniMapSector != null)
-               {
-                  _MiniMapSector.m_Cost[y * MM_SECTOR_SIZE + x] = Waypoints;
-                  _MiniMapSector.m_MinCost = Math.min(_MiniMapSector.m_MinCost,Waypoints);
-               }
-               x++;
-            }
-            y++;
-         }
-         var NumMarks:int = a_ByteArray.readUnsignedShort();
-         var i:int = 0;
-         while(i < NumMarks)
-         {
-            try
-            {
-               x = a_ByteArray.readUnsignedShort();
-               y = a_ByteArray.readUnsignedShort();
-               z = a_ByteArray.readUnsignedByte();
-               Icon = a_ByteArray.readUnsignedByte();
-               Text = StringHelper.s_ReadFromByteArray(a_ByteArray,65535);
-               if(_MiniMapSector != null)
-               {
-                  _MiniMapSector.m_Marks.push({
-                     "x":x,
-                     "y":y,
-                     "z":z,
-                     "icon":Icon,
-                     "text":Text
-                  });
-               }
-            }
-            catch(_Error:*)
-            {
-               _MiniMapSector = null;
-               break;
-            }
-            i++;
-         }
-         return _MiniMapSector;
       }
       
       public function getCost(param1:int, param2:int, param3:int) : int

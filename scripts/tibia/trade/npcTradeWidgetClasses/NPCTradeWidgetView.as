@@ -19,6 +19,7 @@ package tibia.trade.npcTradeWidgetClasses
    import mx.containers.Form;
    import mx.containers.FormItem;
    import mx.events.ItemClickEvent;
+   import shared.controls.CustomButton;
    import flash.events.MouseEvent;
    import flash.events.Event;
    import mx.events.PropertyChangeEvent;
@@ -483,7 +484,7 @@ package tibia.trade.npcTradeWidgetClasses
             this.m_UITradeMode.setStyle("tabHeight",getStyle("tradeModeTabHeight"));
             this.m_UITradeMode.setStyle("tabWidth",getStyle("tradeModeTabWidth"));
             _loc1_ = options == null || options.npcTradeLayout == tibia.trade.npcTradeWidgetClasses.ObjectRefSelectorBase.LAYOUT_GRID;
-            this.m_UIObjectLayout = new Button();
+            this.m_UIObjectLayout = new CustomButton();
             this.m_UIObjectLayout.toggle = true;
             this.m_UIObjectLayout.toolTip = resourceManager.getString(BUNDLE,!!_loc1_?"LAYOUT_MODE_GRID":"LAYOUT_MODE_LIST");
             this.m_UIObjectLayout.selected = _loc1_;
@@ -555,7 +556,7 @@ package tibia.trade.npcTradeWidgetClasses
             _loc2_.percentHeight = NaN;
             _loc2_.percentWidth = 100;
             _loc2_.styleName = getStyle("commitBoxStyle");
-            this.m_UIButtonCommit = new Button();
+            this.m_UIButtonCommit = new CustomButton();
             this.m_UIButtonCommit.label = resourceManager.getString(BUNDLE,this.m_TradeMode == MODE_BUY?"TRADE_MODE_BUY":"TRADE_MODE_SELL");
             this.m_UIButtonCommit.percentWidth = 100;
             this.m_UIButtonCommit.addEventListener(MouseEvent.CLICK,this.onButtonCommit);

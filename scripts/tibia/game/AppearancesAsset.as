@@ -1,13 +1,11 @@
 package tibia.game
 {
-   import loader.asset.Cache;
-   
    public class AppearancesAsset extends Asset
    {
        
-      public function AppearancesAsset(param1:Cache, param2:String, param3:int)
+      public function AppearancesAsset(param1:String, param2:int)
       {
-         super(param1,param2,param3);
+         super(param1,param2);
       }
    }
 }

@@ -14,7 +14,7 @@ package tibia.chat
       
       public static const MESSAGE_BARK_LOW:int = 34;
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       public static const MESSAGE_WHISPER:int = 2;
       

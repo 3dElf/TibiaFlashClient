@@ -12,7 +12,7 @@ package tibia.chat
       
       public static const DEFAULT_SET:int = 0;
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       public static const NUM_SETS:int = 1;
       
@@ -285,6 +285,33 @@ package tibia.chat
       public function set whitelistEnabled(param1:Boolean) : void
       {
          this.m_WhiteEnabled = param1;
+      }
+      
+      public function clone() : NameFilterSet
+      {
+         var _loc1_:NameFilterSet = new NameFilterSet(this.ID);
+         _loc1_.blacklistEnabled = this.blacklistEnabled;
+         _loc1_.blacklistPrivate = this.blacklistPrivate;
+         _loc1_.blacklistYelling = this.blacklistYelling;
+         _loc1_.whitelistBuddies = this.whitelistBuddies;
+         _loc1_.whitelistEnabled = this.whitelistEnabled;
+         var _loc2_:int = 0;
+         var _loc3_:int = 0;
+         _loc2_ = 0;
+         _loc3_ = this.m_BlackItems.length;
+         while(_loc2_ < _loc3_)
+         {
+            _loc1_.m_BlackItems.addItem(this.m_BlackItems.getItemAt(_loc2_).clone());
+            _loc2_++;
+         }
+         _loc2_ = 0;
+         _loc3_ = this.m_WhiteItems.length;
+         while(_loc2_ < _loc3_)
+         {
+            _loc1_.m_WhiteItems.addItem(this.m_WhiteItems.getItemAt(_loc2_).clone());
+            _loc2_++;
+         }
+         return _loc1_;
       }
    }
 }

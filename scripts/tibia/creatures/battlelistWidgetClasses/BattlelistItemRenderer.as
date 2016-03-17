@@ -25,6 +25,8 @@ package tibia.creatures.battlelistWidgetClasses
    public class BattlelistItemRenderer extends UIComponent implements IListItemRenderer, IDataRenderer
    {
       
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const STATE_PZ_BLOCK:int = 13;
       
       public static const CREATURE_ICON_SIZE:int = 24;
@@ -121,6 +123,10 @@ package tibia.creatures.battlelistWidgetClasses
       
       protected static const MAP_MIN_X:int = 24576;
       
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
+      
       protected static const MAP_WIDTH:int = 15;
       
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
@@ -192,6 +198,8 @@ package tibia.creatures.battlelistWidgetClasses
       protected static const SKILL_MANA:int = 4;
       
       protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
+      
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const STATE_CURSED:int = 11;
       
@@ -514,12 +522,10 @@ package tibia.creatures.battlelistWidgetClasses
       
       override protected function measure() : void
       {
-         var _loc1_:EdgeMetrics = null;
-         var _loc3_:Number = NaN;
          super.measure();
-         _loc1_ = this.viewMetricsAndPadding;
+         var _loc1_:EdgeMetrics = this.viewMetricsAndPadding;
          var _loc2_:Number = CREATURE_ICON_SIZE + getStyle("horizontalGap") + Math.max(CreatureStorage.STATE_FLAG_SIZE,s_NameCache.slotWidth,getStyle("healthbarWidth"));
-         _loc3_ = Math.max(CREATURE_ICON_SIZE,Math.max(CreatureStorage.STATE_FLAG_SIZE,s_NameCache.slotHeight) + getStyle("verticalGap") + getStyle("healthbarHeight"));
+         var _loc3_:Number = Math.max(CREATURE_ICON_SIZE,Math.max(CreatureStorage.STATE_FLAG_SIZE,s_NameCache.slotHeight) + getStyle("verticalGap") + getStyle("healthbarHeight"));
          measuredMinWidth = measuredWidth = _loc1_.left + _loc2_ + _loc1_.right;
          measuredMinHeight = measuredHeight = _loc1_.top + _loc3_ + _loc1_.bottom;
       }

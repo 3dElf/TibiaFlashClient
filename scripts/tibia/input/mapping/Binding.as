@@ -391,7 +391,7 @@ package tibia.input.mapping
          "result":60
       }];
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       private static const BUNDLE:String = "InputHandler";
       

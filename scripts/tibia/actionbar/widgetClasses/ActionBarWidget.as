@@ -1,8 +1,6 @@
 package tibia.actionbar.widgetClasses
 {
    import mx.core.Container;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
    import tibia.actionbar.ActionBar;
    import mx.events.PropertyChangeEvent;
    import tibia.input.IAction;
@@ -12,7 +10,7 @@ package tibia.actionbar.widgetClasses
    import tibia.actionbar.ActionBarSet;
    import mx.core.IUIComponent;
    import flash.geom.Point;
-   import mx.controls.Button;
+   import shared.controls.CustomButton;
    import mx.events.DragEvent;
    import tibia.input.MappingSet;
    import tibia.input.mapping.Mapping;
@@ -38,6 +36,7 @@ package tibia.actionbar.widgetClasses
    import tibia.appearances.AppearanceTypeRef;
    import mx.core.EdgeMetrics;
    import mx.core.UIComponent;
+   import mx.controls.Button;
    import mx.events.SandboxMouseEvent;
    import tibia.magic.Spell;
    import tibia.input.gameaction.SpellAction;
@@ -81,11 +80,7 @@ package tibia.actionbar.widgetClasses
          "toggleStyle":"borderStyle",
          "toggleSkin":"skin"
       };
-      
-      {
-         initializeStyle();
-      }
-      
+       
       private var m_UncommittedScrollPosition:Boolean = false;
       
       private var m_UncommittedMaxScrollPosition:Boolean = false;
@@ -143,25 +138,6 @@ package tibia.actionbar.widgetClasses
          addEventListener(MouseEvent.MOUSE_WHEEL,this.onMouseWheel);
       }
       
-      private static function initializeStyle() : void
-      {
-         var Decl:CSSStyleDeclaration = StyleManager.getStyleDeclaration("ActionBarWidget");
-         if(Decl == null)
-         {
-            Decl = new CSSStyleDeclaration();
-         }
-         Decl.defaultFactory = function():void
-         {
-            ActionBarWidget.horizontalGap = 2;
-            ActionBarWidget.verticalGap = 2;
-            ActionBarWidget.paddingLeft = 2;
-            ActionBarWidget.paddingRight = 2;
-            ActionBarWidget.paddingTop = 2;
-            ActionBarWidget.paddingBottom = 2;
-         };
-         StyleManager.setStyleDeclaration("ActionBarWidget",Decl,true);
-      }
-      
       [Bindable(event="propertyChange")]
       public function set actionBar(param1:ActionBar) : void
       {
@@ -214,7 +190,7 @@ package tibia.actionbar.widgetClasses
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
       {
-         layoutChrome(param1,unscaledHeight);
+         layoutChrome(param1,param2);
          var _loc3_:Number = 0;
          var _loc4_:Number = 0;
          var _loc5_:Number = 0;
@@ -265,6 +241,7 @@ package tibia.actionbar.widgetClasses
          this.m_UIToggleButton.visible = this.options != null && !this.options.generalActionBarsLock;
          this.m_UIToggleButton.move(_loc3_,_loc4_);
          this.m_UIToggleButton.setActualSize(_loc6_,_loc5_);
+         rawChildren.setChildIndex(this.m_UIToggleButton,rawChildren.numChildren - 1);
          if(currentState != STATE_OPEN)
          {
             return;
@@ -341,6 +318,7 @@ package tibia.actionbar.widgetClasses
          this.m_UIScrollDownButton.visible = true;
          this.m_UIScrollDownButton.move(_loc3_,_loc4_);
          this.m_UIScrollDownButton.setActualSize(_loc6_,_loc5_);
+         rawChildren.setChildIndex(this.m_UIScrollDownButton,rawChildren.numChildren - 2);
          _loc4_ = getStyle("paddingTop");
          _loc3_ = getStyle("paddingLeft");
          _loc7_ = 0;
@@ -382,6 +360,7 @@ package tibia.actionbar.widgetClasses
          this.m_UIScrollUpButton.visible = true;
          this.m_UIScrollUpButton.move(_loc3_,_loc4_);
          this.m_UIScrollUpButton.setActualSize(_loc6_,_loc5_);
+         rawChildren.setChildIndex(this.m_UIScrollUpButton,rawChildren.numChildren - 3);
       }
       
       private function updateToggleButton() : void
@@ -391,7 +370,7 @@ package tibia.actionbar.widgetClasses
             this.m_UIToggleButton.removeEventListener(MouseEvent.CLICK,this.onMouseClick);
             rawChildren.removeChild(this.m_UIToggleButton);
          }
-         this.m_UIToggleButton = new Button();
+         this.m_UIToggleButton = new CustomButton();
          this.m_UIToggleButton.styleName = getStyle("toggleButtonStyle");
          this.m_UIToggleButton.addEventListener(MouseEvent.CLICK,this.onMouseClick);
          rawChildren.addChild(this.m_UIToggleButton);
@@ -491,9 +470,9 @@ package tibia.actionbar.widgetClasses
       override protected function createChildren() : void
       {
          super.createChildren();
-         this.updateToggleButton();
-         this.updateScrollButtons();
          this.updateActionButtons();
+         this.updateScrollButtons();
+         this.updateToggleButton();
       }
       
       private function set _198267389actionBar(param1:ActionBar) : void
@@ -567,7 +546,7 @@ package tibia.actionbar.widgetClasses
             this.m_UIScrollUpButton.removeEventListener(MouseRepeatEvent.REPEAT_MOUSE_DOWN,this.onMouseClick);
             rawChildren.removeChild(this.m_UIScrollUpButton);
          }
-         this.m_UIScrollUpButton = new Button();
+         this.m_UIScrollUpButton = new CustomButton();
          this.m_UIScrollUpButton.styleName = getStyle("scrollUpButtonStyle");
          this.m_UIScrollUpButton.addEventListener(MouseEvent.CLICK,this.onMouseClick);
          this.m_UIScrollUpButton.addEventListener(MouseEvent.MOUSE_DOWN,this.onMouseDown);
@@ -580,7 +559,7 @@ package tibia.actionbar.widgetClasses
             this.m_UIScrollDownButton.removeEventListener(MouseRepeatEvent.REPEAT_MOUSE_DOWN,this.onMouseClick);
             rawChildren.removeChild(this.m_UIScrollDownButton);
          }
-         this.m_UIScrollDownButton = new Button();
+         this.m_UIScrollDownButton = new CustomButton();
          this.m_UIScrollDownButton.styleName = getStyle("scrollDownButtonStyle");
          this.m_UIScrollDownButton.addEventListener(MouseEvent.CLICK,this.onMouseClick);
          this.m_UIScrollDownButton.addEventListener(MouseEvent.MOUSE_DOWN,this.onMouseDown);
@@ -1019,19 +998,15 @@ package tibia.actionbar.widgetClasses
             }
             if(currentState == STATE_COLLAPSED && this.m_Location == ActionBarSet.LOCATION_TOP)
             {
-               measuredMinHeight = measuredHeight = Math.max(_loc1_.top,_loc3_);
+               measuredMinHeight = measuredHeight = _loc1_.top;
             }
             else if(currentState == STATE_COLLAPSED && this.m_Location == ActionBarSet.LOCATION_BOTTOM)
             {
-               measuredMinHeight = measuredHeight = Math.max(_loc1_.bottom,_loc3_);
-            }
-            else if(this.m_Location == ActionBarSet.LOCATION_TOP)
-            {
-               measuredMinHeight = measuredHeight = Math.max(_loc1_.top,_loc3_) + _loc8_ + _loc1_.bottom;
+               measuredMinHeight = measuredHeight = _loc1_.bottom;
             }
             else
             {
-               measuredMinHeight = measuredHeight = _loc1_.top + _loc8_ + Math.max(_loc1_.bottom,_loc3_);
+               measuredMinHeight = measuredHeight = _loc1_.top + _loc8_ + _loc1_.bottom;
             }
             measuredMinWidth = _loc1_.left + _loc6_ + _loc11_ + 2 * _loc2_ + _loc1_.right;
             measuredWidth = _loc1_.left + _loc6_ + _loc12_ + (numChildren + 1) * _loc2_ + _loc1_.right;
@@ -1051,19 +1026,15 @@ package tibia.actionbar.widgetClasses
             }
             if(currentState == STATE_COLLAPSED && this.m_Location == ActionBarSet.LOCATION_LEFT)
             {
-               measuredMinWidth = measuredWidth = Math.max(_loc1_.left,_loc4_);
+               measuredMinWidth = measuredWidth = _loc1_.left;
             }
             else if(currentState == STATE_COLLAPSED && this.m_Location == ActionBarSet.LOCATION_RIGHT)
             {
-               measuredMinWidth = measuredWidth = Math.max(_loc1_.right,_loc4_);
-            }
-            else if(this.m_Location == ActionBarSet.LOCATION_LEFT)
-            {
-               measuredMinWidth = measuredWidth = Math.max(_loc1_.left,_loc4_) + _loc11_ + _loc1_.right;
+               measuredMinWidth = measuredWidth = _loc1_.right;
             }
             else
             {
-               measuredMinWidth = measuredWidth = _loc1_.left + _loc11_ + Math.max(_loc1_.right,_loc4_);
+               measuredMinWidth = measuredWidth = _loc1_.left + _loc11_ + _loc1_.right;
             }
             measuredMinHeight = _loc1_.top + _loc5_ + _loc8_ + 2 * _loc2_ + _loc1_.bottom;
             measuredHeight = _loc1_.top + _loc5_ + _loc9_ + (numChildren + 1) * _loc2_ + _loc1_.bottom;

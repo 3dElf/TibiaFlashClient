@@ -10,9 +10,13 @@ package tibia.worldmap
    public class OnscreenMessage
    {
       
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const NUM_EFFECTS:int = 200;
       
       protected static const MAP_HEIGHT:int = 11;
+      
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
@@ -22,11 +26,11 @@ package tibia.worldmap
       
       protected static const FIELD_HEIGHT:int = 24;
       
-      protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
-      
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
       
       private static var s_NextID:int = 0;
+      
+      protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
       protected static const MAP_MIN_X:int = 24576;
       
@@ -37,6 +41,8 @@ package tibia.worldmap
       protected static const PLAYER_OFFSET_Y:int = 6;
       
       protected static const FIELD_SIZE:int = 32;
+      
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
       protected static const PLAYER_OFFSET_X:int = 8;
       
@@ -53,6 +59,8 @@ package tibia.worldmap
       protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
       
       protected static const MAP_MAX_Z:int = 15;
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       protected static const MAP_WIDTH:int = 15;
       

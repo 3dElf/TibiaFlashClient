@@ -8,7 +8,7 @@ package tibia.input.staticaction
    public class StaticAction implements IAction
    {
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       protected static const BUNDLE:String = "StaticAction";
       

@@ -10,7 +10,7 @@ package tibia.input.gameaction
    public class TalkAction implements IAction
    {
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       private static const BUNDLE:String = "StaticAction";
       

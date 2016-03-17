@@ -1,6 +1,5 @@
 package tibia.appearances
 {
-   import flash.geom.Point;
    import tibia.§appearances:ns_appearance_internal§.m_Phase;
    import shared.utility.Colour;
    import flash.geom.Rectangle;
@@ -13,8 +12,6 @@ package tibia.appearances
    
    public class TextualEffectInstance extends AppearanceInstance
    {
-      
-      protected static var s_Point:Point = new Point(0,0);
       
       protected static const PHASE_DURATION:Number = 100;
       
@@ -72,26 +69,9 @@ package tibia.appearances
       {
          if(this.m_InstanceCache)
          {
-            if(param5 != null)
-            {
-               param5.x = this.m_InstanceRectangle.x;
-               param5.y = this.m_InstanceRectangle.y;
-               param5.width = this.m_InstanceRectangle.width;
-               param5.height = this.m_InstanceRectangle.height;
-            }
-            return this.m_InstanceBitmap;
+            param5.copyFrom(this.m_InstanceRectangle);
          }
          return null;
-      }
-      
-      override public function draw(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
-      {
-         if(this.m_InstanceCache)
-         {
-            s_Point.x = param2 - this.m_InstanceRectangle.width;
-            s_Point.y = param3 - this.m_InstanceRectangle.height;
-            param1.copyPixels(this.m_InstanceBitmap,this.m_InstanceRectangle,s_Point,null,null,true);
-         }
       }
       
       public function rebuildCache() : void
@@ -126,6 +106,15 @@ package tibia.appearances
       public function get width() : Number
       {
          return this.m_InstanceRectangle.width;
+      }
+      
+      override public function drawTo(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
+      {
+         if(this.m_InstanceCache)
+         {
+            s_TempPoint.setTo(param2 - this.m_InstanceRectangle.width,param3 - this.m_InstanceRectangle.height);
+            param1.copyPixels(this.m_InstanceBitmap,this.m_InstanceRectangle,s_TempPoint,null,null,true);
+         }
       }
       
       public function merge(param1:AppearanceInstance) : Boolean

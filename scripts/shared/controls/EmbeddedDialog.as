@@ -129,7 +129,7 @@ package shared.controls
             {
                if((this.m_ButtonFlags & BUTTON_FLAGS[_loc1_].data) != 0)
                {
-                  _loc2_ = new Button();
+                  _loc2_ = new CustomButton();
                   _loc2_.label = resourceManager.getString(BUNDLE,BUTTON_FLAGS[_loc1_].label);
                   _loc2_.data = BUTTON_FLAGS[_loc1_].data;
                   _loc2_.styleName = getStyle("buttonStyle");

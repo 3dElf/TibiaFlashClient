@@ -19,7 +19,7 @@ package tibia.magic.spellListWidgetClasses
    import mx.containers.VBox;
    import mx.containers.FormHeading;
    import mx.containers.HBox;
-   import mx.controls.Button;
+   import shared.controls.CustomButton;
    import mx.controls.RadioButtonGroup;
    import mx.events.ItemClickEvent;
    import mx.containers.ViewStack;
@@ -28,6 +28,7 @@ package tibia.magic.spellListWidgetClasses
    import tibia.§sidebar:ns_sidebar_internal§.widgetInstance;
    import tibia.magic.Spell;
    import mx.controls.Label;
+   import mx.controls.Button;
    import mx.controls.TabBar;
    import shared.controls.CustomLabel;
    import mx.containers.FormItem;
@@ -215,11 +216,11 @@ package tibia.magic.spellListWidgetClasses
       
       private var m_UncommittedFilterGroup:Boolean = true;
       
-      private var m_SortMode:int;
+      private var m_SortMode:int = 4;
       
       private var m_UncommittedFilterLevel:Boolean = true;
       
-      private var m_LayoutMode:int;
+      private var m_LayoutMode:int = 0;
       
       private var m_UIConstructed:Boolean = false;
       
@@ -299,8 +300,6 @@ package tibia.magic.spellListWidgetClasses
       
       public function SpellListWidgetView()
       {
-         this.m_LayoutMode = SpellListWidget.LAYOUT_LIST;
-         this.m_SortMode = SpellListWidget.SORT_NAME;
          super();
          horizontalScrollPolicy = ScrollPolicy.OFF;
          verticalScrollPolicy = ScrollPolicy.OFF;
@@ -439,7 +438,7 @@ package tibia.magic.spellListWidgetClasses
             _loc1_ = new HBox();
             _loc1_.percentWidth = 100;
             _loc1_.setStyle("horizontalGap",2);
-            this.m_UIQuickProfession = new Button();
+            this.m_UIQuickProfession = new CustomButton();
             this.m_UIQuickProfession.label = resourceManager.getString(BUNDLE,"BTN_MY_PROFESSION");
             this.m_UIQuickProfession.toggle = true;
             this.m_UIQuickProfession.addEventListener(MouseEvent.CLICK,this.onQuickFilterToggle,false,EventPriority.DEFAULT + 1,false);
@@ -447,7 +446,7 @@ package tibia.magic.spellListWidgetClasses
             this.m_UIQuickProfession.setStyle("paddingLeft",2);
             this.m_UIQuickProfession.setStyle("paddingRight",2);
             _loc1_.addChild(this.m_UIQuickProfession);
-            this.m_UIQuickLevel = new Button();
+            this.m_UIQuickLevel = new CustomButton();
             this.m_UIQuickLevel.label = resourceManager.getString(BUNDLE,"BTN_MY_LEVEL");
             this.m_UIQuickLevel.toggle = true;
             this.m_UIQuickLevel.addEventListener(MouseEvent.CLICK,this.onQuickFilterToggle);
@@ -455,7 +454,7 @@ package tibia.magic.spellListWidgetClasses
             this.m_UIQuickLevel.setStyle("paddingLeft",2);
             this.m_UIQuickLevel.setStyle("paddingRight",2);
             _loc1_.addChild(this.m_UIQuickLevel);
-            this.m_UIQuickKnown = new Button();
+            this.m_UIQuickKnown = new CustomButton();
             this.m_UIQuickKnown.label = resourceManager.getString(BUNDLE,"BTN_MY_KNOWN");
             this.m_UIQuickKnown.toggle = true;
             this.m_UIQuickKnown.addEventListener(MouseEvent.CLICK,this.onQuickFilterToggle);
@@ -466,7 +465,7 @@ package tibia.magic.spellListWidgetClasses
             _loc2_ = new Spacer();
             _loc2_.percentWidth = 100;
             _loc1_.addChild(_loc2_);
-            this.m_UIViewToggle = new Button();
+            this.m_UIViewToggle = new CustomButton();
             this.m_UIViewToggle.styleName = "spellListWidgetViewToggle";
             this.m_UIViewToggle.toggle = true;
             this.m_UIViewToggle.addEventListener(MouseEvent.CLICK,this.onViewToggle);

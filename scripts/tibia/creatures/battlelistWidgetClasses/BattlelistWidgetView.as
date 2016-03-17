@@ -12,6 +12,7 @@ package tibia.creatures.battlelistWidgetClasses
    import flash.geom.Point;
    import shared.controls.SmoothList;
    import mx.containers.HBox;
+   import shared.controls.CustomButton;
    import mx.controls.listClasses.IListItemRenderer;
    import tibia.creatures.Creature;
    import tibia.network.Connection;
@@ -188,7 +189,7 @@ package tibia.creatures.battlelistWidgetClasses
             _loc2_ = 0;
             while(_loc2_ < OPPONENT_FILTER_MODES.length)
             {
-               _loc3_ = new Button();
+               _loc3_ = new CustomButton();
                _loc3_.data = OPPONENT_FILTER_MODES[_loc2_].value;
                _loc3_.selected = m_Options != null && (m_Options.opponentFilter & OPPONENT_FILTER_MODES[_loc2_].value) > 0;
                _loc3_.styleName = getStyle(OPPONENT_FILTER_MODES[_loc2_].style);

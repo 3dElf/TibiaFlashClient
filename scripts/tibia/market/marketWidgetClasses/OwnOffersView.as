@@ -16,6 +16,7 @@ package tibia.market.marketWidgetClasses
    import mx.core.EventPriority;
    import mx.containers.HBox;
    import mx.controls.Label;
+   import shared.controls.CustomButton;
    import shared.controls.CustomDataGrid;
    import mx.core.ScrollPolicy;
    import mx.containers.BoxDirection;
@@ -204,7 +205,7 @@ package tibia.market.marketWidgetClasses
             _loc2_.text = resourceManager.getString(BUNDLE,"OWN_OFFERS_VIEW_SELLOFFERS");
             _loc2_.setStyle("fontWeight","bold");
             _loc1_.addChild(_loc2_);
-            this.m_UISellCancel = new Button();
+            this.m_UISellCancel = new CustomButton();
             this.m_UISellCancel.enabled = false;
             this.m_UISellCancel.label = resourceManager.getString(BUNDLE,"OWN_OFFERS_VIEW_SELLCANCEL");
             this.m_UISellCancel.addEventListener(MouseEvent.CLICK,this.onCancelClick);
@@ -232,7 +233,7 @@ package tibia.market.marketWidgetClasses
             _loc2_.text = resourceManager.getString(BUNDLE,"OWN_OFFERS_VIEW_BUYOFFERS");
             _loc2_.setStyle("fontWeight","bold");
             _loc1_.addChild(_loc2_);
-            this.m_UIBuyCancel = new Button();
+            this.m_UIBuyCancel = new CustomButton();
             this.m_UIBuyCancel.enabled = false;
             this.m_UIBuyCancel.label = resourceManager.getString(BUNDLE,"OWN_OFFERS_VIEW_BUYCANCEL");
             this.m_UIBuyCancel.addEventListener(MouseEvent.CLICK,this.onCancelClick);

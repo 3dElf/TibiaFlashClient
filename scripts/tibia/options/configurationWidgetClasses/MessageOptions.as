@@ -12,7 +12,7 @@ package tibia.options.configurationWidgetClasses
    import mx.containers.FormItem;
    import mx.controls.dataGridClasses.DataGridColumn;
    import flash.events.Event;
-   import mx.controls.Button;
+   import shared.controls.CustomButton;
    import shared.controls.CustomDataGrid;
    import mx.core.ClassFactory;
    import mx.events.DataGridEvent;
@@ -23,6 +23,7 @@ package tibia.options.configurationWidgetClasses
    import tibia.chat.MessageMode;
    import mx.collections.ArrayCollection;
    import mx.controls.DataGrid;
+   import mx.controls.Button;
    import mx.events.FlexEvent;
    import mx.events.DataGridEventReason;
    import mx.core.ScrollPolicy;
@@ -140,7 +141,7 @@ package tibia.options.configurationWidgetClasses
             _loc4_.addChild(this.m_UIShowLevels);
             _loc3_.addChild(_loc4_);
             _loc2_.addChild(_loc3_);
-            this.m_UIReset = new Button();
+            this.m_UIReset = new CustomButton();
             this.m_UIReset.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"MESSAGE_GENERAL_RESET");
             this.m_UIReset.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             _loc2_.addChild(this.m_UIReset);
@@ -180,8 +181,8 @@ package tibia.options.configurationWidgetClasses
             _loc6_.headerText = resourceManager.getString(ConfigurationWidget.BUNDLE,"MESSAGE_COLUMN_COLOUR");
             _loc6_.dataField = "textColour";
             _loc6_.editable = true;
-            _loc6_.editorDataField = "colourCode";
-            _loc6_.itemRenderer = new ClassFactory(MessageModeColourSelector);
+            _loc6_.editorDataField = "selectedIndex";
+            _loc6_.itemRenderer = new ClassFactory(ColorComboBox);
             _loc6_.rendererIsEditor = true;
             _loc6_.sortable = false;
             _loc6_.width = 110;
@@ -211,12 +212,8 @@ package tibia.options.configurationWidgetClasses
       
       private function onValueChange(param1:Event) : void
       {
-         var _loc2_:OptionsEditorEvent = null;
-         if(param1 != null)
-         {
-            _loc2_ = new OptionsEditorEvent(OptionsEditorEvent.VALUE_CHANGE);
-            dispatchEvent(_loc2_);
-         }
+         var _loc2_:OptionsEditorEvent = new OptionsEditorEvent(OptionsEditorEvent.VALUE_CHANGE);
+         dispatchEvent(_loc2_);
       }
       
       protected function createFilterSet(param1:*) : IList
@@ -297,12 +294,9 @@ package tibia.options.configurationWidgetClasses
       
       public function set options(param1:OptionsStorage) : void
       {
-         if(this.m_Options != param1)
-         {
-            this.m_Options = param1;
-            this.m_UncommittedOptions = true;
-            invalidateProperties();
-         }
+         this.m_Options = param1;
+         this.m_UncommittedOptions = true;
+         invalidateProperties();
       }
       
       public function set ID(param1:int) : void
@@ -539,30 +533,14 @@ package tibia.options.configurationWidgetClasses
       
       protected function onConfirmReset(param1:CloseEvent) : void
       {
-         var _loc2_:IList = null;
-         var _loc3_:int = 0;
-         var _loc4_:Object = null;
-         var _loc5_:OptionsEditorEvent = null;
+         var _loc2_:OptionsEditorEvent = null;
          if(param1.detail == EmbeddedDialog.YES)
          {
-            _loc2_ = new ArrayCollection();
-            _loc3_ = MessageMode.MESSAGE_NONE;
-            while(_loc3_ < MessageMode.MESSAGE_BEYOND_LAST)
-            {
-               _loc2_.addItem(new MessageMode(_loc3_));
-               _loc3_++;
-            }
-            _loc2_ = this.createFilterSet(_loc2_);
-            _loc4_ = this.m_AvailableFilterSet.getItemAt(this.m_Index);
-            _loc4_.filterSet = _loc2_;
-            _loc4_.showTimestamps = true;
-            _loc4_.showLevels = true;
-            _loc4_.dirty = true;
-            this.m_FilterSet = _loc2_;
-            this.m_UncommittedFilterSet = true;
-            this.m_UncommittedIndex = true;
-            _loc5_ = new OptionsEditorEvent(OptionsEditorEvent.VALUE_CHANGE);
-            dispatchEvent(_loc5_);
+            this.m_Options.resetMessageFilterSet();
+            this.m_UncommittedOptions = true;
+            invalidateProperties();
+            _loc2_ = new OptionsEditorEvent(OptionsEditorEvent.VALUE_CHANGE);
+            dispatchEvent(_loc2_);
          }
       }
       

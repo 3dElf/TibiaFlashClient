@@ -2,6 +2,7 @@ package tibia.sidebar.sideBarWidgetClasses
 {
    import mx.controls.Button;
    import flash.events.MouseEvent;
+   import shared.controls.CustomButton;
    import tibia.input.staticaction.StaticActionList;
    import mx.core.ScrollPolicy;
    
@@ -53,32 +54,32 @@ package tibia.sidebar.sideBarWidgetClasses
          if(!this.m_UIConstructed)
          {
             super.createChildren();
-            this.m_UIButtonLogout = new Button();
+            this.m_UIButtonLogout = new CustomButton();
             this.m_UIButtonLogout.percentWidth = 100;
             this.m_UIButtonLogout.label = resourceManager.getString(BUNDLE,"BTN_LOGOUT_CHARACTER");
             this.m_UIButtonLogout.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             addChild(this.m_UIButtonLogout);
-            this.m_UIButtonChangeCharacter = new Button();
+            this.m_UIButtonChangeCharacter = new CustomButton();
             this.m_UIButtonChangeCharacter.percentWidth = 100;
             this.m_UIButtonChangeCharacter.label = resourceManager.getString(BUNDLE,"BTN_CHANGE_CHARACTER");
             this.m_UIButtonChangeCharacter.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             addChild(this.m_UIButtonChangeCharacter);
-            this.m_UIButtonOptions = new Button();
+            this.m_UIButtonOptions = new CustomButton();
             this.m_UIButtonOptions.percentWidth = 100;
             this.m_UIButtonOptions.label = resourceManager.getString(BUNDLE,"BTN_OPTIONS");
             this.m_UIButtonOptions.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             addChild(this.m_UIButtonOptions);
-            this.m_UIButtonQuestLog = new Button();
+            this.m_UIButtonQuestLog = new CustomButton();
             this.m_UIButtonQuestLog.percentWidth = 100;
             this.m_UIButtonQuestLog.label = resourceManager.getString(BUNDLE,"BTN_QUEST_LOG");
             this.m_UIButtonQuestLog.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             addChild(this.m_UIButtonQuestLog);
-            this.m_UIButtonCharacterProfile = new Button();
+            this.m_UIButtonCharacterProfile = new CustomButton();
             this.m_UIButtonCharacterProfile.percentWidth = 100;
             this.m_UIButtonCharacterProfile.label = resourceManager.getString(BUNDLE,"BTN_CHARACTER_PROFILE");
             this.m_UIButtonCharacterProfile.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             addChild(this.m_UIButtonCharacterProfile);
-            this.m_UIButtonSpellList = new Button();
+            this.m_UIButtonSpellList = new CustomButton();
             this.m_UIButtonSpellList.percentWidth = 100;
             this.m_UIButtonSpellList.label = resourceManager.getString(BUNDLE,"BTN_SPELLLIST");
             this.m_UIButtonSpellList.addEventListener(MouseEvent.CLICK,this.onButtonClick);

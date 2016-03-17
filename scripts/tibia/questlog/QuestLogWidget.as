@@ -7,6 +7,7 @@ package tibia.questlog
    import tibia.questlog.questLogWidgetClasses.QuestLogView;
    import flash.events.Event;
    import tibia.network.Connection;
+   import shared.controls.CustomButton;
    import mx.events.ListEvent;
    import tibia.questlog.questLogWidgetClasses.QuestLineView;
    import mx.containers.ViewStack;
@@ -199,7 +200,7 @@ package tibia.questlog
             {
                if((this.m_ExtraButtonFlags & EXTRA_BUTTON_FLAGS[_loc1_].data) != 0)
                {
-                  _loc3_ = new Button();
+                  _loc3_ = new CustomButton();
                   _loc3_.enabled = (this.m_ExtraButtonFlags & PopUpBase.DISABLE_BUTTONS) == 0;
                   _loc3_.label = resourceManager.getString(BUNDLE,EXTRA_BUTTON_FLAGS[_loc1_].label);
                   _loc3_.data = EXTRA_BUTTON_FLAGS[_loc1_].data;

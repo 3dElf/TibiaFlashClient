@@ -26,11 +26,15 @@ package tibia.worldmap.widgetClasses
    public class TiledLightmapRenderer
    {
       
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
       public static const COLOUR_BELOW_GROUND:Colour = new Colour(255,255,255);
       
       protected static const NUM_EFFECTS:int = 200;
       
       protected static const MAP_HEIGHT:int = 11;
+      
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
@@ -42,9 +46,9 @@ package tibia.worldmap.widgetClasses
       
       protected static const FIELD_HEIGHT:int = 24;
       
-      protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
-      
       protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
+      
+      protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
       protected static const MAP_MIN_X:int = 24576;
       
@@ -57,6 +61,8 @@ package tibia.worldmap.widgetClasses
       public static const LIGHTMAP_SHRINK_FACTOR:uint = 8;
       
       protected static const FIELD_SIZE:int = 32;
+      
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
       protected static const PLAYER_OFFSET_X:int = 8;
       
@@ -73,6 +79,8 @@ package tibia.worldmap.widgetClasses
       protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
       
       protected static const MAP_MAX_Z:int = 15;
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       protected static const MAP_WIDTH:int = 15;
       

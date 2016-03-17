@@ -20,7 +20,7 @@ package tibia.options.configurationWidgetClasses
    import mx.controls.Spacer;
    import mx.controls.dataGridClasses.DataGridColumn;
    import mx.containers.FormItemDirection;
-   import mx.controls.Button;
+   import shared.controls.CustomButton;
    import tibia.input.MouseRepeatEvent;
    import flash.events.Event;
    import flash.events.KeyboardEvent;
@@ -28,6 +28,7 @@ package tibia.options.configurationWidgetClasses
    import flash.events.TextEvent;
    import shared.controls.CustomDataGrid;
    import mx.core.ClassFactory;
+   import mx.controls.Button;
    import mx.events.FlexEvent;
    import mx.containers.ViewStack;
    import mx.events.IndexChangedEvent;
@@ -143,23 +144,25 @@ package tibia.options.configurationWidgetClasses
       private function onConfirmResetMapping(param1:CloseEvent) : void
       {
          var _loc2_:Object = null;
-         var _loc3_:OptionsEditorEvent = null;
+         var _loc3_:MappingSet = null;
+         var _loc4_:OptionsEditorEvent = null;
          if(param1.detail == EmbeddedDialog.YES && this.m_Index >= 0 && this.m_Index < this.m_MappingSets.length)
          {
             _loc2_ = this.m_MappingSets[this.m_Index];
+            _loc3_ = this.m_Options.getDefaultMappingSet();
             if(this.m_Mode == MappingSet.CHAT_MODE_OFF)
             {
-               _loc2_.chatModeOff = this.createMapping(MappingSet.CHAT_MODE_OFF_DEFAULT_BINDINGS);
+               _loc2_.chatModeOff = this.createMapping(_loc3_.chatModeOff.binding);
             }
             else
             {
-               _loc2_.chatModeOn = this.createMapping(MappingSet.CHAT_MODE_ON_DEFAULT_BINDINGS);
+               _loc2_.chatModeOn = this.createMapping(_loc3_.chatModeOn.binding);
             }
             _loc2_.state = STATE_CHANGED;
             this.m_UncommittedIndex = true;
             invalidateProperties();
-            _loc3_ = new OptionsEditorEvent(OptionsEditorEvent.VALUE_CHANGE);
-            dispatchEvent(_loc3_);
+            _loc4_ = new OptionsEditorEvent(OptionsEditorEvent.VALUE_CHANGE);
+            dispatchEvent(_loc4_);
          }
       }
       
@@ -340,7 +343,7 @@ package tibia.options.configurationWidgetClasses
             _loc3_.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"HOTKEY_SETNAME");
             _loc3_.percentHeight = NaN;
             _loc3_.percentWidth = 100;
-            this.m_UIPrevSet = new Button();
+            this.m_UIPrevSet = new CustomButton();
             this.m_UIPrevSet.styleName = getStyle("setScrollLeftStyle");
             this.m_UIPrevSet.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             this.m_UIPrevSet.addEventListener(MouseEvent.MOUSE_DOWN,this.onButtonDown);
@@ -354,7 +357,7 @@ package tibia.options.configurationWidgetClasses
             this.m_UISetName.addEventListener(KeyboardEvent.KEY_DOWN,PreventWhitespaceInput);
             this.m_UISetName.addEventListener(TextEvent.TEXT_INPUT,PreventWhitespaceInput);
             _loc3_.addChild(this.m_UISetName);
-            this.m_UINextSet = new Button();
+            this.m_UINextSet = new CustomButton();
             this.m_UINextSet.styleName = getStyle("setScrollRightStyle");
             this.m_UINextSet.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             this.m_UINextSet.addEventListener(MouseEvent.MOUSE_DOWN,this.onButtonDown);
@@ -363,11 +366,11 @@ package tibia.options.configurationWidgetClasses
             _loc4_ = new Spacer();
             _loc4_.percentWidth = 100;
             _loc3_.addChild(_loc4_);
-            this.m_UIAddSet = new Button();
+            this.m_UIAddSet = new CustomButton();
             this.m_UIAddSet.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"HOTKEY_ADD_SET");
             this.m_UIAddSet.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             _loc3_.addChild(this.m_UIAddSet);
-            this.m_UIRemoveSet = new Button();
+            this.m_UIRemoveSet = new CustomButton();
             this.m_UIRemoveSet.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"HOTKEY_REMOVE_SET");
             this.m_UIRemoveSet.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             _loc3_.addChild(this.m_UIRemoveSet);
@@ -379,7 +382,7 @@ package tibia.options.configurationWidgetClasses
             _loc3_.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"HOTKEY_MODE");
             _loc3_.percentHeight = NaN;
             _loc3_.percentWidth = 100;
-            this.m_UIMode = new Button();
+            this.m_UIMode = new CustomButton();
             this.m_UIMode.width = 75;
             this.m_UIMode.label = resourceManager.getString(ConfigurationWidget.BUNDLE,this.m_Mode == MappingSet.CHAT_MODE_OFF?"HOTKEY_MODE_CHATMODEOFF":"HOTKEY_MODE_CHATMODEON");
             this.m_UIMode.addEventListener(MouseEvent.CLICK,this.onToggleMode);
@@ -387,7 +390,7 @@ package tibia.options.configurationWidgetClasses
             _loc4_ = new Spacer();
             _loc4_.percentWidth = 100;
             _loc3_.addChild(_loc4_);
-            this.m_UIReset = new Button();
+            this.m_UIReset = new CustomButton();
             this.m_UIReset.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"HOTKEY_RESET_MAPPING");
             this.m_UIReset.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             _loc3_.addChild(this.m_UIReset);
@@ -643,12 +646,9 @@ package tibia.options.configurationWidgetClasses
       
       public function set options(param1:OptionsStorage) : void
       {
-         if(this.m_Options != param1)
-         {
-            this.m_Options = param1;
-            this.m_UncommittedOptions = true;
-            invalidateProperties();
-         }
+         this.m_Options = param1;
+         this.m_UncommittedOptions = true;
+         invalidateProperties();
       }
       
       public function set mode(param1:int) : void

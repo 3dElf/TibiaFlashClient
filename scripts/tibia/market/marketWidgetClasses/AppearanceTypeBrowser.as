@@ -13,6 +13,7 @@ package tibia.market.marketWidgetClasses
    import mx.containers.HBox;
    import mx.events.IndexChangedEvent;
    import flash.display.DisplayObject;
+   import shared.controls.CustomButton;
    import mx.events.ListEvent;
    import shared.controls.SimpleTabBar;
    import tibia.options.OptionsStorage;
@@ -270,7 +271,7 @@ package tibia.market.marketWidgetClasses
             this.m_UIEditor[EDITOR_NAME].setStyle("verticalAlign","middle");
             this.m_UIEditor[EDITOR_NAME].setStyle("verticalGap",2);
             this.m_UIEditorStack.addChild(this.m_UIEditor[1] as DisplayObject);
-            this.m_UIDepot = new Button();
+            this.m_UIDepot = new CustomButton();
             this.m_UIDepot.label = resourceManager.getString(BUNDLE,"RESTRICT_DEPOT_LABEL");
             this.m_UIDepot.percentWidth = 100;
             this.m_UIDepot.toggle = true;
@@ -312,7 +313,7 @@ package tibia.market.marketWidgetClasses
             _Spacer = new Spacer();
             _Spacer.percentWidth = 100;
             _BarContainer.addChild(_Spacer);
-            this.m_UIViewToggle = new Button();
+            this.m_UIViewToggle = new CustomButton();
             this.m_UIViewToggle.selected = this.viewLayout == LAYOUT_TILE;
             this.m_UIViewToggle.styleName = "marketWidgetViewToggle";
             this.m_UIViewToggle.toggle = true;

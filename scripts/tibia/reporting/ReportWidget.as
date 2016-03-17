@@ -3,6 +3,7 @@ package tibia.reporting
    import tibia.game.PopUpBase;
    import flash.events.MouseEvent;
    import mx.controls.Button;
+   import shared.controls.CustomButton;
    import tibia.reporting.reportWidgetClasses.ConfirmView;
    import tibia.reporting.reportWidgetClasses.ReasonView;
    import tibia.reporting.reportWidgetClasses.CommentView;
@@ -202,7 +203,7 @@ package tibia.reporting
             {
                if((this.m_ExtraButtonFlags & EXTRA_BUTTON_FLAGS[_loc1_].data) != 0)
                {
-                  _loc3_ = new Button();
+                  _loc3_ = new CustomButton();
                   _loc3_.enabled = (this.m_ExtraButtonFlags & PopUpBase.DISABLE_BUTTONS) == 0;
                   _loc3_.label = resourceManager.getString(BUNDLE,EXTRA_BUTTON_FLAGS[_loc1_].label);
                   _loc3_.data = EXTRA_BUTTON_FLAGS[_loc1_].data;

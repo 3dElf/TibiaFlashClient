@@ -2,24 +2,25 @@ package tibia.sidebar
 {
    import flash.events.EventDispatcher;
    import mx.events.PropertyChangeEvent;
-   import mx.events.PropertyChangeEventKind;
    import mx.events.CollectionEvent;
    import mx.events.CollectionEventKind;
    
    public class SideBar extends EventDispatcher
    {
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
        
-      protected var m_Location:int = -1;
+      private var m_Visible:Boolean = false;
       
-      protected var m_Visible:Boolean = false;
+      private var m_WidgetID:Vector.<int> = null;
       
-      protected var m_WidgetID:Vector.<int> = null;
+      private var m_FoldHeader:Boolean = false;
       
-      protected var m_SideBarSet:tibia.sidebar.SideBarSet = null;
+      private var m_Location:int = -1;
+      
+      private var m_SideBarSet:tibia.sidebar.SideBarSet = null;
       
       public function SideBar(param1:tibia.sidebar.SideBarSet, param2:int)
       {
@@ -29,28 +30,9 @@ package tibia.sidebar
          this.m_WidgetID = new Vector.<int>();
       }
       
-      public function getWidgetInstanceIndex(param1:Widget) : int
+      public function getWidgetInstanceAt(param1:int) : Widget
       {
-         if(param1 != null)
-         {
-            return this.getWidgetIndexByID(param1.ID);
-         }
-         return -1;
-      }
-      
-      public function set visible(param1:Boolean) : void
-      {
-         var _loc2_:PropertyChangeEvent = null;
-         if(this.m_Visible != param1)
-         {
-            _loc2_ = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-            _loc2_.kind = PropertyChangeEventKind.UPDATE;
-            _loc2_.property = "visible";
-            _loc2_.oldValue = this.m_Visible;
-            _loc2_.newValue = param1;
-            this.m_Visible = param1;
-            dispatchEvent(_loc2_);
-         }
+         return this.m_SideBarSet.getWidgetByID(this.m_WidgetID[param1]);
       }
       
       function addWidget(param1:Widget) : Widget
@@ -61,16 +43,6 @@ package tibia.sidebar
       public function get sideBarSet() : tibia.sidebar.SideBarSet
       {
          return this.m_SideBarSet;
-      }
-      
-      public function getWidgetIDAt(param1:int) : int
-      {
-         return this.m_WidgetID[param1];
-      }
-      
-      public function getWidgetInstanceAt(param1:int) : Widget
-      {
-         return this.m_SideBarSet.getWidgetByID(this.m_WidgetID[param1]);
       }
       
       public function getWidgetIndexByID(param1:int) : int
@@ -85,6 +57,92 @@ package tibia.sidebar
             _loc2_--;
          }
          return -1;
+      }
+      
+      private function set _1669917202foldHeader(param1:Boolean) : void
+      {
+         if(this.m_FoldHeader != param1)
+         {
+            this.m_FoldHeader = param1;
+         }
+      }
+      
+      public function reset() : void
+      {
+         this.m_SideBarSet = null;
+         this.removeAllWidgets();
+      }
+      
+      private function set _466743410visible(param1:Boolean) : void
+      {
+         if(this.m_Visible != param1)
+         {
+            this.m_Visible = param1;
+         }
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set foldHeader(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.foldHeader;
+         if(_loc2_ !== param1)
+         {
+            this._1669917202foldHeader = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"foldHeader",_loc2_,param1));
+         }
+      }
+      
+      function addWidgetAt(param1:Widget, param2:int) : Widget
+      {
+         if(param1 == null)
+         {
+            return null;
+         }
+         if(param2 >= 0 && param2 < this.m_WidgetID.length)
+         {
+            this.m_WidgetID.splice(param2,0,param1.ID);
+         }
+         else
+         {
+            param2 = this.m_WidgetID.length;
+            this.m_WidgetID.push(param1.ID);
+         }
+         var _loc3_:CollectionEvent = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
+         _loc3_.kind = CollectionEventKind.ADD;
+         _loc3_.location = param2;
+         _loc3_.items = [param1];
+         dispatchEvent(_loc3_);
+         return param1;
+      }
+      
+      public function getWidgetInstanceIndex(param1:Widget) : int
+      {
+         if(param1 != null)
+         {
+            return this.getWidgetIndexByID(param1.ID);
+         }
+         return -1;
+      }
+      
+      [Bindable(event="propertyChange")]
+      public function set visible(param1:Boolean) : void
+      {
+         var _loc2_:Object = this.visible;
+         if(_loc2_ !== param1)
+         {
+            this._466743410visible = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"visible",_loc2_,param1));
+         }
+      }
+      
+      public function get length() : int
+      {
+         return this.m_WidgetID.length;
+      }
+      
+      public function getWidgetIDAt(param1:int) : int
+      {
+         return this.m_WidgetID[param1];
       }
       
       function setWidgetIndex(param1:Widget, param2:int) : Widget
@@ -136,9 +194,14 @@ package tibia.sidebar
          return param1;
       }
       
-      public function get length() : int
+      public function get foldHeader() : Boolean
       {
-         return this.m_WidgetID.length;
+         return this.m_FoldHeader;
+      }
+      
+      function removeWidget(param1:Widget) : Widget
+      {
+         return this.removeWidgetAt(this.getWidgetInstanceIndex(param1));
       }
       
       public function get visible() : Boolean
@@ -149,17 +212,6 @@ package tibia.sidebar
       public function get location() : int
       {
          return this.m_Location;
-      }
-      
-      public function reset() : void
-      {
-         this.m_SideBarSet = null;
-         this.removeAllWidgets();
-      }
-      
-      function removeWidget(param1:Widget) : Widget
-      {
-         return this.removeWidgetAt(this.getWidgetInstanceIndex(param1));
       }
       
       function removeAllWidgets() : void
@@ -185,29 +237,6 @@ package tibia.sidebar
             return _loc2_;
          }
          return null;
-      }
-      
-      function addWidgetAt(param1:Widget, param2:int) : Widget
-      {
-         if(param1 == null)
-         {
-            return null;
-         }
-         if(param2 >= 0 && param2 < this.m_WidgetID.length)
-         {
-            this.m_WidgetID.splice(param2,0,param1.ID);
-         }
-         else
-         {
-            param2 = this.m_WidgetID.length;
-            this.m_WidgetID.push(param1.ID);
-         }
-         var _loc3_:CollectionEvent = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
-         _loc3_.kind = CollectionEventKind.ADD;
-         _loc3_.location = param2;
-         _loc3_.items = [param1];
-         dispatchEvent(_loc3_);
-         return param1;
       }
    }
 }

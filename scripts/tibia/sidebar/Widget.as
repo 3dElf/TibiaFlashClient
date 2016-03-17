@@ -34,7 +34,7 @@ package tibia.sidebar
       
       public static const TYPE_BODY:int = 4;
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       public static const TYPES_BEYONDLAST:int = 10;
       

@@ -15,7 +15,6 @@ package tibia.options
    import tibia.options.configurationWidgetClasses.MessageOptions;
    import tibia.options.configurationWidgetClasses.HotkeyOptions;
    import tibia.options.configurationWidgetClasses.NameFilterOptions;
-   import tibia.options.configurationWidgetClasses.ImportExportOptions;
    
    public class ConfigurationWidget extends PopUpBase
    {
@@ -31,8 +30,6 @@ package tibia.options
       public static const NAME_FILTER:int = 5;
       
       public static const HOTKEY:int = 4;
-      
-      public static const IMPORT_EXPORT:int = 6;
       
       public static const STATUS:int = 2;
        
@@ -65,7 +62,6 @@ package tibia.options
          this.m_UIOptionsEditor[MESSAGE] = new MessageOptions();
          this.m_UIOptionsEditor[HOTKEY] = new HotkeyOptions();
          this.m_UIOptionsEditor[NAME_FILTER] = new NameFilterOptions();
-         this.m_UIOptionsEditor[IMPORT_EXPORT] = new ImportExportOptions();
       }
       
       override protected function commitProperties() : void
@@ -79,7 +75,7 @@ package tibia.options
                this.m_UIOptionsEditor[_loc1_].options = this.m_Options;
                _loc1_++;
             }
-            this.m_UncommittedOptions = true;
+            this.m_UncommittedOptions = false;
          }
          if(this.m_UncommittedSelectedIndex)
          {
@@ -87,7 +83,7 @@ package tibia.options
             {
                this.m_UINavigator.selectedIndex = this.m_SelectedIndex;
             }
-            this.m_UncommittedSelectedIndex = true;
+            this.m_UncommittedSelectedIndex = false;
          }
          super.commitProperties();
       }
@@ -173,28 +169,29 @@ package tibia.options
       override public function close(param1:Boolean) : void
       {
          var _loc2_:int = 0;
-         while(_loc2_ < this.m_UIOptionsEditor.length)
+         if(param1)
          {
-            this.m_UIOptionsEditor[_loc2_].close(param1);
-            _loc2_++;
+            _loc2_ = 0;
+            while(_loc2_ < this.m_UIOptionsEditor.length)
+            {
+               this.m_UIOptionsEditor[_loc2_].close(param1);
+               _loc2_++;
+            }
+            Tibia.s_SetOptions(this.options);
          }
-         Tibia.s_SetOptions(this.options);
          super.close(param1);
       }
       
       public function set options(param1:tibia.options.OptionsStorage) : void
       {
-         if(this.m_Options != param1)
-         {
-            this.m_Options = param1;
-            this.m_UncommittedOptions = true;
-            invalidateProperties();
-         }
+         this.m_Options = param1;
+         this.m_UncommittedOptions = true;
+         invalidateProperties();
       }
       
       override public function show() : void
       {
-         this.options = Tibia.s_GetOptions();
+         this.options = Tibia.s_GetOptions().clone();
          super.show();
       }
    }

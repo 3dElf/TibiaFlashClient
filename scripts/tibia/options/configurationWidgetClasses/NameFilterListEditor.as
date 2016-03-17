@@ -12,6 +12,7 @@ package tibia.options.configurationWidgetClasses
    import tibia.options.ConfigurationWidget;
    import mx.core.ClassFactory;
    import mx.controls.CheckBox;
+   import shared.controls.CustomButton;
    import flash.events.MouseEvent;
    import mx.collections.IList;
    import tibia.chat.NameFilterItem;
@@ -131,7 +132,7 @@ package tibia.options.configurationWidgetClasses
             _loc3_ = new HBox();
             _loc3_.percentHeight = NaN;
             _loc3_.percentWidth = 100;
-            this.m_UIButtonAdd = new Button();
+            this.m_UIButtonAdd = new CustomButton();
             this.m_UIButtonAdd.enabled = enabled;
             this.m_UIButtonAdd.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"IGNORE_FILTEREDITOR_BTN_ADD");
             this.m_UIButtonAdd.addEventListener(MouseEvent.CLICK,this.onButtonClick);
@@ -139,7 +140,7 @@ package tibia.options.configurationWidgetClasses
             _loc4_ = new Spacer();
             _loc4_.percentWidth = 100;
             _loc3_.addChild(_loc4_);
-            this.m_UIButtonDel = new Button();
+            this.m_UIButtonDel = new CustomButton();
             this.m_UIButtonDel.enabled = enabled;
             this.m_UIButtonDel.label = resourceManager.getString(ConfigurationWidget.BUNDLE,"IGNORE_FILTEREDITOR_BTN_DEL");
             this.m_UIButtonDel.addEventListener(MouseEvent.CLICK,this.onButtonClick);

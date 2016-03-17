@@ -22,7 +22,7 @@ package tibia.creatures
       
       public static const DEFAULT_SET:int = 0;
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       public static const NUM_SETS:int = 1;
       
@@ -67,56 +67,6 @@ package tibia.creatures
          this.m_BuddiesSorted.filterFunction = this.buddyFilter;
          this.m_BuddiesSorted.sort = this.m_BuddiesSorter;
          this.reset();
-      }
-      
-      public static function s_Unmarshall(param1:XML, param2:Number) : BuddySet
-      {
-         var _loc4_:int = 0;
-         var _loc6_:XML = null;
-         var _loc7_:XML = null;
-         var _loc8_:Buddy = null;
-         if(param1 == null || param1.localName() != "buddyset" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
-         {
-            throw new Error("BuddySet.s_Unmarshall: Invalid input.");
-         }
-         var _loc3_:XMLList = null;
-         if((_loc3_ = param1.@ID) == null || _loc3_.length() != 1)
-         {
-            return null;
-         }
-         _loc4_ = parseInt(_loc3_[0].toString());
-         var _loc5_:BuddySet = new BuddySet(_loc4_);
-         if((_loc3_ = param1.@sortOrder) != null && _loc3_.length() == 1)
-         {
-            _loc5_.sortOrder = parseInt(_loc3_[0].toString());
-         }
-         if((_loc3_ = param1.@showOffline) != null && _loc3_.length() == 1)
-         {
-            _loc5_.showOffline = _loc3_[0].toString() == "true";
-         }
-         for each(_loc6_ in param1.elements())
-         {
-            switch(_loc6_.localName())
-            {
-               case "buddies":
-                  for each(_loc7_ in _loc6_.elements("buddy"))
-                  {
-                     _loc8_ = Buddy.s_Unmarshall(_loc7_,param2);
-                     if(_loc8_ != null && _loc5_.length < Buddy.NUM_BUDDIES)
-                     {
-                        _loc5_.removeBuddyInternal(_loc8_);
-                        _loc5_.addBuddyInternal(_loc8_);
-                     }
-                  }
-                  continue;
-               case "groups":
-               case "icons":
-                  continue;
-               default:
-                  continue;
-            }
-         }
-         return _loc5_;
       }
       
       private function addBuddyInternal(param1:Buddy) : Boolean
@@ -229,7 +179,7 @@ package tibia.creatures
             }
             this.invalidateBuddies();
          }
-         else if(rest.length == 2)
+         else if(rest.length == 5)
          {
             _loc7_ = null;
             if(_loc3_ > -1)
@@ -242,7 +192,10 @@ package tibia.creatures
                this.addBuddyInternal(_loc7_);
             }
             _loc7_.name = String(rest[0]);
-            _loc7_.online = Boolean(rest[1]);
+            _loc7_.description = String(rest[1]);
+            _loc7_.icon = int(rest[2]);
+            _loc7_.notify = Boolean(rest[3]);
+            _loc7_.online = Boolean(rest[4]);
             _loc7_.lastUpdate = Number.NEGATIVE_INFINITY;
          }
          else
@@ -304,20 +257,6 @@ package tibia.creatures
          }
          this.m_BuddiesState = BUDDIES_REBUILD;
          this.validateBuddies();
-      }
-      
-      public function marshall() : XML
-      {
-         var _loc1_:XML = <buddyset ID="{this.m_ID}" sortOrder="{this.m_SortOrder}" showOffline="{this.m_ShowOffline}"/>;
-         var _loc2_:XML = <buddies/>;
-         var _loc3_:int = 0;
-         while(_loc3_ < this.m_BuddiesRaw.length)
-         {
-            _loc2_.appendChild(this.m_BuddiesRaw[_loc3_].marshall());
-            _loc3_++;
-         }
-         _loc1_.appendChild(_loc2_);
-         return _loc1_;
       }
       
       private function set _26774448sortOrder(param1:int) : void
@@ -382,6 +321,13 @@ package tibia.creatures
                   break;
                }
                _loc4_--;
+            }
+         }
+         else if(param1 == null)
+         {
+            if(this.m_BuddiesRaw.length > 0)
+            {
+               _loc2_ = 0;
             }
          }
          if(_loc2_ > -1)

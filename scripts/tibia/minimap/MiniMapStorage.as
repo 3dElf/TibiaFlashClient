@@ -13,12 +13,12 @@ package tibia.minimap
    import flash.events.ProgressEvent;
    import flash.events.ErrorEvent;
    import flash.events.Event;
-   import flash.utils.ByteArray;
-   import flash.utils.Endian;
-   import flash.utils.Timer;
    import shared.utility.Vector3D;
    import tibia.worldmap.WorldMapStorage;
+   import flash.utils.Timer;
+   import flash.utils.ByteArray;
    import flash.errors.MemoryError;
+   import flash.utils.Endian;
    import flash.system.System;
    import shared.utility.Heap;
    import shared.utility.IPerformanceCounter;
@@ -27,7 +27,7 @@ package tibia.minimap
    public class MiniMapStorage extends EventDispatcher
    {
       
-      protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const NUM_EFFECTS:int = 200;
       
@@ -40,6 +40,8 @@ package tibia.minimap
       protected static const MM_SECTOR_SIZE:int = 256;
       
       protected static const MM_IE_TIMEOUT:Number = 50;
+      
+      protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
       
       protected static const PATH_NORTH_WEST:int = 4;
       
@@ -93,8 +95,6 @@ package tibia.minimap
       
       protected static const GROUND_LAYER:int = 7;
       
-      protected static const PATH_ERROR_TOO_FAR:int = -3;
-      
       public static const MARK_ICON_COUNT:int = 20;
       
       private static const MARK_HIGHLIGHT_BITMAP:BitmapData = (new MARK_HIGHLIGHT_CLASS() as BitmapAsset).bitmapData;
@@ -105,9 +105,13 @@ package tibia.minimap
       
       protected static const PATH_ERROR_INTERNAL:int = -5;
       
-      protected static const PATH_EMPTY:int = 0;
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const PATH_COST_UNDEFINED:int = 254;
+      
+      protected static const PATH_EMPTY:int = 0;
+      
+      protected static const PATH_ERROR_TOO_FAR:int = -3;
       
       private static const EXPORT_DEFAULT_NAME:String = "ExportedMiniMap.dat";
       
@@ -125,8 +129,6 @@ package tibia.minimap
       
       protected static const PATH_MAX_STEPS:int = 128;
       
-      protected static const MM_STORAGE_MAX_VERSION:int = 1;
-      
       protected static const MM_CACHE_SIZE:int = 48;
       
       protected static const MM_SIDEBAR_HIGHLIGHT_DURATION:Number = 10000;
@@ -143,6 +145,10 @@ package tibia.minimap
       
       private static const MARK_HIGHLIGHT_CLASS:Class = MiniMapStorage_MARK_HIGHLIGHT_CLASS;
       
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
+      protected static const MM_STORAGE_MAX_VERSION:int = 1;
+      
       protected static const MAPSIZE_W:int = 10;
       
       protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
@@ -150,6 +156,8 @@ package tibia.minimap
       protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
       
       protected static const MAPSIZE_Z:int = 8;
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       protected static const PATH_EAST:int = 1;
       
@@ -410,41 +418,6 @@ package tibia.minimap
       public function getPositionZ() : int
       {
          return this.m_PositionZ;
-      }
-      
-      public function importMiniMap(param1:ByteArray) : void
-      {
-         if(this.m_IEData != null || this.m_IEQueue != null || this.m_IETimer != null)
-         {
-            throw new Error("MiniMapStorage.importMiniMap: Concurrent operation detected.");
-         }
-         if(this.m_SectorCache != null)
-         {
-            this.m_SectorCache.length = 0;
-         }
-         if(this.m_LoadQueue != null)
-         {
-            this.m_LoadQueue.length = 0;
-         }
-         if(this.m_SaveQueue != null)
-         {
-            this.m_SaveQueue.length = 0;
-         }
-         this.m_IOTimer.stop();
-         this.refreshFromWorldMap();
-         var _loc2_:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-         _loc2_.kind = PropertyChangeEventKind.UPDATE;
-         _loc2_.property = "position";
-         dispatchEvent(_loc2_);
-         this.m_IEQueue = this.getSectorListing();
-         this.m_IEBytesProcessed = 0;
-         this.m_IEBytesTotal = param1.bytesAvailable + this.m_IEQueue.length * tibia.minimap.MiniMapSector.MIN_BYTES;
-         this.m_IEData = param1;
-         this.m_IEData.endian = Endian.LITTLE_ENDIAN;
-         this.m_IEData.position = 0;
-         this.m_IETimer = new Timer(MM_IE_TIMEOUT);
-         this.m_IETimer.addEventListener(TimerEvent.TIMER,this.onImportTimer);
-         this.m_IETimer.start();
       }
       
       public function calculatePath(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int, param7:Boolean, param8:Boolean, param9:Array) : int
@@ -948,92 +921,6 @@ package tibia.minimap
          this.m_SectorX = this.m_SectorY = this.m_SectorZ = -1;
       }
       
-      private function onImportTimer(param1:TimerEvent) : void
-      {
-         var _ProgressEvent:ProgressEvent = null;
-         var _MiniMapSector:tibia.minimap.MiniMapSector = null;
-         var Index:int = 0;
-         var _SharedObjectManager:SharedObjectManager = null;
-         var Deleted:int = 0;
-         var Name:String = null;
-         var i:int = 0;
-         var a_Event:TimerEvent = param1;
-         if(a_Event != null)
-         {
-            _ProgressEvent = null;
-            if(this.m_IEData != null && this.m_IEData.bytesAvailable >= tibia.minimap.MiniMapSector.MIN_BYTES)
-            {
-               _MiniMapSector = tibia.minimap.MiniMapSector.s_LoadByteArray(this.m_IEData);
-               if(_MiniMapSector != null)
-               {
-                  _MiniMapSector.dirty = true;
-                  _MiniMapSector.saveSharedObject(true);
-                  Index = this.m_IEQueue.indexOf(tibia.minimap.MiniMapSector.s_GetSectorName(_MiniMapSector));
-                  if(Index > -1)
-                  {
-                     this.m_IEQueue.splice(Index,1);
-                     this.m_IEBytesTotal = this.m_IEBytesTotal - tibia.minimap.MiniMapSector.MIN_BYTES;
-                  }
-               }
-               _ProgressEvent = new ProgressEvent(ProgressEvent.PROGRESS);
-               _ProgressEvent.bytesLoaded = this.m_IEBytesProcessed = this.m_IEData.position;
-               _ProgressEvent.bytesTotal = this.m_IEBytesTotal;
-               dispatchEvent(_ProgressEvent);
-            }
-            else if((this.m_IEData == null || this.m_IEData.bytesAvailable == 0) && (this.m_IEQueue != null && this.m_IEQueue.length > 0))
-            {
-               _SharedObjectManager = SharedObjectManager.s_GetInstance();
-               Deleted = 0;
-               while(Deleted < Math.min(this.m_IEQueue.length,5))
-               {
-                  Name = String(this.m_IEQueue.pop());
-                  if(Boolean(SharedObjectManager.s_SharedObjectsAvailable()) && _SharedObjectManager != null)
-                  {
-                     try
-                     {
-                        _SharedObjectManager.clear(Name,true);
-                     }
-                     catch(_Error:*)
-                     {
-                     }
-                  }
-                  Deleted++;
-               }
-               _ProgressEvent = new ProgressEvent(ProgressEvent.PROGRESS);
-               _ProgressEvent.bytesLoaded = this.m_IEBytesProcessed = this.m_IEBytesProcessed + Deleted * tibia.minimap.MiniMapSector.MIN_BYTES;
-               _ProgressEvent.bytesTotal = this.m_IEBytesTotal;
-               dispatchEvent(_ProgressEvent);
-            }
-            else if((this.m_IEData == null || this.m_IEData.bytesAvailable == 0) && (this.m_IEQueue == null || this.m_IEQueue.length == 0))
-            {
-               i = this.m_SectorCache.length - 1;
-               while(i >= 0)
-               {
-                  this.m_SectorCache[i].dirty = false;
-                  this.m_SectorCache[i].loadSharedObject();
-                  i--;
-               }
-               this.refreshFromWorldMap();
-               if(this.m_LoadQueue != null)
-               {
-                  this.m_LoadQueue.length = 0;
-               }
-               if(this.m_SaveQueue != null)
-               {
-                  this.m_SaveQueue.length = 0;
-               }
-               this.m_IOTimer.start();
-               this.cancelImportExport();
-               dispatchEvent(new Event(Event.COMPLETE));
-            }
-            else
-            {
-               this.cancelImportExport();
-               dispatchEvent(new ErrorEvent(ErrorEvent.ERROR));
-            }
-         }
-      }
-      
       public function cancelImportExport() : void
       {
          this.m_IEBytesProcessed = 0;
@@ -1043,7 +930,6 @@ package tibia.minimap
          if(this.m_IETimer != null)
          {
             this.m_IETimer.removeEventListener(TimerEvent.TIMER,this.onExportTimer);
-            this.m_IETimer.removeEventListener(TimerEvent.TIMER,this.onImportTimer);
             this.m_IETimer.stop();
             this.m_IETimer = null;
          }

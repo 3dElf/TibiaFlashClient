@@ -6,6 +6,7 @@ package tibia.sidebar.sideBarWidgetClasses
    import tibia.network.Connection;
    import tibia.options.OptionsStorage;
    import tibia.input.staticaction.StaticActionList;
+   import shared.controls.CustomButton;
    import mx.core.EventPriority;
    import mx.events.PropertyChangeEvent;
    import mx.core.EdgeMetrics;
@@ -74,9 +75,9 @@ package tibia.sidebar.sideBarWidgetClasses
       
       private var m_UncommittedSecureMode:Boolean = false;
       
-      protected var m_AttackMode:int;
+      protected var m_AttackMode:int = 1;
       
-      protected var m_ChaseMode:int;
+      protected var m_ChaseMode:int = 0;
       
       protected var m_UIButtonOffensive:Button = null;
       
@@ -92,15 +93,12 @@ package tibia.sidebar.sideBarWidgetClasses
       
       protected var m_MountMode:Boolean = false;
       
-      protected var m_SecureMode:int;
+      protected var m_SecureMode:int = 0;
       
       private var m_UncommittedAttackMode:Boolean = false;
       
       public function CombatControlWidgetView()
       {
-         this.m_AttackMode = OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
-         this.m_ChaseMode = OptionsStorage.COMBAT_CHASE_OFF;
-         this.m_SecureMode = OptionsStorage.COMBAT_SECURE_OFF;
          super();
          titleText = resourceManager.getString(BUNDLE,"TITLE");
          direction = BoxDirection.HORIZONTAL;
@@ -173,49 +171,49 @@ package tibia.sidebar.sideBarWidgetClasses
          if(!this.m_UIContructed)
          {
             super.createChildren();
-            this.m_UIButtonChase = new Button();
+            this.m_UIButtonChase = new CustomButton();
             this.m_UIButtonChase.selected = this.m_ChaseMode == OptionsStorage.COMBAT_CHASE_ON;
             this.m_UIButtonChase.styleName = getStyle("buttonChaseStyle");
             this.m_UIButtonChase.toggle = true;
             this.m_UIButtonChase.toolTip = resourceManager.getString(BUNDLE,"TIP_CHASE");
             this.m_UIButtonChase.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
             addChild(this.m_UIButtonChase);
-            this.m_UIButtonMount = new Button();
+            this.m_UIButtonMount = new CustomButton();
             this.m_UIButtonMount.selected = this.m_MountMode;
             this.m_UIButtonMount.styleName = getStyle("buttonMountStyle");
             this.m_UIButtonMount.toggle = true;
             this.m_UIButtonMount.toolTip = resourceManager.getString(BUNDLE,"TIP_MOUNT");
             this.m_UIButtonMount.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
             addChild(this.m_UIButtonMount);
-            this.m_UIButtonSecureMode = new Button();
+            this.m_UIButtonSecureMode = new CustomButton();
             this.m_UIButtonSecureMode.selected = this.m_SecureMode == OptionsStorage.COMBAT_SECURE_ON;
             this.m_UIButtonSecureMode.styleName = getStyle("buttonSecureStyle");
             this.m_UIButtonSecureMode.toggle = true;
             this.m_UIButtonSecureMode.toolTip = resourceManager.getString(BUNDLE,"TIP_SECURE");
             this.m_UIButtonSecureMode.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
             addChild(this.m_UIButtonSecureMode);
-            this.m_UIButtonOffensive = new Button();
+            this.m_UIButtonOffensive = new CustomButton();
             this.m_UIButtonOffensive.selected = this.m_AttackMode == OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
             this.m_UIButtonOffensive.styleName = getStyle("buttonOffensiveStyle");
             this.m_UIButtonOffensive.toggle = true;
             this.m_UIButtonOffensive.toolTip = resourceManager.getString(BUNDLE,"TIP_ATTACK_OFFENSIVE");
             this.m_UIButtonOffensive.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
             addChild(this.m_UIButtonOffensive);
-            this.m_UIButtonBalanced = new Button();
+            this.m_UIButtonBalanced = new CustomButton();
             this.m_UIButtonBalanced.selected = this.m_AttackMode == OptionsStorage.COMBAT_ATTACK_BALANCED;
             this.m_UIButtonBalanced.styleName = getStyle("buttonBalancedStyle");
             this.m_UIButtonBalanced.toggle = true;
             this.m_UIButtonBalanced.toolTip = resourceManager.getString(BUNDLE,"TIP_ATTACK_BALANCED");
             this.m_UIButtonBalanced.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
             addChild(this.m_UIButtonBalanced);
-            this.m_UIButtonDefensive = new Button();
+            this.m_UIButtonDefensive = new CustomButton();
             this.m_UIButtonDefensive.selected = this.m_AttackMode == OptionsStorage.COMBAT_ATTACK_DEFENSIVE;
             this.m_UIButtonDefensive.styleName = getStyle("buttonDefensiveStyle");
             this.m_UIButtonDefensive.toggle = true;
             this.m_UIButtonDefensive.toolTip = resourceManager.getString(BUNDLE,"TIP_ATTACK_DEFENSIVE");
             this.m_UIButtonDefensive.addEventListener(MouseEvent.CLICK,this.onButtonClick,false,EventPriority.DEFAULT + 1,false);
             addChild(this.m_UIButtonDefensive);
-            this.m_UIButtonStop = new Button();
+            this.m_UIButtonStop = new CustomButton();
             this.m_UIButtonStop.styleName = getStyle("buttonStopStyle");
             this.m_UIButtonStop.toolTip = resourceManager.getString(BUNDLE,"TIP_STOP");
             this.m_UIButtonStop.addEventListener(MouseEvent.CLICK,this.onButtonClick);

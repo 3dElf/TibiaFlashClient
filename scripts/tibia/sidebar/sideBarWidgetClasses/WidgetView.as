@@ -9,7 +9,7 @@ package tibia.sidebar.sideBarWidgetClasses
    import mx.styles.StyleProxy;
    import flash.events.MouseEvent;
    import shared.controls.CustomLabel;
-   import mx.controls.Button;
+   import shared.controls.CustomButton;
    import flash.geom.Point;
    import tibia.sidebar.Widget;
    import tibia.options.OptionsStorage;
@@ -17,6 +17,7 @@ package tibia.sidebar.sideBarWidgetClasses
    import mx.core.EdgeMetrics;
    import mx.core.UIComponent;
    import mx.containers.BoxDirection;
+   import mx.controls.Button;
    import mx.core.Container;
    import mx.core.IFlexDisplayObject;
    import mx.styles.IStyleClient;
@@ -221,13 +222,13 @@ package tibia.sidebar.sideBarWidgetClasses
             this.m_UITitleLabel.styleName = new StyleProxy(this,TITLE_LABEL_STYLE_FILTER);
             this.setFilteredStyles(this.m_UITitleLabel,TITLE_LABEL_STYLE_FILTER);
             this.m_UIHeader.addChild(this.m_UITitleLabel);
-            this.m_UICollapseButton = new Button();
+            this.m_UICollapseButton = new CustomButton();
             this.m_UICollapseButton.toggle = true;
             this.m_UICollapseButton.selected = this.m_WidgetCollapsed;
             this.m_UICollapseButton.styleName = getStyle("collapseButtonStyle");
             this.m_UICollapseButton.addEventListener(MouseEvent.CLICK,this.onHeaderClick);
             this.m_UIHeader.addChild(this.m_UICollapseButton);
-            this.m_UICloseButton = new Button();
+            this.m_UICloseButton = new CustomButton();
             this.m_UICloseButton.styleName = getStyle("closeButtonStyle");
             this.m_UICloseButton.addEventListener(MouseEvent.CLICK,this.onHeaderClick);
             this.m_UIHeader.addChild(this.m_UICloseButton);

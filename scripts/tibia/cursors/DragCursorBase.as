@@ -52,25 +52,25 @@ package tibia.cursors
          _loc1_.data = new Vector.<BitmapData>();
          _loc1_.data[0] = Bitmap(new DEFAULT_MOVE_CLASS()).bitmapData;
          _loc1_.frameRate = 0;
-         _loc1_.hotSpot = new Point(0,0);
+         _loc1_.hotSpot = new Point(1,0);
          Mouse.registerCursor("dragDefaultMove",_loc1_);
          _loc1_ = new MouseCursorData();
          _loc1_.data = new Vector.<BitmapData>();
          _loc1_.data[0] = Bitmap(new DEFAULT_REJECT_CLASS()).bitmapData;
          _loc1_.frameRate = 0;
-         _loc1_.hotSpot = new Point(0,0);
+         _loc1_.hotSpot = new Point(1,0);
          Mouse.registerCursor("dragDefaultReject",_loc1_);
          _loc1_ = new MouseCursorData();
          _loc1_.data = new Vector.<BitmapData>();
          _loc1_.data[0] = Bitmap(new CROSSHAIR_MOVE_CLASS()).bitmapData;
          _loc1_.frameRate = 0;
-         _loc1_.hotSpot = new Point(9,9);
+         _loc1_.hotSpot = new Point(10,9);
          Mouse.registerCursor("dragCrosshairMove",_loc1_);
          _loc1_ = new MouseCursorData();
          _loc1_.data = new Vector.<BitmapData>();
          _loc1_.data[0] = Bitmap(new CROSSHAIR_REJECT_CLASS()).bitmapData;
          _loc1_.frameRate = 0;
-         _loc1_.hotSpot = new Point(9,9);
+         _loc1_.hotSpot = new Point(10,9);
          Mouse.registerCursor("dragCrosshairReject",_loc1_);
       }
       

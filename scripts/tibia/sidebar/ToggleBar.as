@@ -6,6 +6,7 @@ package tibia.sidebar
    import flash.display.DisplayObject;
    import mx.controls.Button;
    import flash.events.MouseEvent;
+   import shared.controls.CustomButton;
    import mx.events.PropertyChangeEvent;
    import mx.core.IFlexDisplayObject;
    import mx.styles.ISimpleStyleClient;
@@ -119,7 +120,7 @@ package tibia.sidebar
             _loc2_ = this.m_Location.length;
             while(_loc1_ < _loc2_)
             {
-               _loc4_ = new Button();
+               _loc4_ = new CustomButton();
                _loc4_.data = this.m_Location[_loc1_];
                _loc4_.selected = this.m_SideBarSet != null && Boolean(this.m_SideBarSet.getSideBar(this.m_Location[_loc1_]).visible);
                _loc4_.styleName = getStyle("toggleButtonStyle");

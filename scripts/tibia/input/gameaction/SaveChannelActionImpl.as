@@ -2,6 +2,7 @@ package tibia.input.gameaction
 {
    import tibia.input.IActionImpl;
    import mx.formatters.DateFormatter;
+   import mx.resources.IResourceManager;
    import mx.collections.IList;
    import flash.errors.IllegalOperationError;
    import flash.system.Capabilities;
@@ -50,6 +51,7 @@ package tibia.input.gameaction
          var _List:IList = null;
          var i:int = 0;
          var n:int = 0;
+         var Manager:IResourceManager = null;
          var _Formatter:DateFormatter = null;
          var Name:String = null;
          var a_Repeat:Boolean = param1;
@@ -77,9 +79,10 @@ package tibia.input.gameaction
                Data = Data + (ChannelMessage(_List.getItemAt(i)).plainText + EOL);
                i++;
             }
+            Manager = ResourceManager.getInstance();
             _Formatter = new DateFormatter();
-            _Formatter.formatString = ResourceManager.getInstance().getString(GLOBAL_BUNDLE,"DATE_FORMAT_FILENAME");
-            Name = _Formatter.format(new Date()) + " - " + this.m_Channel.name.replace(/\W/g,"_") + ".txt";
+            _Formatter.formatString = Manager.getString(GLOBAL_BUNDLE,"DATE_FORMAT_FILENAME");
+            Name = this.m_Channel.name.replace(/\W/g,"_") + " - " + _Formatter.format(new Date()) + ".txt";
             try
             {
                this.m_File = new FileReferenceWrapper();

@@ -71,9 +71,11 @@ package tibia.network
    public class Connection extends EventDispatcher
    {
       
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const CUPCONTAINER:int = 136;
       
-      protected static const CQUITGAME:int = 20;
+      protected static const STATE_STRENGTHENED:int = 12;
       
       protected static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
       
@@ -83,9 +85,9 @@ package tibia.network
       
       protected static const CGONORTHWEST:int = 109;
       
-      protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
+      protected static const CQUITGAME:int = 20;
       
-      protected static const STATE_STRENGTHENED:int = 12;
+      protected static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
       
       protected static const SOUTFIT:int = 200;
       
@@ -94,6 +96,8 @@ package tibia.network
       protected static const SKILL_FIGHTCLUB:int = 9;
       
       protected static const CSETTACTICS:int = 160;
+      
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       protected static const CGOSOUTH:int = 103;
       
@@ -179,6 +183,8 @@ package tibia.network
       
       protected static const SKILL_NONE:int = -1;
       
+      protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
+      
       protected static const SFIELDDATA:int = 105;
       
       protected static const PATH_EMPTY:int = 0;
@@ -233,11 +239,15 @@ package tibia.network
       
       protected static const MAP_MIN_Z:int = 0;
       
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
       protected static const CGOSOUTHWEST:int = 108;
       
       protected static const SLOGINERROR:int = 20;
       
       protected static const SQUESTLINE:int = 241;
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       protected static const STATE_CONNECTED:int = 3;
       
@@ -357,11 +367,11 @@ package tibia.network
       
       protected static const PRIME_2E16:int = 65521;
       
-      protected static const STATE_CURSED:int = 11;
-      
       protected static const CMARKETBROWSE:int = 245;
       
       protected static const STATE_FREEZING:int = 9;
+      
+      protected static const STATE_CURSED:int = 11;
       
       protected static const SMARKETLEAVE:int = 247;
       
@@ -399,7 +409,7 @@ package tibia.network
       
       protected static const SSPELLDELAY:int = 164;
       
-      protected static const TERMINAL_VERSION:int = 961;
+      protected static const TERMINAL_VERSION:int = 962;
       
       protected static const SDELETEONMAP:int = 108;
       
@@ -410,6 +420,8 @@ package tibia.network
       protected static const CROTATEWEST:int = 114;
       
       protected static const WAR_ALLY:int = 1;
+      
+      protected static const CEDITBUDDY:int = 222;
       
       protected static const SCREATUREOUTFIT:int = 142;
       
@@ -619,9 +631,9 @@ package tibia.network
       
       protected static const SCLOSENPCTRADE:int = 124;
       
-      protected static const SRIGHTROW:int = 102;
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
-      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
+      protected static const SRIGHTROW:int = 102;
       
       protected static const SKILL_MANA:int = 4;
       
@@ -633,13 +645,15 @@ package tibia.network
       
       protected static const PAYLOADDATA_POSITION:int = PAYLOADLENGTH_POS + PAYLOADLENGTH_SIZE;
       
-      protected static const CINSPECTTRADE:int = 126;
+      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
       
       protected static const PAYLOADLENGTH_SIZE:int = 2;
       
       protected static const CBUGREPORT:int = 230;
       
       protected static const PATH_SOUTH_EAST:int = 8;
+      
+      protected static const CINSPECTTRADE:int = 126;
       
       protected static const TYPE_MONSTER:int = 1;
       
@@ -940,7 +954,8 @@ package tibia.network
       
       protected function readSCLOSECHANNEL(param1:ByteArray) : void
       {
-         var _loc2_:int = param1.readUnsignedShort();
+         var _loc2_:int = 0;
+         _loc2_ = param1.readUnsignedShort();
          this.m_ChatStorage.closeChannel(_loc2_);
       }
       
@@ -1857,17 +1872,23 @@ package tibia.network
       {
          var _loc2_:int = 0;
          var _loc3_:String = null;
-         var _loc4_:* = false;
-         var _loc5_:OptionsStorage = null;
-         var _loc6_:BuddySet = null;
+         var _loc4_:String = null;
+         var _loc5_:uint = 0;
+         var _loc6_:Boolean = false;
+         var _loc7_:Boolean = false;
+         var _loc8_:OptionsStorage = null;
+         var _loc9_:BuddySet = null;
          _loc2_ = param1.readUnsignedInt();
          _loc3_ = StringHelper.s_ReadFromByteArray(param1,Creature.MAX_NAME_LENGHT);
-         _loc4_ = param1.readUnsignedByte() == 1;
-         _loc5_ = Tibia.s_GetOptions();
-         _loc6_ = null;
-         if(_loc5_ != null && (_loc6_ = _loc5_.getBuddySet(BuddySet.DEFAULT_SET)) != null)
+         _loc4_ = StringHelper.s_ReadFromByteArray(param1,Creature.MAX_DESCRIPTION_LENGHT);
+         _loc5_ = param1.readUnsignedInt();
+         _loc6_ = param1.readBoolean();
+         _loc7_ = param1.readBoolean();
+         _loc8_ = Tibia.s_GetOptions();
+         _loc9_ = null;
+         if(_loc8_ != null && (_loc9_ = _loc8_.getBuddySet(BuddySet.DEFAULT_SET)) != null)
          {
-            _loc6_.updateBuddy(_loc2_,_loc3_,_loc4_);
+            _loc9_.updateBuddy(_loc2_,_loc3_,_loc4_,_loc5_,_loc6_,_loc7_);
          }
       }
       
@@ -3167,7 +3188,7 @@ package tibia.network
             {
                Message = Message + a_UserMessage.substr(0,BugReportWidget.MAX_USER_MESSAGE_LENGTH);
             }
-            Message = Message + ("\nBuild=" + "release;vanilla;2012-08-09;10:03:40;branches/bugfixes;849");
+            Message = Message + ("\nBuild=" + "release;vanilla;2012-08-29;09:22:20;branches/bugfixes;920");
             Message = Message + ("\nBrowser=" + BrowserHelper.s_GetBrowserString());
             Message = Message + ("\nFlash=" + Capabilities.serverString);
             SystemMessage = null;
@@ -3306,22 +3327,27 @@ package tibia.network
       
       protected function readSOPENOWNCHANNEL(param1:ByteArray) : void
       {
+         var _loc4_:Channel = null;
+         var _loc5_:int = 0;
+         var _loc6_:int = 0;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
          var _loc9_:String = null;
          var _loc10_:String = null;
          var _loc2_:int = param1.readUnsignedShort();
          var _loc3_:String = StringHelper.s_ReadFromByteArray(param1,Channel.MAX_NAME_LENGTH);
-         var _loc4_:Channel = this.m_ChatStorage.addChannel(_loc2_,_loc3_,MessageMode.MESSAGE_CHANNEL);
+         _loc4_ = this.m_ChatStorage.addChannel(_loc2_,_loc3_,MessageMode.MESSAGE_CHANNEL);
          this.m_ChatStorage.ownPrivateChannelID = _loc2_;
-         var _loc5_:int = param1.readUnsignedShort();
-         var _loc6_:int = 0;
+         _loc5_ = param1.readUnsignedShort();
+         _loc6_ = 0;
          while(_loc6_ < _loc5_)
          {
             _loc9_ = StringHelper.s_ReadFromByteArray(param1,Creature.MAX_NAME_LENGHT);
             _loc4_.playerJoined(_loc9_);
             _loc6_++;
          }
-         var _loc7_:int = param1.readUnsignedShort();
-         var _loc8_:int = 0;
+         _loc7_ = param1.readUnsignedShort();
+         _loc8_ = 0;
          while(_loc8_ < _loc7_)
          {
             _loc10_ = StringHelper.s_ReadFromByteArray(param1,Creature.MAX_NAME_LENGHT);
@@ -3789,6 +3815,31 @@ package tibia.network
          catch(e:Error)
          {
             handleSendError(CRULEVIOLATIONREPORT,e);
+            return;
+         }
+      }
+      
+      public function sendCEDITBUDDY(param1:int, param2:String, param3:uint, param4:Boolean) : void
+      {
+         var b:ByteArray = null;
+         var a_ID:int = param1;
+         var a_Description:String = param2;
+         var a_Icon:uint = param3;
+         var a_Notify:Boolean = param4;
+         try
+         {
+            b = this.createPacket();
+            b.writeByte(CEDITBUDDY);
+            b.writeUnsignedInt(a_ID);
+            StringHelper.s_WriteToByteArray(b,a_Description,Creature.MAX_DESCRIPTION_LENGHT);
+            b.writeUnsignedInt(a_Icon);
+            b.writeBoolean(a_Notify);
+            this.sendPacket(true);
+            return;
+         }
+         catch(e:Error)
+         {
+            handleSendError(CEDITBUDDY,e);
             return;
          }
       }

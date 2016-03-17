@@ -44,6 +44,11 @@ package tibia.game
          }
       }
       
+      public static function s_GetInstance() : tibia.game.ContextMenuBase
+      {
+         return s_CurrentContextMenu;
+      }
+      
       public function hide() : void
       {
          var _loc1_:ISystemManager = null;

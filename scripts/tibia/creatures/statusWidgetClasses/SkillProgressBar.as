@@ -2,14 +2,25 @@ package tibia.creatures.statusWidgetClasses
 {
    import mx.containers.HBox;
    import shared.utility.cacheStyleInstance;
-   import tibia.creatures.Player;
-   import flash.display.DisplayObject;
    import mx.events.ToolTipEvent;
    import mx.core.IToolTip;
    import tibia.creatures.StatusWidget;
+   import tibia.creatures.Player;
    import mx.core.IInvalidating;
-   import mx.events.PropertyChangeEvent;
    import shared.controls.ShapeWrapper;
+   import mx.styles.CSSStyleDeclaration;
+   import flash.geom.Matrix;
+   import flash.text.TextField;
+   import flash.text.TextFieldAutoSize;
+   import flash.filters.GlowFilter;
+   import flash.filters.BitmapFilterQuality;
+   import mx.styles.StyleManager;
+   import flash.text.TextFormat;
+   import flash.display.BitmapData;
+   import flash.geom.Rectangle;
+   import mx.events.PropertyChangeEvent;
+   import flash.display.DisplayObject;
+   import flash.display.Bitmap;
    
    public class SkillProgressBar extends HBox
    {
@@ -233,13 +244,25 @@ package tibia.creatures.statusWidgetClasses
       
       private var m_UncommittedSkill:Boolean = true;
       
+      private var m_UILabelWrapper:ShapeWrapper = null;
+      
+      private var m_TextStyle:CSSStyleDeclaration = null;
+      
+      private var m_UncommittedSkillLabel:Boolean = false;
+      
+      private var m_SkillLabel:String = null;
+      
+      private var m_UncommittedCharacter:Boolean = false;
+      
+      private var m_TextField:TextField = null;
+      
       private var m_Skill:int = -1;
       
       private var m_UIProgress:tibia.creatures.statusWidgetClasses.BitmapProgressBar = null;
       
-      private var m_Character:Player = null;
+      private var m_UILabel:Bitmap = null;
       
-      private var m_UncommittedCharacter:Boolean = false;
+      private var m_Character:Player = null;
       
       private var m_UIIcon:ShapeWrapper = null;
       
@@ -248,74 +271,6 @@ package tibia.creatures.statusWidgetClasses
          super();
          toolTip = "toolTip";
          addEventListener(ToolTipEvent.TOOL_TIP_SHOW,this.onToolTip);
-      }
-      
-      public function set skill(param1:int) : void
-      {
-         var _loc3_:Object = null;
-         var _loc2_:int = SKILL_NONE;
-         for each(_loc3_ in SKILL_OPTIONS)
-         {
-            if(_loc3_.value === param1 && _loc3_.styleProp != null)
-            {
-               _loc2_ = param1;
-               break;
-            }
-         }
-         if(this.m_Skill != _loc2_)
-         {
-            this.m_Skill = _loc2_;
-            this.m_UncommittedSkill = true;
-            invalidateProperties();
-         }
-      }
-      
-      public function set progressDirection(param1:String) : void
-      {
-         if(this.m_UIProgress != null)
-         {
-            this.m_UIProgress.direction = param1;
-         }
-      }
-      
-      public function get character() : Player
-      {
-         return this.m_Character;
-      }
-      
-      override protected function commitProperties() : void
-      {
-         var _loc1_:Object = null;
-         var _loc2_:* = false;
-         super.commitProperties();
-         if(this.m_UncommittedCharacter)
-         {
-            if(this.character != null)
-            {
-               this.m_UIProgress.value = this.character.getSkillProgress(this.skill);
-            }
-            this.m_UncommittedCharacter = false;
-         }
-         if(this.m_UncommittedSkill)
-         {
-            this.m_UIIcon.removeChildren();
-            for each(_loc1_ in SKILL_OPTIONS)
-            {
-               if(_loc1_.value === this.skill && _loc1_.styleInstance is DisplayObject)
-               {
-                  this.m_UIIcon.addChild(_loc1_.styleInstance);
-                  break;
-               }
-            }
-            if(this.character != null)
-            {
-               this.m_UIProgress.value = this.character.getSkillProgress(this.skill);
-            }
-            _loc2_ = this.skill != SKILL_NONE;
-            includeInLayout = _loc2_;
-            visible = _loc2_;
-            this.m_UncommittedSkill = false;
-         }
       }
       
       private function onToolTip(param1:ToolTipEvent) : void
@@ -383,17 +338,62 @@ package tibia.creatures.statusWidgetClasses
          }
       }
       
-      override public function set styleName(param1:Object) : void
+      protected function set skillLabel(param1:String) : void
       {
-         super.styleName = param1;
-         if(this.m_UIIcon != null)
+         if(this.m_SkillLabel != param1)
          {
-            this.m_UIIcon.styleName = getStyle("iconStyleName");
+            this.m_SkillLabel = param1;
+            this.m_UncommittedSkillLabel = true;
+            invalidateProperties();
          }
-         if(this.m_UIProgress != null)
+      }
+      
+      private function updateSkillLabel(param1:String) : void
+      {
+         var _loc5_:CSSStyleDeclaration = null;
+         var _loc6_:Matrix = null;
+         var _loc2_:Number = 33;
+         var _loc3_:Number = 10;
+         if(param1 != null)
          {
-            this.m_UIProgress.styleName = getStyle("progressBarStyleName");
+            if(this.m_TextField == null)
+            {
+               this.m_TextField = createInFontContext(TextField) as TextField;
+               this.m_TextField.autoSize = TextFieldAutoSize.LEFT;
+               this.m_TextField.filters = [new GlowFilter(0,1,2,2,4,BitmapFilterQuality.LOW,false,false)];
+            }
+            _loc5_ = StyleManager.getStyleDeclaration(getStyle("labelStyleName"));
+            if(this.m_TextStyle != _loc5_)
+            {
+               this.m_TextStyle = _loc5_;
+            }
+            if(this.m_TextStyle != null)
+            {
+               this.m_TextField.defaultTextFormat = new TextFormat(this.m_TextStyle.getStyle("fontFamily"),this.m_TextStyle.getStyle("fontSize"),this.m_TextStyle.getStyle("fontColor"),this.m_TextStyle.getStyle("fontWeight") == "bold",this.m_TextStyle.getStyle("fontStyle") == "italic");
+            }
+            this.m_TextField.text = param1;
+            _loc2_ = Math.max(33,Math.min(this.m_TextField.textWidth,66));
+            _loc3_ = this.m_TextField.textHeight;
          }
+         var _loc4_:BitmapData = this.m_UILabel.bitmapData;
+         if(_loc4_ == null || _loc4_.width != _loc2_ || _loc4_.height != _loc3_)
+         {
+            _loc4_ = new BitmapData(_loc2_,_loc3_,true,65280);
+            _loc4_.lock();
+            this.m_UILabel.bitmapData = _loc4_;
+            this.m_UILabelWrapper.invalidateSize();
+         }
+         else
+         {
+            _loc4_.lock();
+            _loc4_.fillRect(new Rectangle(0,0,_loc4_.width,_loc4_.height),65280);
+         }
+         if(param1 != null)
+         {
+            _loc6_ = new Matrix(1,0,0,1,(_loc4_.width - this.m_TextField.textWidth) / 2 - 2,-2);
+            _loc4_.draw(this.m_TextField,_loc6_);
+         }
+         _loc4_.unlock();
       }
       
       public function get skill() : int
@@ -419,17 +419,116 @@ package tibia.creatures.statusWidgetClasses
          }
       }
       
+      private function onCharacterChange(param1:PropertyChangeEvent) : void
+      {
+         if((param1.property == "skill" || param1.property == "*") && this.skill != SKILL_NONE)
+         {
+            this.skillLabel = String(this.character.getSkillValue(this.skill));
+            this.m_UIProgress.value = this.character.getSkillProgress(this.skill);
+         }
+      }
+      
       public function get progressDirection() : String
       {
          return this.m_UIProgress != null?this.m_UIProgress.direction:null;
       }
       
-      private function onCharacterChange(param1:PropertyChangeEvent) : void
+      public function set skill(param1:int) : void
       {
-         if(param1.property == "skill" || param1.property == "*")
+         var _loc3_:Object = null;
+         var _loc2_:int = SKILL_NONE;
+         for each(_loc3_ in SKILL_OPTIONS)
          {
-            this.m_UIProgress.value = this.character.getSkillProgress(this.skill);
+            if(_loc3_.value === param1 && _loc3_.styleProp != null)
+            {
+               _loc2_ = param1;
+               break;
+            }
          }
+         if(this.m_Skill != _loc2_)
+         {
+            this.m_Skill = _loc2_;
+            this.m_UncommittedSkill = true;
+            invalidateProperties();
+         }
+      }
+      
+      protected function get skillLabel() : String
+      {
+         return this.m_SkillLabel;
+      }
+      
+      public function get character() : Player
+      {
+         return this.m_Character;
+      }
+      
+      public function set progressDirection(param1:String) : void
+      {
+         if(this.m_UIProgress != null)
+         {
+            this.m_UIProgress.direction = param1;
+         }
+      }
+      
+      override protected function commitProperties() : void
+      {
+         var _loc1_:Object = null;
+         super.commitProperties();
+         if(this.m_UncommittedCharacter)
+         {
+            if(this.character != null && this.skill != SKILL_NONE)
+            {
+               this.skillLabel = String(this.character.getSkillValue(this.skill));
+               this.m_UIProgress.value = this.character.getSkillProgress(this.skill);
+            }
+            this.m_UncommittedCharacter = false;
+         }
+         if(this.m_UncommittedSkill)
+         {
+            this.m_UIIcon.removeChildren();
+            for each(_loc1_ in SKILL_OPTIONS)
+            {
+               if(_loc1_.value === this.skill && _loc1_.styleInstance is DisplayObject)
+               {
+                  this.m_UIIcon.addChild(_loc1_.styleInstance);
+                  break;
+               }
+            }
+            if(this.character != null && this.skill != SKILL_NONE)
+            {
+               includeInLayout = true;
+               this.skillLabel = String(this.character.getSkillValue(this.skill));
+               visible = true;
+               this.m_UIProgress.value = this.character.getSkillProgress(this.skill);
+            }
+            else
+            {
+               includeInLayout = false;
+               visible = false;
+            }
+            this.m_UncommittedSkill = false;
+         }
+         if(this.m_UncommittedSkillLabel)
+         {
+            this.updateSkillLabel(this.skillLabel);
+            this.m_UncommittedSkillLabel = false;
+         }
+      }
+      
+      override public function set styleName(param1:Object) : void
+      {
+         super.styleName = param1;
+         if(this.m_UIIcon != null)
+         {
+            this.m_UIIcon.styleName = getStyle("iconStyleName");
+         }
+         if(this.m_UIProgress != null)
+         {
+            this.m_UIProgress.styleName = getStyle("progressBarStyleName");
+         }
+         this.m_UncommittedSkillLabel = true;
+         invalidateProperties();
       }
       
       override protected function createChildren() : void
@@ -438,6 +537,10 @@ package tibia.creatures.statusWidgetClasses
          this.m_UIIcon = new ShapeWrapper();
          this.m_UIIcon.styleName = getStyle("iconStyleName");
          addChild(this.m_UIIcon);
+         this.m_UILabel = new Bitmap();
+         this.m_UILabelWrapper = new ShapeWrapper();
+         this.m_UILabelWrapper.addChild(this.m_UILabel);
+         addChild(this.m_UILabelWrapper);
          this.m_UIProgress = new tibia.creatures.statusWidgetClasses.BitmapProgressBar();
          this.m_UIProgress.labelEnabled = false;
          this.m_UIProgress.labelFormat = "{1}%";

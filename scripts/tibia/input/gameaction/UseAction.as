@@ -14,7 +14,7 @@ package tibia.input.gameaction
    public class UseAction implements IAction
    {
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
       

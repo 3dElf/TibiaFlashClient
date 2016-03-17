@@ -3,8 +3,6 @@ package tibia.container.containerWidgetClasses
    import tibia.sidebar.sideBarWidgetClasses.WidgetView;
    import tibia.game.IUseWidget;
    import tibia.game.IMoveWidget;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
    import flash.events.MouseEvent;
    import tibia.options.OptionsStorage;
    import shared.utility.Vector3D;
@@ -13,10 +11,9 @@ package tibia.container.containerWidgetClasses
    import tibia.game.ObjectContextMenu;
    import tibia.container.Container;
    import flash.geom.Point;
-   import tibia.game.ObjectDragImpl;
+   import mx.events.PropertyChangeEvent;
    import flash.display.DisplayObjectContainer;
    import tibia.container.ContainerStorage;
-   import mx.events.PropertyChangeEvent;
    import mx.core.ClassFactory;
    import tibia.appearances.AppearanceInstance;
    import flash.display.DisplayObject;
@@ -34,47 +31,21 @@ package tibia.container.containerWidgetClasses
       protected static const ACTION_LOOK:int = 2;
       
       protected static const ACTION_USE:int = 3;
-      
-      {
-         s_InitializeStyle();
-      }
-      
-      protected var m_DragHandler:ObjectDragImpl;
-      
-      protected var m_Container:Container = null;
+       
+      private var m_Container:Container = null;
       
       private var m_UncommittedSlotFactory:Boolean = false;
       
       private var m_UncommittedContainer:Boolean = false;
       
-      protected var m_SlotFactory:ClassFactory = null;
+      private var m_SlotFactory:ClassFactory = null;
       
       public function ContainerWidgetViewBase()
       {
          super();
-         this.m_DragHandler = new ObjectDragImpl();
       }
       
-      private static function s_InitializeStyle() : void
-      {
-         var Selector:String = "ContainerWidgetViewBase";
-         var Style:CSSStyleDeclaration = StyleManager.getStyleDeclaration(Selector);
-         if(Style == null)
-         {
-            Style = new CSSStyleDeclaration(Selector);
-         }
-         Style.defaultFactory = function():void
-         {
-            ContainerWidgetViewBase.horizontalGap = 2;
-            ContainerWidgetViewBase.verticalGap = 2;
-            ContainerWidgetViewBase.slotBackgroundImage = undefined;
-            ContainerWidgetViewBase.slotBackgroundColor = 0;
-            ContainerWidgetViewBase.slotBackgroundAlpha = 1;
-         };
-         StyleManager.setStyleDeclaration(Selector,Style,true);
-      }
-      
-      protected function onSlotMouseClick(param1:MouseEvent) : void
+      private function onSlotMouseClick(param1:MouseEvent) : void
       {
          var _loc3_:OptionsStorage = null;
          var _loc4_:Object = null;
@@ -82,7 +53,7 @@ package tibia.container.containerWidgetClasses
          var _loc6_:Vector3D = null;
          var _loc7_:int = 0;
          var _loc2_:IContainerSlot = null;
-         if(param1 != null && (_loc2_ = param1.target as IContainerSlot) != null && this.m_Container != null)
+         if(this.container != null && (_loc2_ = param1.target as IContainerSlot) != null)
          {
             _loc3_ = Tibia.s_GetOptions();
             _loc4_ = {
@@ -176,6 +147,26 @@ package tibia.container.containerWidgetClasses
          return null;
       }
       
+      function set container(param1:Container) : void
+      {
+         if(param1 != this.m_Container)
+         {
+            if(this.m_Container != null)
+            {
+               this.m_Container.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onContainerChanged);
+            }
+            this.m_Container = param1;
+            if(this.m_Container != null)
+            {
+               this.m_Container.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onContainerChanged);
+            }
+            this.m_UncommittedContainer = true;
+            invalidateDisplayList();
+            invalidateProperties();
+            invalidateSize();
+         }
+      }
+      
       protected function get slotHolder() : DisplayObjectContainer
       {
          return this;
@@ -184,17 +175,130 @@ package tibia.container.containerWidgetClasses
       protected function getSlotCoordinate(param1:IContainerSlot) : Vector3D
       {
          var _loc2_:Vector3D = new Vector3D(65535,0,0);
-         if(this.m_Container.window < 0)
+         if(this.container != null)
          {
-            _loc2_.y = ContainerStorage.BODY_HEAD + param1.position;
-            _loc2_.z = 0;
-         }
-         else
-         {
-            _loc2_.y = 64 + this.m_Container.window;
-            _loc2_.z = param1.position;
+            if(this.container.window < 0)
+            {
+               _loc2_.y = ContainerStorage.BODY_HEAD + param1.position;
+               _loc2_.z = 0;
+            }
+            else
+            {
+               _loc2_.y = 64 + this.container.window;
+               _loc2_.z = param1.position;
+            }
          }
          return _loc2_;
+      }
+      
+      protected function set slotFactory(param1:ClassFactory) : void
+      {
+         if(this.m_SlotFactory != param1)
+         {
+            this.m_SlotFactory = param1;
+            this.m_UncommittedSlotFactory = true;
+            invalidateDisplayList();
+            invalidateProperties();
+            invalidateSize();
+         }
+      }
+      
+      override protected function commitProperties() : void
+      {
+         super.commitProperties();
+         if(this.m_UncommittedContainer)
+         {
+            this.updateSlots();
+            this.m_UncommittedContainer = false;
+         }
+         if(this.m_UncommittedSlotFactory)
+         {
+            this.updateSlots();
+            this.m_UncommittedSlotFactory = false;
+         }
+      }
+      
+      protected function createSlot(param1:AppearanceInstance = null, param2:int = -1) : IContainerSlot
+      {
+         var _loc3_:IContainerSlot = this.slotFactory.newInstance();
+         _loc3_.appearance = param1;
+         _loc3_.position = param2;
+         _loc3_.styleName = getStyle("slotStyleName");
+         _loc3_.addEventListener(MouseEvent.CLICK,this.onSlotMouseClick);
+         _loc3_.addEventListener(MouseEvent.RIGHT_CLICK,this.onSlotMouseClick);
+         this.slotHolder.addChild(DisplayObject(_loc3_));
+         return _loc3_;
+      }
+      
+      public function getMultiUseObjectUnderPoint(param1:Point) : Object
+      {
+         return this.getUseObjectUnderPoint(param1);
+      }
+      
+      public function getMoveObjectUnderPoint(param1:Point) : Object
+      {
+         return this.getUseObjectUnderPoint(param1);
+      }
+      
+      protected function destroySlot(param1:int) : void
+      {
+         var _loc2_:IContainerSlot = IContainerSlot(this.slotHolder.removeChildAt(param1));
+         _loc2_.appearance = null;
+         _loc2_.removeEventListener(MouseEvent.CLICK,this.onSlotMouseClick);
+         _loc2_.removeEventListener(MouseEvent.RIGHT_CLICK,this.onSlotMouseClick);
+      }
+      
+      public function getUseObjectUnderPoint(param1:Point) : Object
+      {
+         var _loc2_:IContainerSlot = this.getSlotUnderPoint(param1);
+         if(this.container != null && _loc2_ != null)
+         {
+            return {
+               "object":_loc2_.appearance,
+               "absolute":this.getSlotCoordinate(_loc2_),
+               "position":(this.container.window < 0?0:_loc2_.position)
+            };
+         }
+         return null;
+      }
+      
+      protected function getSlotUnderPoint(param1:Point) : IContainerSlot
+      {
+         var _loc2_:Array = stage.getObjectsUnderPoint(param1);
+         var _loc3_:DisplayObject = null;
+         var _loc4_:int = _loc2_.length - 1;
+         while(_loc4_ >= 0)
+         {
+            _loc3_ = DisplayObject(_loc2_[_loc4_]);
+            while(_loc3_ != null && !(_loc3_ is Stage))
+            {
+               if(_loc3_ is IContainerSlot)
+               {
+                  return IContainerSlot(_loc3_);
+               }
+               _loc3_ = _loc3_.parent;
+            }
+            _loc4_--;
+         }
+         return null;
+      }
+      
+      public function pointToMap(param1:Point) : Vector3D
+      {
+         return null;
+      }
+      
+      private function onContainerChanged(param1:PropertyChangeEvent) : void
+      {
+         if(param1.property == "item")
+         {
+            this.updateSlots();
+         }
+      }
+      
+      protected function get slotFactory() : ClassFactory
+      {
+         return this.m_SlotFactory;
       }
       
       protected function updateSlots() : void
@@ -244,142 +348,6 @@ package tibia.container.containerWidgetClasses
                _loc1_++;
             }
          }
-      }
-      
-      function set container(param1:Container) : void
-      {
-         if(param1 != this.m_Container)
-         {
-            if(this.m_Container != null)
-            {
-               this.m_Container.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onContainerChanged);
-            }
-            this.m_Container = param1;
-            if(this.m_Container != null)
-            {
-               this.m_Container.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onContainerChanged);
-            }
-            this.m_UncommittedContainer = true;
-            invalidateDisplayList();
-            invalidateProperties();
-            invalidateSize();
-         }
-      }
-      
-      protected function set slotFactory(param1:ClassFactory) : void
-      {
-         if(this.m_SlotFactory != param1)
-         {
-            this.m_SlotFactory = param1;
-            this.m_UncommittedSlotFactory = true;
-            invalidateDisplayList();
-            invalidateProperties();
-            invalidateSize();
-         }
-      }
-      
-      override protected function commitProperties() : void
-      {
-         super.commitProperties();
-         if(this.m_UncommittedContainer)
-         {
-            this.updateSlots();
-            this.m_UncommittedContainer = false;
-         }
-         if(this.m_UncommittedSlotFactory)
-         {
-            this.updateSlots();
-            this.m_UncommittedSlotFactory = false;
-         }
-      }
-      
-      protected function createSlot(param1:AppearanceInstance = null, param2:int = -1) : IContainerSlot
-      {
-         var _loc3_:IContainerSlot = this.slotFactory.newInstance();
-         _loc3_.appearance = param1;
-         _loc3_.position = param2;
-         _loc3_.styleName = getStyle("slotStyleName");
-         _loc3_.addEventListener(MouseEvent.CLICK,this.onSlotMouseClick);
-         _loc3_.addEventListener(MouseEvent.RIGHT_CLICK,this.onSlotMouseClick);
-         this.slotHolder.addChild(DisplayObject(_loc3_));
-         this.m_DragHandler.addDragComponent(_loc3_);
-         return _loc3_;
-      }
-      
-      public function getMoveObjectUnderPoint(param1:Point) : Object
-      {
-         return this.getUseObjectUnderPoint(param1);
-      }
-      
-      protected function destroySlot(param1:int) : void
-      {
-         var _loc2_:IContainerSlot = IContainerSlot(this.slotHolder.removeChildAt(param1));
-         _loc2_.appearance = null;
-         _loc2_.removeEventListener(MouseEvent.CLICK,this.onSlotMouseClick);
-         _loc2_.removeEventListener(MouseEvent.RIGHT_CLICK,this.onSlotMouseClick);
-         this.m_DragHandler.removeDragComponent(_loc2_);
-      }
-      
-      public function getMultiUseObjectUnderPoint(param1:Point) : Object
-      {
-         return this.getUseObjectUnderPoint(param1);
-      }
-      
-      protected function getSlotUnderPoint(param1:Point) : IContainerSlot
-      {
-         var _loc2_:Array = stage.getObjectsUnderPoint(param1);
-         var _loc3_:DisplayObject = null;
-         var _loc4_:int = _loc2_.length - 1;
-         while(_loc4_ >= 0)
-         {
-            _loc3_ = DisplayObject(_loc2_[_loc4_]);
-            while(_loc3_ != null && !(_loc3_ is Stage))
-            {
-               if(_loc3_ is IContainerSlot)
-               {
-                  return IContainerSlot(_loc3_);
-               }
-               _loc3_ = _loc3_.parent;
-            }
-            _loc4_--;
-         }
-         return null;
-      }
-      
-      public function getUseObjectUnderPoint(param1:Point) : Object
-      {
-         var _loc2_:IContainerSlot = this.getSlotUnderPoint(param1);
-         if(this.m_Container != null && _loc2_ != null)
-         {
-            return {
-               "object":_loc2_.appearance,
-               "absolute":this.getSlotCoordinate(_loc2_),
-               "position":(this.m_Container.window < 0?0:_loc2_.position)
-            };
-         }
-         return null;
-      }
-      
-      public function pointToMap(param1:Point) : Vector3D
-      {
-         return null;
-      }
-      
-      protected function onContainerChanged(param1:PropertyChangeEvent) : void
-      {
-         if(param1 != null)
-         {
-            switch(param1.property)
-            {
-               case "item":
-                  this.updateSlots();
-            }
-         }
-      }
-      
-      protected function get slotFactory() : ClassFactory
-      {
-         return this.m_SlotFactory;
       }
       
       override function releaseInstance() : void

@@ -12,6 +12,7 @@ package tibia.market.marketWidgetClasses
    import mx.collections.SortField;
    import mx.containers.HBox;
    import mx.controls.Label;
+   import shared.controls.CustomButton;
    import shared.controls.CustomDataGrid;
    import mx.core.ClassFactory;
    import mx.core.ScrollPolicy;
@@ -134,7 +135,7 @@ package tibia.market.marketWidgetClasses
             _loc2_.text = resourceManager.getString(BUNDLE,"MARKET_OFFERS_VIEW_SELLOFFERS");
             _loc2_.setStyle("fontWeight","bold");
             _loc1_.addChild(_loc2_);
-            this.m_UISellAccept = new Button();
+            this.m_UISellAccept = new CustomButton();
             this.m_UISellAccept.enabled = false;
             this.m_UISellAccept.label = resourceManager.getString(BUNDLE,"MARKET_OFFERS_VIEW_SELLACCEPT");
             this.m_UISellAccept.addEventListener(MouseEvent.CLICK,this.onAcceptClick);
@@ -163,7 +164,7 @@ package tibia.market.marketWidgetClasses
             _loc2_.text = resourceManager.getString(BUNDLE,"MARKET_OFFERS_VIEW_BUYOFFERS");
             _loc2_.setStyle("fontWeight","bold");
             _loc1_.addChild(_loc2_);
-            this.m_UIBuyAccept = new Button();
+            this.m_UIBuyAccept = new CustomButton();
             this.m_UIBuyAccept.enabled = false;
             this.m_UIBuyAccept.label = resourceManager.getString(BUNDLE,"MARKET_OFFERS_VIEW_BUYACCEPT");
             this.m_UIBuyAccept.addEventListener(MouseEvent.CLICK,this.onAcceptClick);

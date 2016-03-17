@@ -16,6 +16,8 @@ package tibia.creatures
    public class Creature extends EventDispatcher implements IReportable
    {
       
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const STATE_PZ_BLOCK:int = 13;
       
       protected static const PK_REVENGE:int = 6;
@@ -25,6 +27,8 @@ package tibia.creatures
       protected static const WAR_ALLY:int = 1;
       
       protected static const SKILL_FIGHTCLUB:int = 9;
+      
+      public static const MAX_DESCRIPTION_LENGHT:int = 128;
       
       protected static const PK_PARTYMODE:int = 2;
       
@@ -102,6 +106,10 @@ package tibia.creatures
       
       protected static const MAP_MIN_X:int = 24576;
       
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
+      
       protected static const MAP_WIDTH:int = 15;
       
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
@@ -175,6 +183,8 @@ package tibia.creatures
       protected static const SKILL_MANA:int = 4;
       
       protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
+      
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const STATE_CURSED:int = 11;
       

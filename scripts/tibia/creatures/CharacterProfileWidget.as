@@ -253,7 +253,6 @@ package tibia.creatures
          keyboardFlags = PopUpBase.KEY_ESCAPE;
          title = resourceManager.getString(BUNDLE,"TITLE");
          width = 512;
-         height = 512;
          this.player = Tibia.s_GetPlayer();
       }
       
@@ -395,11 +394,13 @@ package tibia.creatures
          var _loc3_:Number = NaN;
          var _loc4_:Number = NaN;
          var _loc5_:Number = NaN;
+         var _loc6_:Number = NaN;
          if(param1 != null)
          {
             _loc3_ = param1.getSkillValue(param2);
             _loc4_ = param1.getSkillBase(param2);
-            _loc5_ = param1.getSkillProgress(param2);
+            _loc5_ = 0;
+            _loc6_ = param1.getSkillProgress(param2);
             if(param2 == SKILL_STAMINA || param2 == SKILL_OFFLINETRAINING)
             {
                _loc3_ = Math.round(Math.max(0,_loc3_ - _loc4_) / (60 * 1000));
@@ -408,7 +409,11 @@ package tibia.creatures
             if(param2 == SKILL_FED)
             {
                _loc3_ = Math.round(Math.max(0,_loc3_ - _loc4_) / 1000);
-               return "00:" + String("0" + Math.floor(_loc3_ / 60)).substr(-2) + ":";
+               return "00:" + String("0" + Math.floor(_loc3_ / 60)).substr(-2) + ":" + String("0" + Math.floor(_loc3_ % 60)).substr(-2);
+            }
+            if(param2 == SKILL_HITPOINTS || param2 == SKILL_MANA)
+            {
+               return String(_loc3_) + "/" + String(_loc4_);
             }
             if(param2 == SKILL_CARRYSTRENGTH)
             {
@@ -420,9 +425,13 @@ package tibia.creatures
             }
             if(param2 == SKILL_GOSTRENGTH)
             {
-               return String(Math.round(_loc3_ / 2)) + "/" + String(Math.round(_loc4_ / 2));
+               _loc3_ = Math.round(_loc3_ / 2);
+               _loc4_ = Math.round(_loc4_ / 2);
+               _loc5_ = _loc3_ - _loc4_;
+               return String(_loc4_) + (_loc5_ >= 0?" +":" ") + String(_loc5_);
             }
-            return String(_loc3_) + "/" + String(_loc4_);
+            _loc5_ = _loc3_ - _loc4_;
+            return String(_loc4_) + (_loc5_ >= 0?" +":" ") + String(_loc5_);
          }
          return null;
       }

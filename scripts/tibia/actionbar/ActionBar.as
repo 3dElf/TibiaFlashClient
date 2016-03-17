@@ -19,7 +19,7 @@ package tibia.actionbar
       
       public static const NUM_ACTIONS:int = 30;
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       public static const BUNDLE:String = "ActionBarWidget";
       

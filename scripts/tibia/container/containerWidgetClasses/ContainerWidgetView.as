@@ -1,16 +1,21 @@
 package tibia.container.containerWidgetClasses
 {
-   import tibia.container.Container;
    import flash.events.MouseEvent;
    import tibia.container.ContainerStorage;
    import tibia.§sidebar:ns_sidebar_internal§.container;
+   import tibia.game.ObjectDragImpl;
+   import shared.utility.Vector3D;
+   import flash.geom.Point;
    import flash.display.DisplayObjectContainer;
+   import tibia.container.Container;
+   import mx.controls.Button;
    import tibia.appearances.widgetClasses.SimpleAppearanceRenderer;
    import shared.utility.StringHelper;
-   import mx.controls.Button;
+   import shared.controls.CustomButton;
    import mx.core.ScrollPolicy;
    import mx.styles.StyleProxy;
    import shared.skins.VectorBorderSkin;
+   import mx.core.UIComponent;
    import mx.core.EdgeMetrics;
    import mx.containers.BoxDirection;
    import mx.core.ClassFactory;
@@ -35,13 +40,13 @@ package tibia.container.containerWidgetClasses
          "slotPaddingTop":"paddingTop"
       };
        
+      private const m_DragHandler:ObjectDragImpl = new ObjectDragImpl();
+      
       private var m_UncommittedContainer:Boolean = false;
       
-      protected var m_UIUpButton:Button = null;
+      private var m_UIUpButton:Button = null;
       
-      private var m_UIConstructed:Boolean = false;
-      
-      protected var m_UISlotHolder:ContainerSlotHolder = null;
+      private var m_UISlotHolder:ContainerSlotHolder = null;
       
       public function ContainerWidgetView()
       {
@@ -52,27 +57,23 @@ package tibia.container.containerWidgetClasses
          slotFactory = new ClassFactory(ContainerSlot);
       }
       
-      override function set container(param1:Container) : void
+      private function onUpButtonClick(param1:MouseEvent) : void
       {
-         if(param1 != m_Container)
+         var _loc2_:ContainerStorage = Tibia.s_GetContainerStorage();
+         if(_loc2_ != null && container != null && Boolean(container.isSubContainer))
          {
-            super.container = param1;
-            this.m_UncommittedContainer = true;
-            invalidateProperties();
+            _loc2_.sendUpContainer(container);
          }
       }
       
-      protected function onUpButtonClick(param1:MouseEvent) : void
+      override public function pointToAbsolute(param1:Point) : Vector3D
       {
-         var _loc2_:ContainerStorage = null;
-         if(param1 != null)
+         var _loc2_:Vector3D = super.pointToAbsolute(param1);
+         if(container != null && _loc2_ == null)
          {
-            _loc2_ = Tibia.s_GetContainerStorage();
-            if(_loc2_ != null && container != null && Boolean(container.isSubContainer))
-            {
-               _loc2_.sendUpContainer(container);
-            }
+            _loc2_ = new Vector3D(65535,64 + container.window,0);
          }
+         return _loc2_;
       }
       
       override protected function get slotHolder() : DisplayObjectContainer
@@ -80,12 +81,34 @@ package tibia.container.containerWidgetClasses
          return this.m_UISlotHolder;
       }
       
+      override public function setStyle(param1:String, param2:*) : void
+      {
+         if(SLOT_HOLDER_STYLE_FILTER[param1] != null)
+         {
+            this.m_UISlotHolder.setStyle(SLOT_HOLDER_STYLE_FILTER[param1],param2);
+         }
+         else
+         {
+            super.setStyle(param1,param2);
+         }
+      }
+      
+      override function set container(param1:Container) : void
+      {
+         if(param1 != container)
+         {
+            super.container = param1;
+            this.m_UncommittedContainer = true;
+            invalidateProperties();
+         }
+      }
+      
       override protected function commitProperties() : void
       {
          var _loc1_:SimpleAppearanceRenderer = null;
          if(this.m_UncommittedContainer)
          {
-            if(m_Container != null)
+            if(container != null)
             {
                _loc1_ = new SimpleAppearanceRenderer();
                _loc1_.appearance = container.object;
@@ -106,50 +129,36 @@ package tibia.container.containerWidgetClasses
          super.commitProperties();
       }
       
-      override public function setStyle(param1:String, param2:*) : void
-      {
-         if(SLOT_HOLDER_STYLE_FILTER[param1] != null)
-         {
-            this.m_UISlotHolder.setStyle(SLOT_HOLDER_STYLE_FILTER[param1],param2);
-         }
-         else
-         {
-            super.setStyle(param1,param2);
-         }
-      }
-      
       override protected function createChildren() : void
       {
-         if(!this.m_UIConstructed)
-         {
-            super.createChildren();
-            this.m_UIUpButton = new Button();
-            this.m_UIUpButton.styleName = getStyle("upButtonStyle");
-            this.m_UIUpButton.visible = m_Container != null && Boolean(m_Container.isSubContainer);
-            this.m_UIUpButton.addEventListener(MouseEvent.CLICK,this.onUpButtonClick);
-            header.addChildAt(this.m_UIUpButton,header.numChildren - 2);
-            this.m_UISlotHolder = new ContainerSlotHolder();
-            this.m_UISlotHolder.height = NaN;
-            this.m_UISlotHolder.horizontalScrollPolicy = ScrollPolicy.OFF;
-            this.m_UISlotHolder.percentWidth = NaN;
-            this.m_UISlotHolder.percentHeight = 100;
-            this.m_UISlotHolder.styleName = new StyleProxy(this,SLOT_HOLDER_STYLE_FILTER);
-            this.m_UISlotHolder.verticalScrollPolicy = ScrollPolicy.ON;
-            this.m_UISlotHolder.width = unscaledInnerWidth;
-            this.m_UISlotHolder.setStyle("backgroundAlpha",0);
-            this.m_UISlotHolder.setStyle("backgroundColor",65280);
-            this.m_UISlotHolder.setStyle("borderAlpha",0);
-            this.m_UISlotHolder.setStyle("borderColor",65280);
-            this.m_UISlotHolder.setStyle("borderSkin",VectorBorderSkin);
-            this.m_UISlotHolder.setStyle("borderThickness",0);
-            addChild(this.m_UISlotHolder);
-            this.m_UIConstructed = true;
-         }
+         super.createChildren();
+         this.m_UIUpButton = new CustomButton();
+         this.m_UIUpButton.styleName = getStyle("upButtonStyle");
+         this.m_UIUpButton.visible = container != null && Boolean(container.isSubContainer);
+         this.m_UIUpButton.addEventListener(MouseEvent.CLICK,this.onUpButtonClick);
+         header.addChildAt(this.m_UIUpButton,header.numChildren - 2);
+         this.m_UISlotHolder = new ContainerSlotHolder();
+         this.m_UISlotHolder.height = NaN;
+         this.m_UISlotHolder.horizontalScrollPolicy = ScrollPolicy.OFF;
+         this.m_UISlotHolder.percentWidth = NaN;
+         this.m_UISlotHolder.percentHeight = 100;
+         this.m_UISlotHolder.styleName = new StyleProxy(this,SLOT_HOLDER_STYLE_FILTER);
+         this.m_UISlotHolder.verticalScrollPolicy = ScrollPolicy.ON;
+         this.m_UISlotHolder.width = unscaledInnerWidth;
+         this.m_UISlotHolder.setStyle("backgroundAlpha",0);
+         this.m_UISlotHolder.setStyle("backgroundColor",65280);
+         this.m_UISlotHolder.setStyle("borderAlpha",0);
+         this.m_UISlotHolder.setStyle("borderColor",65280);
+         this.m_UISlotHolder.setStyle("borderSkin",VectorBorderSkin);
+         this.m_UISlotHolder.setStyle("borderThickness",0);
+         addChild(this.m_UISlotHolder);
+         this.m_DragHandler.addDragComponent(this.m_UISlotHolder);
       }
       
       override function releaseInstance() : void
       {
          super.releaseInstance();
+         this.m_DragHandler.removeDragComponent(this.slotHolder as UIComponent);
          this.m_UIUpButton.removeEventListener(MouseEvent.CLICK,this.onUpButtonClick);
       }
       
@@ -188,10 +197,11 @@ class ContainerSlotHolder extends Tile
    
    override protected function measure() : void
    {
+      var _loc1_:Number = NaN;
       var _loc2_:Number = NaN;
       var _loc12_:IContainerSlot = null;
       mx_internal::findCellSize();
-      var _loc1_:Number = getStyle("horizontalGap");
+      _loc1_ = getStyle("horizontalGap");
       _loc2_ = getStyle("verticalGap");
       var _loc3_:EdgeMetrics = viewMetricsAndPadding;
       var _loc4_:int = numChildren;

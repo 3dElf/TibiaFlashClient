@@ -20,9 +20,7 @@ package tibia.worldmap
       
       public static const ONSCREEN_TARGET_BOX_BOTTOM:int = 0;
       
-      public static const ONSCREEN_TARGET_NONE:int = -1;
-      
-      protected static const OBJECT_UPDATE_INTERVAL:int = 40;
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
       public static const ONSCREEN_TARGET_BOX_HIGH:int = 2;
       
@@ -32,13 +30,19 @@ package tibia.worldmap
       
       private static const BUNDLE:String = "WorldMapStorage";
       
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
       
-      public static const MSG_PATH_GO_UPSTAIRS:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_PATH_GO_UPSTAIRS");
+      protected static const OBJECT_UPDATE_INTERVAL:int = 40;
+      
+      public static const ONSCREEN_TARGET_NONE:int = -1;
       
       public static const ONSCREEN_TARGET_BOX_LOW:int = 1;
       
       public static const MSG_PATH_GO_DOWNSTAIRS:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_PATH_GO_DOWNSTAIRS");
+      
+      public static const MSG_PATH_GO_UPSTAIRS:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_PATH_GO_UPSTAIRS");
       
       protected static const UNDERGROUND_LAYER:int = 2;
       
@@ -64,6 +68,8 @@ package tibia.worldmap
       
       protected static const FIELD_SIZE:int = 32;
       
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
       protected static const PLAYER_OFFSET_X:int = 8;
       
       public static const ONSCREEN_TARGET_BOX_TOP:int = 3;
@@ -82,13 +88,15 @@ package tibia.worldmap
       
       protected static const MAP_MAX_Z:int = 15;
       
-      public static const MSG_SORRY_NOT_POSSIBLE:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_SORRY_NOT_POSSIBLE");
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       public static const ONSCREEN_TARGET_BOX_COORDINATE:int = 4;
       
       protected static const MAP_WIDTH:int = 15;
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
+      
+      public static const MSG_SORRY_NOT_POSSIBLE:String = ResourceManager.getInstance().getString(BUNDLE,"MSG_SORRY_NOT_POSSIBLE");
       
       public static const ONSCREEN_TARGET_EFFECT_COORDINATE:int = 5;
       

@@ -1,19 +1,21 @@
 package tibia.appearances
 {
+   import flash.geom.Rectangle;
    import flash.geom.Point;
    import flash.display.BitmapData;
-   import flash.geom.Rectangle;
    
    public class AppearanceInstance
    {
       
-      protected static var s_Point:Point = new Point(0,0);
+      protected static const s_TempRect:Rectangle = new Rectangle(0,0,0,0);
       
       public static const OUTDATEDCREATURE:int = 98;
       
       public static const UNKNOWNCREATURE:int = 97;
       
       public static const PHASE_ASYNCHRONOUS:int = 255;
+      
+      protected static const s_TempPoint:Point = new Point(0,0);
       
       public static const PHASE_RANDOM:int = 254;
       
@@ -41,16 +43,6 @@ package tibia.appearances
       public function get type() : tibia.appearances.AppearanceType
       {
          return this.m_Type;
-      }
-      
-      public function draw(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
-      {
-         var _loc7_:int = 0;
-         _loc7_ = ((this.m_Phase % this.m_Type.phases * this.m_Type.patternDepth + param6 % this.m_Type.patternDepth) * this.m_Type.patternHeight + param5 % this.m_Type.patternHeight) * this.m_Type.patternWidth + param4 % this.m_Type.patternWidth;
-         var _loc8_:Rectangle = this.m_Type.sprite[_loc7_];
-         s_Point.x = param2 - _loc8_.width - this.m_Type.displacementX;
-         s_Point.y = param3 - _loc8_.height - this.m_Type.displacementY;
-         param1.copyPixels(this.m_Type.bitmap,_loc8_,s_Point,null,null,true);
       }
       
       public function animate(param1:Number) : Boolean
@@ -102,7 +94,6 @@ package tibia.appearances
       
       public function getSprite(param1:int, param2:int, param3:int, param4:int, param5:Rectangle = null) : BitmapData
       {
-         var _loc11_:Rectangle = null;
          var _loc6_:int = (param1 >= 0?param1:this.m_Phase) % this.m_Type.phases;
          var _loc7_:int = param4 >= 0?int(param4 % this.m_Type.patternDepth):0;
          var _loc8_:int = param3 >= 0?int(param3 % this.m_Type.patternHeight):0;
@@ -110,13 +101,18 @@ package tibia.appearances
          var _loc10_:int = ((_loc6_ * this.m_Type.patternDepth + _loc7_) * this.m_Type.patternHeight + _loc8_) * this.m_Type.patternWidth + _loc9_;
          if(param5 != null)
          {
-            _loc11_ = this.m_Type.sprite[_loc10_];
-            param5.x = _loc11_.x;
-            param5.y = _loc11_.y;
-            param5.width = _loc11_.width;
-            param5.height = _loc11_.height;
+            param5.copyFrom(this.m_Type.sprite[_loc10_]);
          }
          return this.m_Type.bitmap;
+      }
+      
+      public function drawTo(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
+      {
+         var _loc7_:int = 0;
+         _loc7_ = ((this.m_Phase % this.m_Type.phases * this.m_Type.patternDepth + param6 % this.m_Type.patternDepth) * this.m_Type.patternHeight + param5 % this.m_Type.patternHeight) * this.m_Type.patternWidth + param4 % this.m_Type.patternWidth;
+         var _loc8_:Rectangle = this.m_Type.sprite[_loc7_];
+         s_TempPoint.setTo(param2 - _loc8_.width - this.m_Type.displacementX,param3 - _loc8_.height - this.m_Type.displacementY);
+         param1.copyPixels(this.m_Type.bitmap,_loc8_,s_TempPoint,null,null,true);
       }
    }
 }

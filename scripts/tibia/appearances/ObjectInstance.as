@@ -1,6 +1,5 @@
 package tibia.appearances
 {
-   import flash.geom.Point;
    import flash.display.BitmapData;
    import tibia.§appearances:ns_appearance_internal§.m_Phase;
    import tibia.§appearances:ns_appearance_internal§.m_Type;
@@ -9,8 +8,6 @@ package tibia.appearances
    
    public class ObjectInstance extends AppearanceInstance
    {
-      
-      protected static var s_Point:Point = new Point(0,0);
        
       protected var m_Hang:int = 0;
       
@@ -29,7 +26,7 @@ package tibia.appearances
          this.updateSpecialPattern();
       }
       
-      override public function draw(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
+      override public function drawTo(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
       {
          var _loc9_:int = 0;
          var _loc7_:int = param4;
@@ -41,9 +38,8 @@ package tibia.appearances
          }
          _loc9_ = ((m_Phase % m_Type.phases * m_Type.patternDepth + param6 % m_Type.patternDepth) * m_Type.patternHeight + _loc8_ % m_Type.patternHeight) * m_Type.patternWidth + _loc7_ % m_Type.patternWidth;
          var _loc10_:Rectangle = m_Type.sprite[_loc9_];
-         s_Point.x = param2 - _loc10_.width - m_Type.displacementX;
-         s_Point.y = param3 - _loc10_.height - m_Type.displacementY;
-         param1.copyPixels(m_Type.bitmap,_loc10_,s_Point,null,null,true);
+         s_TempPoint.setTo(param2 - _loc10_.width - m_Type.displacementX,param3 - _loc10_.height - m_Type.displacementY);
+         param1.copyPixels(m_Type.bitmap,_loc10_,s_TempPoint,null,null,true);
       }
       
       protected function updateSpecialPattern() : void
@@ -217,7 +213,6 @@ package tibia.appearances
       
       override public function getSprite(param1:int, param2:int, param3:int, param4:int, param5:Rectangle = null) : BitmapData
       {
-         var _loc11_:Rectangle = null;
          var _loc6_:int = (param1 >= 0?param1:m_Phase) % m_Type.phases;
          var _loc7_:int = param4 >= 0?int(param4 % m_Type.patternDepth):0;
          var _loc8_:int = param3 >= 0?int(param3 % m_Type.patternHeight):int(this.m_SpecialPatternY);
@@ -225,11 +220,7 @@ package tibia.appearances
          var _loc10_:int = ((_loc6_ * m_Type.patternDepth + _loc7_) * m_Type.patternHeight + _loc8_) * m_Type.patternWidth + _loc9_;
          if(param5 != null)
          {
-            _loc11_ = m_Type.sprite[_loc10_];
-            param5.x = _loc11_.x;
-            param5.y = _loc11_.y;
-            param5.width = _loc11_.width;
-            param5.height = _loc11_.height;
+            param5.copyFrom(m_Type.sprite[_loc10_]);
          }
          return m_Type.bitmap;
       }

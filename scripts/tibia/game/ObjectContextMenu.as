@@ -219,10 +219,7 @@ package tibia.game
          var UseObj:ObjectInstance = this.m_UseTarget.object as ObjectInstance;
          var PartyAction:Function = function(param1:int, param2:Creature, param3:*):void
          {
-            if(param2 != null)
-            {
-               new PartyActionImpl(param1,param2).perform();
-            }
+            new PartyActionImpl(param1,param2).perform();
          };
          if(LookObj != null)
          {

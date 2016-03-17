@@ -1,7 +1,9 @@
 package tibia.worldmap.widgetClasses
 {
    import mx.core.UIComponent;
+   import flash.display.BitmapData;
    import shared.utility.Colour;
+   import flash.display.Bitmap;
    import flash.geom.Rectangle;
    import flash.geom.Matrix;
    import tibia.creatures.Player;
@@ -10,7 +12,6 @@ package tibia.worldmap.widgetClasses
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.AppearanceInstance;
    import tibia.appearances.AppearanceStorage;
-   import flash.display.BitmapData;
    import tibia.creatures.Creature;
    import tibia.creatures.CreatureStorage;
    import tibia.appearances.TextualEffectInstance;
@@ -24,13 +25,13 @@ package tibia.worldmap.widgetClasses
    import tibia.worldmap.WorldMapStorage;
    import flash.events.Event;
    import shared.stage3D.Tibia3D;
+   import tibia.worldmap.OnscreenMessageBox;
+   import shared.utility.TextFieldCache;
+   import flash.display3D.Context3DRenderMode;
+   import shared.stage3D.Camera2D;
    import flash.utils.getTimer;
    import flash.utils.ByteArray;
    import flash.display.BlendMode;
-   import shared.utility.TextFieldCache;
-   import tibia.worldmap.OnscreenMessageBox;
-   import flash.display3D.Context3DRenderMode;
-   import shared.stage3D.Camera2D;
    import shared.utility.SlidingWindowPerformanceCounter;
    
    public class RendererImpl extends UIComponent
@@ -38,7 +39,11 @@ package tibia.worldmap.widgetClasses
       
       protected static const PATH_MATRIX_CENTER:int = PATH_MAX_DISTANCE;
       
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const STATE_PZ_BLOCK:int = 13;
+      
+      private static const TILE_CURSOR:BitmapData = Bitmap(new TILE_CURSOR_CLASS()).bitmapData;
       
       protected static const HUD_ARC_ORIENTATION_LEFT:int = 0;
       
@@ -51,6 +56,8 @@ package tibia.worldmap.widgetClasses
       protected static const SKILL_FIGHTCLUB:int = 9;
       
       public static const COLOUR_ABOVE_GROUND:Colour = new Colour(200,200,255);
+      
+      private static const OBJECT_CURSOR_COLOR:uint = 16769335;
       
       protected static const PK_PARTYMODE:int = 2;
       
@@ -156,11 +163,17 @@ package tibia.worldmap.widgetClasses
       
       protected static const MAP_MIN_Z:int = 0;
       
-      protected static const STATE_DROWNING:int = 8;
+      private static const HIGHLIGHT_MAX_OPACITY:Number = 0.8;
+      
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
       protected static const HUD_ARC_TOTAL_WIDTH:Number = 10;
       
       protected static const HUD_ARC_LOWER_LIMIT:Number = 45;
+      
+      protected static const STATE_DROWNING:int = 8;
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       protected static const MAP_WIDTH:int = 15;
       
@@ -189,6 +202,8 @@ package tibia.worldmap.widgetClasses
       protected static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
       
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
+      
+      private static const TILE_CURSOR_CLASS:Class = RendererImpl_TILE_CURSOR_CLASS;
       
       protected static const PATH_NORTH_WEST:int = 4;
       
@@ -252,25 +267,25 @@ package tibia.worldmap.widgetClasses
       
       protected static const MAP_HEIGHT:int = 11;
       
-      protected static const SKILL_OFFLINETRAINING:int = 17;
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
-      protected static const STATE_MANA_SHIELD:int = 4;
+      protected static const SKILL_OFFLINETRAINING:int = 17;
       
       protected static const SKILL_MANA:int = 4;
       
       protected static const HUD_ARC_ALPHA:Number = 0.75;
       
-      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
+      protected static const STATE_MANA_SHIELD:int = 4;
       
       public static const STATUS_STYLE_OFF:int = 0;
       
-      protected static const STATE_CURSED:int = 11;
-      
       protected static const STATE_FREEZING:int = 9;
       
-      protected static const HUD_ARC_RADIUS:Number = 75;
+      protected static const STATE_CURSED:int = 11;
       
       protected static const PATH_SOUTH_EAST:int = 8;
+      
+      protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
       
       protected static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
       
@@ -280,7 +295,11 @@ package tibia.worldmap.widgetClasses
       
       protected static const TYPE_MONSTER:int = 1;
       
+      protected static const HUD_ARC_RADIUS:Number = 75;
+      
       protected static const HUD_ARC_UPPER_LIMIT:Number = -45;
+      
+      private static const HIGHLIGHT_MIN_OPACITY:Number = 0.5;
       
       protected static const STATE_POISONED:int = 0;
       
@@ -322,6 +341,8 @@ package tibia.worldmap.widgetClasses
        
       protected var m_ClipRect:Rectangle = null;
       
+      protected var m_Transform:Matrix = null;
+      
       protected var m_LightTranslate:Matrix = null;
       
       protected var m_HangPatternX:int = 0;
@@ -334,7 +355,7 @@ package tibia.worldmap.widgetClasses
       
       private var m_StopwatchShowFrame:IPerformanceCounter;
       
-      private var m_OptionsLightEnabled:Boolean = false;
+      private var m_HighlightTile:Vector3D = null;
       
       protected var m_LightClipRect:Rectangle = null;
       
@@ -342,39 +363,51 @@ package tibia.worldmap.widgetClasses
       
       protected var m_MaxZPlane:int = 0;
       
+      private var m_OptionsLightEnabled:Boolean = false;
+      
+      private var m_ObjectCursor:tibia.worldmap.widgetClasses.ObjectCursor = null;
+      
+      private var m_HighlightObject = null;
+      
       protected var m_HUDArcScale:Number = NaN;
       
       protected var m_CreatureStorage:CreatureStorage = null;
+      
+      private var m_UncommittedOptions:Boolean = false;
       
       protected var m_HUDArcPoints:Vector.<Number> = null;
       
       protected var m_AtmosphereLayer:BitmapData = null;
       
+      private var m_UncommittedWorldMapStorage:Boolean = false;
+      
+      private var m_OptionsHighlight:Number = NaN;
+      
       private var m_StopwatchEnterFrame:IPerformanceCounter;
       
       private const m_TempColor:Colour = new Colour(0,0,0);
-      
-      protected var m_MinZPlane:Vector.<int> = null;
       
       private const m_TempCreatureColor:Colour = new Colour(0,0,0);
       
       protected var m_HelperCoordinate:Vector3D = null;
       
+      protected var m_MinZPlane:Vector.<int> = null;
+      
+      private var m_OptionsScaleMap:Boolean = true;
+      
       protected var m_DrawnTextualEffectsCount:int = 0;
       
       protected var m_CreatureField:Vector.<Vector.<tibia.worldmap.widgetClasses.RenderAtom>> = null;
       
-      private var m_OptionsLevelSeparator:Number = NaN;
+      protected var m_TiledLightmapRenderer:tibia.worldmap.widgetClasses.TiledLightmapRenderer = null;
       
       protected var m_HelperPoint:Point = null;
       
-      private var m_OptionsScaleMap:Boolean = true;
-      
-      protected var m_TiledLightmapRenderer:tibia.worldmap.widgetClasses.TiledLightmapRenderer = null;
+      private var m_OptionsLevelSeparator:Number = NaN;
       
       protected var m_CreatureCount:Vector.<int> = null;
       
-      private var m_OptionsFrameRate:Number = 60;
+      private var m_OptionsFrameRate:Number = NaN;
       
       protected var m_HUDArcStyle:int = 2;
       
@@ -384,8 +417,6 @@ package tibia.worldmap.widgetClasses
       
       protected var m_Tibia3D:Tibia3D = null;
       
-      protected var m_Options:OptionsStorage = null;
-      
       protected var m_DrawnCreaturesCount:int = 0;
       
       protected var m_PreviousHang:ObjectInstance = null;
@@ -394,15 +425,19 @@ package tibia.worldmap.widgetClasses
       
       private var m_OptionsAmbientBrightness:Number = NaN;
       
-      protected var m_WorldMapStorage:WorldMapStorage = null;
+      private var m_WorldMapStorage:WorldMapStorage = null;
       
       protected var m_CreatureNameCache:TextFieldCache = null;
       
       protected var m_DrawnTextualEffects:Vector.<tibia.worldmap.widgetClasses.RenderAtom> = null;
       
+      private var m_Options:OptionsStorage = null;
+      
       protected var m_HangPixelX:int = 0;
       
       protected var m_HangPixelY:int = 0;
+      
+      private var m_TileCursor:tibia.worldmap.widgetClasses.TileCursor = null;
       
       protected var m_HelperRect:Rectangle = null;
       
@@ -411,8 +446,6 @@ package tibia.worldmap.widgetClasses
       private const m_TempHealthColour:Colour = new Colour(0,0,0);
       
       protected var m_PlayerZPlane:int = 0;
-      
-      protected var m_Transform:Matrix = null;
       
       protected var m_Rectangle:Rectangle = null;
       
@@ -464,6 +497,10 @@ package tibia.worldmap.widgetClasses
             this.m_DrawnTextualEffects[_loc1_] = new tibia.worldmap.widgetClasses.RenderAtom();
             _loc1_++;
          }
+         this.m_ObjectCursor = tibia.worldmap.widgetClasses.ObjectCursor.createFromColor(OBJECT_CURSOR_COLOR,HIGHLIGHT_MIN_OPACITY,HIGHLIGHT_MAX_OPACITY,8,3 * FIELD_SIZE,100);
+         this.m_TileCursor = new tibia.worldmap.widgetClasses.TileCursor();
+         this.m_TileCursor.bitmapData = TILE_CURSOR;
+         this.m_TileCursor.frameDuration = 100;
          this.m_HelperCoordinate = new Vector3D();
          this.m_HelperPoint = new Point();
          this.m_HelperTrans = new Matrix();
@@ -475,11 +512,13 @@ package tibia.worldmap.widgetClasses
       private function drawField(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int, param7:int, param8:int, param9:Boolean) : void
       {
          var _loc10_:Field = null;
-         var _loc31_:* = false;
+         var _loc12_:int = 0;
+         var _loc31_:uint = 0;
          var _loc32_:int = 0;
+         var _loc33_:int = 0;
          _loc10_ = this.m_WorldMapStorage.getField(param6,param7,param8);
          var _loc11_:int = _loc10_.m_ObjectsCount;
-         var _loc12_:int = param7 * MAPSIZE_X + param6;
+         _loc12_ = param7 * MAPSIZE_X + param6;
          var _loc13_:Boolean = param8 >= this.m_MinZPlane[_loc12_] || (param6 == 0 || param8 >= this.m_MinZPlane[_loc12_ - 1]) || (param7 == 0 || param8 >= this.m_MinZPlane[_loc12_ - MAPSIZE_X]) || (param6 == 0 && param7 == 0 || param8 >= this.m_MinZPlane[_loc12_ - MAPSIZE_X - 1]);
          var _loc14_:ObjectInstance = null;
          var _loc15_:ObjectInstance = null;
@@ -512,7 +551,11 @@ package tibia.worldmap.widgetClasses
                   this.m_TempObjectColor.eightBit = _loc14_.m_Type.lightColour;
                   this.m_TiledLightmapRenderer.setLightSource(_loc20_,_loc21_,param8,_loc14_.m_Type.brightness,this.m_TempObjectColor);
                }
-               _loc14_.draw(this.m_MainLayer,param1 - _loc17_,param2 - _loc17_,param3,param4,param5);
+               _loc14_.drawTo(this.m_MainLayer,param1 - _loc17_,param2 - _loc17_,param3,param4,param5);
+               if(_loc14_ == this.m_HighlightObject)
+               {
+                  this.m_ObjectCursor.drawTo(this.m_MainLayer,param1 - _loc17_,param2 - _loc17_,Tibia.s_FrameTimestamp);
+               }
                _loc16_ = Boolean(_loc16_) || Boolean(_loc14_.m_Type.isLyingObject);
                if(Boolean(_loc14_.m_Type.isHangable) && _loc14_.hang == AppearanceStorage.FLAG_HOOKSOUTH)
                {
@@ -542,7 +585,11 @@ package tibia.worldmap.widgetClasses
             }
             if(this.m_PreviousHang != null)
             {
-               this.m_PreviousHang.draw(this.m_MainLayer,this.m_HangPixelX,this.m_HangPixelY,this.m_HangPatternX,this.m_HangPatternY,this.m_HangPatternZ);
+               this.m_PreviousHang.drawTo(this.m_MainLayer,this.m_HangPixelX,this.m_HangPixelY,this.m_HangPatternX,this.m_HangPatternY,this.m_HangPatternZ);
+               if(this.m_PreviousHang == this.m_HighlightObject)
+               {
+                  this.m_ObjectCursor.drawTo(this.m_MainLayer,this.m_HangPixelX,this.m_HangPixelY,Tibia.s_FrameTimestamp);
+               }
                this.m_PreviousHang = null;
             }
             if(_loc15_ != null)
@@ -570,22 +617,35 @@ package tibia.worldmap.widgetClasses
                   _loc22_.x = _loc22_.x - _loc17_;
                   _loc22_.y = _loc22_.y - _loc17_;
                }
-               _loc31_ = _loc26_.extendedMarkID != CreatureStorage.MARK_UNMARKED;
+               _loc31_ = _loc26_.extendedMarkID;
+               if(_loc31_ == CreatureStorage.MARK_AIM)
+               {
+                  _loc31_ = CreatureStorage.MARK_UNMARKED;
+               }
+               else if(_loc31_ == CreatureStorage.MARK_AIM_ATTACK)
+               {
+                  _loc31_ = CreatureStorage.MARK_ATTACK;
+               }
+               else if(_loc31_ == CreatureStorage.MARK_AIM_FOLLOW)
+               {
+                  _loc31_ = CreatureStorage.MARK_FOLLOW;
+               }
+               _loc32_ = _loc31_ != CreatureStorage.MARK_UNMARKED?int(CREATURE_MARK_SIZE_INNER):int(CREATURE_MARK_SIZE_NORMAL);
                this.m_HelperPoint.x = _loc22_.x - FIELD_SIZE;
                this.m_HelperPoint.y = _loc22_.y - FIELD_SIZE;
                if(_loc26_.isTrapper)
                {
-                  _loc25_ = CreatureStorage.s_GetCreatureMark(CreatureStorage.MARK_TRAPPER,!!_loc31_?int(CREATURE_MARK_SIZE_INNER):int(CREATURE_MARK_SIZE_NORMAL),this.m_HelperRect);
+                  _loc25_ = CreatureStorage.s_GetCreatureMark(CreatureStorage.MARK_TRAPPER,_loc32_,this.m_HelperRect);
                   this.m_MainLayer.copyPixels(_loc25_,this.m_HelperRect,this.m_HelperPoint,null,null,true);
                }
                else if(_loc26_.markEnd > Tibia.s_FrameTimestamp)
                {
-                  _loc25_ = CreatureStorage.s_GetCreatureMark(_loc26_.markID,!!_loc31_?int(CREATURE_MARK_SIZE_INNER):int(CREATURE_MARK_SIZE_NORMAL),this.m_HelperRect);
+                  _loc25_ = CreatureStorage.s_GetCreatureMark(_loc26_.markID,_loc32_,this.m_HelperRect);
                   this.m_MainLayer.copyPixels(_loc25_,this.m_HelperRect,this.m_HelperPoint,null,null,true);
                }
-               if(_loc31_)
+               if(_loc31_ != CreatureStorage.MARK_UNMARKED)
                {
-                  _loc25_ = CreatureStorage.s_GetCreatureMark(_loc26_.extendedMarkID,CREATURE_MARK_SIZE_NORMAL,this.m_HelperRect);
+                  _loc25_ = CreatureStorage.s_GetCreatureMark(_loc31_,CREATURE_MARK_SIZE_NORMAL,this.m_HelperRect);
                   this.m_MainLayer.copyPixels(_loc25_,this.m_HelperRect,this.m_HelperPoint,null,null,true);
                }
                _loc18_ = 0;
@@ -594,13 +654,17 @@ package tibia.worldmap.widgetClasses
                {
                   _loc18_ = _loc26_.mountOutfit.m_Type.displacementX;
                   _loc19_ = _loc26_.mountOutfit.m_Type.displacementY;
-                  _loc26_.mountOutfit.draw(this.m_MainLayer,_loc22_.x + _loc18_,_loc22_.y + _loc19_,_loc26_.direction,0,0);
+                  _loc26_.mountOutfit.drawTo(this.m_MainLayer,_loc22_.x + _loc18_,_loc22_.y + _loc19_,_loc26_.direction,0,0);
                }
                if(_loc13_)
                {
                   _loc18_ = _loc18_ + _loc26_.outfit.m_Type.displacementX;
                   _loc19_ = _loc19_ + _loc26_.outfit.m_Type.displacementY;
-                  _loc26_.outfit.draw(this.m_MainLayer,_loc22_.x + _loc18_,_loc22_.y + _loc19_,_loc26_.direction,0,_loc26_.mountOutfit != null?1:0);
+                  _loc26_.outfit.drawTo(this.m_MainLayer,_loc22_.x + _loc18_,_loc22_.y + _loc19_,_loc26_.direction,0,_loc26_.mountOutfit != null?1:0);
+               }
+               if(Boolean(_loc13_) && _loc26_ == this.m_HighlightObject)
+               {
+                  this.m_ObjectCursor.drawTo(this.m_MainLayer,_loc22_.x + _loc18_,_loc22_.y + _loc19_,Tibia.s_FrameTimestamp);
                }
                if(param8 == this.m_PlayerZPlane && (Boolean(this.m_CreatureStorage.isOpponent(_loc26_)) || _loc26_.ID == this.m_Player.ID))
                {
@@ -663,7 +727,7 @@ package tibia.worldmap.widgetClasses
                }
                else if(_loc28_ is MissileInstance)
                {
-                  _loc28_.draw(this.m_MainLayer,_loc18_ + MissileInstance(_loc28_).animationDelta.x,_loc19_ + MissileInstance(_loc28_).animationDelta.y,param3,param4,param5);
+                  _loc28_.drawTo(this.m_MainLayer,_loc18_ + MissileInstance(_loc28_).animationDelta.x,_loc19_ + MissileInstance(_loc28_).animationDelta.y,param3,param4,param5);
                   if(Boolean(param9) && Boolean(this.m_OptionsLightEnabled) && Boolean(_loc28_.m_Type.isLight))
                   {
                      this.m_TempEffectColor.eightBit = _loc28_.m_Type.lightColour;
@@ -672,12 +736,12 @@ package tibia.worldmap.widgetClasses
                }
                else
                {
-                  _loc28_.draw(this.m_MainLayer,_loc18_,_loc19_,param3,param4,param5);
+                  _loc28_.drawTo(this.m_MainLayer,_loc18_,_loc19_,param3,param4,param5);
                   if(Boolean(param9) && Boolean(this.m_OptionsLightEnabled) && Boolean(_loc28_.m_Type.isLight))
                   {
-                     _loc32_ = int((Math.min(_loc28_.phase,_loc28_.m_Type.phases + 1 - _loc28_.phase) * _loc28_.m_Type.brightness + 2) / 3);
+                     _loc33_ = int((Math.min(_loc28_.phase,_loc28_.m_Type.phases + 1 - _loc28_.phase) * _loc28_.m_Type.brightness + 2) / 3);
                      this.m_TempEffectColor.eightBit = _loc28_.m_Type.lightColour;
-                     this.m_TiledLightmapRenderer.setLightSource(_loc20_,_loc21_,param8,Math.min(_loc32_,_loc28_.m_Type.brightness),this.m_TempEffectColor);
+                     this.m_TiledLightmapRenderer.setLightSource(_loc20_,_loc21_,param8,Math.min(_loc33_,_loc28_.m_Type.brightness),this.m_TempEffectColor);
                   }
                }
             }
@@ -689,18 +753,28 @@ package tibia.worldmap.widgetClasses
             {
                if(param9)
                {
-                  _loc10_.m_Environment.draw(this.m_AtmosphereLayer,param1,param2,param3,param4,param5);
+                  _loc10_.m_Environment.drawTo(this.m_AtmosphereLayer,param1,param2,param3,param4,param5);
                }
             }
             else
             {
-               _loc10_.m_Environment.draw(this.m_MainLayer,param1,param2,param3,param4,param5);
+               _loc10_.m_Environment.drawTo(this.m_MainLayer,param1,param2,param3,param4,param5);
             }
          }
          if(Boolean(param9) && _loc11_ > 0 && (_loc14_ = _loc10_.m_ObjectsRenderer[_loc11_ - 1]) != null && Boolean(_loc14_.m_Type.isTop))
          {
-            _loc14_.draw(this.m_MainLayer,param1,param2,param3,param4,param5);
+            _loc14_.drawTo(this.m_MainLayer,param1,param2,param3,param4,param5);
+            if(_loc14_ == this.m_HighlightObject)
+            {
+               this.m_ObjectCursor.drawTo(this.m_MainLayer,param1,param2,Tibia.s_FrameTimestamp);
+            }
          }
+      }
+      
+      public function set highlightTile(param1:Vector3D) : void
+      {
+         this.m_HighlightTile = param1;
+         invalidateDisplayList();
       }
       
       function pointToMap(param1:Number, param2:Number, param3:Boolean, param4:Vector3D = null) : Vector3D
@@ -924,6 +998,25 @@ package tibia.worldmap.widgetClasses
          return this.m_CreatureStorage;
       }
       
+      public function set options(param1:OptionsStorage) : void
+      {
+         if(this.m_Options != param1)
+         {
+            if(this.m_Options != null)
+            {
+               this.m_Options.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
+            }
+            this.m_Options = param1;
+            if(this.m_Options != null)
+            {
+               this.m_Options.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
+            }
+            this.m_UncommittedOptions = true;
+            invalidateDisplayList();
+            invalidateProperties();
+         }
+      }
+      
       private function drawCreatureStatusHUD(param1:Creature, param2:int, param3:int, param4:Boolean, param5:Boolean, param6:Boolean, param7:Boolean, param8:Boolean) : void
       {
          var _loc12_:Number = NaN;
@@ -991,45 +1084,19 @@ package tibia.worldmap.widgetClasses
          }
       }
       
-      public function set options(param1:OptionsStorage) : void
-      {
-         if(this.m_Options != param1)
-         {
-            if(this.m_Options != null)
-            {
-               this.m_Options.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
-            }
-            this.m_Options = param1;
-            if(this.m_Options != null)
-            {
-               this.m_Options.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
-            }
-            this.updateOptions();
-            this.m_TiledLightmapRenderer.options = param1;
-         }
-      }
-      
       public function reset() : void
       {
          this.m_StopwatchEnterFrame.reset();
          this.m_StopwatchShowFrame.reset();
       }
       
-      private function onOptionsChange(param1:PropertyChangeEvent) : void
+      override protected function measure() : void
       {
-         if(param1 != null)
-         {
-            switch(param1.property)
-            {
-               case "rendererAmbientBrightness":
-               case "rendererMaxFrameRate":
-               case "rendererLevelSeparator":
-               case "rendererLightEnabled":
-               case "rendererScaleMap":
-               case "*":
-                  this.updateOptions();
-            }
-         }
+         super.measure();
+         measuredMinWidth = RENDERER_MIN_WIDTH;
+         measuredMinHeight = RENDERER_MIN_HEIGHT;
+         measuredWidth = RENDERER_DEFAULT_WIDTH;
+         measuredHeight = RENDERER_DEFAULT_HEIGHT;
       }
       
       public function set worldMapStorage(param1:WorldMapStorage) : void
@@ -1037,7 +1104,9 @@ package tibia.worldmap.widgetClasses
          if(this.m_WorldMapStorage != param1)
          {
             this.m_WorldMapStorage = param1;
-            this.m_TiledLightmapRenderer.worldMapStorage = param1;
+            this.m_UncommittedWorldMapStorage = true;
+            invalidateDisplayList();
+            invalidateProperties();
          }
       }
       
@@ -1195,6 +1264,22 @@ package tibia.worldmap.widgetClasses
          graphics.endFill();
       }
       
+      private function onOptionsChange(param1:PropertyChangeEvent) : void
+      {
+         switch(param1.property)
+         {
+            case "rendererAmbientBrightness":
+            case "rendererHighlight":
+            case "rendererLevelSeparator":
+            case "rendererLightEnabled":
+            case "rendererMaxFrameRate":
+            case "rendererScaleMap":
+            case "*":
+               invalidateDisplayList();
+               this.updateOptions();
+         }
+      }
+      
       private function drawCreatureStatus() : void
       {
          var _loc5_:int = 0;
@@ -1255,6 +1340,7 @@ package tibia.worldmap.widgetClasses
          if(this.m_CreatureStorage != param1)
          {
             this.m_CreatureStorage = param1;
+            invalidateDisplayList();
          }
       }
       
@@ -1309,27 +1395,46 @@ package tibia.worldmap.widgetClasses
          return null;
       }
       
+      public function get highlightTile() : Vector3D
+      {
+         return this.m_HighlightTile;
+      }
+      
       private function updateOptions() : void
       {
-         if(this.m_Options != null)
+         var _loc1_:Number = NaN;
+         if(this.options != null)
          {
-            this.m_OptionsAmbientBrightness = this.m_Options.rendererAmbientBrightness;
-            this.m_OptionsFrameRate = this.m_Options.rendererMaxFrameRate;
-            this.m_OptionsLevelSeparator = this.m_Options.rendererLevelSeparator;
-            this.m_OptionsLightEnabled = this.m_Options.rendererLightEnabled;
-            this.m_OptionsScaleMap = this.m_Options.rendererScaleMap;
+            this.m_OptionsAmbientBrightness = this.options.rendererAmbientBrightness;
+            this.m_OptionsFrameRate = this.options.rendererMaxFrameRate;
+            this.m_OptionsHighlight = this.options.rendererHighlight;
+            this.m_OptionsLevelSeparator = this.options.rendererLevelSeparator;
+            this.m_OptionsLightEnabled = this.options.rendererLightEnabled;
+            this.m_OptionsScaleMap = this.options.rendererScaleMap;
          }
          else
          {
             this.m_OptionsAmbientBrightness = NaN;
-            this.m_OptionsFrameRate = 60;
+            this.m_OptionsFrameRate = NaN;
+            this.m_OptionsHighlight = NaN;
             this.m_OptionsLevelSeparator = NaN;
             this.m_OptionsLightEnabled = false;
             this.m_OptionsScaleMap = true;
          }
-         if(stage != null)
+         if(stage != null && !isNaN(this.m_OptionsFrameRate))
          {
             stage.frameRate = this.m_OptionsFrameRate;
+         }
+         if(!isNaN(this.m_OptionsHighlight))
+         {
+            _loc1_ = this.m_OptionsHighlight * HIGHLIGHT_MAX_OPACITY + (1 - this.m_OptionsHighlight) * HIGHLIGHT_MIN_OPACITY;
+            this.m_ObjectCursor.opacity = _loc1_;
+            this.m_TileCursor.opacity = _loc1_;
+         }
+         else
+         {
+            this.m_ObjectCursor.opacity = HIGHLIGHT_MIN_OPACITY;
+            this.m_TileCursor.opacity = HIGHLIGHT_MIN_OPACITY;
          }
       }
       
@@ -1351,311 +1456,7 @@ package tibia.worldmap.widgetClasses
       
       private function onEnterFrame(param1:Event) : void
       {
-         var _loc3_:Number = NaN;
-         var _loc13_:uint = 0;
-         var _loc14_:Number = NaN;
-         var _loc15_:* = false;
-         var _loc16_:Number = NaN;
-         var _loc17_:int = 0;
-         var _loc18_:int = 0;
-         var _loc19_:Field = null;
-         var _loc20_:Creature = null;
-         var _loc21_:uint = 0;
-         var _loc22_:uint = 0;
-         var _loc23_:uint = 0;
-         var _loc24_:int = 0;
-         var _loc25_:int = 0;
-         var _loc26_:int = 0;
-         var _loc27_:int = 0;
-         var _loc28_:int = 0;
-         var _loc29_:int = 0;
-         var _loc30_:int = 0;
-         var _loc31_:Vector.<tibia.worldmap.widgetClasses.RenderAtom> = null;
-         var _loc32_:int = 0;
-         var _loc33_:tibia.worldmap.widgetClasses.RenderAtom = null;
-         this.m_StopwatchEnterFrame.stop();
-         this.m_StopwatchEnterFrame.start();
-         var _loc2_:Colour = null;
-         _loc3_ = getTimer();
-         var _loc4_:Number = _loc3_ - Tibia.s_FrameTimestamp;
-         if(Math.floor(this.m_StopwatchEnterFrame.average) > Math.max(Math.ceil(1000 / this.m_OptionsFrameRate),_loc4_) || this.m_CreatureStorage == null || this.m_Options == null || this.m_Player == null || this.m_WorldMapStorage == null || !this.m_WorldMapStorage.valid)
-         {
-            return;
-         }
-         this.m_StopwatchShowFrame.stop();
-         this.m_StopwatchShowFrame.start();
-         this.m_MainLayer.lock();
-         this.m_AtmosphereLayer.lock();
-         this.m_MainLayer.fillRect(this.m_Rectangle,4278190080);
-         this.m_AtmosphereLayer.fillRect(this.m_Rectangle,0);
-         this.m_DrawnCreaturesCount = 0;
-         this.m_DrawnTextualEffectsCount = 0;
-         Tibia.s_FrameTimestamp = _loc3_;
-         this.m_WorldMapStorage.animate();
-         this.m_CreatureStorage.animate();
-         this.m_MaxZPlane = MAPSIZE_Z - 1;
-         this.m_WorldMapStorage.toMap(this.m_Player.position,this.m_HelperCoordinate);
-         this.m_PlayerZPlane = this.m_HelperCoordinate.z;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc8_:int = 0;
-         var _loc9_:int = 0;
-         while(this.m_MaxZPlane > this.m_PlayerZPlane && this.m_WorldMapStorage.getObjectPerLayer(this.m_MaxZPlane) <= 0)
-         {
-            this.m_MaxZPlane--;
-         }
-         var _loc10_:ObjectInstance = null;
-         var _loc11_:AppearanceType = null;
-         _loc7_ = PLAYER_OFFSET_X - 1;
-         while(_loc7_ <= PLAYER_OFFSET_X + 1)
-         {
-            _loc8_ = PLAYER_OFFSET_Y - 1;
-            while(_loc8_ <= PLAYER_OFFSET_Y + 1)
-            {
-               if(!(_loc7_ != PLAYER_OFFSET_X && _loc8_ != PLAYER_OFFSET_Y || !this.m_WorldMapStorage.isLookPossible(_loc7_,_loc8_,this.m_PlayerZPlane)))
-               {
-                  _loc9_ = this.m_PlayerZPlane + 1;
-                  while(_loc9_ - 1 < this.m_MaxZPlane && _loc7_ + this.m_PlayerZPlane - _loc9_ >= 0 && _loc8_ + this.m_PlayerZPlane - _loc9_ >= 0)
-                  {
-                     if((_loc10_ = this.m_WorldMapStorage.getObject(_loc7_ + this.m_PlayerZPlane - _loc9_,_loc8_ + this.m_PlayerZPlane - _loc9_,_loc9_,0)) != null && (_loc11_ = _loc10_.type) != null && Boolean(_loc11_.isBank) && !_loc11_.isDonthide)
-                     {
-                        this.m_MaxZPlane = _loc9_ - 1;
-                     }
-                     else if((_loc10_ = this.m_WorldMapStorage.getObject(_loc7_,_loc8_,_loc9_,0)) != null && (_loc11_ = _loc10_.type) != null && (Boolean(_loc11_.isBank) || Boolean(_loc11_.isBottom)) && !_loc11_.isDonthide)
-                     {
-                        this.m_MaxZPlane = _loc9_ - 1;
-                     }
-                     _loc9_++;
-                  }
-               }
-               _loc8_++;
-            }
-            _loc7_++;
-         }
-         if(!this.m_WorldMapStorage.m_CacheFullbank)
-         {
-            _loc8_ = 0;
-            while(_loc8_ < MAPSIZE_Y)
-            {
-               _loc7_ = 0;
-               while(_loc7_ < MAPSIZE_X)
-               {
-                  _loc5_ = _loc8_ * MAPSIZE_X + _loc7_;
-                  this.m_MinZPlane[_loc5_] = 0;
-                  _loc9_ = this.m_MaxZPlane;
-                  while(_loc9_ >= 0)
-                  {
-                     if((_loc10_ = this.m_WorldMapStorage.getObject(_loc7_,_loc8_,_loc9_,0)) != null && (_loc11_ = _loc10_.type) != null && Boolean(_loc11_.isFullBank))
-                     {
-                        this.m_MinZPlane[_loc5_] = _loc9_;
-                        break;
-                     }
-                     _loc9_--;
-                  }
-                  _loc7_++;
-               }
-               _loc8_++;
-            }
-            this.m_WorldMapStorage.m_CacheFullbank = true;
-         }
-         var _loc12_:ByteArray = this.m_TiledLightmapRenderer.rawColorData;
-         _loc9_ = 0;
-         while(_loc9_ <= this.m_MaxZPlane)
-         {
-            _loc13_ = this.m_WorldMapStorage.getAmbientBrightness();
-            _loc14_ = this.m_OptionsLevelSeparator;
-            _loc15_ = this.m_Player.position.z <= 7;
-            _loc16_ = !!_loc15_?Number(_loc13_):Number(0);
-            _loc5_ = this.m_CreatureCount.length - 1;
-            while(_loc5_ >= 0)
-            {
-               this.m_CreatureCount[_loc5_] = 0;
-               _loc5_--;
-            }
-            _loc7_ = 0;
-            while(_loc7_ < MAPSIZE_X)
-            {
-               _loc8_ = 0;
-               while(_loc8_ < MAPSIZE_Y)
-               {
-                  _loc19_ = this.m_WorldMapStorage.getField(_loc7_,_loc8_,_loc9_);
-                  if(this.m_OptionsLightEnabled)
-                  {
-                     _loc5_ = this.m_TiledLightmapRenderer.toColorIndexRed(_loc7_,_loc8_);
-                     if(_loc9_ == this.m_PlayerZPlane && _loc9_ > 0)
-                     {
-                        _loc12_[_loc5_] = _loc12_[_loc5_] * this.m_OptionsLevelSeparator;
-                        _loc12_[_loc5_ + 1] = _loc12_[_loc5_ + 1] * this.m_OptionsLevelSeparator;
-                        _loc12_[_loc5_ + 2] = _loc12_[_loc5_ + 2] * this.m_OptionsLevelSeparator;
-                     }
-                     if(_loc9_ == 0 || (_loc10_ = _loc19_.m_ObjectsRenderer[0]) != null && Boolean(_loc10_.m_Type.isBank))
-                     {
-                        _loc21_ = _loc12_[_loc5_];
-                        _loc22_ = _loc12_[_loc5_ + 1];
-                        _loc23_ = _loc12_[_loc5_ + 2];
-                        this.m_TiledLightmapRenderer.setFieldBrightness(_loc7_,_loc8_,_loc16_,_loc15_);
-                        if(_loc9_ > 0 && Boolean(_loc19_.m_CacheTranslucent))
-                        {
-                           _loc21_ = _loc21_ * this.m_OptionsLevelSeparator;
-                           _loc22_ = _loc22_ * this.m_OptionsLevelSeparator;
-                           _loc23_ = _loc23_ * this.m_OptionsLevelSeparator;
-                           if(_loc21_ > _loc12_[_loc5_])
-                           {
-                              _loc12_[_loc5_] = _loc21_;
-                           }
-                           if(_loc22_ > _loc12_[_loc5_ + 1])
-                           {
-                              _loc12_[_loc5_ + 1] = _loc22_;
-                           }
-                           if(_loc23_ > _loc12_[_loc5_ + 2])
-                           {
-                              _loc12_[_loc5_ + 2] = _loc23_;
-                           }
-                        }
-                     }
-                     if(_loc7_ > 0 && _loc8_ > 0 && _loc9_ < 7 && _loc9_ == this.m_PlayerZPlane + this.m_WorldMapStorage.m_Position.z - 8 && Boolean(this.m_WorldMapStorage.isTranslucent(_loc7_ - 1,_loc8_ - 1,_loc9_ + 1)))
-                     {
-                        this.m_TiledLightmapRenderer.setFieldBrightness(_loc7_,_loc8_,_loc13_,_loc15_);
-                     }
-                  }
-                  _loc20_ = null;
-                  _loc5_ = _loc19_.m_ObjectsCount - 1;
-                  while(_loc5_ >= _loc19_.m_CacheObjectsCount)
-                  {
-                     if(!((_loc10_ = _loc19_.m_ObjectsRenderer[_loc5_]) == null || _loc10_.ID != AppearanceInstance.CREATURE || (_loc20_ = this.m_CreatureStorage.getCreature(_loc10_.data)) == null))
-                     {
-                        _loc24_ = 0;
-                        _loc25_ = 0;
-                        if(_loc20_.mountOutfit != null)
-                        {
-                           _loc24_ = _loc20_.mountOutfit.type.displacementX;
-                           _loc25_ = _loc20_.mountOutfit.type.displacementY;
-                        }
-                        else if(_loc20_.outfit != null)
-                        {
-                           _loc24_ = _loc20_.outfit.type.displacementX;
-                           _loc25_ = _loc20_.outfit.type.displacementY;
-                        }
-                        _loc26_ = (_loc7_ + 1) * FIELD_SIZE + _loc20_.animationDelta.x - _loc24_;
-                        _loc27_ = (_loc8_ + 1) * FIELD_SIZE + _loc20_.animationDelta.y - _loc25_;
-                        _loc28_ = int((_loc26_ - 1) / FIELD_SIZE);
-                        _loc29_ = int((_loc27_ - 1) / FIELD_SIZE);
-                        _loc30_ = _loc29_ * MAPSIZE_X + _loc28_;
-                        if(!(_loc30_ < 0 || _loc30_ >= MAPSIZE_X * MAPSIZE_Y))
-                        {
-                           _loc31_ = this.m_CreatureField[_loc30_];
-                           _loc32_ = 0;
-                           while(_loc32_ < this.m_CreatureCount[_loc30_] && (_loc33_ = _loc31_[_loc32_]) != null && (_loc33_.y < _loc27_ || _loc33_.y == _loc27_ && _loc33_.x <= _loc26_))
-                           {
-                              _loc32_++;
-                           }
-                           if(_loc32_ < MAPSIZE_W)
-                           {
-                              if(this.m_CreatureCount[_loc30_] < MAPSIZE_W)
-                              {
-                                 this.m_CreatureCount[_loc30_]++;
-                              }
-                              _loc33_ = _loc31_[this.m_CreatureCount[_loc30_] - 1];
-                              _loc6_ = this.m_CreatureCount[_loc30_] - 1;
-                              while(_loc6_ > _loc32_)
-                              {
-                                 _loc31_[_loc6_] = _loc31_[_loc6_ - 1];
-                                 _loc6_--;
-                              }
-                              _loc31_[_loc32_] = _loc33_;
-                              _loc33_.update(_loc20_,_loc26_,_loc27_,_loc9_);
-                           }
-                        }
-                     }
-                     _loc5_--;
-                  }
-                  _loc8_++;
-               }
-               _loc7_++;
-            }
-            this.m_HelperCoordinate.setComponents(0,0,_loc9_);
-            this.m_WorldMapStorage.toAbsolute(this.m_HelperCoordinate,this.m_HelperCoordinate);
-            _loc17_ = 0;
-            _loc18_ = MAPSIZE_X + MAPSIZE_Y;
-            _loc17_ = 0;
-            while(_loc17_ < _loc18_)
-            {
-               _loc8_ = Math.max(_loc17_ - MAPSIZE_X + 1,0);
-               _loc7_ = Math.min(_loc17_,MAPSIZE_X - 1);
-               while(_loc7_ >= 0 && _loc8_ < MAPSIZE_Y)
-               {
-                  this.drawField((_loc7_ + 1) * FIELD_SIZE,(_loc8_ + 1) * FIELD_SIZE,this.m_HelperCoordinate.x + _loc7_,this.m_HelperCoordinate.y + _loc8_,this.m_HelperCoordinate.z,_loc7_,_loc8_,_loc9_,true);
-                  _loc7_--;
-                  _loc8_++;
-               }
-               _loc17_++;
-            }
-            _loc9_++;
-         }
-         this.m_HelperPoint.setTo(0,0);
-         this.m_MainLayer.copyPixels(this.m_AtmosphereLayer,this.m_Rectangle,this.m_HelperPoint,null,null,true);
-         if(this.m_OptionsLightEnabled)
-         {
-            if(Tibia3D.isReady)
-            {
-               this.m_TiledLightmapRenderer.createLightmap();
-               this.m_MainLayer.draw(this.m_TiledLightmapRenderer.lightmapBitmap,this.m_LightTranslate,null,BlendMode.MULTIPLY,this.m_LightClipRect,true);
-            }
-         }
-         this.m_AtmosphereLayer.unlock();
-         this.m_MainLayer.unlock();
-         if(this.m_OptionsScaleMap)
-         {
-            this.m_ClipRect.width = MAP_WIDTH * FIELD_SIZE;
-            this.m_ClipRect.height = MAP_HEIGHT * FIELD_SIZE;
-            this.m_ClipRect.x = FIELD_SIZE + this.m_Player.animationDelta.x;
-            this.m_ClipRect.y = FIELD_SIZE + this.m_Player.animationDelta.y;
-            this.m_Transform.a = unscaledWidth / this.m_ClipRect.width;
-            this.m_Transform.d = unscaledHeight / this.m_ClipRect.height;
-            this.m_Transform.tx = -this.m_ClipRect.x * this.m_Transform.a;
-            this.m_Transform.ty = -this.m_ClipRect.y * this.m_Transform.d;
-         }
-         else
-         {
-            this.m_ClipRect.width = Math.min(MAP_WIDTH * FIELD_SIZE,unscaledWidth);
-            this.m_ClipRect.height = Math.min(MAP_HEIGHT * FIELD_SIZE,unscaledHeight);
-            this.m_ClipRect.x = (MAP_WIDTH * FIELD_SIZE - this.m_ClipRect.width) / 2 + FIELD_SIZE + this.m_Player.animationDelta.x;
-            this.m_ClipRect.y = (MAP_HEIGHT * FIELD_SIZE - this.m_ClipRect.height) / 2 + FIELD_SIZE + this.m_Player.animationDelta.y;
-            this.m_Transform.a = 1;
-            this.m_Transform.d = 1;
-            this.m_Transform.tx = -this.m_ClipRect.x;
-            this.m_Transform.ty = -this.m_ClipRect.y;
-         }
-         graphics.clear();
-         graphics.beginBitmapFill(this.m_MainLayer,this.m_Transform,false,true);
-         graphics.drawRect(0,0,unscaledWidth,unscaledHeight);
-         graphics.endFill();
-         if(Tibia3D.isReady)
-         {
-            Tibia3D.context3D.present();
-         }
-         this.drawCreatureStatus();
-         this.drawTextualEffects();
-         this.drawOnscreenMessages();
-      }
-      
-      public function set player(param1:Player) : void
-      {
-         if(this.m_Player != param1)
-         {
-            this.m_Player = param1;
-         }
-      }
-      
-      function pointToAbsolute(param1:Number, param2:Number, param3:Boolean, param4:Vector3D = null) : Vector3D
-      {
-         var _loc5_:Vector3D = this.pointToMap(param1,param2,param3,param4);
-         if(_loc5_ != null)
-         {
-            return this.m_WorldMapStorage.toAbsolute(_loc5_,_loc5_);
-         }
-         return null;
+         invalidateDisplayList();
       }
       
       private function layoutOnscreenMessages() : void
@@ -1811,6 +1612,41 @@ package tibia.worldmap.widgetClasses
          }
       }
       
+      public function set player(param1:Player) : void
+      {
+         if(this.m_Player != param1)
+         {
+            this.m_Player = param1;
+            invalidateDisplayList();
+         }
+      }
+      
+      function pointToAbsolute(param1:Number, param2:Number, param3:Boolean, param4:Vector3D = null) : Vector3D
+      {
+         var _loc5_:Vector3D = this.pointToMap(param1,param2,param3,param4);
+         if(_loc5_ != null)
+         {
+            return this.m_WorldMapStorage.toAbsolute(_loc5_,_loc5_);
+         }
+         return null;
+      }
+      
+      override protected function commitProperties() : void
+      {
+         super.commitProperties();
+         if(this.m_UncommittedOptions)
+         {
+            this.updateOptions();
+            this.m_TiledLightmapRenderer.options = this.options;
+            this.m_UncommittedOptions = false;
+         }
+         if(this.m_UncommittedWorldMapStorage)
+         {
+            this.m_TiledLightmapRenderer.worldMapStorage = this.worldMapStorage;
+            this.m_UncommittedWorldMapStorage = false;
+         }
+      }
+      
       protected function initialize3DObjects() : void
       {
          var _loc1_:Rectangle = new Rectangle(0,0,100,100);
@@ -1953,6 +1789,342 @@ package tibia.worldmap.widgetClasses
             return Math.round(1000 / _loc1_);
          }
          return 0;
+      }
+      
+      override protected function updateDisplayList(param1:Number, param2:Number) : void
+      {
+         var _loc4_:Number = NaN;
+         var _loc14_:uint = 0;
+         var _loc15_:Number = NaN;
+         var _loc16_:* = false;
+         var _loc17_:Number = NaN;
+         var _loc18_:Object = null;
+         var _loc19_:int = 0;
+         var _loc20_:int = 0;
+         var _loc21_:Field = null;
+         var _loc22_:Creature = null;
+         var _loc23_:uint = 0;
+         var _loc24_:uint = 0;
+         var _loc25_:uint = 0;
+         var _loc26_:int = 0;
+         var _loc27_:int = 0;
+         var _loc28_:int = 0;
+         var _loc29_:int = 0;
+         var _loc30_:int = 0;
+         var _loc31_:int = 0;
+         var _loc32_:int = 0;
+         var _loc33_:Vector.<tibia.worldmap.widgetClasses.RenderAtom> = null;
+         var _loc34_:int = 0;
+         var _loc35_:tibia.worldmap.widgetClasses.RenderAtom = null;
+         var _loc36_:* = false;
+         var _loc37_:ObjectInstance = null;
+         this.m_StopwatchEnterFrame.stop();
+         this.m_StopwatchEnterFrame.start();
+         var _loc3_:Colour = null;
+         _loc4_ = getTimer();
+         var _loc5_:Number = _loc4_ - Tibia.s_FrameTimestamp;
+         if(Math.floor(this.m_StopwatchEnterFrame.average) > Math.max(Math.ceil(1000 / this.m_OptionsFrameRate),_loc5_) || this.m_CreatureStorage == null || this.m_Options == null || this.m_Player == null || this.m_WorldMapStorage == null || !this.m_WorldMapStorage.valid)
+         {
+            return;
+         }
+         this.m_StopwatchShowFrame.stop();
+         this.m_StopwatchShowFrame.start();
+         this.m_MainLayer.lock();
+         this.m_AtmosphereLayer.lock();
+         this.m_MainLayer.fillRect(this.m_Rectangle,4278190080);
+         this.m_AtmosphereLayer.fillRect(this.m_Rectangle,0);
+         this.m_DrawnCreaturesCount = 0;
+         this.m_DrawnTextualEffectsCount = 0;
+         Tibia.s_FrameTimestamp = _loc4_;
+         this.m_WorldMapStorage.animate();
+         this.m_CreatureStorage.animate();
+         this.m_MaxZPlane = MAPSIZE_Z - 1;
+         this.m_WorldMapStorage.toMap(this.m_Player.position,this.m_HelperCoordinate);
+         this.m_PlayerZPlane = this.m_HelperCoordinate.z;
+         var _loc6_:int = 0;
+         var _loc7_:int = 0;
+         var _loc8_:int = 0;
+         var _loc9_:int = 0;
+         var _loc10_:int = 0;
+         while(this.m_MaxZPlane > this.m_PlayerZPlane && this.m_WorldMapStorage.getObjectPerLayer(this.m_MaxZPlane) <= 0)
+         {
+            this.m_MaxZPlane--;
+         }
+         var _loc11_:ObjectInstance = null;
+         var _loc12_:AppearanceType = null;
+         _loc8_ = PLAYER_OFFSET_X - 1;
+         while(_loc8_ <= PLAYER_OFFSET_X + 1)
+         {
+            _loc9_ = PLAYER_OFFSET_Y - 1;
+            while(_loc9_ <= PLAYER_OFFSET_Y + 1)
+            {
+               if(!(_loc8_ != PLAYER_OFFSET_X && _loc9_ != PLAYER_OFFSET_Y || !this.m_WorldMapStorage.isLookPossible(_loc8_,_loc9_,this.m_PlayerZPlane)))
+               {
+                  _loc10_ = this.m_PlayerZPlane + 1;
+                  while(_loc10_ - 1 < this.m_MaxZPlane && _loc8_ + this.m_PlayerZPlane - _loc10_ >= 0 && _loc9_ + this.m_PlayerZPlane - _loc10_ >= 0)
+                  {
+                     if((_loc11_ = this.m_WorldMapStorage.getObject(_loc8_ + this.m_PlayerZPlane - _loc10_,_loc9_ + this.m_PlayerZPlane - _loc10_,_loc10_,0)) != null && (_loc12_ = _loc11_.type) != null && Boolean(_loc12_.isBank) && !_loc12_.isDonthide)
+                     {
+                        this.m_MaxZPlane = _loc10_ - 1;
+                     }
+                     else if((_loc11_ = this.m_WorldMapStorage.getObject(_loc8_,_loc9_,_loc10_,0)) != null && (_loc12_ = _loc11_.type) != null && (Boolean(_loc12_.isBank) || Boolean(_loc12_.isBottom)) && !_loc12_.isDonthide)
+                     {
+                        this.m_MaxZPlane = _loc10_ - 1;
+                     }
+                     _loc10_++;
+                  }
+               }
+               _loc9_++;
+            }
+            _loc8_++;
+         }
+         if(!this.m_WorldMapStorage.m_CacheFullbank)
+         {
+            _loc9_ = 0;
+            while(_loc9_ < MAPSIZE_Y)
+            {
+               _loc8_ = 0;
+               while(_loc8_ < MAPSIZE_X)
+               {
+                  _loc6_ = _loc9_ * MAPSIZE_X + _loc8_;
+                  this.m_MinZPlane[_loc6_] = 0;
+                  _loc10_ = this.m_MaxZPlane;
+                  while(_loc10_ >= 0)
+                  {
+                     if((_loc11_ = this.m_WorldMapStorage.getObject(_loc8_,_loc9_,_loc10_,0)) != null && (_loc12_ = _loc11_.type) != null && Boolean(_loc12_.isFullBank))
+                     {
+                        this.m_MinZPlane[_loc6_] = _loc10_;
+                        break;
+                     }
+                     _loc10_--;
+                  }
+                  _loc8_++;
+               }
+               _loc9_++;
+            }
+            this.m_WorldMapStorage.m_CacheFullbank = true;
+         }
+         if(this.m_OptionsScaleMap)
+         {
+            this.m_ClipRect.width = MAP_WIDTH * FIELD_SIZE;
+            this.m_ClipRect.height = MAP_HEIGHT * FIELD_SIZE;
+            this.m_ClipRect.x = FIELD_SIZE + this.m_Player.animationDelta.x;
+            this.m_ClipRect.y = FIELD_SIZE + this.m_Player.animationDelta.y;
+            this.m_Transform.a = unscaledWidth / this.m_ClipRect.width;
+            this.m_Transform.d = unscaledHeight / this.m_ClipRect.height;
+            this.m_Transform.tx = -this.m_ClipRect.x * this.m_Transform.a;
+            this.m_Transform.ty = -this.m_ClipRect.y * this.m_Transform.d;
+         }
+         else
+         {
+            this.m_ClipRect.width = Math.min(MAP_WIDTH * FIELD_SIZE,unscaledWidth);
+            this.m_ClipRect.height = Math.min(MAP_HEIGHT * FIELD_SIZE,unscaledHeight);
+            this.m_ClipRect.x = (MAP_WIDTH * FIELD_SIZE - this.m_ClipRect.width) / 2 + FIELD_SIZE + this.m_Player.animationDelta.x;
+            this.m_ClipRect.y = (MAP_HEIGHT * FIELD_SIZE - this.m_ClipRect.height) / 2 + FIELD_SIZE + this.m_Player.animationDelta.y;
+            this.m_Transform.a = 1;
+            this.m_Transform.d = 1;
+            this.m_Transform.tx = -this.m_ClipRect.x;
+            this.m_Transform.ty = -this.m_ClipRect.y;
+         }
+         var _loc13_:ByteArray = this.m_TiledLightmapRenderer.rawColorData;
+         _loc10_ = 0;
+         while(_loc10_ <= this.m_MaxZPlane)
+         {
+            _loc14_ = this.m_WorldMapStorage.getAmbientBrightness();
+            _loc15_ = this.m_OptionsLevelSeparator;
+            _loc16_ = this.m_Player.position.z <= 7;
+            _loc17_ = !!_loc16_?Number(_loc14_):Number(0);
+            _loc6_ = this.m_CreatureCount.length - 1;
+            while(_loc6_ >= 0)
+            {
+               this.m_CreatureCount[_loc6_] = 0;
+               _loc6_--;
+            }
+            _loc8_ = 0;
+            while(_loc8_ < MAPSIZE_X)
+            {
+               _loc9_ = 0;
+               while(_loc9_ < MAPSIZE_Y)
+               {
+                  _loc21_ = this.m_WorldMapStorage.getField(_loc8_,_loc9_,_loc10_);
+                  if(this.m_OptionsLightEnabled)
+                  {
+                     _loc6_ = this.m_TiledLightmapRenderer.toColorIndexRed(_loc8_,_loc9_);
+                     if(_loc10_ == this.m_PlayerZPlane && _loc10_ > 0)
+                     {
+                        _loc13_[_loc6_] = _loc13_[_loc6_] * this.m_OptionsLevelSeparator;
+                        _loc13_[_loc6_ + 1] = _loc13_[_loc6_ + 1] * this.m_OptionsLevelSeparator;
+                        _loc13_[_loc6_ + 2] = _loc13_[_loc6_ + 2] * this.m_OptionsLevelSeparator;
+                     }
+                     if(_loc10_ == 0 || (_loc11_ = _loc21_.m_ObjectsRenderer[0]) != null && Boolean(_loc11_.m_Type.isBank))
+                     {
+                        _loc23_ = _loc13_[_loc6_];
+                        _loc24_ = _loc13_[_loc6_ + 1];
+                        _loc25_ = _loc13_[_loc6_ + 2];
+                        this.m_TiledLightmapRenderer.setFieldBrightness(_loc8_,_loc9_,_loc17_,_loc16_);
+                        if(_loc10_ > 0 && Boolean(_loc21_.m_CacheTranslucent))
+                        {
+                           _loc23_ = _loc23_ * this.m_OptionsLevelSeparator;
+                           _loc24_ = _loc24_ * this.m_OptionsLevelSeparator;
+                           _loc25_ = _loc25_ * this.m_OptionsLevelSeparator;
+                           if(_loc23_ > _loc13_[_loc6_])
+                           {
+                              _loc13_[_loc6_] = _loc23_;
+                           }
+                           if(_loc24_ > _loc13_[_loc6_ + 1])
+                           {
+                              _loc13_[_loc6_ + 1] = _loc24_;
+                           }
+                           if(_loc25_ > _loc13_[_loc6_ + 2])
+                           {
+                              _loc13_[_loc6_ + 2] = _loc25_;
+                           }
+                        }
+                     }
+                     if(_loc8_ > 0 && _loc9_ > 0 && _loc10_ < 7 && _loc10_ == this.m_PlayerZPlane + this.m_WorldMapStorage.m_Position.z - 8 && Boolean(this.m_WorldMapStorage.isTranslucent(_loc8_ - 1,_loc9_ - 1,_loc10_ + 1)))
+                     {
+                        this.m_TiledLightmapRenderer.setFieldBrightness(_loc8_,_loc9_,_loc14_,_loc16_);
+                     }
+                  }
+                  _loc22_ = null;
+                  _loc6_ = _loc21_.m_ObjectsCount - 1;
+                  while(_loc6_ >= _loc21_.m_CacheObjectsCount)
+                  {
+                     if(!((_loc11_ = _loc21_.m_ObjectsRenderer[_loc6_]) == null || _loc11_.ID != AppearanceInstance.CREATURE || (_loc22_ = this.m_CreatureStorage.getCreature(_loc11_.data)) == null))
+                     {
+                        _loc26_ = 0;
+                        _loc27_ = 0;
+                        if(_loc22_.mountOutfit != null)
+                        {
+                           _loc26_ = _loc22_.mountOutfit.type.displacementX;
+                           _loc27_ = _loc22_.mountOutfit.type.displacementY;
+                        }
+                        else if(_loc22_.outfit != null)
+                        {
+                           _loc26_ = _loc22_.outfit.type.displacementX;
+                           _loc27_ = _loc22_.outfit.type.displacementY;
+                        }
+                        _loc28_ = (_loc8_ + 1) * FIELD_SIZE + _loc22_.animationDelta.x - _loc26_;
+                        _loc29_ = (_loc9_ + 1) * FIELD_SIZE + _loc22_.animationDelta.y - _loc27_;
+                        _loc30_ = int((_loc28_ - 1) / FIELD_SIZE);
+                        _loc31_ = int((_loc29_ - 1) / FIELD_SIZE);
+                        _loc32_ = _loc31_ * MAPSIZE_X + _loc30_;
+                        if(!(_loc32_ < 0 || _loc32_ >= MAPSIZE_X * MAPSIZE_Y))
+                        {
+                           _loc33_ = this.m_CreatureField[_loc32_];
+                           _loc34_ = 0;
+                           while(_loc34_ < this.m_CreatureCount[_loc32_] && (_loc35_ = _loc33_[_loc34_]) != null && (_loc35_.y < _loc29_ || _loc35_.y == _loc29_ && _loc35_.x <= _loc28_))
+                           {
+                              _loc34_++;
+                           }
+                           if(_loc34_ < MAPSIZE_W)
+                           {
+                              if(this.m_CreatureCount[_loc32_] < MAPSIZE_W)
+                              {
+                                 this.m_CreatureCount[_loc32_]++;
+                              }
+                              _loc35_ = _loc33_[this.m_CreatureCount[_loc32_] - 1];
+                              _loc7_ = this.m_CreatureCount[_loc32_] - 1;
+                              while(_loc7_ > _loc34_)
+                              {
+                                 _loc33_[_loc7_] = _loc33_[_loc7_ - 1];
+                                 _loc7_--;
+                              }
+                              _loc33_[_loc34_] = _loc35_;
+                              _loc35_.update(_loc22_,_loc28_,_loc29_,_loc10_);
+                           }
+                        }
+                     }
+                     _loc6_--;
+                  }
+                  _loc9_++;
+               }
+               _loc8_++;
+            }
+            _loc18_ = {};
+            if(this.m_OptionsHighlight > 0 && this.m_HighlightTile != null && this.m_HighlightTile.z == _loc10_ && this.m_WorldMapStorage.getTopLookObject(this.m_HighlightTile.x,this.m_HighlightTile.y,this.m_HighlightTile.z,_loc18_) > -1)
+            {
+               _loc36_ = this.m_HighlightObject !== _loc18_.object;
+               _loc37_ = ObjectInstance(_loc18_.object);
+               if(Boolean(_loc37_.type.isBank) || Boolean(_loc37_.type.isClip))
+               {
+                  this.m_HighlightObject = null;
+               }
+               else if(Boolean(_loc36_) || Boolean(_loc37_.type.isAnimation) || _loc37_.ID == AppearanceInstance.CREATURE)
+               {
+                  if(_loc37_.ID == AppearanceInstance.CREATURE)
+                  {
+                     _loc22_ = this.m_CreatureStorage.getCreature(_loc37_.data);
+                     if(_loc22_ != null)
+                     {
+                        this.m_ObjectCursor.copyMaskFromCreature(_loc22_);
+                        this.m_HighlightObject = _loc22_;
+                     }
+                     else
+                     {
+                        this.m_HighlightObject = null;
+                     }
+                  }
+                  else
+                  {
+                     this.m_WorldMapStorage.toAbsolute(this.m_HighlightTile,this.m_HelperCoordinate);
+                     this.m_ObjectCursor.copyMaskFromAppearance(_loc37_,this.m_HelperCoordinate.x,this.m_HelperCoordinate.y,this.m_HelperCoordinate.z);
+                     this.m_HighlightObject = _loc37_;
+                  }
+               }
+            }
+            else if((_loc22_ = this.m_CreatureStorage.getAim()) != null)
+            {
+               this.m_ObjectCursor.copyMaskFromCreature(_loc22_);
+               this.m_HighlightObject = _loc22_;
+            }
+            else
+            {
+               this.m_HighlightObject = null;
+            }
+            this.m_HelperCoordinate.setComponents(0,0,_loc10_);
+            this.m_WorldMapStorage.toAbsolute(this.m_HelperCoordinate,this.m_HelperCoordinate);
+            _loc19_ = 0;
+            _loc20_ = MAPSIZE_X + MAPSIZE_Y;
+            _loc19_ = 0;
+            while(_loc19_ < _loc20_)
+            {
+               _loc9_ = Math.max(_loc19_ - MAPSIZE_X + 1,0);
+               _loc8_ = Math.min(_loc19_,MAPSIZE_X - 1);
+               while(_loc8_ >= 0 && _loc9_ < MAPSIZE_Y)
+               {
+                  this.drawField((_loc8_ + 1) * FIELD_SIZE,(_loc9_ + 1) * FIELD_SIZE,this.m_HelperCoordinate.x + _loc8_,this.m_HelperCoordinate.y + _loc9_,this.m_HelperCoordinate.z,_loc8_,_loc9_,_loc10_,true);
+                  _loc8_--;
+                  _loc9_++;
+               }
+               _loc19_++;
+            }
+            if(this.m_OptionsHighlight > 0 && this.m_HighlightTile != null && this.m_HighlightTile.z == _loc10_)
+            {
+               this.m_TileCursor.drawTo(this.m_MainLayer,(this.m_HighlightTile.x + 1) * FIELD_SIZE,(this.m_HighlightTile.y + 1) * FIELD_SIZE,Tibia.s_FrameTimestamp);
+            }
+            _loc10_++;
+         }
+         this.m_HelperPoint.setTo(0,0);
+         this.m_MainLayer.copyPixels(this.m_AtmosphereLayer,this.m_Rectangle,this.m_HelperPoint,null,null,true);
+         if(Boolean(this.m_OptionsLightEnabled) && Boolean(Tibia3D.isReady))
+         {
+            this.m_TiledLightmapRenderer.createLightmap();
+            this.m_MainLayer.draw(this.m_TiledLightmapRenderer.lightmapBitmap,this.m_LightTranslate,null,BlendMode.MULTIPLY,this.m_LightClipRect,true);
+         }
+         this.m_AtmosphereLayer.unlock();
+         this.m_MainLayer.unlock();
+         graphics.clear();
+         graphics.beginBitmapFill(this.m_MainLayer,this.m_Transform,false,true);
+         graphics.drawRect(0,0,unscaledWidth,unscaledHeight);
+         graphics.endFill();
+         this.drawCreatureStatus();
+         this.drawTextualEffects();
+         this.drawOnscreenMessages();
+         if(Tibia3D.isReady)
+         {
+            Tibia3D.context3D.present();
+         }
       }
    }
 }

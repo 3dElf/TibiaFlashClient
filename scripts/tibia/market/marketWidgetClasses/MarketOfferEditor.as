@@ -6,6 +6,7 @@ package tibia.market.marketWidgetClasses
    import mx.containers.HBox;
    import mx.controls.Spacer;
    import mx.controls.Label;
+   import shared.controls.CustomButton;
    import flash.events.MouseEvent;
    import mx.controls.ComboBox;
    import mx.events.DropdownEvent;
@@ -19,7 +20,7 @@ package tibia.market.marketWidgetClasses
    import mx.controls.CheckBox;
    import tibia.market.Offer;
    import tibia.market.MarketWidget;
-   import shared.utility.StringHelper;
+   import shared.utility.i18n.i18nFormatNumber;
    import mx.containers.BoxDirection;
    import mx.core.EventPriority;
    
@@ -130,7 +131,7 @@ package tibia.market.marketWidgetClasses
             _Label.text = resourceManager.getString(BUNDLE,"MARKET_EDIT_LABEL");
             _Label.setStyle("fontWeight","bold");
             _Header.addChild(_Label);
-            this.m_UICreate = new Button();
+            this.m_UICreate = new CustomButton();
             this.m_UICreate.enabled = false;
             this.m_UICreate.label = resourceManager.getString(BUNDLE,"MARKET_EDIT_CREATE_LABEL");
             this.m_UICreate.addEventListener(MouseEvent.CLICK,this.onCreate);
@@ -221,7 +222,7 @@ package tibia.market.marketWidgetClasses
             _Row.percentWidth = 100;
             _Row.setStyle("horizontalGap",2);
             _Row.setStyle("verticalGap",2);
-            this.m_UIAmountDecrease = new Button();
+            this.m_UIAmountDecrease = new CustomButton();
             this.m_UIAmountDecrease.styleName = "marketWidgetAmountDecrease";
             this.m_UIAmountDecrease.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             this.m_UIAmountDecrease.addEventListener(MouseEvent.MOUSE_DOWN,this.onButtonDown);
@@ -242,7 +243,7 @@ package tibia.market.marketWidgetClasses
             this.m_UIAmountEdit.addEventListener(KeyboardEvent.KEY_DOWN,Utility.preventNonNumericInput);
             this.m_UIAmountEdit.addEventListener(TextEvent.TEXT_INPUT,Utility.preventNonNumericInput);
             _Row.addChild(this.m_UIAmountEdit);
-            this.m_UIAmountIncrease = new Button();
+            this.m_UIAmountIncrease = new CustomButton();
             this.m_UIAmountIncrease.styleName = "marketWidgetAmountIncrease";
             this.m_UIAmountIncrease.addEventListener(MouseEvent.CLICK,this.onButtonClick);
             this.m_UIAmountIncrease.addEventListener(MouseEvent.MOUSE_DOWN,this.onButtonDown);
@@ -401,7 +402,7 @@ package tibia.market.marketWidgetClasses
             this.m_UIAnonymous.enabled = _loc1_;
             if(market.accountBalance > 0)
             {
-               this.m_UIAccountBalance.text = StringHelper.formatNumber(market.accountBalance);
+               this.m_UIAccountBalance.text = i18nFormatNumber(market.accountBalance);
             }
             else
             {
@@ -436,7 +437,7 @@ package tibia.market.marketWidgetClasses
             {
                this.m_UICreate.enabled = market.mayCreateOffer(this.offerKind,selectedType,this.offerAmount,this.offerPiecePrice);
                _loc2_ = market.getOfferTotalPrice(this.offerKind,this.offerAmount,this.offerPiecePrice);
-               this.m_UITotalPrice.text = StringHelper.formatNumber(_loc2_);
+               this.m_UITotalPrice.text = i18nFormatNumber(_loc2_);
                this.m_UITotalPrice.setStyle("color",_loc2_ <= market.accountBalance?getStyle("color"):getStyle("errorColor"));
             }
             else

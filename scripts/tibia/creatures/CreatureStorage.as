@@ -21,6 +21,8 @@ package tibia.creatures
    public class CreatureStorage
    {
       
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const STATE_PZ_BLOCK:int = 13;
       
       public static const SORT_DISTANCE_ASC:int = 2;
@@ -131,6 +133,10 @@ package tibia.creatures
       
       protected static const MAP_MIN_X:int = 24576;
       
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
+      
       protected static const MAP_WIDTH:int = 15;
       
       protected static const PARTY_MEMBER_SEXP_OFF:int = 3;
@@ -191,6 +197,8 @@ package tibia.creatures
       
       protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
       
+      private static const STATE_FLAG_CLASS:Class = CreatureStorage_STATE_FLAG_CLASS;
+      
       protected static const MAP_MAX_Z:int = 15;
       
       protected static const SKILL_SOULPOINTS:int = 15;
@@ -200,8 +208,6 @@ package tibia.creatures
       public static const MARK_AIM_ATTACK:uint = MARK_NUM_COLOURS + 2;
       
       private static var s_CreatureMarks:BitmapData = null;
-      
-      private static const STATE_FLAG_CLASS:Class = CreatureStorage_STATE_FLAG_CLASS;
       
       protected static const STATE_FAST:int = 6;
       
@@ -225,6 +231,8 @@ package tibia.creatures
       
       protected static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
       
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
+      
       public static const FILTER_NONE:int = 0;
       
       protected static const STATE_CURSED:int = 11;
@@ -237,11 +245,11 @@ package tibia.creatures
       
       protected static const TYPE_MONSTER:int = 1;
       
-      public static const SORT_KNOWN_SINCE_DESC:int = 1;
-      
       protected static const STATE_POISONED:int = 0;
       
       public static const SORT_DISTANCE_DESC:int = 3;
+      
+      public static const SORT_KNOWN_SINCE_DESC:int = 1;
       
       private static const MARK_NUM_COLOURS:uint = 216;
       

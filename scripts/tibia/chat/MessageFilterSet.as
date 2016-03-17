@@ -10,7 +10,7 @@ package tibia.chat
       
       public static const DEFAULT_SET:int = 0;
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       public static const NUM_SETS:int = 1;
       

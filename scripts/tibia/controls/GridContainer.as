@@ -42,6 +42,24 @@ package tibia.controls
          return this.m_Child[CHILD_TOP];
       }
       
+      private function getExplicitOrMeasuredMinHeight(param1:IUIComponent) : Number
+      {
+         var _loc2_:Number = 0;
+         if(param1 != null)
+         {
+            _loc2_ = param1.explicitMinHeight;
+            if(isNaN(_loc2_))
+            {
+               _loc2_ = param1.measuredMinHeight;
+            }
+            if(isNaN(_loc2_))
+            {
+               _loc2_ = 0;
+            }
+         }
+         return _loc2_;
+      }
+      
       public function get left() : IUIComponent
       {
          return this.m_Child[CHILD_LEFT];
@@ -72,20 +90,38 @@ package tibia.controls
          this.setChild(CHILD_TOP,param1);
       }
       
+      [Bindable(event="propertyChange")]
+      public function set left(param1:IUIComponent) : void
+      {
+         var _loc2_:Object = this.left;
+         if(_loc2_ !== param1)
+         {
+            this._3317767left = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"left",_loc2_,param1));
+         }
+      }
+      
       public function get center() : IUIComponent
       {
          return this.m_Child[CHILD_CENTER];
       }
       
-      [Bindable(event="propertyChange")]
-      public function set bottom(param1:IUIComponent) : void
+      private function getExplicitOrMeasuredMinWidth(param1:IUIComponent) : Number
       {
-         var _loc2_:Object = this.bottom;
-         if(_loc2_ !== param1)
+         var _loc2_:Number = 0;
+         if(param1 != null)
          {
-            this._1383228885bottom = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"bottom",_loc2_,param1));
+            _loc2_ = param1.explicitMinWidth;
+            if(isNaN(_loc2_))
+            {
+               _loc2_ = param1.measuredMinWidth;
+            }
+            if(isNaN(_loc2_))
+            {
+               _loc2_ = 0;
+            }
          }
+         return _loc2_;
       }
       
       override protected function updateDisplayList(param1:Number, param2:Number) : void
@@ -191,13 +227,13 @@ package tibia.controls
       }
       
       [Bindable(event="propertyChange")]
-      public function set left(param1:IUIComponent) : void
+      public function set bottom(param1:IUIComponent) : void
       {
-         var _loc2_:Object = this.left;
+         var _loc2_:Object = this.bottom;
          if(_loc2_ !== param1)
          {
-            this._3317767left = param1;
-            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"left",_loc2_,param1));
+            this._1383228885bottom = param1;
+            this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this,"bottom",_loc2_,param1));
          }
       }
       
@@ -210,38 +246,38 @@ package tibia.controls
          var _loc4_:Number = 0;
          if(this.m_Child[CHILD_LEFT] != null && Boolean(this.m_Child[CHILD_LEFT].includeInLayout))
          {
-            _loc1_ = _loc1_ + Math.max(0,this.m_Child[CHILD_LEFT].getExplicitOrMeasuredWidth());
-            _loc2_ = _loc2_ + Math.max(0,this.m_Child[CHILD_LEFT].minWidth);
+            _loc1_ = _loc1_ + this.m_Child[CHILD_LEFT].getExplicitOrMeasuredWidth();
+            _loc2_ = _loc2_ + this.getExplicitOrMeasuredMinWidth(this.m_Child[CHILD_LEFT]);
             _loc3_ = Math.max(_loc3_,this.m_Child[CHILD_LEFT].getExplicitOrMeasuredHeight());
-            _loc4_ = Math.max(_loc4_,this.m_Child[CHILD_LEFT].minHeight);
+            _loc4_ = Math.max(_loc4_,this.getExplicitOrMeasuredMinHeight(this.m_Child[CHILD_LEFT]));
          }
          if(this.m_Child[CHILD_CENTER] != null && Boolean(this.m_Child[CHILD_CENTER].includeInLayout))
          {
-            _loc1_ = _loc1_ + Math.max(0,this.m_Child[CHILD_CENTER].getExplicitOrMeasuredWidth());
-            _loc2_ = _loc2_ + Math.max(0,this.m_Child[CHILD_CENTER].minWidth);
+            _loc1_ = _loc1_ + this.m_Child[CHILD_CENTER].getExplicitOrMeasuredWidth();
+            _loc2_ = _loc2_ + this.getExplicitOrMeasuredMinWidth(this.m_Child[CHILD_CENTER]);
             _loc3_ = Math.max(_loc3_,this.m_Child[CHILD_CENTER].getExplicitOrMeasuredHeight());
-            _loc4_ = Math.max(_loc4_,this.m_Child[CHILD_CENTER].minHeight);
+            _loc4_ = Math.max(_loc4_,this.getExplicitOrMeasuredMinHeight(this.m_Child[CHILD_CENTER]));
          }
          if(this.m_Child[CHILD_RIGHT] != null && Boolean(this.m_Child[CHILD_RIGHT].includeInLayout))
          {
-            _loc1_ = _loc1_ + Math.max(0,this.m_Child[CHILD_RIGHT].getExplicitOrMeasuredWidth());
-            _loc2_ = _loc2_ + Math.max(0,this.m_Child[CHILD_RIGHT].minWidth);
+            _loc1_ = _loc1_ + this.m_Child[CHILD_RIGHT].getExplicitOrMeasuredWidth();
+            _loc2_ = _loc2_ + this.getExplicitOrMeasuredMinWidth(this.m_Child[CHILD_RIGHT]);
             _loc3_ = Math.max(_loc3_,this.m_Child[CHILD_RIGHT].getExplicitOrMeasuredHeight());
-            _loc4_ = Math.max(_loc4_,this.m_Child[CHILD_RIGHT].minHeight);
+            _loc4_ = Math.max(_loc4_,this.getExplicitOrMeasuredMinHeight(this.m_Child[CHILD_RIGHT]));
          }
          if(this.m_Child[CHILD_BOTTOM] != null && Boolean(this.m_Child[CHILD_BOTTOM].includeInLayout))
          {
             _loc1_ = Math.max(_loc1_,this.m_Child[CHILD_BOTTOM].getExplicitOrMeasuredWidth());
-            _loc2_ = Math.max(_loc2_,this.m_Child[CHILD_BOTTOM].minWidth);
-            _loc3_ = _loc3_ + Math.max(0,this.m_Child[CHILD_BOTTOM].getExplicitOrMeasuredHeight());
-            _loc4_ = _loc4_ + Math.max(0,this.m_Child[CHILD_BOTTOM].minHeight);
+            _loc2_ = Math.max(_loc2_,this.getExplicitOrMeasuredMinWidth(this.m_Child[CHILD_BOTTOM]));
+            _loc3_ = _loc3_ + this.m_Child[CHILD_BOTTOM].getExplicitOrMeasuredHeight();
+            _loc4_ = _loc4_ + this.getExplicitOrMeasuredMinHeight(this.m_Child[CHILD_BOTTOM]);
          }
          if(this.m_Child[CHILD_TOP] != null && Boolean(this.m_Child[CHILD_TOP].includeInLayout))
          {
             _loc1_ = Math.max(_loc1_,this.m_Child[CHILD_TOP].getExplicitOrMeasuredWidth());
-            _loc2_ = Math.max(_loc2_,this.m_Child[CHILD_TOP].minWidth);
-            _loc3_ = _loc3_ + Math.max(0,this.m_Child[CHILD_TOP].getExplicitOrMeasuredHeight());
-            _loc4_ = _loc4_ + Math.max(0,this.m_Child[CHILD_TOP].minHeight);
+            _loc2_ = Math.max(_loc2_,this.getExplicitOrMeasuredMinWidth(this.m_Child[CHILD_TOP]));
+            _loc3_ = _loc3_ + this.m_Child[CHILD_TOP].getExplicitOrMeasuredHeight();
+            _loc4_ = _loc4_ + this.getExplicitOrMeasuredMinHeight(this.m_Child[CHILD_TOP]);
          }
          measuredMinWidth = _loc2_;
          measuredWidth = _loc1_;

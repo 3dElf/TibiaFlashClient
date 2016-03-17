@@ -1,34 +1,15 @@
 package shared.utility
 {
-   import mx.resources.ResourceManager;
-   import mx.resources.IResourceManager;
-   import mx.formatters.NumberFormatter;
    import flash.utils.ByteArray;
-   import mx.formatters.DateFormatter;
    
    public class StringHelper
    {
-      
-      private static const BUNDLE:String = "Global";
       
       public static const STRING_SERIALISATION_CHARSET:String = "iso-8859-1";
        
       public function StringHelper()
       {
          super();
-      }
-      
-      public static function formatNumber(param1:Number) : String
-      {
-         var _loc2_:IResourceManager = ResourceManager.getInstance();
-         if(_loc2_ == null)
-         {
-            return "";
-         }
-         var _loc3_:NumberFormatter = new NumberFormatter();
-         _loc3_.decimalSeparatorTo = _loc2_.getString(BUNDLE,"NUMBER_FORMAT_DECIMAL_SEPARATOR");
-         _loc3_.thousandsSeparatorTo = _loc2_.getString(BUNDLE,"NUMBER_FORMAT_THOUSANDS_SEPARATOR");
-         return _loc3_.format(param1);
       }
       
       public static function s_WriteToByteArray(param1:ByteArray, param2:String, param3:int = 2147483647) : void
@@ -83,25 +64,13 @@ package shared.utility
          return param1;
       }
       
-      public static function s_TrimFront(param1:String) : String
+      public static function s_HTMLSpecialChars(param1:String) : String
       {
          if(param1 != null)
          {
-            param1 = param1.replace(/^\s+/,"");
+            param1 = param1.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
          }
          return param1;
-      }
-      
-      public static function formatTime(param1:Date) : String
-      {
-         var _loc2_:IResourceManager = ResourceManager.getInstance();
-         if(_loc2_ == null)
-         {
-            return "";
-         }
-         var _loc3_:DateFormatter = new DateFormatter();
-         _loc3_.formatString = _loc2_.getString(BUNDLE,"TIME_FORMAT");
-         return _loc3_.format(param1);
       }
       
       public static function s_Trim(param1:String) : String
@@ -137,18 +106,6 @@ package shared.utility
          return null;
       }
       
-      public static function formatDate(param1:Date) : String
-      {
-         var _loc2_:IResourceManager = ResourceManager.getInstance();
-         if(_loc2_ == null)
-         {
-            return "";
-         }
-         var _loc3_:DateFormatter = new DateFormatter();
-         _loc3_.formatString = _loc2_.getString(BUNDLE,"DATE_FORMAT");
-         return _loc3_.format(param1);
-      }
-      
       public static function s_ReadPositiveInt(param1:String, param2:int = -1, param3:int = -1) : int
       {
          var _loc4_:int = 0;
@@ -177,11 +134,11 @@ package shared.utility
          return param1.match(/^\s+$/) != null;
       }
       
-      public static function s_HTMLSpecialChars(param1:String) : String
+      public static function s_TrimFront(param1:String) : String
       {
          if(param1 != null)
          {
-            param1 = param1.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
+            param1 = param1.replace(/^\s+/,"");
          }
          return param1;
       }

@@ -44,18 +44,14 @@ package shared.skins
          this.stylePrefix = param2;
       }
       
-      public function validateStyle() : void
+      public function getStyle(param1:String) : *
       {
-         if(this.m_InvalidStyle)
-         {
-            this.updateStyle();
-            this.m_InvalidStyle = false;
-         }
+         return this.m_StyleName != null?this.m_StyleName.getStyle(param1):null;
       }
       
       public function styleChanged(param1:String) : void
       {
-         this.invalidateStyle();
+         this.m_InvalidStyle = true;
       }
       
       public function get stylePrefix() : String
@@ -82,11 +78,6 @@ package shared.skins
          }
       }
       
-      public function getStyle(param1:String) : *
-      {
-         return this.m_StyleName != null?this.m_StyleName.getStyle(param1):null;
-      }
-      
       public function set stylePrefix(param1:String) : void
       {
          if(param1 == null)
@@ -96,7 +87,7 @@ package shared.skins
          if(this.m_StylePrefix != param1)
          {
             this.m_StylePrefix = param1;
-            this.invalidateStyle();
+            this.m_InvalidStyle = true;
          }
       }
       
@@ -154,15 +145,13 @@ package shared.skins
          return _loc2_;
       }
       
-      private function isValidReferenceCell(param1:int, param2:int) : Boolean
+      public function validateStyle() : void
       {
-         if(param1 == EBitmap.NONE || param1 == EBitmap.CENTER || param2 == EBitmap.NONE || param2 == EBitmap.CENTER || param1 == param2)
+         if(this.m_InvalidStyle)
          {
-            return false;
+            this.doValidateStyle();
+            this.m_InvalidStyle = false;
          }
-         var _loc3_:Boolean = param1 == EBitmap.TOP || param1 == EBitmap.LEFT || param1 == EBitmap.BOTTOM || param1 == EBitmap.RIGHT;
-         var _loc4_:Boolean = param2 == EBitmap.TOP || param2 == EBitmap.LEFT || param2 == EBitmap.BOTTOM || param2 == EBitmap.RIGHT;
-         return Boolean(_loc4_) && Boolean(_loc3_) || !_loc4_ && !_loc3_;
       }
       
       private function getReferenceTransform(param1:int, param2:int) : Matrix
@@ -300,6 +289,17 @@ package shared.skins
          return this.m_StyleName;
       }
       
+      private function isValidReferenceCell(param1:int, param2:int) : Boolean
+      {
+         if(param1 == EBitmap.NONE || param1 == EBitmap.CENTER || param2 == EBitmap.NONE || param2 == EBitmap.CENTER || param1 == param2)
+         {
+            return false;
+         }
+         var _loc3_:Boolean = param1 == EBitmap.TOP || param1 == EBitmap.LEFT || param1 == EBitmap.BOTTOM || param1 == EBitmap.RIGHT;
+         var _loc4_:Boolean = param2 == EBitmap.TOP || param2 == EBitmap.LEFT || param2 == EBitmap.BOTTOM || param2 == EBitmap.RIGHT;
+         return Boolean(_loc4_) && Boolean(_loc3_) || !_loc4_ && !_loc3_;
+      }
+      
       protected function getMaskStyleName() : String
       {
          return this.m_StylePrefix != null?this.m_StylePrefix + "Mask":"mask";
@@ -332,7 +332,7 @@ package shared.skins
          return this.m_StylePrefix != null?this.m_StylePrefix + StringHelper.s_Capitalise(param1):param1;
       }
       
-      protected function updateStyle() : void
+      protected function doValidateStyle() : void
       {
          var _loc4_:Object = null;
          var _loc5_:int = 0;
@@ -419,8 +419,18 @@ package shared.skins
          this.m_MinBorder.left = this.getMinCellSize(EBitmap.TOP_LEFT,EBitmap.LEFT,EBitmap.BOTTOM_LEFT).x;
          this.m_MinBorder.right = this.getMinCellSize(EBitmap.TOP_RIGHT,EBitmap.RIGHT,EBitmap.BOTTOM_RIGHT).x;
          this.m_MinBorder.top = this.getMinCellSize(EBitmap.TOP_LEFT,EBitmap.TOP,EBitmap.TOP_RIGHT).y;
-         this.m_Height = this.m_MaxBorder.top + this.getMaxCellSize(EBitmap.LEFT,EBitmap.CENTER,EBitmap.RIGHT).y + this.m_MaxBorder.bottom;
-         this.m_Width = this.m_MaxBorder.left + this.getMaxCellSize(EBitmap.TOP,EBitmap.CENTER,EBitmap.BOTTOM).x + this.m_MaxBorder.right;
+         this.m_Height = this.m_MaxBorder.top + this.m_MaxBorder.bottom;
+         this.m_Width = this.m_MaxBorder.left + this.m_MaxBorder.right;
+         if(this.isCellVisible(EBitmap.CENTER))
+         {
+            this.m_Height = this.m_Height + this.getMaxCellSize(EBitmap.CENTER).y;
+            this.m_Width = this.m_Width + this.getMaxCellSize(EBitmap.CENTER).x;
+         }
+         else
+         {
+            this.m_Height = this.m_Height + this.getMaxCellSize(EBitmap.LEFT,EBitmap.RIGHT).y;
+            this.m_Width = this.m_Width + this.getMaxCellSize(EBitmap.TOP,EBitmap.BOTTOM).x;
+         }
       }
       
       private function getMaxCellSize(... rest) : Point
@@ -580,7 +590,7 @@ package shared.skins
          if(this.m_StyleName != param1)
          {
             this.m_StyleName = param1 as IStyleClient;
-            this.invalidateStyle();
+            this.m_InvalidStyle = true;
          }
       }
    }

@@ -10,6 +10,7 @@ package tibia.creatures
    import flash.events.TextEvent;
    import mx.controls.CheckBox;
    import tibia.creatures.buddylistClasses.Buddy;
+   import tibia.network.Connection;
    import shared.utility.StringHelper;
    import mx.collections.IList;
    
@@ -99,11 +100,17 @@ package tibia.creatures
       
       override public function close(param1:Boolean) : void
       {
+         var _loc2_:Connection = null;
          if(Boolean(param1) && this.m_Buddy != null)
          {
             this.m_Buddy.description = StringHelper.s_Trim(this.m_UIDescription.text);
             this.m_Buddy.icon = this.m_UIIcon.selectedID;
             this.m_Buddy.notify = this.m_UINotify.selected;
+            _loc2_ = Tibia.s_GetConnection();
+            if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
+            {
+               _loc2_.sendCEDITBUDDY(this.m_Buddy.ID,this.m_Buddy.description,this.m_Buddy.icon,this.m_Buddy.notify);
+            }
          }
          super.close(param1);
       }

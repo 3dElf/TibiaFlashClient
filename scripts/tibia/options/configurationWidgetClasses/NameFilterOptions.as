@@ -206,12 +206,9 @@ package tibia.options.configurationWidgetClasses
       
       public function set options(param1:OptionsStorage) : void
       {
-         if(this.m_Options != param1)
-         {
-            this.m_Options = param1;
-            this.m_UncommittedOptions = true;
-            invalidateProperties();
-         }
+         this.m_Options = param1;
+         this.m_UncommittedOptions = true;
+         invalidateProperties();
       }
       
       public function close(param1:Boolean = false) : void

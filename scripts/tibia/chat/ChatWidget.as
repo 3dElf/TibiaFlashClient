@@ -14,7 +14,7 @@ package tibia.chat
    import mx.core.ScrollPolicy;
    import tibia.controls.dynamicTabBarClasses.TabBarEvent;
    import tibia.chat.chatWidgetClasses.ChannelEvent;
-   import mx.controls.Button;
+   import shared.controls.CustomButton;
    import flash.events.MouseEvent;
    import tibia.input.staticaction.StaticActionList;
    import mx.events.DragEvent;
@@ -26,6 +26,7 @@ package tibia.chat
    import flash.display.DisplayObject;
    import tibia.chat.chatWidgetClasses.CycleButtonSkin;
    import mx.containers.Box;
+   import mx.controls.Button;
    import tibia.options.OptionsStorage;
    import mx.core.DragSource;
    import mx.managers.DragManager;
@@ -282,7 +283,7 @@ package tibia.chat
             this.m_UITabBar.addEventListener(ChannelEvent.HIGHLIGHT,this.onChannelHighlight);
             this.m_UITabBar.addEventListener(ChannelEvent.TAB_CONTEXT_MENU,this.onChannelContextMenu);
             this.m_UITitleRow.addChild(this.m_UITabBar);
-            this.m_UIButtonOpen = new Button();
+            this.m_UIButtonOpen = new CustomButton();
             this.m_UIButtonOpen.styleName = getStyle("titleOpenButtonStyle");
             this.m_UIButtonOpen.toolTip = resourceManager.getString(BUNDLE,"TIP_CHANNEL_OPEN");
             this.m_UIButtonOpen.addEventListener(MouseEvent.CLICK,function(param1:MouseEvent):void
@@ -290,7 +291,7 @@ package tibia.chat
                StaticActionList.CHAT_CHANNEL_OPEN.perform();
             });
             this.m_UITitleRow.addChild(this.m_UIButtonOpen);
-            this.m_UIButtonIgnore = new Button();
+            this.m_UIButtonIgnore = new CustomButton();
             this.m_UIButtonIgnore.styleName = getStyle("titleIgnoreButtonStyle");
             this.m_UIButtonIgnore.toolTip = resourceManager.getString(BUNDLE,"TIP_CHANNEL_IGNORE");
             this.m_UIButtonIgnore.addEventListener(MouseEvent.CLICK,function(param1:MouseEvent):void
@@ -355,7 +356,7 @@ package tibia.chat
             this.m_UIInputRow.percentWidth = 100;
             this.m_UIInputRow.width = NaN;
             this.m_UIInputRow.styleName = getStyle("inputBarStyle");
-            this.m_UIButtonVolume = new Button();
+            this.m_UIButtonVolume = new CustomButton();
             this.m_UIButtonVolume.enabled = this.getVolumeEnabled();
             this.m_UIButtonVolume.label = resourceManager.getString(BUNDLE,this.getVolumeLabelResource());
             this.m_UIButtonVolume.width = 74;
@@ -369,11 +370,11 @@ package tibia.chat
             this.m_UIInput.addEventListener(MouseEvent.MOUSE_DOWN,this.onInputMouseDown);
             this.m_UIInput.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,this.onInputMouseDown);
             this.m_UIInputRow.addChild(this.m_UIInput);
-            this.m_UIButtonMappingMode = new Button();
+            this.m_UIButtonMappingMode = new CustomButton();
             this.m_UIButtonMappingMode.width = 74;
             this.m_UIButtonMappingMode.addEventListener(MouseEvent.CLICK,this.onMappingModeClick);
             this.m_UIInputRow.addChild(this.m_UIButtonMappingMode);
-            this.m_UIButtonSetCycle = new Button();
+            this.m_UIButtonSetCycle = new CustomButton();
             this.m_UIButtonSetCycle.width = 120 + 2 * (6 + 9 * 0.66 + 2);
             this.m_UIButtonSetCycle.addEventListener(MouseEvent.CLICK,function(param1:MouseEvent):void
             {

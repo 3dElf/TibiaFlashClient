@@ -5,12 +5,16 @@ package tibia.game
    public interface IGameClient extends IEventDispatcher
    {
        
+      function saveOptions() : void;
+      
       function setCharacters(param1:String, param2:Array, param3:int) : void;
       
       function get isRunning() : Boolean;
       
-      function unload() : void;
-      
       function setContent(param1:Vector.<Asset>) : void;
+      
+      function setOptions(param1:OptionsAsset, param2:OptionsAsset) : void;
+      
+      function unload() : void;
    }
 }

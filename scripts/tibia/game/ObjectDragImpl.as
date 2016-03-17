@@ -1,17 +1,19 @@
 package tibia.game
 {
    import flash.events.Event;
-   import mx.core.IUIComponent;
-   import flash.events.MouseEvent;
+   import flash.display.InteractiveObject;
    import mx.events.DragEvent;
-   import flash.geom.Point;
-   import flash.display.DisplayObject;
-   import tibia.appearances.ObjectInstance;
    import shared.utility.Vector3D;
    import mx.core.DragSource;
+   import flash.display.Stage;
+   import flash.geom.Point;
    import tibia.input.gameaction.MoveActionImpl;
-   import mx.events.SandboxMouseEvent;
+   import tibia.appearances.ObjectInstance;
+   import flash.events.MouseEvent;
+   import mx.core.UIComponent;
    import mx.managers.DragManager;
+   import flash.display.DisplayObject;
+   import mx.events.SandboxMouseEvent;
    import mx.controls.Image;
    import tibia.appearances.AppearanceType;
    import flash.geom.Rectangle;
@@ -49,21 +51,46 @@ package tibia.game
       
       protected function onMouseUp(param1:Event) : void
       {
-         if(param1 != null)
+         this.removeDragInitListeners(InteractiveObject(param1.currentTarget));
+      }
+      
+      protected function onDragDrop(param1:DragEvent) : void
+      {
+         var _loc3_:* = undefined;
+         var _loc4_:Vector3D = null;
+         var _loc5_:int = 0;
+         var _loc2_:DragSource = null;
+         if((_loc2_ = param1.dragSource) != null && Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_OBJECT && Boolean(_loc2_.hasFormat("dragStart")) && Boolean(_loc2_.hasFormat("dragPosition")) && Boolean(_loc2_.hasFormat("dragObject")))
          {
-            this.updateDragInitListeners(param1.currentTarget as IUIComponent,false);
+            _loc3_ = param1.target;
+            while(_loc3_ != null && !(_loc3_ is IMoveWidget) && !(_loc3_ is Stage))
+            {
+               _loc3_ = _loc3_.parent;
+            }
+            _loc4_ = null;
+            if(_loc3_ != null && (_loc4_ = _loc3_.pointToAbsolute(new Point(param1.stageX,param1.stageY))) != null)
+            {
+               _loc5_ = 0;
+               if(param1.shiftKey)
+               {
+                  _loc5_ = 1;
+               }
+               else if(param1.ctrlKey)
+               {
+                  _loc5_ = MoveActionImpl.MOVE_ASK;
+               }
+               else
+               {
+                  _loc5_ = MoveActionImpl.MOVE_ALL;
+               }
+               new MoveActionImpl(_loc2_.dataForFormat("dragStart") as Vector3D,_loc2_.dataForFormat("dragObject") as ObjectInstance,_loc2_.dataForFormat("dragPosition") as Number,_loc4_,_loc5_).perform();
+            }
          }
       }
       
-      protected function updateDragListeners(param1:IUIComponent, param2:Boolean) : void
+      public function removeDragComponent(param1:InteractiveObject) : void
       {
          if(param1 != null)
-         {
-            param1.addEventListener(MouseEvent.MOUSE_DOWN,this.onMouseDown);
-            param1.addEventListener(DragEvent.DRAG_DROP,this.onDragDrop);
-            param1.addEventListener(DragEvent.DRAG_ENTER,this.onDragEnter);
-         }
-         else
          {
             param1.removeEventListener(MouseEvent.MOUSE_DOWN,this.onMouseDown);
             param1.removeEventListener(DragEvent.DRAG_DROP,this.onDragDrop);
@@ -71,129 +98,75 @@ package tibia.game
          }
       }
       
-      public function removeDragComponent(param1:IUIComponent) : void
-      {
-         this.updateDragListeners(param1,false);
-      }
-      
       protected function onMouseDown(param1:MouseEvent) : void
       {
-         var _loc2_:IUIComponent = null;
-         var _loc3_:Point = null;
-         var _loc4_:IMoveWidget = null;
-         var _loc5_:DisplayObject = null;
-         var _loc6_:Object = null;
-         var _loc7_:ObjectInstance = null;
-         var _loc8_:Vector3D = null;
          this.m_DragStart = null;
          this.m_DragPosition = -1;
          this.m_DragObject = null;
-         this.updateDragInitListeners(param1.currentTarget as IUIComponent,false);
-         if(param1 != null)
+         this.removeDragInitListeners(InteractiveObject(param1.currentTarget));
+         var _loc2_:* = param1.target;
+         while(_loc2_ != null && !(_loc2_ is IMoveWidget) && !(_loc2_ is Stage))
          {
-            _loc2_ = param1.currentTarget as IUIComponent;
-            _loc3_ = null;
-            if(_loc2_ != null)
-            {
-               _loc3_ = _loc2_.localToGlobal(new Point(param1.localX,param1.localY));
-            }
-            _loc4_ = null;
-            _loc5_ = param1.currentTarget as DisplayObject;
-            while(_loc5_ != null && (_loc4_ = _loc5_ as IMoveWidget) == null)
-            {
-               _loc5_ = _loc5_.parent;
-            }
-            _loc6_ = null;
-            _loc7_ = null;
-            _loc8_ = null;
-            if(_loc4_ != null && _loc3_ != null && (_loc6_ = _loc4_.getMoveObjectUnderPoint(_loc3_)) != null && (_loc7_ = _loc6_.object as ObjectInstance) != null && (_loc8_ = _loc6_.absolute as Vector3D) != null)
-            {
-               this.m_DragStart = _loc8_;
-               this.m_DragPosition = int(_loc6_.position);
-               this.m_DragObject = _loc7_;
-               this.updateDragInitListeners(_loc2_,true);
-            }
+            _loc2_ = _loc2_.parent;
+         }
+         var _loc3_:Object = null;
+         var _loc4_:ObjectInstance = null;
+         var _loc5_:Vector3D = null;
+         if(_loc2_ != null && (_loc3_ = _loc2_.getMoveObjectUnderPoint(new Point(param1.stageX,param1.stageY))) != null && (_loc4_ = _loc3_.object as ObjectInstance) != null && (_loc5_ = _loc3_.absolute as Vector3D) != null)
+         {
+            this.m_DragStart = _loc5_;
+            this.m_DragPosition = int(_loc3_.position);
+            this.m_DragObject = _loc4_;
+            this.addDragInitListeners(InteractiveObject(param1.currentTarget));
          }
       }
       
-      protected function onDragDrop(param1:DragEvent) : void
+      public function addDragComponent(param1:InteractiveObject) : void
       {
-         var _loc3_:IUIComponent = null;
-         var _loc4_:Point = null;
-         var _loc5_:IMoveWidget = null;
-         var _loc6_:DisplayObject = null;
-         var _loc7_:Vector3D = null;
-         var _loc8_:int = 0;
-         var _loc2_:DragSource = null;
-         if(param1 != null && (_loc2_ = param1.dragSource) != null && Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_OBJECT && Boolean(_loc2_.hasFormat("dragStart")) && Boolean(_loc2_.hasFormat("dragPosition")) && Boolean(_loc2_.hasFormat("dragObject")))
-         {
-            _loc3_ = param1.currentTarget as IUIComponent;
-            _loc4_ = null;
-            if(_loc3_ != null)
-            {
-               _loc4_ = _loc3_.localToGlobal(new Point(param1.localX,param1.localY));
-            }
-            _loc5_ = null;
-            _loc6_ = param1.currentTarget as DisplayObject;
-            while(_loc6_ != null && (_loc5_ = _loc6_ as IMoveWidget) == null)
-            {
-               _loc6_ = _loc6_.parent;
-            }
-            _loc7_ = null;
-            if(_loc5_ != null && _loc4_ != null && (_loc7_ = _loc5_.pointToAbsolute(_loc4_)) != null)
-            {
-               _loc8_ = 0;
-               if(param1.shiftKey)
-               {
-                  _loc8_ = 1;
-               }
-               else if(param1.ctrlKey)
-               {
-                  _loc8_ = MoveActionImpl.MOVE_ASK;
-               }
-               else
-               {
-                  _loc8_ = MoveActionImpl.MOVE_ALL;
-               }
-               new MoveActionImpl(_loc2_.dataForFormat("dragStart") as Vector3D,_loc2_.dataForFormat("dragObject") as ObjectInstance,_loc2_.dataForFormat("dragPosition") as Number,_loc7_,_loc8_).perform();
-            }
-         }
-      }
-      
-      public function addDragComponent(param1:IUIComponent) : void
-      {
-         this.updateDragListeners(param1,true);
-      }
-      
-      protected function updateDragInitListeners(param1:IUIComponent, param2:Boolean) : void
-      {
-         var _loc3_:DisplayObject = null;
          if(param1 != null)
          {
-            _loc3_ = param1.systemManager.getSandboxRoot();
-            if(param2)
-            {
-               param1.addEventListener(MouseEvent.MOUSE_MOVE,this.onMouseMove);
-               param1.addEventListener(MouseEvent.MOUSE_UP,this.onMouseUp);
-               _loc3_.addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onMouseUp);
-            }
-            else
-            {
-               param1.removeEventListener(MouseEvent.MOUSE_MOVE,this.onMouseMove);
-               param1.removeEventListener(MouseEvent.MOUSE_UP,this.onMouseUp);
-               _loc3_.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onMouseUp);
-            }
+            param1.addEventListener(MouseEvent.MOUSE_DOWN,this.onMouseDown);
+            param1.addEventListener(DragEvent.DRAG_DROP,this.onDragDrop);
+            param1.addEventListener(DragEvent.DRAG_ENTER,this.onDragEnter);
          }
       }
       
       protected function onDragEnter(param1:DragEvent) : void
       {
-         var _loc3_:IUIComponent = null;
          var _loc2_:DragSource = null;
-         if(param1 != null && (_loc2_ = param1.dragSource) != null && Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_OBJECT)
+         if((_loc2_ = param1.dragSource) != null && Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_OBJECT && param1.target is UIComponent)
          {
-            _loc3_ = param1.currentTarget as IUIComponent;
-            DragManager.acceptDragDrop(_loc3_);
+            DragManager.acceptDragDrop(UIComponent(param1.currentTarget));
+         }
+      }
+      
+      protected function removeDragInitListeners(param1:InteractiveObject) : void
+      {
+         var _loc2_:DisplayObject = null;
+         if(param1 != null)
+         {
+            param1.removeEventListener(MouseEvent.MOUSE_MOVE,this.onMouseMove);
+            param1.removeEventListener(MouseEvent.MOUSE_UP,this.onMouseUp);
+         }
+         if(param1 is UIComponent)
+         {
+            _loc2_ = UIComponent(param1).systemManager.getSandboxRoot();
+            _loc2_.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onMouseUp);
+         }
+      }
+      
+      protected function addDragInitListeners(param1:InteractiveObject) : void
+      {
+         var _loc2_:DisplayObject = null;
+         if(param1 != null)
+         {
+            param1.addEventListener(MouseEvent.MOUSE_MOVE,this.onMouseMove);
+            param1.addEventListener(MouseEvent.MOUSE_UP,this.onMouseUp);
+         }
+         if(param1 is UIComponent)
+         {
+            _loc2_ = UIComponent(param1).systemManager.getSandboxRoot();
+            _loc2_.addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,this.onMouseUp);
          }
       }
       
@@ -207,7 +180,7 @@ package tibia.game
          var _loc7_:Rectangle = null;
          var _loc8_:BitmapData = null;
          var _loc9_:Bitmap = null;
-         if(param1 != null && this.m_DragStart != null && this.m_DragPosition != -1 && this.m_DragObject != null)
+         if(this.m_DragStart != null && this.m_DragPosition != -1 && this.m_DragObject != null && param1.currentTarget is UIComponent)
          {
             _loc2_ = new DragSource();
             _loc2_.addData(DRAG_TYPE_OBJECT,"dragType");
@@ -235,8 +208,8 @@ package tibia.game
             this.m_DragStart = null;
             this.m_DragPosition = -1;
             this.m_DragObject = null;
-            DragManager.doDrag(param1.currentTarget as IUIComponent,_loc2_,param1,_loc3_,-param1.localX + _loc4_,-param1.localY + _loc5_,DRAG_OPACITY);
-            this.updateDragInitListeners(param1.currentTarget as IUIComponent,false);
+            DragManager.doDrag(UIComponent(param1.currentTarget),_loc2_,param1,_loc3_,-UIComponent(param1.currentTarget).mouseX + _loc4_,-UIComponent(param1.currentTarget).mouseY + _loc5_,DRAG_OPACITY);
+            this.removeDragInitListeners(InteractiveObject(param1.currentTarget));
          }
       }
    }

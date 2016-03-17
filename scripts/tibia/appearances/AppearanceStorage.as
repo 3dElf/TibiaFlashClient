@@ -23,6 +23,8 @@ package tibia.appearances
       
       private static const ENVIRONMENTAL_EFFECTS:Array = [];
       
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const NUM_EFFECTS:int = 200;
       
       public static const FLAG_LIQUIDPOOL:int = 11;
@@ -115,6 +117,8 @@ package tibia.appearances
       
       public static const FLAG_AVOID:int = 15;
       
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const MAP_MIN_X:int = 24576;
       
       protected static const MAP_MIN_Y:int = 24576;
@@ -122,6 +126,8 @@ package tibia.appearances
       public static const FLAG_DONTHIDE:int = 22;
       
       public static const FLAG_SHIFT:int = 24;
+      
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
       
       protected static const MAP_MIN_Z:int = 0;
       
@@ -134,6 +140,8 @@ package tibia.appearances
       protected static const MAPSIZE_Z:int = 8;
       
       protected static const MAPSIZE_W:int = 10;
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       public static const FLAG_TOP:int = 3;
       
@@ -699,21 +707,19 @@ package tibia.appearances
          BlockTotal = BlockLength[0] + BlockLength[1] + BlockLength[2] + BlockLength[3];
          BlockColumns = Math.ceil(Math.sqrt(BlockTotal));
          var BlockRows:uint = Math.ceil(BlockTotal / BlockColumns);
+         var AllocationSuccessfull:Boolean = false;
          try
          {
             this.m_SpriteBitmap = new BitmapData(BlockColumns * (FIELD_SIZE << 1),BlockRows * (FIELD_SIZE << 1),true,4278255360);
             this.m_SpriteBlockColumns = BlockColumns;
             this.m_SpriteBlockOffset = [0,BlockLength[0],BlockLength[0] + BlockLength[1],BlockLength[0] + BlockLength[1] + BlockLength[2]];
             this.m_SpriteBlockLength = SpriteLength;
+            AllocationSuccessfull = true;
          }
-         catch(e:*)
+         catch(_Error:Error)
          {
-            var _loc3_:* = false;
          }
-         finally
-         {
-            return true;
-         }
+         return AllocationSuccessfull;
       }
       
       public function createEffectInstance(param1:int) : EffectInstance

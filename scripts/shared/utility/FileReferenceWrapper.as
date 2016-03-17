@@ -50,21 +50,11 @@ package shared.utility
          removeEventListener(HTTPStatusEvent.HTTP_STATUS,this.clearInstance);
       }
       
-      override public function save(param1:*, param2:String = null) : void
+      private function checkInstance() : void
       {
-         var a_Data:* = param1;
-         var a_DefaultFileName:String = param2;
-         this.checkInstance();
-         this.setInstance();
-         try
+         if(s_Instance != null)
          {
-            super.save(a_Data,a_DefaultFileName);
-            return;
-         }
-         catch(_Error:*)
-         {
-            clearInstance();
-            throw _Error;
+            throw new IllegalOperationError();
          }
       }
       
@@ -113,6 +103,20 @@ package shared.utility
          }
       }
       
+      override public function cancel() : void
+      {
+         try
+         {
+            super.cancel();
+            this.clearInstance();
+            return;
+         }
+         catch(_Error:*)
+         {
+            throw _Error;
+         }
+      }
+      
       override public function browse(param1:Array = null) : Boolean
       {
          var a_TypeFilter:Array = param1;
@@ -130,11 +134,21 @@ package shared.utility
          return false;
       }
       
-      private function checkInstance() : void
+      override public function save(param1:*, param2:String = null) : void
       {
-         if(s_Instance != null)
+         var a_Data:* = param1;
+         var a_DefaultFileName:String = param2;
+         this.checkInstance();
+         this.setInstance();
+         try
          {
-            throw new IllegalOperationError();
+            super.save(a_Data,a_DefaultFileName);
+            return;
+         }
+         catch(_Error:*)
+         {
+            clearInstance();
+            throw _Error;
          }
       }
    }

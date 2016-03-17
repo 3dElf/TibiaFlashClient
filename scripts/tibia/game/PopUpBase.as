@@ -6,6 +6,7 @@ package tibia.game
    import mx.controls.Label;
    import mx.controls.Button;
    import flash.events.MouseEvent;
+   import shared.controls.CustomButton;
    import shared.utility.loopDisplayList;
    import mx.managers.IFocusManagerComponent;
    import mx.core.EdgeMetrics;
@@ -179,7 +180,7 @@ package tibia.game
             {
                if((this.buttonFlags & BUTTON_FLAGS[i].data) != 0)
                {
-                  _Button = new Button();
+                  _Button = new CustomButton();
                   _Button.data = BUTTON_FLAGS[i].data;
                   _Button.enabled = (this.buttonFlags & DISABLE_BUTTONS) == 0;
                   _Button.label = resourceManager.getString(BUNDLE,BUTTON_FLAGS[i].label);

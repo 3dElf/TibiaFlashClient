@@ -8,6 +8,7 @@ package tibia.market.marketWidgetClasses
    import tibia.market.MarketWidget;
    import mx.containers.Box;
    import mx.containers.HBox;
+   import shared.controls.CustomButton;
    import tibia.input.MouseRepeatEvent;
    import flash.events.Event;
    import flash.events.KeyboardEvent;
@@ -119,7 +120,7 @@ package tibia.market.marketWidgetClasses
          var Inner:HBox = new HBox();
          Inner.setStyle("horizontalGap",2);
          Inner.setStyle("verticalGap",2);
-         this.m_UIAmountDecrease = new Button();
+         this.m_UIAmountDecrease = new CustomButton();
          this.m_UIAmountDecrease.styleName = "marketWidgetAmountDecrease";
          this.m_UIAmountDecrease.addEventListener(MouseEvent.CLICK,this.onButtonClick);
          this.m_UIAmountDecrease.addEventListener(MouseEvent.MOUSE_DOWN,this.onButtonDown);
@@ -134,7 +135,7 @@ package tibia.market.marketWidgetClasses
          this.m_UIAmountEdit.addEventListener(KeyboardEvent.KEY_DOWN,Utility.preventNonNumericInput);
          this.m_UIAmountEdit.addEventListener(TextEvent.TEXT_INPUT,Utility.preventNonNumericInput);
          Inner.addChild(this.m_UIAmountEdit);
-         this.m_UIAmountIncrease = new Button();
+         this.m_UIAmountIncrease = new CustomButton();
          this.m_UIAmountIncrease.styleName = "marketWidgetAmountIncrease";
          this.m_UIAmountIncrease.addEventListener(MouseEvent.CLICK,this.onButtonClick);
          this.m_UIAmountIncrease.addEventListener(MouseEvent.MOUSE_DOWN,this.onButtonDown);

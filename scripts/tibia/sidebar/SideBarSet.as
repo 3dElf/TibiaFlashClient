@@ -14,7 +14,7 @@ package tibia.sidebar
       
       public static const NUM_LOCATIONS:int = 4;
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       public static const NUM_SETS:int = 1;
       
@@ -126,6 +126,10 @@ package tibia.sidebar
                   if((_loc3_ = _loc7_.@visible) != null && _loc3_.length() == 1)
                   {
                      _loc5_.getSideBar(_loc13_).visible = _loc3_[0].toString() == "true";
+                  }
+                  if((_loc3_ = _loc7_.@foldHeader) != null && _loc3_.length() == 1)
+                  {
+                     _loc5_.getSideBar(_loc13_).foldHeader = _loc3_[0].toString() == "true";
                   }
                   for each(_loc14_ in _loc7_.elements("widgetref"))
                   {
@@ -411,7 +415,7 @@ package tibia.sidebar
          _loc4_ = this.m_SideBars.length;
          while(_loc2_ < _loc4_)
          {
-            _loc7_ = <sidebar visible="{this.m_SideBars[_loc2_].visible}" location="{this.m_SideBars[_loc2_].location}"/>;
+            _loc7_ = <sidebar foldHeader="{this.m_SideBars[_loc2_].foldHeader}" location="{this.m_SideBars[_loc2_].location}" visible="{this.m_SideBars[_loc2_].visible}"/>;
             _loc3_ = 0;
             _loc5_ = this.m_SideBars[_loc2_].length;
             while(_loc3_ < _loc5_)

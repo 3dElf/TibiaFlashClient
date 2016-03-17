@@ -1,7 +1,7 @@
 package tibia.market.marketWidgetClasses
 {
    import tibia.market.Offer;
-   import shared.utility.StringHelper;
+   import shared.utility.i18n.i18nFormatNumber;
    import mx.resources.ResourceManager;
    import mx.resources.IResourceManager;
    import tibia.appearances.AppearanceStorage;
@@ -11,6 +11,7 @@ package tibia.market.marketWidgetClasses
    import flash.events.KeyboardEvent;
    import flash.events.TextEvent;
    import shared.utility.closure;
+   import shared.utility.i18n.i18nFormatDate;
    
    class Utility
    {
@@ -26,7 +27,7 @@ package tibia.market.marketWidgetClasses
       
       public static function formatOfferPiecePrice(param1:Offer, ... rest) : String
       {
-         return StringHelper.formatNumber(param1.piecePrice);
+         return i18nFormatNumber(param1.piecePrice);
       }
       
       public static function formatOfferTerminationReason(param1:Offer, ... rest) : String
@@ -49,7 +50,7 @@ package tibia.market.marketWidgetClasses
       
       public static function formatOfferTotalPrice(param1:Offer, ... rest) : String
       {
-         return StringHelper.formatNumber(param1.totalPrice);
+         return i18nFormatNumber(param1.totalPrice);
       }
       
       public static function compareOfferByItemName(param1:Object, param2:Object, param3:Array = null) : int
@@ -147,7 +148,7 @@ package tibia.market.marketWidgetClasses
       
       public static function formatOfferTerminationTimestamp(param1:Offer, ... rest) : String
       {
-         return StringHelper.formatDate(new Date(param1.terminationTimestamp * 1000));
+         return i18nFormatDate(new Date(param1.terminationTimestamp * 1000));
       }
       
       public static function formatOfferTypeID(param1:Offer, ... rest) : String

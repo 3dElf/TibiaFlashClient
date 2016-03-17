@@ -9,19 +9,39 @@ package tibia.appearances
    public class MissileInstance extends AppearanceInstance
    {
       
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
+      
+      protected static const NUM_EFFECTS:int = 200;
+      
+      protected static const MAP_HEIGHT:int = 11;
+      
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
+      
       protected static const ONSCREEN_MESSAGE_WIDTH:int = 295;
+      
+      protected static const UNDERGROUND_LAYER:int = 2;
+      
+      protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
+      
+      protected static const FIELD_HEIGHT:int = 24;
+      
+      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
+      
+      protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
       
       protected static const MAP_MIN_X:int = 24576;
       
       protected static const MAP_MIN_Y:int = 24576;
       
-      protected static const MAP_HEIGHT:int = 11;
+      protected static const MAP_MIN_Z:int = 0;
       
       protected static const PLAYER_OFFSET_Y:int = 6;
       
       protected static const FIELD_SIZE:int = 32;
       
-      protected static const MAP_MIN_Z:int = 0;
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
+      protected static const PLAYER_OFFSET_X:int = 8;
       
       protected static const MAPSIZE_W:int = 10;
       
@@ -31,31 +51,19 @@ package tibia.appearances
       
       protected static const MAPSIZE_Z:int = 8;
       
-      protected static const PLAYER_OFFSET_X:int = 8;
-      
       protected static const MAP_MAX_X:int = MAP_MIN_X + (1 << 14 - 1);
       
       protected static const MAP_MAX_Y:int = MAP_MIN_Y + (1 << 14 - 1);
       
       protected static const MAP_MAX_Z:int = 15;
       
-      protected static const NUM_EFFECTS:int = 200;
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       protected static const MAP_WIDTH:int = 15;
       
       protected static const NUM_ONSCREEN_MESSAGES:int = 16;
       
-      protected static const NUM_FIELDS:int = MAPSIZE_Z * MAPSIZE_Y * MAPSIZE_X;
-      
-      protected static const UNDERGROUND_LAYER:int = 2;
-      
-      protected static const FIELD_HEIGHT:int = 24;
-      
       protected static const GROUND_LAYER:int = 7;
-      
-      protected static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
-      
-      protected static const FIELD_CACHESIZE:int = FIELD_SIZE;
        
       protected var m_PatternX:int = 0;
       
@@ -178,16 +186,6 @@ package tibia.appearances
          this.m_Position = param3;
       }
       
-      override public function draw(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
-      {
-         var _loc7_:int = 0;
-         _loc7_ = ((m_Phase % m_Type.phases * m_Type.patternDepth + 0) * m_Type.patternHeight + this.m_PatternY) * m_Type.patternWidth + this.m_PatternX;
-         var _loc8_:Rectangle = m_Type.sprite[_loc7_];
-         s_Point.x = param2 - m_Type.displacementX - _loc8_.width;
-         s_Point.y = param3 - m_Type.displacementY - _loc8_.height;
-         param1.copyPixels(m_Type.bitmap,_loc8_,s_Point,null,null,true);
-      }
-      
       public function get animationDelta() : Vector3D
       {
          var _loc1_:Vector3D = this.m_AnimationDelta.clone();
@@ -196,20 +194,25 @@ package tibia.appearances
          return _loc1_;
       }
       
+      override public function drawTo(param1:BitmapData, param2:int, param3:int, param4:int, param5:int, param6:int) : void
+      {
+         var _loc7_:int = 0;
+         _loc7_ = ((m_Phase % m_Type.phases * m_Type.patternDepth + 0) * m_Type.patternHeight + this.m_PatternY) * m_Type.patternWidth + this.m_PatternX;
+         var _loc8_:Rectangle = m_Type.sprite[_loc7_];
+         s_TempPoint.x = param2 - m_Type.displacementX - _loc8_.width;
+         s_TempPoint.y = param3 - m_Type.displacementY - _loc8_.height;
+         param1.copyPixels(m_Type.bitmap,_loc8_,s_TempPoint,null,null,true);
+      }
+      
       override public function getSprite(param1:int, param2:int, param3:int, param4:int, param5:Rectangle = null) : BitmapData
       {
-         var _loc10_:Rectangle = null;
          var _loc6_:int = param1 >= 0?int(param1 % m_Type.phases):int(m_Phase);
          var _loc7_:int = param3 >= 0?int(param3 % m_Type.patternHeight):int(this.m_PatternY);
          var _loc8_:int = param2 >= 0?int(param2 % m_Type.patternWidth):int(this.m_PatternX);
          var _loc9_:int = ((_loc6_ * m_Type.patternDepth + 0) * m_Type.patternHeight + _loc7_) * m_Type.patternWidth + _loc8_;
          if(param5 != null)
          {
-            _loc10_ = m_Type.sprite[_loc9_];
-            param5.x = _loc10_.x;
-            param5.y = _loc10_.y;
-            param5.width = _loc10_.width;
-            param5.height = _loc10_.height;
+            param5.copyFrom(m_Type.sprite[_loc9_]);
          }
          return m_Type.bitmap;
       }

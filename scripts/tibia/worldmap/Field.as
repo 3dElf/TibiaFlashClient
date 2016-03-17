@@ -2,17 +2,17 @@ package tibia.worldmap
 {
    import flash.geom.Rectangle;
    import flash.display.BitmapData;
+   import tibia.§worldmap:ns_map_internal§.s_CacheBitmap;
    import tibia.appearances.ObjectInstance;
    import tibia.appearances.AppearanceType;
    import tibia.appearances.AppearanceInstance;
    import tibia.appearances.AppearanceStorage;
    import shared.utility.Colour;
-   import tibia.§worldmap:ns_map_internal§.*;
    
    public class Field
    {
       
-      protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
+      protected static const RENDERER_DEFAULT_HEIGHT:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const NUM_EFFECTS:int = 200;
       
@@ -23,6 +23,8 @@ package tibia.worldmap
       protected static const MM_SECTOR_SIZE:int = 256;
       
       protected static const MM_IE_TIMEOUT:Number = 50;
+      
+      protected static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
       
       private static var s_CacheCount:int = 0;
       
@@ -78,17 +80,19 @@ package tibia.worldmap
       
       protected static const GROUND_LAYER:int = 7;
       
-      protected static const PATH_ERROR_TOO_FAR:int = -3;
-      
       protected static const PATH_WEST:int = 5;
       
       protected static const MAP_HEIGHT:int = 11;
       
       protected static const PATH_ERROR_INTERNAL:int = -5;
       
-      protected static const PATH_EMPTY:int = 0;
+      protected static const RENDERER_DEFAULT_WIDTH:Number = MAP_WIDTH * FIELD_SIZE;
       
       protected static const PATH_COST_UNDEFINED:int = 254;
+      
+      protected static const PATH_EMPTY:int = 0;
+      
+      protected static const PATH_ERROR_TOO_FAR:int = -3;
       
       protected static const PATH_MATRIX_SIZE:int = 2 * PATH_MAX_DISTANCE + 1;
       
@@ -104,8 +108,6 @@ package tibia.worldmap
       
       protected static const PATH_MAX_STEPS:int = 128;
       
-      protected static const MM_STORAGE_MAX_VERSION:int = 1;
-      
       protected static const MM_CACHE_SIZE:int = 48;
       
       protected static const MM_SIDEBAR_HIGHLIGHT_DURATION:Number = 10000;
@@ -118,6 +120,10 @@ package tibia.worldmap
       
       protected static const MAP_MIN_Z:int = 0;
       
+      protected static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
+      
+      protected static const MM_STORAGE_MAX_VERSION:int = 1;
+      
       protected static const MAPSIZE_W:int = 10;
       
       protected static const MAPSIZE_X:int = MAP_WIDTH + 3;
@@ -125,6 +131,8 @@ package tibia.worldmap
       protected static const MAPSIZE_Y:int = MAP_HEIGHT + 3;
       
       protected static const MAPSIZE_Z:int = 8;
+      
+      protected static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
       
       protected static const PATH_EAST:int = 1;
       
@@ -238,8 +246,8 @@ package tibia.worldmap
       
       public function updateBitmapCache(param1:int, param2:int, param3:int) : void
       {
-         var _loc4_:ObjectInstance = null;
-         var _loc5_:AppearanceType = null;
+         var _loc5_:ObjectInstance = null;
+         var _loc6_:AppearanceType = null;
          if(!this.m_CacheBitmapDirty)
          {
             return;
@@ -250,17 +258,18 @@ package tibia.worldmap
          this.m_CacheObjectsHeight = 0;
          this.m_CacheLyingObject = false;
          s_CacheBitmap.fillRect(this.m_CacheRectangle,0);
-         while(this.m_CacheObjectsCount < this.m_ObjectsCount)
+         var _loc4_:int = this.getTopLookObject();
+         while(this.m_CacheObjectsCount < _loc4_)
          {
-            _loc4_ = this.m_ObjectsRenderer[this.m_CacheObjectsCount];
-            _loc5_ = _loc4_.type;
-            if(!_loc5_.isCachable || _loc5_.exactSize + Math.max(_loc5_.displacementX,_loc5_.displacementY) + this.m_CacheObjectsHeight > FIELD_CACHESIZE)
+            _loc5_ = this.m_ObjectsRenderer[this.m_CacheObjectsCount];
+            _loc6_ = _loc5_.type;
+            if(!_loc6_.isCachable || _loc6_.exactSize + Math.max(_loc6_.displacementX,_loc6_.displacementY) + this.m_CacheObjectsHeight > FIELD_CACHESIZE)
             {
                break;
             }
-            _loc4_.draw(s_CacheBitmap,this.m_CacheRectangle.right - this.m_CacheObjectsHeight,this.m_CacheRectangle.bottom - this.m_CacheObjectsHeight,param1,param2,param3);
-            this.m_CacheObjectsHeight = Math.min(this.m_CacheObjectsHeight + _loc5_.elevation,FIELD_HEIGHT);
-            this.m_CacheLyingObject = Boolean(this.m_CacheLyingObject) || Boolean(_loc5_.isLyingObject);
+            _loc5_.drawTo(s_CacheBitmap,this.m_CacheRectangle.right - this.m_CacheObjectsHeight,this.m_CacheRectangle.bottom - this.m_CacheObjectsHeight,param1,param2,param3);
+            this.m_CacheObjectsHeight = Math.min(this.m_CacheObjectsHeight + _loc6_.elevation,FIELD_HEIGHT);
+            this.m_CacheLyingObject = Boolean(this.m_CacheLyingObject) || Boolean(_loc6_.isLyingObject);
             this.m_CacheObjectsCount++;
          }
       }

@@ -19,6 +19,7 @@ package tibia.controls
    import mx.core.mx_internal;
    import flash.geom.Point;
    import mx.controls.HSlider;
+   import shared.controls.CustomButton;
    
    public class CustomSlider extends Canvas
    {
@@ -80,8 +81,8 @@ package tibia.controls
          this.m_UISlider.addEventListener(SliderEvent.THUMB_DRAG,this.onSliderEvent);
          this.m_UISlider.addEventListener(SliderEvent.THUMB_PRESS,this.onSliderEvent);
          this.m_UISlider.addEventListener(SliderEvent.THUMB_RELEASE,this.onSliderEvent);
-         this.m_UIDecrease = new Button();
-         this.m_UIIncrease = new Button();
+         this.m_UIDecrease = new CustomButton();
+         this.m_UIIncrease = new CustomButton();
       }
       
       private static function s_InitialiseStyle() : void

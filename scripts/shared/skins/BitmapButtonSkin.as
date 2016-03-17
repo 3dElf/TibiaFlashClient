@@ -8,9 +8,9 @@ package shared.skins
          super();
       }
       
-      override protected function updateStyle() : void
+      override protected function doValidateStyle() : void
       {
-         super.updateStyle();
+         super.doValidateStyle();
          switch(name)
          {
             case "disabledSkin":

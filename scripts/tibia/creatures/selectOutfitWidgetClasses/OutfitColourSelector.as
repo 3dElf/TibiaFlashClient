@@ -63,11 +63,12 @@ package tibia.creatures.selectOutfitWidgetClasses
       
       override protected function measure() : void
       {
+         var _loc4_:Number = NaN;
          super.measure();
          var _loc1_:EdgeMetrics = this.viewMetricsAndPadding;
          var _loc2_:Number = getStyle("pickerSize");
          var _loc3_:Number = getStyle("horizontalGap");
-         var _loc4_:Number = getStyle("verticalGap");
+         _loc4_ = getStyle("verticalGap");
          measuredMinWidth = measuredWidth = _loc1_.left + Colour.HSI_H_STEPS * (_loc2_ + _loc3_) - _loc3_ + _loc1_.right;
          measuredMinHeight = measuredHeight = _loc1_.top + Colour.HSI_SI_VALUES * (_loc2_ + _loc4_) - _loc4_ + _loc1_.bottom;
       }

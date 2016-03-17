@@ -1,22 +1,19 @@
 package tibia.sidebar
 {
    import mx.core.Container;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   import flash.display.DisplayObject;
-   import flash.display.DisplayObjectContainer;
+   import mx.events.DragEvent;
+   import tibia.sidebar.sideBarWidgetClasses.WidgetView;
+   import mx.core.DragSource;
+   import mx.managers.DragManager;
    import flash.events.Event;
    import flash.events.MouseEvent;
    import mx.events.SandboxMouseEvent;
    import mx.core.EdgeMetrics;
    import mx.core.mx_internal;
    import mx.core.IBorder;
-   import mx.core.DragSource;
-   import tibia.sidebar.sideBarWidgetClasses.WidgetView;
-   import mx.managers.DragManager;
    import mx.events.PropertyChangeEvent;
    import mx.events.CollectionEvent;
-   import mx.events.DragEvent;
+   import flash.display.DisplayObject;
    import mx.events.CollectionEventKind;
    import tibia.options.OptionsStorage;
    import tibia.sidebar.sideBarWidgetClasses.SideBarHeader;
@@ -46,11 +43,7 @@ package tibia.sidebar
       protected static const DRAG_TYPE_OBJECT:String = "object";
       
       protected static const DRAG_TYPE_STATUSWIDGET:String = "statusWidget";
-      
-      {
-         s_InitializeStyle();
-      }
-      
+       
       protected var m_StyleWithoutBorder:String = null;
       
       protected var m_LayoutMode:int = 0;
@@ -59,17 +52,15 @@ package tibia.sidebar
       
       private var m_DropOffset:Number = NaN;
       
-      protected var m_Options:OptionsStorage = null;
-      
       private var m_UIConstructed:Boolean = false;
       
       protected var m_StyleWithBorder:String = null;
       
-      private var m_UncommittedStyleBorderSearchDirection:Boolean = false;
+      protected var m_LayoutProtected:Object = null;
+      
+      protected var m_Options:OptionsStorage = null;
       
       protected var m_SideBarSet:tibia.sidebar.SideBarSet = null;
-      
-      protected var m_LayoutProtected:Object = null;
       
       private var m_DropIndicatorSkipIndex:int = -1;
       
@@ -83,13 +74,13 @@ package tibia.sidebar
       
       private var m_UIHeader:SideBarHeader = null;
       
-      private var m_ResizeStartPoint:Point;
+      private var m_UncommittedStyleWithoutBorder:Boolean = false;
       
       private var m_ResizeUsedHeight:Number = NaN;
       
       private var m_UIDropIndicator:DisplayObject = null;
       
-      private var m_UncommittedStyleWithoutBorder:Boolean = false;
+      private var m_ResizeStartPoint:Point;
       
       private var m_DropOffsetList:Array;
       
@@ -98,8 +89,6 @@ package tibia.sidebar
       private var m_UncommittedLocation:Boolean = false;
       
       protected var m_Location:int = -1;
-      
-      protected var m_StyleBorderSearchDirection:int = 1;
       
       protected var m_DropAvailableHeight:Number = NaN;
       
@@ -120,110 +109,39 @@ package tibia.sidebar
          addEventListener(DragEvent.DRAG_OVER,this.onWidgetDragEvent);
       }
       
-      private static function s_InitializeStyle() : void
+      private function onWidgetDragEvent(param1:DragEvent) : void
       {
-         var Style:CSSStyleDeclaration = StyleManager.getStyleDeclaration("SideBarWidget");
-         if(Style == null)
+         var _loc4_:WidgetView = null;
+         var _loc5_:int = 0;
+         var _loc2_:DragSource = null;
+         var _loc3_:int = -1;
+         if(param1 != null && (_loc2_ = param1.dragSource) != null && (Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_WIDGETBASE) && (Boolean(_loc2_.hasFormat("widgetID")) && (_loc3_ = int(_loc2_.dataForFormat("widgetID"))) > -1))
          {
-            Style = new CSSStyleDeclaration();
-         }
-         Style.defaultFactory = function():void
-         {
-            SideBarWidget.backgroundAlpha = 1;
-            SideBarWidget.backgroundColor = undefined;
-            SideBarWidget.backgroundImage = undefined;
-            SideBarWidget.verticalGap = 4;
-            SideBarWidget.paddingLeft = 2;
-            SideBarWidget.paddingRight = 2;
-            SideBarWidget.paddingTop = 2;
-            SideBarWidget.paddingBottom = 2;
-            SideBarWidget.dropIndicatorSkin = undefined;
-            SideBarWidget.resizeCursorSkin = undefined;
-         };
-         StyleManager.setStyleDeclaration("SideBarWidget",Style,true);
-      }
-      
-      private function updateOwnStyleName() : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:DisplayObject = null;
-         if(styleName != null && styleName != this.m_StyleWithBorder && styleName != this.m_StyleWithoutBorder)
-         {
-            return;
-         }
-         if(this.m_StyleBorderSearchDirection == 0)
-         {
-            return;
-         }
-         var _loc1_:Boolean = false;
-         if(parent is DisplayObjectContainer)
-         {
-            _loc2_ = parent.getChildIndex(this) + this.m_StyleBorderSearchDirection;
-            _loc3_ = parent.numChildren;
             _loc4_ = null;
-            while(_loc2_ >= 0 && _loc2_ < _loc3_)
+            _loc5_ = -1;
+            switch(param1.type)
             {
-               _loc4_ = parent.getChildAt(_loc2_);
-               if(_loc4_ is SideBarWidget && Boolean(_loc4_.visible))
-               {
-                  _loc1_ = true;
+               case DragEvent.DRAG_DROP:
+                  _loc5_ = this.getDropIndex(param1.localY);
+                  if(this.m_DropIndicatorSkipIndex > -1 && _loc5_ > this.m_DropIndicatorSkipIndex)
+                  {
+                     _loc5_--;
+                  }
+                  this.m_SideBarSet.showWidgetByID(_loc3_,this.m_Location,_loc5_);
+               case DragEvent.DRAG_EXIT:
+                  this.updateDropIndicator(false);
                   break;
-               }
-               _loc2_ = _loc2_ + this.m_StyleBorderSearchDirection;
+               case DragEvent.DRAG_ENTER:
+                  _loc4_ = this.m_SideBarSet.getWidgetByID(_loc3_).acquireViewInstance(false);
+                  _loc5_ = this.m_SideBarSet.getSideBar(this.m_Location).getWidgetIndexByID(_loc3_);
+                  if(Boolean(this.m_SideBarSet.getSideBar(this.m_Location).visible) && Boolean(this.hasEnoughSpace(_loc4_)))
+                  {
+                     this.updateDropIndicator(true,_loc5_);
+                     DragManager.acceptDragDrop(this);
+                  }
+               case DragEvent.DRAG_OVER:
+                  this.layoutDropIndicator(param1.localY);
             }
-         }
-         if(_loc1_)
-         {
-            styleName = this.m_StyleWithBorder;
-         }
-         else
-         {
-            styleName = this.m_StyleWithoutBorder;
-         }
-      }
-      
-      override protected function commitProperties() : void
-      {
-         super.commitProperties();
-         if(this.m_UncommittedSideBarSet)
-         {
-            this.m_LayoutMode = 1;
-            this.finishMouseResize();
-            if(this.m_UIHeader != null)
-            {
-               this.m_UIHeader.sideBarSet = this.m_SideBarSet;
-            }
-            this.resetWidgets();
-            this.visible = this.m_SideBarSet != null && Boolean(this.m_SideBarSet.getSideBar(this.m_Location).visible);
-            this.m_UncommittedSideBarSet = false;
-         }
-         if(this.m_UncommittedLocation)
-         {
-            this.m_LayoutMode = 1;
-            this.finishMouseResize();
-            if(this.m_UIHeader != null)
-            {
-               this.m_UIHeader.location = this.m_Location;
-            }
-            this.m_UncommittedLocation = false;
-         }
-         if(this.m_UncommittedOptions)
-         {
-            this.m_UncommittedOptions = false;
-         }
-         if(this.m_UncommittedVisible)
-         {
-            includeInLayout = visible;
-            this.updateSiblingStyleNames();
-            this.m_UncommittedVisible = false;
-         }
-         if(Boolean(this.m_UncommittedStyleBorderSearchDirection) || Boolean(this.m_UncommittedStyleWithBorder) || Boolean(this.m_UncommittedStyleWithoutBorder))
-         {
-            this.updateSiblingStyleNames();
-            this.m_UncommittedStyleBorderSearchDirection = false;
-            this.m_UncommittedStyleWithBorder = false;
-            this.m_UncommittedStyleWithoutBorder = false;
          }
       }
       
@@ -362,8 +280,8 @@ package tibia.sidebar
             _loc7_ = this.m_UIHeader.getExplicitOrMeasuredHeight();
             _loc8_ = this.m_UIHeader.getExplicitOrMeasuredWidth();
             this.m_UIHeader.visible = visible;
-            this.m_UIHeader.move(_loc3_.left,0);
-            this.m_UIHeader.setActualSize(_loc11_,_loc7_);
+            this.m_UIHeader.move(Math.round(_loc3_.left + (_loc11_ - _loc8_) / 2),0);
+            this.m_UIHeader.setActualSize(_loc8_,_loc7_);
             _loc10_ = _loc7_;
          }
          var _loc12_:int = 0;
@@ -485,42 +403,6 @@ package tibia.sidebar
             }
          }
          this.layoutDropIndicator();
-      }
-      
-      private function onWidgetDragEvent(param1:DragEvent) : void
-      {
-         var _loc4_:WidgetView = null;
-         var _loc5_:int = 0;
-         var _loc2_:DragSource = null;
-         var _loc3_:int = -1;
-         if(param1 != null && (_loc2_ = param1.dragSource) != null && (Boolean(_loc2_.hasFormat("dragType")) && _loc2_.dataForFormat("dragType") == DRAG_TYPE_WIDGETBASE) && (Boolean(_loc2_.hasFormat("widgetID")) && (_loc3_ = int(_loc2_.dataForFormat("widgetID"))) > -1))
-         {
-            _loc4_ = null;
-            _loc5_ = -1;
-            switch(param1.type)
-            {
-               case DragEvent.DRAG_DROP:
-                  _loc5_ = this.getDropIndex(param1.localY);
-                  if(this.m_DropIndicatorSkipIndex > -1 && _loc5_ > this.m_DropIndicatorSkipIndex)
-                  {
-                     _loc5_--;
-                  }
-                  this.m_SideBarSet.showWidgetByID(_loc3_,this.m_Location,_loc5_);
-               case DragEvent.DRAG_EXIT:
-                  this.updateDropIndicator(false);
-                  break;
-               case DragEvent.DRAG_ENTER:
-                  _loc4_ = this.m_SideBarSet.getWidgetByID(_loc3_).acquireViewInstance(false);
-                  _loc5_ = this.m_SideBarSet.getSideBar(this.m_Location).getWidgetIndexByID(_loc3_);
-                  if(Boolean(this.m_SideBarSet.getSideBar(this.m_Location).visible) && Boolean(this.hasEnoughSpace(_loc4_)))
-                  {
-                     this.updateDropIndicator(true,_loc5_);
-                     DragManager.acceptDragDrop(this);
-                  }
-               case DragEvent.DRAG_OVER:
-                  this.layoutDropIndicator(param1.localY);
-            }
-         }
       }
       
       private function updateDropIndicator(param1:Boolean, param2:int = -1) : void
@@ -667,9 +549,16 @@ package tibia.sidebar
          return this.m_Location;
       }
       
-      public function get styleBorderSearchDirection() : int
+      private function updateSideBarSet() : void
       {
-         return this.m_StyleBorderSearchDirection;
+         if(this.m_Options != null)
+         {
+            this.sideBarSet = this.m_Options.getSideBarSet(tibia.sidebar.SideBarSet.DEFAULT_SET);
+         }
+         else
+         {
+            this.sideBarSet = null;
+         }
       }
       
       public function get styleWithBorder() : String
@@ -699,18 +588,20 @@ package tibia.sidebar
       private function updateSiblingStyleNames() : void
       {
          var _loc1_:int = 0;
-         var _loc2_:DisplayObject = null;
-         if(parent is DisplayObjectContainer)
+         var _loc2_:int = 0;
+         var _loc3_:DisplayObject = null;
+         if(parent != null)
          {
-            _loc1_ = parent.numChildren - 1;
-            while(_loc1_ >= 0)
+            _loc1_ = parent.numChildren;
+            _loc2_ = 0;
+            while(_loc2_ < _loc1_)
             {
-               _loc2_ = parent.getChildAt(_loc1_);
-               if(_loc2_ is SideBarWidget)
+               _loc3_ = parent.getChildAt(_loc2_);
+               if(_loc3_ is SideBarWidget)
                {
-                  SideBarWidget(_loc2_).updateOwnStyleName();
+                  SideBarWidget(_loc3_).updateOwnStyleName();
                }
-               _loc1_--;
+               _loc2_++;
             }
          }
       }
@@ -740,18 +631,6 @@ package tibia.sidebar
          this.m_UIHeader.sideBarSet = this.m_SideBarSet;
          this.m_UIHeader.location = this.m_Location;
          rawChildren.addChild(this.m_UIHeader as DisplayObject);
-      }
-      
-      private function updateSideBarSet() : void
-      {
-         if(this.m_Options != null)
-         {
-            this.sideBarSet = this.m_Options.getSideBarSet(tibia.sidebar.SideBarSet.DEFAULT_SET);
-         }
-         else
-         {
-            this.sideBarSet = null;
-         }
       }
       
       private function updateMouseResizeCursor(param1:Boolean) : void
@@ -827,6 +706,41 @@ package tibia.sidebar
          }
       }
       
+      private function updateOwnStyleName() : void
+      {
+         var _loc2_:int = 0;
+         var _loc3_:int = 0;
+         var _loc4_:int = 0;
+         var _loc5_:int = 0;
+         if(styleName != null && styleName != this.m_StyleWithBorder && styleName != this.m_StyleWithoutBorder)
+         {
+            return;
+         }
+         var _loc1_:Boolean = false;
+         if(parent != null)
+         {
+            _loc2_ = parent.getChildIndex(this);
+            _loc3_ = parent.numChildren;
+            for each(_loc4_ in [-1,1])
+            {
+               _loc5_ = _loc2_ + _loc4_;
+               if(_loc5_ >= 0 && _loc5_ < _loc3_ && parent.getChildAt(_loc5_) is SideBarWidget && Boolean(parent.getChildAt(_loc5_).visible))
+               {
+                  _loc1_ = true;
+                  break;
+               }
+            }
+         }
+         if(_loc1_)
+         {
+            styleName = this.m_StyleWithBorder;
+         }
+         else
+         {
+            styleName = this.m_StyleWithoutBorder;
+         }
+      }
+      
       override protected function measure() : void
       {
          var _loc4_:UIComponent = null;
@@ -842,10 +756,9 @@ package tibia.sidebar
             }
             _loc2_--;
          }
+         _loc1_ = Math.max(_loc1_,DEFAULT_WIDGET_WIDTH);
          var _loc3_:EdgeMetrics = viewMetricsAndPadding;
-         _loc1_ = _loc1_ + (_loc3_.left + _loc3_.right);
-         measuredMinWidth = _loc1_;
-         measuredWidth = _loc1_;
+         measuredMinWidth = measuredWidth = _loc3_.left + _loc1_ + _loc3_.right;
       }
       
       public function set styleWithoutBorder(param1:String) : void
@@ -873,6 +786,49 @@ package tibia.sidebar
          super.visible = param1;
          this.m_UncommittedVisible = true;
          invalidateProperties();
+      }
+      
+      override protected function commitProperties() : void
+      {
+         super.commitProperties();
+         if(this.m_UncommittedSideBarSet)
+         {
+            this.m_LayoutMode = 1;
+            this.finishMouseResize();
+            if(this.m_UIHeader != null)
+            {
+               this.m_UIHeader.sideBarSet = this.m_SideBarSet;
+            }
+            this.resetWidgets();
+            this.visible = this.m_SideBarSet != null && Boolean(this.m_SideBarSet.getSideBar(this.m_Location).visible);
+            this.m_UncommittedSideBarSet = false;
+         }
+         if(this.m_UncommittedLocation)
+         {
+            this.m_LayoutMode = 1;
+            this.finishMouseResize();
+            if(this.m_UIHeader != null)
+            {
+               this.m_UIHeader.location = this.m_Location;
+            }
+            this.m_UncommittedLocation = false;
+         }
+         if(this.m_UncommittedOptions)
+         {
+            this.m_UncommittedOptions = false;
+         }
+         if(this.m_UncommittedVisible)
+         {
+            includeInLayout = visible;
+            this.updateSiblingStyleNames();
+            this.m_UncommittedVisible = false;
+         }
+         if(Boolean(this.m_UncommittedStyleWithBorder) || Boolean(this.m_UncommittedStyleWithoutBorder))
+         {
+            this.updateSiblingStyleNames();
+            this.m_UncommittedStyleWithBorder = false;
+            this.m_UncommittedStyleWithoutBorder = false;
+         }
       }
       
       private function getDropIndex(param1:Number) : int
@@ -918,28 +874,6 @@ package tibia.sidebar
       public function get styleWithoutBorder() : String
       {
          return this.m_StyleWithoutBorder;
-      }
-      
-      public function set styleBorderSearchDirection(param1:int) : void
-      {
-         if(param1 < 0)
-         {
-            param1 = -1;
-         }
-         else if(param1 > 0)
-         {
-            param1 = 1;
-         }
-         else
-         {
-            param1 = 0;
-         }
-         if(this.m_StyleBorderSearchDirection != param1)
-         {
-            this.m_StyleBorderSearchDirection = param1;
-            this.m_UncommittedStyleBorderSearchDirection = true;
-            invalidateProperties();
-         }
       }
       
       public function resetWidgets() : void

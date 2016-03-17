@@ -5,6 +5,7 @@ package tibia.controls
    import mx.styles.StyleManager;
    import mx.controls.Button;
    import mx.core.Container;
+   import shared.controls.CustomButton;
    import flash.events.MouseEvent;
    import tibia.input.MouseRepeatEvent;
    import tibia.controls.dynamicTabBarClasses.DynamicTab;
@@ -265,7 +266,7 @@ package tibia.controls
          if(!this.m_UIConstructed)
          {
             super.createChildren();
-            this.m_UILeftButton = new Button();
+            this.m_UILeftButton = new CustomButton();
             this.m_UILeftButton.styleName = getStyle("scrollLeftButtonStyle");
             this.m_UILeftButton.addEventListener(MouseEvent.MOUSE_DOWN,this.onScrollButtonDown);
             this.m_UILeftButton.addEventListener(MouseEvent.CLICK,this.onScrollButtonClick);
@@ -273,7 +274,7 @@ package tibia.controls
             this.m_UILeftButton.setStyle("repeatDelay",500);
             addChild(this.m_UILeftButton);
             this.m_UIInternalChildren++;
-            this.m_UIRightButton = new Button();
+            this.m_UIRightButton = new CustomButton();
             this.m_UIRightButton.styleName = getStyle("scrollRightButtonStyle");
             this.m_UIRightButton.addEventListener(MouseEvent.MOUSE_DOWN,this.onScrollButtonDown);
             this.m_UIRightButton.addEventListener(MouseEvent.CLICK,this.onScrollButtonClick);
@@ -281,7 +282,7 @@ package tibia.controls
             this.m_UIRightButton.setStyle("repeatDelay",500);
             addChild(this.m_UIRightButton);
             this.m_UIInternalChildren++;
-            this.m_UIDropDownButton = new Button();
+            this.m_UIDropDownButton = new CustomButton();
             this.m_UIDropDownButton.styleName = getStyle("dropDownButtonStyle");
             this.m_UIDropDownButton.addEventListener(MouseEvent.CLICK,this.onDropDownButton);
             addChild(this.m_UIDropDownButton);

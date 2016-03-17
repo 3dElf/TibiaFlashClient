@@ -7,7 +7,7 @@ package tibia.market.marketWidgetClasses
    import flash.events.Event;
    import tibia.market.OfferStatistics;
    import tibia.market.Offer;
-   import shared.utility.StringHelper;
+   import shared.utility.i18n.i18nFormatNumber;
    import tibia.market.MarketWidget;
    import mx.containers.BoxDirection;
    import mx.core.ScrollPolicy;
@@ -187,9 +187,9 @@ package tibia.market.marketWidgetClasses
                _loc5_ = Math.max(0,_loc5_);
                _loc6_ = Math.min(_loc6_,_loc5_);
                this.m_UIBuyTransactions.text = String(_loc3_);
-               this.m_UIBuyAverage.text = _loc3_ > 0?StringHelper.formatNumber(Math.round(_loc4_ / _loc3_)):"0";
-               this.m_UIBuyMaximum.text = StringHelper.formatNumber(_loc5_);
-               this.m_UIBuyMinimum.text = StringHelper.formatNumber(_loc6_);
+               this.m_UIBuyAverage.text = _loc3_ > 0?i18nFormatNumber(Math.round(_loc4_ / _loc3_)):"0";
+               this.m_UIBuyMaximum.text = i18nFormatNumber(_loc5_);
+               this.m_UIBuyMinimum.text = i18nFormatNumber(_loc6_);
                _loc3_ = _loc4_ = 0;
                _loc5_ = Number.NEGATIVE_INFINITY;
                _loc6_ = Number.POSITIVE_INFINITY;
@@ -212,9 +212,9 @@ package tibia.market.marketWidgetClasses
                _loc5_ = Math.max(0,_loc5_);
                _loc6_ = Math.min(_loc6_,_loc5_);
                this.m_UISellTransactions.text = String(_loc3_);
-               this.m_UISellAverage.text = _loc3_ > 0?StringHelper.formatNumber(Math.round(_loc4_ / _loc3_)):"0";
-               this.m_UISellMaximum.text = StringHelper.formatNumber(_loc5_);
-               this.m_UISellMinimum.text = StringHelper.formatNumber(_loc6_);
+               this.m_UISellAverage.text = _loc3_ > 0?i18nFormatNumber(Math.round(_loc4_ / _loc3_)):"0";
+               this.m_UISellMaximum.text = i18nFormatNumber(_loc5_);
+               this.m_UISellMinimum.text = i18nFormatNumber(_loc6_);
             }
             else
             {

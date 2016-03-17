@@ -11,6 +11,7 @@ package tibia.trade.safeTradeWidgetClasses
    import mx.controls.Text;
    import shared.controls.CustomLabel;
    import mx.core.ScrollPolicy;
+   import shared.controls.CustomButton;
    import mx.containers.ViewStack;
    import tibia.network.Connection;
    import mx.controls.Label;
@@ -188,7 +189,7 @@ package tibia.trade.safeTradeWidgetClasses
             _loc4_.setStyle("paddingTop",-3);
             _loc4_.setStyle("paddingBottom",-3);
             _loc3_.addChild(_loc4_);
-            this.m_UIStateWaitReject = new Button();
+            this.m_UIStateWaitReject = new CustomButton();
             this.m_UIStateWaitReject.label = resourceManager.getString(BUNDLE,"FOOTER_CANCEL_LABEL");
             this.m_UIStateWaitReject.toolTip = resourceManager.getString(BUNDLE,"FOOTER_CANCEL_TOOLTIP");
             this.m_UIStateWaitReject.addEventListener(MouseEvent.CLICK,this.onReject);
@@ -198,12 +199,12 @@ package tibia.trade.safeTradeWidgetClasses
             _loc5_.percentWidth = 100;
             _loc5_.setStyle("horizontalAlign","right");
             _loc5_.setStyle("verticalAlign","middle");
-            this.m_UIStateTradeAccept = new Button();
+            this.m_UIStateTradeAccept = new CustomButton();
             this.m_UIStateTradeAccept.label = resourceManager.getString(BUNDLE,"FOOTER_ACCEPT_LABEL");
             this.m_UIStateTradeAccept.toolTip = resourceManager.getString(BUNDLE,"FOOTER_ACCEPT_TOOLTIP");
             this.m_UIStateTradeAccept.addEventListener(MouseEvent.CLICK,this.onAccept);
             _loc5_.addChild(this.m_UIStateTradeAccept);
-            this.m_UIStateTradeReject = new Button();
+            this.m_UIStateTradeReject = new CustomButton();
             this.m_UIStateTradeReject.label = resourceManager.getString(BUNDLE,"FOOTER_REJECT_LABEL");
             this.m_UIStateTradeReject.toolTip = resourceManager.getString(BUNDLE,"FOOTER_REJECT_TOOLTIP");
             this.m_UIStateTradeReject.addEventListener(MouseEvent.CLICK,this.onReject);
@@ -222,7 +223,7 @@ package tibia.trade.safeTradeWidgetClasses
             _loc7_.setStyle("paddingTop",-3);
             _loc7_.setStyle("paddingBottom",-3);
             _loc6_.addChild(_loc7_);
-            this.m_UIStateAcceptReject = new Button();
+            this.m_UIStateAcceptReject = new CustomButton();
             this.m_UIStateAcceptReject.label = resourceManager.getString(BUNDLE,"FOOTER_REJECT_LABEL");
             this.m_UIStateAcceptReject.toolTip = resourceManager.getString(BUNDLE,"FOOTER_REJECT_TOOLTIP");
             this.m_UIStateAcceptReject.addEventListener(MouseEvent.CLICK,this.onReject);

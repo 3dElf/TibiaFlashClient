@@ -36,7 +36,7 @@ package
             "SKILL_FIGHTDISTANCE":"Distance Fighting",
             "CTX_SWITCH_SKILL":"Show {0} Progress",
             "TIP_STATE_STRENGTHENED":"You are strengthened",
-            "CTX_DISABLE_SKILL":"Disable Progress Display",
+            "CTX_DISABLE_SKILL":"Disable Progress Bar",
             "SKILL_FIGHTSWORD":"Sword Fighting",
             "SKILL_FIGHTFIST":"Fist Fighting",
             "TIP_SKILL_UNIT_DEFAULT":"%",
@@ -50,7 +50,7 @@ package
             "TIP_SKILL_TEXT_SIMPLE":"{0} {1} ({2}{3} for next level)",
             "TIP_STATE_FREEZING":"You are freezing",
             "SKILL_MAGLEVEL":"Magic Level",
-            "SKILL_NONE":"None",
+            "SKILL_NONE":"Disabled",
             "TIP_STATE_DRUNK":"You are drunk"
          };
          return _loc1_;

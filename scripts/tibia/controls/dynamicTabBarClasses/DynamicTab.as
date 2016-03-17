@@ -6,6 +6,7 @@ package tibia.controls.dynamicTabBarClasses
    import flash.events.MouseEvent;
    import mx.controls.Button;
    import tibia.controls.DynamicTabBar;
+   import shared.controls.CustomButton;
    import flash.events.Event;
    
    public class DynamicTab extends Tab
@@ -157,7 +158,7 @@ package tibia.controls.dynamicTabBarClasses
          if(!this.m_UIConstructed)
          {
             super.createChildren();
-            this.m_UICloseButton = new Button();
+            this.m_UICloseButton = new CustomButton();
             this.m_UICloseButton.enabled = enabled;
             this.m_UICloseButton.styleName = this.getStyle("closeButtonStyle");
             this.m_UICloseButton.addEventListener(MouseEvent.CLICK,this.onCloseButtonEvent);

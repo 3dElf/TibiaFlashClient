@@ -30,7 +30,7 @@ package tibia.cursors
          _loc1_.data = new Vector.<BitmapData>();
          _loc1_.data[0] = Bitmap(new CURSOR_CLASS()).bitmapData;
          _loc1_.frameRate = 0;
-         _loc1_.hotSpot = new Point(9,9);
+         _loc1_.hotSpot = new Point(10,9);
          Mouse.registerCursor(CURSOR_NAME,_loc1_);
       }
    }

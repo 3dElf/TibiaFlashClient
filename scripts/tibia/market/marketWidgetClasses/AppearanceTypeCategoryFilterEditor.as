@@ -14,6 +14,7 @@ package tibia.market.marketWidgetClasses
    import shared.controls.CustomList;
    import mx.events.DropdownEvent;
    import mx.events.ListEvent;
+   import shared.controls.CustomButton;
    import tibia.appearances.AppearanceType;
    import tibia.creatures.Player;
    import mx.events.PropertyChangeEvent;
@@ -324,7 +325,7 @@ package tibia.market.marketWidgetClasses
             _Box.setStyle("horizontalAlign","center");
             _Box.setStyle("horizontalGap",1);
             _Box.setStyle("verticalAlign","middle");
-            this.m_UILevel = new Button();
+            this.m_UILevel = new CustomButton();
             this.m_UILevel.label = resourceManager.getString(BUNDLE,"RESTRICT_LEVEL_LABEL");
             this.m_UILevel.toggle = true;
             this.m_UILevel.toolTip = resourceManager.getString(BUNDLE,"RESTRICT_LEVEL_TOOLTIP");
@@ -336,7 +337,7 @@ package tibia.market.marketWidgetClasses
             this.m_UILevel.setStyle("paddingLeft",0);
             this.m_UILevel.setStyle("paddingRight",0);
             _Box.addChild(this.m_UILevel);
-            this.m_UIProfession = new Button();
+            this.m_UIProfession = new CustomButton();
             this.m_UIProfession.label = resourceManager.getString(BUNDLE,"RESTRICT_PROFESSION_LABEL");
             this.m_UIProfession.toggle = true;
             this.m_UIProfession.toolTip = resourceManager.getString(BUNDLE,"RESTRICT_PROFESSION_TOOLTIP");

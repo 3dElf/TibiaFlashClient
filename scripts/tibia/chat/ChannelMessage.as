@@ -1,6 +1,7 @@
 package tibia.chat
 {
    import tibia.reporting.IReportable;
+   import shared.utility.i18n.i18nFormatTime;
    import shared.utility.StringHelper;
    
    public class ChannelMessage implements IReportable
@@ -16,7 +17,7 @@ package tibia.chat
       
       protected var m_HTMLText:String = null;
       
-      protected var m_Mode:int;
+      protected var m_Mode:int = 0;
       
       protected var m_Timestamp:Number = NaN;
       
@@ -28,7 +29,6 @@ package tibia.chat
       
       public function ChannelMessage(param1:int, param2:String, param3:int, param4:int, param5:String)
       {
-         this.m_Mode = MessageMode.MESSAGE_NONE;
          super();
          if(param1 <= 0)
          {
@@ -68,7 +68,7 @@ package tibia.chat
          var _loc5_:* = "";
          if(param1)
          {
-            _loc5_ = StringHelper.formatTime(new Date(this.m_Timestamp));
+            _loc5_ = i18nFormatTime(new Date(this.m_Timestamp));
          }
          if(this.m_Speaker != null)
          {

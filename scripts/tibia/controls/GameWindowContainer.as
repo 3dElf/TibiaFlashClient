@@ -4,6 +4,7 @@ package tibia.controls
    import tibia.options.OptionsStorage;
    import mx.events.PropertyChangeEvent;
    import mx.controls.Button;
+   import shared.controls.CustomButton;
    
    public class GameWindowContainer extends GridContainer
    {
@@ -62,7 +63,7 @@ package tibia.controls
          if(!this.m_UIConstructed)
          {
             super.createChildren();
-            this.m_UILock = new Button();
+            this.m_UILock = new CustomButton();
             this.m_UILock.selected = this.options != null && Boolean(this.options.generalActionBarsLock);
             this.m_UILock.styleName = "gameWindowLockButton";
             this.m_UILock.toggle = true;

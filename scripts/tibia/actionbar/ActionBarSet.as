@@ -11,7 +11,7 @@ package tibia.actionbar
       
       public static const NUM_LOCATIONS:int = 4;
       
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 4;
+      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
       
       public static const NUM_SETS:int = 12;
       
