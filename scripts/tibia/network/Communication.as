@@ -139,7 +139,7 @@ package tibia.network
       
       protected static const CATTACK:int = 161;
       
-      public static const CLIENT_VERSION:uint = 1134;
+      public static const CLIENT_VERSION:uint = 1155;
       
       protected static const CLOOKATCREATURE:int = 141;
       
@@ -409,7 +409,7 @@ package tibia.network
       
       protected static const SCREATUREOUTFIT:int = 142;
       
-      public static const PROTOCOL_VERSION:int = 974;
+      public static const PROTOCOL_VERSION:int = 975;
       
       protected static const SAMBIENTE:int = 130;
       

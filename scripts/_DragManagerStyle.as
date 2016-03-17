@@ -8,13 +8,13 @@ package
    public class _DragManagerStyle
    {
       
-      private static var _embed_css_Assets_swf_mx_skins_cursor_DragCopy_578313209:Class = _DragManagerStyle__embed_css_Assets_swf_mx_skins_cursor_DragCopy_578313209;
+      private static var _embed_css_Assets_swf_mx_skins_cursor_DragCopy_627241039:Class = _DragManagerStyle__embed_css_Assets_swf_mx_skins_cursor_DragCopy_627241039;
       
-      private static var _embed_css_Assets_swf_mx_skins_cursor_DragLink_577002088:Class = _DragManagerStyle__embed_css_Assets_swf_mx_skins_cursor_DragLink_577002088;
+      private static var _embed_css_Assets_swf_mx_skins_cursor_DragReject_2100536315:Class = _DragManagerStyle__embed_css_Assets_swf_mx_skins_cursor_DragReject_2100536315;
       
-      private static var _embed_css_Assets_swf_mx_skins_cursor_DragMove_577029725:Class = _DragManagerStyle__embed_css_Assets_swf_mx_skins_cursor_DragMove_577029725;
+      private static var _embed_css_Assets_swf_mx_skins_cursor_DragLink_627503322:Class = _DragManagerStyle__embed_css_Assets_swf_mx_skins_cursor_DragLink_627503322;
       
-      private static var _embed_css_Assets_swf_mx_skins_cursor_DragReject_1915603021:Class = _DragManagerStyle__embed_css_Assets_swf_mx_skins_cursor_DragReject_1915603021;
+      private static var _embed_css_Assets_swf_mx_skins_cursor_DragMove_627469491:Class = _DragManagerStyle__embed_css_Assets_swf_mx_skins_cursor_DragMove_627469491;
        
       public function _DragManagerStyle()
       {
@@ -34,10 +34,10 @@ package
          {
             style.defaultFactory = function():void
             {
-               _DragManagerStyle.copyCursor = _embed_css_Assets_swf_mx_skins_cursor_DragCopy_578313209;
-               _DragManagerStyle.moveCursor = _embed_css_Assets_swf_mx_skins_cursor_DragMove_577029725;
-               _DragManagerStyle.rejectCursor = _embed_css_Assets_swf_mx_skins_cursor_DragReject_1915603021;
-               _DragManagerStyle.linkCursor = _embed_css_Assets_swf_mx_skins_cursor_DragLink_577002088;
+               _DragManagerStyle.copyCursor = _embed_css_Assets_swf_mx_skins_cursor_DragCopy_627241039;
+               _DragManagerStyle.moveCursor = _embed_css_Assets_swf_mx_skins_cursor_DragMove_627469491;
+               _DragManagerStyle.rejectCursor = _embed_css_Assets_swf_mx_skins_cursor_DragReject_2100536315;
+               _DragManagerStyle.linkCursor = _embed_css_Assets_swf_mx_skins_cursor_DragLink_627503322;
                _DragManagerStyle.defaultDragImageSkin = DefaultDragImage;
             };
          }

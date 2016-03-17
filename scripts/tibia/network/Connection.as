@@ -31,7 +31,7 @@ package tibia.network
       
       protected static const CQUITGAME:int = 20;
       
-      public static const PROTOCOL_VERSION:int = 974;
+      public static const PROTOCOL_VERSION:int = 975;
       
       protected static const CROTATEWEST:int = 114;
       
@@ -81,7 +81,7 @@ package tibia.network
       
       protected static const CBUYOBJECT:int = 122;
       
-      public static const CLIENT_VERSION:uint = 1134;
+      public static const CLIENT_VERSION:uint = 1155;
       
       protected static const SPING:int = 29;
       

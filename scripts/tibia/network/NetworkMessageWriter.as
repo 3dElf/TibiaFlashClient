@@ -24,7 +24,7 @@ package tibia.network
       
       protected static const ERR_INVALID_STATE:int = 4;
       
-      public static const PROTOCOL_VERSION:int = 974;
+      public static const PROTOCOL_VERSION:int = 975;
       
       protected static const PAYLOADLENGTH_SIZE:int = 2;
       
