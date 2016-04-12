@@ -1,21 +1,21 @@
-package build
+﻿package build
 {
-   import tibia.appearances.AppearanceStorage;
-   
-   public class ApperanceStorageFactory
-   {
-       
-      public function ApperanceStorageFactory()
-      {
-         super();
-         throw new Error("ApperanceStorageFactory must not be instantiated");
-      }
-      
-      public static function s_CreateAppearanceStorage() : AppearanceStorage
-      {
-         var _loc1_:AppearanceStorage = null;
-         _loc1_ = new AppearanceStorage();
-         return _loc1_;
-      }
-   }
+    import tibia.appearances.*;
+
+    public class ApperanceStorageFactory extends Object
+    {
+
+        public function ApperanceStorageFactory()
+        {
+            throw new Error("ApperanceStorageFactory must not be instantiated");
+        }// end function
+
+        public static function s_CreateAppearanceStorage() : AppearanceStorage
+        {
+            var _loc_1:* = null;
+            _loc_1 = new AppearanceStorage();
+            return _loc_1;
+        }// end function
+
+    }
 }

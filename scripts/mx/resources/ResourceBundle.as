@@ -1,159 +1,154 @@
-package mx.resources
+﻿package mx.resources
 {
-   import flash.system.ApplicationDomain;
-   import mx.core.mx_internal;
-   import mx.utils.StringUtil;
-   
-   use namespace mx_internal;
-   
-   public class ResourceBundle implements IResourceBundle
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      mx_internal static var backupApplicationDomain:ApplicationDomain;
-      
-      mx_internal static var locale:String;
-       
-      mx_internal var _locale:String;
-      
-      private var _content:Object;
-      
-      mx_internal var _bundleName:String;
-      
-      public function ResourceBundle(param1:String = null, param2:String = null)
-      {
-         _content = {};
-         super();
-         mx_internal::_locale = param1;
-         mx_internal::_bundleName = param2;
-         _content = getContent();
-      }
-      
-      private static function getClassByName(param1:String, param2:ApplicationDomain) : Class
-      {
-         var _loc3_:Class = null;
-         if(param2.hasDefinition(param1))
-         {
-            _loc3_ = param2.getDefinition(param1) as Class;
-         }
-         return _loc3_;
-      }
-      
-      public static function getResourceBundle(param1:String, param2:ApplicationDomain = null) : ResourceBundle
-      {
-         var _loc3_:* = null;
-         var _loc4_:Class = null;
-         var _loc5_:Object = null;
-         var _loc6_:ResourceBundle = null;
-         if(!param2)
-         {
-            param2 = ApplicationDomain.currentDomain;
-         }
-         _loc3_ = mx_internal::locale + "$" + param1 + "_properties";
-         _loc4_ = getClassByName(_loc3_,param2);
-         if(!_loc4_)
-         {
-            _loc3_ = param1 + "_properties";
-            _loc4_ = getClassByName(_loc3_,param2);
-         }
-         if(!_loc4_)
-         {
-            _loc3_ = param1;
-            _loc4_ = getClassByName(_loc3_,param2);
-         }
-         if(!_loc4_ && Boolean(mx_internal::backupApplicationDomain))
-         {
-            _loc3_ = param1 + "_properties";
-            _loc4_ = getClassByName(_loc3_,mx_internal::backupApplicationDomain);
-            if(!_loc4_)
+    import flash.system.*;
+    import mx.core.*;
+    import mx.resources.*;
+    import mx.utils.*;
+
+    public class ResourceBundle extends Object implements IResourceBundle
+    {
+        var _locale:String;
+        private var _content:Object;
+        var _bundleName:String;
+        static const VERSION:String = "3.6.0.21751";
+        static var backupApplicationDomain:ApplicationDomain;
+        static var locale:String;
+
+        public function ResourceBundle(param1:String = null, param2:String = null)
+        {
+            _content = {};
+            mx_internal::_locale = param1;
+            mx_internal::_bundleName = param2;
+            _content = getContent();
+            return;
+        }// end function
+
+        protected function getContent() : Object
+        {
+            return {};
+        }// end function
+
+        public function getString(param1:String) : String
+        {
+            return String(_getObject(param1));
+        }// end function
+
+        public function get content() : Object
+        {
+            return _content;
+        }// end function
+
+        public function getBoolean(param1:String, param2:Boolean = true) : Boolean
+        {
+            var _loc_3:* = _getObject(param1).toLowerCase();
+            if (_loc_3 == "false")
             {
-               _loc3_ = param1;
-               _loc4_ = getClassByName(_loc3_,mx_internal::backupApplicationDomain);
+                return false;
             }
-         }
-         if(_loc4_)
-         {
-            _loc5_ = new _loc4_();
-            if(_loc5_ is ResourceBundle)
+            if (_loc_3 == "true")
             {
-               _loc6_ = ResourceBundle(_loc5_);
-               return _loc6_;
+                return true;
             }
-         }
-         throw new Error("Could not find resource bundle " + param1);
-      }
-      
-      protected function getContent() : Object
-      {
-         return {};
-      }
-      
-      public function getString(param1:String) : String
-      {
-         return String(_getObject(param1));
-      }
-      
-      public function get content() : Object
-      {
-         return _content;
-      }
-      
-      public function getBoolean(param1:String, param2:Boolean = true) : Boolean
-      {
-         var _loc3_:String = _getObject(param1).toLowerCase();
-         if(_loc3_ == "false")
-         {
-            return false;
-         }
-         if(_loc3_ == "true")
-         {
-            return true;
-         }
-         return param2;
-      }
-      
-      public function getStringArray(param1:String) : Array
-      {
-         var _loc2_:Array = _getObject(param1).split(",");
-         var _loc3_:int = _loc2_.length;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc2_[_loc4_] = StringUtil.trim(_loc2_[_loc4_]);
-            _loc4_++;
-         }
-         return _loc2_;
-      }
-      
-      public function getObject(param1:String) : Object
-      {
-         return _getObject(param1);
-      }
-      
-      private function _getObject(param1:String) : Object
-      {
-         var _loc2_:Object = content[param1];
-         if(!_loc2_)
-         {
-            throw new Error("Key " + param1 + " was not found in resource bundle " + bundleName);
-         }
-         return _loc2_;
-      }
-      
-      public function get locale() : String
-      {
-         return mx_internal::_locale;
-      }
-      
-      public function get bundleName() : String
-      {
-         return mx_internal::_bundleName;
-      }
-      
-      public function getNumber(param1:String) : Number
-      {
-         return Number(_getObject(param1));
-      }
-   }
+            return param2;
+        }// end function
+
+        public function getStringArray(param1:String) : Array
+        {
+            var _loc_2:* = _getObject(param1).split(",");
+            var _loc_3:* = _loc_2.length;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                _loc_2[_loc_4] = StringUtil.trim(_loc_2[_loc_4]);
+                _loc_4++;
+            }
+            return _loc_2;
+        }// end function
+
+        public function getObject(param1:String) : Object
+        {
+            return _getObject(param1);
+        }// end function
+
+        private function _getObject(param1:String) : Object
+        {
+            var _loc_2:* = content[param1];
+            if (!_loc_2)
+            {
+                throw new Error("Key " + param1 + " was not found in resource bundle " + bundleName);
+            }
+            return _loc_2;
+        }// end function
+
+        public function get locale() : String
+        {
+            return mx_internal::_locale;
+        }// end function
+
+        public function get bundleName() : String
+        {
+            return mx_internal::_bundleName;
+        }// end function
+
+        public function getNumber(param1:String) : Number
+        {
+            return Number(_getObject(param1));
+        }// end function
+
+        private static function getClassByName(param1:String, param2:ApplicationDomain) : Class
+        {
+            var _loc_3:* = null;
+            if (param2.hasDefinition(param1))
+            {
+                _loc_3 = param2.getDefinition(param1) as Class;
+            }
+            return _loc_3;
+        }// end function
+
+        public static function getResourceBundle(param1:String, param2:ApplicationDomain = null) : ResourceBundle
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            if (!param2)
+            {
+                param2 = ApplicationDomain.currentDomain;
+            }
+            _loc_3 = mx_internal::locale + "$" + param1 + "_properties";
+            _loc_4 = getClassByName(_loc_3, param2);
+            if (!_loc_4)
+            {
+                _loc_3 = param1 + "_properties";
+                _loc_4 = getClassByName(_loc_3, param2);
+            }
+            if (!_loc_4)
+            {
+                _loc_3 = param1;
+                _loc_4 = getClassByName(_loc_3, param2);
+            }
+            if (!_loc_4 && mx_internal::backupApplicationDomain)
+            {
+                _loc_3 = param1 + "_properties";
+                _loc_4 = getClassByName(_loc_3, mx_internal::backupApplicationDomain);
+                if (!_loc_4)
+                {
+                    _loc_3 = param1;
+                    _loc_4 = getClassByName(_loc_3, mx_internal::backupApplicationDomain);
+                }
+            }
+            if (_loc_4)
+            {
+                _loc_5 = new _loc_4;
+                if (_loc_5 is ResourceBundle)
+                {
+                    _loc_6 = ResourceBundle.ResourceBundle(_loc_5);
+                    return _loc_6;
+                }
+            }
+            throw new Error("Could not find resource bundle " + param1);
+        }// end function
+
+    }
 }

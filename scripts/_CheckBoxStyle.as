@@ -1,57 +1,60 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   import mx.skins.halo.CheckBoxIcon;
-   
-   public class _CheckBoxStyle
-   {
-       
-      public function _CheckBoxStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration("CheckBox");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration("CheckBox",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.skins.halo.*;
+    import mx.styles.*;
+
+    public class _CheckBoxStyle extends Object
+    {
+
+        public function _CheckBoxStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration("CheckBox");
+            if (!style)
             {
-               _CheckBoxStyle.icon = CheckBoxIcon;
-               _CheckBoxStyle.downSkin = null;
-               _CheckBoxStyle.overSkin = null;
-               _CheckBoxStyle.selectedDisabledSkin = null;
-               _CheckBoxStyle.disabledIcon = null;
-               _CheckBoxStyle.upIcon = null;
-               _CheckBoxStyle.selectedDownIcon = null;
-               _CheckBoxStyle.iconColor = 2831164;
-               _CheckBoxStyle.selectedUpSkin = null;
-               _CheckBoxStyle.overIcon = null;
-               _CheckBoxStyle.skin = null;
-               _CheckBoxStyle.paddingLeft = 0;
-               _CheckBoxStyle.paddingRight = 0;
-               _CheckBoxStyle.upSkin = null;
-               _CheckBoxStyle.fontWeight = "normal";
-               _CheckBoxStyle.selectedDownSkin = null;
-               _CheckBoxStyle.selectedUpIcon = null;
-               _CheckBoxStyle.selectedOverIcon = null;
-               _CheckBoxStyle.selectedDisabledIcon = null;
-               _CheckBoxStyle.textAlign = "left";
-               _CheckBoxStyle.disabledSkin = null;
-               _CheckBoxStyle.horizontalGap = 5;
-               _CheckBoxStyle.selectedOverSkin = null;
-               _CheckBoxStyle.downIcon = null;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration("CheckBox", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.icon = CheckBoxIcon;
+                this.downSkin = null;
+                this.overSkin = null;
+                this.selectedDisabledSkin = null;
+                this.disabledIcon = null;
+                this.upIcon = null;
+                this.selectedDownIcon = null;
+                this.iconColor = 2831164;
+                this.selectedUpSkin = null;
+                this.overIcon = null;
+                this.skin = null;
+                this.paddingLeft = 0;
+                this.paddingRight = 0;
+                this.upSkin = null;
+                this.fontWeight = "normal";
+                this.selectedDownSkin = null;
+                this.selectedUpIcon = null;
+                this.selectedOverIcon = null;
+                this.selectedDisabledIcon = null;
+                this.textAlign = "left";
+                this.disabledSkin = null;
+                this.horizontalGap = 5;
+                this.selectedOverSkin = null;
+                this.downIcon = null;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

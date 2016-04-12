@@ -1,8 +1,12 @@
-package mx.core
+﻿package mx.core
 {
-   public interface IFactory
-   {
-       
-      function newInstance() : *;
-   }
+
+    public interface IFactory
+    {
+
+        public function IFactory();
+
+        function newInstance();
+
+    }
 }

@@ -1,75 +1,77 @@
-package mx.core
+﻿package mx.core
 {
-   import flash.display.InteractiveObject;
-   import mx.managers.IFocusManager;
-   
-   public class ContainerGlobals
-   {
-      
-      public static var focusedContainer:InteractiveObject;
-       
-      public function ContainerGlobals()
-      {
-         super();
-      }
-      
-      public static function checkFocus(param1:InteractiveObject, param2:InteractiveObject) : void
-      {
-         var _loc6_:IFocusManager = null;
-         var _loc7_:IButton = null;
-         var _loc3_:InteractiveObject = param2;
-         var _loc4_:InteractiveObject = param2;
-         var _loc5_:IUIComponent = null;
-         if(param2 != null && param1 == param2)
-         {
+    import flash.display.*;
+    import mx.managers.*;
+
+    public class ContainerGlobals extends Object
+    {
+        public static var focusedContainer:InteractiveObject;
+
+        public function ContainerGlobals()
+        {
             return;
-         }
-         while(_loc4_)
-         {
-            if(_loc4_.parent)
+        }// end function
+
+        public static function checkFocus(param1:InteractiveObject, param2:InteractiveObject) : void
+        {
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_3:* = param2;
+            var _loc_4:* = param2;
+            var _loc_5:* = null;
+            if (param2 != null && param1 == param2)
             {
-               _loc3_ = _loc4_.parent;
+                return;
             }
-            else
+            while (_loc_4)
             {
-               _loc3_ = null;
+                
+                if (_loc_4.parent)
+                {
+                    _loc_3 = _loc_4.parent;
+                }
+                else
+                {
+                    _loc_3 = null;
+                }
+                if (_loc_4 is IUIComponent)
+                {
+                    _loc_5 = IUIComponent(_loc_4);
+                }
+                _loc_4 = _loc_3;
+                if (_loc_4 && _loc_4 is IContainer && IContainer(_loc_4).defaultButton)
+                {
+                    break;
+                }
             }
-            if(_loc4_ is IUIComponent)
+            if (ContainerGlobals.focusedContainer != _loc_4 || ContainerGlobals.focusedContainer == null && _loc_4 == null)
             {
-               _loc5_ = IUIComponent(_loc4_);
+                if (!_loc_4)
+                {
+                    _loc_4 = InteractiveObject(_loc_5);
+                }
+                if (_loc_4 && _loc_4 is IContainer)
+                {
+                    _loc_6 = IContainer(_loc_4).focusManager;
+                    if (!_loc_6)
+                    {
+                        return;
+                    }
+                    _loc_7 = IContainer(_loc_4).defaultButton as IButton;
+                    if (_loc_7)
+                    {
+                        ContainerGlobals.focusedContainer = InteractiveObject(_loc_4);
+                        _loc_6.mx.managers:IFocusManager::defaultButton = _loc_7 as IButton;
+                    }
+                    else
+                    {
+                        ContainerGlobals.focusedContainer = InteractiveObject(_loc_4);
+                        _loc_6.mx.managers:IFocusManager::defaultButton = null;
+                    }
+                }
             }
-            _loc4_ = _loc3_;
-            if(Boolean(_loc4_) && Boolean(_loc4_ is IContainer) && Boolean(IContainer(_loc4_).defaultButton))
-            {
-               break;
-            }
-         }
-         if(ContainerGlobals.focusedContainer != _loc4_ || ContainerGlobals.focusedContainer == null && _loc4_ == null)
-         {
-            if(!_loc4_)
-            {
-               _loc4_ = InteractiveObject(_loc5_);
-            }
-            if(Boolean(_loc4_) && _loc4_ is IContainer)
-            {
-               _loc6_ = IContainer(_loc4_).focusManager;
-               if(!_loc6_)
-               {
-                  return;
-               }
-               _loc7_ = IContainer(_loc4_).defaultButton as IButton;
-               if(_loc7_)
-               {
-                  ContainerGlobals.focusedContainer = InteractiveObject(_loc4_);
-                  _loc6_.defaultButton = _loc7_ as IButton;
-               }
-               else
-               {
-                  ContainerGlobals.focusedContainer = InteractiveObject(_loc4_);
-                  _loc6_.defaultButton = null;
-               }
-            }
-         }
-      }
-   }
+            return;
+        }// end function
+
+    }
 }

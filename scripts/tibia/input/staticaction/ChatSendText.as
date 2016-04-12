@@ -1,35 +1,38 @@
-package tibia.input.staticaction
+﻿package tibia.input.staticaction
 {
-   import tibia.options.OptionsStorage;
-   import tibia.input.MappingSet;
-   
-   public class ChatSendText extends StaticAction
-   {
-       
-      public function ChatSendText(param1:int, param2:String, param3:uint, param4:Boolean)
-      {
-         super(param1,param2,param3,param4);
-      }
-      
-      override public function perform(param1:Boolean = false) : void
-      {
-         var _loc2_:OptionsStorage = Tibia.s_GetOptions();
-         if(_loc2_ == null)
-         {
+    import tibia.input.*;
+    import tibia.options.*;
+
+    public class ChatSendText extends StaticAction
+    {
+
+        public function ChatSendText(param1:int, param2:String, param3:uint, param4:Boolean)
+        {
+            super(param1, param2, param3, param4);
             return;
-         }
-         if(_loc2_.generalInputSetMode == MappingSet.CHAT_MODE_OFF)
-         {
-            _loc2_.generalInputSetMode = MappingSet.CHAT_MODE_TEMPORARY;
-         }
-         else
-         {
-            Tibia.s_GameActionFactory.createTalkAction(null,true).perform();
-            if(_loc2_.generalInputSetMode == MappingSet.CHAT_MODE_TEMPORARY)
+        }// end function
+
+        override public function perform(param1:Boolean = false) : void
+        {
+            var _loc_2:* = Tibia.s_GetOptions();
+            if (_loc_2 == null)
             {
-               _loc2_.generalInputSetMode = MappingSet.CHAT_MODE_OFF;
+                return;
             }
-         }
-      }
-   }
+            if (_loc_2.generalInputSetMode == MappingSet.CHAT_MODE_OFF)
+            {
+                _loc_2.generalInputSetMode = MappingSet.CHAT_MODE_TEMPORARY;
+            }
+            else
+            {
+                Tibia.s_GameActionFactory.createTalkAction(null, true).perform();
+                if (_loc_2.generalInputSetMode == MappingSet.CHAT_MODE_TEMPORARY)
+                {
+                    _loc_2.generalInputSetMode = MappingSet.CHAT_MODE_OFF;
+                }
+            }
+            return;
+        }// end function
+
+    }
 }

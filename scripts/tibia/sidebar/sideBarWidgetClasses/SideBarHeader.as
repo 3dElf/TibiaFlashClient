@@ -1,357 +1,309 @@
-package tibia.sidebar.sideBarWidgetClasses
+﻿package tibia.sidebar.sideBarWidgetClasses
 {
-   import mx.core.Container;
-   import tibia.sidebar.Widget;
-   import tibia.sidebar.SideBarSet;
-   import flash.events.MouseEvent;
-   import mx.controls.Button;
-   import mx.events.PropertyChangeEvent;
-   import shared.controls.CustomButton;
-   import mx.core.EventPriority;
-   import mx.core.mx_internal;
-   import tibia.sidebar.SideBar;
-   import mx.core.EdgeMetrics;
-   import mx.core.IBorder;
-   import mx.core.ScrollPolicy;
-   
-   public class SideBarHeader extends Container
-   {
-      
-      protected static const DEFAULT_WIDGET_HEIGHT:Number = 200;
-      
-      protected static const DEFAULT_WIDGET_WIDTH:Number = 184;
-      
-      private static const BUNDLE:String = "SideBarHeader";
-      
-      private static const COMPONENT_DEFINITIONS:Array = [{
-         "toolTip":"TIP_GENERAL",
-         "type":Widget.TYPE_GENERALBUTTONS,
-         "styleName":"buttonGeneralStyle",
-         "left":6,
-         "top":19
-      },{
-         "toolTip":"TIP_COMBAT",
-         "type":Widget.TYPE_COMBATCONTROL,
-         "styleName":"buttonCombatStyle",
-         "left":18,
-         "top":4
-      },{
-         "toolTip":"TIP_MINIMAP",
-         "type":Widget.TYPE_MINIMAP,
-         "styleName":"buttonMinimapStyle",
-         "left":42,
-         "top":19
-      },{
-         "toolTip":"TIP_CONTAINER",
-         "type":Widget.TYPE_CONTAINER,
-         "styleName":"buttonContainerStyle",
-         "left":126,
-         "top":4
-      },{
-         "toolTip":"TIP_BODY",
-         "type":Widget.TYPE_BODY,
-         "styleName":"buttonBodyStyle",
-         "left":54,
-         "top":4
-      },{
-         "toolTip":"TIP_BATTLELIST",
-         "type":Widget.TYPE_BATTLELIST,
-         "styleName":"buttonBattlelistStyle",
-         "left":90,
-         "top":4
-      },{
-         "toolTip":"TIP_BUDDYLIST",
-         "type":Widget.TYPE_BUDDYLIST,
-         "styleName":"buttonBuddylistStyle",
-         "left":78,
-         "top":19
-      },{
-         "toolTip":"TIP_TRADE",
-         "type":Widget.TYPE_NPCTRADE,
-         "styleName":"buttonTradeStyle",
-         "left":114,
-         "top":19
-      },{
-         "toolTip":"TIP_UNJUSTPOINTS",
-         "type":Widget.TYPE_UNJUSTPOINTS,
-         "styleName":"buttonUnjustPointsStyle",
-         "left":148,
-         "top":19
-      }];
-       
-      private var m_UIFoldButton:Button = null;
-      
-      private var m_UncommittedLocation:Boolean = false;
-      
-      private var m_Location:int = -1;
-      
-      private var m_Fold:Boolean = false;
-      
-      private var m_UncommittedSideBarSet:Boolean = false;
-      
-      private var m_SideBarSet:SideBarSet = null;
-      
-      private var m_UncommittedFold:Boolean = false;
-      
-      public function SideBarHeader()
-      {
-         super();
-         horizontalScrollPolicy = ScrollPolicy.OFF;
-         verticalScrollPolicy = ScrollPolicy.OFF;
-      }
-      
-      public function get fold() : Boolean
-      {
-         return this.m_Fold;
-      }
-      
-      public function set fold(param1:Boolean) : void
-      {
-         if(this.m_Fold != param1)
-         {
-            this.m_Fold = param1;
-            this.m_UncommittedFold = true;
-            invalidateDisplayList();
-            invalidateProperties();
-            invalidateSize();
-         }
-      }
-      
-      public function get sideBarSet() : SideBarSet
-      {
-         return this.m_SideBarSet;
-      }
-      
-      override protected function commitProperties() : void
-      {
-         super.commitProperties();
-         if(Boolean(this.m_UncommittedLocation) || Boolean(this.m_UncommittedSideBarSet))
-         {
-            this.updateWidgetButtons();
-            if(this.sideBar != null)
+    import flash.events.*;
+    import mx.controls.*;
+    import mx.core.*;
+    import mx.events.*;
+    import shared.controls.*;
+    import tibia.sidebar.*;
+
+    public class SideBarHeader extends Container
+    {
+        private var m_UIFoldButton:Button = null;
+        private var m_UncommittedLocation:Boolean = false;
+        private var m_Location:int = -1;
+        private var m_Fold:Boolean = false;
+        private var m_UncommittedSideBarSet:Boolean = false;
+        private var m_SideBarSet:SideBarSet = null;
+        private var m_UncommittedFold:Boolean = false;
+        static const DEFAULT_WIDGET_HEIGHT:Number = 200;
+        static const DEFAULT_WIDGET_WIDTH:Number = 184;
+        private static const BUNDLE:String = "SideBarHeader";
+        private static const COMPONENT_DEFINITIONS:Array = [{toolTip:"TIP_GENERAL", type:Widget.TYPE_GENERALBUTTONS, styleName:"buttonGeneralStyle", left:6, top:19}, {toolTip:"TIP_COMBAT", type:Widget.TYPE_COMBATCONTROL, styleName:"buttonCombatStyle", left:18, top:4}, {toolTip:"TIP_MINIMAP", type:Widget.TYPE_MINIMAP, styleName:"buttonMinimapStyle", left:42, top:19}, {toolTip:"TIP_CONTAINER", type:Widget.TYPE_CONTAINER, styleName:"buttonContainerStyle", left:126, top:4}, {toolTip:"TIP_BODY", type:Widget.TYPE_BODY, styleName:"buttonBodyStyle", left:54, top:4}, {toolTip:"TIP_BATTLELIST", type:Widget.TYPE_BATTLELIST, styleName:"buttonBattlelistStyle", left:90, top:4}, {toolTip:"TIP_BUDDYLIST", type:Widget.TYPE_BUDDYLIST, styleName:"buttonBuddylistStyle", left:78, top:19}, {toolTip:"TIP_TRADE", type:Widget.TYPE_NPCTRADE, styleName:"buttonTradeStyle", left:114, top:19}, {toolTip:"TIP_UNJUSTPOINTS", type:Widget.TYPE_UNJUSTPOINTS, styleName:"buttonUnjustPointsStyle", left:148, top:19}];
+
+        public function SideBarHeader()
+        {
+            horizontalScrollPolicy = ScrollPolicy.OFF;
+            verticalScrollPolicy = ScrollPolicy.OFF;
+            return;
+        }// end function
+
+        public function get fold() : Boolean
+        {
+            return this.m_Fold;
+        }// end function
+
+        public function set fold(param1:Boolean) : void
+        {
+            if (this.m_Fold != param1)
             {
-               this.fold = this.sideBar.foldHeader;
+                this.m_Fold = param1;
+                this.m_UncommittedFold = true;
+                invalidateDisplayList();
+                invalidateProperties();
+                invalidateSize();
             }
-            this.m_UncommittedLocation = false;
-            this.m_UncommittedSideBarSet = false;
-         }
-         if(this.m_UncommittedFold)
-         {
+            return;
+        }// end function
+
+        public function get sideBarSet() : SideBarSet
+        {
+            return this.m_SideBarSet;
+        }// end function
+
+        override protected function commitProperties() : void
+        {
+            super.commitProperties();
+            if (this.m_UncommittedLocation || this.m_UncommittedSideBarSet)
+            {
+                this.updateWidgetButtons();
+                if (this.sideBar != null)
+                {
+                    this.fold = this.sideBar.foldHeader;
+                }
+                this.m_UncommittedLocation = false;
+                this.m_UncommittedSideBarSet = false;
+            }
+            if (this.m_UncommittedFold)
+            {
+                this.m_UIFoldButton.selected = this.fold;
+                this.m_UncommittedFold = false;
+            }
+            return;
+        }// end function
+
+        private function onWidgetButtonClick(event:MouseEvent) : void
+        {
+            var _loc_3:* = 0;
+            var _loc_2:* = null;
+            var _loc_4:* = event.currentTarget as Button;
+            _loc_2 = event.currentTarget as Button;
+            if (event != null && _loc_4 != null && this.sideBarSet != null)
+            {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                _loc_3 = int(_loc_2.data);
+                if (!Widget.s_GetUnique(_loc_3))
+                {
+                    this.sideBarSet.setDefaultLocation(_loc_3, this.location);
+                }
+                else if (this.sideBarSet.countWidgetType(_loc_3, this.location) > 0)
+                {
+                    this.sideBarSet.hideWidgetType(_loc_3, this.location);
+                }
+                else
+                {
+                    this.sideBarSet.showWidgetType(_loc_3, this.location, -1);
+                }
+            }
+            return;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_6:* = null;
+            var _loc_7:* = NaN;
+            var _loc_8:* = NaN;
+            var _loc_9:* = null;
+            layoutChrome(param1, param2);
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = numChildren - 1;
+            while (_loc_5 >= 0)
+            {
+                
+                _loc_6 = getChildAt(_loc_5) as Button;
+                if (_loc_6 != null)
+                {
+                    _loc_7 = 0;
+                    _loc_8 = 0;
+                    for each (_loc_9 in COMPONENT_DEFINITIONS)
+                    {
+                        
+                        if (_loc_6.data == _loc_9.type)
+                        {
+                            _loc_7 = _loc_9.left;
+                            _loc_8 = _loc_9.top;
+                            break;
+                        }
+                    }
+                    _loc_3 = _loc_6.getExplicitOrMeasuredWidth();
+                    _loc_4 = _loc_6.getExplicitOrMeasuredHeight();
+                    _loc_6.move(_loc_7, _loc_8);
+                    _loc_6.setActualSize(_loc_3, _loc_4);
+                }
+                _loc_5 = _loc_5 - 1;
+            }
+            _loc_3 = this.m_UIFoldButton.getExplicitOrMeasuredWidth();
+            _loc_4 = this.m_UIFoldButton.getExplicitOrMeasuredHeight();
+            this.m_UIFoldButton.move(Math.round((param1 - _loc_3) / 2), param2 - _loc_4);
+            this.m_UIFoldButton.setActualSize(_loc_3, _loc_4);
+            return;
+        }// end function
+
+        public function set sideBarSet(param1:SideBarSet) : void
+        {
+            if (this.m_SideBarSet != param1)
+            {
+                if (this.m_SideBarSet != null)
+                {
+                    this.m_SideBarSet.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, this.onSideBarSetChange);
+                }
+                this.m_SideBarSet = param1;
+                this.m_UncommittedSideBarSet = true;
+                invalidateProperties();
+                if (this.m_SideBarSet != null)
+                {
+                    this.m_SideBarSet.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, this.onSideBarSetChange);
+                }
+            }
+            return;
+        }// end function
+
+        protected function updateWidgetButtons() : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            var _loc_1:* = numChildren - 1;
+            while (_loc_1 >= 0)
+            {
+                
+                _loc_2 = getChildAt(_loc_1) as Button;
+                if (_loc_2 != null)
+                {
+                    _loc_3 = int(_loc_2.data);
+                    if (this.sideBarSet == null)
+                    {
+                        _loc_2.selected = false;
+                    }
+                    else if (!Widget.s_GetUnique(_loc_3))
+                    {
+                        _loc_2.selected = this.sideBarSet.getDefaultLocation(_loc_3) == this.location;
+                    }
+                    else
+                    {
+                        _loc_2.selected = this.sideBarSet.countWidgetType(_loc_3, this.location) > 0;
+                    }
+                }
+                _loc_1 = _loc_1 - 1;
+            }
+            return;
+        }// end function
+
+        private function onSideBarSetChange(event:PropertyChangeEvent) : void
+        {
+            if (event.property == "defaultLocation" || event.property == "sideBarInstanceOptions")
+            {
+                this.updateWidgetButtons();
+                if (this.sideBar != null)
+                {
+                    this.fold = this.sideBar.foldHeader;
+                }
+            }
+            return;
+        }// end function
+
+        private function onFoldButtonClick(event:MouseEvent) : void
+        {
+            if (this.sideBar != null)
+            {
+                this.sideBar.foldHeader = !this.sideBar.foldHeader;
+            }
+            return;
+        }// end function
+
+        override protected function createChildren() : void
+        {
+            var _loc_1:* = null;
+            var _loc_2:* = null;
+            super.createChildren();
+            this.m_UIFoldButton = new CustomButton();
             this.m_UIFoldButton.selected = this.fold;
-            this.m_UncommittedFold = false;
-         }
-      }
-      
-      private function onWidgetButtonClick(param1:MouseEvent) : void
-      {
-         var _loc3_:int = 0;
-         var _loc2_:Button = null;
-         if(param1 != null && (_loc2_ = param1.currentTarget as Button) != null && this.sideBarSet != null)
-         {
-            param1.preventDefault();
-            param1.stopImmediatePropagation();
-            _loc3_ = int(_loc2_.data);
-            if(!Widget.s_GetUnique(_loc3_))
+            this.m_UIFoldButton.styleName = getStyle("foldButtonStyleName");
+            this.m_UIFoldButton.toggle = true;
+            this.m_UIFoldButton.addEventListener(MouseEvent.CLICK, this.onFoldButtonClick);
+            rawChildren.addChild(this.m_UIFoldButton);
+            for each (_loc_1 in COMPONENT_DEFINITIONS)
             {
-               this.sideBarSet.setDefaultLocation(_loc3_,this.location);
+                
+                _loc_2 = new CustomButton();
+                _loc_2.data = _loc_1.type;
+                _loc_2.styleName = getStyle(_loc_1.styleName);
+                _loc_2.toggle = true;
+                _loc_2.toolTip = resourceManager.getString(BUNDLE, _loc_1.toolTip);
+                _loc_2.addEventListener(MouseEvent.CLICK, this.onWidgetButtonClick, false, (EventPriority.DEFAULT + 1), false);
+                addChild(_loc_2);
             }
-            else if(this.sideBarSet.countWidgetType(_loc3_,this.location) > 0)
+            return;
+        }// end function
+
+        override protected function measure() : void
+        {
+            var _loc_2:* = NaN;
+            var _loc_1:* = 0;
+            _loc_2 = 0;
+            if (mx_internal::border != null)
             {
-               this.sideBarSet.hideWidgetType(_loc3_,this.location);
+                if (!isNaN(mx_internal::border.measuredWidth))
+                {
+                    _loc_1 = mx_internal::border.measuredWidth;
+                }
+                if (!isNaN(mx_internal::border.measuredHeight))
+                {
+                    _loc_2 = mx_internal::border.measuredHeight;
+                }
+            }
+            var _loc_3:* = _loc_1;
+            measuredWidth = _loc_1;
+            measuredMinWidth = _loc_3;
+            if (this.fold)
+            {
+                var _loc_3:* = Math.max(viewMetrics.bottom, this.m_UIFoldButton.getExplicitOrMeasuredHeight());
+                measuredHeight = Math.max(viewMetrics.bottom, this.m_UIFoldButton.getExplicitOrMeasuredHeight());
+                measuredMinHeight = _loc_3;
             }
             else
             {
-               this.sideBarSet.showWidgetType(_loc3_,this.location,-1);
+                var _loc_3:* = _loc_2;
+                measuredHeight = _loc_2;
+                measuredMinHeight = _loc_3;
             }
-         }
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc6_:Button = null;
-         var _loc7_:Number = NaN;
-         var _loc8_:Number = NaN;
-         var _loc9_:Object = null;
-         layoutChrome(param1,param2);
-         var _loc3_:Number = 0;
-         var _loc4_:Number = 0;
-         var _loc5_:int = numChildren - 1;
-         while(_loc5_ >= 0)
-         {
-            _loc6_ = getChildAt(_loc5_) as Button;
-            if(_loc6_ != null)
+            return;
+        }// end function
+
+        public function set location(param1:int) : void
+        {
+            if (this.m_Location != param1)
             {
-               _loc7_ = 0;
-               _loc8_ = 0;
-               for each(_loc9_ in COMPONENT_DEFINITIONS)
-               {
-                  if(_loc6_.data == _loc9_.type)
-                  {
-                     _loc7_ = _loc9_.left;
-                     _loc8_ = _loc9_.top;
-                     break;
-                  }
-               }
-               _loc3_ = _loc6_.getExplicitOrMeasuredWidth();
-               _loc4_ = _loc6_.getExplicitOrMeasuredHeight();
-               _loc6_.move(_loc7_,_loc8_);
-               _loc6_.setActualSize(_loc3_,_loc4_);
+                this.m_Location = param1;
+                this.m_UncommittedLocation = true;
+                invalidateProperties();
             }
-            _loc5_--;
-         }
-         _loc3_ = this.m_UIFoldButton.getExplicitOrMeasuredWidth();
-         _loc4_ = this.m_UIFoldButton.getExplicitOrMeasuredHeight();
-         this.m_UIFoldButton.move(Math.round((param1 - _loc3_) / 2),param2 - _loc4_);
-         this.m_UIFoldButton.setActualSize(_loc3_,_loc4_);
-      }
-      
-      public function set sideBarSet(param1:SideBarSet) : void
-      {
-         if(this.m_SideBarSet != param1)
-         {
-            if(this.m_SideBarSet != null)
+            return;
+        }// end function
+
+        public function get location() : int
+        {
+            return this.m_Location;
+        }// end function
+
+        protected function get sideBar() : SideBar
+        {
+            if (this.sideBarSet != null)
             {
-               this.m_SideBarSet.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onSideBarSetChange);
+                return this.sideBarSet.getSideBar(this.location);
             }
-            this.m_SideBarSet = param1;
-            this.m_UncommittedSideBarSet = true;
-            invalidateProperties();
-            if(this.m_SideBarSet != null)
+            return null;
+        }// end function
+
+        override public function get borderMetrics() : EdgeMetrics
+        {
+            if (mx_internal::border is IBorder)
             {
-               this.m_SideBarSet.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onSideBarSetChange);
+                return IBorder(mx_internal::border).borderMetrics;
             }
-         }
-      }
-      
-      protected function updateWidgetButtons() : void
-      {
-         var _loc2_:Button = null;
-         var _loc3_:int = 0;
-         var _loc1_:int = numChildren - 1;
-         while(_loc1_ >= 0)
-         {
-            _loc2_ = getChildAt(_loc1_) as Button;
-            if(_loc2_ != null)
-            {
-               _loc3_ = int(_loc2_.data);
-               if(this.sideBarSet == null)
-               {
-                  _loc2_.selected = false;
-               }
-               else if(!Widget.s_GetUnique(_loc3_))
-               {
-                  _loc2_.selected = this.sideBarSet.getDefaultLocation(_loc3_) == this.location;
-               }
-               else
-               {
-                  _loc2_.selected = this.sideBarSet.countWidgetType(_loc3_,this.location) > 0;
-               }
-            }
-            _loc1_--;
-         }
-      }
-      
-      private function onSideBarSetChange(param1:PropertyChangeEvent) : void
-      {
-         if(param1.property == "defaultLocation" || param1.property == "sideBarInstanceOptions")
-         {
-            this.updateWidgetButtons();
-            if(this.sideBar != null)
-            {
-               this.fold = this.sideBar.foldHeader;
-            }
-         }
-      }
-      
-      private function onFoldButtonClick(param1:MouseEvent) : void
-      {
-         if(this.sideBar != null)
-         {
-            this.sideBar.foldHeader = !this.sideBar.foldHeader;
-         }
-      }
-      
-      override protected function createChildren() : void
-      {
-         var _loc1_:Object = null;
-         var _loc2_:Button = null;
-         super.createChildren();
-         this.m_UIFoldButton = new CustomButton();
-         this.m_UIFoldButton.selected = this.fold;
-         this.m_UIFoldButton.styleName = getStyle("foldButtonStyleName");
-         this.m_UIFoldButton.toggle = true;
-         this.m_UIFoldButton.addEventListener(MouseEvent.CLICK,this.onFoldButtonClick);
-         rawChildren.addChild(this.m_UIFoldButton);
-         for each(_loc1_ in COMPONENT_DEFINITIONS)
-         {
-            _loc2_ = new CustomButton();
-            _loc2_.data = _loc1_.type;
-            _loc2_.styleName = getStyle(_loc1_.styleName);
-            _loc2_.toggle = true;
-            _loc2_.toolTip = resourceManager.getString(BUNDLE,_loc1_.toolTip);
-            _loc2_.addEventListener(MouseEvent.CLICK,this.onWidgetButtonClick,false,EventPriority.DEFAULT + 1,false);
-            addChild(_loc2_);
-         }
-      }
-      
-      override protected function measure() : void
-      {
-         var _loc2_:Number = NaN;
-         var _loc1_:Number = 0;
-         _loc2_ = 0;
-         if(mx_internal::border != null)
-         {
-            if(!isNaN(mx_internal::border.measuredWidth))
-            {
-               _loc1_ = mx_internal::border.measuredWidth;
-            }
-            if(!isNaN(mx_internal::border.measuredHeight))
-            {
-               _loc2_ = mx_internal::border.measuredHeight;
-            }
-         }
-         measuredMinWidth = measuredWidth = _loc1_;
-         if(this.fold)
-         {
-            measuredMinHeight = measuredHeight = Math.max(viewMetrics.bottom,this.m_UIFoldButton.getExplicitOrMeasuredHeight());
-         }
-         else
-         {
-            measuredMinHeight = measuredHeight = _loc2_;
-         }
-      }
-      
-      public function set location(param1:int) : void
-      {
-         if(this.m_Location != param1)
-         {
-            this.m_Location = param1;
-            this.m_UncommittedLocation = true;
-            invalidateProperties();
-         }
-      }
-      
-      public function get location() : int
-      {
-         return this.m_Location;
-      }
-      
-      protected function get sideBar() : SideBar
-      {
-         if(this.sideBarSet != null)
-         {
-            return this.sideBarSet.getSideBar(this.location);
-         }
-         return null;
-      }
-      
-      override public function get borderMetrics() : EdgeMetrics
-      {
-         if(mx_internal::border is IBorder)
-         {
-            return IBorder(mx_internal::border).borderMetrics;
-         }
-         return super.borderMetrics;
-      }
-   }
+            return super.borderMetrics;
+        }// end function
+
+    }
 }

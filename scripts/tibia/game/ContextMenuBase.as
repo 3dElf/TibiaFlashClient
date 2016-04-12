@@ -1,256 +1,260 @@
-package tibia.game
+﻿package tibia.game
 {
-   import mx.containers.VBox;
-   import mx.managers.ISystemManager;
-   import mx.core.IUIComponent;
-   import flash.events.Event;
-   import flash.events.KeyboardEvent;
-   import flash.events.MouseEvent;
-   import tibia.input.InputHandler;
-   import mx.managers.ToolTipManager;
-   import tibia.game.contextMenuClasses.SeparatorItem;
-   import flash.display.Sprite;
-   import flash.display.DisplayObjectContainer;
-   import mx.core.IToolTip;
-   import flash.ui.Keyboard;
-   import mx.events.ChildExistenceChangedEvent;
-   import tibia.game.contextMenuClasses.IContextMenuItem;
-   import flash.events.ContextMenuEvent;
-   import flash.display.DisplayObject;
-   import tibia.game.contextMenuClasses.TextItem;
-   import mx.core.ScrollPolicy;
-   
-   public class ContextMenuBase extends VBox
-   {
-      
-      protected static var s_Current:tibia.game.ContextMenuBase = null;
-       
-      private var m_UIEmbeddedMouseShield:Sprite;
-      
-      public function ContextMenuBase()
-      {
-         this.m_UIEmbeddedMouseShield = new Sprite();
-         super();
-         horizontalScrollPolicy = ScrollPolicy.OFF;
-         verticalScrollPolicy = ScrollPolicy.OFF;
-         maxWidth = 350;
-         minWidth = 200;
-         addEventListener(ChildExistenceChangedEvent.CHILD_ADD,this.onChildExistenceChanged);
-         addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE,this.onChildExistenceChanged);
-      }
-      
-      public static function getCurrent() : tibia.game.ContextMenuBase
-      {
-         return s_Current;
-      }
-      
-      public function hide() : void
-      {
-         var _loc1_:ISystemManager = null;
-         if(owner is IUIComponent && (_loc1_ = (owner as IUIComponent).systemManager) != null)
-         {
-            _loc1_.popUpChildren.removeChild(this);
-            if(_loc1_.popUpChildren.contains(this.m_UIEmbeddedMouseShield))
+    import flash.display.*;
+    import flash.events.*;
+    import flash.ui.*;
+    import mx.containers.*;
+    import mx.core.*;
+    import mx.events.*;
+    import mx.managers.*;
+    import tibia.game.contextMenuClasses.*;
+    import tibia.input.*;
+
+    public class ContextMenuBase extends VBox
+    {
+        private var m_UIEmbeddedMouseShield:Sprite;
+        static var s_Current:ContextMenuBase = null;
+
+        public function ContextMenuBase()
+        {
+            this.m_UIEmbeddedMouseShield = new Sprite();
+            horizontalScrollPolicy = ScrollPolicy.OFF;
+            verticalScrollPolicy = ScrollPolicy.OFF;
+            maxWidth = 350;
+            minWidth = 200;
+            addEventListener(ChildExistenceChangedEvent.CHILD_ADD, this.onChildExistenceChanged);
+            addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, this.onChildExistenceChanged);
+            return;
+        }// end function
+
+        public function hide() : void
+        {
+            var _loc_1:* = null;
+            var _loc_3:* = (owner as IUIComponent).systemManager;
+            _loc_1 = (owner as IUIComponent).systemManager;
+            if (owner is IUIComponent && _loc_3 != null)
             {
-               _loc1_.popUpChildren.removeChild(this.m_UIEmbeddedMouseShield);
-               _loc1_.removeEventListener(Event.RESIZE,this.onResize);
+                _loc_1.popUpChildren.removeChild(this);
+                if (_loc_1.popUpChildren.contains(this.m_UIEmbeddedMouseShield))
+                {
+                    _loc_1.popUpChildren.removeChild(this.m_UIEmbeddedMouseShield);
+                    _loc_1.removeEventListener(Event.RESIZE, this.onResize);
+                }
+                _loc_1.deployMouseShields(false);
+                _loc_1.removeEventListener(Event.ACTIVATE, this.onEventHide);
+                _loc_1.removeEventListener(Event.DEACTIVATE, this.onEventHide);
+                _loc_1.removeEventListener(Event.RESIZE, this.onEventHide);
+                _loc_1.removeEventListener(KeyboardEvent.KEY_DOWN, this.onKeyboardHide);
+                _loc_1.removeEventListener(MouseEvent.MOUSE_DOWN, this.onMouseHide);
+                _loc_1.removeEventListener(MouseEvent.MOUSE_UP, this.onMouseHide);
+                _loc_1.removeEventListener(MouseEvent.CLICK, this.onMouseHide);
+                _loc_1.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN, this.onMouseHide);
+                _loc_1.removeEventListener(MouseEvent.RIGHT_MOUSE_UP, this.onMouseHide);
+                _loc_1.removeEventListener(MouseEvent.RIGHT_CLICK, this.onMouseHide);
+                owner = null;
             }
-            _loc1_.deployMouseShields(false);
-            _loc1_.removeEventListener(Event.ACTIVATE,this.onEventHide);
-            _loc1_.removeEventListener(Event.DEACTIVATE,this.onEventHide);
-            _loc1_.removeEventListener(Event.RESIZE,this.onEventHide);
-            _loc1_.removeEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardHide);
-            _loc1_.removeEventListener(MouseEvent.MOUSE_DOWN,this.onMouseHide);
-            _loc1_.removeEventListener(MouseEvent.MOUSE_UP,this.onMouseHide);
-            _loc1_.removeEventListener(MouseEvent.CLICK,this.onMouseHide);
-            _loc1_.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN,this.onMouseHide);
-            _loc1_.removeEventListener(MouseEvent.RIGHT_MOUSE_UP,this.onMouseHide);
-            _loc1_.removeEventListener(MouseEvent.RIGHT_CLICK,this.onMouseHide);
-            owner = null;
-         }
-         var _loc2_:InputHandler = Tibia.s_GetInputHandler();
-         if(_loc2_ != null)
-         {
-            _loc2_.captureKeyboard = true;
-         }
-         ToolTipManager.currentTarget = null;
-         ToolTipManager.enabled = true;
-         s_Current = null;
-      }
-      
-      protected function createSeparatorItem() : SeparatorItem
-      {
-         var _loc1_:SeparatorItem = new SeparatorItem();
-         _loc1_.owner = owner;
-         _loc1_.percentWidth = 100;
-         addChild(_loc1_);
-         return _loc1_;
-      }
-      
-      private function onMouseHide(param1:MouseEvent) : void
-      {
-         if(!hitTestPoint(param1.stageX,param1.stageY))
-         {
-            param1.preventDefault();
-            param1.stopImmediatePropagation();
-            if(param1.type == MouseEvent.CLICK || param1.type == MouseEvent.MOUSE_UP || param1.type == MouseEvent.RIGHT_CLICK || param1.type == MouseEvent.RIGHT_MOUSE_UP)
+            var _loc_2:* = Tibia.s_GetInputHandler();
+            if (_loc_2 != null)
             {
-               this.hide();
+                _loc_2.captureKeyboard = true;
             }
-         }
-      }
-      
-      public function display(param1:IUIComponent, param2:Number, param3:Number) : void
-      {
-         var _loc4_:ISystemManager = null;
-         if(param1 != null && (_loc4_ = param1.systemManager) != null && _loc4_.stage != null)
-         {
-            if(_loc4_.popUpChildren.contains(this.m_UIEmbeddedMouseShield))
+            ToolTipManager.currentTarget = null;
+            ToolTipManager.enabled = true;
+            s_Current = null;
+            return;
+        }// end function
+
+        protected function createSeparatorItem() : SeparatorItem
+        {
+            var _loc_1:* = new SeparatorItem();
+            _loc_1.owner = owner;
+            _loc_1.percentWidth = 100;
+            addChild(_loc_1);
+            return _loc_1;
+        }// end function
+
+        private function onMouseHide(event:MouseEvent) : void
+        {
+            if (!hitTestPoint(event.stageX, event.stageY))
             {
-               _loc4_.popUpChildren.removeChild(this.m_UIEmbeddedMouseShield);
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                if (event.type == MouseEvent.CLICK || event.type == MouseEvent.MOUSE_UP || event.type == MouseEvent.RIGHT_CLICK || event.type == MouseEvent.RIGHT_MOUSE_UP)
+                {
+                    this.hide();
+                }
             }
-            _loc4_.popUpChildren.addChild(this.m_UIEmbeddedMouseShield);
-            _loc4_.addEventListener(Event.RESIZE,this.onResize);
-            _loc4_.popUpChildren.addChild(this);
-            _loc4_.deployMouseShields(true);
-            _loc4_.addEventListener(Event.ACTIVATE,this.onEventHide);
-            _loc4_.addEventListener(Event.DEACTIVATE,this.onEventHide);
-            _loc4_.addEventListener(Event.RESIZE,this.onEventHide);
-            _loc4_.addEventListener(KeyboardEvent.KEY_DOWN,this.onKeyboardHide);
-            _loc4_.addEventListener(MouseEvent.MOUSE_DOWN,this.onMouseHide);
-            _loc4_.addEventListener(MouseEvent.MOUSE_UP,this.onMouseHide);
-            _loc4_.addEventListener(MouseEvent.CLICK,this.onMouseHide);
-            _loc4_.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,this.onMouseHide);
-            _loc4_.addEventListener(MouseEvent.RIGHT_MOUSE_UP,this.onMouseHide);
-            _loc4_.addEventListener(MouseEvent.RIGHT_CLICK,this.onMouseHide);
-            validateNow();
-            move(Math.max(0,Math.min(param2,_loc4_.stage.stageWidth - measuredWidth)),Math.max(0,Math.min(param3,_loc4_.stage.stageHeight - measuredHeight)));
-            owner = param1 as DisplayObjectContainer;
-         }
-         var _loc5_:InputHandler = Tibia.s_GetInputHandler();
-         if(_loc5_ != null)
-         {
-            _loc5_.captureKeyboard = false;
-         }
-         var _loc6_:IToolTip = ToolTipManager.currentToolTip;
-         if(_loc6_ != null)
-         {
-            ToolTipManager.destroyToolTip(_loc6_);
-            ToolTipManager.currentToolTip = null;
-         }
-         ToolTipManager.currentTarget = null;
-         ToolTipManager.enabled = false;
-         if(s_Current != null)
-         {
-            s_Current.hide();
-         }
-         s_Current = this;
-      }
-      
-      private function onKeyboardHide(param1:KeyboardEvent) : void
-      {
-         if(param1.keyCode == Keyboard.ESCAPE)
-         {
+            return;
+        }// end function
+
+        public function display(param1:IUIComponent, param2:Number, param3:Number) : void
+        {
+            var _loc_4:* = null;
+            var _loc_7:* = param1.systemManager;
+            _loc_4 = param1.systemManager;
+            if (param1 != null && _loc_7 != null && _loc_4.stage != null)
+            {
+                if (_loc_4.popUpChildren.contains(this.m_UIEmbeddedMouseShield))
+                {
+                    _loc_4.popUpChildren.removeChild(this.m_UIEmbeddedMouseShield);
+                }
+                _loc_4.popUpChildren.addChild(this.m_UIEmbeddedMouseShield);
+                _loc_4.addEventListener(Event.RESIZE, this.onResize);
+                _loc_4.popUpChildren.addChild(this);
+                _loc_4.deployMouseShields(true);
+                _loc_4.addEventListener(Event.ACTIVATE, this.onEventHide);
+                _loc_4.addEventListener(Event.DEACTIVATE, this.onEventHide);
+                _loc_4.addEventListener(Event.RESIZE, this.onEventHide);
+                _loc_4.addEventListener(KeyboardEvent.KEY_DOWN, this.onKeyboardHide);
+                _loc_4.addEventListener(MouseEvent.MOUSE_DOWN, this.onMouseHide);
+                _loc_4.addEventListener(MouseEvent.MOUSE_UP, this.onMouseHide);
+                _loc_4.addEventListener(MouseEvent.CLICK, this.onMouseHide);
+                _loc_4.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, this.onMouseHide);
+                _loc_4.addEventListener(MouseEvent.RIGHT_MOUSE_UP, this.onMouseHide);
+                _loc_4.addEventListener(MouseEvent.RIGHT_CLICK, this.onMouseHide);
+                validateNow();
+                move(Math.max(0, Math.min(param2, _loc_4.stage.stageWidth - measuredWidth)), Math.max(0, Math.min(param3, _loc_4.stage.stageHeight - measuredHeight)));
+                owner = param1 as DisplayObjectContainer;
+            }
+            var _loc_5:* = Tibia.s_GetInputHandler();
+            if (Tibia.s_GetInputHandler() != null)
+            {
+                _loc_5.captureKeyboard = false;
+            }
+            var _loc_6:* = ToolTipManager.currentToolTip;
+            if (ToolTipManager.currentToolTip != null)
+            {
+                ToolTipManager.destroyToolTip(_loc_6);
+                ToolTipManager.currentToolTip = null;
+            }
+            ToolTipManager.currentTarget = null;
+            ToolTipManager.enabled = false;
+            if (s_Current != null)
+            {
+                s_Current.hide();
+            }
+            s_Current = this;
+            return;
+        }// end function
+
+        private function onKeyboardHide(event:KeyboardEvent) : void
+        {
+            if (event.keyCode == Keyboard.ESCAPE)
+            {
+                this.hide();
+            }
+            return;
+        }// end function
+
+        private function onChildExistenceChanged(event:ChildExistenceChangedEvent) : void
+        {
+            var _loc_2:* = event.relatedObject as IContextMenuItem;
+            if (_loc_2 != null)
+            {
+                if (event.type == ChildExistenceChangedEvent.CHILD_ADD)
+                {
+                    _loc_2.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, this.onEventHide, false, int.MAX_VALUE, false);
+                }
+                else
+                {
+                    _loc_2.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT, this.onEventHide);
+                }
+            }
+            return;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var a_UnscaledWidth:* = param1;
+            var a_UnscaledHeight:* = param2;
+            super.updateDisplayList(a_UnscaledWidth, a_UnscaledHeight);
+            var OuterContainer:* = Tibia.s_GetInstance();
+            if (OuterContainer != null)
+            {
+                if (this.m_UIEmbeddedMouseShield != null)
+                {
+                    this.m_UIEmbeddedMouseShield.x = 0;
+                    this.m_UIEmbeddedMouseShield.y = 0;
+                    var _loc_4:* = this.m_UIEmbeddedMouseShield.graphics;
+                    with (this.m_UIEmbeddedMouseShield.graphics)
+                    {
+                        clear();
+                        beginFill(65280, 0);
+                        drawRect(0, 0, OuterContainer.width, OuterContainer.height);
+                        endFill();
+                    }
+                }
+            }
+            return;
+        }// end function
+
+        private function onResize(event:Event) : void
+        {
+            invalidateDisplayList();
+            invalidateSize();
+            return;
+        }// end function
+
+        protected function createTextItem(param1:String, param2:Function) : TextItem
+        {
+            var _loc_3:* = new TextItem();
+            _loc_3.caption = param1;
+            _loc_3.owner = owner;
+            _loc_3.percentWidth = 100;
+            _loc_3.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, param2);
+            addChild(_loc_3);
+            return _loc_3;
+        }// end function
+
+        private function onEventHide(event:Event) : void
+        {
             this.hide();
-         }
-      }
-      
-      private function onChildExistenceChanged(param1:ChildExistenceChangedEvent) : void
-      {
-         var _loc2_:IContextMenuItem = param1.relatedObject as IContextMenuItem;
-         if(_loc2_ != null)
-         {
-            if(param1.type == ChildExistenceChangedEvent.CHILD_ADD)
+            return;
+        }// end function
+
+        override protected function measure() : void
+        {
+            var _loc_5:* = false;
+            var _loc_6:* = NaN;
+            var _loc_1:* = 0;
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            while (_loc_3 < numChildren)
             {
-               _loc2_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onEventHide,false,int.MAX_VALUE,false);
+                
+                _loc_2 = getChildAt(_loc_3);
+                if (_loc_2 is SeparatorItem)
+                {
+                    _loc_5 = _loc_3 > 0 && _loc_3 < (numChildren - 1) && !(getChildAt((_loc_3 + 1)) is SeparatorItem);
+                    SeparatorItem(_loc_2).includeInLayout = _loc_5;
+                    SeparatorItem(_loc_2).visible = _loc_5;
+                }
+                else if (_loc_2 is TextItem)
+                {
+                    _loc_6 = !isNaN(TextItem(_loc_2).explicitIconWidth) ? (TextItem(_loc_2).explicitIconWidth) : (TextItem(_loc_2).measuredIconWidth);
+                    _loc_1 = Math.max(_loc_1, _loc_6);
+                }
+                _loc_3++;
             }
-            else
+            var _loc_4:* = 0;
+            while (_loc_4 < numChildren)
             {
-               _loc2_.removeEventListener(ContextMenuEvent.MENU_ITEM_SELECT,this.onEventHide);
+                
+                _loc_2 = getChildAt(_loc_4);
+                if (_loc_2 is TextItem)
+                {
+                    TextItem(_loc_2).iconWidth = _loc_1;
+                }
+                _loc_4++;
             }
-         }
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var a_UnscaledWidth:Number = param1;
-         var a_UnscaledHeight:Number = param2;
-         super.updateDisplayList(a_UnscaledWidth,a_UnscaledHeight);
-         var OuterContainer:DisplayObject = Tibia.s_GetInstance();
-         if(OuterContainer != null)
-         {
-            if(this.m_UIEmbeddedMouseShield != null)
-            {
-               this.m_UIEmbeddedMouseShield.x = 0;
-               this.m_UIEmbeddedMouseShield.y = 0;
-               with(this.m_UIEmbeddedMouseShield.graphics)
-               {
-                  
-                  clear();
-                  beginFill(65280,0);
-                  drawRect(0,0,OuterContainer.width,OuterContainer.height);
-                  endFill();
-               }
-            }
-         }
-      }
-      
-      private function onResize(param1:Event) : void
-      {
-         invalidateDisplayList();
-         invalidateSize();
-      }
-      
-      protected function createTextItem(param1:String, param2:Function) : TextItem
-      {
-         var _loc3_:TextItem = new TextItem();
-         _loc3_.caption = param1;
-         _loc3_.owner = owner;
-         _loc3_.percentWidth = 100;
-         _loc3_.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT,param2);
-         addChild(_loc3_);
-         return _loc3_;
-      }
-      
-      private function onEventHide(param1:Event) : void
-      {
-         this.hide();
-      }
-      
-      override protected function measure() : void
-      {
-         var _loc5_:Boolean = false;
-         var _loc6_:Number = NaN;
-         var _loc1_:Number = 0;
-         var _loc2_:DisplayObject = null;
-         var _loc3_:int = 0;
-         while(_loc3_ < numChildren)
-         {
-            _loc2_ = getChildAt(_loc3_);
-            if(_loc2_ is SeparatorItem)
-            {
-               _loc5_ = _loc3_ > 0 && _loc3_ < numChildren - 1 && !(getChildAt(_loc3_ + 1) is SeparatorItem);
-               SeparatorItem(_loc2_).includeInLayout = _loc5_;
-               SeparatorItem(_loc2_).visible = _loc5_;
-            }
-            else if(_loc2_ is TextItem)
-            {
-               _loc6_ = !isNaN(TextItem(_loc2_).explicitIconWidth)?Number(TextItem(_loc2_).explicitIconWidth):Number(TextItem(_loc2_).measuredIconWidth);
-               _loc1_ = Math.max(_loc1_,_loc6_);
-            }
-            _loc3_++;
-         }
-         var _loc4_:int = 0;
-         while(_loc4_ < numChildren)
-         {
-            _loc2_ = getChildAt(_loc4_);
-            if(_loc2_ is TextItem)
-            {
-               TextItem(_loc2_).iconWidth = _loc1_;
-            }
-            _loc4_++;
-         }
-         super.measure();
-      }
-   }
+            super.measure();
+            return;
+        }// end function
+
+        public static function getCurrent() : ContextMenuBase
+        {
+            return s_Current;
+        }// end function
+
+    }
 }

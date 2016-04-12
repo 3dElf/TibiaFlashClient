@@ -1,27 +1,24 @@
-package mx.utils
+﻿package mx.utils
 {
-   import mx.core.mx_internal;
-   import mx.core.ISWFBridgeProvider;
-   
-   use namespace mx_internal;
-   
-   public class SecurityUtil
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function SecurityUtil()
-      {
-         super();
-      }
-      
-      public static function hasMutualTrustBetweenParentAndChild(param1:ISWFBridgeProvider) : Boolean
-      {
-         if(Boolean(param1) && Boolean(param1.childAllowsParent) && Boolean(param1.parentAllowsChild))
-         {
-            return true;
-         }
-         return false;
-      }
-   }
+    import mx.core.*;
+
+    public class SecurityUtil extends Object
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function SecurityUtil()
+        {
+            return;
+        }// end function
+
+        public static function hasMutualTrustBetweenParentAndChild(param1:ISWFBridgeProvider) : Boolean
+        {
+            if (param1 && param1.childAllowsParent && param1.parentAllowsChild)
+            {
+                return true;
+            }
+            return false;
+        }// end function
+
+    }
 }

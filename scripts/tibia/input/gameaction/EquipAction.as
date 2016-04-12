@@ -1,162 +1,167 @@
-package tibia.input.gameaction
+﻿package tibia.input.gameaction
 {
-   import tibia.input.IAction;
-   import tibia.appearances.AppearanceStorage;
-   import tibia.network.Communication;
-   import tibia.container.ContainerStorage;
-   import tibia.appearances.AppearanceType;
-   import mx.resources.ResourceManager;
-   import mx.resources.IResourceManager;
-   import tibia.container.BodyContainerView;
-   import tibia.appearances.ObjectInstance;
-   
-   public class EquipAction implements IAction
-   {
-      
-      protected static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
-      
-      private static const BUNDLE:String = "StaticAction";
-      
-      protected static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
-      
-      public static const TARGET_AUTO:int = UseActionImpl.TARGET_CROSSHAIR + 1;
-       
-      private var m_Target:int = -1;
-      
-      private var m_Type:AppearanceType = null;
-      
-      private var m_Data:int = -1;
-      
-      public function EquipAction(param1:*, param2:int, param3:int)
-      {
-         var _loc4_:AppearanceStorage = null;
-         super();
-         this.m_Type = null;
-         if(param1 is ObjectInstance)
-         {
-            this.m_Type = ObjectInstance(param1).type;
-         }
-         else if(param1 is AppearanceType)
-         {
-            this.m_Type = AppearanceType(param1);
-         }
-         else if(param1 is int)
-         {
-            _loc4_ = Tibia.s_GetAppearanceStorage();
-            if(_loc4_ != null)
+    import mx.resources.*;
+    import tibia.appearances.*;
+    import tibia.container.*;
+    import tibia.input.*;
+    import tibia.network.*;
+
+    public class EquipAction extends Object implements IAction
+    {
+        private var m_Target:int = -1;
+        private var m_Type:AppearanceType = null;
+        private var m_Data:int = -1;
+        static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
+        private static const BUNDLE:String = "StaticAction";
+        static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
+        public static const TARGET_AUTO:int = 5;
+
+        public function EquipAction(param1, param2:int, param3:int)
+        {
+            var _loc_4:* = null;
+            this.m_Type = null;
+            if (param1 is ObjectInstance)
             {
-               this.m_Type = _loc4_.getObjectType(int(param1));
+                this.m_Type = ObjectInstance(param1).type;
             }
-         }
-         if(this.m_Type == null || !this.m_Type.isCloth)
-         {
-            throw new ArgumentError("EquipAction.EquipAction: Invalid type: " + param1);
-         }
-         this.m_Data = param2;
-         if(param3 != TARGET_AUTO)
-         {
-            throw new ArgumentError("EquipAction.EquipAction: Invalid target: " + param3);
-         }
-         if(this.m_Type.clothSlot == 0)
-         {
-            this.m_Target = BodyContainerView.LEFT_HAND;
-         }
-         else
-         {
-            this.m_Target = this.m_Type.clothSlot;
-         }
-      }
-      
-      public static function s_Unmarshall(param1:XML, param2:Number) : EquipAction
-      {
-         if(param1 == null || param1.localName() != "action" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
-         {
-            throw new Error("EquipAction.s_Unmarshall: Invalid input.");
-         }
-         var _loc3_:XMLList = null;
-         if((_loc3_ = param1.@type) == null || _loc3_.length() != 1 || _loc3_[0].toString() != "equip")
-         {
+            else if (param1 is AppearanceType)
+            {
+                this.m_Type = AppearanceType(param1);
+            }
+            else if (param1 is int)
+            {
+                _loc_4 = Tibia.s_GetAppearanceStorage();
+                if (_loc_4 != null)
+                {
+                    this.m_Type = _loc_4.getObjectType(int(param1));
+                }
+            }
+            if (this.m_Type == null || !this.m_Type.isCloth)
+            {
+                throw new ArgumentError("EquipAction.EquipAction: Invalid type: " + param1);
+            }
+            this.m_Data = param2;
+            if (param3 != TARGET_AUTO)
+            {
+                throw new ArgumentError("EquipAction.EquipAction: Invalid target: " + param3);
+            }
+            if (this.m_Type.clothSlot == 0)
+            {
+                this.m_Target = BodyContainerView.LEFT_HAND;
+            }
+            else
+            {
+                this.m_Target = this.m_Type.clothSlot;
+            }
+            return;
+        }// end function
+
+        public function perform(param1:Boolean = false) : void
+        {
+            var _loc_2:* = Tibia.s_GetCommunication();
+            var _loc_3:* = Tibia.s_GetContainerStorage();
+            if (_loc_2 != null && _loc_2.isGameRunning && _loc_3 != null && _loc_3.getAvailableInventory(this.m_Type.ID, this.m_Data) > 0 && !param1)
+            {
+                _loc_2.sendCEQUIPOBJECT(this.m_Type.ID, this.m_Data);
+            }
+            return;
+        }// end function
+
+        public function get data() : int
+        {
+            return this.m_Data;
+        }// end function
+
+        public function marshall() : XML
+        {
+            return new XML("<action type=\"equip\" object=\"" + this.m_Type.ID + "\" data=\"" + this.m_Data + "\"/>");
+        }// end function
+
+        public function equals(param1:IAction) : Boolean
+        {
+            return param1 is EquipAction && EquipAction(param1).m_Data == this.m_Data && EquipAction(param1).m_Target == this.m_Target && EquipAction(param1).m_Type == this.m_Type;
+        }// end function
+
+        public function get hidden() : Boolean
+        {
+            return true;
+        }// end function
+
+        public function get type() : AppearanceType
+        {
+            return this.m_Type;
+        }// end function
+
+        public function toString() : String
+        {
+            var _loc_1:* = ResourceManager.getInstance();
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_7:* = Tibia.s_GetContainerStorage();
+            _loc_2 = Tibia.s_GetContainerStorage();
+            var _loc_7:* = _loc_2.getBodyContainerView();
+            _loc_3 = _loc_2.getBodyContainerView();
+            if (_loc_7 != null && _loc_7 != null && _loc_3.isEquipped(this.m_Type.ID))
+            {
+                _loc_4 = "GAME_EQUIP_UNEQUIP";
+            }
+            else
+            {
+                _loc_4 = "GAME_EQUIP_EQUIP";
+            }
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = Tibia.s_GetAppearanceStorage();
+            _loc_5 = Tibia.s_GetAppearanceStorage();
+            var _loc_7:* = _loc_5.getCachedObjectTypeName(this.m_Type.ID, this.m_Data);
+            _loc_6 = _loc_5.getCachedObjectTypeName(this.m_Type.ID, this.m_Data);
+            if (_loc_7 == null || _loc_7 == null)
+            {
+                _loc_6 = _loc_1.getString(BUNDLE, "GAME_EQUIP_GENERIC_OBJECT");
+            }
+            return _loc_1.getString(BUNDLE, _loc_4, [_loc_6]);
+        }// end function
+
+        public function clone() : IAction
+        {
+            return new EquipAction(this.m_Type, this.m_Data, this.m_Target);
+        }// end function
+
+        public static function s_Unmarshall(param1:XML, param2:Number) : EquipAction
+        {
+            if (param1 == null || param1.localName() != "action" || param2 < OPTIONS_MIN_COMPATIBLE_VERSION || param2 > OPTIONS_MAX_COMPATIBLE_VERSION)
+            {
+                throw new Error("EquipAction.s_Unmarshall: Invalid input.");
+            }
+            var _loc_3:* = null;
+            var _loc_7:* = param1.@type;
+            _loc_3 = param1.@type;
+            if (_loc_7 == null || _loc_3.length() != 1 || _loc_3[0].toString() != "equip")
+            {
+                return null;
+            }
+            var _loc_4:* = -1;
+            var _loc_7:* = param1.@object;
+            _loc_3 = param1.@object;
+            if (_loc_7 != null && _loc_3.length() == 1)
+            {
+                _loc_4 = parseInt(_loc_3[0].toString());
+            }
+            var _loc_5:* = 0;
+            var _loc_7:* = param1.@data;
+            _loc_3 = param1.@data;
+            if (_loc_7 != null && _loc_3.length() == 1)
+            {
+                _loc_5 = parseInt(_loc_3[0].toString());
+            }
+            var _loc_6:* = Tibia.s_GetAppearanceStorage();
+            if (_loc_6.getObjectType(_loc_4) != null)
+            {
+                return new EquipAction(_loc_4, _loc_5, TARGET_AUTO);
+            }
             return null;
-         }
-         var _loc4_:int = -1;
-         if((_loc3_ = param1.@object) != null && _loc3_.length() == 1)
-         {
-            _loc4_ = parseInt(_loc3_[0].toString());
-         }
-         var _loc5_:int = 0;
-         if((_loc3_ = param1.@data) != null && _loc3_.length() == 1)
-         {
-            _loc5_ = parseInt(_loc3_[0].toString());
-         }
-         var _loc6_:AppearanceStorage = Tibia.s_GetAppearanceStorage();
-         if(_loc6_.getObjectType(_loc4_) != null)
-         {
-            return new EquipAction(_loc4_,_loc5_,TARGET_AUTO);
-         }
-         return null;
-      }
-      
-      public function perform(param1:Boolean = false) : void
-      {
-         var _loc2_:Communication = Tibia.s_GetCommunication();
-         var _loc3_:ContainerStorage = Tibia.s_GetContainerStorage();
-         if(_loc2_ != null && Boolean(_loc2_.isGameRunning) && _loc3_ != null && _loc3_.getAvailableInventory(this.m_Type.ID,this.m_Data) > 0 && !param1)
-         {
-            _loc2_.sendCEQUIPOBJECT(this.m_Type.ID,this.m_Data);
-         }
-      }
-      
-      public function get data() : int
-      {
-         return this.m_Data;
-      }
-      
-      public function marshall() : XML
-      {
-         return <action type="equip" object="{this.m_Type.ID}" data="{this.m_Data}"/>;
-      }
-      
-      public function equals(param1:IAction) : Boolean
-      {
-         return param1 is EquipAction && EquipAction(param1).m_Data == this.m_Data && EquipAction(param1).m_Target == this.m_Target && EquipAction(param1).m_Type == this.m_Type;
-      }
-      
-      public function get hidden() : Boolean
-      {
-         return true;
-      }
-      
-      public function get type() : AppearanceType
-      {
-         return this.m_Type;
-      }
-      
-      public function toString() : String
-      {
-         var _loc1_:IResourceManager = ResourceManager.getInstance();
-         var _loc2_:ContainerStorage = null;
-         var _loc3_:BodyContainerView = null;
-         var _loc4_:String = null;
-         if((_loc2_ = Tibia.s_GetContainerStorage()) != null && (_loc3_ = _loc2_.getBodyContainerView()) != null && Boolean(_loc3_.isEquipped(this.m_Type.ID)))
-         {
-            _loc4_ = "GAME_EQUIP_UNEQUIP";
-         }
-         else
-         {
-            _loc4_ = "GAME_EQUIP_EQUIP";
-         }
-         var _loc5_:AppearanceStorage = null;
-         var _loc6_:String = null;
-         if((_loc5_ = Tibia.s_GetAppearanceStorage()) == null || (_loc6_ = _loc5_.getCachedObjectTypeName(this.m_Type.ID,this.m_Data)) == null)
-         {
-            _loc6_ = _loc1_.getString(BUNDLE,"GAME_EQUIP_GENERIC_OBJECT");
-         }
-         return _loc1_.getString(BUNDLE,_loc4_,[_loc6_]);
-      }
-      
-      public function clone() : IAction
-      {
-         return new EquipAction(this.m_Type,this.m_Data,this.m_Target);
-      }
-   }
+        }// end function
+
+    }
 }

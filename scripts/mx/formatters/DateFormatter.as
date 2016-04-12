@@ -1,292 +1,299 @@
-package mx.formatters
+﻿package mx.formatters
 {
-   import mx.core.mx_internal;
-   
-   use namespace mx_internal;
-   
-   public class DateFormatter extends Formatter
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static const VALID_PATTERN_CHARS:String = "Y,M,D,A,E,H,J,K,L,N,S,Q";
-       
-      private var formatStringOverride:String;
-      
-      private var _formatString:String;
-      
-      public function DateFormatter()
-      {
-         super();
-      }
-      
-      public static function parseDateString(param1:String) : Date
-      {
-         var _loc14_:String = null;
-         var _loc15_:int = 0;
-         var _loc16_:int = 0;
-         var _loc17_:String = null;
-         var _loc18_:String = null;
-         var _loc19_:int = 0;
-         if(!param1 || param1 == "")
-         {
-            return null;
-         }
-         var _loc2_:int = -1;
-         var _loc3_:int = -1;
-         var _loc4_:int = -1;
-         var _loc5_:int = -1;
-         var _loc6_:int = -1;
-         var _loc7_:int = -1;
-         var _loc8_:String = "";
-         var _loc9_:Object = 0;
-         var _loc10_:int = 0;
-         var _loc11_:int = param1.length;
-         var _loc12_:RegExp = /(GMT|UTC)((\+|-)\d\d\d\d )?/ig;
-         param1 = param1.replace(_loc12_,"");
-         while(_loc10_ < _loc11_)
-         {
-            _loc8_ = param1.charAt(_loc10_);
-            _loc10_++;
-            if(!(_loc8_ <= " " || _loc8_ == ","))
+    import mx.core.*;
+
+    public class DateFormatter extends Formatter
+    {
+        private var formatStringOverride:String;
+        private var _formatString:String;
+        static const VERSION:String = "3.6.0.21751";
+        private static const VALID_PATTERN_CHARS:String = "Y,M,D,A,E,H,J,K,L,N,S,Q";
+
+        public function DateFormatter()
+        {
+            return;
+        }// end function
+
+        public function set formatString(param1:String) : void
+        {
+            formatStringOverride = param1;
+            _formatString = param1 != null ? (param1) : (resourceManager.getString("SharedResources", "dateFormat"));
+            return;
+        }// end function
+
+        override protected function resourcesChanged() : void
+        {
+            super.resourcesChanged();
+            formatString = formatStringOverride;
+            return;
+        }// end function
+
+        override public function format(param1:Object) : String
+        {
+            var _loc_2:* = null;
+            if (error)
             {
-               if(_loc8_ == "/" || _loc8_ == ":" || _loc8_ == "+" || _loc8_ == "-")
-               {
-                  _loc9_ = _loc8_;
-               }
-               else if("a" <= _loc8_ && _loc8_ <= "z" || "A" <= _loc8_ && _loc8_ <= "Z")
-               {
-                  _loc14_ = _loc8_;
-                  while(_loc10_ < _loc11_)
-                  {
-                     _loc8_ = param1.charAt(_loc10_);
-                     if(!("a" <= _loc8_ && _loc8_ <= "z" || "A" <= _loc8_ && _loc8_ <= "Z"))
-                     {
-                        break;
-                     }
-                     _loc14_ = _loc14_ + _loc8_;
-                     _loc10_++;
-                  }
-                  _loc15_ = DateBase.mx_internal::defaultStringKey.length;
-                  _loc16_ = 0;
-                  while(_loc16_ < _loc15_)
-                  {
-                     _loc17_ = String(DateBase.mx_internal::defaultStringKey[_loc16_]);
-                     if(_loc17_.toLowerCase() == _loc14_.toLowerCase() || _loc17_.toLowerCase().substr(0,3) == _loc14_.toLowerCase())
-                     {
-                        if(_loc16_ == 13)
-                        {
-                           if(_loc5_ > 12 || _loc5_ < 1)
-                           {
-                              break;
-                           }
-                           if(_loc5_ < 12)
-                           {
-                              _loc5_ = _loc5_ + 12;
-                           }
-                        }
-                        else if(_loc16_ == 12)
-                        {
-                           if(_loc5_ > 12 || _loc5_ < 1)
-                           {
-                              break;
-                           }
-                           if(_loc5_ == 12)
-                           {
-                              _loc5_ = 0;
-                           }
-                        }
-                        else if(_loc16_ < 12)
-                        {
-                           if(_loc3_ < 0)
-                           {
-                              _loc3_ = _loc16_;
-                           }
-                           else
-                           {
-                              break;
-                           }
-                        }
-                        break;
-                     }
-                     _loc16_++;
-                  }
-                  _loc9_ = 0;
-               }
-               else if("0" <= _loc8_ && _loc8_ <= "9")
-               {
-                  _loc18_ = _loc8_;
-                  while("0" <= (_loc8_ = param1.charAt(_loc10_)) && _loc8_ <= "9" && _loc10_ < _loc11_)
-                  {
-                     _loc18_ = _loc18_ + _loc8_;
-                     _loc10_++;
-                  }
-                  _loc19_ = int(_loc18_);
-                  if(_loc19_ >= 70)
-                  {
-                     if(_loc2_ != -1)
-                     {
-                        break;
-                     }
-                     if(_loc8_ <= " " || _loc8_ == "," || _loc8_ == "." || _loc8_ == "/" || _loc8_ == "-" || _loc10_ >= _loc11_)
-                     {
-                        _loc2_ = _loc19_;
-                     }
-                     else
-                     {
-                        break;
-                     }
-                  }
-                  else if(_loc8_ == "/" || _loc8_ == "-" || _loc8_ == ".")
-                  {
-                     if(_loc3_ < 0)
-                     {
-                        _loc3_ = _loc19_ - 1;
-                     }
-                     else if(_loc4_ < 0)
-                     {
-                        _loc4_ = _loc19_;
-                     }
-                     else
-                     {
-                        break;
-                     }
-                  }
-                  else if(_loc8_ == ":")
-                  {
-                     if(_loc5_ < 0)
-                     {
-                        _loc5_ = _loc19_;
-                     }
-                     else if(_loc6_ < 0)
-                     {
-                        _loc6_ = _loc19_;
-                     }
-                     else
-                     {
-                        break;
-                     }
-                  }
-                  else if(_loc5_ >= 0 && _loc6_ < 0)
-                  {
-                     _loc6_ = _loc19_;
-                  }
-                  else if(_loc6_ >= 0 && _loc7_ < 0)
-                  {
-                     _loc7_ = _loc19_;
-                  }
-                  else if(_loc4_ < 0)
-                  {
-                     _loc4_ = _loc19_;
-                  }
-                  else if(_loc2_ < 0 && _loc3_ >= 0 && _loc4_ >= 0)
-                  {
-                     _loc2_ = 2000 + _loc19_;
-                  }
-                  else
-                  {
-                     break;
-                  }
-                  _loc9_ = 0;
-               }
+                error = null;
             }
-         }
-         if(_loc2_ < 0 || _loc3_ < 0 || _loc3_ > 11 || _loc4_ < 1 || _loc4_ > 31)
-         {
-            return null;
-         }
-         if(_loc7_ < 0)
-         {
-            _loc7_ = 0;
-         }
-         if(_loc6_ < 0)
-         {
-            _loc6_ = 0;
-         }
-         if(_loc5_ < 0)
-         {
-            _loc5_ = 0;
-         }
-         var _loc13_:Date = new Date(_loc2_,_loc3_,_loc4_,_loc5_,_loc6_,_loc7_);
-         if(_loc4_ != _loc13_.getDate() || _loc3_ != _loc13_.getMonth())
-         {
-            return null;
-         }
-         return _loc13_;
-      }
-      
-      public function set formatString(param1:String) : void
-      {
-         formatStringOverride = param1;
-         _formatString = param1 != null?param1:resourceManager.getString("SharedResources","dateFormat");
-      }
-      
-      override protected function resourcesChanged() : void
-      {
-         super.resourcesChanged();
-         formatString = formatStringOverride;
-      }
-      
-      override public function format(param1:Object) : String
-      {
-         var _loc2_:String = null;
-         if(error)
-         {
-            error = null;
-         }
-         if(!param1 || param1 is String && param1 == "")
-         {
-            error = defaultInvalidValueError;
-            return "";
-         }
-         if(param1 is String)
-         {
-            param1 = DateFormatter.parseDateString(String(param1));
-            if(!param1)
+            if (!param1 || param1 is String && param1 == "")
             {
-               error = defaultInvalidValueError;
-               return "";
+                error = defaultInvalidValueError;
+                return "";
             }
-         }
-         else if(!(param1 is Date))
-         {
-            error = defaultInvalidValueError;
-            return "";
-         }
-         var _loc3_:int = 0;
-         var _loc4_:String = "";
-         var _loc5_:int = formatString.length;
-         var _loc6_:int = 0;
-         while(_loc6_ < _loc5_)
-         {
-            _loc2_ = formatString.charAt(_loc6_);
-            if(VALID_PATTERN_CHARS.indexOf(_loc2_) != -1 && _loc2_ != ",")
+            if (param1 is String)
             {
-               _loc3_++;
-               if(_loc4_.indexOf(_loc2_) == -1)
-               {
-                  _loc4_ = _loc4_ + _loc2_;
-               }
-               else if(_loc2_ != formatString.charAt(Math.max(_loc6_ - 1,0)))
-               {
-                  error = defaultInvalidFormatError;
-                  return "";
-               }
+                param1 = this.parseDateString(String(param1));
+                if (!param1)
+                {
+                    error = defaultInvalidValueError;
+                    return "";
+                }
             }
-            _loc6_++;
-         }
-         if(_loc3_ < 1)
-         {
-            error = defaultInvalidFormatError;
-            return "";
-         }
-         var _loc7_:StringFormatter = new StringFormatter(formatString,VALID_PATTERN_CHARS,DateBase.mx_internal::extractTokenDate);
-         return _loc7_.formatValue(param1);
-      }
-      
-      public function get formatString() : String
-      {
-         return _formatString;
-      }
-   }
+            else if (!(param1 is Date))
+            {
+                error = defaultInvalidValueError;
+                return "";
+            }
+            var _loc_3:* = 0;
+            var _loc_4:* = "";
+            var _loc_5:* = formatString.length;
+            var _loc_6:* = 0;
+            while (_loc_6 < _loc_5)
+            {
+                
+                _loc_2 = formatString.charAt(_loc_6);
+                if (VALID_PATTERN_CHARS.indexOf(_loc_2) != -1 && _loc_2 != ",")
+                {
+                    _loc_3++;
+                    if (_loc_4.indexOf(_loc_2) == -1)
+                    {
+                        _loc_4 = _loc_4 + _loc_2;
+                    }
+                    else if (_loc_2 != formatString.charAt(Math.max((_loc_6 - 1), 0)))
+                    {
+                        error = defaultInvalidFormatError;
+                        return "";
+                    }
+                }
+                _loc_6++;
+            }
+            if (_loc_3 < 1)
+            {
+                error = defaultInvalidFormatError;
+                return "";
+            }
+            var _loc_7:* = new StringFormatter(formatString, VALID_PATTERN_CHARS, mx_internal::extractTokenDate);
+            return _loc_7.formatValue(param1);
+        }// end function
+
+        public function get formatString() : String
+        {
+            return _formatString;
+        }// end function
+
+        public static function parseDateString(param1:String) : Date
+        {
+            var _loc_14:* = null;
+            var _loc_15:* = 0;
+            var _loc_16:* = 0;
+            var _loc_17:* = null;
+            var _loc_18:* = null;
+            var _loc_19:* = 0;
+            if (!param1 || param1 == "")
+            {
+                return null;
+            }
+            var _loc_2:* = -1;
+            var _loc_3:* = -1;
+            var _loc_4:* = -1;
+            var _loc_5:* = -1;
+            var _loc_6:* = -1;
+            var _loc_7:* = -1;
+            var _loc_8:* = "";
+            var _loc_9:* = 0;
+            var _loc_10:* = 0;
+            var _loc_11:* = param1.length;
+            var _loc_12:* = /(GMT|UTC)((\+|-)\d\d\d\d )?/ig;
+            param1 = param1.replace(_loc_12, "");
+            while (_loc_10 < _loc_11)
+            {
+                
+                _loc_8 = param1.charAt(_loc_10);
+                _loc_10++;
+                if (_loc_8 <= " " || _loc_8 == ",")
+                {
+                    continue;
+                }
+                if (_loc_8 == "/" || _loc_8 == ":" || _loc_8 == "+" || _loc_8 == "-")
+                {
+                    _loc_9 = _loc_8;
+                    continue;
+                }
+                if (_loc_8 >= "a" && _loc_8 <= "z" || _loc_8 >= "A" && _loc_8 <= "Z")
+                {
+                    _loc_14 = _loc_8;
+                    while (_loc_10 < _loc_11)
+                    {
+                        
+                        _loc_8 = param1.charAt(_loc_10);
+                        if (!(_loc_8 >= "a" && _loc_8 <= "z" || _loc_8 >= "A" && _loc_8 <= "Z"))
+                        {
+                            break;
+                        }
+                        _loc_14 = _loc_14 + _loc_8;
+                        _loc_10++;
+                    }
+                    _loc_15 = mx_internal::defaultStringKey.length;
+                    _loc_16 = 0;
+                    while (_loc_16 < _loc_15)
+                    {
+                        
+                        _loc_17 = String(mx_internal::defaultStringKey[_loc_16]);
+                        if (_loc_17.toLowerCase() == _loc_14.toLowerCase() || _loc_17.toLowerCase().substr(0, 3) == _loc_14.toLowerCase())
+                        {
+                            if (_loc_16 == 13)
+                            {
+                                if (_loc_5 > 12 || _loc_5 < 1)
+                                {
+                                    break;
+                                }
+                                else if (_loc_5 < 12)
+                                {
+                                    _loc_5 = _loc_5 + 12;
+                                }
+                            }
+                            else if (_loc_16 == 12)
+                            {
+                                if (_loc_5 > 12 || _loc_5 < 1)
+                                {
+                                    break;
+                                }
+                                else if (_loc_5 == 12)
+                                {
+                                    _loc_5 = 0;
+                                }
+                            }
+                            else if (_loc_16 < 12)
+                            {
+                                if (_loc_3 < 0)
+                                {
+                                    _loc_3 = _loc_16;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        _loc_16++;
+                    }
+                    _loc_9 = 0;
+                    continue;
+                }
+                if (_loc_8 >= "0" && _loc_8 <= "9")
+                {
+                    _loc_18 = _loc_8;
+                    do
+                    {
+                        
+                        _loc_18 = _loc_18 + _loc_8;
+                        _loc_10++;
+                        var _loc_20:* = param1.charAt(_loc_10);
+                        _loc_8 = param1.charAt(_loc_10);
+                    }while (_loc_20 >= "0" && _loc_8 <= "9" && _loc_10 < _loc_11)
+                    _loc_19 = int(_loc_18);
+                    if (_loc_19 >= 70)
+                    {
+                        if (_loc_2 != -1)
+                        {
+                            break;
+                        }
+                        else if (_loc_8 <= " " || _loc_8 == "," || _loc_8 == "." || _loc_8 == "/" || _loc_8 == "-" || _loc_10 >= _loc_11)
+                        {
+                            _loc_2 = _loc_19;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    else if (_loc_8 == "/" || _loc_8 == "-" || _loc_8 == ".")
+                    {
+                        if (_loc_3 < 0)
+                        {
+                            _loc_3 = _loc_19 - 1;
+                        }
+                        else if (_loc_4 < 0)
+                        {
+                            _loc_4 = _loc_19;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    else if (_loc_8 == ":")
+                    {
+                        if (_loc_5 < 0)
+                        {
+                            _loc_5 = _loc_19;
+                        }
+                        else if (_loc_6 < 0)
+                        {
+                            _loc_6 = _loc_19;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    else if (_loc_5 >= 0 && _loc_6 < 0)
+                    {
+                        _loc_6 = _loc_19;
+                    }
+                    else if (_loc_6 >= 0 && _loc_7 < 0)
+                    {
+                        _loc_7 = _loc_19;
+                    }
+                    else if (_loc_4 < 0)
+                    {
+                        _loc_4 = _loc_19;
+                    }
+                    else if (_loc_2 < 0 && _loc_3 >= 0 && _loc_4 >= 0)
+                    {
+                        _loc_2 = 2000 + _loc_19;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    _loc_9 = 0;
+                }
+            }
+            if (_loc_2 < 0 || _loc_3 < 0 || _loc_3 > 11 || _loc_4 < 1 || _loc_4 > 31)
+            {
+                return null;
+            }
+            if (_loc_7 < 0)
+            {
+                _loc_7 = 0;
+            }
+            if (_loc_6 < 0)
+            {
+                _loc_6 = 0;
+            }
+            if (_loc_5 < 0)
+            {
+                _loc_5 = 0;
+            }
+            var _loc_13:* = new Date(_loc_2, _loc_3, _loc_4, _loc_5, _loc_6, _loc_7);
+            if (_loc_4 != _loc_13.getDate() || _loc_3 != _loc_13.getMonth())
+            {
+                return null;
+            }
+            return _loc_13;
+        }// end function
+
+    }
 }

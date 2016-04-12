@@ -1,58 +1,61 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   import mx.skins.halo.RadioButtonIcon;
-   
-   public class _RadioButtonStyle
-   {
-       
-      public function _RadioButtonStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration("RadioButton");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration("RadioButton",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.skins.halo.*;
+    import mx.styles.*;
+
+    public class _RadioButtonStyle extends Object
+    {
+
+        public function _RadioButtonStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration("RadioButton");
+            if (!style)
             {
-               _RadioButtonStyle.downSkin = null;
-               _RadioButtonStyle.iconColor = 2831164;
-               _RadioButtonStyle.cornerRadius = 7;
-               _RadioButtonStyle.selectedDownIcon = null;
-               _RadioButtonStyle.selectedUpSkin = null;
-               _RadioButtonStyle.overIcon = null;
-               _RadioButtonStyle.skin = null;
-               _RadioButtonStyle.upSkin = null;
-               _RadioButtonStyle.selectedDownSkin = null;
-               _RadioButtonStyle.selectedOverIcon = null;
-               _RadioButtonStyle.selectedDisabledIcon = null;
-               _RadioButtonStyle.textAlign = "left";
-               _RadioButtonStyle.horizontalGap = 5;
-               _RadioButtonStyle.downIcon = null;
-               _RadioButtonStyle.icon = RadioButtonIcon;
-               _RadioButtonStyle.overSkin = null;
-               _RadioButtonStyle.disabledIcon = null;
-               _RadioButtonStyle.selectedDisabledSkin = null;
-               _RadioButtonStyle.upIcon = null;
-               _RadioButtonStyle.paddingLeft = 0;
-               _RadioButtonStyle.paddingRight = 0;
-               _RadioButtonStyle.fontWeight = "normal";
-               _RadioButtonStyle.selectedUpIcon = null;
-               _RadioButtonStyle.disabledSkin = null;
-               _RadioButtonStyle.selectedOverSkin = null;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration("RadioButton", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.downSkin = null;
+                this.iconColor = 2831164;
+                this.cornerRadius = 7;
+                this.selectedDownIcon = null;
+                this.selectedUpSkin = null;
+                this.overIcon = null;
+                this.skin = null;
+                this.upSkin = null;
+                this.selectedDownSkin = null;
+                this.selectedOverIcon = null;
+                this.selectedDisabledIcon = null;
+                this.textAlign = "left";
+                this.horizontalGap = 5;
+                this.downIcon = null;
+                this.icon = RadioButtonIcon;
+                this.overSkin = null;
+                this.disabledIcon = null;
+                this.selectedDisabledSkin = null;
+                this.upIcon = null;
+                this.paddingLeft = 0;
+                this.paddingRight = 0;
+                this.fontWeight = "normal";
+                this.selectedUpIcon = null;
+                this.disabledSkin = null;
+                this.selectedOverSkin = null;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

@@ -1,42 +1,41 @@
-package mx.core
+﻿package mx.core
 {
-   import mx.events.ResourceEvent;
-   import flash.events.IOErrorEvent;
-   import mx.resources.ResourceManager;
-   import mx.resources.IResourceManager;
-   import flash.events.IEventDispatcher;
-   
-   use namespace mx_internal;
-   
-   public class ResourceModuleRSLItem extends RSLItem
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function ResourceModuleRSLItem(param1:String)
-      {
-         super(param1);
-      }
-      
-      private function resourceErrorHandler(param1:ResourceEvent) : void
-      {
-         var _loc2_:IOErrorEvent = new IOErrorEvent(IOErrorEvent.IO_ERROR);
-         _loc2_.text = param1.errorText;
-         super.itemErrorHandler(_loc2_);
-      }
-      
-      override public function load(param1:Function, param2:Function, param3:Function, param4:Function, param5:Function) : void
-      {
-         chainedProgressHandler = param1;
-         chainedCompleteHandler = param2;
-         chainedIOErrorHandler = param3;
-         chainedSecurityErrorHandler = param4;
-         chainedRSLErrorHandler = param5;
-         var _loc6_:IResourceManager = ResourceManager.getInstance();
-         var _loc7_:IEventDispatcher = _loc6_.loadResourceModule(url);
-         _loc7_.addEventListener(ResourceEvent.PROGRESS,itemProgressHandler);
-         _loc7_.addEventListener(ResourceEvent.COMPLETE,itemCompleteHandler);
-         _loc7_.addEventListener(ResourceEvent.ERROR,resourceErrorHandler);
-      }
-   }
+    import flash.events.*;
+    import mx.events.*;
+    import mx.resources.*;
+
+    public class ResourceModuleRSLItem extends RSLItem
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function ResourceModuleRSLItem(param1:String)
+        {
+            super(param1);
+            return;
+        }// end function
+
+        private function resourceErrorHandler(event:ResourceEvent) : void
+        {
+            var _loc_2:* = new IOErrorEvent(IOErrorEvent.IO_ERROR);
+            _loc_2.text = event.errorText;
+            super.itemErrorHandler(_loc_2);
+            return;
+        }// end function
+
+        override public function load(param1:Function, param2:Function, param3:Function, param4:Function, param5:Function) : void
+        {
+            chainedProgressHandler = param1;
+            chainedCompleteHandler = param2;
+            chainedIOErrorHandler = param3;
+            chainedSecurityErrorHandler = param4;
+            chainedRSLErrorHandler = param5;
+            var _loc_6:* = ResourceManager.getInstance();
+            var _loc_7:* = _loc_6.loadResourceModule(url);
+            _loc_7.addEventListener(ResourceEvent.PROGRESS, itemProgressHandler);
+            _loc_7.addEventListener(ResourceEvent.COMPLETE, itemCompleteHandler);
+            _loc_7.addEventListener(ResourceEvent.ERROR, resourceErrorHandler);
+            return;
+        }// end function
+
+    }
 }

@@ -1,32 +1,28 @@
-package mx.core
+﻿package mx.core
 {
-   import flash.display.Loader;
-   import mx.utils.NameUtil;
-   
-   use namespace mx_internal;
-   
-   public class FlexLoader extends Loader
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function FlexLoader()
-      {
-         super();
-         try
-         {
-            name = NameUtil.createUniqueName(this);
+    import flash.display.*;
+    import mx.utils.*;
+
+    public class FlexLoader extends Loader
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function FlexLoader()
+        {
+            try
+            {
+                name = NameUtil.createUniqueName(this);
+            }
+            catch (e:Error)
+            {
+            }
             return;
-         }
-         catch(e:Error)
-         {
-            return;
-         }
-      }
-      
-      override public function toString() : String
-      {
-         return NameUtil.displayObjectToString(this);
-      }
-   }
+        }// end function
+
+        override public function toString() : String
+        {
+            return NameUtil.displayObjectToString(this);
+        }// end function
+
+    }
 }

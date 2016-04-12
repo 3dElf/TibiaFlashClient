@@ -1,21 +1,22 @@
-package shared.controls
+﻿package shared.controls
 {
-   import mx.controls.TabBar;
-   import mx.core.mx_internal;
-   import mx.core.ClassFactory;
-   
-   public class SimpleTabBar extends TabBar
-   {
-       
-      public function SimpleTabBar()
-      {
-         super();
-      }
-      
-      override protected function createChildren() : void
-      {
-         super.createChildren();
-         mx_internal::navItemFactory = new ClassFactory(SimpleTab);
-      }
-   }
+    import mx.controls.*;
+    import mx.core.*;
+
+    public class SimpleTabBar extends TabBar
+    {
+
+        public function SimpleTabBar()
+        {
+            return;
+        }// end function
+
+        override protected function createChildren() : void
+        {
+            super.createChildren();
+            mx_internal::navItemFactory = new ClassFactory(SimpleTab);
+            return;
+        }// end function
+
+    }
 }

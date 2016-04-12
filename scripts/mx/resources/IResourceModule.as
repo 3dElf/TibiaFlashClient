@@ -1,8 +1,12 @@
-package mx.resources
+﻿package mx.resources
 {
-   public interface IResourceModule
-   {
-       
-      function get resourceBundles() : Array;
-   }
+
+    public interface IResourceModule
+    {
+
+        public function IResourceModule();
+
+        function get resourceBundles() : Array;
+
+    }
 }

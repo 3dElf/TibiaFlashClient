@@ -1,13 +1,14 @@
-package shared.skins
+﻿package shared.skins
 {
-   import mx.skins.ProgrammaticSkin;
-   
-   public class EmptySkin extends ProgrammaticSkin
-   {
-       
-      public function EmptySkin()
-      {
-         super();
-      }
-   }
+    import mx.skins.*;
+
+    public class EmptySkin extends ProgrammaticSkin
+    {
+
+        public function EmptySkin()
+        {
+            return;
+        }// end function
+
+    }
 }

@@ -1,78 +1,85 @@
-package mx.managers
+﻿package mx.managers
 {
-   import mx.core.IChildList;
-   import mx.core.mx_internal;
-   import flash.display.DisplayObject;
-   import flash.geom.Point;
-   
-   use namespace mx_internal;
-   
-   public class SystemRawChildrenList implements IChildList
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var owner:mx.managers.SystemManager;
-      
-      public function SystemRawChildrenList(param1:mx.managers.SystemManager)
-      {
-         super();
-         this.owner = param1;
-      }
-      
-      public function getChildAt(param1:int) : DisplayObject
-      {
-         return owner.mx_internal::rawChildren_getChildAt(param1);
-      }
-      
-      public function addChild(param1:DisplayObject) : DisplayObject
-      {
-         return owner.mx_internal::rawChildren_addChild(param1);
-      }
-      
-      public function getChildIndex(param1:DisplayObject) : int
-      {
-         return owner.mx_internal::rawChildren_getChildIndex(param1);
-      }
-      
-      public function setChildIndex(param1:DisplayObject, param2:int) : void
-      {
-         owner.mx_internal::rawChildren_setChildIndex(param1,param2);
-      }
-      
-      public function getChildByName(param1:String) : DisplayObject
-      {
-         return owner.mx_internal::rawChildren_getChildByName(param1);
-      }
-      
-      public function removeChildAt(param1:int) : DisplayObject
-      {
-         return owner.mx_internal::rawChildren_removeChildAt(param1);
-      }
-      
-      public function get numChildren() : int
-      {
-         return owner.mx_internal::$numChildren;
-      }
-      
-      public function addChildAt(param1:DisplayObject, param2:int) : DisplayObject
-      {
-         return owner.mx_internal::rawChildren_addChildAt(param1,param2);
-      }
-      
-      public function getObjectsUnderPoint(param1:Point) : Array
-      {
-         return owner.mx_internal::rawChildren_getObjectsUnderPoint(param1);
-      }
-      
-      public function contains(param1:DisplayObject) : Boolean
-      {
-         return owner.mx_internal::rawChildren_contains(param1);
-      }
-      
-      public function removeChild(param1:DisplayObject) : DisplayObject
-      {
-         return owner.mx_internal::rawChildren_removeChild(param1);
-      }
-   }
+    import flash.display.*;
+    import flash.geom.*;
+    import mx.core.*;
+
+    public class SystemRawChildrenList extends Object implements IChildList
+    {
+        private var owner:SystemManager;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function SystemRawChildrenList(param1:SystemManager)
+        {
+            this.owner = param1;
+            return;
+        }// end function
+
+        public function getChildAt(param1:int) : DisplayObject
+        {
+            var _loc_2:* = owner;
+            return _loc_2.mx_internal::rawChildren_getChildAt(param1);
+        }// end function
+
+        public function addChild(param1:DisplayObject) : DisplayObject
+        {
+            var _loc_2:* = owner;
+            return _loc_2.mx_internal::rawChildren_addChild(param1);
+        }// end function
+
+        public function getChildIndex(param1:DisplayObject) : int
+        {
+            var _loc_2:* = owner;
+            return _loc_2.mx_internal::rawChildren_getChildIndex(param1);
+        }// end function
+
+        public function setChildIndex(param1:DisplayObject, param2:int) : void
+        {
+            var _loc_3:* = owner;
+            _loc_3.mx_internal::rawChildren_setChildIndex(param1, param2);
+            return;
+        }// end function
+
+        public function getChildByName(param1:String) : DisplayObject
+        {
+            var _loc_2:* = owner;
+            return _loc_2.mx_internal::rawChildren_getChildByName(param1);
+        }// end function
+
+        public function removeChildAt(param1:int) : DisplayObject
+        {
+            var _loc_2:* = owner;
+            return _loc_2.mx_internal::rawChildren_removeChildAt(param1);
+        }// end function
+
+        public function get numChildren() : int
+        {
+            return mx_internal::$numChildren;
+        }// end function
+
+        public function addChildAt(param1:DisplayObject, param2:int) : DisplayObject
+        {
+            var _loc_3:* = owner;
+            return _loc_3.mx_internal::rawChildren_addChildAt(param1, param2);
+        }// end function
+
+        public function getObjectsUnderPoint(param1:Point) : Array
+        {
+            var _loc_2:* = owner;
+            return _loc_2.mx_internal::rawChildren_getObjectsUnderPoint(param1);
+        }// end function
+
+        public function contains(param1:DisplayObject) : Boolean
+        {
+            var _loc_2:* = owner;
+            return _loc_2.mx_internal::rawChildren_contains(param1);
+        }// end function
+
+        public function removeChild(param1:DisplayObject) : DisplayObject
+        {
+            var _loc_2:* = owner;
+            return _loc_2.mx_internal::rawChildren_removeChild(param1);
+        }// end function
+
+    }
 }

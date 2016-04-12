@@ -1,251 +1,259 @@
-package mx.containers
+﻿package mx.containers
 {
-   import mx.core.mx_internal;
-   import mx.containers.gridClasses.GridColumnInfo;
-   import mx.containers.gridClasses.GridRowInfo;
-   import mx.core.EdgeMetrics;
-   import mx.containers.utilityClasses.Flex;
-   import mx.core.ScrollPolicy;
-   import flash.display.DisplayObject;
-   
-   use namespace mx_internal;
-   
-   public class GridRow extends HBox
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      var rowIndex:int = 0;
-      
-      var columnWidths:Array;
-      
-      var rowHeights:Array;
-      
-      var numGridItems:int;
-      
-      public function GridRow()
-      {
-         super();
-         super.clipContent = false;
-      }
-      
-      override public function getStyle(param1:String) : *
-      {
-         return param1 == "horizontalGap" && Boolean(parent)?Grid(parent).getStyle("horizontalGap"):super.getStyle(param1);
-      }
-      
-      override public function invalidateDisplayList() : void
-      {
-         super.invalidateDisplayList();
-         if(parent)
-         {
-            Grid(parent).invalidateDisplayList();
-         }
-      }
-      
-      override public function get clipContent() : Boolean
-      {
-         return false;
-      }
-      
-      override public function set horizontalScrollPolicy(param1:String) : void
-      {
-      }
-      
-      override public function set clipContent(param1:Boolean) : void
-      {
-      }
-      
-      function doRowLayout(param1:Number, param2:Number) : void
-      {
-         var _loc8_:GridItem = null;
-         var _loc9_:int = 0;
-         var _loc10_:Number = NaN;
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         var _loc13_:int = 0;
-         var _loc14_:GridColumnInfo = null;
-         var _loc15_:Number = NaN;
-         var _loc16_:int = 0;
-         var _loc17_:GridRowInfo = null;
-         var _loc18_:Number = NaN;
-         var _loc19_:Number = NaN;
-         layoutChrome(param1,param2);
-         var _loc3_:Number = numChildren;
-         if(_loc3_ == 0)
-         {
+    import flash.display.*;
+    import mx.containers.gridClasses.*;
+    import mx.containers.utilityClasses.*;
+    import mx.core.*;
+
+    public class GridRow extends HBox
+    {
+        var rowIndex:int = 0;
+        var columnWidths:Array;
+        var rowHeights:Array;
+        var numGridItems:int;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function GridRow()
+        {
+            super.clipContent = false;
             return;
-         }
-         var _loc4_:Boolean = invalidateSizeFlag;
-         var _loc5_:Boolean = invalidateDisplayListFlag;
-         invalidateSizeFlag = true;
-         invalidateDisplayListFlag = true;
-         if(parent.getChildIndex(this) == 0 || Boolean(isNaN(columnWidths[0].x)) || columnWidths.minWidth != minWidth || columnWidths.maxWidth != maxWidth || columnWidths.preferredWidth != getExplicitOrMeasuredWidth() || columnWidths.percentWidth != percentWidth || columnWidths.width != param1 || columnWidths.paddingLeft != getStyle("paddingLeft") || columnWidths.paddingRight != getStyle("paddingRight") || columnWidths.horizontalAlign != getStyle("horizontalAlign") || columnWidths.borderStyle != getStyle("borderStyle"))
-         {
-            calculateColumnWidths();
-            columnWidths.minWidth = minWidth;
-            columnWidths.maxWidth = maxWidth;
-            columnWidths.preferredWidth = getExplicitOrMeasuredWidth();
-            columnWidths.percentWidth = percentWidth;
-            columnWidths.width = param1;
-            columnWidths.paddingLeft = getStyle("paddingLeft");
-            columnWidths.paddingRight = getStyle("paddingRight");
-            columnWidths.horizontalAlign = getStyle("horizontalAlign");
-            columnWidths.borderStyle = getStyle("borderStyle");
-         }
-         var _loc6_:EdgeMetrics = viewMetricsAndPadding;
-         var _loc7_:int = 0;
-         while(_loc7_ < _loc3_)
-         {
-            _loc8_ = GridItem(getChildAt(_loc7_));
-            _loc9_ = _loc8_.colIndex;
-            _loc10_ = columnWidths[_loc9_].x;
-            _loc11_ = _loc6_.top;
-            _loc12_ = _loc8_.percentHeight;
-            _loc13_ = Math.min(_loc9_ + _loc8_.colSpan,columnWidths.length);
-            _loc14_ = columnWidths[_loc13_ - 1];
-            _loc15_ = _loc14_.x + _loc14_.width - _loc10_;
-            _loc16_ = Math.min(rowIndex + _loc8_.rowSpan,rowHeights.length);
-            _loc17_ = rowHeights[_loc16_ - 1];
-            _loc18_ = _loc17_.y + _loc17_.height - rowHeights[rowIndex].y - _loc6_.top - _loc6_.bottom;
-            _loc19_ = _loc15_ - _loc8_.maxWidth;
-            if(_loc19_ > 0)
+        }// end function
+
+        override public function getStyle(param1:String)
+        {
+            return param1 == "horizontalGap" && parent ? (Grid(parent).getStyle("horizontalGap")) : (super.getStyle(param1));
+        }// end function
+
+        override public function invalidateDisplayList() : void
+        {
+            super.invalidateDisplayList();
+            if (parent)
             {
-               _loc10_ = _loc10_ + _loc19_ * layoutObject.getHorizontalAlignValue();
-               _loc15_ = _loc15_ - _loc19_;
+                Grid(parent).invalidateDisplayList();
             }
-            _loc19_ = _loc18_ - _loc8_.maxHeight;
-            if(Boolean(_loc12_) && _loc12_ < 100)
+            return;
+        }// end function
+
+        override public function get clipContent() : Boolean
+        {
+            return false;
+        }// end function
+
+        override public function set horizontalScrollPolicy(param1:String) : void
+        {
+            return;
+        }// end function
+
+        override public function set clipContent(param1:Boolean) : void
+        {
+            return;
+        }// end function
+
+        function doRowLayout(param1:Number, param2:Number) : void
+        {
+            var _loc_8:* = null;
+            var _loc_9:* = 0;
+            var _loc_10:* = NaN;
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            var _loc_13:* = 0;
+            var _loc_14:* = null;
+            var _loc_15:* = NaN;
+            var _loc_16:* = 0;
+            var _loc_17:* = null;
+            var _loc_18:* = NaN;
+            var _loc_19:* = NaN;
+            layoutChrome(param1, param2);
+            var _loc_3:* = numChildren;
+            if (_loc_3 == 0)
             {
-               _loc19_ = Math.max(_loc19_,_loc18_ * (100 - _loc12_));
+                return;
             }
-            if(_loc19_ > 0)
+            var _loc_4:* = invalidateSizeFlag;
+            var _loc_5:* = invalidateDisplayListFlag;
+            invalidateSizeFlag = true;
+            invalidateDisplayListFlag = true;
+            if (parent.getChildIndex(this) == 0 || isNaN(columnWidths[0].x) || columnWidths.minWidth != minWidth || columnWidths.maxWidth != maxWidth || columnWidths.preferredWidth != getExplicitOrMeasuredWidth() || columnWidths.percentWidth != percentWidth || columnWidths.width != param1 || columnWidths.paddingLeft != getStyle("paddingLeft") || columnWidths.paddingRight != getStyle("paddingRight") || columnWidths.horizontalAlign != getStyle("horizontalAlign") || columnWidths.borderStyle != getStyle("borderStyle"))
             {
-               _loc11_ = _loc19_ * layoutObject.getVerticalAlignValue();
-               _loc18_ = _loc18_ - _loc19_;
+                calculateColumnWidths();
+                columnWidths.minWidth = minWidth;
+                columnWidths.maxWidth = maxWidth;
+                columnWidths.preferredWidth = getExplicitOrMeasuredWidth();
+                columnWidths.percentWidth = percentWidth;
+                columnWidths.width = param1;
+                columnWidths.paddingLeft = getStyle("paddingLeft");
+                columnWidths.paddingRight = getStyle("paddingRight");
+                columnWidths.horizontalAlign = getStyle("horizontalAlign");
+                columnWidths.borderStyle = getStyle("borderStyle");
             }
-            _loc15_ = Math.ceil(_loc15_);
-            _loc18_ = Math.ceil(_loc18_);
-            _loc8_.move(_loc10_,_loc11_);
-            _loc8_.setActualSize(_loc15_,_loc18_);
-            _loc7_++;
-         }
-         invalidateSizeFlag = _loc4_;
-         invalidateDisplayListFlag = _loc5_;
-      }
-      
-      private function calculateColumnWidths() : void
-      {
-         var _loc5_:Number = NaN;
-         var _loc6_:GridColumnInfo = null;
-         var _loc7_:Number = NaN;
-         var _loc8_:int = 0;
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         var _loc13_:int = 0;
-         var _loc1_:EdgeMetrics = viewMetricsAndPadding;
-         var _loc2_:Number = getStyle("horizontalGap");
-         var _loc3_:int = columnWidths.length;
-         var _loc4_:Number = unscaledWidth - _loc1_.left - _loc1_.right - (_loc3_ - 1) * _loc2_;
-         var _loc9_:Number = 0;
-         var _loc10_:Array = [];
-         _loc5_ = _loc4_;
-         _loc8_ = 0;
-         while(_loc8_ < _loc3_)
-         {
-            _loc6_ = columnWidths[_loc8_];
-            _loc11_ = _loc6_.percent;
-            if(_loc11_)
+            var _loc_6:* = viewMetricsAndPadding;
+            var _loc_7:* = 0;
+            while (_loc_7 < _loc_3)
             {
-               _loc9_ = _loc9_ + _loc11_;
-               _loc10_.push(_loc6_);
+                
+                _loc_8 = GridItem(getChildAt(_loc_7));
+                _loc_9 = _loc_8.colIndex;
+                _loc_10 = columnWidths[_loc_9].x;
+                _loc_11 = _loc_6.top;
+                _loc_12 = _loc_8.percentHeight;
+                _loc_13 = Math.min(_loc_9 + _loc_8.colSpan, columnWidths.length);
+                _loc_14 = columnWidths[(_loc_13 - 1)];
+                _loc_15 = _loc_14.x + _loc_14.width - _loc_10;
+                _loc_16 = Math.min(rowIndex + _loc_8.rowSpan, rowHeights.length);
+                _loc_17 = rowHeights[(_loc_16 - 1)];
+                _loc_18 = _loc_17.y + _loc_17.height - rowHeights[rowIndex].y - _loc_6.top - _loc_6.bottom;
+                _loc_19 = _loc_15 - _loc_8.maxWidth;
+                if (_loc_19 > 0)
+                {
+                    _loc_10 = _loc_10 + _loc_19 * layoutObject.getHorizontalAlignValue();
+                    _loc_15 = _loc_15 - _loc_19;
+                }
+                _loc_19 = _loc_18 - _loc_8.maxHeight;
+                if (_loc_12 && _loc_12 < 100)
+                {
+                    _loc_19 = Math.max(_loc_19, _loc_18 * (100 - _loc_12));
+                }
+                if (_loc_19 > 0)
+                {
+                    _loc_11 = _loc_19 * layoutObject.getVerticalAlignValue();
+                    _loc_18 = _loc_18 - _loc_19;
+                }
+                _loc_15 = Math.ceil(_loc_15);
+                _loc_18 = Math.ceil(_loc_18);
+                _loc_8.move(_loc_10, _loc_11);
+                _loc_8.setActualSize(_loc_15, _loc_18);
+                _loc_7++;
             }
-            else
+            invalidateSizeFlag = _loc_4;
+            invalidateDisplayListFlag = _loc_5;
+            return;
+        }// end function
+
+        private function calculateColumnWidths() : void
+        {
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            var _loc_7:* = NaN;
+            var _loc_8:* = 0;
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            var _loc_13:* = 0;
+            var _loc_1:* = viewMetricsAndPadding;
+            var _loc_2:* = getStyle("horizontalGap");
+            var _loc_3:* = columnWidths.length;
+            var _loc_4:* = unscaledWidth - _loc_1.left - _loc_1.right - (_loc_3 - 1) * _loc_2;
+            var _loc_9:* = 0;
+            var _loc_10:* = [];
+            _loc_5 = _loc_4;
+            _loc_8 = 0;
+            while (_loc_8 < _loc_3)
             {
-               _loc12_ = _loc6_.width = _loc6_.preferred;
-               _loc5_ = _loc5_ - _loc12_;
+                
+                _loc_6 = columnWidths[_loc_8];
+                _loc_11 = _loc_6.percent;
+                if (_loc_11)
+                {
+                    _loc_9 = _loc_9 + _loc_11;
+                    _loc_10.push(_loc_6);
+                }
+                else
+                {
+                    var _loc_14:* = _loc_6.preferred;
+                    _loc_6.width = _loc_6.preferred;
+                    _loc_12 = _loc_14;
+                    _loc_5 = _loc_5 - _loc_12;
+                }
+                _loc_8++;
             }
-            _loc8_++;
-         }
-         if(_loc9_)
-         {
-            _loc5_ = Flex.flexChildrenProportionally(_loc4_,_loc5_,_loc9_,_loc10_);
-            _loc13_ = _loc10_.length;
-            _loc8_ = 0;
-            while(_loc8_ < _loc13_)
+            if (_loc_9)
             {
-               _loc6_ = _loc10_[_loc8_];
-               _loc6_.width = _loc6_.size;
-               _loc8_++;
+                _loc_5 = Flex.flexChildrenProportionally(_loc_4, _loc_5, _loc_9, _loc_10);
+                _loc_13 = _loc_10.length;
+                _loc_8 = 0;
+                while (_loc_8 < _loc_13)
+                {
+                    
+                    _loc_6 = _loc_10[_loc_8];
+                    _loc_6.width = _loc_6.size;
+                    _loc_8++;
+                }
             }
-         }
-         _loc7_ = _loc1_.left + _loc5_ * layoutObject.getHorizontalAlignValue();
-         _loc8_ = 0;
-         while(_loc8_ < _loc3_)
-         {
-            _loc6_ = columnWidths[_loc8_];
-            _loc6_.x = _loc7_;
-            _loc7_ = _loc7_ + (_loc6_.width + _loc2_);
-            _loc8_++;
-         }
-      }
-      
-      override public function get horizontalScrollPolicy() : String
-      {
-         return ScrollPolicy.OFF;
-      }
-      
-      override public function invalidateSize() : void
-      {
-         super.invalidateSize();
-         if(parent)
-         {
+            _loc_7 = _loc_1.left + _loc_5 * layoutObject.getHorizontalAlignValue();
+            _loc_8 = 0;
+            while (_loc_8 < _loc_3)
+            {
+                
+                _loc_6 = columnWidths[_loc_8];
+                _loc_6.x = _loc_7;
+                _loc_7 = _loc_7 + (_loc_6.width + _loc_2);
+                _loc_8++;
+            }
+            return;
+        }// end function
+
+        override public function get horizontalScrollPolicy() : String
+        {
+            return ScrollPolicy.OFF;
+        }// end function
+
+        override public function invalidateSize() : void
+        {
+            super.invalidateSize();
+            if (parent)
+            {
+                Grid(parent).invalidateSize();
+            }
+            return;
+        }// end function
+
+        function updateRowMeasurements() : void
+        {
+            var _loc_6:* = NaN;
+            var _loc_8:* = null;
+            var _loc_1:* = columnWidths.length;
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_1)
+            {
+                
+                _loc_8 = columnWidths[_loc_4];
+                _loc_2 = _loc_2 + _loc_8.min;
+                _loc_3 = _loc_3 + _loc_8.preferred;
+                _loc_4++;
+            }
+            var _loc_5:* = layoutObject.widthPadding(_loc_1);
+            _loc_6 = layoutObject.heightPadding(0);
+            var _loc_7:* = rowHeights[rowIndex];
+            measuredMinWidth = _loc_2 + _loc_5;
+            measuredMinHeight = _loc_7.min + _loc_6;
+            measuredWidth = _loc_3 + _loc_5;
+            measuredHeight = _loc_7.preferred + _loc_6;
+            return;
+        }// end function
+
+        override public function set verticalScrollPolicy(param1:String) : void
+        {
+            return;
+        }// end function
+
+        override public function get verticalScrollPolicy() : String
+        {
+            return ScrollPolicy.OFF;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            return;
+        }// end function
+
+        override public function setChildIndex(param1:DisplayObject, param2:int) : void
+        {
+            super.setChildIndex(param1, param2);
             Grid(parent).invalidateSize();
-         }
-      }
-      
-      function updateRowMeasurements() : void
-      {
-         var _loc6_:Number = NaN;
-         var _loc8_:GridColumnInfo = null;
-         var _loc1_:Number = columnWidths.length;
-         var _loc2_:Number = 0;
-         var _loc3_:Number = 0;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc1_)
-         {
-            _loc8_ = columnWidths[_loc4_];
-            _loc2_ = _loc2_ + _loc8_.min;
-            _loc3_ = _loc3_ + _loc8_.preferred;
-            _loc4_++;
-         }
-         var _loc5_:Number = layoutObject.widthPadding(_loc1_);
-         _loc6_ = layoutObject.heightPadding(0);
-         var _loc7_:GridRowInfo = rowHeights[rowIndex];
-         measuredMinWidth = _loc2_ + _loc5_;
-         measuredMinHeight = _loc7_.min + _loc6_;
-         measuredWidth = _loc3_ + _loc5_;
-         measuredHeight = _loc7_.preferred + _loc6_;
-      }
-      
-      override public function set verticalScrollPolicy(param1:String) : void
-      {
-      }
-      
-      override public function get verticalScrollPolicy() : String
-      {
-         return ScrollPolicy.OFF;
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-      }
-      
-      override public function setChildIndex(param1:DisplayObject, param2:int) : void
-      {
-         super.setChildIndex(param1,param2);
-         Grid(parent).invalidateSize();
-         Grid(parent).invalidateDisplayList();
-      }
-   }
+            Grid(parent).invalidateDisplayList();
+            return;
+        }// end function
+
+    }
 }

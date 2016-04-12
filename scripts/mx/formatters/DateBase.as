@@ -1,309 +1,331 @@
-package mx.formatters
+﻿package mx.formatters
 {
-   import mx.resources.IResourceManager;
-   import mx.core.mx_internal;
-   import flash.events.Event;
-   import mx.resources.ResourceManager;
-   
-   use namespace mx_internal;
-   
-   public class DateBase
-   {
-      
-      private static var _resourceManager:IResourceManager;
-      
-      private static var monthNamesShortOverride:Array;
-      
-      private static var _dayNamesShort:Array;
-      
-      private static var initialized:Boolean = false;
-      
-      private static var _dayNamesLong:Array;
-      
-      private static var dayNamesLongOverride:Array;
-      
-      private static var _monthNamesLong:Array;
-      
-      private static var timeOfDayOverride:Array;
-      
-      private static var monthNamesLongOverride:Array;
-      
-      private static var _monthNamesShort:Array;
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static var _timeOfDay:Array;
-      
-      private static var dayNamesShortOverride:Array;
-       
-      public function DateBase()
-      {
-         super();
-      }
-      
-      public static function get monthNamesLong() : Array
-      {
-         initialize();
-         return _monthNamesLong;
-      }
-      
-      public static function set monthNamesLong(param1:Array) : void
-      {
-         var _loc2_:String = null;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         monthNamesLongOverride = param1;
-         _monthNamesLong = param1 != null?param1:resourceManager.getStringArray("SharedResources","monthNames");
-         if(param1 == null)
-         {
-            _loc2_ = resourceManager.getString("SharedResources","monthSymbol");
-            if(_loc2_ != " ")
+    import flash.events.*;
+    import mx.resources.*;
+
+    public class DateBase extends Object
+    {
+        private static var _resourceManager:IResourceManager;
+        private static var monthNamesShortOverride:Array;
+        private static var _dayNamesShort:Array;
+        private static var initialized:Boolean = false;
+        private static var _dayNamesLong:Array;
+        private static var dayNamesLongOverride:Array;
+        private static var _monthNamesLong:Array;
+        private static var timeOfDayOverride:Array;
+        private static var monthNamesLongOverride:Array;
+        private static var _monthNamesShort:Array;
+        static const VERSION:String = "3.6.0.21751";
+        private static var _timeOfDay:Array;
+        private static var dayNamesShortOverride:Array;
+
+        public function DateBase()
+        {
+            return;
+        }// end function
+
+        public static function get monthNamesLong() : Array
+        {
+            initialize();
+            return _monthNamesLong;
+        }// end function
+
+        public static function set monthNamesLong(param1:Array) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            monthNamesLongOverride = param1;
+            _monthNamesLong = param1 != null ? (param1) : (resourceManager.getStringArray("SharedResources", "monthNames"));
+            if (param1 == null)
             {
-               _loc3_ = !!_monthNamesLong?int(_monthNamesLong.length):0;
-               _loc4_ = 0;
-               while(_loc4_ < _loc3_)
-               {
-                  _monthNamesLong[_loc4_] = _monthNamesLong[_loc4_] + _loc2_;
-                  _loc4_++;
-               }
+                _loc_2 = resourceManager.getString("SharedResources", "monthSymbol");
+                if (_loc_2 != " ")
+                {
+                    _loc_3 = _monthNamesLong ? (_monthNamesLong.length) : (0);
+                    _loc_4 = 0;
+                    while (_loc_4 < _loc_3)
+                    {
+                        
+                        _monthNamesLong[_loc_4] = _monthNamesLong[_loc_4] + _loc_2;
+                        _loc_4++;
+                    }
+                }
             }
-         }
-      }
-      
-      public static function get dayNamesLong() : Array
-      {
-         initialize();
-         return _dayNamesLong;
-      }
-      
-      private static function static_resourceManager_changeHandler(param1:Event) : void
-      {
-         static_resourcesChanged();
-      }
-      
-      mx_internal static function get defaultStringKey() : Array
-      {
-         initialize();
-         return monthNamesLong.concat(timeOfDay);
-      }
-      
-      public static function set dayNamesLong(param1:Array) : void
-      {
-         dayNamesLongOverride = param1;
-         _dayNamesLong = param1 != null?param1:resourceManager.getStringArray("SharedResources","dayNames");
-      }
-      
-      public static function set timeOfDay(param1:Array) : void
-      {
-         timeOfDayOverride = param1;
-         var _loc2_:String = resourceManager.getString("formatters","am");
-         var _loc3_:String = resourceManager.getString("formatters","pm");
-         _timeOfDay = param1 != null?param1:[_loc2_,_loc3_];
-      }
-      
-      public static function set monthNamesShort(param1:Array) : void
-      {
-         var _loc2_:String = null;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         monthNamesShortOverride = param1;
-         _monthNamesShort = param1 != null?param1:resourceManager.getStringArray("formatters","monthNamesShort");
-         if(param1 == null)
-         {
-            _loc2_ = resourceManager.getString("SharedResources","monthSymbol");
-            if(_loc2_ != " ")
-            {
-               _loc3_ = !!_monthNamesShort?int(_monthNamesShort.length):0;
-               _loc4_ = 0;
-               while(_loc4_ < _loc3_)
-               {
-                  _monthNamesShort[_loc4_] = _monthNamesShort[_loc4_] + _loc2_;
-                  _loc4_++;
-               }
-            }
-         }
-      }
-      
-      public static function get dayNamesShort() : Array
-      {
-         initialize();
-         return _dayNamesShort;
-      }
-      
-      private static function static_resourcesChanged() : void
-      {
-         dayNamesLong = dayNamesLongOverride;
-         dayNamesShort = dayNamesShortOverride;
-         monthNamesLong = monthNamesLongOverride;
-         monthNamesShort = monthNamesShortOverride;
-         timeOfDay = timeOfDayOverride;
-      }
-      
-      public static function get timeOfDay() : Array
-      {
-         initialize();
-         return _timeOfDay;
-      }
-      
-      mx_internal static function extractTokenDate(param1:Date, param2:Object) : String
-      {
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc7_:String = null;
-         var _loc8_:int = 0;
-         var _loc9_:int = 0;
-         var _loc10_:int = 0;
-         var _loc11_:int = 0;
-         initialize();
-         var _loc3_:String = "";
-         var _loc4_:int = int(param2.end) - int(param2.begin);
-         switch(param2.token)
-         {
-            case "Y":
-               _loc7_ = param1.getFullYear().toString();
-               if(_loc4_ < 3)
-               {
-                  return _loc7_.substr(2);
-               }
-               if(_loc4_ > 4)
-               {
-                  return setValue(Number(_loc7_),_loc4_);
-               }
-               return _loc7_;
-            case "M":
-               _loc8_ = int(param1.getMonth());
-               if(_loc4_ < 3)
-               {
-                  _loc8_++;
-                  _loc3_ = _loc3_ + setValue(_loc8_,_loc4_);
-                  return _loc3_;
-               }
-               if(_loc4_ == 3)
-               {
-                  return monthNamesShort[_loc8_];
-               }
-               return monthNamesLong[_loc8_];
-            case "D":
-               _loc5_ = int(param1.getDate());
-               _loc3_ = _loc3_ + setValue(_loc5_,_loc4_);
-               return _loc3_;
-            case "E":
-               _loc5_ = int(param1.getDay());
-               if(_loc4_ < 3)
-               {
-                  _loc3_ = _loc3_ + setValue(_loc5_,_loc4_);
-                  return _loc3_;
-               }
-               if(_loc4_ == 3)
-               {
-                  return dayNamesShort[_loc5_];
-               }
-               return dayNamesLong[_loc5_];
-            case "A":
-               _loc6_ = int(param1.getHours());
-               if(_loc6_ < 12)
-               {
-                  return timeOfDay[0];
-               }
-               return timeOfDay[1];
-            case "H":
-               _loc6_ = int(param1.getHours());
-               if(_loc6_ == 0)
-               {
-                  _loc6_ = 24;
-               }
-               _loc3_ = _loc3_ + setValue(_loc6_,_loc4_);
-               return _loc3_;
-            case "J":
-               _loc6_ = int(param1.getHours());
-               _loc3_ = _loc3_ + setValue(_loc6_,_loc4_);
-               return _loc3_;
-            case "K":
-               _loc6_ = int(param1.getHours());
-               if(_loc6_ >= 12)
-               {
-                  _loc6_ = _loc6_ - 12;
-               }
-               _loc3_ = _loc3_ + setValue(_loc6_,_loc4_);
-               return _loc3_;
-            case "L":
-               _loc6_ = int(param1.getHours());
-               if(_loc6_ == 0)
-               {
-                  _loc6_ = 12;
-               }
-               else if(_loc6_ > 12)
-               {
-                  _loc6_ = _loc6_ - 12;
-               }
-               _loc3_ = _loc3_ + setValue(_loc6_,_loc4_);
-               return _loc3_;
-            case "N":
-               _loc9_ = int(param1.getMinutes());
-               _loc3_ = _loc3_ + setValue(_loc9_,_loc4_);
-               return _loc3_;
-            case "S":
-               _loc10_ = int(param1.getSeconds());
-               _loc3_ = _loc3_ + setValue(_loc10_,_loc4_);
-               return _loc3_;
-            case "Q":
-               _loc11_ = int(param1.getMilliseconds());
-               _loc3_ = _loc3_ + setValue(_loc11_,_loc4_);
-               return _loc3_;
-            default:
-               return _loc3_;
-         }
-      }
-      
-      private static function initialize() : void
-      {
-         if(!initialized)
-         {
-            resourceManager.addEventListener(Event.CHANGE,static_resourceManager_changeHandler,false,0,true);
+            return;
+        }// end function
+
+        public static function get dayNamesLong() : Array
+        {
+            initialize();
+            return _dayNamesLong;
+        }// end function
+
+        private static function static_resourceManager_changeHandler(event:Event) : void
+        {
             static_resourcesChanged();
-            initialized = true;
-         }
-      }
-      
-      public static function set dayNamesShort(param1:Array) : void
-      {
-         dayNamesShortOverride = param1;
-         _dayNamesShort = param1 != null?param1:resourceManager.getStringArray("formatters","dayNamesShort");
-      }
-      
-      private static function get resourceManager() : IResourceManager
-      {
-         if(!_resourceManager)
-         {
-            _resourceManager = ResourceManager.getInstance();
-         }
-         return _resourceManager;
-      }
-      
-      public static function get monthNamesShort() : Array
-      {
-         initialize();
-         return _monthNamesShort;
-      }
-      
-      private static function setValue(param1:Object, param2:int) : String
-      {
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc3_:* = "";
-         var _loc4_:int = param1.toString().length;
-         if(_loc4_ < param2)
-         {
-            _loc5_ = param2 - _loc4_;
-            _loc6_ = 0;
-            while(_loc6_ < _loc5_)
+            return;
+        }// end function
+
+        static function get defaultStringKey() : Array
+        {
+            initialize();
+            return monthNamesLong.concat(timeOfDay);
+        }// end function
+
+        public static function set dayNamesLong(param1:Array) : void
+        {
+            dayNamesLongOverride = param1;
+            _dayNamesLong = param1 != null ? (param1) : (resourceManager.getStringArray("SharedResources", "dayNames"));
+            return;
+        }// end function
+
+        public static function set timeOfDay(param1:Array) : void
+        {
+            timeOfDayOverride = param1;
+            var _loc_2:* = resourceManager.getString("formatters", "am");
+            var _loc_3:* = resourceManager.getString("formatters", "pm");
+            _timeOfDay = param1 != null ? (param1) : ([_loc_2, _loc_3]);
+            return;
+        }// end function
+
+        public static function set monthNamesShort(param1:Array) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            monthNamesShortOverride = param1;
+            _monthNamesShort = param1 != null ? (param1) : (resourceManager.getStringArray("formatters", "monthNamesShort"));
+            if (param1 == null)
             {
-               _loc3_ = _loc3_ + "0";
-               _loc6_++;
+                _loc_2 = resourceManager.getString("SharedResources", "monthSymbol");
+                if (_loc_2 != " ")
+                {
+                    _loc_3 = _monthNamesShort ? (_monthNamesShort.length) : (0);
+                    _loc_4 = 0;
+                    while (_loc_4 < _loc_3)
+                    {
+                        
+                        _monthNamesShort[_loc_4] = _monthNamesShort[_loc_4] + _loc_2;
+                        _loc_4++;
+                    }
+                }
             }
-         }
-         _loc3_ = _loc3_ + param1.toString();
-         return _loc3_;
-      }
-   }
+            return;
+        }// end function
+
+        public static function get dayNamesShort() : Array
+        {
+            initialize();
+            return _dayNamesShort;
+        }// end function
+
+        private static function static_resourcesChanged() : void
+        {
+            dayNamesLong = dayNamesLongOverride;
+            dayNamesShort = dayNamesShortOverride;
+            monthNamesLong = monthNamesLongOverride;
+            monthNamesShort = monthNamesShortOverride;
+            timeOfDay = timeOfDayOverride;
+            return;
+        }// end function
+
+        public static function get timeOfDay() : Array
+        {
+            initialize();
+            return _timeOfDay;
+        }// end function
+
+        static function extractTokenDate(param1:Date, param2:Object) : String
+        {
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = null;
+            var _loc_8:* = 0;
+            var _loc_9:* = 0;
+            var _loc_10:* = 0;
+            var _loc_11:* = 0;
+            initialize();
+            var _loc_3:* = "";
+            var _loc_4:* = int(param2.end) - int(param2.begin);
+            switch(param2.token)
+            {
+                case "Y":
+                {
+                    _loc_7 = param1.getFullYear().toString();
+                    if (_loc_4 < 3)
+                    {
+                        return _loc_7.substr(2);
+                    }
+                    if (_loc_4 > 4)
+                    {
+                        return setValue(Number(_loc_7), _loc_4);
+                    }
+                    return _loc_7;
+                }
+                case "M":
+                {
+                    _loc_8 = int(param1.getMonth());
+                    if (_loc_4 < 3)
+                    {
+                        _loc_8++;
+                        _loc_3 = _loc_3 + setValue(_loc_8, _loc_4);
+                        return _loc_3;
+                    }
+                    if (_loc_4 == 3)
+                    {
+                        return monthNamesShort[_loc_8];
+                    }
+                    return monthNamesLong[_loc_8];
+                }
+                case "D":
+                {
+                    _loc_5 = int(param1.getDate());
+                    _loc_3 = _loc_3 + setValue(_loc_5, _loc_4);
+                    return _loc_3;
+                }
+                case "E":
+                {
+                    _loc_5 = int(param1.getDay());
+                    if (_loc_4 < 3)
+                    {
+                        _loc_3 = _loc_3 + setValue(_loc_5, _loc_4);
+                        return _loc_3;
+                    }
+                    if (_loc_4 == 3)
+                    {
+                        return dayNamesShort[_loc_5];
+                    }
+                    return dayNamesLong[_loc_5];
+                }
+                case "A":
+                {
+                    _loc_6 = int(param1.getHours());
+                    if (_loc_6 < 12)
+                    {
+                        return timeOfDay[0];
+                    }
+                    return timeOfDay[1];
+                }
+                case "H":
+                {
+                    _loc_6 = int(param1.getHours());
+                    if (_loc_6 == 0)
+                    {
+                        _loc_6 = 24;
+                    }
+                    _loc_3 = _loc_3 + setValue(_loc_6, _loc_4);
+                    return _loc_3;
+                }
+                case "J":
+                {
+                    _loc_6 = int(param1.getHours());
+                    _loc_3 = _loc_3 + setValue(_loc_6, _loc_4);
+                    return _loc_3;
+                }
+                case "K":
+                {
+                    _loc_6 = int(param1.getHours());
+                    if (_loc_6 >= 12)
+                    {
+                        _loc_6 = _loc_6 - 12;
+                    }
+                    _loc_3 = _loc_3 + setValue(_loc_6, _loc_4);
+                    return _loc_3;
+                }
+                case "L":
+                {
+                    _loc_6 = int(param1.getHours());
+                    if (_loc_6 == 0)
+                    {
+                        _loc_6 = 12;
+                    }
+                    else if (_loc_6 > 12)
+                    {
+                        _loc_6 = _loc_6 - 12;
+                    }
+                    _loc_3 = _loc_3 + setValue(_loc_6, _loc_4);
+                    return _loc_3;
+                }
+                case "N":
+                {
+                    _loc_9 = int(param1.getMinutes());
+                    _loc_3 = _loc_3 + setValue(_loc_9, _loc_4);
+                    return _loc_3;
+                }
+                case "S":
+                {
+                    _loc_10 = int(param1.getSeconds());
+                    _loc_3 = _loc_3 + setValue(_loc_10, _loc_4);
+                    return _loc_3;
+                }
+                case "Q":
+                {
+                    _loc_11 = int(param1.getMilliseconds());
+                    _loc_3 = _loc_3 + setValue(_loc_11, _loc_4);
+                    return _loc_3;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            return _loc_3;
+        }// end function
+
+        private static function initialize() : void
+        {
+            if (!initialized)
+            {
+                resourceManager.addEventListener(Event.CHANGE, static_resourceManager_changeHandler, false, 0, true);
+                static_resourcesChanged();
+                initialized = true;
+            }
+            return;
+        }// end function
+
+        public static function set dayNamesShort(param1:Array) : void
+        {
+            dayNamesShortOverride = param1;
+            _dayNamesShort = param1 != null ? (param1) : (resourceManager.getStringArray("formatters", "dayNamesShort"));
+            return;
+        }// end function
+
+        private static function get resourceManager() : IResourceManager
+        {
+            if (!_resourceManager)
+            {
+                _resourceManager = ResourceManager.getInstance();
+            }
+            return _resourceManager;
+        }// end function
+
+        public static function get monthNamesShort() : Array
+        {
+            initialize();
+            return _monthNamesShort;
+        }// end function
+
+        private static function setValue(param1:Object, param2:int) : String
+        {
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_3:* = "";
+            var _loc_4:* = param1.toString().length;
+            if (param1.toString().length < param2)
+            {
+                _loc_5 = param2 - _loc_4;
+                _loc_6 = 0;
+                while (_loc_6 < _loc_5)
+                {
+                    
+                    _loc_3 = _loc_3 + "0";
+                    _loc_6++;
+                }
+            }
+            _loc_3 = _loc_3 + param1.toString();
+            return _loc_3;
+        }// end function
+
+    }
 }

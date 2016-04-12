@@ -1,204 +1,226 @@
-package tibia.game
+﻿package tibia.game
 {
-   import tibia.appearances.AppearancesAsset;
-   import tibia.options.OptionsAsset;
-   import tibia.sessiondump.SessiondumpAsset;
-   import tibia.sessiondump.hints.SessiondumpHintsAsset;
-   import tibia.tutorial.TutorialProgressServiceAsset;
-   import flash.system.System;
-   import flash.utils.ByteArray;
-   import shared.utility.SharedObjectManager;
-   import flash.net.SharedObject;
-   import flash.utils.setTimeout;
-   import flash.events.Event;
-   import flash.net.URLLoader;
-   
-   public class Asset extends AssetBase
-   {
-       
-      private var m_RawBytes:ByteArray = null;
-      
-      protected var m_SaveAsLSO:Boolean = true;
-      
-      public function Asset(param1:String, param2:int)
-      {
-         super(param1,param2);
-      }
-      
-      public static function s_FromXML(param1:XML) : AssetBase
-      {
-         var _loc4_:String = null;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc8_:int = 0;
-         var _loc9_:int = 0;
-         var _loc10_:Vector.<int> = null;
-         var _loc11_:uint = 0;
-         var _loc12_:int = 0;
-         var _loc2_:String = param1 != null?param1.localName():null;
-         var _loc3_:XMLList = null;
-         if(_loc2_ == "appearances" || _loc2_ == "binary" || _loc2_ == "currentOptions" || _loc2_ == "defaultOptions" || _loc2_ == "defaultOptionsTutorial" || _loc2_ == "tutorialProgressService" || _loc2_ == "sprites" || _loc2_ == "tutorialSessiondump" || _loc2_ == "tutorialSessiondumpHints" || _loc2_ == "tutorialProgressService")
-         {
-            if((_loc3_ = param1.url) == null || _loc3_.length() != 1)
+    import __AS3__.vec.*;
+    import flash.events.*;
+    import flash.net.*;
+    import flash.system.*;
+    import flash.utils.*;
+    import shared.utility.*;
+    import tibia.appearances.*;
+    import tibia.options.*;
+    import tibia.sessiondump.*;
+    import tibia.sessiondump.hints.*;
+    import tibia.tutorial.*;
+
+    public class Asset extends AssetBase
+    {
+        private var m_RawBytes:ByteArray = null;
+        protected var m_SaveAsLSO:Boolean = true;
+
+        public function Asset(param1:String, param2:int)
+        {
+            super(param1, param2);
+            return;
+        }// end function
+
+        override protected function resetDownloadedData() : void
+        {
+            this.m_RawBytes = null;
+            System.pauseForGCIfCollectionImminent(0.95);
+            return;
+        }// end function
+
+        public function get rawBytes() : ByteArray
+        {
+            return this.m_RawBytes;
+        }// end function
+
+        override public function load() : void
+        {
+            var _SharedObjectManager:SharedObjectManager;
+            var _SharedObject:SharedObject;
+            this.resetDownloadedData();
+            if (this.m_SaveAsLSO)
             {
-               return null;
-            }
-            _loc4_ = _loc3_[0].toString();
-            _loc5_ = 0;
-            if((_loc3_ = param1.size) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[1-9[0-9]*$/) != null)
-            {
-               _loc5_ = int(_loc3_[0].toString());
-            }
-            _loc6_ = 0;
-            if((_loc3_ = param1.version) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[1-9[0-9]*$/) != null)
-            {
-               _loc6_ = int(_loc3_[0].toString());
-            }
-            if(_loc2_ != "currentOptions" && _loc2_ != "defaultOptions" && _loc2_ != "defaultOptionsTutorial" && _loc2_ != "tutorialProgressService" && _loc5_ < 1)
-            {
-               return null;
-            }
-            if(_loc2_ == "appearances")
-            {
-               return new AppearancesAsset(_loc4_,_loc5_,_loc6_);
-            }
-            if(_loc2_ == "binary")
-            {
-               return new GameBinaryAsset(_loc4_,_loc5_);
-            }
-            if(_loc2_ == "currentOptions")
-            {
-               return new OptionsAsset(_loc4_,_loc5_,"application/json",false,false);
-            }
-            if(_loc2_ == "defaultOptions")
-            {
-               return new OptionsAsset(_loc4_,_loc5_,"text/xml",true,false);
-            }
-            if(_loc2_ == "defaultOptionsTutorial")
-            {
-               return new OptionsAsset(_loc4_,_loc5_,"text/xml",true,true);
-            }
-            if(_loc2_ == "sprites")
-            {
-               _loc7_ = -1;
-               if((_loc3_ = param1.firstSpriteID) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
-               {
-                  _loc7_ = int(_loc3_[0].toString());
-               }
-               _loc8_ = -1;
-               if((_loc3_ = param1.lastSpriteID) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
-               {
-                  _loc8_ = int(_loc3_[0].toString());
-               }
-               _loc9_ = -1;
-               if((_loc3_ = param1.spriteType) != null && _loc3_.length() == 1 && _loc3_[0].toString().match(/^[0-9]+$/) != null)
-               {
-                  _loc9_ = int(_loc3_[0].toString());
-               }
-               _loc10_ = new Vector.<int>();
-               if((_loc3_ = param1.area) != null && _loc3_.length() > 0)
-               {
-                  _loc11_ = 0;
-                  while(_loc11_ < _loc3_.length())
-                  {
-                     if(_loc3_[_loc11_].toString().match(/^[0-9]+$/) != null)
-                     {
-                        _loc12_ = int(_loc3_[_loc11_].toString());
-                        _loc10_.push(_loc12_);
-                     }
-                     _loc11_++;
-                  }
-               }
-               return new SpritesAsset(_loc4_,_loc5_,_loc7_,_loc8_,_loc9_,_loc10_);
-            }
-            if(_loc2_ == "tutorialSessiondump")
-            {
-               return new SessiondumpAsset(_loc4_,_loc5_);
-            }
-            if(_loc2_ == "tutorialSessiondumpHints")
-            {
-               return new SessiondumpHintsAsset(_loc4_,_loc5_);
-            }
-            if(_loc2_ == "tutorialProgressService")
-            {
-               return new TutorialProgressServiceAsset(_loc4_,_loc5_,"application/json");
-            }
-            return null;
-         }
-         return null;
-      }
-      
-      override protected function resetDownloadedData() : void
-      {
-         this.m_RawBytes = null;
-         System.pauseForGCIfCollectionImminent(0.95);
-      }
-      
-      public function get rawBytes() : ByteArray
-      {
-         return this.m_RawBytes;
-      }
-      
-      override public function load() : void
-      {
-         var _SharedObjectManager:SharedObjectManager = null;
-         var _SharedObject:SharedObject = null;
-         this.resetDownloadedData();
-         if(this.m_SaveAsLSO)
-         {
-            _SharedObjectManager = SharedObjectManager.s_GetInstance();
-            if(Boolean(SharedObjectManager.s_SharedObjectsAvailable()) && _SharedObjectManager != null)
-            {
-               try
-               {
-                  _SharedObject = _SharedObjectManager.getLocal(name);
-                  this.m_RawBytes = _SharedObject.data.RAW_BYTES;
-               }
-               catch(e:*)
-               {
-               }
-            }
-            if(this.m_RawBytes != null && (size == 0 || this.m_RawBytes.length == size))
-            {
-               setTimeout(dispatchEvent,0,new Event(Event.COMPLETE,false,false));
+                _SharedObjectManager = SharedObjectManager.s_GetInstance();
+                if (SharedObjectManager.s_SharedObjectsAvailable() && _SharedObjectManager != null)
+                {
+                    try
+                    {
+                        _SharedObject = _SharedObjectManager.getLocal(name);
+                        this.m_RawBytes = _SharedObject.data.RAW_BYTES;
+                    }
+                    catch (e)
+                    {
+                    }
+                }
+                if (this.m_RawBytes != null && (size == 0 || this.m_RawBytes.length == size))
+                {
+                    setTimeout(dispatchEvent, 0, new Event(Event.COMPLETE, false, false));
+                }
+                else
+                {
+                    super.load();
+                }
             }
             else
             {
-               super.load();
+                super.load();
             }
-         }
-         else
-         {
-            super.load();
-         }
-      }
-      
-      override public function get loaded() : Boolean
-      {
-         return this.m_RawBytes != null || optional == true;
-      }
-      
-      override protected function processDownloadedData(param1:URLLoader) : Boolean
-      {
-         var _SharedObject:SharedObject = null;
-         var a_Loader:URLLoader = param1;
-         this.m_RawBytes = a_Loader.data;
-         var _SharedObjectManager:SharedObjectManager = SharedObjectManager.s_GetInstance();
-         if(Boolean(this.m_SaveAsLSO) && Boolean(SharedObjectManager.s_SharedObjectsAvailable()) && _SharedObjectManager != null)
-         {
-            try
+            return;
+        }// end function
+
+        override public function get loaded() : Boolean
+        {
+            return this.m_RawBytes != null || optional == true;
+        }// end function
+
+        override protected function processDownloadedData(param1:URLLoader) : Boolean
+        {
+            var _SharedObject:SharedObject;
+            var a_Loader:* = param1;
+            this.m_RawBytes = a_Loader.data;
+            var _SharedObjectManager:* = SharedObjectManager.s_GetInstance();
+            if (this.m_SaveAsLSO && SharedObjectManager.s_SharedObjectsAvailable() && _SharedObjectManager != null)
             {
-               _SharedObject = _SharedObjectManager.getLocal(name);
-               _SharedObject.data.RAW_BYTES = this.m_RawBytes;
-               _SharedObject.flush();
-               _SharedObjectManager.syncListing();
+                try
+                {
+                    _SharedObject = _SharedObjectManager.getLocal(name);
+                    _SharedObject.data.RAW_BYTES = this.m_RawBytes;
+                    _SharedObject.flush();
+                    _SharedObjectManager.syncListing();
+                }
+                catch (e)
+                {
+                }
             }
-            catch(e:*)
+            return true;
+        }// end function
+
+        public static function s_FromXML(param1:XML) : AssetBase
+        {
+            var _loc_4:* = null;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_8:* = 0;
+            var _loc_9:* = 0;
+            var _loc_10:* = null;
+            var _loc_11:* = 0;
+            var _loc_12:* = 0;
+            var _loc_2:* = param1 != null ? (param1.localName()) : (null);
+            var _loc_3:* = null;
+            if (_loc_2 == "appearances" || _loc_2 == "binary" || _loc_2 == "currentOptions" || _loc_2 == "defaultOptions" || _loc_2 == "defaultOptionsTutorial" || _loc_2 == "tutorialProgressService" || _loc_2 == "sprites" || _loc_2 == "tutorialSessiondump" || _loc_2 == "tutorialSessiondumpHints" || _loc_2 == "tutorialProgressService")
             {
+                var _loc_13:* = param1.url;
+                _loc_3 = param1.url;
+                if (_loc_13 == null || _loc_3.length() != 1)
+                {
+                    return null;
+                }
+                _loc_4 = _loc_3[0].toString();
+                _loc_5 = 0;
+                var _loc_13:* = param1.size;
+                _loc_3 = param1.size;
+                if (_loc_13 != null && _loc_3.length() == 1 && _loc_4.match(/^[1-9[0-9]*$/) != null)
+                {
+                    _loc_5 = int(_loc_3[0].toString());
+                }
+                _loc_6 = 0;
+                var _loc_13:* = param1.version;
+                _loc_3 = param1.version;
+                if (_loc_13 != null && _loc_3.length() == 1 && _loc_4.match(/^[1-9[0-9]*$/) != null)
+                {
+                    _loc_6 = int(_loc_3[0].toString());
+                }
+                if (_loc_2 != "currentOptions" && _loc_2 != "defaultOptions" && _loc_2 != "defaultOptionsTutorial" && _loc_2 != "tutorialProgressService" && _loc_5 < 1)
+                {
+                    return null;
+                }
+                if (_loc_2 == "appearances")
+                {
+                    return new AppearancesAsset(_loc_4, _loc_5, _loc_6);
+                }
+                if (_loc_2 == "binary")
+                {
+                    return new GameBinaryAsset(_loc_4, _loc_5);
+                }
+                if (_loc_2 == "currentOptions")
+                {
+                    return new OptionsAsset(_loc_4, _loc_5, "application/json", false, false);
+                }
+                if (_loc_2 == "defaultOptions")
+                {
+                    return new OptionsAsset(_loc_4, _loc_5, "text/xml", true, false);
+                }
+                if (_loc_2 == "defaultOptionsTutorial")
+                {
+                    return new OptionsAsset(_loc_4, _loc_5, "text/xml", true, true);
+                }
+                if (_loc_2 == "sprites")
+                {
+                    _loc_7 = -1;
+                    var _loc_13:* = param1.firstSpriteID;
+                    _loc_3 = param1.firstSpriteID;
+                    if (_loc_13 != null && _loc_3.length() == 1 && _loc_4.match(/^[0-9]+$/) != null)
+                    {
+                        _loc_7 = int(_loc_3[0].toString());
+                    }
+                    _loc_8 = -1;
+                    var _loc_13:* = param1.lastSpriteID;
+                    _loc_3 = param1.lastSpriteID;
+                    if (_loc_13 != null && _loc_3.length() == 1 && _loc_4.match(/^[0-9]+$/) != null)
+                    {
+                        _loc_8 = int(_loc_3[0].toString());
+                    }
+                    _loc_9 = -1;
+                    var _loc_13:* = param1.spriteType;
+                    _loc_3 = param1.spriteType;
+                    if (_loc_13 != null && _loc_3.length() == 1 && _loc_4.match(/^[0-9]+$/) != null)
+                    {
+                        _loc_9 = int(_loc_3[0].toString());
+                    }
+                    _loc_10 = new Vector.<int>;
+                    var _loc_13:* = param1.area;
+                    _loc_3 = param1.area;
+                    if (_loc_13 != null && _loc_3.length() > 0)
+                    {
+                        _loc_11 = 0;
+                        while (_loc_11 < _loc_3.length())
+                        {
+                            
+                            if (_loc_3[_loc_11].toString().match(/^[0-9]+$/) != null)
+                            {
+                                _loc_12 = int(_loc_3[_loc_11].toString());
+                                _loc_10.push(_loc_12);
+                            }
+                            _loc_11 = _loc_11 + 1;
+                        }
+                    }
+                    return new SpritesAsset(_loc_4, _loc_5, _loc_7, _loc_8, _loc_9, _loc_10);
+                }
+                else
+                {
+                    if (_loc_2 == "tutorialSessiondump")
+                    {
+                        return new SessiondumpAsset(_loc_4, _loc_5);
+                    }
+                    if (_loc_2 == "tutorialSessiondumpHints")
+                    {
+                        return new SessiondumpHintsAsset(_loc_4, _loc_5);
+                    }
+                    if (_loc_2 == "tutorialProgressService")
+                    {
+                        return new TutorialProgressServiceAsset(_loc_4, _loc_5, "application/json");
+                    }
+                    return null;
+                }
             }
-         }
-         return true;
-      }
-   }
+            else
+            {
+                return null;
+            }
+        }// end function
+
+    }
 }

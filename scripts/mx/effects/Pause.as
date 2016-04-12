@@ -1,25 +1,23 @@
-package mx.effects
+﻿package mx.effects
 {
-   import mx.core.mx_internal;
-   import mx.effects.effectClasses.PauseInstance;
-   
-   use namespace mx_internal;
-   
-   public class Pause extends TweenEffect
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function Pause(param1:Object = null)
-      {
-         super(param1);
-         instanceClass = PauseInstance;
-      }
-      
-      override public function createInstances(param1:Array = null) : Array
-      {
-         var _loc2_:IEffectInstance = createInstance();
-         return !!_loc2_?[_loc2_]:[];
-      }
-   }
+    import mx.effects.effectClasses.*;
+
+    public class Pause extends TweenEffect
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function Pause(param1:Object = null)
+        {
+            super(param1);
+            instanceClass = PauseInstance;
+            return;
+        }// end function
+
+        override public function createInstances(param1:Array = null) : Array
+        {
+            var _loc_2:* = createInstance();
+            return _loc_2 ? ([_loc_2]) : ([]);
+        }// end function
+
+    }
 }

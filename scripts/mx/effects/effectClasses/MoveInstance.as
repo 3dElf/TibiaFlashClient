@@ -1,254 +1,240 @@
-package mx.effects.effectClasses
+﻿package mx.effects.effectClasses
 {
-   import mx.core.mx_internal;
-   import flash.events.Event;
-   import mx.events.MoveEvent;
-   import mx.core.EdgeMetrics;
-   import mx.effects.EffectManager;
-   import mx.core.IUIComponent;
-   import mx.core.Container;
-   import mx.styles.IStyleClient;
-   
-   use namespace mx_internal;
-   
-   public class MoveInstance extends TweenEffectInstance
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public var xFrom:Number;
-      
-      public var yFrom:Number;
-      
-      private var left;
-      
-      private var forceClipping:Boolean = false;
-      
-      public var xTo:Number;
-      
-      private var top;
-      
-      private var horizontalCenter;
-      
-      public var yTo:Number;
-      
-      private var oldWidth:Number;
-      
-      private var right;
-      
-      private var bottom;
-      
-      private var oldHeight:Number;
-      
-      public var xBy:Number;
-      
-      public var yBy:Number;
-      
-      private var checkClipping:Boolean = true;
-      
-      private var verticalCenter;
-      
-      public function MoveInstance(param1:Object)
-      {
-         super(param1);
-      }
-      
-      override public function initEffect(param1:Event) : void
-      {
-         super.initEffect(param1);
-         if(param1 is MoveEvent && param1.type == MoveEvent.MOVE)
-         {
-            if(Boolean(isNaN(xFrom)) && Boolean(isNaN(xTo)) && Boolean(isNaN(xBy)) && Boolean(isNaN(yFrom)) && Boolean(isNaN(yTo)) && Boolean(isNaN(yBy)))
+    import flash.events.*;
+    import mx.core.*;
+    import mx.effects.*;
+    import mx.events.*;
+    import mx.styles.*;
+
+    public class MoveInstance extends TweenEffectInstance
+    {
+        public var xFrom:Number;
+        public var yFrom:Number;
+        private var left:Object;
+        private var forceClipping:Boolean = false;
+        public var xTo:Number;
+        private var top:Object;
+        private var horizontalCenter:Object;
+        public var yTo:Number;
+        private var oldWidth:Number;
+        private var right:Object;
+        private var bottom:Object;
+        private var oldHeight:Number;
+        public var xBy:Number;
+        public var yBy:Number;
+        private var checkClipping:Boolean = true;
+        private var verticalCenter:Object;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function MoveInstance(param1:Object)
+        {
+            super(param1);
+            return;
+        }// end function
+
+        override public function initEffect(event:Event) : void
+        {
+            super.initEffect(event);
+            if (event is MoveEvent && event.type == MoveEvent.MOVE)
             {
-               xFrom = MoveEvent(param1).oldX;
-               xTo = target.x;
-               yFrom = MoveEvent(param1).oldY;
-               yTo = target.y;
+                if (isNaN(xFrom) && isNaN(xTo) && isNaN(xBy) && isNaN(yFrom) && isNaN(yTo) && isNaN(yBy))
+                {
+                    xFrom = MoveEvent(event).oldX;
+                    xTo = target.x;
+                    yFrom = MoveEvent(event).oldY;
+                    yTo = target.y;
+                }
             }
-         }
-      }
-      
-      override public function play() : void
-      {
-         var _loc2_:EdgeMetrics = null;
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:Number = NaN;
-         var _loc7_:Number = NaN;
-         var _loc8_:Number = NaN;
-         super.play();
-         EffectManager.mx_internal::startBitmapEffect(IUIComponent(target));
-         if(isNaN(xFrom))
-         {
-            xFrom = !isNaN(xTo) && !isNaN(xBy)?Number(xTo - xBy):Number(target.x);
-         }
-         if(isNaN(xTo))
-         {
-            if(Boolean(isNaN(xBy)) && Boolean(propertyChanges) && propertyChanges.end["x"] !== undefined)
+            return;
+        }// end function
+
+        override public function play() : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = NaN;
+            var _loc_7:* = NaN;
+            var _loc_8:* = NaN;
+            super.play();
+            var _loc_9:* = EffectManager;
+            _loc_9.mx_internal::startBitmapEffect(IUIComponent(target));
+            if (isNaN(xFrom))
             {
-               xTo = propertyChanges.end["x"];
+                xFrom = !isNaN(xTo) && !isNaN(xBy) ? (xTo - xBy) : (target.x);
             }
-            else
+            if (isNaN(xTo))
             {
-               xTo = !isNaN(xBy)?Number(xFrom + xBy):Number(target.x);
+                if (isNaN(xBy) && propertyChanges && propertyChanges.end["x"] !== undefined)
+                {
+                    xTo = propertyChanges.end["x"];
+                }
+                else
+                {
+                    xTo = !isNaN(xBy) ? (xFrom + xBy) : (target.x);
+                }
             }
-         }
-         if(isNaN(yFrom))
-         {
-            yFrom = !isNaN(yTo) && !isNaN(yBy)?Number(yTo - yBy):Number(target.y);
-         }
-         if(isNaN(yTo))
-         {
-            if(Boolean(isNaN(yBy)) && Boolean(propertyChanges) && propertyChanges.end["y"] !== undefined)
+            if (isNaN(yFrom))
             {
-               yTo = propertyChanges.end["y"];
+                yFrom = !isNaN(yTo) && !isNaN(yBy) ? (yTo - yBy) : (target.y);
             }
-            else
+            if (isNaN(yTo))
             {
-               yTo = !isNaN(yBy)?Number(yFrom + yBy):Number(target.y);
+                if (isNaN(yBy) && propertyChanges && propertyChanges.end["y"] !== undefined)
+                {
+                    yTo = propertyChanges.end["y"];
+                }
+                else
+                {
+                    yTo = !isNaN(yBy) ? (yFrom + yBy) : (target.y);
+                }
             }
-         }
-         tween = createTween(this,[xFrom,yFrom],[xTo,yTo],duration);
-         var _loc1_:Container = target.parent as Container;
-         if(_loc1_)
-         {
-            _loc2_ = _loc1_.viewMetrics;
-            _loc3_ = _loc2_.left;
-            _loc4_ = _loc1_.width - _loc2_.right;
-            _loc5_ = _loc2_.top;
-            _loc6_ = _loc1_.height - _loc2_.bottom;
-            if(xFrom < _loc3_ || xTo < _loc3_ || xFrom + target.width > _loc4_ || xTo + target.width > _loc4_ || yFrom < _loc5_ || yTo < _loc5_ || yFrom + target.height > _loc6_ || yTo + target.height > _loc6_)
+            tween = createTween(this, [xFrom, yFrom], [xTo, yTo], duration);
+            var _loc_1:* = target.parent as Container;
+            if (_loc_1)
             {
-               forceClipping = true;
-               _loc1_.mx_internal::forceClipping = true;
+                _loc_2 = _loc_1.viewMetrics;
+                _loc_3 = _loc_2.left;
+                _loc_4 = _loc_1.width - _loc_2.right;
+                _loc_5 = _loc_2.top;
+                _loc_6 = _loc_1.height - _loc_2.bottom;
+                if (xFrom < _loc_3 || xTo < _loc_3 || xFrom + target.width > _loc_4 || xTo + target.width > _loc_4 || yFrom < _loc_5 || yTo < _loc_5 || yFrom + target.height > _loc_6 || yTo + target.height > _loc_6)
+                {
+                    forceClipping = true;
+                    mx_internal::forceClipping = true;
+                }
             }
-         }
-         mx_internal::applyTweenStartValues();
-         if(target is IStyleClient)
-         {
-            left = target.getStyle("left");
-            if(left != undefined)
+            .mx_internal::applyTweenStartValues();
+            if (target is IStyleClient)
             {
-               target.setStyle("left",undefined);
+                left = target.getStyle("left");
+                if (left != undefined)
+                {
+                    target.setStyle("left", undefined);
+                }
+                right = target.getStyle("right");
+                if (right != undefined)
+                {
+                    target.setStyle("right", undefined);
+                }
+                top = target.getStyle("top");
+                if (top != undefined)
+                {
+                    target.setStyle("top", undefined);
+                }
+                bottom = target.getStyle("bottom");
+                if (bottom != undefined)
+                {
+                    target.setStyle("bottom", undefined);
+                }
+                horizontalCenter = target.getStyle("horizontalCenter");
+                if (horizontalCenter != undefined)
+                {
+                    target.setStyle("horizontalCenter", undefined);
+                }
+                verticalCenter = target.getStyle("verticalCenter");
+                if (verticalCenter != undefined)
+                {
+                    target.setStyle("verticalCenter", undefined);
+                }
+                if (left != undefined && right != undefined)
+                {
+                    _loc_7 = target.width;
+                    oldWidth = target.explicitWidth;
+                    target.width = _loc_7;
+                }
+                if (top != undefined && bottom != undefined)
+                {
+                    _loc_8 = target.height;
+                    oldHeight = target.explicitHeight;
+                    target.height = _loc_8;
+                }
             }
-            right = target.getStyle("right");
-            if(right != undefined)
+            return;
+        }// end function
+
+        override public function onTweenUpdate(param1:Object) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = NaN;
+            var _loc_7:* = NaN;
+            EffectManager.suspendEventHandling();
+            if (!forceClipping && checkClipping)
             {
-               target.setStyle("right",undefined);
+                _loc_2 = target.parent as Container;
+                if (_loc_2)
+                {
+                    _loc_3 = _loc_2.viewMetrics;
+                    _loc_4 = _loc_3.left;
+                    _loc_5 = _loc_2.width - _loc_3.right;
+                    _loc_6 = _loc_3.top;
+                    _loc_7 = _loc_2.height - _loc_3.bottom;
+                    if (param1[0] < _loc_4 || param1[0] + target.width > _loc_5 || param1[1] < _loc_6 || param1[1] + target.height > _loc_7)
+                    {
+                        forceClipping = true;
+                        mx_internal::forceClipping = true;
+                    }
+                }
             }
-            top = target.getStyle("top");
-            if(top != undefined)
+            target.move(param1[0], param1[1]);
+            EffectManager.resumeEventHandling();
+            return;
+        }// end function
+
+        override public function onTweenEnd(param1:Object) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = EffectManager;
+            _loc_3.mx_internal::endBitmapEffect(IUIComponent(target));
+            if (left != undefined)
             {
-               target.setStyle("top",undefined);
+                target.setStyle("left", left);
             }
-            bottom = target.getStyle("bottom");
-            if(bottom != undefined)
+            if (right != undefined)
             {
-               target.setStyle("bottom",undefined);
+                target.setStyle("right", right);
             }
-            horizontalCenter = target.getStyle("horizontalCenter");
-            if(horizontalCenter != undefined)
+            if (top != undefined)
             {
-               target.setStyle("horizontalCenter",undefined);
+                target.setStyle("top", top);
             }
-            verticalCenter = target.getStyle("verticalCenter");
-            if(verticalCenter != undefined)
+            if (bottom != undefined)
             {
-               target.setStyle("verticalCenter",undefined);
+                target.setStyle("bottom", bottom);
             }
-            if(left != undefined && right != undefined)
+            if (horizontalCenter != undefined)
             {
-               _loc7_ = target.width;
-               oldWidth = target.explicitWidth;
-               target.width = _loc7_;
+                target.setStyle("horizontalCenter", horizontalCenter);
             }
-            if(top != undefined && bottom != undefined)
+            if (verticalCenter != undefined)
             {
-               _loc8_ = target.height;
-               oldHeight = target.explicitHeight;
-               target.height = _loc8_;
+                target.setStyle("verticalCenter", verticalCenter);
             }
-         }
-      }
-      
-      override public function onTweenUpdate(param1:Object) : void
-      {
-         var _loc2_:Container = null;
-         var _loc3_:EdgeMetrics = null;
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:Number = NaN;
-         var _loc7_:Number = NaN;
-         EffectManager.suspendEventHandling();
-         if(!forceClipping && Boolean(checkClipping))
-         {
-            _loc2_ = target.parent as Container;
-            if(_loc2_)
+            if (left != undefined && right != undefined)
             {
-               _loc3_ = _loc2_.viewMetrics;
-               _loc4_ = _loc3_.left;
-               _loc5_ = _loc2_.width - _loc3_.right;
-               _loc6_ = _loc3_.top;
-               _loc7_ = _loc2_.height - _loc3_.bottom;
-               if(param1[0] < _loc4_ || param1[0] + target.width > _loc5_ || param1[1] < _loc6_ || param1[1] + target.height > _loc7_)
-               {
-                  forceClipping = true;
-                  _loc2_.mx_internal::forceClipping = true;
-               }
+                target.explicitWidth = oldWidth;
             }
-         }
-         target.move(param1[0],param1[1]);
-         EffectManager.resumeEventHandling();
-      }
-      
-      override public function onTweenEnd(param1:Object) : void
-      {
-         var _loc2_:Container = null;
-         EffectManager.mx_internal::endBitmapEffect(IUIComponent(target));
-         if(left != undefined)
-         {
-            target.setStyle("left",left);
-         }
-         if(right != undefined)
-         {
-            target.setStyle("right",right);
-         }
-         if(top != undefined)
-         {
-            target.setStyle("top",top);
-         }
-         if(bottom != undefined)
-         {
-            target.setStyle("bottom",bottom);
-         }
-         if(horizontalCenter != undefined)
-         {
-            target.setStyle("horizontalCenter",horizontalCenter);
-         }
-         if(verticalCenter != undefined)
-         {
-            target.setStyle("verticalCenter",verticalCenter);
-         }
-         if(left != undefined && right != undefined)
-         {
-            target.explicitWidth = oldWidth;
-         }
-         if(top != undefined && bottom != undefined)
-         {
-            target.explicitHeight = oldHeight;
-         }
-         if(forceClipping)
-         {
-            _loc2_ = target.parent as Container;
-            if(_loc2_)
+            if (top != undefined && bottom != undefined)
             {
-               forceClipping = false;
-               _loc2_.mx_internal::forceClipping = false;
+                target.explicitHeight = oldHeight;
             }
-         }
-         checkClipping = false;
-         super.onTweenEnd(param1);
-      }
-   }
+            if (forceClipping)
+            {
+                _loc_2 = target.parent as Container;
+                if (_loc_2)
+                {
+                    forceClipping = false;
+                    mx_internal::forceClipping = false;
+                }
+            }
+            checkClipping = false;
+            super.onTweenEnd(param1);
+            return;
+        }// end function
+
+    }
 }

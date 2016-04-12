@@ -1,691 +1,716 @@
-package mx.controls.treeClasses
+﻿package mx.controls.treeClasses
 {
-   import flash.events.EventDispatcher;
-   import mx.collections.ICollectionView;
-   import mx.utils.IXMLNotifiable;
-   import mx.core.mx_internal;
-   import mx.events.CollectionEvent;
-   import mx.events.CollectionEventKind;
-   import mx.collections.IViewCursor;
-   import mx.utils.XMLNotifier;
-   import mx.collections.Sort;
-   import mx.collections.XMLListCollection;
-   import mx.collections.XMLListAdapter;
-   import mx.events.PropertyChangeEvent;
-   import flash.utils.Dictionary;
-   import mx.collections.errors.ItemPendingError;
-   import mx.core.EventPriority;
-   
-   use namespace mx_internal;
-   
-   public class HierarchicalCollectionView extends EventDispatcher implements ICollectionView, IXMLNotifiable
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var itemToUID:Function;
-      
-      public var openNodes:Object;
-      
-      private var dataDescriptor:mx.controls.treeClasses.ITreeDataDescriptor;
-      
-      private var currentLength:int;
-      
-      private var parentNode:XML;
-      
-      public var parentMap:Object;
-      
-      private var cursor:mx.controls.treeClasses.HierarchicalViewCursor;
-      
-      private var childrenMap:Dictionary;
-      
-      private var treeData:ICollectionView;
-      
-      public function HierarchicalCollectionView(param1:ICollectionView, param2:mx.controls.treeClasses.ITreeDataDescriptor, param3:Function, param4:Object = null)
-      {
-         super();
-         parentMap = {};
-         childrenMap = new Dictionary(true);
-         treeData = param1;
-         treeData.addEventListener(CollectionEvent.COLLECTION_CHANGE,collectionChangeHandler,false,EventPriority.DEFAULT_HANDLER,true);
-         addEventListener(CollectionEvent.COLLECTION_CHANGE,expandEventHandler,false,0,true);
-         dataDescriptor = param2;
-         this.itemToUID = param3;
-         openNodes = param4;
-         currentLength = calculateLength();
-      }
-      
-      public function nestedCollectionChangeHandler(param1:CollectionEvent) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc5_:String = null;
-         var _loc6_:Object = null;
-         var _loc7_:Object = null;
-         var _loc8_:Array = null;
-         var _loc9_:CollectionEvent = null;
-         var _loc10_:CollectionEvent = null;
-         var _loc11_:int = 0;
-         if(param1 is CollectionEvent)
-         {
-            _loc10_ = CollectionEvent(param1);
-            if(_loc10_.kind == CollectionEventKind.mx_internal::EXPAND)
+    import flash.events.*;
+    import flash.utils.*;
+    import mx.collections.*;
+    import mx.collections.errors.*;
+    import mx.core.*;
+    import mx.events.*;
+    import mx.utils.*;
+
+    public class HierarchicalCollectionView extends EventDispatcher implements ICollectionView, IXMLNotifiable
+    {
+        private var itemToUID:Function;
+        public var openNodes:Object;
+        private var dataDescriptor:ITreeDataDescriptor;
+        private var currentLength:int;
+        private var parentNode:XML;
+        public var parentMap:Object;
+        private var cursor:HierarchicalViewCursor;
+        private var childrenMap:Dictionary;
+        private var treeData:ICollectionView;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function HierarchicalCollectionView(param1:ICollectionView, param2:ITreeDataDescriptor, param3:Function, param4:Object = null)
+        {
+            parentMap = {};
+            childrenMap = new Dictionary(true);
+            treeData = param1;
+            treeData.addEventListener(CollectionEvent.COLLECTION_CHANGE, collectionChangeHandler, false, EventPriority.DEFAULT_HANDLER, true);
+            addEventListener(CollectionEvent.COLLECTION_CHANGE, expandEventHandler, false, 0, true);
+            dataDescriptor = param2;
+            this.itemToUID = param3;
+            openNodes = param4;
+            currentLength = calculateLength();
+            return;
+        }// end function
+
+        public function nestedCollectionChangeHandler(event:CollectionEvent) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            var _loc_10:* = null;
+            var _loc_11:* = 0;
+            if (event is CollectionEvent)
             {
-               param1.stopImmediatePropagation();
+                _loc_10 = CollectionEvent(event);
+                if (_loc_10.kind == mx_internal::EXPAND)
+                {
+                    event.stopImmediatePropagation();
+                }
+                else if (_loc_10.kind == CollectionEventKind.ADD)
+                {
+                    updateLength();
+                    _loc_3 = _loc_10.items.length;
+                    _loc_9 = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE, false, true, _loc_10.kind);
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_3)
+                    {
+                        
+                        _loc_7 = _loc_10.items[_loc_2];
+                        if (_loc_7 is XML)
+                        {
+                            startTrackUpdates(_loc_7);
+                        }
+                        _loc_6 = getParentItem(_loc_7);
+                        if (_loc_6 != null)
+                        {
+                            getVisibleNodes(_loc_7, _loc_6, _loc_9.items);
+                        }
+                        _loc_2++;
+                    }
+                    _loc_9.location = getVisibleLocationInSubCollection(_loc_6, _loc_10.location);
+                    dispatchEvent(_loc_9);
+                }
+                else if (_loc_10.kind == CollectionEventKind.REMOVE)
+                {
+                    _loc_3 = _loc_10.items.length;
+                    _loc_9 = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE, false, true, _loc_10.kind);
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_3)
+                    {
+                        
+                        _loc_7 = _loc_10.items[_loc_2];
+                        if (_loc_7 is XML)
+                        {
+                            stopTrackUpdates(_loc_7);
+                        }
+                        _loc_6 = getParentItem(_loc_7);
+                        if (_loc_6 != null)
+                        {
+                            getVisibleNodes(_loc_7, _loc_6, _loc_9.items);
+                        }
+                        _loc_2++;
+                    }
+                    _loc_9.location = getVisibleLocationInSubCollection(_loc_6, _loc_10.location);
+                    currentLength = currentLength - _loc_9.items.length;
+                    dispatchEvent(_loc_9);
+                }
+                else if (_loc_10.kind == CollectionEventKind.UPDATE)
+                {
+                    dispatchEvent(event);
+                }
+                else if (_loc_10.kind == CollectionEventKind.REPLACE)
+                {
+                    _loc_3 = _loc_10.items.length;
+                    _loc_9 = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE, false, true, CollectionEventKind.REMOVE);
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_3)
+                    {
+                        
+                        _loc_7 = _loc_7.oldValue;
+                        _loc_6 = getParentItem(_loc_7);
+                        if (_loc_6 != null)
+                        {
+                            getVisibleNodes(_loc_7, _loc_6, _loc_9.items);
+                        }
+                        _loc_2++;
+                    }
+                    _loc_11 = 0;
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_3)
+                    {
+                        
+                        _loc_7 = _loc_10.items[_loc_2].oldValue;
+                        if (_loc_7 is XML)
+                        {
+                            stopTrackUpdates(_loc_7);
+                        }
+                        while (_loc_9.items[_loc_11] != _loc_7)
+                        {
+                            
+                            _loc_11++;
+                        }
+                        _loc_9.items.splice(_loc_11, 1);
+                        _loc_2++;
+                    }
+                    if (_loc_9.items.length)
+                    {
+                        currentLength = currentLength - _loc_9.items.length;
+                        dispatchEvent(_loc_9);
+                    }
+                    dispatchEvent(event);
+                }
+                else if (_loc_10.kind == CollectionEventKind.RESET)
+                {
+                    updateLength();
+                    _loc_9 = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE, false, true, CollectionEventKind.REFRESH);
+                    dispatchEvent(_loc_9);
+                }
             }
-            else if(_loc10_.kind == CollectionEventKind.ADD)
-            {
-               updateLength();
-               _loc3_ = _loc10_.items.length;
-               _loc9_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE,false,true,_loc10_.kind);
-               _loc2_ = 0;
-               while(_loc2_ < _loc3_)
-               {
-                  _loc7_ = _loc10_.items[_loc2_];
-                  if(_loc7_ is XML)
-                  {
-                     startTrackUpdates(_loc7_);
-                  }
-                  _loc6_ = getParentItem(_loc7_);
-                  if(_loc6_ != null)
-                  {
-                     getVisibleNodes(_loc7_,_loc6_,_loc9_.items);
-                  }
-                  _loc2_++;
-               }
-               _loc9_.location = getVisibleLocationInSubCollection(_loc6_,_loc10_.location);
-               dispatchEvent(_loc9_);
-            }
-            else if(_loc10_.kind == CollectionEventKind.REMOVE)
-            {
-               _loc3_ = _loc10_.items.length;
-               _loc9_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE,false,true,_loc10_.kind);
-               _loc2_ = 0;
-               while(_loc2_ < _loc3_)
-               {
-                  _loc7_ = _loc10_.items[_loc2_];
-                  if(_loc7_ is XML)
-                  {
-                     stopTrackUpdates(_loc7_);
-                  }
-                  _loc6_ = getParentItem(_loc7_);
-                  if(_loc6_ != null)
-                  {
-                     getVisibleNodes(_loc7_,_loc6_,_loc9_.items);
-                  }
-                  _loc2_++;
-               }
-               _loc9_.location = getVisibleLocationInSubCollection(_loc6_,_loc10_.location);
-               currentLength = currentLength - _loc9_.items.length;
-               dispatchEvent(_loc9_);
-            }
-            else if(_loc10_.kind == CollectionEventKind.UPDATE)
-            {
-               dispatchEvent(param1);
-            }
-            else if(_loc10_.kind == CollectionEventKind.REPLACE)
-            {
-               _loc3_ = _loc10_.items.length;
-               _loc9_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE,false,true,CollectionEventKind.REMOVE);
-               _loc2_ = 0;
-               while(_loc2_ < _loc3_)
-               {
-                  _loc7_ = _loc10_.items[_loc2_].oldValue;
-                  _loc6_ = getParentItem(_loc7_);
-                  if(_loc6_ != null)
-                  {
-                     getVisibleNodes(_loc7_,_loc6_,_loc9_.items);
-                  }
-                  _loc2_++;
-               }
-               _loc11_ = 0;
-               _loc2_ = 0;
-               while(_loc2_ < _loc3_)
-               {
-                  _loc7_ = _loc10_.items[_loc2_].oldValue;
-                  if(_loc7_ is XML)
-                  {
-                     stopTrackUpdates(_loc7_);
-                  }
-                  while(_loc9_.items[_loc11_] != _loc7_)
-                  {
-                     _loc11_++;
-                  }
-                  _loc9_.items.splice(_loc11_,1);
-                  _loc2_++;
-               }
-               if(_loc9_.items.length)
-               {
-                  currentLength = currentLength - _loc9_.items.length;
-                  dispatchEvent(_loc9_);
-               }
-               dispatchEvent(param1);
-            }
-            else if(_loc10_.kind == CollectionEventKind.RESET)
-            {
-               updateLength();
-               _loc9_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE,false,true,CollectionEventKind.REFRESH);
-               dispatchEvent(_loc9_);
-            }
-         }
-      }
-      
-      private function getVisibleLocationInSubCollection(param1:Object, param2:int) : int
-      {
-         var _loc5_:ICollectionView = null;
-         var _loc6_:IViewCursor = null;
-         var _loc3_:int = param2;
-         var _loc4_:Object = param1;
-         param1 = getParentItem(param1);
-         while(param1 != null)
-         {
-            _loc5_ = childrenMap[param1];
-            _loc6_ = _loc5_.createCursor();
-            while(!_loc6_.afterLast)
-            {
-               if(_loc6_.current == _loc4_)
-               {
-                  _loc3_++;
-                  break;
-               }
-               _loc3_ = _loc3_ + (calculateLength(_loc6_.current,param1) + 1);
-               _loc6_.moveNext();
-            }
-            _loc4_ = param1;
+            return;
+        }// end function
+
+        private function getVisibleLocationInSubCollection(param1:Object, param2:int) : int
+        {
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_3:* = param2;
+            var _loc_4:* = param1;
             param1 = getParentItem(param1);
-         }
-         _loc6_ = treeData.createCursor();
-         while(!_loc6_.afterLast)
-         {
-            if(_loc6_.current == _loc4_)
+            while (param1 != null)
             {
-               _loc3_++;
-               break;
-            }
-            _loc3_ = _loc3_ + (calculateLength(_loc6_.current,param1) + 1);
-            _loc6_.moveNext();
-         }
-         return _loc3_;
-      }
-      
-      public function expandEventHandler(param1:CollectionEvent) : void
-      {
-         var _loc2_:CollectionEvent = null;
-         if(param1 is CollectionEvent)
-         {
-            _loc2_ = CollectionEvent(param1);
-            if(_loc2_.kind == CollectionEventKind.mx_internal::EXPAND)
-            {
-               param1.stopImmediatePropagation();
-               updateLength();
-            }
-         }
-      }
-      
-      private function updateLength(param1:Object = null, param2:Object = null) : void
-      {
-         currentLength = calculateLength();
-      }
-      
-      private function startTrackUpdates(param1:Object) : void
-      {
-         XMLNotifier.getInstance().watchXML(param1,this);
-      }
-      
-      private function getVisibleLocation(param1:int) : int
-      {
-         var _loc2_:int = 0;
-         var _loc3_:IViewCursor = treeData.createCursor();
-         var _loc4_:int = 0;
-         while(_loc4_ < param1 && !_loc3_.afterLast)
-         {
-            _loc2_ = _loc2_ + (calculateLength(_loc3_.current,null) + 1);
-            _loc3_.moveNext();
-            _loc4_++;
-         }
-         return _loc2_;
-      }
-      
-      public function describeData() : Object
-      {
-         return null;
-      }
-      
-      public function get sort() : Sort
-      {
-         return null;
-      }
-      
-      public function contains(param1:Object) : Boolean
-      {
-         var _loc2_:IViewCursor = createCursor();
-         var _loc3_:Boolean = false;
-         while(!_loc3_)
-         {
-            if(_loc2_.current == param1)
-            {
-               return true;
-            }
-            _loc3_ = _loc2_.moveNext();
-         }
-         return false;
-      }
-      
-      private function stopTrackUpdates(param1:Object) : void
-      {
-         XMLNotifier.getInstance().unwatchXML(param1,this);
-      }
-      
-      public function xmlNotification(param1:Object, param2:String, param3:Object, param4:Object, param5:Object) : void
-      {
-         var _loc6_:String = null;
-         var _loc7_:Object = null;
-         var _loc8_:Object = null;
-         var _loc9_:XMLListCollection = null;
-         var _loc10_:int = 0;
-         var _loc11_:CollectionEvent = null;
-         var _loc12_:XMLListAdapter = null;
-         var _loc13_:* = undefined;
-         var _loc14_:* = undefined;
-         var _loc15_:XMLList = null;
-         var _loc16_:XMLListCollection = null;
-         var _loc17_:int = 0;
-         var _loc18_:int = 0;
-         if(param1 === param3)
-         {
-            switch(param2)
-            {
-               case "nodeAdded":
-                  for(_loc13_ in childrenMap)
-                  {
-                     if(_loc13_ === param1)
-                     {
-                        _loc12_ = childrenMap[_loc13_].list as XMLListAdapter;
+                
+                _loc_5 = childrenMap[param1];
+                _loc_6 = _loc_5.createCursor();
+                while (!_loc_6.afterLast)
+                {
+                    
+                    if (_loc_6.current == _loc_4)
+                    {
+                        _loc_3++;
                         break;
-                     }
-                  }
-                  if(!_loc12_ && param3 is XML && XML(param3).children().length() == 1)
-                  {
-                     _loc12_ = (getChildren(param3) as XMLListCollection).list as XMLListAdapter;
-                  }
-                  if(Boolean(_loc12_) && !_loc12_.busy())
-                  {
-                     if(childrenMap[_loc13_] === treeData)
-                     {
-                        _loc9_ = treeData as XMLListCollection;
-                        if(parentNode)
+                    }
+                    _loc_3 = _loc_3 + (calculateLength(_loc_6.current, param1) + 1);
+                    _loc_6.moveNext();
+                }
+                _loc_4 = param1;
+                param1 = getParentItem(param1);
+            }
+            _loc_6 = treeData.createCursor();
+            while (!_loc_6.afterLast)
+            {
+                
+                if (_loc_6.current == _loc_4)
+                {
+                    _loc_3++;
+                    break;
+                }
+                _loc_3 = _loc_3 + (calculateLength(_loc_6.current, param1) + 1);
+                _loc_6.moveNext();
+            }
+            return _loc_3;
+        }// end function
+
+        public function expandEventHandler(event:CollectionEvent) : void
+        {
+            var _loc_2:* = null;
+            if (event is CollectionEvent)
+            {
+                _loc_2 = CollectionEvent(event);
+                if (_loc_2.kind == mx_internal::EXPAND)
+                {
+                    event.stopImmediatePropagation();
+                    updateLength();
+                }
+            }
+            return;
+        }// end function
+
+        private function updateLength(param1:Object = null, param2:Object = null) : void
+        {
+            currentLength = calculateLength();
+            return;
+        }// end function
+
+        private function startTrackUpdates(param1:Object) : void
+        {
+            XMLNotifier.getInstance().watchXML(param1, this);
+            return;
+        }// end function
+
+        private function getVisibleLocation(param1:int) : int
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = treeData.createCursor();
+            var _loc_4:* = 0;
+            while (_loc_4 < param1 && !_loc_3.afterLast)
+            {
+                
+                _loc_2 = _loc_2 + (calculateLength(_loc_3.current, null) + 1);
+                _loc_3.moveNext();
+                _loc_4++;
+            }
+            return _loc_2;
+        }// end function
+
+        public function describeData() : Object
+        {
+            return null;
+        }// end function
+
+        public function get sort() : Sort
+        {
+            return null;
+        }// end function
+
+        public function contains(param1:Object) : Boolean
+        {
+            var _loc_2:* = createCursor();
+            var _loc_3:* = false;
+            while (!_loc_3)
+            {
+                
+                if (_loc_2.current == param1)
+                {
+                    return true;
+                }
+                _loc_3 = _loc_2.moveNext();
+            }
+            return false;
+        }// end function
+
+        private function stopTrackUpdates(param1:Object) : void
+        {
+            XMLNotifier.getInstance().unwatchXML(param1, this);
+            return;
+        }// end function
+
+        public function xmlNotification(param1:Object, param2:String, param3:Object, param4:Object, param5:Object) : void
+        {
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            var _loc_10:* = 0;
+            var _loc_11:* = null;
+            var _loc_12:* = null;
+            var _loc_13:* = undefined;
+            var _loc_14:* = undefined;
+            var _loc_15:* = null;
+            var _loc_16:* = null;
+            var _loc_17:* = 0;
+            var _loc_18:* = 0;
+            if (param1 === param3)
+            {
+                switch(param2)
+                {
+                    case "nodeAdded":
+                    {
+                        for (_loc_13 in childrenMap)
                         {
-                           _loc9_.mx_internal::dispatchResetEvent = false;
-                           _loc9_.source = parentNode.*;
+                            
+                            if (_loc_13 === param1)
+                            {
+                                _loc_12 = _loc_20[_loc_13].list as XMLListAdapter;
+                                break;
+                            }
                         }
-                     }
-                     else
-                     {
-                        _loc9_ = getChildren(_loc13_) as XMLListCollection;
-                     }
-                     if(_loc9_)
-                     {
-                        _loc10_ = param4.childIndex();
-                        _loc11_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
-                        _loc11_.kind = CollectionEventKind.ADD;
-                        _loc11_.location = _loc10_;
-                        _loc11_.items = [param4];
-                        _loc9_.dispatchEvent(_loc11_);
-                     }
-                  }
-                  break;
-               case "nodeRemoved":
-                  for(_loc14_ in childrenMap)
-                  {
-                     if(_loc14_ === param1)
-                     {
-                        _loc9_ = childrenMap[_loc14_];
-                        _loc12_ = _loc9_.list as XMLListAdapter;
-                        if(Boolean(_loc12_) && !_loc12_.busy())
+                        if (!_loc_12 && param3 is XML && XML(param3).children().length() == 1)
                         {
-                           _loc15_ = _loc9_.source as XMLList;
-                           if(childrenMap[_loc14_] === treeData)
-                           {
-                              _loc9_ = treeData as XMLListCollection;
-                              if(parentNode)
-                              {
-                                 _loc9_.mx_internal::dispatchResetEvent = false;
-                                 _loc9_.source = parentNode.*;
-                              }
-                           }
-                           else
-                           {
-                              _loc16_ = _loc9_;
-                              _loc9_ = getChildren(_loc14_) as XMLListCollection;
-                              if(!_loc9_)
-                              {
-                                 _loc16_.addEventListener(CollectionEvent.COLLECTION_CHANGE,nestedCollectionChangeHandler,false,0,true);
-                                 _loc11_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
-                                 _loc11_.kind = CollectionEventKind.REMOVE;
-                                 _loc11_.location = 0;
-                                 _loc11_.items = [param4];
-                                 _loc16_.dispatchEvent(_loc11_);
-                                 _loc16_.removeEventListener(CollectionEvent.COLLECTION_CHANGE,nestedCollectionChangeHandler);
-                              }
-                           }
-                           if(_loc9_)
-                           {
-                              _loc17_ = _loc15_.length();
-                              _loc18_ = 0;
-                              while(_loc18_ < _loc17_)
-                              {
-                                 if(_loc15_[_loc18_] === param4)
-                                 {
-                                    _loc11_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
-                                    _loc11_.kind = CollectionEventKind.REMOVE;
-                                    _loc11_.location = _loc10_;
-                                    _loc11_.items = [param4];
-                                    _loc9_.dispatchEvent(_loc11_);
-                                    break;
-                                 }
-                                 _loc18_++;
-                              }
-                           }
+                            _loc_12 = (getChildren(param3) as XMLListCollection).list as XMLListAdapter;
+                        }
+                        if (_loc_12 && !_loc_12.busy())
+                        {
+                            if (_loc_20[_loc_13] === treeData)
+                            {
+                                _loc_9 = treeData as XMLListCollection;
+                                if (parentNode)
+                                {
+                                    mx_internal::dispatchResetEvent = false;
+                                    _loc_9.source = parentNode.*;
+                                }
+                            }
+                            else
+                            {
+                                _loc_9 = getChildren(_loc_13) as XMLListCollection;
+                            }
+                            if (_loc_9)
+                            {
+                                _loc_10 = param4.childIndex();
+                                _loc_11 = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
+                                _loc_11.kind = CollectionEventKind.ADD;
+                                _loc_11.location = _loc_10;
+                                _loc_11.items = [param4];
+                                _loc_9.dispatchEvent(_loc_11);
+                            }
                         }
                         break;
-                     }
-                  }
+                    }
+                    case "nodeRemoved":
+                    {
+                        for (_loc_14 in childrenMap)
+                        {
+                            
+                            if (_loc_14 === param1)
+                            {
+                                _loc_9 = _loc_20[_loc_14];
+                                _loc_12 = _loc_9.list as XMLListAdapter;
+                                if (_loc_12 && !_loc_12.busy())
+                                {
+                                    _loc_15 = _loc_9.source as XMLList;
+                                    if (_loc_20[_loc_14] === treeData)
+                                    {
+                                        _loc_9 = treeData as XMLListCollection;
+                                        if (parentNode)
+                                        {
+                                            mx_internal::dispatchResetEvent = false;
+                                            _loc_9.source = parentNode.*;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _loc_16 = _loc_9;
+                                        _loc_9 = getChildren(_loc_14) as XMLListCollection;
+                                        if (!_loc_9)
+                                        {
+                                            _loc_16.addEventListener(CollectionEvent.COLLECTION_CHANGE, nestedCollectionChangeHandler, false, 0, true);
+                                            _loc_11 = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
+                                            _loc_11.kind = CollectionEventKind.REMOVE;
+                                            _loc_11.location = 0;
+                                            _loc_11.items = [param4];
+                                            _loc_16.dispatchEvent(_loc_11);
+                                            _loc_16.removeEventListener(CollectionEvent.COLLECTION_CHANGE, nestedCollectionChangeHandler);
+                                        }
+                                    }
+                                    if (_loc_9)
+                                    {
+                                        _loc_17 = _loc_15.length();
+                                        _loc_18 = 0;
+                                        while (_loc_18 < _loc_17)
+                                        {
+                                            
+                                            if (_loc_15[_loc_18] === param4)
+                                            {
+                                                _loc_11 = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
+                                                _loc_11.kind = CollectionEventKind.REMOVE;
+                                                _loc_11.location = _loc_10;
+                                                _loc_11.items = [param4];
+                                                _loc_9.dispatchEvent(_loc_11);
+                                                break;
+                                            }
+                                            _loc_18++;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                        break;
+                    }
+                }
             }
-         }
-      }
-      
-      public function itemUpdated(param1:Object, param2:Object = null, param3:Object = null, param4:Object = null) : void
-      {
-         var _loc5_:CollectionEvent = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
-         _loc5_.kind = CollectionEventKind.UPDATE;
-         var _loc6_:PropertyChangeEvent = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-         _loc6_.property = param2;
-         _loc6_.oldValue = param3;
-         _loc6_.newValue = param4;
-         _loc5_.items.push(_loc6_);
-         dispatchEvent(_loc5_);
-      }
-      
-      public function enableAutoUpdate() : void
-      {
-      }
-      
-      public function set sort(param1:Sort) : void
-      {
-      }
-      
-      public function getParentItem(param1:Object) : *
-      {
-         var _loc2_:String = itemToUID(param1);
-         if(parentMap.hasOwnProperty(_loc2_))
-         {
-            return parentMap[_loc2_];
-         }
-         return undefined;
-      }
-      
-      private function getVisibleNodes(param1:Object, param2:Object, param3:Array) : void
-      {
-         var _loc4_:ICollectionView = null;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         param3.push(param1);
-         var _loc5_:String = itemToUID(param1);
-         parentMap[_loc5_] = param2;
-         if(Boolean(openNodes[_loc5_]) && Boolean(dataDescriptor.isBranch(param1,treeData)) && Boolean(dataDescriptor.hasChildren(param1,treeData)))
-         {
-            _loc4_ = getChildren(param1);
-            if(_loc4_ != null)
+            return;
+        }// end function
+
+        public function itemUpdated(param1:Object, param2:Object = null, param3:Object = null, param4:Object = null) : void
+        {
+            var _loc_5:* = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
+            _loc_5.kind = CollectionEventKind.UPDATE;
+            var _loc_6:* = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc_6.property = param2;
+            _loc_6.oldValue = param3;
+            _loc_6.newValue = param4;
+            _loc_5.items.push(_loc_6);
+            dispatchEvent(_loc_5);
+            return;
+        }// end function
+
+        public function enableAutoUpdate() : void
+        {
+            return;
+        }// end function
+
+        public function set sort(param1:Sort) : void
+        {
+            return;
+        }// end function
+
+        public function getParentItem(param1:Object)
+        {
+            var _loc_2:* = itemToUID(param1);
+            if (parentMap.hasOwnProperty(_loc_2))
             {
-               _loc6_ = _loc4_.length;
-               _loc7_ = 0;
-               while(_loc7_ < _loc6_)
-               {
-                  getVisibleNodes(_loc4_[_loc7_],param1,param3);
-                  _loc7_++;
-               }
+                return parentMap[_loc_2];
             }
-         }
-      }
-      
-      public function refresh() : Boolean
-      {
-         var _loc1_:CollectionEvent = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
-         _loc1_.kind = CollectionEventKind.REFRESH;
-         dispatchEvent(_loc1_);
-         return true;
-      }
-      
-      public function get length() : int
-      {
-         return currentLength;
-      }
-      
-      public function set filterFunction(param1:Function) : void
-      {
-      }
-      
-      public function calculateLength(param1:Object = null, param2:Object = null) : int
-      {
-         var length:int = 0;
-         var childNodes:ICollectionView = null;
-         var modelOffset:int = 0;
-         var modelCursor:IViewCursor = null;
-         var parNode:* = undefined;
-         var uid:String = null;
-         var numChildren:int = 0;
-         var i:int = 0;
-         var node:Object = param1;
-         var parent:Object = param2;
-         length = 0;
-         var firstNode:Boolean = true;
-         if(node == null)
-         {
-            modelOffset = 0;
-            modelCursor = treeData.createCursor();
-            if(modelCursor.beforeFirst)
+            return undefined;
+        }// end function
+
+        private function getVisibleNodes(param1:Object, param2:Object, param3:Array) : void
+        {
+            var _loc_4:* = null;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            param3.push(param1);
+            var _loc_5:* = itemToUID(param1);
+            parentMap[_loc_5] = param2;
+            if (openNodes[_loc_5] && dataDescriptor.isBranch(param1, treeData) && dataDescriptor.hasChildren(param1, treeData))
             {
-               return treeData.length;
+                _loc_4 = getChildren(param1);
+                if (_loc_4 != null)
+                {
+                    _loc_6 = _loc_4.length;
+                    _loc_7 = 0;
+                    while (_loc_7 < _loc_6)
+                    {
+                        
+                        getVisibleNodes(_loc_4[_loc_7], param1, param3);
+                        _loc_7++;
+                    }
+                }
             }
-            while(!modelCursor.afterLast)
+            return;
+        }// end function
+
+        public function refresh() : Boolean
+        {
+            var _loc_1:* = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
+            _loc_1.kind = CollectionEventKind.REFRESH;
+            dispatchEvent(_loc_1);
+            return true;
+        }// end function
+
+        public function get length() : int
+        {
+            return currentLength;
+        }// end function
+
+        public function set filterFunction(param1:Function) : void
+        {
+            return;
+        }// end function
+
+        public function calculateLength(param1:Object = null, param2:Object = null) : int
+        {
+            var length:int;
+            var childNodes:ICollectionView;
+            var modelOffset:int;
+            var modelCursor:IViewCursor;
+            var parNode:*;
+            var uid:String;
+            var numChildren:int;
+            var i:int;
+            var node:* = param1;
+            var parent:* = param2;
+            length;
+            var firstNode:Boolean;
+            if (node == null)
             {
-               node = modelCursor.current;
-               if(node is XML)
-               {
-                  if(firstNode)
-                  {
-                     firstNode = false;
-                     parNode = node.parent();
-                     if(parNode)
-                     {
-                        startTrackUpdates(parNode);
-                        childrenMap[parNode] = treeData;
-                        parentNode = parNode;
-                     }
-                  }
-                  startTrackUpdates(node);
-               }
-               if(node === null)
-               {
-                  length = length + 1;
-               }
-               else
-               {
-                  length = length + (calculateLength(node,null) + 1);
-               }
-               modelOffset++;
-               try
-               {
-                  modelCursor.moveNext();
-               }
-               catch(e:ItemPendingError)
-               {
-                  length = length + (treeData.length - modelOffset);
-                  return length;
-               }
-            }
-         }
-         else
-         {
-            uid = itemToUID(node);
-            parentMap[uid] = parent;
-            if(Boolean(node != null && openNodes[uid]) && Boolean(dataDescriptor.isBranch(node,treeData)) && Boolean(dataDescriptor.hasChildren(node,treeData)))
-            {
-               childNodes = getChildren(node);
-               if(childNodes != null)
-               {
-                  numChildren = childNodes.length;
-                  i = 0;
-                  while(i < numChildren)
-                  {
-                     if(node is XML)
-                     {
-                        startTrackUpdates(childNodes[i]);
-                     }
-                     length = length + (calculateLength(childNodes[i],node) + 1);
-                     i++;
-                  }
-               }
-            }
-         }
-         return length;
-      }
-      
-      public function disableAutoUpdate() : void
-      {
-      }
-      
-      public function createCursor() : IViewCursor
-      {
-         return new mx.controls.treeClasses.HierarchicalViewCursor(this,treeData,dataDescriptor,itemToUID,openNodes);
-      }
-      
-      private function getChildren(param1:Object) : ICollectionView
-      {
-         var _loc2_:ICollectionView = dataDescriptor.getChildren(param1,treeData);
-         var _loc3_:ICollectionView = childrenMap[param1];
-         if(_loc3_ != _loc2_)
-         {
-            if(_loc3_ != null)
-            {
-               _loc3_.removeEventListener(CollectionEvent.COLLECTION_CHANGE,nestedCollectionChangeHandler);
-            }
-            if(_loc2_)
-            {
-               _loc2_.addEventListener(CollectionEvent.COLLECTION_CHANGE,nestedCollectionChangeHandler,false,0,true);
-               childrenMap[param1] = _loc2_;
+                modelOffset;
+                modelCursor = treeData.createCursor();
+                if (modelCursor.beforeFirst)
+                {
+                    return treeData.length;
+                }
+                do
+                {
+                    
+                    node = modelCursor.current;
+                    if (node is XML)
+                    {
+                        if (firstNode)
+                        {
+                            firstNode;
+                            parNode = node.parent();
+                            if (parNode)
+                            {
+                                startTrackUpdates(parNode);
+                                childrenMap[parNode] = treeData;
+                                parentNode = parNode;
+                            }
+                        }
+                        startTrackUpdates(node);
+                    }
+                    if (node === null)
+                    {
+                        length = (length + 1);
+                    }
+                    else
+                    {
+                        length = length + (calculateLength(node, null) + 1);
+                    }
+                    modelOffset = (modelOffset + 1);
+                    try
+                    {
+                        modelCursor.moveNext();
+                    }
+                    catch (e:ItemPendingError)
+                    {
+                        length = length + (treeData.length - modelOffset);
+                        return length;
+                    }
+                }while (!modelCursor.afterLast)
             }
             else
             {
-               delete childrenMap[param1];
+                uid = itemToUID(node);
+                parentMap[uid] = parent;
+                if (node != null && openNodes[uid] && dataDescriptor.isBranch(node, treeData) && dataDescriptor.hasChildren(node, treeData))
+                {
+                    childNodes = getChildren(node);
+                    if (childNodes != null)
+                    {
+                        numChildren = childNodes.length;
+                        i;
+                        while (i < numChildren)
+                        {
+                            
+                            if (node is XML)
+                            {
+                                startTrackUpdates(childNodes[i]);
+                            }
+                            length = length + (calculateLength(childNodes[i], node) + 1);
+                            i = (i + 1);
+                        }
+                    }
+                }
             }
-         }
-         return _loc2_;
-      }
-      
-      public function get filterFunction() : Function
-      {
-         return null;
-      }
-      
-      public function collectionChangeHandler(param1:CollectionEvent) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc5_:String = null;
-         var _loc6_:Object = null;
-         var _loc7_:Object = null;
-         var _loc8_:Array = null;
-         var _loc9_:CollectionEvent = null;
-         var _loc10_:CollectionEvent = null;
-         var _loc11_:int = 0;
-         if(param1 is CollectionEvent)
-         {
-            _loc10_ = CollectionEvent(param1);
-            if(_loc10_.kind == CollectionEventKind.RESET)
+            return length;
+        }// end function
+
+        public function disableAutoUpdate() : void
+        {
+            return;
+        }// end function
+
+        public function createCursor() : IViewCursor
+        {
+            return new HierarchicalViewCursor(this, treeData, dataDescriptor, itemToUID, openNodes);
+        }// end function
+
+        private function getChildren(param1:Object) : ICollectionView
+        {
+            var _loc_2:* = dataDescriptor.getChildren(param1, treeData);
+            var _loc_3:* = childrenMap[param1];
+            if (_loc_3 != _loc_2)
             {
-               updateLength();
-               dispatchEvent(param1);
+                if (_loc_3 != null)
+                {
+                    _loc_3.removeEventListener(CollectionEvent.COLLECTION_CHANGE, nestedCollectionChangeHandler);
+                }
+                if (_loc_2)
+                {
+                    _loc_2.addEventListener(CollectionEvent.COLLECTION_CHANGE, nestedCollectionChangeHandler, false, 0, true);
+                    childrenMap[param1] = _loc_2;
+                }
+                else
+                {
+                    delete childrenMap[param1];
+                }
             }
-            else if(_loc10_.kind == CollectionEventKind.ADD)
+            return _loc_2;
+        }// end function
+
+        public function get filterFunction() : Function
+        {
+            return null;
+        }// end function
+
+        public function collectionChangeHandler(event:CollectionEvent) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            var _loc_10:* = null;
+            var _loc_11:* = 0;
+            if (event is CollectionEvent)
             {
-               _loc3_ = _loc10_.items.length;
-               _loc9_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE,false,true,_loc10_.kind);
-               _loc9_.location = getVisibleLocation(_loc10_.location);
-               _loc2_ = 0;
-               while(_loc2_ < _loc3_)
-               {
-                  _loc7_ = _loc10_.items[_loc2_];
-                  if(_loc7_ is XML)
-                  {
-                     startTrackUpdates(_loc7_);
-                  }
-                  getVisibleNodes(_loc7_,null,_loc9_.items);
-                  _loc2_++;
-               }
-               currentLength = currentLength + _loc9_.items.length;
-               dispatchEvent(_loc9_);
+                _loc_10 = CollectionEvent(event);
+                if (_loc_10.kind == CollectionEventKind.RESET)
+                {
+                    updateLength();
+                    dispatchEvent(event);
+                }
+                else if (_loc_10.kind == CollectionEventKind.ADD)
+                {
+                    _loc_3 = _loc_10.items.length;
+                    _loc_9 = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE, false, true, _loc_10.kind);
+                    _loc_9.location = getVisibleLocation(_loc_10.location);
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_3)
+                    {
+                        
+                        _loc_7 = _loc_10.items[_loc_2];
+                        if (_loc_7 is XML)
+                        {
+                            startTrackUpdates(_loc_7);
+                        }
+                        getVisibleNodes(_loc_7, null, _loc_9.items);
+                        _loc_2++;
+                    }
+                    currentLength = currentLength + _loc_9.items.length;
+                    dispatchEvent(_loc_9);
+                }
+                else if (_loc_10.kind == CollectionEventKind.REMOVE)
+                {
+                    _loc_3 = _loc_10.items.length;
+                    _loc_9 = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE, false, true, _loc_10.kind);
+                    _loc_9.location = getVisibleLocation(_loc_10.location);
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_3)
+                    {
+                        
+                        _loc_7 = _loc_10.items[_loc_2];
+                        if (_loc_7 is XML)
+                        {
+                            stopTrackUpdates(_loc_7);
+                        }
+                        getVisibleNodes(_loc_7, null, _loc_9.items);
+                        _loc_2++;
+                    }
+                    currentLength = currentLength - _loc_9.items.length;
+                    dispatchEvent(_loc_9);
+                }
+                else if (_loc_10.kind == CollectionEventKind.UPDATE)
+                {
+                    dispatchEvent(event);
+                }
+                else if (_loc_10.kind == CollectionEventKind.REPLACE)
+                {
+                    _loc_3 = _loc_10.items.length;
+                    _loc_9 = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE, false, true, CollectionEventKind.REMOVE);
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_3)
+                    {
+                        
+                        _loc_7 = _loc_7.oldValue;
+                        if (_loc_7 is XML)
+                        {
+                            stopTrackUpdates(_loc_7);
+                        }
+                        getVisibleNodes(_loc_7, null, _loc_9.items);
+                        _loc_2++;
+                    }
+                    _loc_11 = 0;
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_3)
+                    {
+                        
+                        _loc_7 = _loc_10.items[_loc_2].oldValue;
+                        while (_loc_9.items[_loc_11] != _loc_7)
+                        {
+                            
+                            _loc_11++;
+                        }
+                        _loc_9.items.splice(_loc_11, 1);
+                        _loc_2++;
+                    }
+                    if (_loc_9.items.length)
+                    {
+                        currentLength = currentLength - _loc_9.items.length;
+                        dispatchEvent(_loc_9);
+                    }
+                    dispatchEvent(event);
+                }
             }
-            else if(_loc10_.kind == CollectionEventKind.REMOVE)
-            {
-               _loc3_ = _loc10_.items.length;
-               _loc9_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE,false,true,_loc10_.kind);
-               _loc9_.location = getVisibleLocation(_loc10_.location);
-               _loc2_ = 0;
-               while(_loc2_ < _loc3_)
-               {
-                  _loc7_ = _loc10_.items[_loc2_];
-                  if(_loc7_ is XML)
-                  {
-                     stopTrackUpdates(_loc7_);
-                  }
-                  getVisibleNodes(_loc7_,null,_loc9_.items);
-                  _loc2_++;
-               }
-               currentLength = currentLength - _loc9_.items.length;
-               dispatchEvent(_loc9_);
-            }
-            else if(_loc10_.kind == CollectionEventKind.UPDATE)
-            {
-               dispatchEvent(param1);
-            }
-            else if(_loc10_.kind == CollectionEventKind.REPLACE)
-            {
-               _loc3_ = _loc10_.items.length;
-               _loc9_ = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE,false,true,CollectionEventKind.REMOVE);
-               _loc2_ = 0;
-               while(_loc2_ < _loc3_)
-               {
-                  _loc7_ = _loc10_.items[_loc2_].oldValue;
-                  if(_loc7_ is XML)
-                  {
-                     stopTrackUpdates(_loc7_);
-                  }
-                  getVisibleNodes(_loc7_,null,_loc9_.items);
-                  _loc2_++;
-               }
-               _loc11_ = 0;
-               _loc2_ = 0;
-               while(_loc2_ < _loc3_)
-               {
-                  _loc7_ = _loc10_.items[_loc2_].oldValue;
-                  while(_loc9_.items[_loc11_] != _loc7_)
-                  {
-                     _loc11_++;
-                  }
-                  _loc9_.items.splice(_loc11_,1);
-                  _loc2_++;
-               }
-               if(_loc9_.items.length)
-               {
-                  currentLength = currentLength - _loc9_.items.length;
-                  dispatchEvent(_loc9_);
-               }
-               dispatchEvent(param1);
-            }
-         }
-      }
-   }
+            return;
+        }// end function
+
+    }
 }

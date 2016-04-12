@@ -1,10 +1,14 @@
-package mx.core
+﻿package mx.core
 {
-   public interface IProgrammaticSkin
-   {
-       
-      function validateNow() : void;
-      
-      function validateDisplayList() : void;
-   }
+
+    public interface IProgrammaticSkin
+    {
+
+        public function IProgrammaticSkin();
+
+        function validateNow() : void;
+
+        function validateDisplayList() : void;
+
+    }
 }

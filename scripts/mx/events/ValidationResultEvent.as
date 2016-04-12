@@ -1,50 +1,45 @@
-package mx.events
+﻿package mx.events
 {
-   import flash.events.Event;
-   import mx.core.mx_internal;
-   
-   use namespace mx_internal;
-   
-   public class ValidationResultEvent extends Event
-   {
-      
-      public static const INVALID:String = "invalid";
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      public static const VALID:String = "valid";
-       
-      public var results:Array;
-      
-      public var field:String;
-      
-      public function ValidationResultEvent(param1:String, param2:Boolean = false, param3:Boolean = false, param4:String = null, param5:Array = null)
-      {
-         super(param1,param2,param3);
-         this.field = param4;
-         this.results = param5;
-      }
-      
-      public function get message() : String
-      {
-         var _loc1_:String = "";
-         var _loc2_:int = results.length;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            if(results[_loc3_].isError)
+    import flash.events.*;
+
+    public class ValidationResultEvent extends Event
+    {
+        public var results:Array;
+        public var field:String;
+        public static const INVALID:String = "invalid";
+        static const VERSION:String = "3.6.0.21751";
+        public static const VALID:String = "valid";
+
+        public function ValidationResultEvent(param1:String, param2:Boolean = false, param3:Boolean = false, param4:String = null, param5:Array = null)
+        {
+            super(param1, param2, param3);
+            this.field = param4;
+            this.results = param5;
+            return;
+        }// end function
+
+        public function get message() : String
+        {
+            var _loc_1:* = "";
+            var _loc_2:* = results.length;
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_2)
             {
-               _loc1_ = _loc1_ + (_loc1_ == ""?"":"\n");
-               _loc1_ = _loc1_ + results[_loc3_].errorMessage;
+                
+                if (results[_loc_3].isError)
+                {
+                    _loc_1 = _loc_1 + (_loc_1 == "" ? ("") : ("\n"));
+                    _loc_1 = _loc_1 + results[_loc_3].errorMessage;
+                }
+                _loc_3++;
             }
-            _loc3_++;
-         }
-         return _loc1_;
-      }
-      
-      override public function clone() : Event
-      {
-         return new ValidationResultEvent(type,bubbles,cancelable,field,results);
-      }
-   }
+            return _loc_1;
+        }// end function
+
+        override public function clone() : Event
+        {
+            return new ValidationResultEvent(type, bubbles, cancelable, field, results);
+        }// end function
+
+    }
 }

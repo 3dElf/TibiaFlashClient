@@ -1,2309 +1,2415 @@
-package mx.controls.listClasses
+﻿package mx.controls.listClasses
 {
-   import mx.core.mx_internal;
-   import mx.core.IFactory;
-   import mx.collections.ItemWrapper;
-   import flash.utils.Dictionary;
-   import mx.core.UIComponentGlobals;
-   import flash.events.Event;
-   import mx.events.ScrollEvent;
-   import flash.ui.Keyboard;
-   import mx.events.ScrollEventDetail;
-   import mx.events.ScrollEventDirection;
-   import mx.collections.errors.ItemPendingError;
-   import mx.collections.CursorBookmark;
-   import flash.display.DisplayObject;
-   import flash.display.Sprite;
-   import mx.core.FlexSprite;
-   import mx.styles.StyleManager;
-   import mx.events.ListEvent;
-   import flash.events.KeyboardEvent;
-   import flash.geom.Point;
-   import mx.events.DragEvent;
-   import mx.core.EdgeMetrics;
-   import mx.skins.halo.ListDropIndicator;
-   import mx.core.IFlexDisplayObject;
-   import flash.utils.setInterval;
-   import mx.controls.scrollClasses.ScrollBar;
-   import mx.collections.ItemResponder;
-   import mx.collections.ModifiedCollectionView;
-   import flash.display.Shape;
-   import mx.core.FlexShape;
-   import flash.display.Graphics;
-   import mx.events.CollectionEvent;
-   import mx.events.CollectionEventKind;
-   import mx.core.ClassFactory;
-   
-   use namespace mx_internal;
-   
-   public class TileBase extends ListBase
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var _direction:String = "horizontal";
-      
-      private var lastRowCount:int = 0;
-      
-      private var _maxRows:int = 0;
-      
-      private var bSelectItem:Boolean = false;
-      
-      private var bCtrlKey:Boolean = false;
-      
-      private var lastColumnCount:int = 0;
-      
-      private var lastKey:uint = 0;
-      
-      private var _maxColumns:int = 0;
-      
-      protected var measuringObjects:Dictionary;
-      
-      private var bShiftKey:Boolean = false;
-      
-      public function TileBase()
-      {
-         super();
-         itemRenderer = new ClassFactory(TileListItemRenderer);
-         setRowHeight(50);
-         setColumnWidth(50);
-      }
-      
-      override public function measureWidthOfItems(param1:int = -1, param2:int = 0) : Number
-      {
-         var _loc3_:IListItemRenderer = null;
-         var _loc4_:Number = NaN;
-         var _loc5_:ListData = null;
-         var _loc7_:Object = null;
-         var _loc8_:Object = null;
-         var _loc9_:IFactory = null;
-         var _loc6_:Boolean = false;
-         if(Boolean(collection) && Boolean(collection.length))
-         {
-            _loc7_ = iterator.current;
-            _loc8_ = _loc7_ is ItemWrapper?_loc7_.data:_loc7_;
-            if(!measuringObjects)
-            {
-               measuringObjects = new Dictionary(true);
-            }
-            _loc9_ = getItemRendererFactory(_loc8_);
-            _loc3_ = measuringObjects[_loc9_];
-            if(!_loc3_)
-            {
-               _loc3_ = getMeasuringRenderer(_loc8_);
-               _loc6_ = true;
-            }
-            _loc5_ = ListData(makeListData(_loc8_,uid,0,0));
-            if(_loc3_ is IDropInListItemRenderer)
-            {
-               IDropInListItemRenderer(_loc3_).listData = !!_loc8_?_loc5_:null;
-            }
-            _loc3_.data = _loc8_;
-            UIComponentGlobals.layoutManager.validateClient(_loc3_,true);
-            _loc4_ = _loc3_.getExplicitOrMeasuredWidth();
-            if(_loc6_)
-            {
-               _loc3_.setActualSize(_loc4_,_loc3_.getExplicitOrMeasuredHeight());
-               _loc6_ = false;
-            }
-         }
-         if(Boolean(isNaN(_loc4_)) || _loc4_ == 0)
-         {
-            _loc4_ = 50;
-         }
-         return _loc4_ * param2;
-      }
-      
-      override public function indexToItemRenderer(param1:int) : IListItemRenderer
-      {
-         var _loc2_:int = indexToRow(param1);
-         if(_loc2_ < verticalScrollPosition || _loc2_ >= verticalScrollPosition + rowCount)
-         {
-            return null;
-         }
-         var _loc3_:int = indexToColumn(param1);
-         if(_loc3_ < horizontalScrollPosition || _loc3_ >= horizontalScrollPosition + columnCount)
-         {
-            return null;
-         }
-         return listItems[_loc2_ - verticalScrollPosition][_loc3_ - horizontalScrollPosition];
-      }
-      
-      public function set direction(param1:String) : void
-      {
-         _direction = param1;
-         itemsSizeChanged = true;
-         offscreenExtraRowsOrColumnsChanged = true;
-         if(listContent)
-         {
-            if(direction == TileBaseDirection.HORIZONTAL)
-            {
-               listContent.leftOffset = listContent.rightOffset = 0;
-               offscreenExtraColumnsLeft = offscreenExtraColumnsRight = 0;
-            }
-            else
-            {
-               listContent.topOffset = listContent.bottomOffset = 0;
-               offscreenExtraRowsTop = offscreenExtraRowsBottom = 0;
-            }
-         }
-         invalidateProperties();
-         invalidateSize();
-         invalidateDisplayList();
-         dispatchEvent(new Event("directionChanged"));
-      }
-      
-      [Bindable("directionChanged")]
-      public function get direction() : String
-      {
-         return _direction;
-      }
-      
-      override mx_internal function reconstructDataFromListItems() : Array
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:IListItemRenderer = null;
-         var _loc5_:Object = null;
-         if(direction == TileBaseDirection.HORIZONTAL || !listItems)
-         {
-            return super.reconstructDataFromListItems();
-         }
-         var _loc1_:Array = [];
-         if(listItems.length > 0)
-         {
-            _loc2_ = 0;
-            while(_loc2_ < listItems[0].length)
-            {
-               _loc3_ = 0;
-               while(_loc3_ < listItems.length)
-               {
-                  if(Boolean(listItems[_loc3_]) && listItems[_loc3_].length > _loc2_)
-                  {
-                     _loc4_ = listItems[_loc3_][_loc2_] as IListItemRenderer;
-                     if(_loc4_)
-                     {
-                        _loc5_ = _loc4_.data;
-                        _loc1_.push(_loc5_);
-                     }
-                  }
-                  _loc3_++;
-               }
-               _loc2_++;
-            }
-         }
-         return _loc1_;
-      }
-      
-      override protected function moveSelectionHorizontally(param1:uint, param2:Boolean, param3:Boolean) : void
-      {
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:IListItemRenderer = null;
-         var _loc7_:String = null;
-         var _loc8_:int = 0;
-         var _loc9_:Boolean = false;
-         var _loc10_:int = 0;
-         var _loc11_:int = 0;
-         var _loc16_:ScrollEvent = null;
-         var _loc12_:int = listItems[0].length - offscreenExtraColumnsLeft - offscreenExtraColumnsRight;
-         var _loc13_:int = maxColumns > 0 && direction != TileBaseDirection.VERTICAL?int(maxColumns):int(_loc12_);
-         var _loc14_:int = !!displayingPartialRow()?1:0;
-         var _loc15_:int = !!displayingPartialColumn()?1:0;
-         if(!collection)
-         {
+    import flash.display.*;
+    import flash.events.*;
+    import flash.geom.*;
+    import flash.ui.*;
+    import flash.utils.*;
+    import mx.collections.*;
+    import mx.collections.errors.*;
+    import mx.controls.scrollClasses.*;
+    import mx.core.*;
+    import mx.events.*;
+    import mx.skins.halo.*;
+    import mx.styles.*;
+
+    public class TileBase extends ListBase
+    {
+        private var _direction:String = "horizontal";
+        private var lastRowCount:int = 0;
+        private var _maxRows:int = 0;
+        private var bSelectItem:Boolean = false;
+        private var bCtrlKey:Boolean = false;
+        private var lastColumnCount:int = 0;
+        private var lastKey:uint = 0;
+        private var _maxColumns:int = 0;
+        protected var measuringObjects:Dictionary;
+        private var bShiftKey:Boolean = false;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function TileBase()
+        {
+            itemRenderer = new ClassFactory(TileListItemRenderer);
+            setRowHeight(50);
+            setColumnWidth(50);
             return;
-         }
-         showCaret = true;
-         switch(param1)
-         {
-            case Keyboard.LEFT:
-               if(caretIndex > 0)
-               {
-                  if(direction == TileBaseDirection.HORIZONTAL)
-                  {
-                     caretIndex--;
-                  }
-                  else
-                  {
-                     _loc10_ = indexToRow(caretIndex);
-                     _loc11_ = indexToColumn(caretIndex);
-                     if(_loc11_ == 0)
-                     {
-                        _loc10_--;
-                        _loc11_ = lastColumnInRow(_loc10_);
-                     }
-                     else
-                     {
-                        _loc11_--;
-                     }
-                     caretIndex = Math.min(indicesToIndex(_loc10_,_loc11_),collection.length - 1);
-                  }
-                  _loc10_ = indexToRow(caretIndex);
-                  _loc11_ = indexToColumn(caretIndex);
-                  if(direction == TileBaseDirection.HORIZONTAL)
-                  {
-                     if(_loc10_ < verticalScrollPosition)
-                     {
-                        _loc4_ = verticalScrollPosition - 1;
-                     }
-                     else if(_loc10_ > verticalScrollPosition + rowCount - _loc14_)
-                     {
-                        _loc4_ = maxVerticalScrollPosition;
-                     }
-                  }
-                  else if(_loc11_ < horizontalScrollPosition)
-                  {
-                     _loc5_ = horizontalScrollPosition - 1;
-                  }
-                  else if(_loc11_ > horizontalScrollPosition + _loc12_ - 1 - _loc15_)
-                  {
-                     _loc5_ = maxHorizontalScrollPosition;
-                  }
-               }
-               break;
-            case Keyboard.RIGHT:
-               if(caretIndex < collection.length - 1)
-               {
-                  if(direction == TileBaseDirection.HORIZONTAL || caretIndex == -1)
-                  {
-                     caretIndex++;
-                  }
-                  else
-                  {
-                     _loc10_ = indexToRow(caretIndex);
-                     _loc11_ = indexToColumn(caretIndex);
-                     if(_loc11_ == lastColumnInRow(_loc10_))
-                     {
-                        _loc11_ = 0;
-                        _loc10_++;
-                     }
-                     else
-                     {
-                        _loc11_++;
-                     }
-                     caretIndex = Math.min(indicesToIndex(_loc10_,_loc11_),collection.length - 1);
-                  }
-                  _loc10_ = indexToRow(caretIndex);
-                  _loc11_ = indexToColumn(caretIndex);
-                  if(direction == TileBaseDirection.HORIZONTAL)
-                  {
-                     if(_loc10_ >= verticalScrollPosition + rowCount - _loc14_ && verticalScrollPosition < maxVerticalScrollPosition)
-                     {
-                        _loc4_ = verticalScrollPosition + 1;
-                     }
-                     if(_loc10_ < verticalScrollPosition)
-                     {
-                        _loc4_ = _loc10_;
-                     }
-                  }
-                  else
-                  {
-                     if(_loc11_ >= horizontalScrollPosition + _loc12_ - _loc15_ && horizontalScrollPosition < maxHorizontalScrollPosition)
-                     {
-                        _loc5_ = horizontalScrollPosition + 1;
-                     }
-                     if(_loc11_ < horizontalScrollPosition)
-                     {
-                        _loc5_ = _loc11_;
-                     }
-                  }
-               }
-               break;
-            case Keyboard.PAGE_UP:
-               if(caretIndex < 0)
-               {
-                  caretIndex = scrollPositionToIndex(horizontalScrollPosition,verticalScrollPosition);
-               }
-               _loc10_ = indexToRow(caretIndex);
-               _loc11_ = indexToColumn(caretIndex);
-               if(_loc11_ > 0)
-               {
-                  _loc5_ = _loc11_ = Math.max(horizontalScrollPosition - (_loc12_ - _loc15_),0);
-                  caretIndex = indicesToIndex(_loc10_,_loc11_);
-               }
-               break;
-            case Keyboard.PAGE_DOWN:
-               if(caretIndex < 0)
-               {
-                  caretIndex = scrollPositionToIndex(horizontalScrollPosition,verticalScrollPosition);
-               }
-               _loc10_ = indexToRow(caretIndex);
-               _loc11_ = indexToColumn(caretIndex);
-               if(_loc11_ < maxHorizontalScrollPosition)
-               {
-                  _loc11_ = Math.min(horizontalScrollPosition + _loc12_ - _loc15_,indexToColumn(collection.length - 1));
-                  if(_loc11_ > horizontalScrollPosition)
-                  {
-                     _loc5_ = Math.min(_loc11_,maxHorizontalScrollPosition);
-                  }
-                  caretIndex = indicesToIndex(_loc10_,_loc11_);
-               }
-               break;
-            case Keyboard.HOME:
-               if(collection.length)
-               {
-                  caretIndex = 0;
-                  _loc5_ = 0;
-                  _loc4_ = 0;
-               }
-               break;
-            case Keyboard.END:
-               if(caretIndex < collection.length)
-               {
-                  caretIndex = collection.length - 1;
-                  _loc5_ = maxHorizontalScrollPosition;
-                  _loc4_ = maxVerticalScrollPosition;
-               }
-         }
-         if(!isNaN(_loc4_))
-         {
-            if(_loc4_ != verticalScrollPosition)
+        }// end function
+
+        override public function measureWidthOfItems(param1:int = -1, param2:int = 0) : Number
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = NaN;
+            var _loc_5:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            var _loc_6:* = false;
+            if (collection && collection.length)
             {
-               _loc16_ = new ScrollEvent(ScrollEvent.SCROLL);
-               _loc16_.detail = ScrollEventDetail.THUMB_POSITION;
-               _loc16_.direction = ScrollEventDirection.VERTICAL;
-               _loc16_.delta = _loc4_ - verticalScrollPosition;
-               _loc16_.position = _loc4_;
-               verticalScrollPosition = _loc4_;
-               dispatchEvent(_loc16_);
+                _loc_7 = iterator.current;
+                _loc_8 = _loc_7 is ItemWrapper ? (_loc_7.data) : (_loc_7);
+                if (!measuringObjects)
+                {
+                    measuringObjects = new Dictionary(true);
+                }
+                _loc_9 = getItemRendererFactory(_loc_8);
+                _loc_3 = measuringObjects[_loc_9];
+                if (!_loc_3)
+                {
+                    _loc_3 = getMeasuringRenderer(_loc_8);
+                    _loc_6 = true;
+                }
+                _loc_5 = ListData(makeListData(_loc_8, uid, 0, 0));
+                if (_loc_3 is IDropInListItemRenderer)
+                {
+                    IDropInListItemRenderer(_loc_3).listData = _loc_8 ? (_loc_5) : (null);
+                }
+                _loc_3.data = _loc_8;
+                UIComponentGlobals.layoutManager.validateClient(_loc_3, true);
+                _loc_4 = _loc_3.getExplicitOrMeasuredWidth();
+                if (_loc_6)
+                {
+                    _loc_3.setActualSize(_loc_4, _loc_3.getExplicitOrMeasuredHeight());
+                    _loc_6 = false;
+                }
             }
-         }
-         if(iteratorValid)
-         {
-            if(!isNaN(_loc5_))
+            if (isNaN(_loc_4) || _loc_4 == 0)
             {
-               if(_loc5_ != horizontalScrollPosition)
-               {
-                  _loc16_ = new ScrollEvent(ScrollEvent.SCROLL);
-                  _loc16_.detail = ScrollEventDetail.THUMB_POSITION;
-                  _loc16_.direction = ScrollEventDirection.HORIZONTAL;
-                  _loc16_.delta = _loc5_ - horizontalScrollPosition;
-                  _loc16_.position = _loc5_;
-                  horizontalScrollPosition = _loc5_;
-                  dispatchEvent(_loc16_);
-               }
+                _loc_4 = 50;
             }
-         }
-         if(!iteratorValid)
-         {
-            keySelectionPending = true;
-            return;
-         }
-         bShiftKey = param2;
-         bCtrlKey = param3;
-         lastKey = param1;
-         finishKeySelection();
-      }
-      
-      override mx_internal function removeClipMask() : void
-      {
-      }
-      
-      override protected function commitProperties() : void
-      {
-         super.commitProperties();
-         if(itemsNeedMeasurement)
-         {
-            itemsNeedMeasurement = false;
-            if(isNaN(explicitRowHeight))
+            return _loc_4 * param2;
+        }// end function
+
+        override public function indexToItemRenderer(param1:int) : IListItemRenderer
+        {
+            var _loc_2:* = indexToRow(param1);
+            if (_loc_2 < verticalScrollPosition || _loc_2 >= verticalScrollPosition + rowCount)
             {
-               setRowHeight(measureHeightOfItems(0,1));
+                return null;
             }
-            if(isNaN(explicitColumnWidth))
+            var _loc_3:* = indexToColumn(param1);
+            if (_loc_3 < horizontalScrollPosition || _loc_3 >= horizontalScrollPosition + columnCount)
             {
-               setColumnWidth(measureWidthOfItems(0,1));
+                return null;
             }
-         }
-      }
-      
-      override public function scrollToIndex(param1:int) : Boolean
-      {
-         var newVPos:int = 0;
-         var newHPos:int = 0;
-         var index:int = param1;
-         var firstIndex:int = scrollPositionToIndex(horizontalScrollPosition,verticalScrollPosition);
-         var numItemsVisible:int = (listItems.length - offscreenExtraRowsTop - offscreenExtraRowsBottom) * (listItems[0].length - offscreenExtraColumnsLeft - offscreenExtraColumnsRight);
-         if(index >= firstIndex + numItemsVisible || index < firstIndex)
-         {
-            newVPos = Math.min(indexToRow(index),maxVerticalScrollPosition);
-            newHPos = Math.min(indexToColumn(index),maxHorizontalScrollPosition);
-            try
+            return listItems[_loc_2 - verticalScrollPosition][_loc_3 - horizontalScrollPosition];
+        }// end function
+
+        public function set direction(param1:String) : void
+        {
+            _direction = param1;
+            itemsSizeChanged = true;
+            offscreenExtraRowsOrColumnsChanged = true;
+            if (listContent)
             {
-               iterator.seek(CursorBookmark.FIRST,scrollPositionToIndex(horizontalScrollPosition,verticalScrollPosition));
-               super.horizontalScrollPosition = newHPos;
-               super.verticalScrollPosition = newVPos;
+                if (direction == TileBaseDirection.HORIZONTAL)
+                {
+                    var _loc_2:* = 0;
+                    listContent.rightOffset = 0;
+                    listContent.leftOffset = _loc_2;
+                    var _loc_2:* = 0;
+                    offscreenExtraColumnsRight = 0;
+                    offscreenExtraColumnsLeft = _loc_2;
+                }
+                else
+                {
+                    var _loc_2:* = 0;
+                    listContent.bottomOffset = 0;
+                    listContent.topOffset = _loc_2;
+                    var _loc_2:* = 0;
+                    offscreenExtraRowsBottom = 0;
+                    offscreenExtraRowsTop = _loc_2;
+                }
             }
-            catch(e:ItemPendingError)
-            {
-            }
-            return true;
-         }
-         return false;
-      }
-      
-      override public function createItemRenderer(param1:Object) : IListItemRenderer
-      {
-         var _loc2_:IFactory = null;
-         var _loc3_:IListItemRenderer = null;
-         var _loc4_:Dictionary = null;
-         var _loc5_:* = undefined;
-         _loc2_ = getItemRendererFactory(param1);
-         if(!_loc2_)
-         {
-            if(!param1)
-            {
-               _loc2_ = nullItemRenderer;
-            }
-            if(!_loc2_)
-            {
-               _loc2_ = itemRenderer;
-            }
-         }
-         if(_loc2_ == itemRenderer)
-         {
-            if(Boolean(freeItemRenderers) && Boolean(freeItemRenderers.length) && Boolean(freeItemRenderersByFactory[_loc2_]))
-            {
-               _loc3_ = freeItemRenderers.pop();
-               delete freeItemRenderersByFactory[_loc2_][_loc3_];
-            }
-         }
-         else if(freeItemRenderersByFactory)
-         {
-            _loc4_ = freeItemRenderersByFactory[_loc2_];
-            if(_loc4_)
-            {
-               for(_loc5_ in _loc4_)
-               {
-                  _loc3_ = IListItemRenderer(_loc5_);
-                  delete _loc4_[_loc5_];
-               }
-            }
-         }
-         if(!_loc3_)
-         {
-            _loc3_ = _loc2_.newInstance();
-            _loc3_.styleName = this;
-            factoryMap[_loc3_] = _loc2_;
-         }
-         _loc3_.owner = this;
-         return _loc3_;
-      }
-      
-      protected function drawTileBackgrounds() : void
-      {
-         var _loc2_:Array = null;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc7_:Number = NaN;
-         var _loc8_:Number = NaN;
-         var _loc9_:IListItemRenderer = null;
-         var _loc10_:int = 0;
-         var _loc11_:DisplayObject = null;
-         var _loc1_:Sprite = Sprite(listContent.getChildByName("tileBGs"));
-         if(!_loc1_)
-         {
-            _loc1_ = new FlexSprite();
-            _loc1_.mouseEnabled = false;
-            _loc1_.name = "tileBGs";
-            listContent.addChildAt(_loc1_,0);
-         }
-         _loc2_ = getStyle("alternatingItemColors");
-         if(!_loc2_ || _loc2_.length == 0)
-         {
-            while(_loc1_.numChildren > _loc5_)
-            {
-               _loc1_.removeChildAt(_loc1_.numChildren - 1);
-            }
-            return;
-         }
-         StyleManager.getColorNames(_loc2_);
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         while(_loc4_ < rowCount)
-         {
-            _loc6_ = 0;
-            while(_loc6_ < columnCount)
-            {
-               _loc7_ = _loc4_ < rowCount - 1?Number(rowHeight):Number(Math.min(rowHeight,listContent.height - (rowCount - 1) * rowHeight));
-               _loc8_ = _loc6_ < columnCount - 1?Number(columnWidth):Number(Math.min(columnWidth,listContent.width - (columnCount - 1) * columnWidth));
-               _loc9_ = !!listItems[_loc4_]?listItems[_loc4_][_loc6_]:null;
-               _loc10_ = (verticalScrollPosition + _loc4_) * columnCount + (horizontalScrollPosition + _loc6_);
-               _loc11_ = drawTileBackground(_loc1_,_loc4_,_loc6_,_loc8_,_loc7_,_loc2_[_loc10_ % _loc2_.length],_loc9_);
-               _loc11_.y = _loc4_ * rowHeight;
-               _loc11_.x = _loc6_ * columnWidth;
-               _loc6_++;
-            }
-            _loc4_++;
-         }
-         _loc5_ = rowCount * columnCount;
-         while(_loc1_.numChildren > _loc5_)
-         {
-            _loc1_.removeChildAt(_loc1_.numChildren - 1);
-         }
-      }
-      
-      private function displayingPartialRow() : Boolean
-      {
-         var _loc2_:IListItemRenderer = null;
-         var _loc1_:Array = listItems[listItems.length - 1 - offscreenExtraRowsBottom];
-         if(Boolean(_loc1_) && _loc1_.length > 0)
-         {
-            _loc2_ = _loc1_[0];
-            if(!_loc2_ || _loc2_.y + _loc2_.height > listContent.heightExcludingOffsets - listContent.topOffset)
-            {
-               return true;
-            }
-         }
-         return false;
-      }
-      
-      override protected function createChildren() : void
-      {
-         super.createChildren();
-         listContent.mask = maskShape;
-      }
-      
-      override mx_internal function addClipMask(param1:Boolean) : void
-      {
-      }
-      
-      override protected function finishKeySelection() : void
-      {
-         var _loc1_:String = null;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc5_:IListItemRenderer = null;
-         var _loc6_:ListEvent = null;
-         var _loc2_:Boolean = false;
-         if(caretIndex < 0)
-         {
-            return;
-         }
-         _loc3_ = indexToRow(caretIndex);
-         _loc4_ = indexToColumn(caretIndex);
-         _loc5_ = listItems[_loc3_ - verticalScrollPosition + offscreenExtraRowsTop][_loc4_ - horizontalScrollPosition + offscreenExtraColumnsLeft];
-         if(!bCtrlKey)
-         {
-            selectItem(_loc5_,bShiftKey,bCtrlKey);
-            _loc2_ = true;
-         }
-         if(bCtrlKey)
-         {
-            _loc1_ = itemToUID(_loc5_.data);
-            drawItem(visibleData[_loc1_],selectedData[_loc1_] != null,false,true);
-         }
-         if(_loc2_)
-         {
-            _loc6_ = new ListEvent(ListEvent.CHANGE);
-            _loc6_.itemRenderer = _loc5_;
-            _loc6_.rowIndex = _loc3_;
-            _loc6_.columnIndex = _loc4_;
-            dispatchEvent(_loc6_);
-         }
-      }
-      
-      override protected function scrollPositionToIndex(param1:int, param2:int) : int
-      {
-         var _loc3_:int = 0;
-         if(iterator)
-         {
-            if(direction == TileBaseDirection.HORIZONTAL)
-            {
-               _loc3_ = param2 * columnCount + param1;
-            }
-            else
-            {
-               _loc3_ = param1 * rowCount + param2;
-            }
-            return _loc3_;
-         }
-         return -1;
-      }
-      
-      override protected function keyDownHandler(param1:KeyboardEvent) : void
-      {
-         var _loc2_:IListItemRenderer = null;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         if(!iteratorValid)
-         {
-            return;
-         }
-         if(!collection)
-         {
-            return;
-         }
-         switch(param1.keyCode)
-         {
-            case Keyboard.UP:
-            case Keyboard.DOWN:
-               moveSelectionVertically(param1.keyCode,param1.shiftKey,param1.ctrlKey);
-               param1.stopPropagation();
-               break;
-            case Keyboard.LEFT:
-            case Keyboard.RIGHT:
-               moveSelectionHorizontally(param1.keyCode,param1.shiftKey,param1.ctrlKey);
-               param1.stopPropagation();
-               break;
-            case Keyboard.END:
-            case Keyboard.HOME:
-            case Keyboard.PAGE_UP:
-            case Keyboard.PAGE_DOWN:
-               if(direction == TileBaseDirection.VERTICAL)
-               {
-                  moveSelectionHorizontally(param1.keyCode,param1.shiftKey,param1.ctrlKey);
-               }
-               else
-               {
-                  moveSelectionVertically(param1.keyCode,param1.shiftKey,param1.ctrlKey);
-               }
-               param1.stopPropagation();
-               break;
-            case Keyboard.SPACE:
-               if(caretIndex < 0)
-               {
-                  break;
-               }
-               _loc3_ = indexToRow(caretIndex);
-               _loc4_ = indexToColumn(caretIndex);
-               _loc2_ = listItems[_loc3_ - verticalScrollPosition][_loc4_ - horizontalScrollPosition];
-               selectItem(_loc2_,param1.shiftKey,param1.ctrlKey);
-               break;
-            default:
-               if(findKey(param1.keyCode))
-               {
-                  param1.stopPropagation();
-               }
-         }
-      }
-      
-      override protected function indexToColumn(param1:int) : int
-      {
-         var _loc3_:int = 0;
-         if(direction == TileBaseDirection.VERTICAL)
-         {
-            _loc3_ = maxRows > 0?int(maxRows):int(rowCount);
-            return Math.floor(param1 / _loc3_);
-         }
-         var _loc2_:int = maxColumns > 0?int(maxColumns):int(columnCount);
-         return param1 % _loc2_;
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         if(explicitColumnCount > 0 && Boolean(isNaN(explicitColumnWidth)))
-         {
-            setColumnWidth(Math.floor((width - viewMetrics.left - viewMetrics.right) / explicitColumnCount));
-         }
-         if(explicitRowCount > 0 && Boolean(isNaN(explicitRowHeight)))
-         {
-            setRowHeight(Math.floor((height - viewMetrics.top - viewMetrics.bottom) / explicitRowCount));
-         }
-         super.updateDisplayList(param1,param2);
-         drawTileBackgrounds();
-      }
-      
-      override protected function scrollHorizontally(param1:int, param2:int, param3:Boolean) : void
-      {
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:Number = NaN;
-         var _loc7_:String = null;
-         var _loc8_:int = 0;
-         var _loc9_:Number = NaN;
-         var _loc14_:int = 0;
-         var _loc15_:int = 0;
-         var _loc16_:int = 0;
-         var _loc20_:int = 0;
-         var _loc21_:int = 0;
-         var _loc22_:IListItemRenderer = null;
-         var _loc23_:int = 0;
-         var _loc24_:int = 0;
-         var _loc25_:Point = null;
-         var _loc26_:int = 0;
-         var _loc27_:IListItemRenderer = null;
-         var _loc28_:int = 0;
-         var _loc29_:int = 0;
-         if(param2 == 0)
-         {
-            return;
-         }
-         removeClipMask();
-         var _loc10_:int = offscreenExtraColumnsRight;
-         var _loc11_:int = offscreenExtraColumnsLeft;
-         var _loc12_:int = offscreenExtraColumns / 2;
-         var _loc13_:int = offscreenExtraColumns / 2;
-         if(param3)
-         {
-            offscreenExtraColumnsLeft = Math.min(_loc12_,offscreenExtraColumnsLeft + param2);
-            _loc14_ = param2 - (offscreenExtraColumnsLeft - _loc11_);
-            _loc15_ = _loc14_;
-         }
-         else
-         {
-            _loc20_ = Boolean(offscreenExtraColumnsRight == 0 && listItems[0]) && Boolean(listItems[0].length > 0) && Boolean(listItems[0][listItems[0].length - 1]) && listItems[0][listItems[0].length - 1].x + columnWidth < listContent.widthExcludingOffsets - listContent.leftOffset?1:0;
-            offscreenExtraColumnsLeft = Math.min(_loc12_,param1);
-            offscreenExtraColumnsRight = Math.min(offscreenExtraColumnsRight + param2 - _loc20_,_loc13_);
-            _loc14_ = param2 - (_loc11_ - offscreenExtraColumnsLeft);
-            _loc16_ = offscreenExtraColumnsLeft - _loc11_ + _loc20_ + (offscreenExtraColumnsRight - _loc10_);
-            _loc15_ = param2 - (offscreenExtraColumnsRight - _loc10_) - _loc20_;
-         }
-         var _loc17_:int = listItems[0].length;
-         var _loc18_:int = 0;
-         while(_loc18_ < _loc15_)
-         {
-            _loc21_ = 0;
-            while(_loc21_ < rowCount)
-            {
-               _loc22_ = !!param3?listItems[_loc21_][_loc18_]:listItems[_loc21_][_loc17_ - _loc18_ - 1];
-               if(_loc22_)
-               {
-                  delete visibleData[rowMap[_loc22_.name].uid];
-                  removeIndicators(rowMap[_loc22_.name].uid);
-                  addToFreeItemRenderers(_loc22_);
-                  delete rowMap[_loc22_.name];
-                  if(param3)
-                  {
-                     listItems[_loc21_][_loc18_] = null;
-                  }
-                  else
-                  {
-                     listItems[_loc21_][_loc17_ - _loc18_ - 1] = null;
-                  }
-               }
-               _loc21_++;
-            }
-            _loc18_++;
-         }
-         if(param3)
-         {
-            _loc9_ = _loc14_ * columnWidth;
-            _loc6_ = 0;
-            _loc18_ = _loc14_;
-            while(_loc18_ < _loc17_)
-            {
-               _loc21_ = 0;
-               while(_loc21_ < rowCount)
-               {
-                  _loc27_ = listItems[_loc21_][_loc18_];
-                  if(_loc27_)
-                  {
-                     _loc22_ = _loc27_;
-                     _loc22_.x = _loc22_.x - _loc9_;
-                     _loc7_ = rowMap[_loc22_.name].uid;
-                     listItems[_loc21_][_loc18_ - _loc14_] = _loc22_;
-                     rowMap[_loc22_.name].columnIndex = rowMap[_loc22_.name].columnIndex - _loc14_;
-                     moveIndicatorsHorizontally(_loc7_,-_loc9_);
-                  }
-                  else
-                  {
-                     listItems[_loc21_][_loc18_ - _loc14_] = null;
-                  }
-                  _loc21_++;
-               }
-               _loc6_ = _loc6_ + columnWidth;
-               _loc18_++;
-            }
-            _loc18_ = 0;
-            while(_loc18_ < _loc14_)
-            {
-               _loc21_ = 0;
-               while(_loc21_ < rowCount)
-               {
-                  listItems[_loc21_][_loc17_ - _loc18_ - 1] = null;
-                  _loc21_++;
-               }
-               _loc18_++;
-            }
-            _loc8_ = indicesToIndex(verticalScrollPosition,horizontalScrollPosition + _loc17_ - offscreenExtraColumnsLeft - _loc14_);
-            seekPositionSafely(_loc8_);
-            _loc23_ = param2 + (_loc13_ - _loc10_);
-            _loc24_ = !!listItems.length?int(listItems[0].length - _loc14_):0;
-            allowRendererStealingDuringLayout = false;
-            _loc25_ = makeRowsAndColumns(_loc6_,0,listContent.width,listContent.height,_loc17_ - _loc14_,0,true,_loc23_);
-            allowRendererStealingDuringLayout = true;
-            _loc26_ = listItems[0].length - (_loc24_ + _loc25_.x);
-            if(_loc26_)
-            {
-               _loc18_ = 0;
-               while(_loc18_ < listItems.length)
-               {
-                  _loc21_ = 0;
-                  while(_loc21_ < _loc26_)
-                  {
-                     listItems[_loc18_].pop();
-                     _loc21_++;
-                  }
-                  _loc18_++;
-               }
-            }
-            _loc8_ = indicesToIndex(verticalScrollPosition,horizontalScrollPosition - offscreenExtraColumnsLeft);
-            seekPositionSafely(_loc8_);
-            offscreenExtraColumnsRight = Math.max(0,_loc13_ - (_loc25_.x < param2?_loc23_ - _loc25_.x:0));
-         }
-         else
-         {
-            if(_loc16_ < 0)
-            {
-               _loc29_ = listItems[0].length + _loc16_;
-               _loc21_ = 0;
-               while(_loc21_ < rowCount)
-               {
-                  while(listItems[_loc21_].length > _loc29_)
-                  {
-                     listItems[_loc21_].pop();
-                  }
-                  _loc21_++;
-               }
-            }
-            _loc9_ = _loc14_ * columnWidth;
-            if(_loc14_)
-            {
-               _loc6_ = _loc9_;
-            }
-            _loc28_ = _loc17_ + _loc16_;
-            _loc18_ = _loc28_ - _loc14_ - 1;
-            while(_loc18_ >= 0)
-            {
-               _loc21_ = 0;
-               while(_loc21_ < rowCount)
-               {
-                  _loc22_ = listItems[_loc21_][_loc18_];
-                  if(_loc22_)
-                  {
-                     _loc22_.x = _loc22_.x + _loc9_;
-                     _loc7_ = rowMap[_loc22_.name].uid;
-                     listItems[_loc21_][_loc18_ + _loc14_] = _loc22_;
-                     rowMap[_loc22_.name].columnIndex = rowMap[_loc22_.name].columnIndex + _loc14_;
-                     moveIndicatorsHorizontally(_loc7_,_loc9_);
-                  }
-                  else
-                  {
-                     listItems[_loc21_][_loc18_ + _loc14_] = null;
-                  }
-                  _loc21_++;
-               }
-               _loc18_--;
-            }
-            _loc18_ = 0;
-            while(_loc18_ < _loc14_)
-            {
-               _loc21_ = 0;
-               while(_loc21_ < rowCount)
-               {
-                  listItems[_loc21_][_loc18_] = null;
-                  _loc21_++;
-               }
-               _loc18_++;
-            }
-            _loc8_ = indicesToIndex(verticalScrollPosition,horizontalScrollPosition - offscreenExtraColumnsLeft);
-            seekPositionSafely(_loc8_);
-            allowRendererStealingDuringLayout = false;
-            makeRowsAndColumns(0,0,_loc6_,listContent.height,0,0,true,_loc14_);
-            allowRendererStealingDuringLayout = true;
-            seekPositionSafely(_loc8_);
-         }
-         var _loc19_:Number = listContent.widthExcludingOffsets;
-         listContent.leftOffset = -columnWidth * offscreenExtraColumnsLeft;
-         listContent.rightOffset = !!offscreenExtraColumnsRight?Number(listItems[0][listItems[0].length - 1].x + listItems[0][listItems[0].length - 1].width + listContent.leftOffset - _loc19_):Number(0);
-         adjustListContent();
-         addClipMask(false);
-      }
-      
-      override mx_internal function adjustOffscreenRowsAndColumns() : void
-      {
-         if(direction == TileBaseDirection.VERTICAL)
-         {
-            offscreenExtraRows = 0;
-            offscreenExtraColumns = offscreenExtraRowsOrColumns;
-         }
-         else
-         {
-            offscreenExtraColumns = 0;
-            offscreenExtraRows = offscreenExtraRowsOrColumns;
-         }
-      }
-      
-      override protected function moveSelectionVertically(param1:uint, param2:Boolean, param3:Boolean) : void
-      {
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:IListItemRenderer = null;
-         var _loc7_:String = null;
-         var _loc8_:int = 0;
-         var _loc9_:Boolean = false;
-         var _loc11_:int = 0;
-         var _loc12_:int = 0;
-         var _loc17_:ScrollEvent = null;
-         var _loc10_:Boolean = false;
-         var _loc13_:int = listItems.length - offscreenExtraRowsTop - offscreenExtraRowsBottom;
-         var _loc14_:int = maxRows > 0 && direction != TileBaseDirection.HORIZONTAL?int(maxRows):int(_loc13_);
-         var _loc15_:int = !!displayingPartialRow()?1:0;
-         var _loc16_:int = !!displayingPartialColumn()?1:0;
-         if(!collection)
-         {
-            return;
-         }
-         showCaret = true;
-         switch(param1)
-         {
-            case Keyboard.UP:
-               if(caretIndex > 0)
-               {
-                  if(direction == TileBaseDirection.VERTICAL)
-                  {
-                     caretIndex--;
-                  }
-                  else
-                  {
-                     _loc11_ = indexToRow(caretIndex);
-                     _loc12_ = indexToColumn(caretIndex);
-                     if(_loc11_ == 0)
-                     {
-                        _loc12_--;
-                        _loc11_ = lastRowInColumn(_loc12_);
-                     }
-                     else
-                     {
-                        _loc11_--;
-                     }
-                     caretIndex = Math.min(indicesToIndex(_loc11_,_loc12_),collection.length - 1);
-                  }
-                  _loc11_ = indexToRow(caretIndex);
-                  _loc12_ = indexToColumn(caretIndex);
-                  if(_loc11_ < verticalScrollPosition)
-                  {
-                     _loc4_ = verticalScrollPosition - 1;
-                  }
-                  if(_loc11_ > verticalScrollPosition + _loc13_ - _loc15_)
-                  {
-                     _loc4_ = maxVerticalScrollPosition;
-                  }
-                  if(_loc12_ < horizontalScrollPosition)
-                  {
-                     _loc5_ = horizontalScrollPosition - 1;
-                  }
-               }
-               break;
-            case Keyboard.DOWN:
-               if(caretIndex < collection.length - 1)
-               {
-                  if(direction == TileBaseDirection.VERTICAL || caretIndex == -1)
-                  {
-                     caretIndex++;
-                  }
-                  else
-                  {
-                     _loc11_ = indexToRow(caretIndex);
-                     _loc12_ = indexToColumn(caretIndex);
-                     if(_loc11_ == lastRowInColumn(_loc12_))
-                     {
-                        _loc11_ = 0;
-                        _loc12_++;
-                     }
-                     else
-                     {
-                        _loc11_++;
-                     }
-                     caretIndex = Math.min(indicesToIndex(_loc11_,_loc12_),collection.length - 1);
-                  }
-                  _loc11_ = indexToRow(caretIndex);
-                  _loc12_ = indexToColumn(caretIndex);
-                  if(_loc11_ >= verticalScrollPosition + _loc13_ - _loc15_ && verticalScrollPosition < maxVerticalScrollPosition)
-                  {
-                     _loc4_ = verticalScrollPosition + 1;
-                  }
-                  if(_loc11_ < verticalScrollPosition)
-                  {
-                     _loc4_ = _loc11_;
-                  }
-                  if(_loc12_ > horizontalScrollPosition + columnCount - 1)
-                  {
-                     _loc5_ = horizontalScrollPosition + 1;
-                  }
-               }
-               break;
-            case Keyboard.PAGE_UP:
-               if(caretIndex < 0)
-               {
-                  caretIndex = scrollPositionToIndex(horizontalScrollPosition,verticalScrollPosition);
-               }
-               _loc11_ = indexToRow(caretIndex);
-               _loc12_ = indexToColumn(caretIndex);
-               if(verticalScrollPosition > 0)
-               {
-                  if(_loc11_ == verticalScrollPosition)
-                  {
-                     _loc4_ = _loc11_ = Math.max(verticalScrollPosition - (_loc13_ - _loc15_),0);
-                  }
-                  else
-                  {
-                     _loc11_ = verticalScrollPosition;
-                  }
-                  caretIndex = indicesToIndex(_loc11_,_loc12_);
-                  break;
-               }
-            case Keyboard.HOME:
-               if(collection.length)
-               {
-                  caretIndex = 0;
-                  _loc4_ = 0;
-                  _loc5_ = 0;
-               }
-               break;
-            case Keyboard.PAGE_DOWN:
-               if(caretIndex < 0)
-               {
-                  caretIndex = scrollPositionToIndex(horizontalScrollPosition,verticalScrollPosition);
-               }
-               _loc11_ = indexToRow(caretIndex);
-               _loc12_ = indexToColumn(caretIndex);
-               if(_loc11_ < maxVerticalScrollPosition)
-               {
-                  if(_loc11_ == verticalScrollPosition + (_loc13_ - _loc15_))
-                  {
-                     _loc4_ = Math.min(verticalScrollPosition + _loc13_ - _loc15_,maxVerticalScrollPosition);
-                     _loc11_ = verticalScrollPosition + _loc13_;
-                  }
-                  else
-                  {
-                     _loc11_ = Math.min(verticalScrollPosition + _loc13_ - _loc15_,indexToRow(collection.length - 1));
-                     if(_loc11_ == verticalScrollPosition + _loc13_ - _loc15_)
-                     {
-                        _loc4_ = Math.min(verticalScrollPosition + _loc13_ - _loc15_,maxVerticalScrollPosition);
-                     }
-                  }
-                  caretIndex = Math.min(indicesToIndex(_loc11_,_loc12_),collection.length - 1);
-                  break;
-               }
-            case Keyboard.END:
-               if(caretIndex < collection.length)
-               {
-                  caretIndex = collection.length - 1;
-                  _loc4_ = maxVerticalScrollPosition;
-                  _loc5_ = maxHorizontalScrollPosition;
-               }
-         }
-         if(!isNaN(_loc4_))
-         {
-            if(_loc4_ != verticalScrollPosition)
-            {
-               _loc17_ = new ScrollEvent(ScrollEvent.SCROLL);
-               _loc17_.detail = ScrollEventDetail.THUMB_POSITION;
-               _loc17_.direction = ScrollEventDirection.VERTICAL;
-               _loc17_.delta = _loc4_ - verticalScrollPosition;
-               _loc17_.position = _loc4_;
-               verticalScrollPosition = _loc4_;
-               dispatchEvent(_loc17_);
-            }
-         }
-         if(iteratorValid)
-         {
-            if(!isNaN(_loc5_))
-            {
-               if(_loc5_ != horizontalScrollPosition)
-               {
-                  _loc17_ = new ScrollEvent(ScrollEvent.SCROLL);
-                  _loc17_.detail = ScrollEventDetail.THUMB_POSITION;
-                  _loc17_.direction = ScrollEventDirection.HORIZONTAL;
-                  _loc17_.delta = _loc5_ - horizontalScrollPosition;
-                  _loc17_.position = _loc5_;
-                  horizontalScrollPosition = _loc5_;
-                  dispatchEvent(_loc17_);
-               }
-            }
-         }
-         if(!iteratorValid)
-         {
-            keySelectionPending = true;
-            return;
-         }
-         bShiftKey = param2;
-         bCtrlKey = param3;
-         lastKey = param1;
-         finishKeySelection();
-      }
-      
-      override protected function scrollVertically(param1:int, param2:int, param3:Boolean) : void
-      {
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:Number = NaN;
-         var _loc7_:String = null;
-         var _loc8_:int = 0;
-         var _loc9_:Number = NaN;
-         var _loc14_:int = 0;
-         var _loc15_:int = 0;
-         var _loc16_:int = 0;
-         var _loc21_:int = 0;
-         var _loc22_:int = 0;
-         var _loc23_:IListItemRenderer = null;
-         var _loc24_:int = 0;
-         var _loc25_:Point = null;
-         var _loc26_:int = 0;
-         removeClipMask();
-         var _loc10_:int = offscreenExtraRowsBottom;
-         var _loc11_:int = offscreenExtraRowsTop;
-         var _loc12_:int = offscreenExtraRows / 2;
-         var _loc13_:int = offscreenExtraRows / 2;
-         if(param3)
-         {
-            offscreenExtraRowsTop = Math.min(_loc12_,offscreenExtraRowsTop + param2);
-            _loc14_ = param2 - (offscreenExtraRowsTop - _loc11_);
-            _loc15_ = _loc14_;
-         }
-         else
-         {
-            _loc21_ = Boolean(offscreenExtraRowsBottom == 0) && Boolean(listItems.length) && Boolean(listItems[listItems.length - 1][0]) && listItems[listItems.length - 1][0].y + rowHeight < listContent.heightExcludingOffsets - listContent.topOffset?1:0;
-            offscreenExtraRowsTop = Math.min(_loc12_,param1);
-            offscreenExtraRowsBottom = Math.min(offscreenExtraRowsBottom + param2 - _loc21_,_loc13_);
-            _loc14_ = param2 - (_loc11_ - offscreenExtraRowsTop);
-            _loc16_ = offscreenExtraRowsTop - _loc11_ + _loc21_ + (offscreenExtraRowsBottom - _loc10_);
-            _loc15_ = param2 - (offscreenExtraRowsBottom - _loc10_) - _loc21_;
-         }
-         var _loc17_:int = listItems.length;
-         var _loc18_:int = 0;
-         while(_loc18_ < _loc15_)
-         {
-            _loc5_ = !!param3?int(listItems[_loc18_].length):int(listItems[_loc17_ - _loc18_ - 1].length);
-            _loc22_ = 0;
-            while(_loc22_ < columnCount && _loc22_ < _loc5_)
-            {
-               _loc23_ = !!param3?listItems[_loc18_][_loc22_]:listItems[_loc17_ - _loc18_ - 1][_loc22_];
-               if(_loc23_)
-               {
-                  delete visibleData[rowMap[_loc23_.name].uid];
-                  removeIndicators(rowMap[_loc23_.name].uid);
-                  addToFreeItemRenderers(_loc23_);
-                  delete rowMap[_loc23_.name];
-                  if(param3)
-                  {
-                     listItems[_loc18_][_loc22_] = null;
-                  }
-                  else
-                  {
-                     listItems[_loc17_ - _loc18_ - 1][_loc22_] = null;
-                  }
-               }
-               _loc22_++;
-            }
-            _loc18_++;
-         }
-         var _loc19_:int = listItems.length;
-         if(param3)
-         {
-            _loc9_ = _loc14_ * rowHeight;
-            _loc6_ = 0;
-            _loc18_ = _loc14_;
-            while(_loc18_ < _loc19_)
-            {
-               _loc5_ = listItems[_loc18_].length;
-               _loc22_ = 0;
-               while(_loc22_ < columnCount && _loc22_ < _loc5_)
-               {
-                  _loc23_ = listItems[_loc18_][_loc22_];
-                  listItems[_loc18_ - _loc14_][_loc22_] = _loc23_;
-                  if(_loc23_)
-                  {
-                     _loc23_.y = _loc23_.y - _loc9_;
-                     rowMap[_loc23_.name].rowIndex = rowMap[_loc23_.name].rowIndex - _loc14_;
-                     moveIndicatorsVertically(rowMap[_loc23_.name].uid,-_loc9_);
-                  }
-                  _loc22_++;
-               }
-               if(_loc5_ < columnCount)
-               {
-                  _loc22_ = _loc5_;
-                  while(_loc22_ < columnCount)
-                  {
-                     listItems[_loc18_ - _loc14_][_loc22_] = null;
-                     _loc22_++;
-                  }
-               }
-               rowInfo[_loc18_ - _loc14_] = rowInfo[_loc18_];
-               rowInfo[_loc18_ - _loc14_].y = rowInfo[_loc18_ - _loc14_].y - _loc9_;
-               _loc6_ = rowInfo[_loc18_ - _loc14_].y + rowHeight;
-               _loc18_++;
-            }
-            listItems.splice(_loc19_ - _loc14_ - 1,_loc14_);
-            rowInfo.splice(_loc19_ - _loc14_ - 1,_loc14_);
-            _loc8_ = indicesToIndex(verticalScrollPosition - offscreenExtraRowsTop + _loc19_ - _loc14_,horizontalScrollPosition);
-            seekPositionSafely(_loc8_);
-            _loc24_ = param2 + (_loc13_ - _loc10_);
-            _loc25_ = makeRowsAndColumns(0,_loc6_,listContent.width,_loc6_ + param2 * rowHeight,0,_loc19_ - _loc14_,true,_loc24_);
-            _loc26_ = _loc24_ - _loc25_.y;
-            while(_loc26_--)
-            {
-               listItems.pop();
-               rowInfo.pop();
-            }
-            _loc8_ = indicesToIndex(verticalScrollPosition - offscreenExtraRowsTop,horizontalScrollPosition);
-            seekPositionSafely(_loc8_);
-            offscreenExtraRowsBottom = Math.max(0,_loc13_ - (_loc25_.y < param2?_loc24_ - _loc25_.y:0));
-         }
-         else
-         {
-            if(_loc16_ < 0)
-            {
-               listItems.splice(listItems.length + _loc16_,-_loc16_);
-               rowInfo.splice(rowInfo.length + _loc16_,-_loc16_);
-            }
-            else if(_loc16_ > 0)
-            {
-               _loc18_ = 0;
-               while(_loc18_ < _loc16_)
-               {
-                  listItems[_loc19_ + _loc18_] = [];
-                  _loc18_++;
-               }
-            }
-            _loc9_ = _loc14_ * rowHeight;
-            _loc6_ = rowInfo[_loc14_].y;
-            _loc18_ = listItems.length - 1 - _loc14_;
-            while(_loc18_ >= 0)
-            {
-               _loc5_ = listItems[_loc18_].length;
-               _loc22_ = 0;
-               while(_loc22_ < columnCount && _loc22_ < _loc5_)
-               {
-                  _loc23_ = listItems[_loc18_][_loc22_];
-                  if(_loc23_)
-                  {
-                     _loc23_.y = _loc23_.y + _loc9_;
-                     rowMap[_loc23_.name].rowIndex = rowMap[_loc23_.name].rowIndex + _loc14_;
-                     _loc7_ = rowMap[_loc23_.name].uid;
-                     listItems[_loc18_ + _loc14_][_loc22_] = _loc23_;
-                     moveIndicatorsVertically(_loc7_,_loc9_);
-                  }
-                  else
-                  {
-                     listItems[_loc18_ + _loc14_][_loc22_] = null;
-                  }
-                  _loc22_++;
-               }
-               rowInfo[_loc18_ + _loc14_] = rowInfo[_loc18_];
-               rowInfo[_loc18_ + _loc14_].y = rowInfo[_loc18_ + _loc14_].y + _loc9_;
-               _loc18_--;
-            }
-            _loc18_ = 0;
-            while(_loc18_ < _loc14_)
-            {
-               _loc22_ = 0;
-               while(_loc22_ < columnCount)
-               {
-                  listItems[_loc18_][_loc22_] = null;
-                  _loc22_++;
-               }
-               _loc18_++;
-            }
-            _loc8_ = indicesToIndex(verticalScrollPosition - offscreenExtraRowsTop,horizontalScrollPosition);
-            seekPositionSafely(_loc8_);
-            allowRendererStealingDuringLayout = false;
-            _loc25_ = makeRowsAndColumns(0,0,listContent.width,_loc6_,0,0,true,_loc14_);
-            allowRendererStealingDuringLayout = true;
-            seekPositionSafely(_loc8_);
-         }
-         var _loc20_:Number = listContent.heightExcludingOffsets;
-         listContent.topOffset = -rowHeight * offscreenExtraRowsTop;
-         listContent.bottomOffset = !!offscreenExtraRowsBottom?Number(rowInfo[rowInfo.length - 1].y + rowHeight + listContent.topOffset - _loc20_):Number(0);
-         adjustListContent();
-         addClipMask(false);
-      }
-      
-      override public function showDropFeedback(param1:DragEvent) : void
-      {
-         var _loc7_:Class = null;
-         var _loc8_:EdgeMetrics = null;
-         if(!dropIndicator)
-         {
-            _loc7_ = getStyle("dropIndicatorSkin");
-            if(!_loc7_)
-            {
-               _loc7_ = ListDropIndicator;
-            }
-            dropIndicator = IFlexDisplayObject(new _loc7_());
-            _loc8_ = viewMetrics;
-            drawFocus(true);
-            dropIndicator.x = 2;
-            if(direction == TileBaseDirection.HORIZONTAL)
-            {
-               dropIndicator.setActualSize(rowHeight - 4,4);
-               DisplayObject(dropIndicator).rotation = 90;
-            }
-            else
-            {
-               dropIndicator.setActualSize(columnWidth - 4,4);
-            }
-            dropIndicator.visible = true;
-            listContent.addChild(DisplayObject(dropIndicator));
-            if(collection)
-            {
-               dragScrollingInterval = setInterval(dragScroll,15);
-            }
-         }
-         var _loc2_:int = calculateDropIndex(param1);
-         var _loc3_:int = indexToRow(_loc2_);
-         var _loc4_:int = indexToColumn(_loc2_);
-         _loc3_ = _loc3_ - (verticalScrollPosition - offscreenExtraRowsTop);
-         _loc4_ = _loc4_ - (horizontalScrollPosition - offscreenExtraColumnsLeft);
-         var _loc5_:Number = listItems.length;
-         if(_loc3_ >= _loc5_)
-         {
-            _loc3_ = _loc5_ - 1;
-         }
-         var _loc6_:Number = !!_loc5_?Number(listItems[0].length):Number(0);
-         if(_loc4_ > _loc6_)
-         {
-            _loc4_ = _loc6_;
-         }
-         dropIndicator.x = Boolean(_loc6_) && Boolean(listItems[_loc3_].length) && Boolean(listItems[_loc3_][_loc4_])?Number(listItems[_loc3_][_loc4_].x):Number(_loc4_ * columnWidth);
-         dropIndicator.y = Boolean(_loc5_) && Boolean(listItems[_loc3_].length) && Boolean(listItems[_loc3_][0])?Number(listItems[_loc3_][0].y):Number(_loc3_ * rowHeight);
-      }
-      
-      public function set maxColumns(param1:int) : void
-      {
-         if(_maxColumns != param1)
-         {
-            _maxColumns = param1;
+            invalidateProperties();
             invalidateSize();
             invalidateDisplayList();
-         }
-      }
-      
-      override protected function configureScrollBars() : void
-      {
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc8_:int = 0;
-         var _loc9_:int = 0;
-         var _loc10_:int = 0;
-         var _loc11_:int = 0;
-         var _loc12_:int = 0;
-         var _loc1_:int = listItems.length;
-         if(_loc1_ == 0)
-         {
+            dispatchEvent(new Event("directionChanged"));
             return;
-         }
-         var _loc2_:int = listItems[0].length;
-         if(_loc2_ == 0)
-         {
-            return;
-         }
-         if(_loc1_ > 1 && (_loc1_ - offscreenExtraRowsTop - offscreenExtraRowsBottom) * rowHeight > listContent.heightExcludingOffsets)
-         {
-            _loc1_--;
-         }
-         _loc1_ = _loc1_ - (offscreenExtraRowsTop + offscreenExtraRowsBottom);
-         if(_loc2_ > 1 && (_loc2_ - offscreenExtraColumnsLeft - offscreenExtraColumnsRight) * columnWidth > listContent.widthExcludingOffsets)
-         {
-            _loc2_--;
-         }
-         _loc2_ = _loc2_ - (offscreenExtraColumnsLeft + offscreenExtraColumnsRight);
-         var _loc3_:Object = horizontalScrollBar;
-         var _loc4_:Object = verticalScrollBar;
-         if(direction == TileBaseDirection.VERTICAL)
-         {
-            if(Boolean(iteratorValid) && horizontalScrollPosition > 0)
+        }// end function
+
+        public function get direction() : String
+        {
+            return _direction;
+        }// end function
+
+        public function reconstructDataFromListItems() : Array
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            if (direction == TileBaseDirection.HORIZONTAL || !listItems)
             {
-               _loc8_ = 0;
-               while(_loc2_ > 0 && listItems[0][_loc2_ + offscreenExtraColumnsLeft - 1] == null)
-               {
-                  _loc2_--;
-                  _loc8_++;
-               }
-               _loc9_ = Math.floor(listContent.widthExcludingOffsets / columnWidth);
-               _loc10_ = Math.max(0,_loc9_ - (_loc2_ + _loc8_));
-               if(Boolean(_loc8_) || Boolean(_loc10_))
-               {
-                  _loc11_ = 0;
-                  while(_loc11_ < listItems.length)
-                  {
-                     while(listItems[_loc11_].length > _loc2_ + offscreenExtraColumnsLeft)
-                     {
-                        (listItems[_loc11_] as Array).pop();
-                     }
-                     _loc11_++;
-                  }
-                  if(!runningDataEffect)
-                  {
-                     horizontalScrollPosition = Math.max(0,horizontalScrollPosition - (_loc8_ + _loc10_));
-                     _loc7_ = scrollPositionToIndex(Math.max(0,horizontalScrollPosition - offscreenExtraColumnsLeft),verticalScrollPosition);
-                     seekPositionSafely(_loc7_);
-                     updateList();
-                  }
-                  return;
-               }
+                return super.reconstructDataFromListItems();
             }
-            if(!iteratorValid)
+            var _loc_1:* = [];
+            if (listItems.length > 0)
             {
-               _loc1_ = Math.floor(listContent.heightExcludingOffsets / rowHeight);
-            }
-            _loc5_ = maxRows > 0?int(maxRows):int(_loc1_);
-            _loc6_ = !!collection?int(Math.ceil(collection.length / _loc5_)):int(_loc2_);
-         }
-         else
-         {
-            if(Boolean(iteratorValid) && verticalScrollPosition > 0)
-            {
-               _loc12_ = 0;
-               while(_loc1_ > 0 && (listItems[_loc1_ + offscreenExtraRowsTop - 1] == null || listItems[_loc1_ + offscreenExtraRowsTop - 1][0] == null))
-               {
-                  _loc1_--;
-                  _loc12_++;
-               }
-               if(_loc12_)
-               {
-                  while(listItems.length > _loc1_ + offscreenExtraRowsTop)
-                  {
-                     listItems.pop();
-                     rowInfo.pop();
-                  }
-                  if(!runningDataEffect)
-                  {
-                     verticalScrollPosition = Math.max(0,verticalScrollPosition - _loc12_);
-                     _loc7_ = scrollPositionToIndex(horizontalScrollPosition,Math.max(0,verticalScrollPosition - offscreenExtraRowsTop));
-                     seekPositionSafely(_loc7_);
-                     updateList();
-                  }
-                  return;
-               }
-            }
-            if(!iteratorValid)
-            {
-               _loc2_ = Math.floor(listContent.widthExcludingOffsets / columnWidth);
-            }
-            _loc6_ = maxColumns > 0?int(maxColumns):int(_loc2_);
-            _loc5_ = !!collection?int(Math.ceil(collection.length / _loc6_)):int(_loc1_);
-         }
-         maxHorizontalScrollPosition = Math.max(0,_loc6_ - _loc2_);
-         maxVerticalScrollPosition = Math.max(0,_loc5_ - _loc1_);
-         setScrollBarProperties(_loc6_,_loc2_,_loc5_,_loc1_);
-      }
-      
-      override protected function indexToRow(param1:int) : int
-      {
-         var _loc3_:int = 0;
-         if(direction == TileBaseDirection.VERTICAL)
-         {
-            _loc3_ = maxRows > 0?int(maxRows):int(rowCount);
-            return param1 % _loc3_;
-         }
-         var _loc2_:int = maxColumns > 0?int(maxColumns):int(columnCount);
-         return Math.floor(param1 / _loc2_);
-      }
-      
-      private function displayingPartialColumn() : Boolean
-      {
-         var _loc1_:IListItemRenderer = null;
-         if(Boolean(listItems[0]) && listItems[0].length > 0)
-         {
-            _loc1_ = listItems[0][listItems[0].length - 1 - offscreenExtraColumnsRight];
-            if(Boolean(_loc1_) && _loc1_.x + _loc1_.width > listContent.widthExcludingOffsets - listContent.leftOffset)
-            {
-               return true;
-            }
-         }
-         return false;
-      }
-      
-      override protected function scrollHandler(param1:Event) : void
-      {
-         var scrollBar:ScrollBar = null;
-         var pos:Number = NaN;
-         var delta:int = 0;
-         var startIndex:int = 0;
-         var o:EdgeMetrics = null;
-         var bookmark:CursorBookmark = null;
-         var event:Event = param1;
-         if(event is ScrollEvent)
-         {
-            if(!liveScrolling && ScrollEvent(event).detail == ScrollEventDetail.THUMB_TRACK)
-            {
-               return;
-            }
-            scrollBar = ScrollBar(event.target);
-            pos = scrollBar.scrollPosition;
-            if(scrollBar == verticalScrollBar)
-            {
-               delta = pos - verticalScrollPosition;
-               super.scrollHandler(event);
-               if(Math.abs(delta) >= listItems.length || !iteratorValid)
-               {
-                  startIndex = indicesToIndex(pos,horizontalScrollPosition);
-                  try
-                  {
-                     iterator.seek(CursorBookmark.FIRST,startIndex);
-                     if(!iteratorValid)
-                     {
-                        iteratorValid = true;
-                        lastSeekPending = null;
-                     }
-                  }
-                  catch(e:ItemPendingError)
-                  {
-                     lastSeekPending = new ListBaseSeekPending(CursorBookmark.FIRST,startIndex);
-                     e.addResponder(new ItemResponder(seekPendingResultHandler,seekPendingFailureHandler,lastSeekPending));
-                     iteratorValid = false;
-                  }
-                  bookmark = iterator.bookmark;
-                  clearIndicators();
-                  clearVisibleData();
-                  makeRowsAndColumns(0,0,listContent.width,listContent.height,0,0);
-                  iterator.seek(bookmark,0);
-                  drawRowBackgrounds();
-               }
-               else if(delta != 0)
-               {
-                  scrollVertically(pos,Math.abs(delta),delta > 0);
-               }
-            }
-            else
-            {
-               delta = pos - horizontalScrollPosition;
-               super.scrollHandler(event);
-               if(Math.abs(delta) >= listItems[0].length || !iteratorValid)
-               {
-                  startIndex = indicesToIndex(verticalScrollPosition,pos);
-                  try
-                  {
-                     iterator.seek(CursorBookmark.FIRST,startIndex);
-                     if(!iteratorValid)
-                     {
-                        iteratorValid = true;
-                        lastSeekPending = null;
-                     }
-                  }
-                  catch(e:ItemPendingError)
-                  {
-                     lastSeekPending = new ListBaseSeekPending(CursorBookmark.FIRST,startIndex);
-                     e.addResponder(new ItemResponder(seekPendingResultHandler,seekPendingFailureHandler,lastSeekPending));
-                     iteratorValid = false;
-                  }
-                  bookmark = iterator.bookmark;
-                  clearIndicators();
-                  clearVisibleData();
-                  makeRowsAndColumns(0,0,listContent.width,listContent.height,0,0);
-                  iterator.seek(bookmark,0);
-                  drawRowBackgrounds();
-               }
-               else if(delta != 0)
-               {
-                  scrollHorizontally(pos,Math.abs(delta),delta > 0);
-               }
-            }
-         }
-      }
-      
-      mx_internal function purgeMeasuringRenderers() : void
-      {
-         var _loc1_:IListItemRenderer = null;
-         for each(_loc1_ in measuringObjects)
-         {
-            if(_loc1_.parent)
-            {
-               _loc1_.parent.removeChild(DisplayObject(_loc1_));
-            }
-         }
-         if(!measuringObjects)
-         {
-            measuringObjects = new Dictionary(true);
-         }
-      }
-      
-      override public function itemRendererToIndex(param1:IListItemRenderer) : int
-      {
-         var _loc2_:String = null;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         if(runningDataEffect)
-         {
-            _loc2_ = itemToUID(dataItemWrappersByRenderer[param1]);
-         }
-         else
-         {
-            _loc2_ = itemToUID(param1.data);
-         }
-         var _loc3_:int = listItems.length;
-         var _loc4_:int = 0;
-         while(_loc4_ < listItems.length)
-         {
-            _loc5_ = listItems[_loc4_].length;
-            _loc6_ = 0;
-            while(_loc6_ < _loc5_)
-            {
-               if(Boolean(listItems[_loc4_][_loc6_]) && rowMap[listItems[_loc4_][_loc6_].name].uid == _loc2_)
-               {
-                  if(direction == TileBaseDirection.VERTICAL)
-                  {
-                     return (_loc6_ + horizontalScrollPosition - offscreenExtraColumnsLeft) * Math.max(maxRows,rowCount) + _loc4_;
-                  }
-                  return (_loc4_ + verticalScrollPosition - offscreenExtraRowsTop) * Math.max(maxColumns,columnCount) + _loc6_;
-               }
-               _loc6_++;
-            }
-            _loc4_++;
-         }
-         return -1;
-      }
-      
-      override public function measureHeightOfItems(param1:int = -1, param2:int = 0) : Number
-      {
-         var _loc3_:Number = NaN;
-         var _loc7_:Object = null;
-         var _loc8_:Object = null;
-         var _loc9_:IFactory = null;
-         var _loc10_:IListItemRenderer = null;
-         var _loc4_:Boolean = false;
-         if(Boolean(collection) && Boolean(collection.length))
-         {
-            _loc7_ = iterator.current;
-            _loc8_ = _loc7_ is ItemWrapper?_loc7_.data:_loc7_;
-            _loc9_ = getItemRendererFactory(_loc8_);
-            _loc10_ = measuringObjects[_loc9_];
-            if(_loc10_ == null)
-            {
-               _loc10_ = getMeasuringRenderer(_loc8_);
-               _loc4_ = true;
-            }
-            setupRendererFromData(_loc10_,_loc8_);
-            _loc3_ = _loc10_.getExplicitOrMeasuredHeight();
-            if(_loc4_)
-            {
-               _loc10_.setActualSize(_loc10_.getExplicitOrMeasuredWidth(),_loc3_);
-               _loc4_ = false;
-            }
-         }
-         if(Boolean(isNaN(_loc3_)) || _loc3_ == 0)
-         {
-            _loc3_ = 50;
-         }
-         var _loc5_:Number = getStyle("paddingTop");
-         var _loc6_:Number = getStyle("paddingBottom");
-         _loc3_ = _loc3_ + (_loc5_ + _loc6_);
-         return _loc3_ * param2;
-      }
-      
-      mx_internal function getMeasuringRenderer(param1:Object) : IListItemRenderer
-      {
-         var _loc2_:IListItemRenderer = null;
-         if(!measuringObjects)
-         {
-            measuringObjects = new Dictionary(true);
-         }
-         var _loc3_:IFactory = getItemRendererFactory(param1);
-         _loc2_ = measuringObjects[_loc3_];
-         if(!_loc2_)
-         {
-            _loc2_ = createItemRenderer(param1);
-            _loc2_.owner = this;
-            _loc2_.name = "hiddenItem";
-            _loc2_.visible = false;
-            _loc2_.styleName = listContent;
-            listContent.addChild(DisplayObject(_loc2_));
-            measuringObjects[_loc3_] = _loc2_;
-         }
-         return _loc2_;
-      }
-      
-      private function getPreparedItemRenderer(param1:int, param2:int, param3:Object, param4:Object, param5:String) : IListItemRenderer
-      {
-         var _loc7_:IListItemRenderer = null;
-         var _loc8_:ListData = null;
-         var _loc9_:ListData = null;
-         var _loc6_:IListItemRenderer = listItems[param1][param2];
-         if(_loc6_)
-         {
-            if(!!runningDataEffect?dataItemWrappersByRenderer[_loc6_] != param3:_loc6_.data != param4)
-            {
-               addToFreeItemRenderers(_loc6_);
-            }
-            else
-            {
-               _loc7_ = _loc6_;
-            }
-         }
-         if(!_loc7_)
-         {
-            if(allowRendererStealingDuringLayout)
-            {
-               _loc7_ = visibleData[param5];
-               if(!_loc7_ && param3 != param4)
-               {
-                  _loc7_ = visibleData[itemToUID(param4)];
-               }
-            }
-            if(_loc7_)
-            {
-               _loc9_ = ListData(rowMap[_loc7_.name]);
-               if(_loc9_)
-               {
-                  if(direction == TileBaseDirection.HORIZONTAL && (_loc9_.rowIndex > param1 || _loc9_.rowIndex == param1 && _loc9_.columnIndex > param2) || direction == TileBaseDirection.VERTICAL && (_loc9_.columnIndex > param2 || _loc9_.columnIndex == param2 && _loc9_.rowIndex > param1))
-                  {
-                     listItems[_loc9_.rowIndex][_loc9_.columnIndex] = null;
-                  }
-                  else
-                  {
-                     _loc7_ = null;
-                  }
-               }
-            }
-            if(!_loc7_)
-            {
-               _loc7_ = getReservedOrFreeItemRenderer(param3);
-               if(Boolean(_loc7_) && !isRendererUnconstrained(_loc7_))
-               {
-                  _loc7_.x = 0;
-                  _loc7_.y = 0;
-               }
-            }
-            if(!_loc7_)
-            {
-               _loc7_ = createItemRenderer(param4);
-            }
-            _loc7_.owner = this;
-            _loc7_.styleName = listContent;
-         }
-         if(!_loc7_.parent)
-         {
-            listContent.addChild(DisplayObject(_loc7_));
-         }
-         _loc8_ = ListData(makeListData(param4,param5,param1,param2));
-         rowMap[_loc7_.name] = _loc8_;
-         if(_loc7_ is IDropInListItemRenderer)
-         {
-            IDropInListItemRenderer(_loc7_).listData = !!param4?_loc8_:null;
-         }
-         _loc7_.data = param4;
-         if(param3 != param4)
-         {
-            dataItemWrappersByRenderer[_loc7_] = param3;
-         }
-         _loc7_.visible = true;
-         if(param5)
-         {
-            visibleData[param5] = _loc7_;
-         }
-         listItems[param1][param2] = _loc7_;
-         UIComponentGlobals.layoutManager.validateClient(_loc7_,true);
-         return _loc7_;
-      }
-      
-      private function placeAndDrawItemRenderer(param1:IListItemRenderer, param2:Number, param3:Number, param4:String) : void
-      {
-         var _loc8_:Number = NaN;
-         var _loc5_:* = false;
-         var _loc6_:* = false;
-         var _loc7_:* = false;
-         _loc8_ = param1.getExplicitOrMeasuredHeight();
-         if(param1.width != columnWidth || _loc8_ != rowHeight - cachedPaddingTop - cachedPaddingBottom)
-         {
-            param1.setActualSize(columnWidth,rowHeight - cachedPaddingTop - cachedPaddingBottom);
-         }
-         if(!isRendererUnconstrained(param1))
-         {
-            param1.move(param2,param3 + cachedPaddingTop);
-         }
-         _loc5_ = selectedData[param4] != null;
-         if(runningDataEffect)
-         {
-            _loc5_ = Boolean(Boolean(_loc5_) || selectedData[itemToUID(param1.data)] != null);
-            _loc5_ = Boolean(Boolean(_loc5_) && !getRendererSemanticValue(param1,ModifiedCollectionView.REPLACEMENT) && !getRendererSemanticValue(param1,ModifiedCollectionView.ADDED));
-         }
-         _loc6_ = highlightUID == param4;
-         _loc7_ = caretUID == param4;
-         if(param4)
-         {
-            drawItem(param1,_loc5_,_loc6_,_loc7_);
-         }
-      }
-      
-      override protected function makeRowsAndColumns(param1:Number, param2:Number, param3:Number, param4:Number, param5:int, param6:int, param7:Boolean = false, param8:uint = 0) : Point
-      {
-         var _loc9_:int = 0;
-         var _loc10_:int = 0;
-         var _loc11_:int = 0;
-         var _loc12_:int = 0;
-         var _loc13_:Number = NaN;
-         var _loc14_:Number = NaN;
-         var _loc15_:Object = null;
-         var _loc16_:Object = null;
-         var _loc17_:String = null;
-         var _loc18_:IListItemRenderer = null;
-         var _loc19_:IListItemRenderer = null;
-         var _loc20_:Boolean = false;
-         var _loc21_:Boolean = false;
-         var _loc22_:int = 0;
-         var _loc23_:Number = NaN;
-         var _loc24_:int = 0;
-         var _loc25_:int = 0;
-         var _loc29_:Array = null;
-         var _loc26_:Boolean = false;
-         var _loc27_:Boolean = false;
-         var _loc28_:Boolean = false;
-         if(columnWidth == 0 || rowHeight == 0)
-         {
-            return null;
-         }
-         invalidateSizeFlag = true;
-         allowItemSizeChangeNotification = false;
-         if(direction == TileBaseDirection.VERTICAL)
-         {
-            _loc9_ = maxRows > 0?int(maxRows):int(Math.max(Math.floor(listContent.heightExcludingOffsets / rowHeight),1));
-            _loc10_ = Math.max(Math.ceil(listContent.widthExcludingOffsets / columnWidth),1);
-            setRowCount(_loc9_);
-            setColumnCount(_loc10_);
-            _loc11_ = param5;
-            _loc13_ = param1;
-            _loc25_ = _loc11_ - 1;
-            _loc20_ = iterator != null && !iterator.afterLast && Boolean(iteratorValid);
-            while(Boolean(param7) && Boolean(param8--) || !param7 && _loc11_ < _loc10_ + param5)
-            {
-               _loc12_ = param6;
-               _loc14_ = param2;
-               while(_loc12_ < _loc9_)
-               {
-                  _loc21_ = _loc20_;
-                  _loc15_ = !!_loc20_?iterator.current:null;
-                  _loc16_ = _loc15_ is ItemWrapper?_loc15_.data:_loc15_;
-                  _loc20_ = moveNextSafely(_loc20_);
-                  if(!listItems[_loc12_])
-                  {
-                     listItems[_loc12_] = [];
-                  }
-                  if(Boolean(_loc21_) && _loc14_ < param4)
-                  {
-                     _loc17_ = itemToUID(_loc15_);
-                     rowInfo[_loc12_] = new ListRowInfo(_loc14_,rowHeight,_loc17_);
-                     _loc19_ = getPreparedItemRenderer(_loc12_,_loc11_,_loc15_,_loc16_,_loc17_);
-                     placeAndDrawItemRenderer(_loc19_,_loc13_,_loc14_,_loc17_);
-                     _loc25_ = Math.max(_loc11_,_loc25_);
-                  }
-                  else
-                  {
-                     _loc18_ = listItems[_loc12_][_loc11_];
-                     if(_loc18_)
-                     {
-                        addToFreeItemRenderers(_loc18_);
-                        listItems[_loc12_][_loc11_] = null;
-                     }
-                     rowInfo[_loc12_] = new ListRowInfo(_loc14_,rowHeight,_loc17_);
-                  }
-                  _loc14_ = _loc14_ + rowHeight;
-                  _loc12_++;
-               }
-               _loc11_++;
-               if(param6)
-               {
-                  _loc22_ = 0;
-                  while(_loc22_ < param6)
-                  {
-                     _loc20_ = moveNextSafely(_loc20_);
-                     _loc22_++;
-                  }
-               }
-               _loc13_ = _loc13_ + columnWidth;
-            }
-         }
-         else
-         {
-            _loc10_ = maxColumns > 0?int(maxColumns):int(Math.max(Math.floor(listContent.widthExcludingOffsets / columnWidth),1));
-            _loc9_ = Math.max(Math.ceil(listContent.heightExcludingOffsets / rowHeight),1);
-            setColumnCount(_loc10_);
-            setRowCount(_loc9_);
-            _loc12_ = param6;
-            _loc14_ = param2;
-            _loc20_ = iterator != null && !iterator.afterLast && Boolean(iteratorValid);
-            _loc24_ = _loc12_ - 1;
-            while(Boolean(param7) && Boolean(param8--) || !param7 && _loc12_ < _loc9_ + param6)
-            {
-               _loc11_ = param5;
-               _loc13_ = param1;
-               rowInfo[_loc12_] = null;
-               while(_loc11_ < _loc10_)
-               {
-                  _loc21_ = _loc20_;
-                  _loc15_ = !!_loc20_?iterator.current:null;
-                  _loc16_ = _loc15_ is ItemWrapper?_loc15_.data:_loc15_;
-                  _loc20_ = moveNextSafely(_loc20_);
-                  if(!listItems[_loc12_])
-                  {
-                     listItems[_loc12_] = [];
-                  }
-                  if(Boolean(_loc21_) && _loc13_ < param3)
-                  {
-                     _loc17_ = itemToUID(_loc15_);
-                     if(!rowInfo[_loc12_])
-                     {
-                        rowInfo[_loc12_] = new ListRowInfo(_loc14_,rowHeight,_loc17_);
-                     }
-                     _loc19_ = getPreparedItemRenderer(_loc12_,_loc11_,_loc15_,_loc16_,_loc17_);
-                     placeAndDrawItemRenderer(_loc19_,_loc13_,_loc14_,_loc17_);
-                     _loc24_ = _loc12_;
-                  }
-                  else
-                  {
-                     if(!rowInfo[_loc12_])
-                     {
-                        rowInfo[_loc12_] = new ListRowInfo(_loc14_,rowHeight,_loc17_);
-                     }
-                     _loc18_ = listItems[_loc12_][_loc11_];
-                     if(_loc18_)
-                     {
-                        addToFreeItemRenderers(_loc18_);
-                        listItems[_loc12_][_loc11_] = null;
-                     }
-                  }
-                  _loc13_ = _loc13_ + columnWidth;
-                  _loc11_++;
-               }
-               _loc12_++;
-               if(param5)
-               {
-                  _loc22_ = 0;
-                  while(_loc22_ < param5)
-                  {
-                     _loc20_ = moveNextSafely(_loc20_);
-                     _loc22_++;
-                  }
-               }
-               _loc14_ = _loc14_ + rowHeight;
-            }
-         }
-         if(!param7)
-         {
-            while(listItems.length > _loc9_ + offscreenExtraRowsTop)
-            {
-               _loc29_ = listItems.pop();
-               rowInfo.pop();
-               _loc22_ = 0;
-               while(_loc22_ < _loc29_.length)
-               {
-                  _loc18_ = _loc29_[_loc22_];
-                  if(_loc18_)
-                  {
-                     addToFreeItemRenderers(_loc18_);
-                  }
-                  _loc22_++;
-               }
-            }
-            if(Boolean(listItems.length) && listItems[0].length > _loc10_ + offscreenExtraColumnsLeft)
-            {
-               _loc22_ = 0;
-               while(_loc22_ < _loc9_ + offscreenExtraRowsTop)
-               {
-                  _loc29_ = listItems[_loc22_];
-                  while(_loc29_.length > _loc10_ + offscreenExtraColumnsLeft)
-                  {
-                     _loc18_ = _loc29_.pop();
-                     if(_loc18_)
-                     {
-                        addToFreeItemRenderers(_loc18_);
-                     }
-                  }
-                  _loc22_++;
-               }
-            }
-         }
-         allowItemSizeChangeNotification = true;
-         invalidateSizeFlag = false;
-         return new Point(_loc25_ - param5 + 1,_loc24_ - param6 + 1);
-      }
-      
-      private function lastColumnInRow(param1:int) : int
-      {
-         var _loc2_:int = maxRows > 0?int(maxRows):int(rowCount);
-         var _loc3_:int = Math.floor((collection.length - 1) / _loc2_);
-         if(indicesToIndex(param1,_loc3_) >= collection.length)
-         {
-            _loc3_--;
-         }
-         return _loc3_;
-      }
-      
-      override protected function get dragImageOffsets() : Point
-      {
-         var _loc4_:* = null;
-         var _loc1_:Point = new Point(8192,8192);
-         var _loc2_:Boolean = false;
-         var _loc3_:int = listItems.length;
-         for(_loc4_ in visibleData)
-         {
-            if(selectedData[_loc4_])
-            {
-               _loc1_.x = Math.min(_loc1_.x,visibleData[_loc4_].x);
-               _loc1_.y = Math.min(_loc1_.y,visibleData[_loc4_].y);
-               _loc2_ = true;
-            }
-         }
-         if(_loc2_)
-         {
-            return _loc1_;
-         }
-         return new Point(0,0);
-      }
-      
-      public function get maxColumns() : int
-      {
-         return _maxColumns;
-      }
-      
-      public function set maxRows(param1:int) : void
-      {
-         if(_maxRows != param1)
-         {
-            _maxRows = param1;
-            invalidateSize();
-            invalidateDisplayList();
-         }
-      }
-      
-      public function get maxRows() : int
-      {
-         return _maxRows;
-      }
-      
-      private function moveNextSafely(param1:Boolean) : Boolean
-      {
-         var more:Boolean = param1;
-         if(Boolean(iterator) && Boolean(more))
-         {
-            try
-            {
-               more = iterator.moveNext();
-            }
-            catch(e1:ItemPendingError)
-            {
-               lastSeekPending = new ListBaseSeekPending(CursorBookmark.CURRENT,0);
-               e1.addResponder(new ItemResponder(seekPendingResultHandler,seekPendingFailureHandler,lastSeekPending));
-               more = false;
-               iteratorValid = false;
-            }
-         }
-         return more;
-      }
-      
-      private function lastRowInColumn(param1:int) : int
-      {
-         var _loc2_:int = maxColumns > 0?int(maxColumns):int(columnCount);
-         var _loc3_:int = Math.floor((collection.length - 1) / _loc2_);
-         if(param1 * _loc3_ > collection.length)
-         {
-            _loc3_--;
-         }
-         return _loc3_;
-      }
-      
-      protected function drawTileBackground(param1:Sprite, param2:int, param3:int, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : DisplayObject
-      {
-         var _loc9_:Shape = null;
-         var _loc8_:int = param2 * columnCount + param3;
-         if(_loc8_ < param1.numChildren)
-         {
-            _loc9_ = Shape(param1.getChildAt(_loc8_));
-         }
-         else
-         {
-            _loc9_ = new FlexShape();
-            _loc9_.name = "tileBackground";
-            param1.addChild(_loc9_);
-         }
-         var _loc10_:Graphics = _loc9_.graphics;
-         _loc10_.clear();
-         _loc10_.beginFill(param6,getStyle("backgroundAlpha"));
-         _loc10_.drawRect(0,0,param4,param5);
-         _loc10_.endFill();
-         return _loc9_;
-      }
-      
-      override public function calculateDropIndex(param1:DragEvent = null) : int
-      {
-         var _loc2_:IListItemRenderer = null;
-         var _loc3_:Point = null;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         if(param1)
-         {
-            _loc3_ = new Point(param1.localX,param1.localY);
-            _loc3_ = DisplayObject(param1.target).localToGlobal(_loc3_);
-            _loc3_ = listContent.globalToLocal(_loc3_);
-            _loc4_ = listItems.length;
-            _loc5_ = 0;
-            while(_loc5_ < _loc4_)
-            {
-               if(rowInfo[_loc5_].y <= _loc3_.y && _loc3_.y < rowInfo[_loc5_].y + rowInfo[_loc5_].height)
-               {
-                  _loc6_ = listItems[_loc5_].length;
-                  _loc7_ = 0;
-                  while(_loc7_ < _loc6_)
-                  {
-                     if(Boolean(listItems[_loc5_][_loc7_]) && Boolean(listItems[_loc5_][_loc7_].x <= _loc3_.x) && _loc3_.x < listItems[_loc5_][_loc7_].x + listItems[_loc5_][_loc7_].width)
-                     {
-                        _loc2_ = listItems[_loc5_][_loc7_];
-                        if(!DisplayObject(_loc2_).visible)
+                _loc_2 = 0;
+                while (_loc_2 < listItems[0].length)
+                {
+                    
+                    _loc_3 = 0;
+                    while (_loc_3 < listItems.length)
+                    {
+                        
+                        if (listItems[_loc_3] && listItems[_loc_3].length > _loc_2)
                         {
-                           _loc2_ = null;
+                            _loc_4 = listItems[_loc_3][_loc_2] as IListItemRenderer;
+                            if (_loc_4)
+                            {
+                                _loc_5 = _loc_4.data;
+                                _loc_1.push(_loc_5);
+                            }
+                        }
+                        _loc_3++;
+                    }
+                    _loc_2++;
+                }
+            }
+            return _loc_1;
+        }// end function
+
+        override protected function moveSelectionHorizontally(param1:uint, param2:Boolean, param3:Boolean) : void
+        {
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = 0;
+            var _loc_9:* = false;
+            var _loc_10:* = 0;
+            var _loc_11:* = 0;
+            var _loc_16:* = null;
+            var _loc_12:* = listItems[0].length - offscreenExtraColumnsLeft - offscreenExtraColumnsRight;
+            var _loc_13:* = maxColumns > 0 && direction != TileBaseDirection.VERTICAL ? (maxColumns) : (_loc_12);
+            var _loc_14:* = displayingPartialRow() ? (1) : (0);
+            var _loc_15:* = displayingPartialColumn() ? (1) : (0);
+            if (!collection)
+            {
+                return;
+            }
+            showCaret = true;
+            switch(param1)
+            {
+                case Keyboard.LEFT:
+                {
+                    if (caretIndex > 0)
+                    {
+                        if (direction == TileBaseDirection.HORIZONTAL)
+                        {
+                            var _loc_18:* = caretIndex - 1;
+                            caretIndex = _loc_18;
+                        }
+                        else
+                        {
+                            _loc_10 = indexToRow(caretIndex);
+                            _loc_11 = indexToColumn(caretIndex);
+                            if (_loc_11 == 0)
+                            {
+                                _loc_10 = _loc_10 - 1;
+                                _loc_11 = lastColumnInRow(_loc_10);
+                            }
+                            else
+                            {
+                                _loc_11 = _loc_11 - 1;
+                            }
+                            caretIndex = Math.min(indicesToIndex(_loc_10, _loc_11), (collection.length - 1));
+                        }
+                        _loc_10 = indexToRow(caretIndex);
+                        _loc_11 = indexToColumn(caretIndex);
+                        if (direction == TileBaseDirection.HORIZONTAL)
+                        {
+                            if (_loc_10 < verticalScrollPosition)
+                            {
+                                _loc_4 = verticalScrollPosition - 1;
+                            }
+                            else if (_loc_10 > verticalScrollPosition + rowCount - _loc_14)
+                            {
+                                _loc_4 = maxVerticalScrollPosition;
+                            }
+                        }
+                        else if (_loc_11 < horizontalScrollPosition)
+                        {
+                            _loc_5 = horizontalScrollPosition - 1;
+                        }
+                        else if (_loc_11 > horizontalScrollPosition + _loc_12 - 1 - _loc_15)
+                        {
+                            _loc_5 = maxHorizontalScrollPosition;
+                        }
+                    }
+                    break;
+                }
+                case Keyboard.RIGHT:
+                {
+                    if (caretIndex < (collection.length - 1))
+                    {
+                        if (direction == TileBaseDirection.HORIZONTAL || caretIndex == -1)
+                        {
+                            var _loc_18:* = caretIndex + 1;
+                            caretIndex = _loc_18;
+                        }
+                        else
+                        {
+                            _loc_10 = indexToRow(caretIndex);
+                            _loc_11 = indexToColumn(caretIndex);
+                            if (_loc_11 == lastColumnInRow(_loc_10))
+                            {
+                                _loc_11 = 0;
+                                _loc_10++;
+                            }
+                            else
+                            {
+                                _loc_11++;
+                            }
+                            caretIndex = Math.min(indicesToIndex(_loc_10, _loc_11), (collection.length - 1));
+                        }
+                        _loc_10 = indexToRow(caretIndex);
+                        _loc_11 = indexToColumn(caretIndex);
+                        if (direction == TileBaseDirection.HORIZONTAL)
+                        {
+                            if (_loc_10 >= verticalScrollPosition + rowCount - _loc_14 && verticalScrollPosition < maxVerticalScrollPosition)
+                            {
+                                _loc_4 = verticalScrollPosition + 1;
+                            }
+                            if (_loc_10 < verticalScrollPosition)
+                            {
+                                _loc_4 = _loc_10;
+                            }
+                        }
+                        else
+                        {
+                            if (_loc_11 >= horizontalScrollPosition + _loc_12 - _loc_15 && horizontalScrollPosition < maxHorizontalScrollPosition)
+                            {
+                                _loc_5 = horizontalScrollPosition + 1;
+                            }
+                            if (_loc_11 < horizontalScrollPosition)
+                            {
+                                _loc_5 = _loc_11;
+                            }
+                        }
+                    }
+                    break;
+                }
+                case Keyboard.PAGE_UP:
+                {
+                    if (caretIndex < 0)
+                    {
+                        caretIndex = scrollPositionToIndex(horizontalScrollPosition, verticalScrollPosition);
+                    }
+                    _loc_10 = indexToRow(caretIndex);
+                    _loc_11 = indexToColumn(caretIndex);
+                    if (_loc_11 > 0)
+                    {
+                        var _loc_17:* = Math.max(horizontalScrollPosition - (_loc_12 - _loc_15), 0);
+                        _loc_11 = Math.max(horizontalScrollPosition - (_loc_12 - _loc_15), 0);
+                        _loc_5 = _loc_17;
+                        caretIndex = indicesToIndex(_loc_10, _loc_11);
+                    }
+                    break;
+                }
+                case Keyboard.PAGE_DOWN:
+                {
+                    if (caretIndex < 0)
+                    {
+                        caretIndex = scrollPositionToIndex(horizontalScrollPosition, verticalScrollPosition);
+                    }
+                    _loc_10 = indexToRow(caretIndex);
+                    _loc_11 = indexToColumn(caretIndex);
+                    if (_loc_11 < maxHorizontalScrollPosition)
+                    {
+                        _loc_11 = Math.min(horizontalScrollPosition + _loc_12 - _loc_15, indexToColumn((collection.length - 1)));
+                        if (_loc_11 > horizontalScrollPosition)
+                        {
+                            _loc_5 = Math.min(_loc_11, maxHorizontalScrollPosition);
+                        }
+                        caretIndex = indicesToIndex(_loc_10, _loc_11);
+                    }
+                    break;
+                }
+                case Keyboard.HOME:
+                {
+                    if (collection.length)
+                    {
+                        caretIndex = 0;
+                        _loc_5 = 0;
+                        _loc_4 = 0;
+                    }
+                    break;
+                }
+                case Keyboard.END:
+                {
+                    if (caretIndex < collection.length)
+                    {
+                        caretIndex = collection.length - 1;
+                        _loc_5 = maxHorizontalScrollPosition;
+                        _loc_4 = maxVerticalScrollPosition;
+                    }
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            if (!isNaN(_loc_4))
+            {
+                if (_loc_4 != verticalScrollPosition)
+                {
+                    _loc_16 = new ScrollEvent(ScrollEvent.SCROLL);
+                    _loc_16.detail = ScrollEventDetail.THUMB_POSITION;
+                    _loc_16.direction = ScrollEventDirection.VERTICAL;
+                    _loc_16.delta = _loc_4 - verticalScrollPosition;
+                    _loc_16.position = _loc_4;
+                    verticalScrollPosition = _loc_4;
+                    dispatchEvent(_loc_16);
+                }
+            }
+            if (iteratorValid)
+            {
+                if (!isNaN(_loc_5))
+                {
+                    if (_loc_5 != horizontalScrollPosition)
+                    {
+                        _loc_16 = new ScrollEvent(ScrollEvent.SCROLL);
+                        _loc_16.detail = ScrollEventDetail.THUMB_POSITION;
+                        _loc_16.direction = ScrollEventDirection.HORIZONTAL;
+                        _loc_16.delta = _loc_5 - horizontalScrollPosition;
+                        _loc_16.position = _loc_5;
+                        horizontalScrollPosition = _loc_5;
+                        dispatchEvent(_loc_16);
+                    }
+                }
+            }
+            if (!iteratorValid)
+            {
+                keySelectionPending = true;
+                return;
+            }
+            bShiftKey = param2;
+            bCtrlKey = param3;
+            lastKey = param1;
+            finishKeySelection();
+            return;
+        }// end function
+
+        public function removeClipMask() : void
+        {
+            return;
+        }// end function
+
+        override protected function commitProperties() : void
+        {
+            super.commitProperties();
+            if (itemsNeedMeasurement)
+            {
+                itemsNeedMeasurement = false;
+                if (isNaN(explicitRowHeight))
+                {
+                    setRowHeight(measureHeightOfItems(0, 1));
+                }
+                if (isNaN(explicitColumnWidth))
+                {
+                    setColumnWidth(measureWidthOfItems(0, 1));
+                }
+            }
+            return;
+        }// end function
+
+        override public function scrollToIndex(param1:int) : Boolean
+        {
+            var newVPos:int;
+            var newHPos:int;
+            var index:* = param1;
+            var firstIndex:* = scrollPositionToIndex(horizontalScrollPosition, verticalScrollPosition);
+            var numItemsVisible:* = (listItems.length - offscreenExtraRowsTop - offscreenExtraRowsBottom) * (listItems[0].length - offscreenExtraColumnsLeft - offscreenExtraColumnsRight);
+            if (index >= firstIndex + numItemsVisible || index < firstIndex)
+            {
+                newVPos = Math.min(indexToRow(index), maxVerticalScrollPosition);
+                newHPos = Math.min(indexToColumn(index), maxHorizontalScrollPosition);
+                try
+                {
+                    iterator.seek(CursorBookmark.FIRST, scrollPositionToIndex(horizontalScrollPosition, verticalScrollPosition));
+                    super.horizontalScrollPosition = newHPos;
+                    super.verticalScrollPosition = newVPos;
+                }
+                catch (e:ItemPendingError)
+                {
+                }
+                return true;
+            }
+            return false;
+        }// end function
+
+        override public function createItemRenderer(param1:Object) : IListItemRenderer
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_5:* = undefined;
+            _loc_2 = getItemRendererFactory(param1);
+            if (!_loc_2)
+            {
+                if (!param1)
+                {
+                    _loc_2 = nullItemRenderer;
+                }
+                if (!_loc_2)
+                {
+                    _loc_2 = itemRenderer;
+                }
+            }
+            if (_loc_2 == itemRenderer)
+            {
+                if (freeItemRenderers && freeItemRenderers.length && freeItemRenderersByFactory[_loc_2])
+                {
+                    _loc_3 = freeItemRenderers.pop();
+                    delete freeItemRenderersByFactory[_loc_2][_loc_3];
+                }
+            }
+            else if (freeItemRenderersByFactory)
+            {
+                _loc_4 = freeItemRenderersByFactory[_loc_2];
+                if (_loc_4)
+                {
+                    for (_loc_5 in _loc_4)
+                    {
+                        
+                        _loc_3 = IListItemRenderer(_loc_5);
+                        delete _loc_4[_loc_5];
+                        break;
+                    }
+                }
+            }
+            if (!_loc_3)
+            {
+                _loc_3 = _loc_2.newInstance();
+                _loc_3.styleName = this;
+                factoryMap[_loc_3] = _loc_2;
+            }
+            _loc_3.owner = this;
+            return _loc_3;
+        }// end function
+
+        protected function drawTileBackgrounds() : void
+        {
+            var _loc_2:* = null;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = NaN;
+            var _loc_8:* = NaN;
+            var _loc_9:* = null;
+            var _loc_10:* = 0;
+            var _loc_11:* = null;
+            var _loc_1:* = Sprite(listContent.getChildByName("tileBGs"));
+            if (!_loc_1)
+            {
+                _loc_1 = new FlexSprite();
+                _loc_1.mouseEnabled = false;
+                _loc_1.name = "tileBGs";
+                listContent.addChildAt(_loc_1, 0);
+            }
+            _loc_2 = getStyle("alternatingItemColors");
+            if (!_loc_2 || _loc_2.length == 0)
+            {
+                while (_loc_1.numChildren > _loc_5)
+                {
+                    
+                    _loc_1.removeChildAt((_loc_1.numChildren - 1));
+                }
+                return;
+            }
+            StyleManager.getColorNames(_loc_2);
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            while (_loc_4 < rowCount)
+            {
+                
+                _loc_6 = 0;
+                while (_loc_6 < columnCount)
+                {
+                    
+                    _loc_7 = _loc_4 < (rowCount - 1) ? (rowHeight) : (Math.min(rowHeight, listContent.height - (rowCount - 1) * rowHeight));
+                    _loc_8 = _loc_6 < (columnCount - 1) ? (columnWidth) : (Math.min(columnWidth, listContent.width - (columnCount - 1) * columnWidth));
+                    _loc_9 = listItems[_loc_4] ? (listItems[_loc_4][_loc_6]) : (null);
+                    _loc_10 = (verticalScrollPosition + _loc_4) * columnCount + (horizontalScrollPosition + _loc_6);
+                    _loc_11 = drawTileBackground(_loc_1, _loc_4, _loc_6, _loc_8, _loc_7, _loc_2[_loc_10 % _loc_2.length], _loc_9);
+                    _loc_11.y = _loc_4 * rowHeight;
+                    _loc_11.x = _loc_6 * columnWidth;
+                    _loc_6++;
+                }
+                _loc_4++;
+            }
+            _loc_5 = rowCount * columnCount;
+            while (_loc_1.numChildren > _loc_5)
+            {
+                
+                _loc_1.removeChildAt((_loc_1.numChildren - 1));
+            }
+            return;
+        }// end function
+
+        private function displayingPartialRow() : Boolean
+        {
+            var _loc_2:* = null;
+            var _loc_1:* = listItems[(listItems.length - 1) - offscreenExtraRowsBottom];
+            if (_loc_1 && _loc_1.length > 0)
+            {
+                _loc_2 = _loc_1[0];
+                if (!_loc_2 || _loc_2.y + _loc_2.height > listContent.heightExcludingOffsets - listContent.topOffset)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }// end function
+
+        override protected function createChildren() : void
+        {
+            super.createChildren();
+            listContent.mask = maskShape;
+            return;
+        }// end function
+
+        public function addClipMask(param1:Boolean) : void
+        {
+            return;
+        }// end function
+
+        override protected function finishKeySelection() : void
+        {
+            var _loc_1:* = null;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_2:* = false;
+            if (caretIndex < 0)
+            {
+                return;
+            }
+            _loc_3 = indexToRow(caretIndex);
+            _loc_4 = indexToColumn(caretIndex);
+            _loc_5 = listItems[_loc_3 - verticalScrollPosition + offscreenExtraRowsTop][_loc_4 - horizontalScrollPosition + offscreenExtraColumnsLeft];
+            if (!bCtrlKey)
+            {
+                selectItem(_loc_5, bShiftKey, bCtrlKey);
+                _loc_2 = true;
+            }
+            if (bCtrlKey)
+            {
+                _loc_1 = itemToUID(_loc_5.data);
+                drawItem(visibleData[_loc_1], selectedData[_loc_1] != null, false, true);
+            }
+            if (_loc_2)
+            {
+                _loc_6 = new ListEvent(ListEvent.CHANGE);
+                _loc_6.itemRenderer = _loc_5;
+                _loc_6.rowIndex = _loc_3;
+                _loc_6.columnIndex = _loc_4;
+                dispatchEvent(_loc_6);
+            }
+            return;
+        }// end function
+
+        override protected function scrollPositionToIndex(param1:int, param2:int) : int
+        {
+            var _loc_3:* = 0;
+            if (iterator)
+            {
+                if (direction == TileBaseDirection.HORIZONTAL)
+                {
+                    _loc_3 = param2 * columnCount + param1;
+                }
+                else
+                {
+                    _loc_3 = param1 * rowCount + param2;
+                }
+                return _loc_3;
+            }
+            return -1;
+        }// end function
+
+        override protected function keyDownHandler(event:KeyboardEvent) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            if (!iteratorValid)
+            {
+                return;
+            }
+            if (!collection)
+            {
+                return;
+            }
+            switch(event.keyCode)
+            {
+                case Keyboard.UP:
+                case Keyboard.DOWN:
+                {
+                    moveSelectionVertically(event.keyCode, event.shiftKey, event.ctrlKey);
+                    event.stopPropagation();
+                    break;
+                }
+                case Keyboard.LEFT:
+                case Keyboard.RIGHT:
+                {
+                    moveSelectionHorizontally(event.keyCode, event.shiftKey, event.ctrlKey);
+                    event.stopPropagation();
+                    break;
+                }
+                case Keyboard.END:
+                case Keyboard.HOME:
+                case Keyboard.PAGE_UP:
+                case Keyboard.PAGE_DOWN:
+                {
+                    if (direction == TileBaseDirection.VERTICAL)
+                    {
+                        moveSelectionHorizontally(event.keyCode, event.shiftKey, event.ctrlKey);
+                    }
+                    else
+                    {
+                        moveSelectionVertically(event.keyCode, event.shiftKey, event.ctrlKey);
+                    }
+                    event.stopPropagation();
+                    break;
+                }
+                case Keyboard.SPACE:
+                {
+                    if (caretIndex < 0)
+                    {
+                        break;
+                    }
+                    _loc_3 = indexToRow(caretIndex);
+                    _loc_4 = indexToColumn(caretIndex);
+                    _loc_2 = listItems[_loc_3 - verticalScrollPosition][_loc_4 - horizontalScrollPosition];
+                    selectItem(_loc_2, event.shiftKey, event.ctrlKey);
+                    break;
+                }
+                default:
+                {
+                    if (findKey(event.keyCode))
+                    {
+                        event.stopPropagation();
+                    }
+                    break;
+                }
+            }
+            return;
+        }// end function
+
+        override protected function indexToColumn(param1:int) : int
+        {
+            var _loc_3:* = 0;
+            if (direction == TileBaseDirection.VERTICAL)
+            {
+                _loc_3 = maxRows > 0 ? (maxRows) : (rowCount);
+                return Math.floor(param1 / _loc_3);
+            }
+            var _loc_2:* = maxColumns > 0 ? (maxColumns) : (columnCount);
+            return param1 % _loc_2;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            if (explicitColumnCount > 0 && isNaN(explicitColumnWidth))
+            {
+                setColumnWidth(Math.floor((width - viewMetrics.left - viewMetrics.right) / explicitColumnCount));
+            }
+            if (explicitRowCount > 0 && isNaN(explicitRowHeight))
+            {
+                setRowHeight(Math.floor((height - viewMetrics.top - viewMetrics.bottom) / explicitRowCount));
+            }
+            super.updateDisplayList(param1, param2);
+            drawTileBackgrounds();
+            return;
+        }// end function
+
+        override protected function scrollHorizontally(param1:int, param2:int, param3:Boolean) : void
+        {
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = NaN;
+            var _loc_7:* = null;
+            var _loc_8:* = 0;
+            var _loc_9:* = NaN;
+            var _loc_14:* = 0;
+            var _loc_15:* = 0;
+            var _loc_16:* = 0;
+            var _loc_20:* = 0;
+            var _loc_21:* = 0;
+            var _loc_22:* = null;
+            var _loc_23:* = 0;
+            var _loc_24:* = 0;
+            var _loc_25:* = null;
+            var _loc_26:* = 0;
+            var _loc_27:* = null;
+            var _loc_28:* = 0;
+            var _loc_29:* = 0;
+            if (param2 == 0)
+            {
+                return;
+            }
+            removeClipMask();
+            var _loc_10:* = offscreenExtraColumnsRight;
+            var _loc_11:* = offscreenExtraColumnsLeft;
+            var _loc_12:* = offscreenExtraColumns / 2;
+            var _loc_13:* = offscreenExtraColumns / 2;
+            if (param3)
+            {
+                offscreenExtraColumnsLeft = Math.min(_loc_12, offscreenExtraColumnsLeft + param2);
+                _loc_14 = param2 - (offscreenExtraColumnsLeft - _loc_11);
+                _loc_15 = _loc_14;
+            }
+            else
+            {
+                _loc_20 = offscreenExtraColumnsRight == 0 && listItems[0] && listItems[0].length > 0 && listItems[0][(listItems[0].length - 1)] && listItems[0][(listItems[0].length - 1)].x + columnWidth < listContent.widthExcludingOffsets - listContent.leftOffset ? (1) : (0);
+                offscreenExtraColumnsLeft = Math.min(_loc_12, param1);
+                offscreenExtraColumnsRight = Math.min(offscreenExtraColumnsRight + param2 - _loc_20, _loc_13);
+                _loc_14 = param2 - (_loc_11 - offscreenExtraColumnsLeft);
+                _loc_16 = offscreenExtraColumnsLeft - _loc_11 + _loc_20 + (offscreenExtraColumnsRight - _loc_10);
+                _loc_15 = param2 - (offscreenExtraColumnsRight - _loc_10) - _loc_20;
+            }
+            var _loc_17:* = listItems[0].length;
+            var _loc_18:* = 0;
+            while (_loc_18 < _loc_15)
+            {
+                
+                _loc_21 = 0;
+                while (_loc_21 < rowCount)
+                {
+                    
+                    _loc_22 = param3 ? (listItems[_loc_21][_loc_18]) : (listItems[_loc_21][_loc_17 - _loc_18 - 1]);
+                    if (_loc_22)
+                    {
+                        delete visibleData[rowMap[_loc_22.name].uid];
+                        removeIndicators(rowMap[_loc_22.name].uid);
+                        addToFreeItemRenderers(_loc_22);
+                        delete rowMap[_loc_22.name];
+                        if (param3)
+                        {
+                            listItems[_loc_21][_loc_18] = null;
+                        }
+                        else
+                        {
+                            listItems[_loc_21][_loc_17 - _loc_18 - 1] = null;
+                        }
+                    }
+                    _loc_21++;
+                }
+                _loc_18++;
+            }
+            if (param3)
+            {
+                _loc_9 = _loc_14 * columnWidth;
+                _loc_6 = 0;
+                _loc_18 = _loc_14;
+                while (_loc_18 < _loc_17)
+                {
+                    
+                    _loc_21 = 0;
+                    while (_loc_21 < rowCount)
+                    {
+                        
+                        _loc_27 = listItems[_loc_21][_loc_18];
+                        if (_loc_27)
+                        {
+                            _loc_22 = _loc_27;
+                            _loc_27.x = _loc_22.x - _loc_9;
+                            _loc_7 = rowMap[_loc_22.name].uid;
+                            listItems[_loc_21][_loc_18 - _loc_14] = _loc_22;
+                            rowMap[_loc_22.name].columnIndex = rowMap[_loc_22.name].columnIndex - _loc_14;
+                            moveIndicatorsHorizontally(_loc_7, -_loc_9);
+                        }
+                        else
+                        {
+                            listItems[_loc_21][_loc_18 - _loc_14] = null;
+                        }
+                        _loc_21++;
+                    }
+                    _loc_6 = _loc_6 + columnWidth;
+                    _loc_18++;
+                }
+                _loc_18 = 0;
+                while (_loc_18 < _loc_14)
+                {
+                    
+                    _loc_21 = 0;
+                    while (_loc_21 < rowCount)
+                    {
+                        
+                        listItems[_loc_21][_loc_17 - _loc_18 - 1] = null;
+                        _loc_21++;
+                    }
+                    _loc_18++;
+                }
+                _loc_8 = indicesToIndex(verticalScrollPosition, horizontalScrollPosition + _loc_17 - offscreenExtraColumnsLeft - _loc_14);
+                seekPositionSafely(_loc_8);
+                _loc_23 = param2 + (_loc_13 - _loc_10);
+                _loc_24 = listItems.length ? (listItems[0].length - _loc_14) : (0);
+                allowRendererStealingDuringLayout = false;
+                _loc_25 = makeRowsAndColumns(_loc_6, 0, listContent.width, listContent.height, _loc_17 - _loc_14, 0, true, _loc_23);
+                allowRendererStealingDuringLayout = true;
+                _loc_26 = listItems[0].length - (_loc_24 + _loc_25.x);
+                if (_loc_26)
+                {
+                    _loc_18 = 0;
+                    while (_loc_18 < listItems.length)
+                    {
+                        
+                        _loc_21 = 0;
+                        while (_loc_21 < _loc_26)
+                        {
+                            
+                            listItems[_loc_18].pop();
+                            _loc_21++;
+                        }
+                        _loc_18++;
+                    }
+                }
+                _loc_8 = indicesToIndex(verticalScrollPosition, horizontalScrollPosition - offscreenExtraColumnsLeft);
+                seekPositionSafely(_loc_8);
+                offscreenExtraColumnsRight = Math.max(0, _loc_13 - (_loc_25.x < param2 ? (_loc_23 - _loc_25.x) : (0)));
+            }
+            else
+            {
+                if (_loc_16 < 0)
+                {
+                    _loc_29 = listItems[0].length + _loc_16;
+                    _loc_21 = 0;
+                    while (_loc_21 < rowCount)
+                    {
+                        
+                        while (listItems[_loc_21].length > _loc_29)
+                        {
+                            
+                            listItems[_loc_21].pop();
+                        }
+                        _loc_21++;
+                    }
+                }
+                _loc_9 = _loc_14 * columnWidth;
+                if (_loc_14)
+                {
+                    _loc_6 = _loc_9;
+                }
+                _loc_28 = _loc_17 + _loc_16;
+                _loc_18 = _loc_28 - _loc_14 - 1;
+                while (_loc_18 >= 0)
+                {
+                    
+                    _loc_21 = 0;
+                    while (_loc_21 < rowCount)
+                    {
+                        
+                        _loc_22 = listItems[_loc_21][_loc_18];
+                        if (_loc_22)
+                        {
+                            _loc_22.x = _loc_22.x + _loc_9;
+                            _loc_7 = rowMap[_loc_22.name].uid;
+                            listItems[_loc_21][_loc_18 + _loc_14] = _loc_22;
+                            rowMap[_loc_22.name].columnIndex = rowMap[_loc_22.name].columnIndex + _loc_14;
+                            moveIndicatorsHorizontally(_loc_7, _loc_9);
+                        }
+                        else
+                        {
+                            listItems[_loc_21][_loc_18 + _loc_14] = null;
+                        }
+                        _loc_21++;
+                    }
+                    _loc_18 = _loc_18 - 1;
+                }
+                _loc_18 = 0;
+                while (_loc_18 < _loc_14)
+                {
+                    
+                    _loc_21 = 0;
+                    while (_loc_21 < rowCount)
+                    {
+                        
+                        listItems[_loc_21][_loc_18] = null;
+                        _loc_21++;
+                    }
+                    _loc_18++;
+                }
+                _loc_8 = indicesToIndex(verticalScrollPosition, horizontalScrollPosition - offscreenExtraColumnsLeft);
+                seekPositionSafely(_loc_8);
+                allowRendererStealingDuringLayout = false;
+                makeRowsAndColumns(0, 0, _loc_6, listContent.height, 0, 0, true, _loc_14);
+                allowRendererStealingDuringLayout = true;
+                seekPositionSafely(_loc_8);
+            }
+            var _loc_19:* = listContent.widthExcludingOffsets;
+            listContent.leftOffset = (-columnWidth) * offscreenExtraColumnsLeft;
+            listContent.rightOffset = offscreenExtraColumnsRight ? (listItems[0][(listItems[0].length - 1)].x + listItems[0][(listItems[0].length - 1)].width + listContent.leftOffset - _loc_19) : (0);
+            adjustListContent();
+            addClipMask(false);
+            return;
+        }// end function
+
+        public function adjustOffscreenRowsAndColumns() : void
+        {
+            if (direction == TileBaseDirection.VERTICAL)
+            {
+                offscreenExtraRows = 0;
+                offscreenExtraColumns = offscreenExtraRowsOrColumns;
+            }
+            else
+            {
+                offscreenExtraColumns = 0;
+                offscreenExtraRows = offscreenExtraRowsOrColumns;
+            }
+            return;
+        }// end function
+
+        override protected function moveSelectionVertically(param1:uint, param2:Boolean, param3:Boolean) : void
+        {
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = 0;
+            var _loc_9:* = false;
+            var _loc_11:* = 0;
+            var _loc_12:* = 0;
+            var _loc_17:* = null;
+            var _loc_10:* = false;
+            var _loc_13:* = listItems.length - offscreenExtraRowsTop - offscreenExtraRowsBottom;
+            var _loc_14:* = maxRows > 0 && direction != TileBaseDirection.HORIZONTAL ? (maxRows) : (_loc_13);
+            var _loc_15:* = displayingPartialRow() ? (1) : (0);
+            var _loc_16:* = displayingPartialColumn() ? (1) : (0);
+            if (!collection)
+            {
+                return;
+            }
+            showCaret = true;
+            switch(param1)
+            {
+                case Keyboard.UP:
+                {
+                    if (caretIndex > 0)
+                    {
+                        if (direction == TileBaseDirection.VERTICAL)
+                        {
+                            var _loc_19:* = caretIndex - 1;
+                            caretIndex = _loc_19;
+                        }
+                        else
+                        {
+                            _loc_11 = indexToRow(caretIndex);
+                            _loc_12 = indexToColumn(caretIndex);
+                            if (_loc_11 == 0)
+                            {
+                                _loc_12 = _loc_12 - 1;
+                                _loc_11 = lastRowInColumn(_loc_12);
+                            }
+                            else
+                            {
+                                _loc_11 = _loc_11 - 1;
+                            }
+                            caretIndex = Math.min(indicesToIndex(_loc_11, _loc_12), (collection.length - 1));
+                        }
+                        _loc_11 = indexToRow(caretIndex);
+                        _loc_12 = indexToColumn(caretIndex);
+                        if (_loc_11 < verticalScrollPosition)
+                        {
+                            _loc_4 = verticalScrollPosition - 1;
+                        }
+                        if (_loc_11 > verticalScrollPosition + _loc_13 - _loc_15)
+                        {
+                            _loc_4 = maxVerticalScrollPosition;
+                        }
+                        if (_loc_12 < horizontalScrollPosition)
+                        {
+                            _loc_5 = horizontalScrollPosition - 1;
+                        }
+                    }
+                    break;
+                }
+                case Keyboard.DOWN:
+                {
+                    if (caretIndex < (collection.length - 1))
+                    {
+                        if (direction == TileBaseDirection.VERTICAL || caretIndex == -1)
+                        {
+                            var _loc_19:* = caretIndex + 1;
+                            caretIndex = _loc_19;
+                        }
+                        else
+                        {
+                            _loc_11 = indexToRow(caretIndex);
+                            _loc_12 = indexToColumn(caretIndex);
+                            if (_loc_11 == lastRowInColumn(_loc_12))
+                            {
+                                _loc_11 = 0;
+                                _loc_12++;
+                            }
+                            else
+                            {
+                                _loc_11++;
+                            }
+                            caretIndex = Math.min(indicesToIndex(_loc_11, _loc_12), (collection.length - 1));
+                        }
+                        _loc_11 = indexToRow(caretIndex);
+                        _loc_12 = indexToColumn(caretIndex);
+                        if (_loc_11 >= verticalScrollPosition + _loc_13 - _loc_15 && verticalScrollPosition < maxVerticalScrollPosition)
+                        {
+                            _loc_4 = verticalScrollPosition + 1;
+                        }
+                        if (_loc_11 < verticalScrollPosition)
+                        {
+                            _loc_4 = _loc_11;
+                        }
+                        if (_loc_12 > horizontalScrollPosition + columnCount - 1)
+                        {
+                            _loc_5 = horizontalScrollPosition + 1;
+                        }
+                    }
+                    break;
+                }
+                case Keyboard.PAGE_UP:
+                {
+                    if (caretIndex < 0)
+                    {
+                        caretIndex = scrollPositionToIndex(horizontalScrollPosition, verticalScrollPosition);
+                    }
+                    _loc_11 = indexToRow(caretIndex);
+                    _loc_12 = indexToColumn(caretIndex);
+                    if (verticalScrollPosition > 0)
+                    {
+                        if (_loc_11 == verticalScrollPosition)
+                        {
+                            var _loc_18:* = Math.max(verticalScrollPosition - (_loc_13 - _loc_15), 0);
+                            _loc_11 = Math.max(verticalScrollPosition - (_loc_13 - _loc_15), 0);
+                            _loc_4 = _loc_18;
+                        }
+                        else
+                        {
+                            _loc_11 = verticalScrollPosition;
+                        }
+                        caretIndex = indicesToIndex(_loc_11, _loc_12);
+                        break;
+                    }
+                }
+                case Keyboard.HOME:
+                {
+                    if (collection.length)
+                    {
+                        caretIndex = 0;
+                        _loc_4 = 0;
+                        _loc_5 = 0;
+                    }
+                    break;
+                }
+                case Keyboard.PAGE_DOWN:
+                {
+                    if (caretIndex < 0)
+                    {
+                        caretIndex = scrollPositionToIndex(horizontalScrollPosition, verticalScrollPosition);
+                    }
+                    _loc_11 = indexToRow(caretIndex);
+                    _loc_12 = indexToColumn(caretIndex);
+                    if (_loc_11 < maxVerticalScrollPosition)
+                    {
+                        if (_loc_11 == verticalScrollPosition + (_loc_13 - _loc_15))
+                        {
+                            _loc_4 = Math.min(verticalScrollPosition + _loc_13 - _loc_15, maxVerticalScrollPosition);
+                            _loc_11 = verticalScrollPosition + _loc_13;
+                        }
+                        else
+                        {
+                            _loc_11 = Math.min(verticalScrollPosition + _loc_13 - _loc_15, indexToRow((collection.length - 1)));
+                            if (_loc_11 == verticalScrollPosition + _loc_13 - _loc_15)
+                            {
+                                _loc_4 = Math.min(verticalScrollPosition + _loc_13 - _loc_15, maxVerticalScrollPosition);
+                            }
+                        }
+                        caretIndex = Math.min(indicesToIndex(_loc_11, _loc_12), (collection.length - 1));
+                        break;
+                    }
+                }
+                case Keyboard.END:
+                {
+                    if (caretIndex < collection.length)
+                    {
+                        caretIndex = collection.length - 1;
+                        _loc_4 = maxVerticalScrollPosition;
+                        _loc_5 = maxHorizontalScrollPosition;
+                    }
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            if (!isNaN(_loc_4))
+            {
+                if (_loc_4 != verticalScrollPosition)
+                {
+                    _loc_17 = new ScrollEvent(ScrollEvent.SCROLL);
+                    _loc_17.detail = ScrollEventDetail.THUMB_POSITION;
+                    _loc_17.direction = ScrollEventDirection.VERTICAL;
+                    _loc_17.delta = _loc_4 - verticalScrollPosition;
+                    _loc_17.position = _loc_4;
+                    verticalScrollPosition = _loc_4;
+                    dispatchEvent(_loc_17);
+                }
+            }
+            if (iteratorValid)
+            {
+                if (!isNaN(_loc_5))
+                {
+                    if (_loc_5 != horizontalScrollPosition)
+                    {
+                        _loc_17 = new ScrollEvent(ScrollEvent.SCROLL);
+                        _loc_17.detail = ScrollEventDetail.THUMB_POSITION;
+                        _loc_17.direction = ScrollEventDirection.HORIZONTAL;
+                        _loc_17.delta = _loc_5 - horizontalScrollPosition;
+                        _loc_17.position = _loc_5;
+                        horizontalScrollPosition = _loc_5;
+                        dispatchEvent(_loc_17);
+                    }
+                }
+            }
+            if (!iteratorValid)
+            {
+                keySelectionPending = true;
+                return;
+            }
+            bShiftKey = param2;
+            bCtrlKey = param3;
+            lastKey = param1;
+            finishKeySelection();
+            return;
+        }// end function
+
+        override protected function scrollVertically(param1:int, param2:int, param3:Boolean) : void
+        {
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = NaN;
+            var _loc_7:* = null;
+            var _loc_8:* = 0;
+            var _loc_9:* = NaN;
+            var _loc_14:* = 0;
+            var _loc_15:* = 0;
+            var _loc_16:* = 0;
+            var _loc_21:* = 0;
+            var _loc_22:* = 0;
+            var _loc_23:* = null;
+            var _loc_24:* = 0;
+            var _loc_25:* = null;
+            var _loc_26:* = 0;
+            removeClipMask();
+            var _loc_10:* = offscreenExtraRowsBottom;
+            var _loc_11:* = offscreenExtraRowsTop;
+            var _loc_12:* = offscreenExtraRows / 2;
+            var _loc_13:* = offscreenExtraRows / 2;
+            if (param3)
+            {
+                offscreenExtraRowsTop = Math.min(_loc_12, offscreenExtraRowsTop + param2);
+                _loc_14 = param2 - (offscreenExtraRowsTop - _loc_11);
+                _loc_15 = _loc_14;
+            }
+            else
+            {
+                _loc_21 = offscreenExtraRowsBottom == 0 && listItems.length && listItems[(listItems.length - 1)][0] && listItems[(listItems.length - 1)][0].y + rowHeight < listContent.heightExcludingOffsets - listContent.topOffset ? (1) : (0);
+                offscreenExtraRowsTop = Math.min(_loc_12, param1);
+                offscreenExtraRowsBottom = Math.min(offscreenExtraRowsBottom + param2 - _loc_21, _loc_13);
+                _loc_14 = param2 - (_loc_11 - offscreenExtraRowsTop);
+                _loc_16 = offscreenExtraRowsTop - _loc_11 + _loc_21 + (offscreenExtraRowsBottom - _loc_10);
+                _loc_15 = param2 - (offscreenExtraRowsBottom - _loc_10) - _loc_21;
+            }
+            var _loc_17:* = listItems.length;
+            var _loc_18:* = 0;
+            while (_loc_18 < _loc_15)
+            {
+                
+                _loc_5 = param3 ? (listItems[_loc_18].length) : (listItems[_loc_17 - _loc_18 - 1].length);
+                _loc_22 = 0;
+                while (_loc_22 < columnCount && _loc_22 < _loc_5)
+                {
+                    
+                    _loc_23 = param3 ? (listItems[_loc_18][_loc_22]) : (listItems[_loc_17 - _loc_18 - 1][_loc_22]);
+                    if (_loc_23)
+                    {
+                        delete visibleData[rowMap[_loc_23.name].uid];
+                        removeIndicators(rowMap[_loc_23.name].uid);
+                        addToFreeItemRenderers(_loc_23);
+                        delete rowMap[_loc_23.name];
+                        if (param3)
+                        {
+                            listItems[_loc_18][_loc_22] = null;
+                        }
+                        else
+                        {
+                            listItems[_loc_17 - _loc_18 - 1][_loc_22] = null;
+                        }
+                    }
+                    _loc_22++;
+                }
+                _loc_18++;
+            }
+            var _loc_19:* = listItems.length;
+            if (param3)
+            {
+                _loc_9 = _loc_14 * rowHeight;
+                _loc_6 = 0;
+                _loc_18 = _loc_14;
+                while (_loc_18 < _loc_19)
+                {
+                    
+                    _loc_5 = listItems[_loc_18].length;
+                    _loc_22 = 0;
+                    while (_loc_22 < columnCount && _loc_22 < _loc_5)
+                    {
+                        
+                        _loc_23 = listItems[_loc_18][_loc_22];
+                        listItems[_loc_18 - _loc_14][_loc_22] = _loc_23;
+                        if (_loc_23)
+                        {
+                            _loc_23.y = _loc_23.y - _loc_9;
+                            rowMap[_loc_23.name].rowIndex = rowMap[_loc_23.name].rowIndex - _loc_14;
+                            moveIndicatorsVertically(rowMap[_loc_23.name].uid, -_loc_9);
+                        }
+                        _loc_22++;
+                    }
+                    if (_loc_5 < columnCount)
+                    {
+                        _loc_22 = _loc_5;
+                        while (_loc_22 < columnCount)
+                        {
+                            
+                            listItems[_loc_18 - _loc_14][_loc_22] = null;
+                            _loc_22++;
+                        }
+                    }
+                    rowInfo[_loc_18 - _loc_14] = rowInfo[_loc_18];
+                    rowInfo[_loc_18 - _loc_14].y = rowInfo[_loc_18 - _loc_14].y - _loc_9;
+                    _loc_6 = rowInfo[_loc_18 - _loc_14].y + rowHeight;
+                    _loc_18++;
+                }
+                listItems.splice(_loc_19 - _loc_14 - 1, _loc_14);
+                rowInfo.splice(_loc_19 - _loc_14 - 1, _loc_14);
+                _loc_8 = indicesToIndex(verticalScrollPosition - offscreenExtraRowsTop + _loc_19 - _loc_14, horizontalScrollPosition);
+                seekPositionSafely(_loc_8);
+                _loc_24 = param2 + (_loc_13 - _loc_10);
+                _loc_25 = makeRowsAndColumns(0, _loc_6, listContent.width, _loc_6 + param2 * rowHeight, 0, _loc_19 - _loc_14, true, _loc_24);
+                _loc_26 = _loc_24 - _loc_25.y;
+                while (_loc_26--)
+                {
+                    
+                    listItems.pop();
+                    rowInfo.pop();
+                }
+                _loc_8 = indicesToIndex(verticalScrollPosition - offscreenExtraRowsTop, horizontalScrollPosition);
+                seekPositionSafely(_loc_8);
+                offscreenExtraRowsBottom = Math.max(0, _loc_13 - (_loc_25.y < param2 ? (_loc_24 - _loc_25.y) : (0)));
+            }
+            else
+            {
+                if (_loc_16 < 0)
+                {
+                    listItems.splice(listItems.length + _loc_16, -_loc_16);
+                    rowInfo.splice(rowInfo.length + _loc_16, -_loc_16);
+                }
+                else if (_loc_16 > 0)
+                {
+                    _loc_18 = 0;
+                    while (_loc_18 < _loc_16)
+                    {
+                        
+                        listItems[_loc_19 + _loc_18] = [];
+                        _loc_18++;
+                    }
+                }
+                _loc_9 = _loc_14 * rowHeight;
+                _loc_6 = rowInfo[_loc_14].y;
+                _loc_18 = (listItems.length - 1) - _loc_14;
+                while (_loc_18 >= 0)
+                {
+                    
+                    _loc_5 = listItems[_loc_18].length;
+                    _loc_22 = 0;
+                    while (_loc_22 < columnCount && _loc_22 < _loc_5)
+                    {
+                        
+                        _loc_23 = listItems[_loc_18][_loc_22];
+                        if (_loc_23)
+                        {
+                            _loc_23.y = _loc_23.y + _loc_9;
+                            rowMap[_loc_23.name].rowIndex = rowMap[_loc_23.name].rowIndex + _loc_14;
+                            _loc_7 = rowMap[_loc_23.name].uid;
+                            listItems[_loc_18 + _loc_14][_loc_22] = _loc_23;
+                            moveIndicatorsVertically(_loc_7, _loc_9);
+                        }
+                        else
+                        {
+                            listItems[_loc_18 + _loc_14][_loc_22] = null;
+                        }
+                        _loc_22++;
+                    }
+                    rowInfo[_loc_18 + _loc_14] = rowInfo[_loc_18];
+                    rowInfo[_loc_18 + _loc_14].y = rowInfo[_loc_18 + _loc_14].y + _loc_9;
+                    _loc_18 = _loc_18 - 1;
+                }
+                _loc_18 = 0;
+                while (_loc_18 < _loc_14)
+                {
+                    
+                    _loc_22 = 0;
+                    while (_loc_22 < columnCount)
+                    {
+                        
+                        listItems[_loc_18][_loc_22] = null;
+                        _loc_22++;
+                    }
+                    _loc_18++;
+                }
+                _loc_8 = indicesToIndex(verticalScrollPosition - offscreenExtraRowsTop, horizontalScrollPosition);
+                seekPositionSafely(_loc_8);
+                allowRendererStealingDuringLayout = false;
+                _loc_25 = makeRowsAndColumns(0, 0, listContent.width, _loc_6, 0, 0, true, _loc_14);
+                allowRendererStealingDuringLayout = true;
+                seekPositionSafely(_loc_8);
+            }
+            var _loc_20:* = listContent.heightExcludingOffsets;
+            listContent.topOffset = (-rowHeight) * offscreenExtraRowsTop;
+            listContent.bottomOffset = offscreenExtraRowsBottom ? (rowInfo[(rowInfo.length - 1)].y + rowHeight + listContent.topOffset - _loc_20) : (0);
+            adjustListContent();
+            addClipMask(false);
+            return;
+        }// end function
+
+        override public function showDropFeedback(event:DragEvent) : void
+        {
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            if (!dropIndicator)
+            {
+                _loc_7 = getStyle("dropIndicatorSkin");
+                if (!_loc_7)
+                {
+                    _loc_7 = ListDropIndicator;
+                }
+                dropIndicator = IFlexDisplayObject(new _loc_7);
+                _loc_8 = viewMetrics;
+                drawFocus(true);
+                dropIndicator.x = 2;
+                if (direction == TileBaseDirection.HORIZONTAL)
+                {
+                    dropIndicator.setActualSize(rowHeight - 4, 4);
+                    DisplayObject(dropIndicator).rotation = 90;
+                }
+                else
+                {
+                    dropIndicator.setActualSize(columnWidth - 4, 4);
+                }
+                dropIndicator.visible = true;
+                listContent.addChild(DisplayObject(dropIndicator));
+                if (collection)
+                {
+                    dragScrollingInterval = setInterval(dragScroll, 15);
+                }
+            }
+            var _loc_2:* = calculateDropIndex(event);
+            var _loc_3:* = indexToRow(_loc_2);
+            var _loc_4:* = indexToColumn(_loc_2);
+            _loc_3 = _loc_3 - (verticalScrollPosition - offscreenExtraRowsTop);
+            _loc_4 = _loc_4 - (horizontalScrollPosition - offscreenExtraColumnsLeft);
+            var _loc_5:* = listItems.length;
+            if (_loc_3 >= _loc_5)
+            {
+                _loc_3 = _loc_5 - 1;
+            }
+            var _loc_6:* = _loc_5 ? (listItems[0].length) : (0);
+            if (_loc_4 > _loc_6)
+            {
+                _loc_4 = _loc_6;
+            }
+            dropIndicator.x = _loc_6 && listItems[_loc_3].length && listItems[_loc_3][_loc_4] ? (listItems[_loc_3][_loc_4].x) : (_loc_4 * columnWidth);
+            dropIndicator.y = _loc_5 && listItems[_loc_3].length && listItems[_loc_3][0] ? (listItems[_loc_3][0].y) : (_loc_3 * rowHeight);
+            return;
+        }// end function
+
+        public function set maxColumns(param1:int) : void
+        {
+            if (_maxColumns != param1)
+            {
+                _maxColumns = param1;
+                invalidateSize();
+                invalidateDisplayList();
+            }
+            return;
+        }// end function
+
+        override protected function configureScrollBars() : void
+        {
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_8:* = 0;
+            var _loc_9:* = 0;
+            var _loc_10:* = 0;
+            var _loc_11:* = 0;
+            var _loc_12:* = 0;
+            var _loc_1:* = listItems.length;
+            if (_loc_1 == 0)
+            {
+                return;
+            }
+            var _loc_2:* = listItems[0].length;
+            if (_loc_2 == 0)
+            {
+                return;
+            }
+            if (_loc_1 > 1 && (_loc_1 - offscreenExtraRowsTop - offscreenExtraRowsBottom) * rowHeight > listContent.heightExcludingOffsets)
+            {
+                _loc_1 = _loc_1 - 1;
+            }
+            _loc_1 = _loc_1 - (offscreenExtraRowsTop + offscreenExtraRowsBottom);
+            if (_loc_2 > 1 && (_loc_2 - offscreenExtraColumnsLeft - offscreenExtraColumnsRight) * columnWidth > listContent.widthExcludingOffsets)
+            {
+                _loc_2 = _loc_2 - 1;
+            }
+            _loc_2 = _loc_2 - (offscreenExtraColumnsLeft + offscreenExtraColumnsRight);
+            var _loc_3:* = horizontalScrollBar;
+            var _loc_4:* = verticalScrollBar;
+            if (direction == TileBaseDirection.VERTICAL)
+            {
+                if (iteratorValid && horizontalScrollPosition > 0)
+                {
+                    _loc_8 = 0;
+                    while (_loc_2 > 0 && listItems[0][_loc_2 + offscreenExtraColumnsLeft - 1] == null)
+                    {
+                        
+                        _loc_2 = _loc_2 - 1;
+                        _loc_8++;
+                    }
+                    _loc_9 = Math.floor(listContent.widthExcludingOffsets / columnWidth);
+                    _loc_10 = Math.max(0, _loc_9 - (_loc_2 + _loc_8));
+                    if (_loc_8 || _loc_10)
+                    {
+                        _loc_11 = 0;
+                        while (_loc_11 < listItems.length)
+                        {
+                            
+                            while (listItems[_loc_11].length > _loc_2 + offscreenExtraColumnsLeft)
+                            {
+                                
+                                (listItems[_loc_11] as Array).pop();
+                            }
+                            _loc_11++;
+                        }
+                        if (!runningDataEffect)
+                        {
+                            horizontalScrollPosition = Math.max(0, horizontalScrollPosition - (_loc_8 + _loc_10));
+                            _loc_7 = scrollPositionToIndex(Math.max(0, horizontalScrollPosition - offscreenExtraColumnsLeft), verticalScrollPosition);
+                            seekPositionSafely(_loc_7);
+                            updateList();
+                        }
+                        return;
+                    }
+                }
+                if (!iteratorValid)
+                {
+                    _loc_1 = Math.floor(listContent.heightExcludingOffsets / rowHeight);
+                }
+                _loc_5 = maxRows > 0 ? (maxRows) : (_loc_1);
+                _loc_6 = collection ? (Math.ceil(collection.length / _loc_5)) : (_loc_2);
+            }
+            else
+            {
+                if (iteratorValid && verticalScrollPosition > 0)
+                {
+                    _loc_12 = 0;
+                    while (_loc_1 > 0 && (listItems[_loc_1 + offscreenExtraRowsTop - 1] == null || listItems[_loc_1 + offscreenExtraRowsTop - 1][0] == null))
+                    {
+                        
+                        _loc_1 = _loc_1 - 1;
+                        _loc_12++;
+                    }
+                    if (_loc_12)
+                    {
+                        while (listItems.length > _loc_1 + offscreenExtraRowsTop)
+                        {
+                            
+                            listItems.pop();
+                            rowInfo.pop();
+                        }
+                        if (!runningDataEffect)
+                        {
+                            verticalScrollPosition = Math.max(0, verticalScrollPosition - _loc_12);
+                            _loc_7 = scrollPositionToIndex(horizontalScrollPosition, Math.max(0, verticalScrollPosition - offscreenExtraRowsTop));
+                            seekPositionSafely(_loc_7);
+                            updateList();
+                        }
+                        return;
+                    }
+                }
+                if (!iteratorValid)
+                {
+                    _loc_2 = Math.floor(listContent.widthExcludingOffsets / columnWidth);
+                }
+                _loc_6 = maxColumns > 0 ? (maxColumns) : (_loc_2);
+                _loc_5 = collection ? (Math.ceil(collection.length / _loc_6)) : (_loc_1);
+            }
+            maxHorizontalScrollPosition = Math.max(0, _loc_6 - _loc_2);
+            maxVerticalScrollPosition = Math.max(0, _loc_5 - _loc_1);
+            setScrollBarProperties(_loc_6, _loc_2, _loc_5, _loc_1);
+            return;
+        }// end function
+
+        override protected function indexToRow(param1:int) : int
+        {
+            var _loc_3:* = 0;
+            if (direction == TileBaseDirection.VERTICAL)
+            {
+                _loc_3 = maxRows > 0 ? (maxRows) : (rowCount);
+                return param1 % _loc_3;
+            }
+            var _loc_2:* = maxColumns > 0 ? (maxColumns) : (columnCount);
+            return Math.floor(param1 / _loc_2);
+        }// end function
+
+        private function displayingPartialColumn() : Boolean
+        {
+            var _loc_1:* = null;
+            if (listItems[0] && listItems[0].length > 0)
+            {
+                _loc_1 = listItems[0][(listItems[0].length - 1) - offscreenExtraColumnsRight];
+                if (_loc_1 && _loc_1.x + _loc_1.width > listContent.widthExcludingOffsets - listContent.leftOffset)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }// end function
+
+        override protected function scrollHandler(event:Event) : void
+        {
+            var scrollBar:ScrollBar;
+            var pos:Number;
+            var delta:int;
+            var startIndex:int;
+            var o:EdgeMetrics;
+            var bookmark:CursorBookmark;
+            var event:* = event;
+            if (event is ScrollEvent)
+            {
+                if (!liveScrolling && ScrollEvent(event).detail == ScrollEventDetail.THUMB_TRACK)
+                {
+                    return;
+                }
+                scrollBar = ScrollBar(event.target);
+                pos = scrollBar.scrollPosition;
+                if (scrollBar == verticalScrollBar)
+                {
+                    delta = pos - verticalScrollPosition;
+                    super.scrollHandler(event);
+                    if (Math.abs(delta) >= listItems.length || !iteratorValid)
+                    {
+                        startIndex = indicesToIndex(pos, horizontalScrollPosition);
+                        try
+                        {
+                            iterator.seek(CursorBookmark.FIRST, startIndex);
+                            if (!iteratorValid)
+                            {
+                                iteratorValid = true;
+                                lastSeekPending = null;
+                            }
+                        }
+                        catch (e:ItemPendingError)
+                        {
+                            lastSeekPending = new ListBaseSeekPending(CursorBookmark.FIRST, startIndex);
+                            e.addResponder(new ItemResponder(seekPendingResultHandler, seekPendingFailureHandler, lastSeekPending));
+                            iteratorValid = false;
+                        }
+                        bookmark = iterator.bookmark;
+                        clearIndicators();
+                        clearVisibleData();
+                        makeRowsAndColumns(0, 0, listContent.width, listContent.height, 0, 0);
+                        iterator.seek(bookmark, 0);
+                        drawRowBackgrounds();
+                    }
+                    else if (delta != 0)
+                    {
+                        scrollVertically(pos, Math.abs(delta), delta > 0);
+                    }
+                }
+                else
+                {
+                    delta = pos - horizontalScrollPosition;
+                    super.scrollHandler(event);
+                    if (Math.abs(delta) >= listItems[0].length || !iteratorValid)
+                    {
+                        startIndex = indicesToIndex(verticalScrollPosition, pos);
+                        try
+                        {
+                            iterator.seek(CursorBookmark.FIRST, startIndex);
+                            if (!iteratorValid)
+                            {
+                                iteratorValid = true;
+                                lastSeekPending = null;
+                            }
+                        }
+                        catch (e:ItemPendingError)
+                        {
+                            lastSeekPending = new ListBaseSeekPending(CursorBookmark.FIRST, startIndex);
+                            e.addResponder(new ItemResponder(seekPendingResultHandler, seekPendingFailureHandler, lastSeekPending));
+                            iteratorValid = false;
+                        }
+                        bookmark = iterator.bookmark;
+                        clearIndicators();
+                        clearVisibleData();
+                        makeRowsAndColumns(0, 0, listContent.width, listContent.height, 0, 0);
+                        iterator.seek(bookmark, 0);
+                        drawRowBackgrounds();
+                    }
+                    else if (delta != 0)
+                    {
+                        scrollHorizontally(pos, Math.abs(delta), delta > 0);
+                    }
+                }
+            }
+            return;
+        }// end function
+
+        function purgeMeasuringRenderers() : void
+        {
+            var _loc_1:* = null;
+            for each (_loc_1 in measuringObjects)
+            {
+                
+                if (_loc_1.parent)
+                {
+                    _loc_1.parent.removeChild(DisplayObject(_loc_1));
+                }
+            }
+            if (!measuringObjects)
+            {
+                measuringObjects = new Dictionary(true);
+            }
+            return;
+        }// end function
+
+        override public function itemRendererToIndex(param1:IListItemRenderer) : int
+        {
+            var _loc_2:* = null;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            if (runningDataEffect)
+            {
+                _loc_2 = itemToUID(dataItemWrappersByRenderer[param1]);
+            }
+            else
+            {
+                _loc_2 = itemToUID(param1.data);
+            }
+            var _loc_3:* = listItems.length;
+            var _loc_4:* = 0;
+            while (_loc_4 < listItems.length)
+            {
+                
+                _loc_5 = listItems[_loc_4].length;
+                _loc_6 = 0;
+                while (_loc_6 < _loc_5)
+                {
+                    
+                    if (listItems[_loc_4][_loc_6] && rowMap[listItems[_loc_4][_loc_6].name].uid == _loc_2)
+                    {
+                        if (direction == TileBaseDirection.VERTICAL)
+                        {
+                            return (_loc_6 + horizontalScrollPosition - offscreenExtraColumnsLeft) * Math.max(maxRows, rowCount) + _loc_4;
+                        }
+                        return (_loc_4 + verticalScrollPosition - offscreenExtraRowsTop) * Math.max(maxColumns, columnCount) + _loc_6;
+                    }
+                    _loc_6++;
+                }
+                _loc_4++;
+            }
+            return -1;
+        }// end function
+
+        override public function measureHeightOfItems(param1:int = -1, param2:int = 0) : Number
+        {
+            var _loc_3:* = NaN;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            var _loc_10:* = null;
+            var _loc_4:* = false;
+            if (collection && collection.length)
+            {
+                _loc_7 = iterator.current;
+                _loc_8 = _loc_7 is ItemWrapper ? (_loc_7.data) : (_loc_7);
+                _loc_9 = getItemRendererFactory(_loc_8);
+                _loc_10 = measuringObjects[_loc_9];
+                if (_loc_10 == null)
+                {
+                    _loc_10 = getMeasuringRenderer(_loc_8);
+                    _loc_4 = true;
+                }
+                setupRendererFromData(_loc_10, _loc_8);
+                _loc_3 = _loc_10.getExplicitOrMeasuredHeight();
+                if (_loc_4)
+                {
+                    _loc_10.setActualSize(_loc_10.getExplicitOrMeasuredWidth(), _loc_3);
+                    _loc_4 = false;
+                }
+            }
+            if (isNaN(_loc_3) || _loc_3 == 0)
+            {
+                _loc_3 = 50;
+            }
+            var _loc_5:* = getStyle("paddingTop");
+            var _loc_6:* = getStyle("paddingBottom");
+            _loc_3 = _loc_3 + (_loc_5 + _loc_6);
+            return _loc_3 * param2;
+        }// end function
+
+        function getMeasuringRenderer(param1:Object) : IListItemRenderer
+        {
+            var _loc_2:* = null;
+            if (!measuringObjects)
+            {
+                measuringObjects = new Dictionary(true);
+            }
+            var _loc_3:* = getItemRendererFactory(param1);
+            _loc_2 = measuringObjects[_loc_3];
+            if (!_loc_2)
+            {
+                _loc_2 = createItemRenderer(param1);
+                _loc_2.owner = this;
+                _loc_2.name = "hiddenItem";
+                _loc_2.visible = false;
+                _loc_2.styleName = listContent;
+                listContent.addChild(DisplayObject(_loc_2));
+                measuringObjects[_loc_3] = _loc_2;
+            }
+            return _loc_2;
+        }// end function
+
+        private function getPreparedItemRenderer(param1:int, param2:int, param3:Object, param4:Object, param5:String) : IListItemRenderer
+        {
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            var _loc_6:* = listItems[param1][param2];
+            if (listItems[param1][param2])
+            {
+                if (runningDataEffect ? (dataItemWrappersByRenderer[_loc_6] != param3) : (_loc_6.data != param4))
+                {
+                    addToFreeItemRenderers(_loc_6);
+                }
+                else
+                {
+                    _loc_7 = _loc_6;
+                }
+            }
+            if (!_loc_7)
+            {
+                if (allowRendererStealingDuringLayout)
+                {
+                    _loc_7 = visibleData[param5];
+                    if (!_loc_7 && param3 != param4)
+                    {
+                        _loc_7 = visibleData[itemToUID(param4)];
+                    }
+                }
+                if (_loc_7)
+                {
+                    _loc_9 = ListData(rowMap[_loc_7.name]);
+                    if (_loc_9)
+                    {
+                        if (direction == TileBaseDirection.HORIZONTAL && (_loc_9.rowIndex > param1 || _loc_9.rowIndex == param1 && _loc_9.columnIndex > param2) || direction == TileBaseDirection.VERTICAL && (_loc_9.columnIndex > param2 || _loc_9.columnIndex == param2 && _loc_9.rowIndex > param1))
+                        {
+                            listItems[_loc_9.rowIndex][_loc_9.columnIndex] = null;
+                        }
+                        else
+                        {
+                            _loc_7 = null;
+                        }
+                    }
+                }
+                if (!_loc_7)
+                {
+                    _loc_7 = getReservedOrFreeItemRenderer(param3);
+                    if (_loc_7 && !isRendererUnconstrained(_loc_7))
+                    {
+                        _loc_7.x = 0;
+                        _loc_7.y = 0;
+                    }
+                }
+                if (!_loc_7)
+                {
+                    _loc_7 = createItemRenderer(param4);
+                }
+                _loc_7.owner = this;
+                _loc_7.styleName = listContent;
+            }
+            if (!_loc_7.parent)
+            {
+                listContent.addChild(DisplayObject(_loc_7));
+            }
+            _loc_8 = ListData(makeListData(param4, param5, param1, param2));
+            rowMap[_loc_7.name] = _loc_8;
+            if (_loc_7 is IDropInListItemRenderer)
+            {
+                IDropInListItemRenderer(_loc_7).listData = param4 ? (_loc_8) : (null);
+            }
+            _loc_7.data = param4;
+            if (param3 != param4)
+            {
+                dataItemWrappersByRenderer[_loc_7] = param3;
+            }
+            _loc_7.visible = true;
+            if (param5)
+            {
+                visibleData[param5] = _loc_7;
+            }
+            listItems[param1][param2] = _loc_7;
+            UIComponentGlobals.layoutManager.validateClient(_loc_7, true);
+            return _loc_7;
+        }// end function
+
+        private function placeAndDrawItemRenderer(param1:IListItemRenderer, param2:Number, param3:Number, param4:String) : void
+        {
+            var _loc_8:* = NaN;
+            var _loc_5:* = false;
+            var _loc_6:* = false;
+            var _loc_7:* = false;
+            _loc_8 = param1.getExplicitOrMeasuredHeight();
+            if (param1.width != columnWidth || _loc_8 != rowHeight - cachedPaddingTop - cachedPaddingBottom)
+            {
+                param1.setActualSize(columnWidth, rowHeight - cachedPaddingTop - cachedPaddingBottom);
+            }
+            if (!isRendererUnconstrained(param1))
+            {
+                param1.move(param2, param3 + cachedPaddingTop);
+            }
+            _loc_5 = selectedData[param4] != null;
+            if (runningDataEffect)
+            {
+                _loc_5 = _loc_5 || selectedData[itemToUID(param1.data)] != null;
+                _loc_5 = _loc_5 && !getRendererSemanticValue(param1, ModifiedCollectionView.REPLACEMENT) && !getRendererSemanticValue(param1, ModifiedCollectionView.ADDED);
+            }
+            _loc_6 = highlightUID == param4;
+            _loc_7 = caretUID == param4;
+            if (param4)
+            {
+                drawItem(param1, _loc_5, _loc_6, _loc_7);
+            }
+            return;
+        }// end function
+
+        override protected function makeRowsAndColumns(param1:Number, param2:Number, param3:Number, param4:Number, param5:int, param6:int, param7:Boolean = false, param8:uint = 0) : Point
+        {
+            var _loc_9:* = 0;
+            var _loc_10:* = 0;
+            var _loc_11:* = 0;
+            var _loc_12:* = 0;
+            var _loc_13:* = NaN;
+            var _loc_14:* = NaN;
+            var _loc_15:* = null;
+            var _loc_16:* = null;
+            var _loc_17:* = null;
+            var _loc_18:* = null;
+            var _loc_19:* = null;
+            var _loc_20:* = false;
+            var _loc_21:* = false;
+            var _loc_22:* = 0;
+            var _loc_23:* = NaN;
+            var _loc_24:* = 0;
+            var _loc_25:* = 0;
+            var _loc_29:* = null;
+            var _loc_26:* = false;
+            var _loc_27:* = false;
+            var _loc_28:* = false;
+            if (columnWidth == 0 || rowHeight == 0)
+            {
+                return null;
+            }
+            invalidateSizeFlag = true;
+            allowItemSizeChangeNotification = false;
+            if (direction == TileBaseDirection.VERTICAL)
+            {
+                _loc_9 = maxRows > 0 ? (maxRows) : (Math.max(Math.floor(listContent.heightExcludingOffsets / rowHeight), 1));
+                _loc_10 = Math.max(Math.ceil(listContent.widthExcludingOffsets / columnWidth), 1);
+                setRowCount(_loc_9);
+                setColumnCount(_loc_10);
+                _loc_11 = param5;
+                _loc_13 = param1;
+                _loc_25 = _loc_11 - 1;
+                _loc_20 = iterator != null && !iterator.afterLast && iteratorValid;
+                while (param7 && param8-- || !param7 && _loc_11 < _loc_10 + param5)
+                {
+                    
+                    _loc_12 = param6;
+                    _loc_14 = param2;
+                    while (_loc_12 < _loc_9)
+                    {
+                        
+                        _loc_21 = _loc_20;
+                        _loc_15 = _loc_20 ? (iterator.current) : (null);
+                        _loc_16 = _loc_15 is ItemWrapper ? (_loc_15.data) : (_loc_15);
+                        _loc_20 = moveNextSafely(_loc_20);
+                        if (!listItems[_loc_12])
+                        {
+                            listItems[_loc_12] = [];
+                        }
+                        if (_loc_21 && _loc_14 < param4)
+                        {
+                            _loc_17 = itemToUID(_loc_15);
+                            rowInfo[_loc_12] = new ListRowInfo(_loc_14, rowHeight, _loc_17);
+                            _loc_19 = getPreparedItemRenderer(_loc_12, _loc_11, _loc_15, _loc_16, _loc_17);
+                            placeAndDrawItemRenderer(_loc_19, _loc_13, _loc_14, _loc_17);
+                            _loc_25 = Math.max(_loc_11, _loc_25);
+                        }
+                        else
+                        {
+                            _loc_18 = listItems[_loc_12][_loc_11];
+                            if (_loc_18)
+                            {
+                                addToFreeItemRenderers(_loc_18);
+                                listItems[_loc_12][_loc_11] = null;
+                            }
+                            rowInfo[_loc_12] = new ListRowInfo(_loc_14, rowHeight, _loc_17);
+                        }
+                        _loc_14 = _loc_14 + rowHeight;
+                        _loc_12++;
+                    }
+                    _loc_11++;
+                    if (param6)
+                    {
+                        _loc_22 = 0;
+                        while (_loc_22 < param6)
+                        {
+                            
+                            _loc_20 = moveNextSafely(_loc_20);
+                            _loc_22++;
+                        }
+                    }
+                    _loc_13 = _loc_13 + columnWidth;
+                }
+            }
+            else
+            {
+                _loc_10 = maxColumns > 0 ? (maxColumns) : (Math.max(Math.floor(listContent.widthExcludingOffsets / columnWidth), 1));
+                _loc_9 = Math.max(Math.ceil(listContent.heightExcludingOffsets / rowHeight), 1);
+                setColumnCount(_loc_10);
+                setRowCount(_loc_9);
+                _loc_12 = param6;
+                _loc_14 = param2;
+                _loc_20 = iterator != null && !iterator.afterLast && iteratorValid;
+                _loc_24 = _loc_12 - 1;
+                while (param7 && _loc_8-- || !param7 && _loc_12 < _loc_9 + param6)
+                {
+                    
+                    _loc_11 = param5;
+                    _loc_13 = param1;
+                    rowInfo[_loc_12] = null;
+                    while (_loc_11 < _loc_10)
+                    {
+                        
+                        _loc_21 = _loc_20;
+                        _loc_15 = _loc_20 ? (iterator.current) : (null);
+                        _loc_16 = _loc_15 is ItemWrapper ? (_loc_15.data) : (_loc_15);
+                        _loc_20 = moveNextSafely(_loc_20);
+                        if (!listItems[_loc_12])
+                        {
+                            listItems[_loc_12] = [];
+                        }
+                        if (_loc_21 && _loc_13 < param3)
+                        {
+                            _loc_17 = itemToUID(_loc_15);
+                            if (!rowInfo[_loc_12])
+                            {
+                                rowInfo[_loc_12] = new ListRowInfo(_loc_14, rowHeight, _loc_17);
+                            }
+                            _loc_19 = getPreparedItemRenderer(_loc_12, _loc_11, _loc_15, _loc_16, _loc_17);
+                            placeAndDrawItemRenderer(_loc_19, _loc_13, _loc_14, _loc_17);
+                            _loc_24 = _loc_12;
+                        }
+                        else
+                        {
+                            if (!rowInfo[_loc_12])
+                            {
+                                rowInfo[_loc_12] = new ListRowInfo(_loc_14, rowHeight, _loc_17);
+                            }
+                            _loc_18 = listItems[_loc_12][_loc_11];
+                            if (_loc_18)
+                            {
+                                addToFreeItemRenderers(_loc_18);
+                                listItems[_loc_12][_loc_11] = null;
+                            }
+                        }
+                        _loc_13 = _loc_13 + columnWidth;
+                        _loc_11++;
+                    }
+                    _loc_12++;
+                    if (param5)
+                    {
+                        _loc_22 = 0;
+                        while (_loc_22 < param5)
+                        {
+                            
+                            _loc_20 = moveNextSafely(_loc_20);
+                            _loc_22++;
+                        }
+                    }
+                    _loc_14 = _loc_14 + rowHeight;
+                }
+            }
+            if (!param7)
+            {
+                while (listItems.length > _loc_9 + offscreenExtraRowsTop)
+                {
+                    
+                    _loc_29 = listItems.pop();
+                    rowInfo.pop();
+                    _loc_22 = 0;
+                    while (_loc_22 < _loc_29.length)
+                    {
+                        
+                        _loc_18 = _loc_29[_loc_22];
+                        if (_loc_18)
+                        {
+                            addToFreeItemRenderers(_loc_18);
+                        }
+                        _loc_22++;
+                    }
+                }
+                if (listItems.length && listItems[0].length > _loc_10 + offscreenExtraColumnsLeft)
+                {
+                    _loc_22 = 0;
+                    while (_loc_22 < _loc_9 + offscreenExtraRowsTop)
+                    {
+                        
+                        _loc_29 = listItems[_loc_22];
+                        while (_loc_29.length > _loc_10 + offscreenExtraColumnsLeft)
+                        {
+                            
+                            _loc_18 = _loc_29.pop();
+                            if (_loc_18)
+                            {
+                                addToFreeItemRenderers(_loc_18);
+                            }
+                        }
+                        _loc_22++;
+                    }
+                }
+            }
+            allowItemSizeChangeNotification = true;
+            invalidateSizeFlag = false;
+            return new Point(_loc_25 - param5 + 1, _loc_24 - param6 + 1);
+        }// end function
+
+        private function lastColumnInRow(param1:int) : int
+        {
+            var _loc_2:* = maxRows > 0 ? (maxRows) : (rowCount);
+            var _loc_3:* = Math.floor((collection.length - 1) / _loc_2);
+            if (indicesToIndex(param1, _loc_3) >= collection.length)
+            {
+                _loc_3 = _loc_3 - 1;
+            }
+            return _loc_3;
+        }// end function
+
+        override protected function get dragImageOffsets() : Point
+        {
+            var _loc_4:* = null;
+            var _loc_1:* = new Point(8192, 8192);
+            var _loc_2:* = false;
+            var _loc_3:* = listItems.length;
+            for (_loc_4 in visibleData)
+            {
+                
+                if (selectedData[_loc_4])
+                {
+                    _loc_1.x = Math.min(_loc_1.x, _loc_6[_loc_4].x);
+                    _loc_1.y = Math.min(_loc_1.y, _loc_6[_loc_4].y);
+                    _loc_2 = true;
+                }
+            }
+            if (_loc_2)
+            {
+                return _loc_1;
+            }
+            return new Point(0, 0);
+        }// end function
+
+        public function get maxColumns() : int
+        {
+            return _maxColumns;
+        }// end function
+
+        public function set maxRows(param1:int) : void
+        {
+            if (_maxRows != param1)
+            {
+                _maxRows = param1;
+                invalidateSize();
+                invalidateDisplayList();
+            }
+            return;
+        }// end function
+
+        public function get maxRows() : int
+        {
+            return _maxRows;
+        }// end function
+
+        private function moveNextSafely(param1:Boolean) : Boolean
+        {
+            var more:* = param1;
+            if (iterator && more)
+            {
+                try
+                {
+                    more = iterator.moveNext();
+                }
+                catch (e1:ItemPendingError)
+                {
+                    lastSeekPending = new ListBaseSeekPending(CursorBookmark.CURRENT, 0);
+                    e1.addResponder(new ItemResponder(seekPendingResultHandler, seekPendingFailureHandler, lastSeekPending));
+                    more;
+                    iteratorValid = false;
+                }
+            }
+            return more;
+        }// end function
+
+        private function lastRowInColumn(param1:int) : int
+        {
+            var _loc_2:* = maxColumns > 0 ? (maxColumns) : (columnCount);
+            var _loc_3:* = Math.floor((collection.length - 1) / _loc_2);
+            if (param1 * _loc_3 > collection.length)
+            {
+                _loc_3 = _loc_3 - 1;
+            }
+            return _loc_3;
+        }// end function
+
+        protected function drawTileBackground(param1:Sprite, param2:int, param3:int, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : DisplayObject
+        {
+            var _loc_9:* = null;
+            var _loc_8:* = param2 * columnCount + param3;
+            if (param2 * columnCount + param3 < param1.numChildren)
+            {
+                _loc_9 = Shape(param1.getChildAt(_loc_8));
+            }
+            else
+            {
+                _loc_9 = new FlexShape();
+                _loc_9.name = "tileBackground";
+                param1.addChild(_loc_9);
+            }
+            var _loc_10:* = _loc_9.graphics;
+            _loc_10.clear();
+            _loc_10.beginFill(param6, getStyle("backgroundAlpha"));
+            _loc_10.drawRect(0, 0, param4, param5);
+            _loc_10.endFill();
+            return _loc_9;
+        }// end function
+
+        override public function calculateDropIndex(event:DragEvent = null) : int
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            if (event)
+            {
+                _loc_3 = new Point(event.localX, event.localY);
+                _loc_3 = DisplayObject(event.target).localToGlobal(_loc_3);
+                _loc_3 = listContent.globalToLocal(_loc_3);
+                _loc_4 = listItems.length;
+                _loc_5 = 0;
+                while (_loc_5 < _loc_4)
+                {
+                    
+                    if (rowInfo[_loc_5].y <= _loc_3.y && _loc_3.y < rowInfo[_loc_5].y + rowInfo[_loc_5].height)
+                    {
+                        _loc_6 = listItems[_loc_5].length;
+                        _loc_7 = 0;
+                        while (_loc_7 < _loc_6)
+                        {
+                            
+                            if (listItems[_loc_5][_loc_7] && listItems[_loc_5][_loc_7].x <= _loc_3.x && _loc_3.x < listItems[_loc_5][_loc_7].x + listItems[_loc_5][_loc_7].width)
+                            {
+                                _loc_2 = listItems[_loc_5][_loc_7];
+                                if (!DisplayObject(_loc_2).visible)
+                                {
+                                    _loc_2 = null;
+                                }
+                                break;
+                            }
+                            _loc_7++;
                         }
                         break;
-                     }
-                     _loc7_++;
-                  }
-                  break;
-               }
-               _loc5_++;
+                    }
+                    _loc_5++;
+                }
+                if (_loc_2)
+                {
+                    lastDropIndex = itemRendererToIndex(_loc_2);
+                }
+                else
+                {
+                    lastDropIndex = collection ? (collection.length) : (0);
+                }
             }
-            if(_loc2_)
+            return lastDropIndex;
+        }// end function
+
+        override public function set itemRenderer(param1:IFactory) : void
+        {
+            super.itemRenderer = param1;
+            purgeMeasuringRenderers();
+            return;
+        }// end function
+
+        function setupRendererFromData(param1:IListItemRenderer, param2:Object) : void
+        {
+            var _loc_3:* = ListData(makeListData(param2, itemToUID(param2), 0, 0));
+            if (param1 is IDropInListItemRenderer)
             {
-               lastDropIndex = itemRendererToIndex(_loc2_);
+                IDropInListItemRenderer(param1).listData = param2 ? (_loc_3) : (null);
+            }
+            param1.data = param2;
+            UIComponentGlobals.layoutManager.validateClient(param1, true);
+            return;
+        }// end function
+
+        protected function makeListData(param1:Object, param2:String, param3:int, param4:int) : BaseListData
+        {
+            return new ListData(itemToLabel(param1), itemToIcon(param1), labelField, param2, this, param3, param4);
+        }// end function
+
+        override public function indicesToIndex(param1:int, param2:int) : int
+        {
+            var _loc_4:* = 0;
+            if (direction == TileBaseDirection.VERTICAL)
+            {
+                _loc_4 = maxRows > 0 ? (maxRows) : (rowCount);
+                return param2 * _loc_4 + param1;
+            }
+            var _loc_3:* = maxColumns > 0 ? (maxColumns) : (columnCount);
+            return param1 * _loc_3 + param2;
+        }// end function
+
+        override protected function adjustListContent(param1:Number = -1, param2:Number = -1) : void
+        {
+            var _loc_3:* = false;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_8:* = 0;
+            var _loc_9:* = 0;
+            super.adjustListContent(param1, param2);
+            if (!collection)
+            {
+                return;
+            }
+            var _loc_7:* = collection.length;
+            if (direction == TileBaseDirection.VERTICAL)
+            {
+                _loc_5 = maxRows > 0 ? (maxRows) : (Math.max(Math.floor(listContent.heightExcludingOffsets / rowHeight), 1));
+                _loc_6 = Math.max(Math.ceil(listContent.widthExcludingOffsets / columnWidth), 1);
+                if (_loc_5 != lastRowCount)
+                {
+                    _loc_3 = listContent.widthExcludingOffsets / columnWidth != Math.ceil(listContent.widthExcludingOffsets / columnWidth);
+                    _loc_8 = Math.max(Math.ceil(_loc_7 / _loc_5) - _loc_6, 0);
+                    if (_loc_3)
+                    {
+                        _loc_8++;
+                    }
+                    if (horizontalScrollPosition > _loc_8)
+                    {
+                        $horizontalScrollPosition = _loc_8;
+                    }
+                    setRowCount(_loc_5);
+                    setColumnCount(_loc_6);
+                    _loc_4 = scrollPositionToIndex(Math.max(0, horizontalScrollPosition - offscreenExtraColumnsLeft), verticalScrollPosition);
+                    seekPositionSafely(_loc_4);
+                }
+                lastRowCount = _loc_5;
             }
             else
             {
-               lastDropIndex = !!collection?int(collection.length):0;
+                _loc_6 = maxColumns > 0 ? (maxColumns) : (Math.max(Math.floor(listContent.widthExcludingOffsets / columnWidth), 1));
+                _loc_5 = Math.max(Math.ceil(listContent.heightExcludingOffsets / rowHeight), 1);
+                if (_loc_6 != lastColumnCount)
+                {
+                    _loc_3 = listContent.heightExcludingOffsets / rowHeight != Math.ceil(listContent.heightExcludingOffsets / rowHeight);
+                    _loc_9 = Math.max(Math.ceil(_loc_7 / _loc_6) - _loc_5, 0);
+                    if (_loc_3)
+                    {
+                        _loc_9++;
+                    }
+                    if (verticalScrollPosition > _loc_9)
+                    {
+                        $verticalScrollPosition = _loc_9;
+                    }
+                    setRowCount(_loc_5);
+                    setColumnCount(_loc_6);
+                    _loc_4 = scrollPositionToIndex(horizontalScrollPosition, Math.max(0, verticalScrollPosition - offscreenExtraRowsTop));
+                    seekPositionSafely(_loc_4);
+                }
+                lastColumnCount = _loc_6;
             }
-         }
-         return lastDropIndex;
-      }
-      
-      override public function set itemRenderer(param1:IFactory) : void
-      {
-         super.itemRenderer = param1;
-         purgeMeasuringRenderers();
-      }
-      
-      mx_internal function setupRendererFromData(param1:IListItemRenderer, param2:Object) : void
-      {
-         var _loc3_:ListData = ListData(makeListData(param2,itemToUID(param2),0,0));
-         if(param1 is IDropInListItemRenderer)
-         {
-            IDropInListItemRenderer(param1).listData = !!param2?_loc3_:null;
-         }
-         param1.data = param2;
-         UIComponentGlobals.layoutManager.validateClient(param1,true);
-      }
-      
-      protected function makeListData(param1:Object, param2:String, param3:int, param4:int) : BaseListData
-      {
-         return new ListData(itemToLabel(param1),itemToIcon(param1),labelField,param2,this,param3,param4);
-      }
-      
-      override public function indicesToIndex(param1:int, param2:int) : int
-      {
-         var _loc4_:int = 0;
-         if(direction == TileBaseDirection.VERTICAL)
-         {
-            _loc4_ = maxRows > 0?int(maxRows):int(rowCount);
-            return param2 * _loc4_ + param1;
-         }
-         var _loc3_:int = maxColumns > 0?int(maxColumns):int(columnCount);
-         return param1 * _loc3_ + param2;
-      }
-      
-      override protected function adjustListContent(param1:Number = -1, param2:Number = -1) : void
-      {
-         var _loc3_:* = false;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc8_:int = 0;
-         var _loc9_:int = 0;
-         super.adjustListContent(param1,param2);
-         if(!collection)
-         {
             return;
-         }
-         var _loc7_:int = collection.length;
-         if(direction == TileBaseDirection.VERTICAL)
-         {
-            _loc5_ = maxRows > 0?int(maxRows):int(Math.max(Math.floor(listContent.heightExcludingOffsets / rowHeight),1));
-            _loc6_ = Math.max(Math.ceil(listContent.widthExcludingOffsets / columnWidth),1);
-            if(_loc5_ != lastRowCount)
+        }// end function
+
+        override protected function collectionChangeHandler(event:Event) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            if (event is CollectionEvent)
             {
-               _loc3_ = listContent.widthExcludingOffsets / columnWidth != Math.ceil(listContent.widthExcludingOffsets / columnWidth);
-               _loc8_ = Math.max(Math.ceil(_loc7_ / _loc5_) - _loc6_,0);
-               if(_loc3_)
-               {
-                  _loc8_++;
-               }
-               if(horizontalScrollPosition > _loc8_)
-               {
-                  $horizontalScrollPosition = _loc8_;
-               }
-               setRowCount(_loc5_);
-               setColumnCount(_loc6_);
-               _loc4_ = scrollPositionToIndex(Math.max(0,horizontalScrollPosition - offscreenExtraColumnsLeft),verticalScrollPosition);
-               seekPositionSafely(_loc4_);
+                _loc_2 = CollectionEvent(event);
+                if (_loc_2.location == 0 || _loc_2.kind == CollectionEventKind.REFRESH)
+                {
+                    itemsNeedMeasurement = true;
+                    invalidateProperties();
+                }
+                if (_loc_2.kind == CollectionEventKind.REMOVE)
+                {
+                    _loc_3 = indicesToIndex(verticalScrollPosition, horizontalScrollPosition);
+                    if (_loc_2.location < _loc_3)
+                    {
+                        _loc_3 = _loc_3 - _loc_2.items.length;
+                        super.collectionChangeHandler(event);
+                        _loc_4 = 0;
+                        _loc_5 = 0;
+                        if (direction == TileBaseDirection.HORIZONTAL)
+                        {
+                            super.verticalScrollPosition = indexToRow(_loc_3);
+                            _loc_4 = Math.min(offscreenExtraRows / 2, verticalScrollPosition);
+                        }
+                        else
+                        {
+                            super.horizontalScrollPosition = indexToColumn(_loc_3);
+                            _loc_5 = Math.min(offscreenExtraColumns / 2, horizontalScrollPosition);
+                        }
+                        _loc_6 = scrollPositionToIndex(horizontalScrollPosition - _loc_5, verticalScrollPosition - _loc_4);
+                        seekPositionSafely(_loc_6);
+                        return;
+                    }
+                }
             }
-            lastRowCount = _loc5_;
-         }
-         else
-         {
-            _loc6_ = maxColumns > 0?int(maxColumns):int(Math.max(Math.floor(listContent.widthExcludingOffsets / columnWidth),1));
-            _loc5_ = Math.max(Math.ceil(listContent.heightExcludingOffsets / rowHeight),1);
-            if(_loc6_ != lastColumnCount)
-            {
-               _loc3_ = listContent.heightExcludingOffsets / rowHeight != Math.ceil(listContent.heightExcludingOffsets / rowHeight);
-               _loc9_ = Math.max(Math.ceil(_loc7_ / _loc6_) - _loc5_,0);
-               if(_loc3_)
-               {
-                  _loc9_++;
-               }
-               if(verticalScrollPosition > _loc9_)
-               {
-                  $verticalScrollPosition = _loc9_;
-               }
-               setRowCount(_loc5_);
-               setColumnCount(_loc6_);
-               _loc4_ = scrollPositionToIndex(horizontalScrollPosition,Math.max(0,verticalScrollPosition - offscreenExtraRowsTop));
-               seekPositionSafely(_loc4_);
-            }
-            lastColumnCount = _loc6_;
-         }
-      }
-      
-      override protected function collectionChangeHandler(param1:Event) : void
-      {
-         var _loc2_:CollectionEvent = null;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         if(param1 is CollectionEvent)
-         {
-            _loc2_ = CollectionEvent(param1);
-            if(_loc2_.location == 0 || _loc2_.kind == CollectionEventKind.REFRESH)
-            {
-               itemsNeedMeasurement = true;
-               invalidateProperties();
-            }
-            if(_loc2_.kind == CollectionEventKind.REMOVE)
-            {
-               _loc3_ = indicesToIndex(verticalScrollPosition,horizontalScrollPosition);
-               if(_loc2_.location < _loc3_)
-               {
-                  _loc3_ = _loc3_ - _loc2_.items.length;
-                  super.collectionChangeHandler(param1);
-                  _loc4_ = 0;
-                  _loc5_ = 0;
-                  if(direction == TileBaseDirection.HORIZONTAL)
-                  {
-                     super.verticalScrollPosition = indexToRow(_loc3_);
-                     _loc4_ = Math.min(offscreenExtraRows / 2,verticalScrollPosition);
-                  }
-                  else
-                  {
-                     super.horizontalScrollPosition = indexToColumn(_loc3_);
-                     _loc5_ = Math.min(offscreenExtraColumns / 2,horizontalScrollPosition);
-                  }
-                  _loc6_ = scrollPositionToIndex(horizontalScrollPosition - _loc5_,verticalScrollPosition - _loc4_);
-                  seekPositionSafely(_loc6_);
-                  return;
-               }
-            }
-         }
-         super.collectionChangeHandler(param1);
-      }
-   }
+            super.collectionChangeHandler(event);
+            return;
+        }// end function
+
+    }
 }

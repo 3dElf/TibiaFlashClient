@@ -1,37 +1,40 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   
-   public class _opaquePanelStyle
-   {
-       
-      public function _opaquePanelStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration(".opaquePanel");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration(".opaquePanel",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class _opaquePanelStyle extends Object
+    {
+
+        public function _opaquePanelStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration(".opaquePanel");
+            if (!style)
             {
-               _opaquePanelStyle.borderColor = 16777215;
-               _opaquePanelStyle.backgroundColor = 16777215;
-               _opaquePanelStyle.headerColors = [15198183,14277081];
-               _opaquePanelStyle.footerColors = [15198183,13092807];
-               _opaquePanelStyle.borderAlpha = 1;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration(".opaquePanel", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.borderColor = 16777215;
+                this.backgroundColor = 16777215;
+                this.headerColors = [15198183, 14277081];
+                this.footerColors = [15198183, 13092807];
+                this.borderAlpha = 1;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

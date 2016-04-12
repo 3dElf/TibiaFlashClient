@@ -1,116 +1,129 @@
-package shared.controls
+﻿package shared.controls
 {
-   import mx.controls.Button;
-   import flash.events.MouseEvent;
-   import flash.events.Event;
-   import flash.utils.getTimer;
-   import flash.events.KeyboardEvent;
-   
-   public class CustomButton extends Button
-   {
-       
-      private var m_EventQueue:Vector.<DeferredEvent>;
-      
-      public function CustomButton()
-      {
-         this.m_EventQueue = new Vector.<CustomButton>();
-         super();
-         addEventListener(Event.ENTER_FRAME,this.onEnterFrame);
-      }
-      
-      override protected function mouseUpHandler(param1:MouseEvent) : void
-      {
-         this.m_EventQueue.length = 0;
-         super.mouseUpHandler(param1);
-      }
-      
-      private function onEnterFrame(param1:Event) : void
-      {
-         this.processEventQueue();
-      }
-      
-      private function processEventQueue(param1:int = 0) : void
-      {
-         var _loc5_:MouseEvent = null;
-         var _loc2_:int = getTimer() - param1;
-         var _loc3_:uint = this.m_EventQueue.length;
-         var _loc4_:uint = 0;
-         while(_loc4_ < _loc3_ && this.m_EventQueue[_loc4_].timestamp <= _loc2_)
-         {
-            _loc5_ = this.m_EventQueue[_loc4_].event;
-            if(_loc5_.type == MouseEvent.ROLL_OUT)
+    import __AS3__.vec.*;
+    import flash.events.*;
+    import flash.utils.*;
+    import mx.controls.*;
+
+    public class CustomButton extends Button
+    {
+        private var m_EventQueue:Vector.<DeferredEvent>;
+
+        public function CustomButton()
+        {
+            this.m_EventQueue = new Vector.<>;
+            addEventListener(Event.ENTER_FRAME, this.onEnterFrame);
+            return;
+        }// end function
+
+        override protected function mouseUpHandler(event:MouseEvent) : void
+        {
+            this.m_EventQueue.length = 0;
+            super.mouseUpHandler(event);
+            return;
+        }// end function
+
+        private function onEnterFrame(event:Event) : void
+        {
+            this.processEventQueue();
+            return;
+        }// end function
+
+        private function processEventQueue(param1:int = 0) : void
+        {
+            var _loc_5:* = null;
+            var _loc_2:* = getTimer() - param1;
+            var _loc_3:* = this.m_EventQueue.length;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3 && this.m_EventQueue[_loc_4].timestamp <= _loc_2)
             {
-               super.rollOutHandler(_loc5_);
+                
+                _loc_5 = this.m_EventQueue[_loc_4].event;
+                if (_loc_5.type == MouseEvent.ROLL_OUT)
+                {
+                    super.rollOutHandler(_loc_5);
+                }
+                else
+                {
+                    super.rollOverHandler(_loc_5);
+                }
+                _loc_4 = _loc_4 + 1;
+            }
+            if (_loc_4 < _loc_3)
+            {
+                this.m_EventQueue = this.m_EventQueue.slice(_loc_4);
             }
             else
             {
-               super.rollOverHandler(_loc5_);
+                this.m_EventQueue.length = 0;
             }
-            _loc4_++;
-         }
-         if(_loc4_ < _loc3_)
-         {
-            this.m_EventQueue = this.m_EventQueue.slice(_loc4_);
-         }
-         else
-         {
+            return;
+        }// end function
+
+        override protected function keyUpHandler(event:KeyboardEvent) : void
+        {
             this.m_EventQueue.length = 0;
-         }
-      }
-      
-      override protected function keyUpHandler(param1:KeyboardEvent) : void
-      {
-         this.m_EventQueue.length = 0;
-         super.keyUpHandler(param1);
-      }
-      
-      override protected function rollOutHandler(param1:MouseEvent) : void
-      {
-         this.m_EventQueue.push(new DeferredEvent(param1));
-         this.processEventQueue(50);
-      }
-      
-      override protected function keyDownHandler(param1:KeyboardEvent) : void
-      {
-         this.m_EventQueue.length = 0;
-         super.keyDownHandler(param1);
-      }
-      
-      override protected function mouseDownHandler(param1:MouseEvent) : void
-      {
-         this.m_EventQueue.length = 0;
-         super.mouseDownHandler(param1);
-      }
-      
-      override protected function rollOverHandler(param1:MouseEvent) : void
-      {
-         this.m_EventQueue.push(new DeferredEvent(param1));
-         this.processEventQueue(50);
-      }
-   }
+            super.keyUpHandler(event);
+            return;
+        }// end function
+
+        override protected function rollOutHandler(event:MouseEvent) : void
+        {
+            this.m_EventQueue.push(new DeferredEvent(event));
+            this.processEventQueue(50);
+            return;
+        }// end function
+
+        override protected function keyDownHandler(event:KeyboardEvent) : void
+        {
+            this.m_EventQueue.length = 0;
+            super.keyDownHandler(event);
+            return;
+        }// end function
+
+        override protected function mouseDownHandler(event:MouseEvent) : void
+        {
+            this.m_EventQueue.length = 0;
+            super.mouseDownHandler(event);
+            return;
+        }// end function
+
+        override protected function rollOverHandler(event:MouseEvent) : void
+        {
+            this.m_EventQueue.push(new DeferredEvent(event));
+            this.processEventQueue(50);
+            return;
+        }// end function
+
+    }
 }
 
-import flash.events.MouseEvent;
-import flash.utils.getTimer;
+import __AS3__.vec.*;
 
-class DeferredEvent
+import flash.events.*;
+
+import flash.utils.*;
+
+import mx.controls.*;
+
+class DeferredEvent extends Object
 {
-    
-   public var event:MouseEvent = null;
-   
-   public var timestamp:int = 0;
-   
-   function DeferredEvent(param1:MouseEvent, param2:int = -1)
-   {
-      super();
-      this.event = param1;
-      if(param2 < 0)
-      {
-         this.timestamp = getTimer();
-      }
-      else
-      {
-         this.timestamp = param2;
-      }
-   }
+    public var event:MouseEvent = null;
+    public var timestamp:int = 0;
+
+    function DeferredEvent(event:MouseEvent, param2:int = -1)
+    {
+        this.event = event;
+        if (param2 < 0)
+        {
+            this.timestamp = getTimer();
+        }
+        else
+        {
+            this.timestamp = param2;
+        }
+        return;
+    }// end function
+
 }
+

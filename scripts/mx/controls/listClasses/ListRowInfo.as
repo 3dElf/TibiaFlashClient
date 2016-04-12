@@ -1,33 +1,24 @@
-package mx.controls.listClasses
+﻿package mx.controls.listClasses
 {
-   import mx.core.mx_internal;
-   
-   use namespace mx_internal;
-   
-   public class ListRowInfo
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public var itemOldY:Number;
-      
-      public var height:Number;
-      
-      public var uid:String;
-      
-      public var data:Object;
-      
-      public var oldY:Number;
-      
-      public var y:Number;
-      
-      public function ListRowInfo(param1:Number, param2:Number, param3:String, param4:Object = null)
-      {
-         super();
-         this.y = param1;
-         this.height = param2;
-         this.uid = param3;
-         this.data = param4;
-      }
-   }
+
+    public class ListRowInfo extends Object
+    {
+        public var itemOldY:Number;
+        public var height:Number;
+        public var uid:String;
+        public var data:Object;
+        public var oldY:Number;
+        public var y:Number;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function ListRowInfo(param1:Number, param2:Number, param3:String, param4:Object = null)
+        {
+            this.y = param1;
+            this.height = param2;
+            this.uid = param3;
+            this.data = param4;
+            return;
+        }// end function
+
+    }
 }

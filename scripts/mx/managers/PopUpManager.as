@@ -1,58 +1,56 @@
-package mx.managers
+﻿package mx.managers
 {
-   import mx.core.Singleton;
-   import mx.core.IFlexDisplayObject;
-   import flash.display.DisplayObject;
-   import mx.core.mx_internal;
-   
-   use namespace mx_internal;
-   
-   public class PopUpManager
-   {
-      
-      private static var implClassDependency:mx.managers.PopUpManagerImpl;
-      
-      private static var _impl:mx.managers.IPopUpManager;
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function PopUpManager()
-      {
-         super();
-      }
-      
-      private static function get impl() : mx.managers.IPopUpManager
-      {
-         if(!_impl)
-         {
-            _impl = IPopUpManager(Singleton.getInstance("mx.managers::IPopUpManager"));
-         }
-         return _impl;
-      }
-      
-      public static function removePopUp(param1:IFlexDisplayObject) : void
-      {
-         impl.removePopUp(param1);
-      }
-      
-      public static function addPopUp(param1:IFlexDisplayObject, param2:DisplayObject, param3:Boolean = false, param4:String = null) : void
-      {
-         impl.addPopUp(param1,param2,param3,param4);
-      }
-      
-      public static function centerPopUp(param1:IFlexDisplayObject) : void
-      {
-         impl.centerPopUp(param1);
-      }
-      
-      public static function bringToFront(param1:IFlexDisplayObject) : void
-      {
-         impl.bringToFront(param1);
-      }
-      
-      public static function createPopUp(param1:DisplayObject, param2:Class, param3:Boolean = false, param4:String = null) : IFlexDisplayObject
-      {
-         return impl.createPopUp(param1,param2,param3,param4);
-      }
-   }
+    import flash.display.*;
+    import mx.core.*;
+
+    public class PopUpManager extends Object
+    {
+        private static var implClassDependency:PopUpManagerImpl;
+        private static var _impl:IPopUpManager;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function PopUpManager()
+        {
+            return;
+        }// end function
+
+        private static function get impl() : IPopUpManager
+        {
+            if (!_impl)
+            {
+                _impl = IPopUpManager(Singleton.getInstance("mx.managers::IPopUpManager"));
+            }
+            return _impl;
+        }// end function
+
+        public static function removePopUp(param1:IFlexDisplayObject) : void
+        {
+            impl.removePopUp(param1);
+            return;
+        }// end function
+
+        public static function addPopUp(param1:IFlexDisplayObject, param2:DisplayObject, param3:Boolean = false, param4:String = null) : void
+        {
+            impl.addPopUp(param1, param2, param3, param4);
+            return;
+        }// end function
+
+        public static function centerPopUp(param1:IFlexDisplayObject) : void
+        {
+            impl.centerPopUp(param1);
+            return;
+        }// end function
+
+        public static function bringToFront(param1:IFlexDisplayObject) : void
+        {
+            impl.bringToFront(param1);
+            return;
+        }// end function
+
+        public static function createPopUp(param1:DisplayObject, param2:Class, param3:Boolean = false, param4:String = null) : IFlexDisplayObject
+        {
+            return impl.createPopUp(param1, param2, param3, param4);
+        }// end function
+
+    }
 }

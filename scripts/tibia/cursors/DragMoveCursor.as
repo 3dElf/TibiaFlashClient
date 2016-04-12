@@ -1,16 +1,18 @@
-package tibia.cursors
+﻿package tibia.cursors
 {
-   public class DragMoveCursor
-   {
-       
-      public function DragMoveCursor()
-      {
-         super();
-      }
-      
-      public static function get CURSOR_NAME() : String
-      {
-         return DragCursorBase.CURSOR_NAME;
-      }
-   }
+
+    public class DragMoveCursor extends Object
+    {
+
+        public function DragMoveCursor()
+        {
+            return;
+        }// end function
+
+        public static function get CURSOR_NAME() : String
+        {
+            return DragCursorBase.CURSOR_NAME;
+        }// end function
+
+    }
 }

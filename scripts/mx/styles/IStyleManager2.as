@@ -1,14 +1,17 @@
-package mx.styles
+﻿package mx.styles
 {
-   import flash.events.IEventDispatcher;
-   import flash.system.ApplicationDomain;
-   import flash.system.SecurityDomain;
-   
-   public interface IStyleManager2 extends IStyleManager
-   {
-       
-      function get selectors() : Array;
-      
-      function loadStyleDeclarations2(param1:String, param2:Boolean = true, param3:ApplicationDomain = null, param4:SecurityDomain = null) : IEventDispatcher;
-   }
+    import flash.events.*;
+    import flash.system.*;
+    import mx.styles.*;
+
+    public interface IStyleManager2 extends IStyleManager
+    {
+
+        public function IStyleManager2();
+
+        function get selectors() : Array;
+
+        function loadStyleDeclarations2(param1:String, param2:Boolean = true, param3:ApplicationDomain = null, param4:SecurityDomain = null) : IEventDispatcher;
+
+    }
 }

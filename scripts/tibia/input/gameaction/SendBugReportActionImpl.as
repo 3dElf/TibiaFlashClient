@@ -1,81 +1,77 @@
-package tibia.input.gameaction
+﻿package tibia.input.gameaction
 {
-   import tibia.input.IActionImpl;
-   import tibia.game.BugReportWidget;
-   import tibia.worldmap.WorldMapStorage;
-   import tibia.chat.ChatStorage;
-   import tibia.network.Communication;
-   import mx.events.CloseEvent;
-   import mx.resources.ResourceManager;
-   import tibia.chat.MessageMode;
-   
-   public class SendBugReportActionImpl implements IActionImpl
-   {
-      
-      private static const BUNDLE:String = "BugReportWidget";
-       
-      protected var m_BugCategory:int;
-      
-      protected var m_SystemMessage = null;
-      
-      protected var m_UserMessage:String = null;
-      
-      protected var m_Callback:Function = null;
-      
-      public function SendBugReportActionImpl(param1:String = null, param2:* = null, param3:Function = null, param4:int = -1)
-      {
-         this.m_BugCategory = BugReportWidget.BUG_CATEGORY_OTHER;
-         super();
-         this.m_UserMessage = param1;
-         this.m_SystemMessage = param2;
-         this.m_Callback = param3;
-         if(param4 > -1)
-         {
-            this.m_BugCategory = param4;
-         }
-      }
-      
-      public function perform(param1:Boolean = false) : void
-      {
-         var _loc3_:BugReportWidget = null;
-         var _loc4_:String = null;
-         var _loc5_:WorldMapStorage = null;
-         var _loc6_:ChatStorage = null;
-         var _loc2_:Communication = Tibia.s_GetCommunication();
-         if(_loc2_ != null && Boolean(_loc2_.allowBugreports) && Boolean(_loc2_.isGameRunning))
-         {
-            _loc3_ = new BugReportWidget();
-            _loc3_.userMessage = this.m_UserMessage;
-            _loc3_.bugInformation = this.m_SystemMessage;
-            _loc3_.category = this.m_BugCategory;
-            if(this.m_Callback != null)
+    import mx.events.*;
+    import mx.resources.*;
+    import tibia.chat.*;
+    import tibia.game.*;
+    import tibia.input.*;
+    import tibia.network.*;
+    import tibia.worldmap.*;
+
+    public class SendBugReportActionImpl extends Object implements IActionImpl
+    {
+        protected var m_BugCategory:int;
+        protected var m_SystemMessage:Object = null;
+        protected var m_UserMessage:String = null;
+        protected var m_Callback:Function = null;
+        private static const BUNDLE:String = "BugReportWidget";
+
+        public function SendBugReportActionImpl(param1:String = null, param2 = null, param3:Function = null, param4:int = -1)
+        {
+            this.m_BugCategory = BugReportWidget.BUG_CATEGORY_OTHER;
+            this.m_UserMessage = param1;
+            this.m_SystemMessage = param2;
+            this.m_Callback = param3;
+            if (param4 > -1)
             {
-               _loc3_.addEventListener(CloseEvent.CLOSE,this.m_Callback);
+                this.m_BugCategory = param4;
             }
-            _loc3_.show();
-         }
-         else
-         {
-            _loc4_ = null;
-            if(_loc2_ != null && !_loc2_.allowBugreports && Boolean(_loc2_.isGameRunning))
+            return;
+        }// end function
+
+        public function perform(param1:Boolean = false) : void
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_2:* = Tibia.s_GetCommunication();
+            if (_loc_2 != null && _loc_2.allowBugreports && _loc_2.isGameRunning)
             {
-               _loc4_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_NOT_AUHTORIZED");
+                _loc_3 = new BugReportWidget();
+                _loc_3.userMessage = this.m_UserMessage;
+                _loc_3.bugInformation = this.m_SystemMessage;
+                _loc_3.category = this.m_BugCategory;
+                if (this.m_Callback != null)
+                {
+                    _loc_3.addEventListener(CloseEvent.CLOSE, this.m_Callback);
+                }
+                _loc_3.show();
             }
             else
             {
-               _loc4_ = ResourceManager.getInstance().getString(BUNDLE,"MSG_NOT_CONNECTED");
+                _loc_4 = null;
+                if (_loc_2 != null && !_loc_2.allowBugreports && _loc_2.isGameRunning)
+                {
+                    _loc_4 = ResourceManager.getInstance().getString(BUNDLE, "MSG_NOT_AUHTORIZED");
+                }
+                else
+                {
+                    _loc_4 = ResourceManager.getInstance().getString(BUNDLE, "MSG_NOT_CONNECTED");
+                }
+                _loc_5 = Tibia.s_GetWorldMapStorage();
+                if (_loc_5 != null)
+                {
+                    _loc_5.addOnscreenMessage(MessageMode.MESSAGE_FAILURE, _loc_4);
+                }
+                _loc_6 = Tibia.s_GetChatStorage();
+                if (_loc_6 != null)
+                {
+                    _loc_6.addChannelMessage(-1, -1, null, 0, MessageMode.MESSAGE_FAILURE, _loc_4);
+                }
             }
-            _loc5_ = Tibia.s_GetWorldMapStorage();
-            if(_loc5_ != null)
-            {
-               _loc5_.addOnscreenMessage(MessageMode.MESSAGE_FAILURE,_loc4_);
-            }
-            _loc6_ = Tibia.s_GetChatStorage();
-            if(_loc6_ != null)
-            {
-               _loc6_.addChannelMessage(-1,-1,null,0,MessageMode.MESSAGE_FAILURE,_loc4_);
-            }
-         }
-      }
-   }
+            return;
+        }// end function
+
+    }
 }

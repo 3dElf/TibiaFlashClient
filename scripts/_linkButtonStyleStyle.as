@@ -1,36 +1,39 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   
-   public class _linkButtonStyleStyle
-   {
-       
-      public function _linkButtonStyleStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration(".linkButtonStyle");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration(".linkButtonStyle",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class _linkButtonStyleStyle extends Object
+    {
+
+        public function _linkButtonStyleStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration(".linkButtonStyle");
+            if (!style)
             {
-               _linkButtonStyleStyle.paddingTop = 2;
-               _linkButtonStyleStyle.paddingLeft = 2;
-               _linkButtonStyleStyle.paddingBottom = 2;
-               _linkButtonStyleStyle.paddingRight = 2;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration(".linkButtonStyle", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.paddingTop = 2;
+                this.paddingLeft = 2;
+                this.paddingBottom = 2;
+                this.paddingRight = 2;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

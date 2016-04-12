@@ -1,34 +1,37 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   
-   public class _TextInputStyle
-   {
-       
-      public function _TextInputStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration("TextInput");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration("TextInput",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class _TextInputStyle extends Object
+    {
+
+        public function _TextInputStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration("TextInput");
+            if (!style)
             {
-               _TextInputStyle.backgroundColor = 16777215;
-               _TextInputStyle.backgroundDisabledColor = 14540253;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration("TextInput", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.backgroundColor = 16777215;
+                this.backgroundDisabledColor = 14540253;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

@@ -1,12 +1,16 @@
-package mx.resources
+﻿package mx.resources
 {
-   public interface IResourceBundle
-   {
-       
-      function get content() : Object;
-      
-      function get locale() : String;
-      
-      function get bundleName() : String;
-   }
+
+    public interface IResourceBundle
+    {
+
+        public function IResourceBundle();
+
+        function get content() : Object;
+
+        function get locale() : String;
+
+        function get bundleName() : String;
+
+    }
 }

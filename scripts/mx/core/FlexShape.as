@@ -1,32 +1,28 @@
-package mx.core
+﻿package mx.core
 {
-   import flash.display.Shape;
-   import mx.utils.NameUtil;
-   
-   use namespace mx_internal;
-   
-   public class FlexShape extends Shape
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function FlexShape()
-      {
-         super();
-         try
-         {
-            name = NameUtil.createUniqueName(this);
+    import flash.display.*;
+    import mx.utils.*;
+
+    public class FlexShape extends Shape
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function FlexShape()
+        {
+            try
+            {
+                name = NameUtil.createUniqueName(this);
+            }
+            catch (e:Error)
+            {
+            }
             return;
-         }
-         catch(e:Error)
-         {
-            return;
-         }
-      }
-      
-      override public function toString() : String
-      {
-         return NameUtil.displayObjectToString(this);
-      }
-   }
+        }// end function
+
+        override public function toString() : String
+        {
+            return NameUtil.displayObjectToString(this);
+        }// end function
+
+    }
 }

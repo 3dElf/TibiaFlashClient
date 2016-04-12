@@ -1,157 +1,184 @@
-package tibia.ingameshop.shopWidgetClasses
+﻿package tibia.ingameshop.shopWidgetClasses
 {
-   import shared.controls.CustomTileList;
-   import mx.core.IDataRenderer;
-   import tibia.ingameshop.IngameShopOffer;
-   import mx.events.ListEvent;
-   import tibia.ingameshop.IngameShopCategory;
-   import mx.collections.ArrayCollection;
-   import tibia.ingameshop.IngameShopWidget;
-   import flash.errors.IllegalOperationError;
-   import tibia.ingameshop.IngameShopEvent;
-   import flash.events.MouseEvent;
-   import flash.events.Event;
-   import mx.core.ClassFactory;
-   
-   public class OfferList extends CustomTileList implements IIngameShopWidgetComponent, IDataRenderer
-   {
-      
-      private static const LIST_ITEM_HEIGHT:int = 140;
-      
-      private static const BUNDLE:String = "IngameShopWidget";
-      
-      private static const LIST_ITEM_WIDTH:int = 120;
-       
-      private var m_UncommittedCategory:Boolean;
-      
-      private var m_ShopWindow:IngameShopWidget;
-      
-      public function OfferList()
-      {
-         super();
-         styleName = "ingameShopOfferList";
-         itemRenderer = new ClassFactory(OfferRenderer);
-         columnWidth = LIST_ITEM_WIDTH;
-         rowHeight = LIST_ITEM_HEIGHT;
-         doubleClickEnabled = true;
-         addEventListener(ListEvent.CHANGE,this.onOfferSelected);
-         this.m_UncommittedCategory = true;
-      }
-      
-      private function updateUIOnOfferSelection(param1:IngameShopOffer) : void
-      {
-         if(this.m_ShopWindow != null)
-         {
-            this.m_ShopWindow.mainView.setShowButtonBar(param1 != null && !param1.disabled);
-            this.m_ShopWindow.mainView.detailsList.offer = param1;
-         }
-      }
-      
-      public function dispose() : void
-      {
-         removeEventListener(ListEvent.CHANGE,this.onOfferSelected);
-         this.data = null;
-         this.m_ShopWindow = null;
-      }
-      
-      protected function onOfferSelected(param1:ListEvent) : void
-      {
-         var _loc2_:IngameShopOffer = param1.itemRenderer.data as IngameShopOffer;
-         if(_loc2_ != null && Boolean(_loc2_.disabled))
-         {
-            selectedIndex = -1;
-            param1.preventDefault();
-         }
-         if(selectedIndex == -1)
-         {
-            _loc2_ = null;
-         }
-         this.updateUIOnOfferSelection(_loc2_);
-      }
-      
-      override protected function commitProperties() : void
-      {
-         var _loc1_:IngameShopCategory = null;
-         var _loc2_:Array = null;
-         var _loc3_:int = 0;
-         super.commitProperties();
-         if(this.m_UncommittedCategory)
-         {
-            selectedItem = null;
-            this.updateUIOnOfferSelection(null);
-            _loc1_ = data as IngameShopCategory;
-            if(_loc1_ != null)
+    import flash.errors.*;
+    import flash.events.*;
+    import mx.collections.*;
+    import mx.core.*;
+    import mx.events.*;
+    import shared.controls.*;
+    import tibia.ingameshop.*;
+    import tibia.ingameshop.shopWidgetClasses.*;
+
+    public class OfferList extends CustomTileList implements IIngameShopWidgetComponent, IDataRenderer
+    {
+        private var m_LastStoreEventOffer:int;
+        private var m_UncommittedCategory:Boolean;
+        private var m_ShopWindow:IngameShopWidget;
+        private static const LIST_ITEM_HEIGHT:int = 140;
+        private static const BUNDLE:String = "IngameShopWidget";
+        private static const LIST_ITEM_WIDTH:int = 120;
+
+        public function OfferList()
+        {
+            styleName = "ingameShopOfferList";
+            itemRenderer = new ClassFactory(OfferRenderer);
+            columnWidth = LIST_ITEM_WIDTH;
+            rowHeight = LIST_ITEM_HEIGHT;
+            doubleClickEnabled = true;
+            addEventListener(ListEvent.CHANGE, this.onOfferSelected);
+            addEventListener(ListEvent.ITEM_CLICK, this.onOfferClicked);
+            this.m_UncommittedCategory = true;
+            return;
+        }// end function
+
+        override protected function mouseWheelHandler(event:MouseEvent) : void
+        {
+            event.delta = Math.max(-1, Math.min(1, event.delta));
+            super.mouseWheelHandler(event);
+            return;
+        }// end function
+
+        private function updateUIOnOfferSelection(param1:IngameShopOffer) : void
+        {
+            if (this.m_ShopWindow != null)
             {
-               _loc2_ = new Array();
-               _loc3_ = 0;
-               while(_loc3_ < _loc1_.offers.length)
-               {
-                  _loc2_.push(_loc1_.offers[_loc3_]);
-                  _loc3_++;
-               }
-               dataProvider = new ArrayCollection(_loc2_);
+                this.m_ShopWindow.mainView.setShowButtonBar(param1 != null && !param1.disabled);
+                this.m_ShopWindow.mainView.detailsList.offer = param1;
             }
-            else
+            return;
+        }// end function
+
+        protected function onOfferSelected(event:ListEvent) : void
+        {
+            var _loc_2:* = event.itemRenderer.data as IngameShopOffer;
+            if (_loc_2 != null && _loc_2.disabled)
             {
-               dataProvider = null;
+                selectedIndex = -1;
+                event.preventDefault();
             }
-            this.m_UncommittedCategory = false;
-         }
-      }
-      
-      public function getSelectedOffer() : IngameShopOffer
-      {
-         return selectedItem as IngameShopOffer;
-      }
-      
-      public function set shopWidget(param1:IngameShopWidget) : void
-      {
-         if(this.m_ShopWindow != null)
-         {
-            throw new IllegalOperationError("IngameShopOfferList.shopWidget: Attempted to set reference twice");
-         }
-         this.m_ShopWindow = param1;
-      }
-      
-      protected function onCurrentOffersChanged(param1:IngameShopEvent) : void
-      {
-         this.m_UncommittedCategory = true;
-         invalidateProperties();
-      }
-      
-      override public function set data(param1:Object) : void
-      {
-         var _loc2_:IngameShopCategory = super.data as IngameShopCategory;
-         if(_loc2_ != null)
-         {
-            _loc2_.removeEventListener(IngameShopEvent.CATEGORY_OFFERS_CHANGED,this.onCurrentOffersChanged);
-         }
-         var _loc3_:IngameShopCategory = param1 as IngameShopCategory;
-         if(_loc3_ != null)
-         {
-            _loc3_.addEventListener(IngameShopEvent.CATEGORY_OFFERS_CHANGED,this.onCurrentOffersChanged);
-         }
-         super.data = param1;
-         this.m_UncommittedCategory = true;
-         invalidateProperties();
-      }
-      
-      override protected function mouseWheelHandler(param1:MouseEvent) : void
-      {
-         param1.delta = Math.max(-1,Math.min(1,param1.delta));
-         super.mouseWheelHandler(param1);
-      }
-      
-      protected function onOfferDoubleClicked(param1:Event) : void
-      {
-         var _loc3_:IngameShopEvent = null;
-         var _loc2_:IngameShopOffer = this.getSelectedOffer();
-         if(_loc2_ != null && !_loc2_.disabled)
-         {
-            _loc3_ = new IngameShopEvent(IngameShopEvent.OFFER_ACTIVATED);
-            _loc3_.data = _loc2_;
-            dispatchEvent(_loc3_);
-         }
-      }
-   }
+            if (selectedIndex == -1)
+            {
+                _loc_2 = null;
+            }
+            this.updateUIOnOfferSelection(_loc_2);
+            return;
+        }// end function
+
+        override protected function commitProperties() : void
+        {
+            var _loc_1:* = null;
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            super.commitProperties();
+            if (this.m_UncommittedCategory)
+            {
+                selectedItem = null;
+                this.updateUIOnOfferSelection(null);
+                _loc_1 = data as IngameShopCategory;
+                if (_loc_1 != null)
+                {
+                    _loc_2 = new Array();
+                    _loc_3 = 0;
+                    while (_loc_3 < _loc_1.offers.length)
+                    {
+                        
+                        _loc_2.push(_loc_1.offers[_loc_3]);
+                        _loc_3++;
+                    }
+                    dataProvider = new ArrayCollection(_loc_2);
+                }
+                else
+                {
+                    dataProvider = null;
+                }
+                this.m_UncommittedCategory = false;
+            }
+            return;
+        }// end function
+
+        public function getSelectedOffer() : IngameShopOffer
+        {
+            return selectedItem as IngameShopOffer;
+        }// end function
+
+        protected function onOfferClicked(event:ListEvent) : void
+        {
+            var _loc_2:* = event.itemRenderer.data as IngameShopOffer;
+            if (_loc_2 != null && _loc_2.disabled)
+            {
+                selectedIndex = -1;
+                event.preventDefault();
+                this.m_LastStoreEventOffer = 0;
+            }
+            if (selectedIndex == -1)
+            {
+                _loc_2 = null;
+                this.m_LastStoreEventOffer = 0;
+            }
+            if (_loc_2 != null && this.m_LastStoreEventOffer != _loc_2.offerID)
+            {
+                this.m_LastStoreEventOffer = _loc_2.offerID;
+                Tibia.s_GetCommunication().sendCSTOREEVENT(IngameShopManager.STORE_EVENT_SELECT_OFFER, _loc_2.offerID);
+            }
+            return;
+        }// end function
+
+        protected function onCurrentOffersChanged(event:IngameShopEvent) : void
+        {
+            this.m_UncommittedCategory = true;
+            invalidateProperties();
+            return;
+        }// end function
+
+        public function set shopWidget(param1:IngameShopWidget) : void
+        {
+            if (this.m_ShopWindow != null)
+            {
+                throw new IllegalOperationError("IngameShopOfferList.shopWidget: Attempted to set reference twice");
+            }
+            this.m_ShopWindow = param1;
+            return;
+        }// end function
+
+        protected function onOfferDoubleClicked(event:Event) : void
+        {
+            var _loc_3:* = null;
+            var _loc_2:* = this.getSelectedOffer();
+            if (_loc_2 != null && !_loc_2.disabled)
+            {
+                _loc_3 = new IngameShopEvent(IngameShopEvent.OFFER_ACTIVATED);
+                _loc_3.data = _loc_2;
+                dispatchEvent(_loc_3);
+            }
+            return;
+        }// end function
+
+        override public function set data(param1:Object) : void
+        {
+            var _loc_2:* = super.data as IngameShopCategory;
+            if (_loc_2 != null)
+            {
+                _loc_2.removeEventListener(IngameShopEvent.CATEGORY_OFFERS_CHANGED, this.onCurrentOffersChanged);
+            }
+            var _loc_3:* = param1 as IngameShopCategory;
+            if (_loc_3 != null)
+            {
+                _loc_3.addEventListener(IngameShopEvent.CATEGORY_OFFERS_CHANGED, this.onCurrentOffersChanged);
+            }
+            super.data = param1;
+            this.m_UncommittedCategory = true;
+            invalidateProperties();
+            return;
+        }// end function
+
+        public function dispose() : void
+        {
+            removeEventListener(ListEvent.CHANGE, this.onOfferSelected);
+            removeEventListener(ListEvent.ITEM_CLICK, this.onOfferClicked);
+            this.data = null;
+            this.m_ShopWindow = null;
+            return;
+        }// end function
+
+    }
 }

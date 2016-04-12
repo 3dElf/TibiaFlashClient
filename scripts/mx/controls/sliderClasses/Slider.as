@@ -1,1451 +1,1449 @@
-package mx.controls.sliderClasses
+﻿package mx.controls.sliderClasses
 {
-   import mx.core.UIComponent;
-   import mx.core.mx_internal;
-   import flash.display.DisplayObject;
-   import mx.styles.ISimpleStyleClient;
-   import flash.display.Graphics;
-   import flash.events.MouseEvent;
-   import flash.geom.Point;
-   import mx.formatters.NumberFormatter;
-   import mx.core.IFlexDisplayObject;
-   import mx.events.SliderEvent;
-   import mx.styles.StyleProxy;
-   import flash.events.FocusEvent;
-   import mx.core.FlexVersion;
-   import mx.events.SliderEventClickTarget;
-   import mx.events.FlexEvent;
-   import mx.effects.Tween;
-   import flash.events.KeyboardEvent;
-   
-   use namespace mx_internal;
-   
-   public class Slider extends UIComponent
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      mx_internal static var createAccessibilityImplementation:Function;
-       
-      private var _enabled:Boolean;
-      
-      private var snapIntervalChanged:Boolean = false;
-      
-      private var _direction:String = "horizontal";
-      
-      private var _thumbClass:Class;
-      
-      private var _labels:Array;
-      
-      public var allowTrackClick:Boolean = true;
-      
-      private var valuesChanged:Boolean = false;
-      
-      mx_internal var keyInteraction:Boolean = false;
-      
-      private var directionChanged:Boolean = false;
-      
-      private var enabledChanged:Boolean = false;
-      
-      private var dataFormatter:NumberFormatter;
-      
-      private var track:IFlexDisplayObject;
-      
-      private var _values:Array;
-      
-      private var initValues:Boolean = true;
-      
-      public var liveDragging:Boolean = false;
-      
-      private var thumbs:UIComponent;
-      
-      private var _tickInterval:Number = 0;
-      
-      private var ticksChanged:Boolean = false;
-      
-      private var minimumSet:Boolean = false;
-      
-      private var ticks:UIComponent;
-      
-      private var _thumbCount:int = 1;
-      
-      private var labelObjects:UIComponent;
-      
-      public var allowThumbOverlap:Boolean = false;
-      
-      private var snapIntervalPrecision:int = -1;
-      
-      mx_internal var dataTip:mx.controls.sliderClasses.SliderDataTip;
-      
-      private var _snapInterval:Number = 0;
-      
-      private var thumbsChanged:Boolean = true;
-      
-      private var _tabIndex:Number;
-      
-      private var _sliderDataTipClass:Class;
-      
-      private var tabIndexChanged:Boolean;
-      
-      private var _tickValues:Array;
-      
-      private var labelsChanged:Boolean = false;
-      
-      private var interactionClickTarget:String;
-      
-      private var trackHighlightChanged:Boolean = true;
-      
-      private var _minimum:Number = 0;
-      
-      public var showDataTip:Boolean = true;
-      
-      mx_internal var innerSlider:UIComponent;
-      
-      private var labelStyleChanged:Boolean = false;
-      
-      private var _dataTipFormatFunction:Function;
-      
-      private var trackHitArea:UIComponent;
-      
-      private var highlightTrack:IFlexDisplayObject;
-      
-      private var _maximum:Number = 10;
-      
-      public function Slider()
-      {
-         _labels = [];
-         _thumbClass = SliderThumb;
-         _sliderDataTipClass = mx.controls.sliderClasses.SliderDataTip;
-         _tickValues = [];
-         _values = [0,0];
-         super();
-         tabChildren = true;
-      }
-      
-      public function get sliderThumbClass() : Class
-      {
-         return _thumbClass;
-      }
-      
-      public function set sliderThumbClass(param1:Class) : void
-      {
-         _thumbClass = param1;
-         thumbsChanged = true;
-         invalidateProperties();
-         invalidateDisplayList();
-      }
-      
-      public function set tickInterval(param1:Number) : void
-      {
-         _tickInterval = param1;
-         ticksChanged = true;
-         invalidateProperties();
-         invalidateDisplayList();
-      }
-      
-      public function set direction(param1:String) : void
-      {
-         _direction = param1;
-         directionChanged = true;
-         invalidateProperties();
-         invalidateSize();
-         invalidateDisplayList();
-      }
-      
-      public function get minimum() : Number
-      {
-         return _minimum;
-      }
-      
-      override protected function commitProperties() : void
-      {
-         var _loc1_:int = 0;
-         var _loc2_:int = 0;
-         var _loc3_:* = false;
-         var _loc4_:int = 0;
-         var _loc5_:SliderLabel = null;
-         var _loc6_:String = null;
-         var _loc7_:Number = NaN;
-         super.commitProperties();
-         if(trackHighlightChanged)
-         {
-            trackHighlightChanged = false;
-            if(getStyle("showTrackHighlight"))
-            {
-               createHighlightTrack();
-            }
-            else if(highlightTrack)
-            {
-               innerSlider.removeChild(DisplayObject(highlightTrack));
-               highlightTrack = null;
-            }
-         }
-         if(directionChanged)
-         {
-            directionChanged = false;
-            _loc3_ = _direction == SliderDirection.HORIZONTAL;
-            if(_loc3_)
-            {
-               DisplayObject(innerSlider).rotation = 0;
-            }
-            else
-            {
-               DisplayObject(innerSlider).rotation = -90;
-               innerSlider.y = unscaledHeight;
-            }
-            if(labelObjects)
-            {
-               _loc4_ = labelObjects.numChildren - 1;
-               while(_loc4_ >= 0)
-               {
-                  _loc5_ = SliderLabel(labelObjects.getChildAt(_loc4_));
-                  _loc5_.rotation = !!_loc3_?Number(0):Number(90);
-                  _loc4_--;
-               }
-            }
-         }
-         if(Boolean(labelStyleChanged) && !labelsChanged)
-         {
-            labelStyleChanged = false;
-            if(labelObjects)
-            {
-               _loc6_ = getStyle("labelStyleName");
-               _loc1_ = labelObjects.numChildren;
-               _loc2_ = 0;
-               while(_loc2_ < _loc1_)
-               {
-                  ISimpleStyleClient(labelObjects.getChildAt(_loc2_)).styleName = _loc6_;
-                  _loc2_++;
-               }
-            }
-         }
-         if(ticksChanged)
-         {
-            ticksChanged = false;
-            createTicks();
-         }
-         if(labelsChanged)
-         {
-            labelsChanged = false;
-            createLabels();
-         }
-         if(thumbsChanged)
-         {
-            thumbsChanged = false;
-            createThumbs();
-         }
-         if(initValues)
-         {
-            initValues = false;
-            if(!valuesChanged)
-            {
-               _loc7_ = minimum;
-               _loc1_ = _thumbCount;
-               _loc2_ = 0;
-               while(_loc2_ < _loc1_)
-               {
-                  _values[_loc2_] = _loc7_;
-                  setValueAt(_loc7_,_loc2_);
-                  if(Boolean(_snapInterval) && _snapInterval != 0)
-                  {
-                     _loc7_ = _loc7_ + snapInterval;
-                  }
-                  else
-                  {
-                     _loc7_++;
-                  }
-                  _loc2_++;
-               }
-               snapIntervalChanged = false;
-            }
-         }
-         if(snapIntervalChanged)
-         {
-            snapIntervalChanged = false;
-            if(!valuesChanged)
-            {
-               _loc1_ = thumbs.numChildren;
-               _loc2_ = 0;
-               while(_loc2_ < _loc1_)
-               {
-                  setValueAt(getValueFromX(SliderThumb(thumbs.getChildAt(_loc2_)).xPosition),_loc2_);
-                  _loc2_++;
-               }
-            }
-         }
-         if(valuesChanged)
-         {
-            valuesChanged = false;
-            _loc1_ = _thumbCount;
-            _loc2_ = 0;
-            while(_loc2_ < _loc1_)
-            {
-               setValueAt(getValueFromX(getXFromValue(Math.min(Math.max(values[_loc2_],minimum),maximum))),_loc2_);
-               _loc2_++;
-            }
-         }
-         if(enabledChanged)
-         {
-            enabledChanged = false;
-            _loc1_ = thumbs.numChildren;
-            _loc2_ = 0;
-            while(_loc2_ < _loc1_)
-            {
-               SliderThumb(thumbs.getChildAt(_loc2_)).enabled = _enabled;
-               _loc2_++;
-            }
-            _loc1_ = !!labelObjects?int(labelObjects.numChildren):0;
-            _loc2_ = 0;
-            while(_loc2_ < _loc1_)
-            {
-               SliderLabel(labelObjects.getChildAt(_loc2_)).enabled = _enabled;
-               _loc2_++;
-            }
-         }
-         if(tabIndexChanged)
-         {
-            tabIndexChanged = false;
-            _loc1_ = thumbs.numChildren;
-            _loc2_ = 0;
-            while(_loc2_ < _loc1_)
-            {
-               SliderThumb(thumbs.getChildAt(_loc2_)).tabIndex = _tabIndex;
-               _loc2_++;
-            }
-         }
-      }
-      
-      mx_internal function getSnapValue(param1:Number, param2:SliderThumb = null) : Number
-      {
-         var _loc3_:Number = NaN;
-         var _loc4_:Boolean = false;
-         var _loc5_:Object = null;
-         var _loc6_:SliderThumb = null;
-         var _loc7_:SliderThumb = null;
-         if(!isNaN(_snapInterval) && _snapInterval != 0)
-         {
-            _loc3_ = getValueFromX(param1);
-            if(Boolean(param2) && Boolean(thumbs.numChildren > 1) && !allowThumbOverlap)
-            {
-               _loc4_ = true;
-               _loc5_ = getXBounds(param2.thumbIndex);
-               _loc6_ = param2.thumbIndex > 0?SliderThumb(thumbs.getChildAt(param2.thumbIndex - 1)):null;
-               _loc7_ = param2.thumbIndex + 1 < thumbs.numChildren?SliderThumb(thumbs.getChildAt(param2.thumbIndex + 1)):null;
-               if(_loc6_)
-               {
-                  _loc5_.min = _loc5_.min - _loc6_.width / 2;
-                  if(_loc3_ == minimum)
-                  {
-                     if(getValueFromX(_loc6_.xPosition - _loc6_.width / 2) != minimum)
-                     {
-                        _loc4_ = false;
-                     }
-                  }
-               }
-               else if(_loc3_ == minimum)
-               {
-                  _loc4_ = false;
-               }
-               if(_loc7_)
-               {
-                  _loc5_.max = _loc5_.max + _loc7_.width / 2;
-                  if(_loc3_ == maximum)
-                  {
-                     if(getValueFromX(_loc7_.xPosition + _loc7_.width / 2) != maximum)
-                     {
-                        _loc4_ = false;
-                     }
-                  }
-               }
-               else if(_loc3_ == maximum)
-               {
-                  _loc4_ = false;
-               }
-               if(_loc4_)
-               {
-                  _loc3_ = Math.min(Math.max(_loc3_,getValueFromX(Math.round(_loc5_.min)) + _snapInterval),getValueFromX(Math.round(_loc5_.max)) - _snapInterval);
-               }
-            }
-            return getXFromValue(_loc3_);
-         }
-         return param1;
-      }
-      
-      private function createHighlightTrack() : void
-      {
-         var _loc2_:Class = null;
-         var _loc1_:Boolean = getStyle("showTrackHighlight");
-         if(!highlightTrack && Boolean(_loc1_))
-         {
-            _loc2_ = getStyle("trackHighlightSkin");
-            highlightTrack = new _loc2_();
-            if(highlightTrack is ISimpleStyleClient)
-            {
-               ISimpleStyleClient(highlightTrack).styleName = this;
-            }
-            innerSlider.addChildAt(DisplayObject(highlightTrack),innerSlider.getChildIndex(DisplayObject(track)) + 1);
-         }
-      }
-      
-      mx_internal function drawTrackHighlight() : void
-      {
-         var _loc1_:Number = NaN;
-         var _loc2_:Number = NaN;
-         var _loc3_:SliderThumb = null;
-         var _loc4_:SliderThumb = null;
-         if(highlightTrack)
-         {
-            _loc3_ = SliderThumb(thumbs.getChildAt(0));
-            if(_thumbCount > 1)
-            {
-               _loc1_ = _loc3_.xPosition;
-               _loc4_ = SliderThumb(thumbs.getChildAt(1));
-               _loc2_ = _loc4_.xPosition - _loc3_.xPosition;
-            }
-            else
-            {
-               _loc1_ = track.x;
-               _loc2_ = _loc3_.xPosition - _loc1_;
-            }
-            highlightTrack.move(_loc1_,track.y + 1);
-            highlightTrack.setActualSize(_loc2_ > 0?Number(_loc2_):Number(0),highlightTrack.height);
-         }
-      }
-      
-      mx_internal function getXBounds(param1:int) : Object
-      {
-         var _loc2_:Number = track.x + track.width;
-         var _loc3_:Number = track.x;
-         if(allowThumbOverlap)
-         {
-            return {
-               "max":_loc2_,
-               "min":_loc3_
-            };
-         }
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:SliderThumb = param1 > 0?SliderThumb(thumbs.getChildAt(param1 - 1)):null;
-         var _loc7_:SliderThumb = param1 + 1 < thumbs.numChildren?SliderThumb(thumbs.getChildAt(param1 + 1)):null;
-         if(_loc6_)
-         {
-            _loc4_ = _loc6_.xPosition + _loc6_.width / 2;
-         }
-         if(_loc7_)
-         {
-            _loc5_ = _loc7_.xPosition - _loc7_.width / 2;
-         }
-         if(isNaN(_loc4_))
-         {
-            _loc4_ = _loc3_;
-         }
-         else
-         {
-            _loc4_ = Math.min(Math.max(_loc3_,_loc4_),_loc2_);
-         }
-         if(isNaN(_loc5_))
-         {
-            _loc5_ = _loc2_;
-         }
-         else
-         {
-            _loc5_ = Math.max(Math.min(_loc2_,_loc5_),_loc3_);
-         }
-         return {
-            "max":_loc5_,
-            "min":_loc4_
-         };
-      }
-      
-      protected function get thumbStyleFilters() : Object
-      {
-         return null;
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc11_:Number = NaN;
-         var _loc23_:SliderLabel = null;
-         var _loc24_:SliderLabel = null;
-         var _loc25_:SliderThumb = null;
-         super.updateDisplayList(param1,param2);
-         var _loc3_:* = _direction == SliderDirection.HORIZONTAL;
-         var _loc4_:int = !!labelObjects?int(labelObjects.numChildren):0;
-         var _loc5_:int = !!thumbs?int(thumbs.numChildren):0;
-         var _loc6_:Number = getStyle("trackMargin");
-         var _loc7_:Number = 6;
-         var _loc8_:SliderThumb = SliderThumb(thumbs.getChildAt(0));
-         if(Boolean(thumbs) && Boolean(_loc8_))
-         {
-            _loc7_ = _loc8_.getExplicitOrMeasuredWidth();
-         }
-         var _loc9_:Number = _loc7_ / 2;
-         var _loc10_:Number = _loc9_;
-         var _loc12_:Number = 0;
-         if(_loc4_ > 0)
-         {
-            _loc23_ = SliderLabel(labelObjects.getChildAt(0));
-            _loc12_ = !!_loc3_?Number(_loc23_.getExplicitOrMeasuredWidth()):Number(_loc23_.getExplicitOrMeasuredHeight());
-         }
-         var _loc13_:Number = 0;
-         if(_loc4_ > 1)
-         {
-            _loc24_ = SliderLabel(labelObjects.getChildAt(_loc4_ - 1));
-            _loc13_ = !!_loc3_?Number(_loc24_.getExplicitOrMeasuredWidth()):Number(_loc24_.getExplicitOrMeasuredHeight());
-         }
-         if(!isNaN(_loc6_))
-         {
-            _loc11_ = _loc6_;
-         }
-         else
-         {
-            _loc11_ = (_loc12_ + _loc13_) / 2;
-         }
-         if(_loc4_ > 0)
-         {
-            if(!isNaN(_loc6_))
-            {
-               _loc9_ = Math.max(_loc9_,_loc11_ / (_loc4_ > 1?2:1));
-            }
-            else
-            {
-               _loc9_ = Math.max(_loc9_,_loc12_ / 2);
-            }
-         }
-         else
-         {
-            _loc9_ = Math.max(_loc9_,_loc11_ / 2);
-         }
-         var _loc14_:Object = getComponentBounds();
-         var _loc15_:Number = ((!!_loc3_?param2:param1) - (Number(_loc14_.lower) - Number(_loc14_.upper))) / 2 - Number(_loc14_.upper);
-         track.move(Math.round(_loc9_),Math.round(_loc15_));
-         track.setActualSize((!!_loc3_?param1:param2) - _loc9_ * 2,track.height);
-         var _loc16_:Number = track.y + (track.height - _loc8_.getExplicitOrMeasuredHeight()) / 2 + getStyle("thumbOffset");
-         var _loc17_:int = _thumbCount;
-         var _loc18_:int = 0;
-         while(_loc18_ < _loc17_)
-         {
-            _loc25_ = SliderThumb(thumbs.getChildAt(_loc18_));
-            _loc25_.move(_loc25_.x,_loc16_);
-            _loc25_.visible = true;
-            _loc25_.setActualSize(_loc25_.getExplicitOrMeasuredWidth(),_loc25_.getExplicitOrMeasuredHeight());
-            _loc18_++;
-         }
-         var _loc19_:Graphics = trackHitArea.graphics;
-         var _loc20_:Number = 0;
-         if(_tickInterval > 0 || Boolean(_tickValues) && Boolean(_tickValues.length > 0))
-         {
-            _loc20_ = getStyle("tickLength");
-         }
-         _loc19_.clear();
-         _loc19_.beginFill(0,0);
-         var _loc21_:Number = _loc8_.getExplicitOrMeasuredHeight();
-         var _loc22_:Number = !_loc21_?Number(0):Number(_loc21_ / 2);
-         _loc19_.drawRect(track.x,track.y - _loc22_ - _loc20_,track.width,track.height + _loc21_ + _loc20_);
-         _loc19_.endFill();
-         if(_direction != SliderDirection.HORIZONTAL)
-         {
-            innerSlider.y = param2;
-         }
-         layoutTicks();
-         layoutLabels();
-         setPosFromValue();
-         drawTrackHighlight();
-      }
-      
-      override protected function createChildren() : void
-      {
-         super.createChildren();
-         if(!innerSlider)
-         {
-            innerSlider = new UIComponent();
-            UIComponent(innerSlider).tabChildren = true;
-            addChild(innerSlider);
-         }
-         createBackgroundTrack();
-         if(!trackHitArea)
-         {
-            trackHitArea = new UIComponent();
-            innerSlider.addChild(trackHitArea);
-            trackHitArea.addEventListener(MouseEvent.MOUSE_DOWN,track_mouseDownHandler);
-         }
-         invalidateProperties();
-      }
-      
-      public function set minimum(param1:Number) : void
-      {
-         _minimum = param1;
-         ticksChanged = true;
-         if(!initValues)
-         {
-            valuesChanged = true;
-         }
-         invalidateProperties();
-         invalidateDisplayList();
-      }
-      
-      public function get tickValues() : Array
-      {
-         return _tickValues;
-      }
-      
-      public function get maximum() : Number
-      {
-         return _maximum;
-      }
-      
-      private function createBackgroundTrack() : void
-      {
-         var _loc1_:Class = null;
-         if(!track)
-         {
-            _loc1_ = getStyle("trackSkin");
-            track = new _loc1_();
-            if(track is ISimpleStyleClient)
-            {
-               ISimpleStyleClient(track).styleName = this;
-            }
-            innerSlider.addChildAt(DisplayObject(track),0);
-         }
-      }
-      
-      private function positionDataTip(param1:Object) : void
-      {
-         var _loc2_:Number = NaN;
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = param1.x;
-         var _loc5_:Number = param1.y;
-         var _loc6_:String = getStyle("dataTipPlacement");
-         var _loc7_:Number = getStyle("dataTipOffset");
-         if(_direction == SliderDirection.HORIZONTAL)
-         {
-            _loc2_ = _loc4_;
-            _loc3_ = _loc5_;
-            if(_loc6_ == "left")
-            {
-               _loc2_ = _loc2_ - (_loc7_ + dataTip.width);
-               _loc3_ = _loc3_ + (param1.height - dataTip.height) / 2;
-            }
-            else if(_loc6_ == "right")
-            {
-               _loc2_ = _loc2_ + (_loc7_ + param1.width);
-               _loc3_ = _loc3_ + (param1.height - dataTip.height) / 2;
-            }
-            else if(_loc6_ == "top")
-            {
-               _loc3_ = _loc3_ - (_loc7_ + dataTip.height);
-               _loc2_ = _loc2_ - (dataTip.width - param1.width) / 2;
-            }
-            else if(_loc6_ == "bottom")
-            {
-               _loc3_ = _loc3_ + (_loc7_ + param1.height);
-               _loc2_ = _loc2_ - (dataTip.width - param1.width) / 2;
-            }
-         }
-         else
-         {
-            _loc2_ = _loc5_;
-            _loc3_ = unscaledHeight - _loc4_ - (dataTip.height + param1.width) / 2;
-            if(_loc6_ == "left")
-            {
-               _loc2_ = _loc2_ - (_loc7_ + dataTip.width);
-            }
-            else if(_loc6_ == "right")
-            {
-               _loc2_ = _loc2_ + (_loc7_ + param1.height);
-            }
-            else if(_loc6_ == "top")
-            {
-               _loc3_ = _loc3_ - (_loc7_ + (dataTip.height + param1.width) / 2);
-               _loc2_ = _loc2_ - (dataTip.width - param1.height) / 2;
-            }
-            else if(_loc6_ == "bottom")
-            {
-               _loc3_ = _loc3_ + (_loc7_ + (dataTip.height + param1.width) / 2);
-               _loc2_ = _loc2_ - (dataTip.width - param1.height) / 2;
-            }
-         }
-         var _loc8_:Point = new Point(_loc2_,_loc3_);
-         var _loc9_:Point = localToGlobal(_loc8_);
-         _loc9_ = dataTip.parent.globalToLocal(_loc9_);
-         dataTip.x = _loc9_.x < 0?Number(0):Number(_loc9_.x);
-         dataTip.y = _loc9_.y < 0?Number(0):Number(_loc9_.y);
-      }
-      
-      [Bindable("change")]
-      public function get values() : Array
-      {
-         return _values;
-      }
-      
-      private function createLabels() : void
-      {
-         var _loc1_:SliderLabel = null;
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc5_:String = null;
-         if(labelObjects)
-         {
-            _loc2_ = labelObjects.numChildren - 1;
-            while(_loc2_ >= 0)
-            {
-               labelObjects.removeChildAt(_loc2_);
-               _loc2_--;
-            }
-         }
-         else
-         {
-            labelObjects = new UIComponent();
-            innerSlider.addChildAt(labelObjects,innerSlider.getChildIndex(trackHitArea));
-         }
-         if(_labels)
-         {
-            _loc3_ = _labels.length;
-            _loc4_ = 0;
-            while(_loc4_ < _loc3_)
-            {
-               _loc1_ = new SliderLabel();
-               _loc1_.text = _labels[_loc4_] is String?_labels[_loc4_]:_labels[_loc4_].toString();
-               if(_direction != SliderDirection.HORIZONTAL)
-               {
-                  _loc1_.rotation = 90;
-               }
-               _loc5_ = getStyle("labelStyleName");
-               if(_loc5_)
-               {
-                  _loc1_.styleName = _loc5_;
-               }
-               labelObjects.addChild(_loc1_);
-               _loc4_++;
-            }
-         }
-      }
-      
-      private function destroyDataTip() : void
-      {
-         if(dataTip)
-         {
-            systemManager.toolTipChildren.removeChild(dataTip);
-            dataTip = null;
-         }
-      }
-      
-      private function setValueFromPos(param1:int) : void
-      {
-         var _loc2_:SliderThumb = SliderThumb(thumbs.getChildAt(param1));
-         setValueAt(getValueFromX(_loc2_.xPosition),param1);
-      }
-      
-      public function set tickValues(param1:Array) : void
-      {
-         _tickValues = param1;
-         ticksChanged = true;
-         invalidateProperties();
-         invalidateDisplayList();
-      }
-      
-      override public function get enabled() : Boolean
-      {
-         return _enabled;
-      }
-      
-      public function set values(param1:Array) : void
-      {
-         _values = param1;
-         valuesChanged = true;
-         minimumSet = true;
-         invalidateProperties();
-         invalidateDisplayList();
-      }
-      
-      mx_internal function getXFromValue(param1:Number) : Number
-      {
-         var _loc2_:Number = NaN;
-         if(param1 == minimum)
-         {
-            _loc2_ = track.x;
-         }
-         else if(param1 == maximum)
-         {
-            _loc2_ = track.x + track.width;
-         }
-         else
-         {
-            _loc2_ = track.x + (param1 - minimum) * track.width / (maximum - minimum);
-         }
-         return _loc2_;
-      }
-      
-      public function set maximum(param1:Number) : void
-      {
-         _maximum = param1;
-         ticksChanged = true;
-         if(!initValues)
-         {
-            valuesChanged = true;
-         }
-         invalidateProperties();
-         invalidateDisplayList();
-      }
-      
-      mx_internal function onThumbPress(param1:Object) : void
-      {
-         var _loc3_:String = null;
-         var _loc4_:String = null;
-         if(showDataTip)
-         {
-            dataFormatter = new NumberFormatter();
-            dataFormatter.precision = getStyle("dataTipPrecision");
-            if(!dataTip)
-            {
-               dataTip = SliderDataTip(new sliderDataTipClass());
-               systemManager.toolTipChildren.addChild(dataTip);
-               _loc4_ = getStyle("dataTipStyleName");
-               if(_loc4_)
-               {
-                  dataTip.styleName = _loc4_;
-               }
-            }
-            if(_dataTipFormatFunction != null)
-            {
-               _loc3_ = this._dataTipFormatFunction(getValueFromX(param1.xPosition));
-            }
-            else
-            {
-               _loc3_ = dataFormatter.format(getValueFromX(param1.xPosition));
-            }
-            dataTip.text = _loc3_;
-            dataTip.validateNow();
-            dataTip.setActualSize(dataTip.getExplicitOrMeasuredWidth(),dataTip.getExplicitOrMeasuredHeight());
-            positionDataTip(param1);
-         }
-         keyInteraction = false;
-         var _loc2_:SliderEvent = new SliderEvent(SliderEvent.THUMB_PRESS);
-         _loc2_.value = getValueFromX(param1.xPosition);
-         _loc2_.thumbIndex = param1.thumbIndex;
-         dispatchEvent(_loc2_);
-      }
-      
-      public function setThumbValueAt(param1:int, param2:Number) : void
-      {
-         setValueAt(param2,param1,true);
-         valuesChanged = true;
-         invalidateProperties();
-         invalidateDisplayList();
-      }
-      
-      public function set snapInterval(param1:Number) : void
-      {
-         _snapInterval = param1;
-         var _loc2_:Array = new String(1 + param1).split(".");
-         if(_loc2_.length == 2)
-         {
-            snapIntervalPrecision = _loc2_[1].length;
-         }
-         else
-         {
-            snapIntervalPrecision = -1;
-         }
-         if(!isNaN(param1) && param1 != 0)
-         {
-            snapIntervalChanged = true;
-            invalidateProperties();
-            invalidateDisplayList();
-         }
-      }
-      
-      mx_internal function unRegisterMouseMove(param1:Function) : void
-      {
-         innerSlider.removeEventListener(MouseEvent.MOUSE_MOVE,param1);
-      }
-      
-      mx_internal function getTrackHitArea() : UIComponent
-      {
-         return trackHitArea;
-      }
-      
-      private function layoutTicks() : void
-      {
-         var _loc1_:Graphics = null;
-         var _loc2_:Number = NaN;
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:Number = NaN;
-         var _loc7_:Boolean = false;
-         var _loc8_:int = 0;
-         var _loc9_:Number = NaN;
-         if(ticks)
-         {
-            _loc1_ = ticks.graphics;
-            _loc2_ = getStyle("tickLength");
-            _loc3_ = getStyle("tickOffset");
-            _loc4_ = getStyle("tickThickness");
-            _loc6_ = getStyle("tickColor");
-            _loc7_ = Boolean(_tickValues) && _tickValues.length > 0?true:false;
-            _loc8_ = 0;
-            _loc9_ = !!_loc7_?Number(_tickValues[_loc8_++]):Number(minimum);
-            _loc1_.clear();
-            if(_tickInterval > 0 || Boolean(_loc7_))
-            {
-               _loc1_.lineStyle(_loc4_,_loc6_,100);
-               do
-               {
-                  _loc5_ = Math.round(getXFromValue(_loc9_));
-                  _loc1_.moveTo(_loc5_,_loc2_);
-                  _loc1_.lineTo(_loc5_,0);
-                  _loc9_ = !!_loc7_?_loc8_ < _tickValues.length?Number(_tickValues[_loc8_++]):Number(NaN):Number(_tickInterval + _loc9_);
-               }
-               while(_loc9_ < maximum || Boolean(_loc7_) && _loc8_ < _tickValues.length);
-               
-               if(!_loc7_ || _loc9_ == maximum)
-               {
-                  _loc5_ = track.x + track.width - 1;
-                  _loc1_.moveTo(_loc5_,_loc2_);
-                  _loc1_.lineTo(_loc5_,0);
-               }
-               ticks.y = Math.round(track.y + _loc3_ - _loc2_);
-            }
-         }
-      }
-      
-      public function getThumbAt(param1:int) : SliderThumb
-      {
-         return param1 >= 0 && param1 < thumbs.numChildren?SliderThumb(thumbs.getChildAt(param1)):null;
-      }
-      
-      private function setPosFromValue() : void
-      {
-         var _loc3_:SliderThumb = null;
-         var _loc1_:int = _thumbCount;
-         var _loc2_:int = 0;
-         while(_loc2_ < _loc1_)
-         {
-            _loc3_ = SliderThumb(thumbs.getChildAt(_loc2_));
-            _loc3_.xPosition = getXFromValue(values[_loc2_]);
-            _loc2_++;
-         }
-      }
-      
-      private function createThumbs() : void
-      {
-         var _loc1_:int = 0;
-         var _loc2_:int = 0;
-         var _loc3_:SliderThumb = null;
-         if(thumbs)
-         {
-            _loc1_ = thumbs.numChildren;
-            _loc2_ = _loc1_ - 1;
-            while(_loc2_ >= 0)
-            {
-               thumbs.removeChildAt(_loc2_);
-               _loc2_--;
-            }
-         }
-         else
-         {
-            thumbs = new UIComponent();
-            thumbs.tabChildren = true;
-            thumbs.tabEnabled = false;
-            innerSlider.addChild(thumbs);
-         }
-         _loc1_ = _thumbCount;
-         _loc2_ = 0;
-         while(_loc2_ < _loc1_)
-         {
-            _loc3_ = SliderThumb(new _thumbClass());
-            _loc3_.owner = this;
-            _loc3_.styleName = new StyleProxy(this,thumbStyleFilters);
-            _loc3_.thumbIndex = _loc2_;
-            _loc3_.visible = true;
-            _loc3_.enabled = enabled;
-            _loc3_.upSkinName = "thumbUpSkin";
-            _loc3_.downSkinName = "thumbDownSkin";
-            _loc3_.disabledSkinName = "thumbDisabledSkin";
-            _loc3_.overSkinName = "thumbOverSkin";
-            _loc3_.skinName = "thumbSkin";
-            thumbs.addChild(_loc3_);
-            _loc3_.addEventListener(FocusEvent.FOCUS_IN,thumb_focusInHandler);
-            _loc3_.addEventListener(FocusEvent.FOCUS_OUT,thumb_focusOutHandler);
-            _loc2_++;
-         }
-      }
-      
-      override public function set tabIndex(param1:int) : void
-      {
-         super.tabIndex = param1;
-         _tabIndex = param1;
-         tabIndexChanged = true;
-         invalidateProperties();
-      }
-      
-      public function get direction() : String
-      {
-         return _direction;
-      }
-      
-      override public function set enabled(param1:Boolean) : void
-      {
-         _enabled = param1;
-         enabledChanged = true;
-         invalidateProperties();
-      }
-      
-      override protected function measure() : void
-      {
-         var _loc1_:* = false;
-         var _loc6_:Number = NaN;
-         super.measure();
-         _loc1_ = direction == SliderDirection.HORIZONTAL;
-         var _loc2_:int = !!labelObjects?int(labelObjects.numChildren):0;
-         var _loc3_:Number = getStyle("trackMargin");
-         var _loc4_:Number = DEFAULT_MEASURED_WIDTH;
-         if(!isNaN(_loc3_))
-         {
-            if(_loc2_ > 0)
-            {
-               _loc4_ = _loc4_ + (!!_loc1_?SliderLabel(labelObjects.getChildAt(0)).getExplicitOrMeasuredWidth() / 2:SliderLabel(labelObjects.getChildAt(0)).getExplicitOrMeasuredHeight() / 2);
-            }
-            if(_loc2_ > 1)
-            {
-               _loc4_ = _loc4_ + (!!_loc1_?SliderLabel(labelObjects.getChildAt(_loc2_ - 1)).getExplicitOrMeasuredWidth() / 2:SliderLabel(labelObjects.getChildAt(_loc2_ - 1)).getExplicitOrMeasuredHeight() / 2);
-            }
-         }
-         var _loc5_:Object = getComponentBounds();
-         _loc6_ = _loc5_.lower - _loc5_.upper;
-         measuredMinWidth = measuredWidth = !!_loc1_?Number(_loc4_):Number(_loc6_);
-         measuredMinHeight = measuredHeight = !!_loc1_?Number(_loc6_):Number(_loc4_);
-      }
-      
-      [Bindable("valueCommit")]
-      [Bindable("change")]
-      public function get value() : Number
-      {
-         return _values[0];
-      }
-      
-      public function get tickInterval() : Number
-      {
-         return _tickInterval;
-      }
-      
-      override public function get baselinePosition() : Number
-      {
-         if(FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
-         {
-            return super.baselinePosition;
-         }
-         if(!validateBaselinePosition())
-         {
-            return NaN;
-         }
-         return int(0.75 * height);
-      }
-      
-      mx_internal function getSnapIntervalWidth() : Number
-      {
-         return _snapInterval * track.width / (maximum - minimum);
-      }
-      
-      private function thumb_focusOutHandler(param1:FocusEvent) : void
-      {
-         dispatchEvent(param1);
-      }
-      
-      override protected function initializeAccessibility() : void
-      {
-         if(Slider.createAccessibilityImplementation != null)
-         {
-            Slider.createAccessibilityImplementation(this);
-         }
-      }
-      
-      public function get snapInterval() : Number
-      {
-         return _snapInterval;
-      }
-      
-      public function set thumbCount(param1:int) : void
-      {
-         var _loc2_:int = param1 > 2?2:int(param1);
-         _loc2_ = param1 < 1?1:int(param1);
-         if(_loc2_ != _thumbCount)
-         {
-            _thumbCount = _loc2_;
-            thumbsChanged = true;
-            initValues = true;
-            invalidateProperties();
-            invalidateDisplayList();
-         }
-      }
-      
-      mx_internal function registerMouseMove(param1:Function) : void
-      {
-         innerSlider.addEventListener(MouseEvent.MOUSE_MOVE,param1);
-      }
-      
-      public function set dataTipFormatFunction(param1:Function) : void
-      {
-         _dataTipFormatFunction = param1;
-      }
-      
-      override public function styleChanged(param1:String) : void
-      {
-         var _loc2_:Boolean = param1 == null || param1 == "styleName";
-         super.styleChanged(param1);
-         if(param1 == "showTrackHighlight" || Boolean(_loc2_))
-         {
-            trackHighlightChanged = true;
-            invalidateProperties();
-         }
-         if(param1 == "trackHighlightSkin" || Boolean(_loc2_))
-         {
-            if(Boolean(innerSlider) && Boolean(highlightTrack))
-            {
-               innerSlider.removeChild(DisplayObject(highlightTrack));
-               highlightTrack = null;
-            }
-            trackHighlightChanged = true;
-            invalidateProperties();
-         }
-         if(param1 == "labelStyleName" || Boolean(_loc2_))
-         {
-            labelStyleChanged = true;
-            invalidateProperties();
-         }
-         if(param1 == "trackMargin" || Boolean(_loc2_))
-         {
-            invalidateSize();
-         }
-         if(param1 == "trackSkin" || Boolean(_loc2_))
-         {
-            if(track)
-            {
-               innerSlider.removeChild(DisplayObject(track));
-               track = null;
-               createBackgroundTrack();
-            }
-         }
-         invalidateDisplayList();
-      }
-      
-      public function set sliderDataTipClass(param1:Class) : void
-      {
-         _sliderDataTipClass = param1;
-         invalidateProperties();
-      }
-      
-      mx_internal function onThumbMove(param1:Object) : void
-      {
-         var _loc2_:Number = getValueFromX(param1.xPosition);
-         if(showDataTip)
-         {
-            dataTip.text = _dataTipFormatFunction != null?_dataTipFormatFunction(_loc2_):dataFormatter.format(_loc2_);
-            dataTip.setActualSize(dataTip.getExplicitOrMeasuredWidth(),dataTip.getExplicitOrMeasuredHeight());
-            positionDataTip(param1);
-         }
-         if(liveDragging)
-         {
-            interactionClickTarget = SliderEventClickTarget.THUMB;
-            setValueAt(_loc2_,param1.thumbIndex);
-         }
-         var _loc3_:SliderEvent = new SliderEvent(SliderEvent.THUMB_DRAG);
-         _loc3_.value = _loc2_;
-         _loc3_.thumbIndex = param1.thumbIndex;
-         dispatchEvent(_loc3_);
-      }
-      
-      private function layoutLabels() : void
-      {
-         var _loc2_:Number = NaN;
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:Object = null;
-         var _loc7_:int = 0;
-         var _loc8_:Number = NaN;
-         var _loc9_:Number = NaN;
-         var _loc1_:Number = !!labelObjects?Number(labelObjects.numChildren):Number(0);
-         if(_loc1_ > 0)
-         {
-            _loc3_ = track.width / (_loc1_ - 1);
-            _loc2_ = Math.max((_direction == SliderDirection.HORIZONTAL?unscaledWidth:unscaledHeight) - track.width,SliderThumb(thumbs.getChildAt(0)).getExplicitOrMeasuredWidth());
-            _loc5_ = track.x;
-            _loc7_ = 0;
-            while(_loc7_ < _loc1_)
-            {
-               _loc6_ = labelObjects.getChildAt(_loc7_);
-               _loc6_.setActualSize(_loc6_.getExplicitOrMeasuredWidth(),_loc6_.getExplicitOrMeasuredHeight());
-               _loc8_ = track.y - _loc6_.height + getStyle("labelOffset");
-               if(_direction == SliderDirection.HORIZONTAL)
-               {
-                  _loc4_ = _loc6_.getExplicitOrMeasuredWidth() / 2;
-                  if(_loc7_ == 0)
-                  {
-                     _loc4_ = Math.min(_loc4_,_loc2_ / (_loc1_ > Number(1)?Number(2):Number(1)));
-                  }
-                  else if(_loc7_ == _loc1_ - 1)
-                  {
-                     _loc4_ = Math.max(_loc4_,_loc6_.getExplicitOrMeasuredWidth() - _loc2_ / 2);
-                  }
-                  _loc6_.move(_loc5_ - _loc4_,_loc8_);
-               }
-               else
-               {
-                  _loc9_ = getStyle("labelOffset");
-                  _loc4_ = _loc6_.getExplicitOrMeasuredHeight() / 2;
-                  if(_loc7_ == 0)
-                  {
-                     _loc4_ = Math.max(_loc4_,_loc6_.getExplicitOrMeasuredHeight() - _loc2_ / (_loc1_ > Number(1)?Number(2):Number(1)));
-                  }
-                  else if(_loc7_ == _loc1_ - 1)
-                  {
-                     _loc4_ = Math.min(_loc4_,_loc2_ / 2);
-                  }
-                  _loc6_.move(_loc5_ + _loc4_,track.y + _loc9_ + (_loc9_ > 0?0:-_loc6_.getExplicitOrMeasuredWidth()));
-               }
-               _loc5_ = _loc5_ + _loc3_;
-               _loc7_++;
-            }
-         }
-      }
-      
-      public function get thumbCount() : int
-      {
-         return _thumbCount;
-      }
-      
-      private function getComponentBounds() : Object
-      {
-         var _loc3_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc8_:SliderLabel = null;
-         var _loc9_:Number = NaN;
-         var _loc10_:int = 0;
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         var _loc1_:* = direction == SliderDirection.HORIZONTAL;
-         var _loc2_:int = !!labelObjects?int(labelObjects.numChildren):0;
-         var _loc4_:Number = 0;
-         var _loc6_:Number = 0;
-         var _loc7_:Number = track.height;
-         if(_loc2_ > 0)
-         {
-            _loc8_ = SliderLabel(labelObjects.getChildAt(0));
-            if(_loc1_)
-            {
-               _loc4_ = _loc8_.getExplicitOrMeasuredHeight();
-            }
-            else
-            {
-               _loc10_ = 0;
-               while(_loc10_ < _loc2_)
-               {
-                  _loc8_ = SliderLabel(labelObjects.getChildAt(_loc10_));
-                  _loc4_ = Math.max(_loc4_,_loc8_.getExplicitOrMeasuredWidth());
-                  _loc10_++;
-               }
-            }
-            _loc9_ = getStyle("labelOffset");
-            _loc3_ = _loc9_ - (_loc9_ > 0?0:_loc4_);
-            _loc6_ = Math.min(_loc6_,_loc3_);
-            _loc7_ = Math.max(_loc7_,_loc9_ + (_loc9_ > 0?_loc4_:0));
-         }
-         if(ticks)
-         {
-            _loc11_ = getStyle("tickLength");
-            _loc12_ = getStyle("tickOffset");
-            _loc6_ = Math.min(_loc6_,_loc12_ - _loc11_);
-            _loc7_ = Math.max(_loc7_,_loc12_);
-         }
-         if(thumbs.numChildren > 0)
-         {
-            _loc5_ = (track.height - SliderThumb(thumbs.getChildAt(0)).getExplicitOrMeasuredHeight()) / 2 + getStyle("thumbOffset");
-            _loc6_ = Math.min(_loc6_,_loc5_);
-            _loc7_ = Math.max(_loc7_,_loc5_ + SliderThumb(thumbs.getChildAt(0)).getExplicitOrMeasuredHeight());
-         }
-         return {
-            "lower":_loc7_,
-            "upper":_loc6_
-         };
-      }
-      
-      mx_internal function onThumbRelease(param1:Object) : void
-      {
-         interactionClickTarget = SliderEventClickTarget.THUMB;
-         destroyDataTip();
-         setValueFromPos(param1.thumbIndex);
-         dataFormatter = null;
-         var _loc2_:SliderEvent = new SliderEvent(SliderEvent.THUMB_RELEASE);
-         _loc2_.value = getValueFromX(param1.xPosition);
-         _loc2_.thumbIndex = param1.thumbIndex;
-         dispatchEvent(_loc2_);
-      }
-      
-      public function get dataTipFormatFunction() : Function
-      {
-         return _dataTipFormatFunction;
-      }
-      
-      public function set value(param1:Number) : void
-      {
-         setValueAt(param1,0,true);
-         valuesChanged = true;
-         minimumSet = true;
-         invalidateProperties();
-         invalidateDisplayList();
-         dispatchEvent(new FlexEvent(FlexEvent.VALUE_COMMIT));
-      }
-      
-      mx_internal function updateThumbValue(param1:int) : void
-      {
-         setValueFromPos(param1);
-      }
-      
-      private function track_mouseDownHandler(param1:MouseEvent) : void
-      {
-         var _loc2_:Point = null;
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc8_:SliderThumb = null;
-         var _loc9_:Number = NaN;
-         var _loc10_:Tween = null;
-         var _loc11_:Function = null;
-         var _loc12_:Number = NaN;
-         if(param1.target != trackHitArea && param1.target != ticks)
-         {
+    import flash.display.*;
+    import flash.events.*;
+    import flash.geom.*;
+    import mx.core.*;
+    import mx.effects.*;
+    import mx.events.*;
+    import mx.formatters.*;
+    import mx.styles.*;
+
+    public class Slider extends UIComponent
+    {
+        private var _enabled:Boolean;
+        private var snapIntervalChanged:Boolean = false;
+        private var _direction:String = "horizontal";
+        private var _thumbClass:Class;
+        private var _labels:Array;
+        public var allowTrackClick:Boolean = true;
+        private var valuesChanged:Boolean = false;
+        var keyInteraction:Boolean = false;
+        private var directionChanged:Boolean = false;
+        private var enabledChanged:Boolean = false;
+        private var dataFormatter:NumberFormatter;
+        private var track:IFlexDisplayObject;
+        private var _values:Array;
+        private var initValues:Boolean = true;
+        public var liveDragging:Boolean = false;
+        private var thumbs:UIComponent;
+        private var _tickInterval:Number = 0;
+        private var ticksChanged:Boolean = false;
+        private var minimumSet:Boolean = false;
+        private var ticks:UIComponent;
+        private var _thumbCount:int = 1;
+        private var labelObjects:UIComponent;
+        public var allowThumbOverlap:Boolean = false;
+        private var snapIntervalPrecision:int = -1;
+        var dataTip:SliderDataTip;
+        private var _snapInterval:Number = 0;
+        private var thumbsChanged:Boolean = true;
+        private var _tabIndex:Number;
+        private var _sliderDataTipClass:Class;
+        private var tabIndexChanged:Boolean;
+        private var _tickValues:Array;
+        private var labelsChanged:Boolean = false;
+        private var interactionClickTarget:String;
+        private var trackHighlightChanged:Boolean = true;
+        private var _minimum:Number = 0;
+        public var showDataTip:Boolean = true;
+        var innerSlider:UIComponent;
+        private var labelStyleChanged:Boolean = false;
+        private var _dataTipFormatFunction:Function;
+        private var trackHitArea:UIComponent;
+        private var highlightTrack:IFlexDisplayObject;
+        private var _maximum:Number = 10;
+        static const VERSION:String = "3.6.0.21751";
+        static var createAccessibilityImplementation:Function;
+
+        public function Slider()
+        {
+            _labels = [];
+            _thumbClass = SliderThumb;
+            _sliderDataTipClass = SliderDataTip;
+            _tickValues = [];
+            _values = [0, 0];
+            tabChildren = true;
             return;
-         }
-         if(Boolean(enabled) && Boolean(allowTrackClick))
-         {
-            interactionClickTarget = SliderEventClickTarget.TRACK;
-            keyInteraction = false;
-            _loc2_ = new Point(param1.localX,param1.localY);
-            _loc3_ = _loc2_.x;
-            _loc4_ = 0;
-            _loc5_ = 10000000;
-            _loc6_ = _thumbCount;
-            _loc7_ = 0;
-            while(_loc7_ < _loc6_)
+        }// end function
+
+        public function get sliderThumbClass() : Class
+        {
+            return _thumbClass;
+        }// end function
+
+        public function set sliderThumbClass(param1:Class) : void
+        {
+            _thumbClass = param1;
+            thumbsChanged = true;
+            invalidateProperties();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        public function set tickInterval(param1:Number) : void
+        {
+            _tickInterval = param1;
+            ticksChanged = true;
+            invalidateProperties();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        public function set direction(param1:String) : void
+        {
+            _direction = param1;
+            directionChanged = true;
+            invalidateProperties();
+            invalidateSize();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        public function get minimum() : Number
+        {
+            return _minimum;
+        }// end function
+
+        override protected function commitProperties() : void
+        {
+            var _loc_1:* = 0;
+            var _loc_2:* = 0;
+            var _loc_3:* = false;
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = NaN;
+            super.commitProperties();
+            if (trackHighlightChanged)
             {
-               _loc12_ = Math.abs(SliderThumb(thumbs.getChildAt(_loc7_)).xPosition - _loc3_);
-               if(_loc12_ < _loc5_)
-               {
-                  _loc4_ = _loc7_;
-                  _loc5_ = _loc12_;
-               }
-               _loc7_++;
+                trackHighlightChanged = false;
+                if (getStyle("showTrackHighlight"))
+                {
+                    createHighlightTrack();
+                }
+                else if (highlightTrack)
+                {
+                    innerSlider.removeChild(DisplayObject(highlightTrack));
+                    highlightTrack = null;
+                }
             }
-            _loc8_ = SliderThumb(thumbs.getChildAt(_loc4_));
-            if(!isNaN(_snapInterval) && _snapInterval != 0)
+            if (directionChanged)
             {
-               _loc3_ = getXFromValue(getValueFromX(_loc3_));
+                directionChanged = false;
+                _loc_3 = _direction == SliderDirection.HORIZONTAL;
+                if (_loc_3)
+                {
+                    DisplayObject(innerSlider).rotation = 0;
+                }
+                else
+                {
+                    DisplayObject(innerSlider).rotation = -90;
+                    innerSlider.y = unscaledHeight;
+                }
+                if (labelObjects)
+                {
+                    _loc_4 = labelObjects.numChildren - 1;
+                    while (_loc_4 >= 0)
+                    {
+                        
+                        _loc_5 = SliderLabel(labelObjects.getChildAt(_loc_4));
+                        _loc_5.rotation = _loc_3 ? (0) : (90);
+                        _loc_4 = _loc_4 - 1;
+                    }
+                }
             }
-            _loc9_ = getStyle("slideDuration");
-            _loc10_ = new Tween(_loc8_,_loc8_.xPosition,_loc3_,_loc9_);
-            _loc11_ = getStyle("slideEasingFunction") as Function;
-            if(_loc11_ != null)
+            if (labelStyleChanged && !labelsChanged)
             {
-               _loc10_.easingFunction = _loc11_;
+                labelStyleChanged = false;
+                if (labelObjects)
+                {
+                    _loc_6 = getStyle("labelStyleName");
+                    _loc_1 = labelObjects.numChildren;
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_1)
+                    {
+                        
+                        ISimpleStyleClient(labelObjects.getChildAt(_loc_2)).styleName = _loc_6;
+                        _loc_2++;
+                    }
+                }
             }
-            drawTrackHighlight();
-         }
-      }
-      
-      public function get sliderDataTipClass() : Class
-      {
-         return _sliderDataTipClass;
-      }
-      
-      private function createTicks() : void
-      {
-         if(!ticks)
-         {
-            ticks = new UIComponent();
-            innerSlider.addChild(ticks);
-         }
-      }
-      
-      mx_internal function getValueFromX(param1:Number) : Number
-      {
-         var _loc2_:Number = (param1 - track.x) * (maximum - minimum) / track.width + minimum;
-         if(_loc2_ - minimum <= 0.002)
-         {
-            _loc2_ = minimum;
-         }
-         else if(maximum - _loc2_ <= 0.002)
-         {
-            _loc2_ = maximum;
-         }
-         else if(!isNaN(_snapInterval) && _snapInterval != 0)
-         {
-            _loc2_ = Math.round((_loc2_ - minimum) / _snapInterval) * _snapInterval + minimum;
-         }
-         return _loc2_;
-      }
-      
-      private function thumb_focusInHandler(param1:FocusEvent) : void
-      {
-         dispatchEvent(param1);
-      }
-      
-      private function setValueAt(param1:Number, param2:int, param3:Boolean = false) : void
-      {
-         var _loc5_:Number = NaN;
-         var _loc6_:SliderEvent = null;
-         var _loc4_:Number = _values[param2];
-         if(snapIntervalPrecision != -1)
-         {
-            _loc5_ = Math.pow(10,snapIntervalPrecision);
-            param1 = Math.round(param1 * _loc5_) / _loc5_;
-         }
-         _values[param2] = param1;
-         if(!param3)
-         {
-            _loc6_ = new SliderEvent(SliderEvent.CHANGE);
-            _loc6_.value = param1;
-            _loc6_.thumbIndex = param2;
-            _loc6_.clickTarget = interactionClickTarget;
-            if(keyInteraction)
+            if (ticksChanged)
             {
-               _loc6_.triggerEvent = new KeyboardEvent(KeyboardEvent.KEY_DOWN);
-               keyInteraction = false;
+                ticksChanged = false;
+                createTicks();
+            }
+            if (labelsChanged)
+            {
+                labelsChanged = false;
+                createLabels();
+            }
+            if (thumbsChanged)
+            {
+                thumbsChanged = false;
+                createThumbs();
+            }
+            if (initValues)
+            {
+                initValues = false;
+                if (!valuesChanged)
+                {
+                    _loc_7 = minimum;
+                    _loc_1 = _thumbCount;
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_1)
+                    {
+                        
+                        _values[_loc_2] = _loc_7;
+                        setValueAt(_loc_7, _loc_2);
+                        if (_snapInterval && _snapInterval != 0)
+                        {
+                            _loc_7 = _loc_7 + snapInterval;
+                        }
+                        else
+                        {
+                            _loc_7 = _loc_7 + 1;
+                        }
+                        _loc_2++;
+                    }
+                    snapIntervalChanged = false;
+                }
+            }
+            if (snapIntervalChanged)
+            {
+                snapIntervalChanged = false;
+                if (!valuesChanged)
+                {
+                    _loc_1 = thumbs.numChildren;
+                    _loc_2 = 0;
+                    while (_loc_2 < _loc_1)
+                    {
+                        
+                        setValueAt(getValueFromX(SliderThumb(thumbs.getChildAt(_loc_2)).xPosition), _loc_2);
+                        _loc_2++;
+                    }
+                }
+            }
+            if (valuesChanged)
+            {
+                valuesChanged = false;
+                _loc_1 = _thumbCount;
+                _loc_2 = 0;
+                while (_loc_2 < _loc_1)
+                {
+                    
+                    setValueAt(getValueFromX(getXFromValue(Math.min(Math.max(values[_loc_2], minimum), maximum))), _loc_2);
+                    _loc_2++;
+                }
+            }
+            if (enabledChanged)
+            {
+                enabledChanged = false;
+                _loc_1 = thumbs.numChildren;
+                _loc_2 = 0;
+                while (_loc_2 < _loc_1)
+                {
+                    
+                    SliderThumb(thumbs.getChildAt(_loc_2)).enabled = _enabled;
+                    _loc_2++;
+                }
+                _loc_1 = labelObjects ? (labelObjects.numChildren) : (0);
+                _loc_2 = 0;
+                while (_loc_2 < _loc_1)
+                {
+                    
+                    SliderLabel(labelObjects.getChildAt(_loc_2)).enabled = _enabled;
+                    _loc_2++;
+                }
+            }
+            if (tabIndexChanged)
+            {
+                tabIndexChanged = false;
+                _loc_1 = thumbs.numChildren;
+                _loc_2 = 0;
+                while (_loc_2 < _loc_1)
+                {
+                    
+                    SliderThumb(thumbs.getChildAt(_loc_2)).tabIndex = _tabIndex;
+                    _loc_2++;
+                }
+            }
+            return;
+        }// end function
+
+        function getSnapValue(param1:Number, param2:SliderThumb = null) : Number
+        {
+            var _loc_3:* = NaN;
+            var _loc_4:* = false;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            if (!isNaN(_snapInterval) && _snapInterval != 0)
+            {
+                _loc_3 = getValueFromX(param1);
+                if (param2 && thumbs.numChildren > 1 && !allowThumbOverlap)
+                {
+                    _loc_4 = true;
+                    _loc_5 = getXBounds(param2.thumbIndex);
+                    _loc_6 = param2.thumbIndex > 0 ? (SliderThumb(thumbs.getChildAt((param2.thumbIndex - 1)))) : (null);
+                    _loc_7 = (param2.thumbIndex + 1) < thumbs.numChildren ? (SliderThumb(thumbs.getChildAt((param2.thumbIndex + 1)))) : (null);
+                    if (_loc_6)
+                    {
+                        _loc_5.min = _loc_5.min - _loc_6.width / 2;
+                        if (_loc_3 == minimum)
+                        {
+                            if (getValueFromX(_loc_6.xPosition - _loc_6.width / 2) != minimum)
+                            {
+                                _loc_4 = false;
+                            }
+                        }
+                    }
+                    else if (_loc_3 == minimum)
+                    {
+                        _loc_4 = false;
+                    }
+                    if (_loc_7)
+                    {
+                        _loc_5.max = _loc_5.max + _loc_7.width / 2;
+                        if (_loc_3 == maximum)
+                        {
+                            if (getValueFromX(_loc_7.xPosition + _loc_7.width / 2) != maximum)
+                            {
+                                _loc_4 = false;
+                            }
+                        }
+                    }
+                    else if (_loc_3 == maximum)
+                    {
+                        _loc_4 = false;
+                    }
+                    if (_loc_4)
+                    {
+                        _loc_3 = Math.min(Math.max(_loc_3, getValueFromX(Math.round(_loc_5.min)) + _snapInterval), getValueFromX(Math.round(_loc_5.max)) - _snapInterval);
+                    }
+                }
+                return getXFromValue(_loc_3);
+            }
+            return param1;
+        }// end function
+
+        private function createHighlightTrack() : void
+        {
+            var _loc_2:* = null;
+            var _loc_1:* = getStyle("showTrackHighlight");
+            if (!highlightTrack && _loc_1)
+            {
+                _loc_2 = getStyle("trackHighlightSkin");
+                highlightTrack = new _loc_2;
+                if (highlightTrack is ISimpleStyleClient)
+                {
+                    ISimpleStyleClient(highlightTrack).styleName = this;
+                }
+                innerSlider.addChildAt(DisplayObject(highlightTrack), (innerSlider.getChildIndex(DisplayObject(track)) + 1));
+            }
+            return;
+        }// end function
+
+        function drawTrackHighlight() : void
+        {
+            var _loc_1:* = NaN;
+            var _loc_2:* = NaN;
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            if (highlightTrack)
+            {
+                _loc_3 = SliderThumb(thumbs.getChildAt(0));
+                if (_thumbCount > 1)
+                {
+                    _loc_1 = _loc_3.xPosition;
+                    _loc_4 = SliderThumb(thumbs.getChildAt(1));
+                    _loc_2 = _loc_4.xPosition - _loc_3.xPosition;
+                }
+                else
+                {
+                    _loc_1 = track.x;
+                    _loc_2 = _loc_3.xPosition - _loc_1;
+                }
+                highlightTrack.move(_loc_1, (track.y + 1));
+                highlightTrack.setActualSize(_loc_2 > 0 ? (_loc_2) : (0), highlightTrack.height);
+            }
+            return;
+        }// end function
+
+        function getXBounds(param1:int) : Object
+        {
+            var _loc_2:* = track.x + track.width;
+            var _loc_3:* = track.x;
+            if (allowThumbOverlap)
+            {
+                return {max:_loc_2, min:_loc_3};
+            }
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = param1 > 0 ? (SliderThumb(thumbs.getChildAt((param1 - 1)))) : (null);
+            var _loc_7:* = (param1 + 1) < thumbs.numChildren ? (SliderThumb(thumbs.getChildAt((param1 + 1)))) : (null);
+            if (_loc_6)
+            {
+                _loc_4 = _loc_6.xPosition + _loc_6.width / 2;
+            }
+            if (_loc_7)
+            {
+                _loc_5 = _loc_7.xPosition - _loc_7.width / 2;
+            }
+            if (isNaN(_loc_4))
+            {
+                _loc_4 = _loc_3;
             }
             else
             {
-               _loc6_.triggerEvent = new MouseEvent(MouseEvent.CLICK);
+                _loc_4 = Math.min(Math.max(_loc_3, _loc_4), _loc_2);
             }
-            if(!isNaN(_loc4_))
+            if (isNaN(_loc_5))
             {
-               if(Math.abs(_loc4_ - param1) > 0.002)
-               {
-                  dispatchEvent(_loc6_);
-               }
+                _loc_5 = _loc_2;
             }
-            else if(!isNaN(param1))
+            else
             {
-               dispatchEvent(_loc6_);
+                _loc_5 = Math.max(Math.min(_loc_2, _loc_5), _loc_3);
             }
-         }
-         invalidateDisplayList();
-      }
-      
-      public function set labels(param1:Array) : void
-      {
-         _labels = param1;
-         labelsChanged = true;
-         invalidateProperties();
-         invalidateSize();
-         invalidateDisplayList();
-      }
-      
-      public function get labels() : Array
-      {
-         return _labels;
-      }
-   }
+            return {max:_loc_5, min:_loc_4};
+        }// end function
+
+        protected function get thumbStyleFilters() : Object
+        {
+            return null;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_11:* = NaN;
+            var _loc_23:* = null;
+            var _loc_24:* = null;
+            var _loc_25:* = null;
+            super.updateDisplayList(param1, param2);
+            var _loc_3:* = _direction == SliderDirection.HORIZONTAL;
+            var _loc_4:* = labelObjects ? (labelObjects.numChildren) : (0);
+            var _loc_5:* = thumbs ? (thumbs.numChildren) : (0);
+            var _loc_6:* = getStyle("trackMargin");
+            var _loc_7:* = 6;
+            var _loc_8:* = SliderThumb(thumbs.getChildAt(0));
+            if (thumbs && _loc_8)
+            {
+                _loc_7 = _loc_8.getExplicitOrMeasuredWidth();
+            }
+            var _loc_9:* = _loc_7 / 2;
+            var _loc_10:* = _loc_7 / 2;
+            var _loc_12:* = 0;
+            if (_loc_4 > 0)
+            {
+                _loc_23 = SliderLabel(labelObjects.getChildAt(0));
+                _loc_12 = _loc_3 ? (_loc_23.getExplicitOrMeasuredWidth()) : (_loc_23.getExplicitOrMeasuredHeight());
+            }
+            var _loc_13:* = 0;
+            if (_loc_4 > 1)
+            {
+                _loc_24 = SliderLabel(labelObjects.getChildAt((_loc_4 - 1)));
+                _loc_13 = _loc_3 ? (_loc_24.getExplicitOrMeasuredWidth()) : (_loc_24.getExplicitOrMeasuredHeight());
+            }
+            if (!isNaN(_loc_6))
+            {
+                _loc_11 = _loc_6;
+            }
+            else
+            {
+                _loc_11 = (_loc_12 + _loc_13) / 2;
+            }
+            if (_loc_4 > 0)
+            {
+                if (!isNaN(_loc_6))
+                {
+                    _loc_9 = Math.max(_loc_9, _loc_11 / (_loc_4 > 1 ? (2) : (1)));
+                }
+                else
+                {
+                    _loc_9 = Math.max(_loc_9, _loc_12 / 2);
+                }
+            }
+            else
+            {
+                _loc_9 = Math.max(_loc_9, _loc_11 / 2);
+            }
+            var _loc_14:* = getComponentBounds();
+            var _loc_15:* = ((_loc_3 ? (param2) : (param1)) - (Number(_loc_14.lower) - Number(_loc_14.upper))) / 2 - Number(_loc_14.upper);
+            track.move(Math.round(_loc_9), Math.round(_loc_15));
+            track.setActualSize((_loc_3 ? (param1) : (param2)) - _loc_9 * 2, track.height);
+            var _loc_16:* = track.y + (track.height - _loc_8.getExplicitOrMeasuredHeight()) / 2 + getStyle("thumbOffset");
+            var _loc_17:* = _thumbCount;
+            var _loc_18:* = 0;
+            while (_loc_18 < _loc_17)
+            {
+                
+                _loc_25 = SliderThumb(thumbs.getChildAt(_loc_18));
+                _loc_25.move(_loc_25.x, _loc_16);
+                _loc_25.visible = true;
+                _loc_25.setActualSize(_loc_25.getExplicitOrMeasuredWidth(), _loc_25.getExplicitOrMeasuredHeight());
+                _loc_18++;
+            }
+            var _loc_19:* = trackHitArea.graphics;
+            var _loc_20:* = 0;
+            if (_tickInterval > 0 || _tickValues && _tickValues.length > 0)
+            {
+                _loc_20 = getStyle("tickLength");
+            }
+            _loc_19.clear();
+            _loc_19.beginFill(0, 0);
+            var _loc_21:* = _loc_8.getExplicitOrMeasuredHeight();
+            var _loc_22:* = !_loc_8.getExplicitOrMeasuredHeight() ? (0) : (_loc_21 / 2);
+            _loc_19.drawRect(track.x, track.y - _loc_22 - _loc_20, track.width, track.height + _loc_21 + _loc_20);
+            _loc_19.endFill();
+            if (_direction != SliderDirection.HORIZONTAL)
+            {
+                innerSlider.y = param2;
+            }
+            layoutTicks();
+            layoutLabels();
+            setPosFromValue();
+            drawTrackHighlight();
+            return;
+        }// end function
+
+        override protected function createChildren() : void
+        {
+            super.createChildren();
+            if (!innerSlider)
+            {
+                innerSlider = new UIComponent();
+                UIComponent(innerSlider).tabChildren = true;
+                addChild(innerSlider);
+            }
+            createBackgroundTrack();
+            if (!trackHitArea)
+            {
+                trackHitArea = new UIComponent();
+                innerSlider.addChild(trackHitArea);
+                trackHitArea.addEventListener(MouseEvent.MOUSE_DOWN, track_mouseDownHandler);
+            }
+            invalidateProperties();
+            return;
+        }// end function
+
+        public function set minimum(param1:Number) : void
+        {
+            _minimum = param1;
+            ticksChanged = true;
+            if (!initValues)
+            {
+                valuesChanged = true;
+            }
+            invalidateProperties();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        public function get tickValues() : Array
+        {
+            return _tickValues;
+        }// end function
+
+        public function get maximum() : Number
+        {
+            return _maximum;
+        }// end function
+
+        private function createBackgroundTrack() : void
+        {
+            var _loc_1:* = null;
+            if (!track)
+            {
+                _loc_1 = getStyle("trackSkin");
+                track = new _loc_1;
+                if (track is ISimpleStyleClient)
+                {
+                    ISimpleStyleClient(track).styleName = this;
+                }
+                innerSlider.addChildAt(DisplayObject(track), 0);
+            }
+            return;
+        }// end function
+
+        private function positionDataTip(param1:Object) : void
+        {
+            var _loc_2:* = NaN;
+            var _loc_3:* = NaN;
+            var _loc_4:* = param1.x;
+            var _loc_5:* = param1.y;
+            var _loc_6:* = getStyle("dataTipPlacement");
+            var _loc_7:* = getStyle("dataTipOffset");
+            if (_direction == SliderDirection.HORIZONTAL)
+            {
+                _loc_2 = _loc_4;
+                _loc_3 = _loc_5;
+                if (_loc_6 == "left")
+                {
+                    _loc_2 = _loc_2 - (_loc_7 + dataTip.width);
+                    _loc_3 = _loc_3 + (param1.height - dataTip.height) / 2;
+                }
+                else if (_loc_6 == "right")
+                {
+                    _loc_2 = _loc_2 + (_loc_7 + param1.width);
+                    _loc_3 = _loc_3 + (param1.height - dataTip.height) / 2;
+                }
+                else if (_loc_6 == "top")
+                {
+                    _loc_3 = _loc_3 - (_loc_7 + dataTip.height);
+                    _loc_2 = _loc_2 - (dataTip.width - param1.width) / 2;
+                }
+                else if (_loc_6 == "bottom")
+                {
+                    _loc_3 = _loc_3 + (_loc_7 + param1.height);
+                    _loc_2 = _loc_2 - (dataTip.width - param1.width) / 2;
+                }
+            }
+            else
+            {
+                _loc_2 = _loc_5;
+                _loc_3 = unscaledHeight - _loc_4 - (dataTip.height + param1.width) / 2;
+                if (_loc_6 == "left")
+                {
+                    _loc_2 = _loc_2 - (_loc_7 + dataTip.width);
+                }
+                else if (_loc_6 == "right")
+                {
+                    _loc_2 = _loc_2 + (_loc_7 + param1.height);
+                }
+                else if (_loc_6 == "top")
+                {
+                    _loc_3 = _loc_3 - (_loc_7 + (dataTip.height + param1.width) / 2);
+                    _loc_2 = _loc_2 - (dataTip.width - param1.height) / 2;
+                }
+                else if (_loc_6 == "bottom")
+                {
+                    _loc_3 = _loc_3 + (_loc_7 + (dataTip.height + param1.width) / 2);
+                    _loc_2 = _loc_2 - (dataTip.width - param1.height) / 2;
+                }
+            }
+            var _loc_8:* = new Point(_loc_2, _loc_3);
+            var _loc_9:* = localToGlobal(_loc_8);
+            _loc_9 = dataTip.parent.globalToLocal(_loc_9);
+            dataTip.x = _loc_9.x < 0 ? (0) : (_loc_9.x);
+            dataTip.y = _loc_9.y < 0 ? (0) : (_loc_9.y);
+            return;
+        }// end function
+
+        public function get values() : Array
+        {
+            return _values;
+        }// end function
+
+        private function createLabels() : void
+        {
+            var _loc_1:* = null;
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            if (labelObjects)
+            {
+                _loc_2 = labelObjects.numChildren - 1;
+                while (_loc_2 >= 0)
+                {
+                    
+                    labelObjects.removeChildAt(_loc_2);
+                    _loc_2 = _loc_2 - 1;
+                }
+            }
+            else
+            {
+                labelObjects = new UIComponent();
+                innerSlider.addChildAt(labelObjects, innerSlider.getChildIndex(trackHitArea));
+            }
+            if (_labels)
+            {
+                _loc_3 = _labels.length;
+                _loc_4 = 0;
+                while (_loc_4 < _loc_3)
+                {
+                    
+                    _loc_1 = new SliderLabel();
+                    _loc_1.text = _labels[_loc_4] is String ? (_labels[_loc_4]) : (_labels[_loc_4].toString());
+                    if (_direction != SliderDirection.HORIZONTAL)
+                    {
+                        _loc_1.rotation = 90;
+                    }
+                    _loc_5 = getStyle("labelStyleName");
+                    if (_loc_5)
+                    {
+                        _loc_1.styleName = _loc_5;
+                    }
+                    labelObjects.addChild(_loc_1);
+                    _loc_4++;
+                }
+            }
+            return;
+        }// end function
+
+        private function destroyDataTip() : void
+        {
+            if (dataTip)
+            {
+                systemManager.toolTipChildren.removeChild(dataTip);
+                dataTip = null;
+            }
+            return;
+        }// end function
+
+        private function setValueFromPos(param1:int) : void
+        {
+            var _loc_2:* = SliderThumb(thumbs.getChildAt(param1));
+            setValueAt(getValueFromX(_loc_2.xPosition), param1);
+            return;
+        }// end function
+
+        public function set tickValues(param1:Array) : void
+        {
+            _tickValues = param1;
+            ticksChanged = true;
+            invalidateProperties();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        override public function get enabled() : Boolean
+        {
+            return _enabled;
+        }// end function
+
+        public function set values(param1:Array) : void
+        {
+            _values = param1;
+            valuesChanged = true;
+            minimumSet = true;
+            invalidateProperties();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        function getXFromValue(param1:Number) : Number
+        {
+            var _loc_2:* = NaN;
+            if (param1 == minimum)
+            {
+                _loc_2 = track.x;
+            }
+            else if (param1 == maximum)
+            {
+                _loc_2 = track.x + track.width;
+            }
+            else
+            {
+                _loc_2 = track.x + (param1 - minimum) * track.width / (maximum - minimum);
+            }
+            return _loc_2;
+        }// end function
+
+        public function set maximum(param1:Number) : void
+        {
+            _maximum = param1;
+            ticksChanged = true;
+            if (!initValues)
+            {
+                valuesChanged = true;
+            }
+            invalidateProperties();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        function onThumbPress(param1:Object) : void
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            if (showDataTip)
+            {
+                dataFormatter = new NumberFormatter();
+                dataFormatter.precision = getStyle("dataTipPrecision");
+                if (!dataTip)
+                {
+                    dataTip = SliderDataTip(new sliderDataTipClass());
+                    systemManager.toolTipChildren.addChild(dataTip);
+                    _loc_4 = getStyle("dataTipStyleName");
+                    if (_loc_4)
+                    {
+                        dataTip.styleName = _loc_4;
+                    }
+                }
+                if (_dataTipFormatFunction != null)
+                {
+                    _loc_3 = this._dataTipFormatFunction(getValueFromX(param1.xPosition));
+                }
+                else
+                {
+                    _loc_3 = dataFormatter.format(getValueFromX(param1.xPosition));
+                }
+                dataTip.text = _loc_3;
+                dataTip.validateNow();
+                dataTip.setActualSize(dataTip.getExplicitOrMeasuredWidth(), dataTip.getExplicitOrMeasuredHeight());
+                positionDataTip(param1);
+            }
+            keyInteraction = false;
+            var _loc_2:* = new SliderEvent(SliderEvent.THUMB_PRESS);
+            _loc_2.value = getValueFromX(param1.xPosition);
+            _loc_2.thumbIndex = param1.thumbIndex;
+            dispatchEvent(_loc_2);
+            return;
+        }// end function
+
+        public function setThumbValueAt(param1:int, param2:Number) : void
+        {
+            setValueAt(param2, param1, true);
+            valuesChanged = true;
+            invalidateProperties();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        public function set snapInterval(param1:Number) : void
+        {
+            _snapInterval = param1;
+            var _loc_2:* = new String(1 + param1).split(".");
+            if (_loc_2.length == 2)
+            {
+                snapIntervalPrecision = _loc_2[1].length;
+            }
+            else
+            {
+                snapIntervalPrecision = -1;
+            }
+            if (!isNaN(param1) && param1 != 0)
+            {
+                snapIntervalChanged = true;
+                invalidateProperties();
+                invalidateDisplayList();
+            }
+            return;
+        }// end function
+
+        function unRegisterMouseMove(param1:Function) : void
+        {
+            innerSlider.removeEventListener(MouseEvent.MOUSE_MOVE, param1);
+            return;
+        }// end function
+
+        function getTrackHitArea() : UIComponent
+        {
+            return trackHitArea;
+        }// end function
+
+        private function layoutTicks() : void
+        {
+            var _loc_1:* = null;
+            var _loc_2:* = NaN;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = NaN;
+            var _loc_7:* = false;
+            var _loc_8:* = 0;
+            var _loc_9:* = NaN;
+            if (ticks)
+            {
+                _loc_1 = ticks.graphics;
+                _loc_2 = getStyle("tickLength");
+                _loc_3 = getStyle("tickOffset");
+                _loc_4 = getStyle("tickThickness");
+                _loc_6 = getStyle("tickColor");
+                _loc_7 = _tickValues && _tickValues.length > 0 ? (true) : (false);
+                _loc_8 = 0;
+                _loc_9 = _loc_7 ? (_tickValues[_loc_8++]) : (minimum);
+                _loc_1.clear();
+                if (_tickInterval > 0 || _loc_7)
+                {
+                    _loc_1.lineStyle(_loc_4, _loc_6, 100);
+                    do
+                    {
+                        
+                        _loc_5 = Math.round(getXFromValue(_loc_9));
+                        _loc_1.moveTo(_loc_5, _loc_2);
+                        _loc_1.lineTo(_loc_5, 0);
+                        _loc_9 = _loc_7 ? (_loc_8 < _tickValues.length ? (_tickValues[_loc_8++]) : (NaN)) : (_tickInterval + _loc_9);
+                    }while (_loc_9 < maximum || _loc_7 && _loc_8 < _tickValues.length)
+                    if (!_loc_7 || _loc_9 == maximum)
+                    {
+                        _loc_5 = track.x + track.width - 1;
+                        _loc_1.moveTo(_loc_5, _loc_2);
+                        _loc_1.lineTo(_loc_5, 0);
+                    }
+                    ticks.y = Math.round(track.y + _loc_3 - _loc_2);
+                }
+            }
+            return;
+        }// end function
+
+        public function getThumbAt(param1:int) : SliderThumb
+        {
+            return param1 >= 0 && param1 < thumbs.numChildren ? (SliderThumb(thumbs.getChildAt(param1))) : (null);
+        }// end function
+
+        private function setPosFromValue() : void
+        {
+            var _loc_3:* = null;
+            var _loc_1:* = _thumbCount;
+            var _loc_2:* = 0;
+            while (_loc_2 < _loc_1)
+            {
+                
+                _loc_3 = SliderThumb(thumbs.getChildAt(_loc_2));
+                _loc_3.xPosition = getXFromValue(values[_loc_2]);
+                _loc_2++;
+            }
+            return;
+        }// end function
+
+        private function createThumbs() : void
+        {
+            var _loc_1:* = 0;
+            var _loc_2:* = 0;
+            var _loc_3:* = null;
+            if (thumbs)
+            {
+                _loc_1 = thumbs.numChildren;
+                _loc_2 = _loc_1 - 1;
+                while (_loc_2 >= 0)
+                {
+                    
+                    thumbs.removeChildAt(_loc_2);
+                    _loc_2 = _loc_2 - 1;
+                }
+            }
+            else
+            {
+                thumbs = new UIComponent();
+                thumbs.tabChildren = true;
+                thumbs.tabEnabled = false;
+                innerSlider.addChild(thumbs);
+            }
+            _loc_1 = _thumbCount;
+            _loc_2 = 0;
+            while (_loc_2 < _loc_1)
+            {
+                
+                _loc_3 = SliderThumb(new _thumbClass());
+                _loc_3.owner = this;
+                _loc_3.styleName = new StyleProxy(this, thumbStyleFilters);
+                _loc_3.thumbIndex = _loc_2;
+                _loc_3.visible = true;
+                _loc_3.enabled = enabled;
+                _loc_3.upSkinName = "thumbUpSkin";
+                _loc_3.downSkinName = "thumbDownSkin";
+                _loc_3.disabledSkinName = "thumbDisabledSkin";
+                _loc_3.overSkinName = "thumbOverSkin";
+                _loc_3.skinName = "thumbSkin";
+                thumbs.addChild(_loc_3);
+                _loc_3.addEventListener(FocusEvent.FOCUS_IN, thumb_focusInHandler);
+                _loc_3.addEventListener(FocusEvent.FOCUS_OUT, thumb_focusOutHandler);
+                _loc_2++;
+            }
+            return;
+        }// end function
+
+        override public function set tabIndex(param1:int) : void
+        {
+            super.tabIndex = param1;
+            _tabIndex = param1;
+            tabIndexChanged = true;
+            invalidateProperties();
+            return;
+        }// end function
+
+        public function get direction() : String
+        {
+            return _direction;
+        }// end function
+
+        override public function set enabled(param1:Boolean) : void
+        {
+            _enabled = param1;
+            enabledChanged = true;
+            invalidateProperties();
+            return;
+        }// end function
+
+        override protected function measure() : void
+        {
+            var _loc_1:* = false;
+            var _loc_6:* = NaN;
+            super.measure();
+            _loc_1 = direction == SliderDirection.HORIZONTAL;
+            var _loc_2:* = labelObjects ? (labelObjects.numChildren) : (0);
+            var _loc_3:* = getStyle("trackMargin");
+            var _loc_4:* = DEFAULT_MEASURED_WIDTH;
+            if (!isNaN(_loc_3))
+            {
+                if (_loc_2 > 0)
+                {
+                    _loc_4 = _loc_4 + (_loc_1 ? (SliderLabel(labelObjects.getChildAt(0)).getExplicitOrMeasuredWidth() / 2) : (SliderLabel(labelObjects.getChildAt(0)).getExplicitOrMeasuredHeight() / 2));
+                }
+                if (_loc_2 > 1)
+                {
+                    _loc_4 = _loc_4 + (_loc_1 ? (SliderLabel(labelObjects.getChildAt((_loc_2 - 1))).getExplicitOrMeasuredWidth() / 2) : (SliderLabel(labelObjects.getChildAt((_loc_2 - 1))).getExplicitOrMeasuredHeight() / 2));
+                }
+            }
+            var _loc_5:* = getComponentBounds();
+            _loc_6 = _loc_5.lower - _loc_5.upper;
+            var _loc_7:* = _loc_1 ? (_loc_4) : (_loc_6);
+            measuredWidth = _loc_1 ? (_loc_4) : (_loc_6);
+            measuredMinWidth = _loc_7;
+            var _loc_7:* = _loc_1 ? (_loc_6) : (_loc_4);
+            measuredHeight = _loc_1 ? (_loc_6) : (_loc_4);
+            measuredMinHeight = _loc_7;
+            return;
+        }// end function
+
+        public function get value() : Number
+        {
+            return _values[0];
+        }// end function
+
+        public function get tickInterval() : Number
+        {
+            return _tickInterval;
+        }// end function
+
+        override public function get baselinePosition() : Number
+        {
+            if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
+            {
+                return super.baselinePosition;
+            }
+            if (!validateBaselinePosition())
+            {
+                return NaN;
+            }
+            return int(0.75 * height);
+        }// end function
+
+        function getSnapIntervalWidth() : Number
+        {
+            return _snapInterval * track.width / (maximum - minimum);
+        }// end function
+
+        private function thumb_focusOutHandler(event:FocusEvent) : void
+        {
+            dispatchEvent(event);
+            return;
+        }// end function
+
+        override protected function initializeAccessibility() : void
+        {
+            if (Slider.createAccessibilityImplementation != null)
+            {
+                Slider.createAccessibilityImplementation(this);
+            }
+            return;
+        }// end function
+
+        public function get snapInterval() : Number
+        {
+            return _snapInterval;
+        }// end function
+
+        public function set thumbCount(param1:int) : void
+        {
+            var _loc_2:* = param1 > 2 ? (2) : (param1);
+            _loc_2 = param1 < 1 ? (1) : (param1);
+            if (_loc_2 != _thumbCount)
+            {
+                _thumbCount = _loc_2;
+                thumbsChanged = true;
+                initValues = true;
+                invalidateProperties();
+                invalidateDisplayList();
+            }
+            return;
+        }// end function
+
+        function registerMouseMove(param1:Function) : void
+        {
+            innerSlider.addEventListener(MouseEvent.MOUSE_MOVE, param1);
+            return;
+        }// end function
+
+        public function set dataTipFormatFunction(param1:Function) : void
+        {
+            _dataTipFormatFunction = param1;
+            return;
+        }// end function
+
+        override public function styleChanged(param1:String) : void
+        {
+            var _loc_2:* = param1 == null || param1 == "styleName";
+            super.styleChanged(param1);
+            if (param1 == "showTrackHighlight" || _loc_2)
+            {
+                trackHighlightChanged = true;
+                invalidateProperties();
+            }
+            if (param1 == "trackHighlightSkin" || _loc_2)
+            {
+                if (innerSlider && highlightTrack)
+                {
+                    innerSlider.removeChild(DisplayObject(highlightTrack));
+                    highlightTrack = null;
+                }
+                trackHighlightChanged = true;
+                invalidateProperties();
+            }
+            if (param1 == "labelStyleName" || _loc_2)
+            {
+                labelStyleChanged = true;
+                invalidateProperties();
+            }
+            if (param1 == "trackMargin" || _loc_2)
+            {
+                invalidateSize();
+            }
+            if (param1 == "trackSkin" || _loc_2)
+            {
+                if (track)
+                {
+                    innerSlider.removeChild(DisplayObject(track));
+                    track = null;
+                    createBackgroundTrack();
+                }
+            }
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        public function set sliderDataTipClass(param1:Class) : void
+        {
+            _sliderDataTipClass = param1;
+            invalidateProperties();
+            return;
+        }// end function
+
+        function onThumbMove(param1:Object) : void
+        {
+            var _loc_2:* = getValueFromX(param1.xPosition);
+            if (showDataTip)
+            {
+                dataTip.text = _dataTipFormatFunction != null ? (_dataTipFormatFunction(_loc_2)) : (dataFormatter.format(_loc_2));
+                dataTip.setActualSize(dataTip.getExplicitOrMeasuredWidth(), dataTip.getExplicitOrMeasuredHeight());
+                positionDataTip(param1);
+            }
+            if (liveDragging)
+            {
+                interactionClickTarget = SliderEventClickTarget.THUMB;
+                setValueAt(_loc_2, param1.thumbIndex);
+            }
+            var _loc_3:* = new SliderEvent(SliderEvent.THUMB_DRAG);
+            _loc_3.value = _loc_2;
+            _loc_3.thumbIndex = param1.thumbIndex;
+            dispatchEvent(_loc_3);
+            return;
+        }// end function
+
+        private function layoutLabels() : void
+        {
+            var _loc_2:* = NaN;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            var _loc_7:* = 0;
+            var _loc_8:* = NaN;
+            var _loc_9:* = NaN;
+            var _loc_1:* = labelObjects ? (labelObjects.numChildren) : (0);
+            if (_loc_1 > 0)
+            {
+                _loc_3 = track.width / (_loc_1 - 1);
+                _loc_2 = Math.max((_direction == SliderDirection.HORIZONTAL ? (unscaledWidth) : (unscaledHeight)) - track.width, SliderThumb(thumbs.getChildAt(0)).getExplicitOrMeasuredWidth());
+                _loc_5 = track.x;
+                _loc_7 = 0;
+                while (_loc_7 < _loc_1)
+                {
+                    
+                    _loc_6 = labelObjects.getChildAt(_loc_7);
+                    _loc_6.setActualSize(_loc_6.getExplicitOrMeasuredWidth(), _loc_6.getExplicitOrMeasuredHeight());
+                    _loc_8 = track.y - _loc_6.height + getStyle("labelOffset");
+                    if (_direction == SliderDirection.HORIZONTAL)
+                    {
+                        _loc_4 = _loc_6.getExplicitOrMeasuredWidth() / 2;
+                        if (_loc_7 == 0)
+                        {
+                            _loc_4 = Math.min(_loc_4, _loc_2 / (_loc_1 > Number(1) ? (Number(2)) : (Number(1))));
+                        }
+                        else if (_loc_7 == (_loc_1 - 1))
+                        {
+                            _loc_4 = Math.max(_loc_4, _loc_6.getExplicitOrMeasuredWidth() - _loc_2 / 2);
+                        }
+                        _loc_6.move(_loc_5 - _loc_4, _loc_8);
+                    }
+                    else
+                    {
+                        _loc_9 = getStyle("labelOffset");
+                        _loc_4 = _loc_6.getExplicitOrMeasuredHeight() / 2;
+                        if (_loc_7 == 0)
+                        {
+                            _loc_4 = Math.max(_loc_4, _loc_6.getExplicitOrMeasuredHeight() - _loc_2 / (_loc_1 > Number(1) ? (Number(2)) : (Number(1))));
+                        }
+                        else if (_loc_7 == (_loc_1 - 1))
+                        {
+                            _loc_4 = Math.min(_loc_4, _loc_2 / 2);
+                        }
+                        _loc_6.move(_loc_5 + _loc_4, track.y + _loc_9 + (_loc_9 > 0 ? (0) : (-_loc_6.getExplicitOrMeasuredWidth())));
+                    }
+                    _loc_5 = _loc_5 + _loc_3;
+                    _loc_7++;
+                }
+            }
+            return;
+        }// end function
+
+        public function get thumbCount() : int
+        {
+            return _thumbCount;
+        }// end function
+
+        private function getComponentBounds() : Object
+        {
+            var _loc_3:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_8:* = null;
+            var _loc_9:* = NaN;
+            var _loc_10:* = 0;
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            var _loc_1:* = direction == SliderDirection.HORIZONTAL;
+            var _loc_2:* = labelObjects ? (labelObjects.numChildren) : (0);
+            var _loc_4:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = track.height;
+            if (_loc_2 > 0)
+            {
+                _loc_8 = SliderLabel(labelObjects.getChildAt(0));
+                if (_loc_1)
+                {
+                    _loc_4 = _loc_8.getExplicitOrMeasuredHeight();
+                }
+                else
+                {
+                    _loc_10 = 0;
+                    while (_loc_10 < _loc_2)
+                    {
+                        
+                        _loc_8 = SliderLabel(labelObjects.getChildAt(_loc_10));
+                        _loc_4 = Math.max(_loc_4, _loc_8.getExplicitOrMeasuredWidth());
+                        _loc_10++;
+                    }
+                }
+                _loc_9 = getStyle("labelOffset");
+                _loc_3 = getStyle("labelOffset") - (_loc_9 > 0 ? (0) : (_loc_4));
+                _loc_6 = Math.min(_loc_6, _loc_3);
+                _loc_7 = Math.max(_loc_7, _loc_9 + (_loc_9 > 0 ? (_loc_4) : (0)));
+            }
+            if (ticks)
+            {
+                _loc_11 = getStyle("tickLength");
+                _loc_12 = getStyle("tickOffset");
+                _loc_6 = Math.min(_loc_6, _loc_12 - _loc_11);
+                _loc_7 = Math.max(_loc_7, _loc_12);
+            }
+            if (thumbs.numChildren > 0)
+            {
+                _loc_5 = (track.height - SliderThumb(thumbs.getChildAt(0)).getExplicitOrMeasuredHeight()) / 2 + getStyle("thumbOffset");
+                _loc_6 = Math.min(_loc_6, _loc_5);
+                _loc_7 = Math.max(_loc_7, _loc_5 + SliderThumb(thumbs.getChildAt(0)).getExplicitOrMeasuredHeight());
+            }
+            return {lower:_loc_7, upper:_loc_6};
+        }// end function
+
+        function onThumbRelease(param1:Object) : void
+        {
+            interactionClickTarget = SliderEventClickTarget.THUMB;
+            destroyDataTip();
+            setValueFromPos(param1.thumbIndex);
+            dataFormatter = null;
+            var _loc_2:* = new SliderEvent(SliderEvent.THUMB_RELEASE);
+            _loc_2.value = getValueFromX(param1.xPosition);
+            _loc_2.thumbIndex = param1.thumbIndex;
+            dispatchEvent(_loc_2);
+            return;
+        }// end function
+
+        public function get dataTipFormatFunction() : Function
+        {
+            return _dataTipFormatFunction;
+        }// end function
+
+        public function set value(param1:Number) : void
+        {
+            setValueAt(param1, 0, true);
+            valuesChanged = true;
+            minimumSet = true;
+            invalidateProperties();
+            invalidateDisplayList();
+            dispatchEvent(new FlexEvent(FlexEvent.VALUE_COMMIT));
+            return;
+        }// end function
+
+        function updateThumbValue(param1:int) : void
+        {
+            setValueFromPos(param1);
+            return;
+        }// end function
+
+        private function track_mouseDownHandler(event:MouseEvent) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_8:* = null;
+            var _loc_9:* = NaN;
+            var _loc_10:* = null;
+            var _loc_11:* = null;
+            var _loc_12:* = NaN;
+            if (event.target != trackHitArea && event.target != ticks)
+            {
+                return;
+            }
+            if (enabled && allowTrackClick)
+            {
+                interactionClickTarget = SliderEventClickTarget.TRACK;
+                keyInteraction = false;
+                _loc_2 = new Point(event.localX, event.localY);
+                _loc_3 = _loc_2.x;
+                _loc_4 = 0;
+                _loc_5 = 10000000;
+                _loc_6 = _thumbCount;
+                _loc_7 = 0;
+                while (_loc_7 < _loc_6)
+                {
+                    
+                    _loc_12 = Math.abs(SliderThumb(thumbs.getChildAt(_loc_7)).xPosition - _loc_3);
+                    if (_loc_12 < _loc_5)
+                    {
+                        _loc_4 = _loc_7;
+                        _loc_5 = _loc_12;
+                    }
+                    _loc_7++;
+                }
+                _loc_8 = SliderThumb(thumbs.getChildAt(_loc_4));
+                if (!isNaN(_snapInterval) && _snapInterval != 0)
+                {
+                    _loc_3 = getXFromValue(getValueFromX(_loc_3));
+                }
+                _loc_9 = getStyle("slideDuration");
+                _loc_10 = new Tween(_loc_8, _loc_8.xPosition, _loc_3, _loc_9);
+                _loc_11 = getStyle("slideEasingFunction") as Function;
+                if (_loc_11 != null)
+                {
+                    _loc_10.easingFunction = _loc_11;
+                }
+                drawTrackHighlight();
+            }
+            return;
+        }// end function
+
+        public function get sliderDataTipClass() : Class
+        {
+            return _sliderDataTipClass;
+        }// end function
+
+        private function createTicks() : void
+        {
+            if (!ticks)
+            {
+                ticks = new UIComponent();
+                innerSlider.addChild(ticks);
+            }
+            return;
+        }// end function
+
+        function getValueFromX(param1:Number) : Number
+        {
+            var _loc_2:* = (param1 - track.x) * (maximum - minimum) / track.width + minimum;
+            if (_loc_2 - minimum <= 0.002)
+            {
+                _loc_2 = minimum;
+            }
+            else if (maximum - _loc_2 <= 0.002)
+            {
+                _loc_2 = maximum;
+            }
+            else if (!isNaN(_snapInterval) && _snapInterval != 0)
+            {
+                _loc_2 = Math.round((_loc_2 - minimum) / _snapInterval) * _snapInterval + minimum;
+            }
+            return _loc_2;
+        }// end function
+
+        private function thumb_focusInHandler(event:FocusEvent) : void
+        {
+            dispatchEvent(event);
+            return;
+        }// end function
+
+        private function setValueAt(param1:Number, param2:int, param3:Boolean = false) : void
+        {
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            var _loc_4:* = _values[param2];
+            if (snapIntervalPrecision != -1)
+            {
+                _loc_5 = Math.pow(10, snapIntervalPrecision);
+                param1 = Math.round(param1 * _loc_5) / _loc_5;
+            }
+            _values[param2] = param1;
+            if (!param3)
+            {
+                _loc_6 = new SliderEvent(SliderEvent.CHANGE);
+                _loc_6.value = param1;
+                _loc_6.thumbIndex = param2;
+                _loc_6.clickTarget = interactionClickTarget;
+                if (keyInteraction)
+                {
+                    _loc_6.triggerEvent = new KeyboardEvent(KeyboardEvent.KEY_DOWN);
+                    keyInteraction = false;
+                }
+                else
+                {
+                    _loc_6.triggerEvent = new MouseEvent(MouseEvent.CLICK);
+                }
+                if (!isNaN(_loc_4))
+                {
+                    if (Math.abs(_loc_4 - param1) > 0.002)
+                    {
+                        dispatchEvent(_loc_6);
+                    }
+                }
+                else if (!isNaN(param1))
+                {
+                    dispatchEvent(_loc_6);
+                }
+            }
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        public function set labels(param1:Array) : void
+        {
+            _labels = param1;
+            labelsChanged = true;
+            invalidateProperties();
+            invalidateSize();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        public function get labels() : Array
+        {
+            return _labels;
+        }// end function
+
+    }
 }

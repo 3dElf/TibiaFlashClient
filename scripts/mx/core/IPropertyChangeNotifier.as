@@ -1,8 +1,12 @@
-package mx.core
+﻿package mx.core
 {
-   import flash.events.IEventDispatcher;
-   
-   public interface IPropertyChangeNotifier extends IEventDispatcher, IUID
-   {
-       }
+    import flash.events.*;
+    import mx.core.*;
+
+    public interface IPropertyChangeNotifier extends IEventDispatcher, IUID
+    {
+
+        public function IPropertyChangeNotifier();
+
+    }
 }

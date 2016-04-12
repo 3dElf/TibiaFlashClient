@@ -1,124 +1,131 @@
-package shared.controls
+﻿package shared.controls
 {
-   import mx.controls.DataGrid;
-   import flash.display.Sprite;
-   import mx.controls.listClasses.IListItemRenderer;
-   import mx.controls.listClasses.ListBaseContentHolder;
-   import flash.display.Shape;
-   import flash.display.Graphics;
-   import mx.core.FlexSprite;
-   import mx.styles.StyleManager;
-   import mx.core.FlexShape;
-   
-   public class CustomDataGrid extends DataGrid
-   {
-       
-      public function CustomDataGrid()
-      {
-         super();
-      }
-      
-      override protected function drawCaretIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
-      {
-         this.drawIndicator(param1,param2,param3,unscaledWidth - viewMetrics.left - viewMetrics.right,param5,getStyle("backgroundAlpha"),param6,param7,false);
-      }
-      
-      override protected function drawRowGraphics(param1:ListBaseContentHolder) : void
-      {
-         var _loc9_:Shape = null;
-         var _loc10_:uint = 0;
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         var _loc13_:Number = NaN;
-         var _loc14_:Number = NaN;
-         var _loc15_:Number = NaN;
-         var _loc16_:Graphics = null;
-         var _loc2_:Sprite = Sprite(param1.getChildByName("rowBGs"));
-         if(_loc2_ == null)
-         {
-            _loc2_ = new FlexSprite();
-            _loc2_.mouseChildren = false;
-            _loc2_.mouseEnabled = false;
-            _loc2_.name = "rowBGs";
-            param1.addChildAt(_loc2_,0);
-         }
-         var _loc3_:int = _loc2_.numChildren;
-         var _loc4_:Array = getStyle("alternatingItemColors");
-         var _loc5_:Array = getStyle("alternatingItemAlphas");
-         if(_loc4_ == null || _loc4_.length == 0 || _loc5_ == null || _loc5_.length != _loc4_.length)
-         {
-            while(_loc3_ > 0)
-            {
-               _loc2_.removeChildAt(--_loc3_);
-            }
+    import flash.display.*;
+    import mx.controls.*;
+    import mx.controls.listClasses.*;
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class CustomDataGrid extends DataGrid
+    {
+
+        public function CustomDataGrid()
+        {
             return;
-         }
-         StyleManager.getColorNames(_loc4_);
-         var _loc6_:int = 0;
-         var _loc7_:int = verticalScrollPosition;
-         var _loc8_:int = param1.listItems.length;
-         while(_loc6_ < _loc8_)
-         {
-            _loc9_ = null;
-            if(_loc6_ < _loc2_.numChildren)
+        }// end function
+
+        override protected function drawCaretIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
+        {
+            this.drawIndicator(param1, param2, param3, unscaledWidth - viewMetrics.left - viewMetrics.right, param5, getStyle("backgroundAlpha"), param6, param7, false);
+            return;
+        }// end function
+
+        override protected function drawRowGraphics(param1:ListBaseContentHolder) : void
+        {
+            var _loc_9:* = null;
+            var _loc_10:* = 0;
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            var _loc_13:* = NaN;
+            var _loc_14:* = NaN;
+            var _loc_15:* = NaN;
+            var _loc_16:* = null;
+            var _loc_2:* = Sprite(param1.getChildByName("rowBGs"));
+            if (_loc_2 == null)
             {
-               _loc9_ = Shape(_loc2_.getChildAt(_loc6_));
+                _loc_2 = new FlexSprite();
+                _loc_2.mouseChildren = false;
+                _loc_2.mouseEnabled = false;
+                _loc_2.name = "rowBGs";
+                param1.addChildAt(_loc_2, 0);
+            }
+            var _loc_3:* = _loc_2.numChildren;
+            var _loc_4:* = getStyle("alternatingItemColors");
+            var _loc_5:* = getStyle("alternatingItemAlphas");
+            if (_loc_4 == null || _loc_4.length == 0 || _loc_5 == null || _loc_5.length != _loc_4.length)
+            {
+                while (--_loc_3 > 0)
+                {
+                    
+                    _loc_2.removeChildAt(--_loc_3);
+                }
+                return;
+            }
+            StyleManager.getColorNames(_loc_4);
+            var _loc_6:* = 0;
+            var _loc_7:* = verticalScrollPosition;
+            var _loc_8:* = param1.listItems.length;
+            while (_loc_6 < _loc_8)
+            {
+                
+                _loc_9 = null;
+                if (_loc_6 < _loc_2.numChildren)
+                {
+                    _loc_9 = Shape(_loc_2.getChildAt(_loc_6));
+                }
+                else
+                {
+                    _loc_9 = new FlexShape();
+                    _loc_9.name = "rowBackground";
+                    _loc_2.addChild(_loc_9);
+                }
+                _loc_10 = _loc_4[_loc_7 % _loc_4.length];
+                _loc_11 = _loc_5[_loc_7 % _loc_5.length];
+                _loc_12 = 0;
+                _loc_13 = param1.rowInfo[_loc_6].y;
+                _loc_14 = Math.min(param1.rowInfo[_loc_6].height, param1.height - param1.rowInfo[_loc_6].y);
+                _loc_15 = param1.width;
+                _loc_16 = _loc_9.graphics;
+                _loc_16.clear();
+                _loc_16.beginFill(_loc_10, _loc_11);
+                _loc_16.drawRect(0, 0, _loc_15, _loc_14);
+                _loc_16.endFill();
+                _loc_9.x = _loc_12;
+                _loc_9.y = _loc_13;
+                _loc_6++;
+                _loc_7++;
+            }
+            do
+            {
+                
+                _loc_2.removeChildAt((_loc_3 - 1));
+                var _loc_17:* = _loc_2.numChildren;
+                _loc_3 = _loc_2.numChildren;
+            }while (_loc_17 > _loc_8)
+            return;
+        }// end function
+
+        override protected function drawSelectionIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
+        {
+            this.drawIndicator(param1, param2, param3, unscaledWidth - viewMetrics.left - viewMetrics.right, param5, getStyle("backgroundAlpha"), param6, param7, true);
+            return;
+        }// end function
+
+        private function drawIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:uint, param8:IListItemRenderer, param9:Boolean) : void
+        {
+            var _loc_10:* = param1.graphics;
+            _loc_10.clear();
+            if (param9)
+            {
+                _loc_10.beginFill(param7, param6);
+                _loc_10.drawRect(0, 0, param4, param5);
+                _loc_10.endFill();
             }
             else
             {
-               _loc9_ = new FlexShape();
-               _loc9_.name = "rowBackground";
-               _loc2_.addChild(_loc9_);
+                _loc_10.lineStyle(1, param7, param6);
+                _loc_10.drawRect(0, 0, (param4 - 1), (param5 - 1));
             }
-            _loc10_ = _loc4_[_loc7_ % _loc4_.length];
-            _loc11_ = _loc5_[_loc7_ % _loc5_.length];
-            _loc12_ = 0;
-            _loc13_ = param1.rowInfo[_loc6_].y;
-            _loc14_ = Math.min(param1.rowInfo[_loc6_].height,param1.height - param1.rowInfo[_loc6_].y);
-            _loc15_ = param1.width;
-            _loc16_ = _loc9_.graphics;
-            _loc16_.clear();
-            _loc16_.beginFill(_loc10_,_loc11_);
-            _loc16_.drawRect(0,0,_loc15_,_loc14_);
-            _loc16_.endFill();
-            _loc9_.x = _loc12_;
-            _loc9_.y = _loc13_;
-            _loc6_++;
-            _loc7_++;
-         }
-         while((_loc3_ = _loc2_.numChildren) > _loc8_)
-         {
-            _loc2_.removeChildAt(_loc3_ - 1);
-         }
-      }
-      
-      override protected function drawSelectionIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
-      {
-         this.drawIndicator(param1,param2,param3,unscaledWidth - viewMetrics.left - viewMetrics.right,param5,getStyle("backgroundAlpha"),param6,param7,true);
-      }
-      
-      private function drawIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:uint, param8:IListItemRenderer, param9:Boolean) : void
-      {
-         var _loc10_:Graphics = param1.graphics;
-         _loc10_.clear();
-         if(param9)
-         {
-            _loc10_.beginFill(param7,param6);
-            _loc10_.drawRect(0,0,param4,param5);
-            _loc10_.endFill();
-         }
-         else
-         {
-            _loc10_.lineStyle(1,param7,param6);
-            _loc10_.drawRect(0,0,param4 - 1,param5 - 1);
-         }
-         param1.x = param2;
-         param1.y = param3;
-      }
-      
-      override protected function drawHighlightIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
-      {
-         this.drawIndicator(param1,param2,param3,unscaledWidth - viewMetrics.left - viewMetrics.right,param5,getStyle("backgroundAlpha"),param6,param7,true);
-      }
-   }
+            param1.x = param2;
+            param1.y = param3;
+            return;
+        }// end function
+
+        override protected function drawHighlightIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
+        {
+            this.drawIndicator(param1, param2, param3, unscaledWidth - viewMetrics.left - viewMetrics.right, param5, getStyle("backgroundAlpha"), param6, param7, true);
+            return;
+        }// end function
+
+    }
 }

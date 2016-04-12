@@ -1,10 +1,14 @@
-package mx.core
+﻿package mx.core
 {
-   public interface IFontContextComponent
-   {
-       
-      function get fontContext() : IFlexModuleFactory;
-      
-      function set fontContext(param1:IFlexModuleFactory) : void;
-   }
+
+    public interface IFontContextComponent
+    {
+
+        public function IFontContextComponent();
+
+        function get fontContext() : IFlexModuleFactory;
+
+        function set fontContext(param1:IFlexModuleFactory) : void;
+
+    }
 }

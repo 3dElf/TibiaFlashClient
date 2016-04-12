@@ -1,39 +1,42 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   
-   public class _ControlBarStyle
-   {
-       
-      public function _ControlBarStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration("ControlBar");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration("ControlBar",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class _ControlBarStyle extends Object
+    {
+
+        public function _ControlBarStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration("ControlBar");
+            if (!style)
             {
-               _ControlBarStyle.disabledOverlayAlpha = 0;
-               _ControlBarStyle.borderStyle = "controlBar";
-               _ControlBarStyle.paddingTop = 10;
-               _ControlBarStyle.verticalAlign = "middle";
-               _ControlBarStyle.paddingLeft = 10;
-               _ControlBarStyle.paddingBottom = 10;
-               _ControlBarStyle.paddingRight = 10;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration("ControlBar", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.disabledOverlayAlpha = 0;
+                this.borderStyle = "controlBar";
+                this.paddingTop = 10;
+                this.verticalAlign = "middle";
+                this.paddingLeft = 10;
+                this.paddingBottom = 10;
+                this.paddingRight = 10;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

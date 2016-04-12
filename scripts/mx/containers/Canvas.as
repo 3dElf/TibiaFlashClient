@@ -1,97 +1,94 @@
-package mx.containers
+﻿package mx.containers
 {
-   import mx.core.Container;
-   import mx.containers.utilityClasses.IConstraintLayout;
-   import mx.core.mx_internal;
-   import mx.containers.utilityClasses.CanvasLayout;
-   import mx.containers.utilityClasses.ConstraintRow;
-   import mx.containers.utilityClasses.ConstraintColumn;
-   
-   use namespace mx_internal;
-   
-   public class Canvas extends Container implements IConstraintLayout
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var _constraintColumns:Array;
-      
-      private var layoutObject:CanvasLayout;
-      
-      private var _constraintRows:Array;
-      
-      public function Canvas()
-      {
-         layoutObject = new CanvasLayout();
-         _constraintColumns = [];
-         _constraintRows = [];
-         super();
-         layoutObject.target = this;
-      }
-      
-      public function get constraintColumns() : Array
-      {
-         return _constraintColumns;
-      }
-      
-      override mx_internal function get usePadding() : Boolean
-      {
-         return false;
-      }
-      
-      public function set constraintRows(param1:Array) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         if(param1 != _constraintRows)
-         {
-            _loc2_ = param1.length;
-            _loc3_ = 0;
-            while(_loc3_ < _loc2_)
+    import mx.containers.utilityClasses.*;
+    import mx.core.*;
+
+    public class Canvas extends Container implements IConstraintLayout
+    {
+        private var _constraintColumns:Array;
+        private var layoutObject:CanvasLayout;
+        private var _constraintRows:Array;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function Canvas()
+        {
+            layoutObject = new CanvasLayout();
+            _constraintColumns = [];
+            _constraintRows = [];
+            layoutObject.target = this;
+            return;
+        }// end function
+
+        public function get constraintColumns() : Array
+        {
+            return _constraintColumns;
+        }// end function
+
+        public function get usePadding() : Boolean
+        {
+            return false;
+        }// end function
+
+        public function set constraintRows(param1:Array) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            if (param1 != _constraintRows)
             {
-               ConstraintRow(param1[_loc3_]).container = this;
-               _loc3_++;
+                _loc_2 = param1.length;
+                _loc_3 = 0;
+                while (_loc_3 < _loc_2)
+                {
+                    
+                    ConstraintRow(param1[_loc_3]).container = this;
+                    _loc_3++;
+                }
+                _constraintRows = param1;
+                invalidateSize();
+                invalidateDisplayList();
             }
-            _constraintRows = param1;
-            invalidateSize();
-            invalidateDisplayList();
-         }
-      }
-      
-      public function get constraintRows() : Array
-      {
-         return _constraintRows;
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         super.updateDisplayList(param1,param2);
-         layoutObject.updateDisplayList(param1,param2);
-      }
-      
-      public function set constraintColumns(param1:Array) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         if(param1 != _constraintColumns)
-         {
-            _loc2_ = param1.length;
-            _loc3_ = 0;
-            while(_loc3_ < _loc2_)
+            return;
+        }// end function
+
+        public function get constraintRows() : Array
+        {
+            return _constraintRows;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            super.updateDisplayList(param1, param2);
+            layoutObject.updateDisplayList(param1, param2);
+            return;
+        }// end function
+
+        public function set constraintColumns(param1:Array) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            if (param1 != _constraintColumns)
             {
-               ConstraintColumn(param1[_loc3_]).container = this;
-               _loc3_++;
+                _loc_2 = param1.length;
+                _loc_3 = 0;
+                while (_loc_3 < _loc_2)
+                {
+                    
+                    ConstraintColumn(param1[_loc_3]).container = this;
+                    _loc_3++;
+                }
+                _constraintColumns = param1;
+                invalidateSize();
+                invalidateDisplayList();
             }
-            _constraintColumns = param1;
-            invalidateSize();
-            invalidateDisplayList();
-         }
-      }
-      
-      override protected function measure() : void
-      {
-         super.measure();
-         layoutObject.measure();
-      }
-   }
+            return;
+        }// end function
+
+        override protected function measure() : void
+        {
+            super.measure();
+            layoutObject.measure();
+            return;
+        }// end function
+
+    }
 }

@@ -1,42 +1,39 @@
-package mx.effects.effectClasses
+﻿package mx.effects.effectClasses
 {
-   import mx.effects.EffectTargetFilter;
-   import mx.core.mx_internal;
-   
-   use namespace mx_internal;
-   
-   public class AddRemoveEffectTargetFilter extends EffectTargetFilter
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public var add:Boolean = true;
-      
-      public function AddRemoveEffectTargetFilter()
-      {
-         super();
-         filterProperties = ["parent"];
-      }
-      
-      override protected function defaultFilterFunction(param1:Array, param2:Object) : Boolean
-      {
-         var _loc5_:PropertyChanges = null;
-         var _loc3_:int = param1.length;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc5_ = param1[_loc4_];
-            if(_loc5_.target == param2)
+    import mx.effects.*;
+
+    public class AddRemoveEffectTargetFilter extends EffectTargetFilter
+    {
+        public var add:Boolean = true;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function AddRemoveEffectTargetFilter()
+        {
+            filterProperties = ["parent"];
+            return;
+        }// end function
+
+        override protected function defaultFilterFunction(param1:Array, param2:Object) : Boolean
+        {
+            var _loc_5:* = null;
+            var _loc_3:* = param1.length;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
             {
-               if(add)
-               {
-                  return _loc5_.start["parent"] == null && _loc5_.end["parent"] != null;
-               }
-               return _loc5_.start["parent"] != null && _loc5_.end["parent"] == null;
+                
+                _loc_5 = param1[_loc_4];
+                if (_loc_5.target == param2)
+                {
+                    if (add)
+                    {
+                        return _loc_5.start["parent"] == null && _loc_5.end["parent"] != null;
+                    }
+                    return _loc_5.start["parent"] != null && _loc_5.end["parent"] == null;
+                }
+                _loc_4++;
             }
-            _loc4_++;
-         }
-         return false;
-      }
-   }
+            return false;
+        }// end function
+
+    }
 }

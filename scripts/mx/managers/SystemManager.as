@@ -1,3831 +1,3898 @@
-package mx.managers
+﻿package mx.managers
 {
-   import flash.display.MovieClip;
-   import mx.core.IChildList;
-   import mx.core.IFlexDisplayObject;
-   import mx.core.IFlexModuleFactory;
-   import mx.core.ISWFBridgeProvider;
-   import mx.core.mx_internal;
-   import flash.display.DisplayObject;
-   import flash.system.ApplicationDomain;
-   import flash.utils.getQualifiedClassName;
-   import mx.managers.systemClasses.RemotePopUp;
-   import flash.utils.Dictionary;
-   import flash.events.IEventDispatcher;
-   import mx.events.EventListenerRequest;
-   import flash.display.DisplayObjectContainer;
-   import mx.core.IUIComponent;
-   import flash.display.InteractiveObject;
-   import mx.styles.IStyleClient;
-   import mx.styles.ISimpleStyleClient;
-   import flash.display.Stage;
-   import flash.events.Event;
-   import flash.events.TimerEvent;
-   import mx.events.FlexEvent;
-   import mx.events.InterManagerRequest;
-   import mx.core.Singleton;
-   import flash.geom.Point;
-   import flash.geom.Rectangle;
-   import mx.events.SWFBridgeRequest;
-   import mx.core.ISWFLoader;
-   import mx.events.SWFBridgeEvent;
-   import mx.core.SWFBridgeGroup;
-   import mx.core.IRawChildrenContainer;
-   import flash.display.Loader;
-   import flash.display.Sprite;
-   import flash.events.MouseEvent;
-   import mx.events.SandboxMouseEvent;
-   import mx.managers.systemClasses.EventProxy;
-   import mx.utils.EventUtil;
-   import mx.core.EventPriority;
-   import flash.utils.Timer;
-   import mx.utils.SecurityUtil;
-   import mx.utils.NameUtil;
-   import mx.events.FlexChangeEvent;
-   import mx.events.RSLEvent;
-   import mx.core.TextFieldFactory;
-   import mx.preloaders.Preloader;
-   import mx.core.ISWFBridgeGroup;
-   import flash.display.StageAlign;
-   import mx.managers.systemClasses.PlaceholderData;
-   import flash.display.LoaderInfo;
-   import flash.display.Graphics;
-   import flash.text.TextFormat;
-   import flash.text.Font;
-   import mx.resources.ResourceManager;
-   import mx.resources.IResourceManager;
-   import mx.events.InvalidateRequestData;
-   import mx.styles.StyleManager;
-   import mx.core.IInvalidating;
-   import mx.core.EmbeddedFontRegistry;
-   import mx.core.RSLItem;
-   import mx.preloaders.DownloadProgressBar;
-   import mx.utils.LoaderUtil;
-   import mx.core.FlexSprite;
-   import mx.messaging.config.LoaderConfig;
-   import flash.display.StageScaleMode;
-   import mx.resources.ResourceBundle;
-   
-   use namespace mx_internal;
-   
-   public class SystemManager extends MovieClip implements IChildList, IFlexDisplayObject, IFlexModuleFactory, mx.managers.ISystemManager, ISWFBridgeProvider
-   {
-      
-      private static const IDLE_THRESHOLD:Number = 1000;
-      
-      mx_internal static var lastSystemManager:mx.managers.SystemManager;
-      
-      private static const IDLE_INTERVAL:Number = 100;
-      
-      mx_internal static var allSystemManagers:Dictionary = new Dictionary(true);
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var _stage:Stage;
-      
-      mx_internal var nestLevel:int = 0;
-      
-      private var currentSandboxEvent:Event;
-      
-      private var forms:Array;
-      
-      private var mouseCatcher:Sprite;
-      
-      private var _height:Number;
-      
-      private var preloader:Preloader;
-      
-      private var lastFrame:int;
-      
-      private var _document:Object;
-      
-      private var strongReferenceProxies:Dictionary;
-      
-      private var _rawChildren:mx.managers.SystemRawChildrenList;
-      
-      private var _topLevelSystemManager:mx.managers.ISystemManager;
-      
-      private var _toolTipIndex:int = 0;
-      
-      private var _bridgeToFocusManager:Dictionary;
-      
-      private var _explicitHeight:Number;
-      
-      private var idToPlaceholder:Object;
-      
-      private var _swfBridgeGroup:ISWFBridgeGroup;
-      
-      private var _toolTipChildren:mx.managers.SystemChildrenList;
-      
-      private var form:Object;
-      
-      private var _width:Number;
-      
-      private var initialized:Boolean = false;
-      
-      private var _focusPane:Sprite;
-      
-      private var _fontList:Object = null;
-      
-      private var isStageRoot:Boolean = true;
-      
-      private var _popUpChildren:mx.managers.SystemChildrenList;
-      
-      private var _topMostIndex:int = 0;
-      
-      private var nextFrameTimer:Timer = null;
-      
-      mx_internal var topLevel:Boolean = true;
-      
-      private var weakReferenceProxies:Dictionary;
-      
-      private var _cursorIndex:int = 0;
-      
-      private var isBootstrapRoot:Boolean = false;
-      
-      mx_internal var _mouseY;
-      
-      private var _numModalWindows:int = 0;
-      
-      mx_internal var _mouseX;
-      
-      private var _screen:Rectangle;
-      
-      mx_internal var idleCounter:int = 0;
-      
-      private var _cursorChildren:mx.managers.SystemChildrenList;
-      
-      private var initCallbackFunctions:Array;
-      
-      private var _noTopMostIndex:int = 0;
-      
-      private var _applicationIndex:int = 1;
-      
-      private var isDispatchingResizeEvent:Boolean;
-      
-      private var idleTimer:Timer;
-      
-      private var doneExecutingInitCallbacks:Boolean = false;
-      
-      private var _explicitWidth:Number;
-      
-      private var eventProxy:EventProxy;
-      
-      mx_internal var topLevelWindow:IUIComponent;
-      
-      public function SystemManager()
-      {
-         initCallbackFunctions = [];
-         forms = [];
-         weakReferenceProxies = new Dictionary(true);
-         strongReferenceProxies = new Dictionary(false);
-         super();
-         if(stage)
-         {
-            stage.scaleMode = StageScaleMode.NO_SCALE;
-            stage.align = StageAlign.TOP_LEFT;
-         }
-         if(SystemManagerGlobals.topLevelSystemManagers.length > 0 && !stage)
-         {
-            topLevel = false;
-         }
-         if(!stage)
-         {
-            isStageRoot = false;
-         }
-         if(topLevel)
-         {
-            SystemManagerGlobals.topLevelSystemManagers.push(this);
-         }
-         lastSystemManager = this;
-         var _loc1_:Array = info()["compiledLocales"];
-         ResourceBundle.locale = _loc1_ != null && _loc1_.length > 0?_loc1_[0]:"en_US";
-         executeCallbacks();
-         stop();
-         if(Boolean(topLevel) && currentFrame != 1)
-         {
-            throw new Error("The SystemManager constructor was called when the currentFrame was at " + currentFrame + " Please add this SWF to bug 129782.");
-         }
-         if(Boolean(root) && Boolean(root.loaderInfo))
-         {
-            root.loaderInfo.addEventListener(Event.INIT,initHandler);
-         }
-      }
-      
-      public static function getSWFRoot(param1:Object) : DisplayObject
-      {
-         var p:* = undefined;
-         var sm:mx.managers.ISystemManager = null;
-         var domain:ApplicationDomain = null;
-         var cls:Class = null;
-         var object:Object = param1;
-         var className:String = getQualifiedClassName(object);
-         for(p in allSystemManagers)
-         {
-            sm = p as mx.managers.ISystemManager;
-            domain = sm.loaderInfo.applicationDomain;
+    import flash.display.*;
+    import flash.events.*;
+    import flash.geom.*;
+    import flash.system.*;
+    import flash.text.*;
+    import flash.utils.*;
+    import mx.core.*;
+    import mx.events.*;
+    import mx.managers.*;
+    import mx.managers.systemClasses.*;
+    import mx.messaging.config.*;
+    import mx.preloaders.*;
+    import mx.resources.*;
+    import mx.styles.*;
+    import mx.utils.*;
+
+    public class SystemManager extends MovieClip implements IChildList, IFlexDisplayObject, IFlexModuleFactory, ISystemManager, ISWFBridgeProvider
+    {
+        private var _stage:Stage;
+        var nestLevel:int = 0;
+        private var currentSandboxEvent:Event;
+        private var forms:Array;
+        private var mouseCatcher:Sprite;
+        private var _height:Number;
+        private var preloader:Preloader;
+        private var lastFrame:int;
+        private var _document:Object;
+        private var strongReferenceProxies:Dictionary;
+        private var _rawChildren:SystemRawChildrenList;
+        private var _topLevelSystemManager:ISystemManager;
+        private var _toolTipIndex:int = 0;
+        private var _bridgeToFocusManager:Dictionary;
+        private var _explicitHeight:Number;
+        private var idToPlaceholder:Object;
+        private var _swfBridgeGroup:ISWFBridgeGroup;
+        private var _toolTipChildren:SystemChildrenList;
+        private var form:Object;
+        private var _width:Number;
+        private var initialized:Boolean = false;
+        private var _focusPane:Sprite;
+        private var _fontList:Object = null;
+        private var isStageRoot:Boolean = true;
+        private var _popUpChildren:SystemChildrenList;
+        private var _topMostIndex:int = 0;
+        private var nextFrameTimer:Timer = null;
+        var topLevel:Boolean = true;
+        private var weakReferenceProxies:Dictionary;
+        private var _cursorIndex:int = 0;
+        private var isBootstrapRoot:Boolean = false;
+        var _mouseY:Object;
+        private var _numModalWindows:int = 0;
+        var _mouseX:Object;
+        private var _screen:Rectangle;
+        var idleCounter:int = 0;
+        private var _cursorChildren:SystemChildrenList;
+        private var initCallbackFunctions:Array;
+        private var _noTopMostIndex:int = 0;
+        private var _applicationIndex:int = 1;
+        private var isDispatchingResizeEvent:Boolean;
+        private var idleTimer:Timer;
+        private var doneExecutingInitCallbacks:Boolean = false;
+        private var _explicitWidth:Number;
+        private var eventProxy:EventProxy;
+        var topLevelWindow:IUIComponent;
+        private static const IDLE_THRESHOLD:Number = 1000;
+        static var lastSystemManager:SystemManager;
+        private static const IDLE_INTERVAL:Number = 100;
+        static var allSystemManagers:Dictionary = new Dictionary(true);
+        static const VERSION:String = "3.6.0.21751";
+
+        public function SystemManager()
+        {
+            initCallbackFunctions = [];
+            forms = [];
+            weakReferenceProxies = new Dictionary(true);
+            strongReferenceProxies = new Dictionary(false);
+            if (stage)
+            {
+                stage.scaleMode = StageScaleMode.NO_SCALE;
+                stage.align = StageAlign.TOP_LEFT;
+            }
+            if (SystemManagerGlobals.topLevelSystemManagers.length > 0 && !stage)
+            {
+                topLevel = false;
+            }
+            if (!stage)
+            {
+                isStageRoot = false;
+            }
+            if (topLevel)
+            {
+                SystemManagerGlobals.topLevelSystemManagers.push(this);
+            }
+            lastSystemManager = this;
+            var _loc_1:* = info()["compiledLocales"];
+            ResourceBundle.locale = _loc_1 != null && _loc_1.length > 0 ? (_loc_1[0]) : ("en_US");
+            executeCallbacks();
+            stop();
+            if (topLevel && currentFrame != 1)
+            {
+                throw new Error("The SystemManager constructor was called when the currentFrame was at " + currentFrame + " Please add this SWF to bug 129782.");
+            }
+            if (root && root.loaderInfo)
+            {
+                root.loaderInfo.addEventListener(Event.INIT, initHandler);
+            }
+            return;
+        }// end function
+
+        private function removeEventListenerFromSandboxes(param1:String, param2:Function, param3:Boolean = false, param4:IEventDispatcher = null) : void
+        {
+            var _loc_8:* = 0;
+            if (!swfBridgeGroup)
+            {
+                return;
+            }
+            var _loc_5:* = new EventListenerRequest(EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST, false, false, param1, param3);
+            var _loc_6:* = swfBridgeGroup.parentBridge;
+            if (swfBridgeGroup.parentBridge && _loc_6 != param4)
+            {
+                _loc_6.removeEventListener(param1, param2, param3);
+            }
+            var _loc_7:* = swfBridgeGroup.getChildBridges();
+            while (_loc_8 < _loc_7.length)
+            {
+                
+                if (_loc_7[_loc_8] != param4)
+                {
+                    IEventDispatcher(_loc_7[_loc_8]).removeEventListener(param1, param2, param3);
+                }
+                _loc_8++;
+            }
+            dispatchEventFromSWFBridges(_loc_5, param4);
+            return;
+        }// end function
+
+        function addingChild(param1:DisplayObject) : void
+        {
+            var _loc_4:* = null;
+            var _loc_2:* = 1;
+            if (!topLevel && parent)
+            {
+                _loc_4 = parent.parent;
+                while (_loc_4)
+                {
+                    
+                    if (_loc_4 is ILayoutManagerClient)
+                    {
+                        _loc_2 = ILayoutManagerClient(_loc_4).nestLevel + 1;
+                        break;
+                    }
+                    _loc_4 = _loc_4.parent;
+                }
+            }
+            nestLevel = _loc_2;
+            if (param1 is IUIComponent)
+            {
+                IUIComponent(param1).systemManager = this;
+            }
+            var _loc_3:* = Class(getDefinitionByName("mx.core.UIComponent"));
+            if (param1 is IUIComponent && !IUIComponent(param1).document)
+            {
+                IUIComponent(param1).document = document;
+            }
+            if (param1 is ILayoutManagerClient)
+            {
+                ILayoutManagerClient(param1).nestLevel = nestLevel + 1;
+            }
+            if (param1 is InteractiveObject)
+            {
+                if (doubleClickEnabled)
+                {
+                    InteractiveObject(param1).doubleClickEnabled = true;
+                }
+            }
+            if (param1 is IUIComponent)
+            {
+                IUIComponent(param1).parentChanged(this);
+            }
+            if (param1 is IStyleClient)
+            {
+                IStyleClient(param1).regenerateStyleCache(true);
+            }
+            if (param1 is ISimpleStyleClient)
+            {
+                ISimpleStyleClient(param1).styleChanged(null);
+            }
+            if (param1 is IStyleClient)
+            {
+                IStyleClient(param1).notifyStyleChangeInChildren(null, true);
+            }
+            if (_loc_3 && param1 is _loc_3)
+            {
+                this._loc_3(param1).initThemeColor();
+            }
+            if (_loc_3 && param1 is _loc_3)
+            {
+                this._loc_3(param1).stylesInitialized();
+            }
+            return;
+        }// end function
+
+        private function dispatchEventToOtherSystemManagers(event:Event) : void
+        {
+            SystemManagerGlobals.dispatchingEventToOtherSystemManagers = true;
+            var _loc_2:* = SystemManagerGlobals.topLevelSystemManagers;
+            var _loc_3:* = _loc_2.length;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                if (_loc_2[_loc_4] != this)
+                {
+                    _loc_2[_loc_4].dispatchEvent(event);
+                }
+                _loc_4++;
+            }
+            SystemManagerGlobals.dispatchingEventToOtherSystemManagers = false;
+            return;
+        }// end function
+
+        private function idleTimer_timerHandler(event:TimerEvent) : void
+        {
+            var _loc_3:* = idleCounter + 1;
+            idleCounter = _loc_3;
+            if (idleCounter * IDLE_INTERVAL > IDLE_THRESHOLD)
+            {
+                dispatchEvent(new FlexEvent(FlexEvent.IDLE));
+            }
+            return;
+        }// end function
+
+        private function initManagerHandler(event:Event) : void
+        {
+            var event:* = event;
+            if (!SystemManagerGlobals.dispatchingEventToOtherSystemManagers)
+            {
+                dispatchEventToOtherSystemManagers(event);
+            }
+            if (event is InterManagerRequest)
+            {
+                return;
+            }
+            var name:* = event["name"];
             try
             {
-               cls = Class(domain.getDefinition(className));
-               if(object is cls)
-               {
-                  return sm as DisplayObject;
-               }
+                Singleton.getInstance(name);
             }
-            catch(e:Error)
+            catch (e:Error)
             {
-               continue;
             }
-         }
-         return null;
-      }
-      
-      private static function areRemotePopUpsEqual(param1:Object, param2:Object) : Boolean
-      {
-         if(!(param1 is RemotePopUp))
-         {
+            return;
+        }// end function
+
+        function rawChildren_getObjectsUnderPoint(param1:Point) : Array
+        {
+            return super.getObjectsUnderPoint(param1);
+        }// end function
+
+        public function get preloadedRSLs() : Dictionary
+        {
+            return null;
+        }// end function
+
+        private function getSizeRequestHandler(event:Event) : void
+        {
+            var _loc_2:* = Object(event);
+            _loc_2.data = {width:measuredWidth, height:measuredHeight};
+            return;
+        }// end function
+
+        private function beforeUnloadHandler(event:Event) : void
+        {
+            var _loc_2:* = null;
+            if (topLevel && stage)
+            {
+                _loc_2 = getSandboxRoot();
+                if (_loc_2 != this)
+                {
+                    _loc_2.removeEventListener(Event.RESIZE, Stage_resizeHandler);
+                }
+            }
+            removeParentBridgeListeners();
+            dispatchEvent(event);
+            return;
+        }// end function
+
+        public function getExplicitOrMeasuredHeight() : Number
+        {
+            return !isNaN(explicitHeight) ? (explicitHeight) : (measuredHeight);
+        }// end function
+
+        private function getVisibleRectRequestHandler(event:Event) : void
+        {
+            var _loc_5:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            if (event is SWFBridgeRequest)
+            {
+                return;
+            }
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            var _loc_3:* = Rectangle(_loc_2.data);
+            var _loc_4:* = DisplayObject(swfBridgeGroup.getChildBridgeProvider(_loc_2.requestor));
+            var _loc_6:* = true;
+            if (!DisplayObjectContainer(document).contains(_loc_4))
+            {
+                _loc_6 = false;
+            }
+            if (_loc_4 is ISWFLoader)
+            {
+                _loc_5 = ISWFLoader(_loc_4).getVisibleApplicationRect();
+            }
+            else
+            {
+                _loc_5 = _loc_4.getBounds(this);
+                _loc_7 = localToGlobal(_loc_5.topLeft);
+                _loc_5.x = _loc_7.x;
+                _loc_5.y = _loc_7.y;
+            }
+            _loc_3 = _loc_3.intersection(_loc_5);
+            _loc_2.data = _loc_3;
+            if (_loc_6 && useSWFBridge())
+            {
+                _loc_8 = swfBridgeGroup.parentBridge;
+                _loc_2.requestor = _loc_8;
+                _loc_8.dispatchEvent(_loc_2);
+            }
+            Object(event).data = _loc_2.data;
+            return;
+        }// end function
+
+        function notifyStyleChangeInChildren(param1:String, param2:Boolean) : void
+        {
+            var _loc_6:* = null;
+            var _loc_3:* = false;
+            var _loc_4:* = rawChildren.numChildren;
+            var _loc_5:* = 0;
+            while (_loc_5 < _loc_4)
+            {
+                
+                _loc_6 = rawChildren.getChildAt(_loc_5) as IStyleClient;
+                if (_loc_6)
+                {
+                    _loc_6.styleChanged(param1);
+                    _loc_6.notifyStyleChangeInChildren(param1, param2);
+                }
+                if (isTopLevelWindow(DisplayObject(_loc_6)))
+                {
+                    _loc_3 = true;
+                }
+                _loc_4 = rawChildren.numChildren;
+                _loc_5++;
+            }
+            if (!_loc_3 && topLevelWindow is IStyleClient)
+            {
+                IStyleClient(topLevelWindow).styleChanged(param1);
+                IStyleClient(topLevelWindow).notifyStyleChangeInChildren(param1, param2);
+            }
+            return;
+        }// end function
+
+        private function addEventListenerToOtherSystemManagers(param1:String, param2:Function, param3:Boolean = false, param4:int = 0, param5:Boolean = false) : void
+        {
+            var _loc_6:* = SystemManagerGlobals.topLevelSystemManagers;
+            if (_loc_6.length < 2)
+            {
+                return;
+            }
+            SystemManagerGlobals.changingListenersInOtherSystemManagers = true;
+            var _loc_7:* = _loc_6.length;
+            var _loc_8:* = 0;
+            while (_loc_8 < _loc_7)
+            {
+                
+                if (_loc_6[_loc_8] != this)
+                {
+                    _loc_6[_loc_8].addEventListener(param1, param2, param3, param4, param5);
+                }
+                _loc_8++;
+            }
+            SystemManagerGlobals.changingListenersInOtherSystemManagers = false;
+            return;
+        }// end function
+
+        private function initHandler(event:Event) : void
+        {
+            var bridgeEvent:SWFBridgeEvent;
+            var event:* = event;
+            if (!isStageRoot)
+            {
+                if (root.loaderInfo.parentAllowsChild)
+                {
+                    try
+                    {
+                        if (!parent.dispatchEvent(new Event("mx.managers.SystemManager.isBootstrapRoot", false, true)) || !root.loaderInfo.sharedEvents.hasEventListener(SWFBridgeEvent.BRIDGE_NEW_APPLICATION))
+                        {
+                            isBootstrapRoot = true;
+                        }
+                    }
+                    catch (e:Error)
+                    {
+                    }
+                }
+            }
+            allSystemManagers[this] = this.loaderInfo.url;
+            root.loaderInfo.removeEventListener(Event.INIT, initHandler);
+            if (useSWFBridge())
+            {
+                swfBridgeGroup = new SWFBridgeGroup(this);
+                swfBridgeGroup.parentBridge = loaderInfo.sharedEvents;
+                addParentBridgeListeners();
+                bridgeEvent = new SWFBridgeEvent(SWFBridgeEvent.BRIDGE_NEW_APPLICATION);
+                bridgeEvent.data = swfBridgeGroup.parentBridge;
+                swfBridgeGroup.parentBridge.dispatchEvent(bridgeEvent);
+                addEventListener(SWFBridgeRequest.ADD_POP_UP_PLACE_HOLDER_REQUEST, addPlaceholderPopupRequestHandler);
+                root.loaderInfo.addEventListener(Event.UNLOAD, unloadHandler, false, 0, true);
+            }
+            var sbRoot:* = getSandboxRoot();
+            sbRoot.addEventListener(InterManagerRequest.INIT_MANAGER_REQUEST, initManagerHandler, false, 0, true);
+            if (sbRoot == this)
+            {
+                addEventListener(InterManagerRequest.SYSTEM_MANAGER_REQUEST, systemManagerHandler);
+                addEventListener(InterManagerRequest.DRAG_MANAGER_REQUEST, multiWindowRedispatcher);
+                addEventListener("dispatchDragEvent", multiWindowRedispatcher);
+                addEventListener(SWFBridgeRequest.ADD_POP_UP_REQUEST, addPopupRequestHandler);
+                addEventListener(SWFBridgeRequest.REMOVE_POP_UP_REQUEST, removePopupRequestHandler);
+                addEventListener(SWFBridgeRequest.ADD_POP_UP_PLACE_HOLDER_REQUEST, addPlaceholderPopupRequestHandler);
+                addEventListener(SWFBridgeRequest.REMOVE_POP_UP_PLACE_HOLDER_REQUEST, removePlaceholderPopupRequestHandler);
+                addEventListener(SWFBridgeEvent.BRIDGE_WINDOW_ACTIVATE, activateFormSandboxEventHandler);
+                addEventListener(SWFBridgeEvent.BRIDGE_WINDOW_DEACTIVATE, deactivateFormSandboxEventHandler);
+                addEventListener(SWFBridgeRequest.HIDE_MOUSE_CURSOR_REQUEST, hideMouseCursorRequestHandler);
+                addEventListener(SWFBridgeRequest.SHOW_MOUSE_CURSOR_REQUEST, showMouseCursorRequestHandler);
+                addEventListener(SWFBridgeRequest.RESET_MOUSE_CURSOR_REQUEST, resetMouseCursorRequestHandler);
+            }
+            var docFrame:* = totalFrames == 1 ? (0) : (1);
+            addEventListener(Event.ENTER_FRAME, docFrameListener);
+            initialize();
+            return;
+        }// end function
+
+        function findFocusManagerContainer(param1:SystemManagerProxy) : IFocusManagerContainer
+        {
+            var _loc_5:* = null;
+            var _loc_2:* = param1.rawChildren;
+            var _loc_3:* = _loc_2.numChildren;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                _loc_5 = _loc_2.getChildAt(_loc_4);
+                if (_loc_5 is IFocusManagerContainer)
+                {
+                    return IFocusManagerContainer(_loc_5);
+                }
+                _loc_4++;
+            }
+            return null;
+        }// end function
+
+        private function addPlaceholderPopupRequestHandler(event:Event) : void
+        {
+            var _loc_3:* = null;
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            if (event.target != this && event is SWFBridgeRequest)
+            {
+                return;
+            }
+            if (!forwardPlaceholderRequest(_loc_2, true))
+            {
+                _loc_3 = new RemotePopUp(_loc_2.data.placeHolderId, _loc_2.requestor);
+                forms.push(_loc_3);
+            }
+            return;
+        }// end function
+
+        override public function contains(param1:DisplayObject) : Boolean
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
+            if (super.contains(param1))
+            {
+                if (param1.parent == this)
+                {
+                    _loc_2 = super.getChildIndex(param1);
+                    if (_loc_2 < noTopMostIndex)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    _loc_3 = 0;
+                    while (_loc_3 < noTopMostIndex)
+                    {
+                        
+                        _loc_4 = super.getChildAt(_loc_3);
+                        if (_loc_4 is IRawChildrenContainer)
+                        {
+                            if (IRawChildrenContainer(_loc_4).rawChildren.contains(param1))
+                            {
+                                return true;
+                            }
+                        }
+                        if (_loc_4 is DisplayObjectContainer)
+                        {
+                            if (DisplayObjectContainer(_loc_4).contains(param1))
+                            {
+                                return true;
+                            }
+                        }
+                        _loc_3++;
+                    }
+                }
+            }
             return false;
-         }
-         if(!(param2 is RemotePopUp))
-         {
-            return false;
-         }
-         var _loc3_:RemotePopUp = RemotePopUp(param1);
-         var _loc4_:RemotePopUp = RemotePopUp(param2);
-         if(Boolean(_loc3_.window == _loc4_.window) && Boolean(_loc3_.bridge) && Boolean(_loc4_.bridge))
-         {
+        }// end function
+
+        private function modalWindowRequestHandler(event:Event) : void
+        {
+            if (event is SWFBridgeRequest)
+            {
+                return;
+            }
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            if (!preProcessModalWindowRequest(_loc_2, getSandboxRoot()))
+            {
+                return;
+            }
+            Singleton.getInstance("mx.managers::IPopUpManager");
+            dispatchEvent(_loc_2);
+            return;
+        }// end function
+
+        private function activateApplicationSandboxEventHandler(event:Event) : void
+        {
+            if (!isTopLevelRoot())
+            {
+                swfBridgeGroup.parentBridge.dispatchEvent(event);
+                return;
+            }
+            activateForm(document);
+            return;
+        }// end function
+
+        public function getDefinitionByName(param1:String) : Object
+        {
+            var _loc_3:* = null;
+            var _loc_2:* = !topLevel && parent is Loader ? (Loader(parent).contentLoaderInfo.applicationDomain) : (info()["currentDomain"] as ApplicationDomain);
+            if (_loc_2.hasDefinition(param1))
+            {
+                _loc_3 = _loc_2.getDefinition(param1);
+            }
+            return _loc_3;
+        }// end function
+
+        public function removeChildFromSandboxRoot(param1:String, param2:DisplayObject) : void
+        {
+            var _loc_3:* = null;
+            if (getSandboxRoot() == this)
+            {
+                this[param1].removeChild(param2);
+            }
+            else
+            {
+                removingChild(param2);
+                _loc_3 = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST);
+                _loc_3.name = param1 + ".removeChild";
+                _loc_3.value = param2;
+                getSandboxRoot().dispatchEvent(_loc_3);
+                childRemoved(param2);
+            }
+            return;
+        }// end function
+
+        private function removeEventListenerFromOtherSystemManagers(param1:String, param2:Function, param3:Boolean = false) : void
+        {
+            var _loc_4:* = SystemManagerGlobals.topLevelSystemManagers;
+            if (_loc_4.length < 2)
+            {
+                return;
+            }
+            SystemManagerGlobals.changingListenersInOtherSystemManagers = true;
+            var _loc_5:* = _loc_4.length;
+            var _loc_6:* = 0;
+            while (_loc_6 < _loc_5)
+            {
+                
+                if (_loc_4[_loc_6] != this)
+                {
+                    _loc_4[_loc_6].removeEventListener(param1, param2, param3);
+                }
+                _loc_6++;
+            }
+            SystemManagerGlobals.changingListenersInOtherSystemManagers = false;
+            return;
+        }// end function
+
+        public function get embeddedFontList() : Object
+        {
+            var _loc_1:* = null;
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            if (_fontList == null)
+            {
+                _fontList = {};
+                _loc_1 = info()["fonts"];
+                for (_loc_2 in _loc_1)
+                {
+                    
+                    _fontList[_loc_2] = _loc_1[_loc_2];
+                }
+                if (!topLevel && _topLevelSystemManager)
+                {
+                    _loc_3 = _topLevelSystemManager.embeddedFontList;
+                    for (_loc_2 in _loc_3)
+                    {
+                        
+                        _fontList[_loc_2] = _loc_3[_loc_2];
+                    }
+                }
+            }
+            return _fontList;
+        }// end function
+
+        function set cursorIndex(param1:int) : void
+        {
+            var _loc_2:* = param1 - _cursorIndex;
+            _cursorIndex = param1;
+            return;
+        }// end function
+
+        function addChildBridgeListeners(param1:IEventDispatcher) : void
+        {
+            if (!topLevel && topLevelSystemManager)
+            {
+                SystemManager(topLevelSystemManager).addChildBridgeListeners(param1);
+                return;
+            }
+            param1.addEventListener(SWFBridgeRequest.ADD_POP_UP_REQUEST, addPopupRequestHandler);
+            param1.addEventListener(SWFBridgeRequest.REMOVE_POP_UP_REQUEST, removePopupRequestHandler);
+            param1.addEventListener(SWFBridgeRequest.ADD_POP_UP_PLACE_HOLDER_REQUEST, addPlaceholderPopupRequestHandler);
+            param1.addEventListener(SWFBridgeRequest.REMOVE_POP_UP_PLACE_HOLDER_REQUEST, removePlaceholderPopupRequestHandler);
+            param1.addEventListener(SWFBridgeEvent.BRIDGE_WINDOW_ACTIVATE, activateFormSandboxEventHandler);
+            param1.addEventListener(SWFBridgeEvent.BRIDGE_WINDOW_DEACTIVATE, deactivateFormSandboxEventHandler);
+            param1.addEventListener(SWFBridgeEvent.BRIDGE_APPLICATION_ACTIVATE, activateApplicationSandboxEventHandler);
+            param1.addEventListener(EventListenerRequest.ADD_EVENT_LISTENER_REQUEST, eventListenerRequestHandler, false, 0, true);
+            param1.addEventListener(EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST, eventListenerRequestHandler, false, 0, true);
+            param1.addEventListener(SWFBridgeRequest.CREATE_MODAL_WINDOW_REQUEST, modalWindowRequestHandler);
+            param1.addEventListener(SWFBridgeRequest.SHOW_MODAL_WINDOW_REQUEST, modalWindowRequestHandler);
+            param1.addEventListener(SWFBridgeRequest.HIDE_MODAL_WINDOW_REQUEST, modalWindowRequestHandler);
+            param1.addEventListener(SWFBridgeRequest.GET_VISIBLE_RECT_REQUEST, getVisibleRectRequestHandler);
+            param1.addEventListener(SWFBridgeRequest.HIDE_MOUSE_CURSOR_REQUEST, hideMouseCursorRequestHandler);
+            param1.addEventListener(SWFBridgeRequest.SHOW_MOUSE_CURSOR_REQUEST, showMouseCursorRequestHandler);
+            param1.addEventListener(SWFBridgeRequest.RESET_MOUSE_CURSOR_REQUEST, resetMouseCursorRequestHandler);
+            return;
+        }// end function
+
+        public function set document(param1:Object) : void
+        {
+            _document = param1;
+            return;
+        }// end function
+
+        override public function getChildAt(param1:int) : DisplayObject
+        {
+            return super.getChildAt(applicationIndex + param1);
+        }// end function
+
+        public function get rawChildren() : IChildList
+        {
+            if (!_rawChildren)
+            {
+                _rawChildren = new SystemRawChildrenList(this);
+            }
+            return _rawChildren;
+        }// end function
+
+        private function findLastActiveForm(param1:Object) : Object
+        {
+            var _loc_2:* = forms.length;
+            var _loc_3:* = forms.length - 1;
+            while (_loc_3 >= 0)
+            {
+                
+                if (forms[_loc_3] != param1 && canActivatePopUp(forms[_loc_3]))
+                {
+                    return forms[_loc_3];
+                }
+                _loc_3 = _loc_3 - 1;
+            }
+            return null;
+        }// end function
+
+        private function multiWindowRedispatcher(event:Event) : void
+        {
+            if (!SystemManagerGlobals.dispatchingEventToOtherSystemManagers)
+            {
+                dispatchEventToOtherSystemManagers(event);
+            }
+            return;
+        }// end function
+
+        public function deployMouseShields(param1:Boolean) : void
+        {
+            var _loc_2:* = new InterManagerRequest(InterManagerRequest.DRAG_MANAGER_REQUEST, false, false, "mouseShield", param1);
+            getSandboxRoot().dispatchEvent(_loc_2);
+            return;
+        }// end function
+
+        override public function addEventListener(param1:String, param2:Function, param3:Boolean = false, param4:int = 0, param5:Boolean = false) : void
+        {
+            var actualType:String;
+            var type:* = param1;
+            var listener:* = param2;
+            var useCapture:* = param3;
+            var priority:* = param4;
+            var useWeakReference:* = param5;
+            if (type == FlexEvent.RENDER || type == FlexEvent.ENTER_FRAME)
+            {
+                if (type == FlexEvent.RENDER)
+                {
+                    type = Event.RENDER;
+                }
+                else
+                {
+                    type = Event.ENTER_FRAME;
+                }
+                try
+                {
+                    if (stage)
+                    {
+                        stage.addEventListener(type, listener, useCapture, priority, useWeakReference);
+                    }
+                    else
+                    {
+                        super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+                    }
+                }
+                catch (error:SecurityError)
+                {
+                    super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+                }
+                if (stage && type == Event.RENDER)
+                {
+                    stage.invalidate();
+                }
+                return;
+            }
+            if (type == MouseEvent.MOUSE_MOVE || type == MouseEvent.MOUSE_UP || type == MouseEvent.MOUSE_DOWN || type == Event.ACTIVATE || type == Event.DEACTIVATE)
+            {
+                try
+                {
+                    if (stage)
+                    {
+                        stage.addEventListener(type, stageEventHandler, false, 0, true);
+                    }
+                }
+                catch (error:SecurityError)
+                {
+                }
+            }
+            if (type == SandboxMouseEvent.MOUSE_UP_SOMEWHERE)
+            {
+                try
+                {
+                    if (stage)
+                    {
+                        stage.addEventListener(Event.MOUSE_LEAVE, mouseLeaveHandler, false, 0, true);
+                    }
+                    else
+                    {
+                        super.addEventListener(Event.MOUSE_LEAVE, mouseLeaveHandler, false, 0, true);
+                    }
+                }
+                catch (error:SecurityError)
+                {
+                    super.addEventListener(Event.MOUSE_LEAVE, mouseLeaveHandler, false, 0, true);
+                }
+            }
+            if (hasSWFBridges() || SystemManagerGlobals.topLevelSystemManagers.length > 1)
+            {
+                if (!eventProxy)
+                {
+                    eventProxy = new EventProxy(this);
+                }
+                actualType = EventUtil.sandboxMouseEventMap[type];
+                if (actualType)
+                {
+                    if (isTopLevelRoot())
+                    {
+                        stage.addEventListener(MouseEvent.MOUSE_MOVE, resetMouseCursorTracking, true, (EventPriority.CURSOR_MANAGEMENT + 1), true);
+                        addEventListenerToSandboxes(SandboxMouseEvent.MOUSE_MOVE_SOMEWHERE, resetMouseCursorTracking, true, (EventPriority.CURSOR_MANAGEMENT + 1), true);
+                    }
+                    else
+                    {
+                        super.addEventListener(MouseEvent.MOUSE_MOVE, resetMouseCursorTracking, true, (EventPriority.CURSOR_MANAGEMENT + 1), true);
+                    }
+                    addEventListenerToSandboxes(type, sandboxMouseListener, useCapture, priority, useWeakReference);
+                    if (!SystemManagerGlobals.changingListenersInOtherSystemManagers)
+                    {
+                        addEventListenerToOtherSystemManagers(type, otherSystemManagerMouseListener, useCapture, priority, useWeakReference);
+                    }
+                    if (getSandboxRoot() == this)
+                    {
+                        super.addEventListener(actualType, eventProxy.marshalListener, useCapture, priority, useWeakReference);
+                        if (actualType == MouseEvent.MOUSE_UP)
+                        {
+                            try
+                            {
+                                if (stage)
+                                {
+                                    stage.addEventListener(Event.MOUSE_LEAVE, eventProxy.marshalListener, useCapture, priority, useWeakReference);
+                                }
+                                else
+                                {
+                                    super.addEventListener(Event.MOUSE_LEAVE, eventProxy.marshalListener, useCapture, priority, useWeakReference);
+                                }
+                            }
+                            catch (e:SecurityError)
+                            {
+                                super.addEventListener(Event.MOUSE_LEAVE, eventProxy.marshalListener, useCapture, priority, useWeakReference);
+                            }
+                        }
+                    }
+                    super.addEventListener(type, listener, false, priority, useWeakReference);
+                    return;
+                }
+            }
+            if (type == FlexEvent.IDLE && !idleTimer)
+            {
+                idleTimer = new Timer(IDLE_INTERVAL);
+                idleTimer.addEventListener(TimerEvent.TIMER, idleTimer_timerHandler);
+                idleTimer.start();
+                addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler, true);
+                addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, true);
+            }
+            super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+            return;
+        }// end function
+
+        private function activateForm(param1:Object) : void
+        {
+            var _loc_2:* = null;
+            if (form)
+            {
+                if (form != param1 && forms.length > 1)
+                {
+                    if (isRemotePopUp(form))
+                    {
+                        if (!areRemotePopUpsEqual(form, param1))
+                        {
+                            deactivateRemotePopUp(form);
+                        }
+                    }
+                    else
+                    {
+                        _loc_2 = IFocusManagerContainer(form);
+                        _loc_2.focusManager.deactivate();
+                    }
+                }
+            }
+            form = param1;
+            if (isRemotePopUp(param1))
+            {
+                activateRemotePopUp(param1);
+            }
+            else if (param1.focusManager)
+            {
+                param1.focusManager.activate();
+            }
+            updateLastActiveForm();
+            return;
+        }// end function
+
+        public function removeFocusManager(param1:IFocusManagerContainer) : void
+        {
+            var _loc_2:* = forms.length;
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_2)
+            {
+                
+                if (forms[_loc_3] == param1)
+                {
+                    if (form == param1)
+                    {
+                        deactivate(param1);
+                    }
+                    dispatchDeactivatedWindowEvent(DisplayObject(param1));
+                    forms.splice(_loc_3, 1);
+                    return;
+                }
+                _loc_3++;
+            }
+            return;
+        }// end function
+
+        private function mouseMoveHandler(event:MouseEvent) : void
+        {
+            idleCounter = 0;
+            return;
+        }// end function
+
+        private function getSandboxScreen() : Rectangle
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_1:* = getSandboxRoot();
+            if (_loc_1 == this)
+            {
+                _loc_2 = new Rectangle(0, 0, width, height);
+            }
+            else if (_loc_1 == topLevelSystemManager)
+            {
+                _loc_3 = DisplayObject(topLevelSystemManager);
+                _loc_2 = new Rectangle(0, 0, _loc_3.width, _loc_3.height);
+            }
+            else
+            {
+                _loc_4 = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST, false, false, "screen");
+                _loc_1.dispatchEvent(_loc_4);
+                _loc_2 = Rectangle(_loc_4.value);
+            }
+            return _loc_2;
+        }// end function
+
+        public function get focusPane() : Sprite
+        {
+            return _focusPane;
+        }// end function
+
+        override public function get mouseX() : Number
+        {
+            if (_mouseX === undefined)
+            {
+                return super.mouseX;
+            }
+            return _mouseX;
+        }// end function
+
+        private function mouseDownHandler(event:MouseEvent) : void
+        {
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
+            var _loc_5:* = false;
+            var _loc_6:* = 0;
+            var _loc_7:* = null;
+            var _loc_8:* = 0;
+            var _loc_9:* = 0;
+            var _loc_10:* = 0;
+            var _loc_11:* = null;
+            var _loc_12:* = null;
+            var _loc_13:* = false;
+            var _loc_14:* = 0;
+            idleCounter = 0;
+            var _loc_2:* = getSWFBridgeOfDisplayObject(event.target as DisplayObject);
+            if (_loc_2 && bridgeToFocusManager[_loc_2] == document.focusManager)
+            {
+                if (isTopLevelRoot())
+                {
+                    activateForm(document);
+                }
+                else
+                {
+                    dispatchActivatedApplicationEvent();
+                }
+                return;
+            }
+            if (numModalWindows == 0)
+            {
+                if (!isTopLevelRoot() || forms.length > 1)
+                {
+                    _loc_3 = forms.length;
+                    _loc_4 = DisplayObject(event.target);
+                    _loc_5 = document.rawChildren.contains(_loc_4);
+                    while (_loc_4)
+                    {
+                        
+                        _loc_6 = 0;
+                        while (_loc_6 < _loc_3)
+                        {
+                            
+                            _loc_7 = isRemotePopUp(forms[_loc_6]) ? (forms[_loc_6].window) : (forms[_loc_6]);
+                            if (_loc_7 == _loc_4)
+                            {
+                                _loc_8 = 0;
+                                if (_loc_4 != form && _loc_4 is IFocusManagerContainer || !isTopLevelRoot() && _loc_4 == form)
+                                {
+                                    if (isTopLevelRoot())
+                                    {
+                                        activate(IFocusManagerContainer(_loc_4));
+                                    }
+                                    if (_loc_4 == document)
+                                    {
+                                        dispatchActivatedApplicationEvent();
+                                    }
+                                    else if (_loc_4 is DisplayObject)
+                                    {
+                                        dispatchActivatedWindowEvent(DisplayObject(_loc_4));
+                                    }
+                                }
+                                if (popUpChildren.contains(_loc_4))
+                                {
+                                    _loc_11 = popUpChildren;
+                                }
+                                else
+                                {
+                                    _loc_11 = this;
+                                }
+                                _loc_9 = _loc_11.getChildIndex(_loc_4);
+                                _loc_10 = _loc_9;
+                                _loc_3 = forms.length;
+                                _loc_8 = 0;
+                                while (_loc_8 < _loc_3)
+                                {
+                                    
+                                    _loc_13 = isRemotePopUp(forms[_loc_8]);
+                                    if (_loc_13)
+                                    {
+                                        if (forms[_loc_8].window is String)
+                                        {
+                                        }
+                                        _loc_12 = forms[_loc_8].window;
+                                    }
+                                    else
+                                    {
+                                        _loc_12 = forms[_loc_8];
+                                    }
+                                    if (_loc_13)
+                                    {
+                                        _loc_14 = getChildListIndex(_loc_11, _loc_12);
+                                        if (_loc_14 > _loc_9)
+                                        {
+                                            _loc_10 = Math.max(_loc_14, _loc_10);
+                                        }
+                                    }
+                                    else if (_loc_11.contains(_loc_12))
+                                    {
+                                        if (_loc_11.getChildIndex(_loc_12) > _loc_9)
+                                        {
+                                            _loc_10 = Math.max(_loc_11.getChildIndex(_loc_12), _loc_10);
+                                        }
+                                    }
+                                    _loc_8++;
+                                }
+                                if (_loc_10 > _loc_9 && !_loc_5)
+                                {
+                                    _loc_11.setChildIndex(_loc_4, _loc_10);
+                                }
+                                return;
+                            }
+                            _loc_6++;
+                        }
+                        _loc_4 = _loc_4.parent;
+                    }
+                }
+                else
+                {
+                    dispatchActivatedApplicationEvent();
+                }
+            }
+            return;
+        }// end function
+
+        public function allowInsecureDomain(... args) : void
+        {
+            return;
+        }// end function
+
+        private function removePopupRequestHandler(event:Event) : void
+        {
+            var _loc_3:* = null;
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            if (swfBridgeGroup.parentBridge && SecurityUtil.hasMutualTrustBetweenParentAndChild(this))
+            {
+                _loc_2.requestor = swfBridgeGroup.parentBridge;
+                getSandboxRoot().dispatchEvent(_loc_2);
+                return;
+            }
+            if (popUpChildren.contains(_loc_2.data.window))
+            {
+                popUpChildren.removeChild(_loc_2.data.window);
+            }
+            else
+            {
+                removeChild(DisplayObject(_loc_2.data.window));
+            }
+            if (_loc_2.data.modal)
+            {
+                var _loc_5:* = numModalWindows - 1;
+                numModalWindows = _loc_5;
+            }
+            removeRemotePopUp(new RemotePopUp(_loc_2.data.window, _loc_2.requestor));
+            if (!isTopLevelRoot() && swfBridgeGroup)
+            {
+                _loc_3 = new SWFBridgeRequest(SWFBridgeRequest.REMOVE_POP_UP_PLACE_HOLDER_REQUEST, false, false, _loc_2.requestor, {placeHolderId:NameUtil.displayObjectToString(_loc_2.data.window)});
+                dispatchEvent(_loc_3);
+            }
+            return;
+        }// end function
+
+        public function addChildBridge(param1:IEventDispatcher, param2:DisplayObject) : void
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = param2;
+            while (_loc_4)
+            {
+                
+                if (_loc_4 is IFocusManagerContainer)
+                {
+                    _loc_3 = IFocusManagerContainer(_loc_4).focusManager;
+                    break;
+                }
+                _loc_4 = _loc_4.parent;
+            }
+            if (!_loc_3)
+            {
+                return;
+            }
+            if (!swfBridgeGroup)
+            {
+                swfBridgeGroup = new SWFBridgeGroup(this);
+            }
+            swfBridgeGroup.addChildBridge(param1, ISWFBridgeProvider(param2));
+            _loc_3.addSWFBridge(param1, param2);
+            if (!bridgeToFocusManager)
+            {
+                bridgeToFocusManager = new Dictionary();
+            }
+            bridgeToFocusManager[param1] = _loc_3;
+            addChildBridgeListeners(param1);
+            dispatchEvent(new FlexChangeEvent(FlexChangeEvent.ADD_CHILD_BRIDGE, false, false, param1));
+            return;
+        }// end function
+
+        public function get screen() : Rectangle
+        {
+            if (!_screen)
+            {
+                Stage_resizeHandler();
+            }
+            if (!isStageRoot)
+            {
+                Stage_resizeHandler();
+            }
+            return _screen;
+        }// end function
+
+        private function resetMouseCursorRequestHandler(event:Event) : void
+        {
+            var _loc_3:* = null;
+            if (!isTopLevelRoot() && event is SWFBridgeRequest)
+            {
+                return;
+            }
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            if (!isTopLevelRoot())
+            {
+                _loc_3 = swfBridgeGroup.parentBridge;
+                _loc_2.requestor = _loc_3;
+                _loc_3.dispatchEvent(_loc_2);
+            }
+            else if (eventProxy)
+            {
+                SystemManagerGlobals.showMouseCursor = true;
+            }
+            return;
+        }// end function
+
+        private function preloader_rslCompleteHandler(event:RSLEvent) : void
+        {
+            if (event.loaderInfo)
+            {
+                preloadedRSLs[event.loaderInfo] = event.url.url;
+            }
+            return;
+        }// end function
+
+        function set topMostIndex(param1:int) : void
+        {
+            var _loc_2:* = param1 - _topMostIndex;
+            _topMostIndex = param1;
+            toolTipIndex = toolTipIndex + _loc_2;
+            return;
+        }// end function
+
+        function docFrameHandler(event:Event = null) : void
+        {
+            var _loc_3:* = null;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = null;
+            Singleton.registerClass("mx.managers::IBrowserManager", Class(getDefinitionByName("mx.managers::BrowserManagerImpl")));
+            Singleton.registerClass("mx.managers::ICursorManager", Class(getDefinitionByName("mx.managers::CursorManagerImpl")));
+            Singleton.registerClass("mx.managers::IHistoryManager", Class(getDefinitionByName("mx.managers::HistoryManagerImpl")));
+            Singleton.registerClass("mx.managers::ILayoutManager", Class(getDefinitionByName("mx.managers::LayoutManager")));
+            Singleton.registerClass("mx.managers::IPopUpManager", Class(getDefinitionByName("mx.managers::PopUpManagerImpl")));
+            Singleton.registerClass("mx.managers::IToolTipManager2", Class(getDefinitionByName("mx.managers::ToolTipManagerImpl")));
+            var _loc_2:* = null;
+            _loc_2 = Class(getDefinitionByName("mx.managers::NativeDragManagerImpl"));
+            if (_loc_2 == null)
+            {
+                _loc_2 = Class(getDefinitionByName("mx.managers::DragManagerImpl"));
+            }
+            Singleton.registerClass("mx.managers::IDragManager", _loc_2);
+            Singleton.registerClass("mx.core::ITextFieldFactory", Class(getDefinitionByName("mx.core::TextFieldFactory")));
+            executeCallbacks();
+            doneExecutingInitCallbacks = true;
+            var _loc_4:* = info()["mixins"];
+            if (info()["mixins"] && _loc_4.length > 0)
+            {
+                _loc_5 = _loc_4.length;
+                _loc_6 = 0;
+                while (_loc_6 < _loc_5)
+                {
+                    
+                    _loc_7 = Class(getDefinitionByName(_loc_4[_loc_6]));
+                    var _loc_8:* = _loc_7;
+                    _loc_8["init"](this);
+                    _loc_6++;
+                }
+            }
+            installCompiledResourceBundles();
+            initializeTopLevelWindow(null);
+            deferredNextFrame();
+            return;
+        }// end function
+
+        public function get explicitHeight() : Number
+        {
+            return _explicitHeight;
+        }// end function
+
+        public function get preloaderBackgroundSize() : String
+        {
+            return info()["backgroundSize"];
+        }// end function
+
+        public function isTopLevel() : Boolean
+        {
+            return topLevel;
+        }// end function
+
+        override public function get mouseY() : Number
+        {
+            if (_mouseY === undefined)
+            {
+                return super.mouseY;
+            }
+            return _mouseY;
+        }// end function
+
+        public function getExplicitOrMeasuredWidth() : Number
+        {
+            return !isNaN(explicitWidth) ? (explicitWidth) : (measuredWidth);
+        }// end function
+
+        public function deactivate(param1:IFocusManagerContainer) : void
+        {
+            deactivateForm(Object(param1));
+            return;
+        }// end function
+
+        private function preProcessModalWindowRequest(param1:SWFBridgeRequest, param2:DisplayObject) : Boolean
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            if (param1.data.skip)
+            {
+                param1.data.skip = false;
+                if (useSWFBridge())
+                {
+                    _loc_3 = swfBridgeGroup.parentBridge;
+                    param1.requestor = _loc_3;
+                    _loc_3.dispatchEvent(param1);
+                }
+                return false;
+            }
+            if (param2 != this)
+            {
+                if (param1.type == SWFBridgeRequest.CREATE_MODAL_WINDOW_REQUEST || param1.type == SWFBridgeRequest.SHOW_MODAL_WINDOW_REQUEST)
+                {
+                    _loc_4 = swfBridgeGroup.getChildBridgeProvider(param1.requestor) as ISWFLoader;
+                    if (_loc_4)
+                    {
+                        _loc_5 = ISWFLoader(_loc_4).getVisibleApplicationRect();
+                        param1.data.excludeRect = _loc_5;
+                        if (!DisplayObjectContainer(document).contains(DisplayObject(_loc_4)))
+                        {
+                            param1.data.useExclude = false;
+                        }
+                    }
+                }
+                _loc_3 = swfBridgeGroup.parentBridge;
+                param1.requestor = _loc_3;
+                if (param1.type == SWFBridgeRequest.HIDE_MODAL_WINDOW_REQUEST)
+                {
+                    param2.dispatchEvent(param1);
+                }
+                else
+                {
+                    _loc_3.dispatchEvent(param1);
+                }
+                return false;
+            }
+            param1.data.skip = false;
             return true;
-         }
-         return false;
-      }
-      
-      private static function getChildListIndex(param1:IChildList, param2:Object) : int
-      {
-         var childList:IChildList = param1;
-         var f:Object = param2;
-         var index:int = -1;
-         try
-         {
-            index = childList.getChildIndex(DisplayObject(f));
-         }
-         catch(e:ArgumentError)
-         {
-         }
-         return index;
-      }
-      
-      mx_internal static function registerInitCallback(param1:Function) : void
-      {
-         if(!allSystemManagers || !lastSystemManager)
-         {
+        }// end function
+
+        private function resetMouseCursorTracking(event:Event) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            if (isTopLevelRoot())
+            {
+                SystemManagerGlobals.showMouseCursor = true;
+            }
+            else if (swfBridgeGroup.parentBridge)
+            {
+                _loc_2 = new SWFBridgeRequest(SWFBridgeRequest.RESET_MOUSE_CURSOR_REQUEST);
+                _loc_3 = swfBridgeGroup.parentBridge;
+                _loc_2.requestor = _loc_3;
+                _loc_3.dispatchEvent(_loc_2);
+            }
             return;
-         }
-         var _loc2_:mx.managers.SystemManager = lastSystemManager;
-         if(_loc2_.doneExecutingInitCallbacks)
-         {
-            param1(_loc2_);
-         }
-         else
-         {
-            _loc2_.initCallbackFunctions.push(param1);
-         }
-      }
-      
-      private static function isRemotePopUp(param1:Object) : Boolean
-      {
-         return !(param1 is IFocusManagerContainer);
-      }
-      
-      private function removeEventListenerFromSandboxes(param1:String, param2:Function, param3:Boolean = false, param4:IEventDispatcher = null) : void
-      {
-         var _loc8_:int = 0;
-         if(!swfBridgeGroup)
-         {
+        }// end function
+
+        function addParentBridgeListeners() : void
+        {
+            if (!topLevel && topLevelSystemManager)
+            {
+                SystemManager(topLevelSystemManager).addParentBridgeListeners();
+                return;
+            }
+            var _loc_1:* = swfBridgeGroup.parentBridge;
+            _loc_1.addEventListener(SWFBridgeRequest.SET_ACTUAL_SIZE_REQUEST, setActualSizeRequestHandler);
+            _loc_1.addEventListener(SWFBridgeRequest.GET_SIZE_REQUEST, getSizeRequestHandler);
+            _loc_1.addEventListener(SWFBridgeRequest.ACTIVATE_POP_UP_REQUEST, activateRequestHandler);
+            _loc_1.addEventListener(SWFBridgeRequest.DEACTIVATE_POP_UP_REQUEST, deactivateRequestHandler);
+            _loc_1.addEventListener(SWFBridgeRequest.IS_BRIDGE_CHILD_REQUEST, isBridgeChildHandler);
+            _loc_1.addEventListener(EventListenerRequest.ADD_EVENT_LISTENER_REQUEST, eventListenerRequestHandler);
+            _loc_1.addEventListener(EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST, eventListenerRequestHandler);
+            _loc_1.addEventListener(SWFBridgeRequest.CAN_ACTIVATE_POP_UP_REQUEST, canActivateHandler);
+            _loc_1.addEventListener(SWFBridgeEvent.BRIDGE_APPLICATION_UNLOADING, beforeUnloadHandler);
             return;
-         }
-         var _loc5_:EventListenerRequest = new EventListenerRequest(EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST,false,false,param1,param3);
-         var _loc6_:IEventDispatcher = swfBridgeGroup.parentBridge;
-         if(Boolean(_loc6_) && _loc6_ != param4)
-         {
-            _loc6_.removeEventListener(param1,param2,param3);
-         }
-         var _loc7_:Array = swfBridgeGroup.getChildBridges();
-         while(_loc8_ < _loc7_.length)
-         {
-            if(_loc7_[_loc8_] != param4)
+        }// end function
+
+        public function get swfBridgeGroup() : ISWFBridgeGroup
+        {
+            if (topLevel)
             {
-               IEventDispatcher(_loc7_[_loc8_]).removeEventListener(param1,param2,param3);
+                return _swfBridgeGroup;
             }
-            _loc8_++;
-         }
-         dispatchEventFromSWFBridges(_loc5_,param4);
-      }
-      
-      mx_internal function addingChild(param1:DisplayObject) : void
-      {
-         var _loc4_:DisplayObjectContainer = null;
-         var _loc2_:int = 1;
-         if(!topLevel && Boolean(parent))
-         {
-            _loc4_ = parent.parent;
-            while(_loc4_)
+            if (topLevelSystemManager)
             {
-               if(_loc4_ is ILayoutManagerClient)
-               {
-                  _loc2_ = ILayoutManagerClient(_loc4_).nestLevel + 1;
-                  break;
-               }
-               _loc4_ = _loc4_.parent;
+                return topLevelSystemManager.swfBridgeGroup;
             }
-         }
-         nestLevel = _loc2_;
-         if(param1 is IUIComponent)
-         {
-            IUIComponent(param1).systemManager = this;
-         }
-         var _loc3_:Class = Class(getDefinitionByName("mx.core.UIComponent"));
-         if(param1 is IUIComponent && !IUIComponent(param1).document)
-         {
-            IUIComponent(param1).document = document;
-         }
-         if(param1 is ILayoutManagerClient)
-         {
-            ILayoutManagerClient(param1).nestLevel = nestLevel + 1;
-         }
-         if(param1 is InteractiveObject)
-         {
-            if(doubleClickEnabled)
-            {
-               InteractiveObject(param1).doubleClickEnabled = true;
-            }
-         }
-         if(param1 is IUIComponent)
-         {
-            IUIComponent(param1).parentChanged(this);
-         }
-         if(param1 is IStyleClient)
-         {
-            IStyleClient(param1).regenerateStyleCache(true);
-         }
-         if(param1 is ISimpleStyleClient)
-         {
-            ISimpleStyleClient(param1).styleChanged(null);
-         }
-         if(param1 is IStyleClient)
-         {
-            IStyleClient(param1).notifyStyleChangeInChildren(null,true);
-         }
-         if(Boolean(_loc3_) && param1 is _loc3_)
-         {
-            _loc3_(param1).initThemeColor();
-         }
-         if(Boolean(_loc3_) && param1 is _loc3_)
-         {
-            _loc3_(param1).stylesInitialized();
-         }
-      }
-      
-      private function dispatchEventToOtherSystemManagers(param1:Event) : void
-      {
-         SystemManagerGlobals.dispatchingEventToOtherSystemManagers = true;
-         var _loc2_:Array = SystemManagerGlobals.topLevelSystemManagers;
-         var _loc3_:int = _loc2_.length;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            if(_loc2_[_loc4_] != this)
-            {
-               _loc2_[_loc4_].dispatchEvent(param1);
-            }
-            _loc4_++;
-         }
-         SystemManagerGlobals.dispatchingEventToOtherSystemManagers = false;
-      }
-      
-      private function idleTimer_timerHandler(param1:TimerEvent) : void
-      {
-         idleCounter++;
-         if(idleCounter * IDLE_INTERVAL > IDLE_THRESHOLD)
-         {
-            dispatchEvent(new FlexEvent(FlexEvent.IDLE));
-         }
-      }
-      
-      private function initManagerHandler(param1:Event) : void
-      {
-         var event:Event = param1;
-         if(!SystemManagerGlobals.dispatchingEventToOtherSystemManagers)
-         {
-            dispatchEventToOtherSystemManagers(event);
-         }
-         if(event is InterManagerRequest)
-         {
+            return null;
+        }// end function
+
+        override public function getChildByName(param1:String) : DisplayObject
+        {
+            return super.getChildByName(param1);
+        }// end function
+
+        public function get measuredWidth() : Number
+        {
+            return topLevelWindow ? (topLevelWindow.getExplicitOrMeasuredWidth()) : (loaderInfo.width);
+        }// end function
+
+        public function removeChildBridge(param1:IEventDispatcher) : void
+        {
+            dispatchEvent(new FlexChangeEvent(FlexChangeEvent.REMOVE_CHILD_BRIDGE, false, false, param1));
+            var _loc_2:* = IFocusManager(bridgeToFocusManager[param1]);
+            _loc_2.removeSWFBridge(param1);
+            swfBridgeGroup.removeChildBridge(param1);
+            delete bridgeToFocusManager[param1];
+            removeChildBridgeListeners(param1);
             return;
-         }
-         var name:String = event["name"];
-         try
-         {
-            Singleton.getInstance(name);
+        }// end function
+
+        function removeChildBridgeListeners(param1:IEventDispatcher) : void
+        {
+            if (!topLevel && topLevelSystemManager)
+            {
+                SystemManager(topLevelSystemManager).removeChildBridgeListeners(param1);
+                return;
+            }
+            param1.removeEventListener(SWFBridgeRequest.ADD_POP_UP_REQUEST, addPopupRequestHandler);
+            param1.removeEventListener(SWFBridgeRequest.REMOVE_POP_UP_REQUEST, removePopupRequestHandler);
+            param1.removeEventListener(SWFBridgeRequest.ADD_POP_UP_PLACE_HOLDER_REQUEST, addPlaceholderPopupRequestHandler);
+            param1.removeEventListener(SWFBridgeRequest.REMOVE_POP_UP_PLACE_HOLDER_REQUEST, removePlaceholderPopupRequestHandler);
+            param1.removeEventListener(SWFBridgeEvent.BRIDGE_WINDOW_ACTIVATE, activateFormSandboxEventHandler);
+            param1.removeEventListener(SWFBridgeEvent.BRIDGE_WINDOW_DEACTIVATE, deactivateFormSandboxEventHandler);
+            param1.removeEventListener(SWFBridgeEvent.BRIDGE_APPLICATION_ACTIVATE, activateApplicationSandboxEventHandler);
+            param1.removeEventListener(EventListenerRequest.ADD_EVENT_LISTENER_REQUEST, eventListenerRequestHandler);
+            param1.removeEventListener(EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST, eventListenerRequestHandler);
+            param1.removeEventListener(SWFBridgeRequest.CREATE_MODAL_WINDOW_REQUEST, modalWindowRequestHandler);
+            param1.removeEventListener(SWFBridgeRequest.SHOW_MODAL_WINDOW_REQUEST, modalWindowRequestHandler);
+            param1.removeEventListener(SWFBridgeRequest.HIDE_MODAL_WINDOW_REQUEST, modalWindowRequestHandler);
+            param1.removeEventListener(SWFBridgeRequest.GET_VISIBLE_RECT_REQUEST, getVisibleRectRequestHandler);
+            param1.removeEventListener(SWFBridgeRequest.HIDE_MOUSE_CURSOR_REQUEST, hideMouseCursorRequestHandler);
+            param1.removeEventListener(SWFBridgeRequest.SHOW_MOUSE_CURSOR_REQUEST, showMouseCursorRequestHandler);
+            param1.removeEventListener(SWFBridgeRequest.RESET_MOUSE_CURSOR_REQUEST, resetMouseCursorRequestHandler);
             return;
-         }
-         catch(e:Error)
-         {
+        }// end function
+
+        override public function addChildAt(param1:DisplayObject, param2:int) : DisplayObject
+        {
+            var _loc_5:* = noTopMostIndex + 1;
+            noTopMostIndex = _loc_5;
+            var _loc_3:* = param1.parent;
+            if (_loc_3)
+            {
+                _loc_3.removeChild(param1);
+            }
+            return rawChildren_addChildAt(param1, applicationIndex + param2);
+        }// end function
+
+        private function Stage_resizeHandler(event:Event = null) : void
+        {
+            var m:Number;
+            var n:Number;
+            var sandboxScreen:Rectangle;
+            var event:* = event;
+            if (isDispatchingResizeEvent)
+            {
+                return;
+            }
+            var w:Number;
+            var h:Number;
+            try
+            {
+                m = loaderInfo.width;
+                n = loaderInfo.height;
+            }
+            catch (error:Error)
+            {
+                if (!_screen)
+                {
+                    _screen = new Rectangle();
+                }
+                return;
+            }
+            var align:* = StageAlign.TOP_LEFT;
+            try
+            {
+                if (stage)
+                {
+                    w = stage.stageWidth;
+                    h = stage.stageHeight;
+                    align = stage.align;
+                }
+            }
+            catch (error:SecurityError)
+            {
+                sandboxScreen = getSandboxScreen();
+                w = sandboxScreen.width;
+                h = sandboxScreen.height;
+            }
+            var x:* = (m - w) / 2;
+            var y:* = (n - h) / 2;
+            if (align == StageAlign.TOP)
+            {
+                y;
+            }
+            else if (align == StageAlign.BOTTOM)
+            {
+                y = n - h;
+            }
+            else if (align == StageAlign.LEFT)
+            {
+                x;
+            }
+            else if (align == StageAlign.RIGHT)
+            {
+                x = m - w;
+            }
+            else if (align == StageAlign.TOP_LEFT || align == "LT")
+            {
+                y;
+                x;
+            }
+            else if (align == StageAlign.TOP_RIGHT)
+            {
+                y;
+                x = m - w;
+            }
+            else if (align == StageAlign.BOTTOM_LEFT)
+            {
+                y = n - h;
+                x;
+            }
+            else if (align == StageAlign.BOTTOM_RIGHT)
+            {
+                y = n - h;
+                x = m - w;
+            }
+            if (!_screen)
+            {
+                _screen = new Rectangle();
+            }
+            _screen.x = x;
+            _screen.y = y;
+            _screen.width = w;
+            _screen.height = h;
+            if (isStageRoot)
+            {
+                _width = stage.stageWidth;
+                _height = stage.stageHeight;
+            }
+            if (event)
+            {
+                resizeMouseCatcher();
+                isDispatchingResizeEvent = true;
+                dispatchEvent(event);
+                isDispatchingResizeEvent = false;
+            }
             return;
-         }
-      }
-      
-      mx_internal function rawChildren_getObjectsUnderPoint(param1:Point) : Array
-      {
-         return super.getObjectsUnderPoint(param1);
-      }
-      
-      public function get preloadedRSLs() : Dictionary
-      {
-         return null;
-      }
-      
-      private function getSizeRequestHandler(param1:Event) : void
-      {
-         var _loc2_:Object = Object(param1);
-         _loc2_.data = {
-            "width":measuredWidth,
-            "height":measuredHeight
-         };
-      }
-      
-      private function beforeUnloadHandler(param1:Event) : void
-      {
-         var _loc2_:DisplayObject = null;
-         if(Boolean(topLevel) && Boolean(stage))
-         {
-            _loc2_ = getSandboxRoot();
-            if(_loc2_ != this)
+        }// end function
+
+        public function get swfBridge() : IEventDispatcher
+        {
+            if (swfBridgeGroup)
             {
-               _loc2_.removeEventListener(Event.RESIZE,Stage_resizeHandler);
+                return swfBridgeGroup.parentBridge;
             }
-         }
-         removeParentBridgeListeners();
-         dispatchEvent(param1);
-      }
-      
-      public function getExplicitOrMeasuredHeight() : Number
-      {
-         return !isNaN(explicitHeight)?Number(explicitHeight):Number(measuredHeight);
-      }
-      
-      private function getVisibleRectRequestHandler(param1:Event) : void
-      {
-         var _loc5_:Rectangle = null;
-         var _loc7_:Point = null;
-         var _loc8_:IEventDispatcher = null;
-         if(param1 is SWFBridgeRequest)
-         {
+            return null;
+        }// end function
+
+        private function findRemotePopUp(param1:Object, param2:IEventDispatcher) : RemotePopUp
+        {
+            var _loc_5:* = null;
+            var _loc_3:* = forms.length;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                if (isRemotePopUp(forms[_loc_4]))
+                {
+                    _loc_5 = RemotePopUp(forms[_loc_4]);
+                    if (_loc_5.window == param1 && _loc_5.bridge == param2)
+                    {
+                        return _loc_5;
+                    }
+                }
+                _loc_4++;
+            }
+            return null;
+        }// end function
+
+        public function info() : Object
+        {
+            return {};
+        }// end function
+
+        function get toolTipIndex() : int
+        {
+            return _toolTipIndex;
+        }// end function
+
+        public function setActualSize(param1:Number, param2:Number) : void
+        {
+            if (isStageRoot)
+            {
+                return;
+            }
+            _width = param1;
+            _height = param2;
+            if (mouseCatcher)
+            {
+                mouseCatcher.width = param1;
+                mouseCatcher.height = param2;
+            }
+            dispatchEvent(new Event(Event.RESIZE));
             return;
-         }
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         var _loc3_:Rectangle = Rectangle(_loc2_.data);
-         var _loc4_:DisplayObject = DisplayObject(swfBridgeGroup.getChildBridgeProvider(_loc2_.requestor));
-         var _loc6_:Boolean = true;
-         if(!DisplayObjectContainer(document).contains(_loc4_))
-         {
-            _loc6_ = false;
-         }
-         if(_loc4_ is ISWFLoader)
-         {
-            _loc5_ = ISWFLoader(_loc4_).getVisibleApplicationRect();
-         }
-         else
-         {
-            _loc5_ = _loc4_.getBounds(this);
-            _loc7_ = localToGlobal(_loc5_.topLeft);
-            _loc5_.x = _loc7_.x;
-            _loc5_.y = _loc7_.y;
-         }
-         _loc3_ = _loc3_.intersection(_loc5_);
-         _loc2_.data = _loc3_;
-         if(Boolean(_loc6_) && Boolean(useSWFBridge()))
-         {
-            _loc8_ = swfBridgeGroup.parentBridge;
-            _loc2_.requestor = _loc8_;
-            _loc8_.dispatchEvent(_loc2_);
-         }
-         Object(param1).data = _loc2_.data;
-      }
-      
-      mx_internal function notifyStyleChangeInChildren(param1:String, param2:Boolean) : void
-      {
-         var _loc6_:IStyleClient = null;
-         var _loc3_:Boolean = false;
-         var _loc4_:int = rawChildren.numChildren;
-         var _loc5_:int = 0;
-         while(_loc5_ < _loc4_)
-         {
-            _loc6_ = rawChildren.getChildAt(_loc5_) as IStyleClient;
-            if(_loc6_)
+        }// end function
+
+        private function removePlaceholderPopupRequestHandler(event:Event) : void
+        {
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            if (!forwardPlaceholderRequest(_loc_2, false))
             {
-               _loc6_.styleChanged(param1);
-               _loc6_.notifyStyleChangeInChildren(param1,param2);
+                _loc_3 = forms.length;
+                _loc_4 = 0;
+                while (_loc_4 < _loc_3)
+                {
+                    
+                    if (isRemotePopUp(forms[_loc_4]))
+                    {
+                        if (forms[_loc_4].window == _loc_2.data.placeHolderId && forms[_loc_4].bridge == _loc_2.requestor)
+                        {
+                            forms.splice(_loc_4, 1);
+                            break;
+                        }
+                    }
+                    _loc_4++;
+                }
             }
-            if(isTopLevelWindow(DisplayObject(_loc6_)))
-            {
-               _loc3_ = true;
-            }
-            _loc4_ = rawChildren.numChildren;
-            _loc5_++;
-         }
-         if(!_loc3_ && topLevelWindow is IStyleClient)
-         {
-            IStyleClient(topLevelWindow).styleChanged(param1);
-            IStyleClient(topLevelWindow).notifyStyleChangeInChildren(param1,param2);
-         }
-      }
-      
-      private function addEventListenerToOtherSystemManagers(param1:String, param2:Function, param3:Boolean = false, param4:int = 0, param5:Boolean = false) : void
-      {
-         var _loc6_:Array = SystemManagerGlobals.topLevelSystemManagers;
-         if(_loc6_.length < 2)
-         {
             return;
-         }
-         SystemManagerGlobals.changingListenersInOtherSystemManagers = true;
-         var _loc7_:int = _loc6_.length;
-         var _loc8_:int = 0;
-         while(_loc8_ < _loc7_)
-         {
-            if(_loc6_[_loc8_] != this)
+        }// end function
+
+        public function set focusPane(param1:Sprite) : void
+        {
+            if (param1)
             {
-               _loc6_[_loc8_].addEventListener(param1,param2,param3,param4,param5);
-            }
-            _loc8_++;
-         }
-         SystemManagerGlobals.changingListenersInOtherSystemManagers = false;
-      }
-      
-      private function initHandler(param1:Event) : void
-      {
-         var bridgeEvent:SWFBridgeEvent = null;
-         var event:Event = param1;
-         if(!isStageRoot)
-         {
-            if(root.loaderInfo.parentAllowsChild)
-            {
-               try
-               {
-                  if(!parent.dispatchEvent(new Event("mx.managers.SystemManager.isBootstrapRoot",false,true)) || !root.loaderInfo.sharedEvents.hasEventListener(SWFBridgeEvent.BRIDGE_NEW_APPLICATION))
-                  {
-                     isBootstrapRoot = true;
-                  }
-               }
-               catch(e:Error)
-               {
-               }
-            }
-         }
-         allSystemManagers[this] = this.loaderInfo.url;
-         root.loaderInfo.removeEventListener(Event.INIT,initHandler);
-         if(useSWFBridge())
-         {
-            swfBridgeGroup = new SWFBridgeGroup(this);
-            swfBridgeGroup.parentBridge = loaderInfo.sharedEvents;
-            addParentBridgeListeners();
-            bridgeEvent = new SWFBridgeEvent(SWFBridgeEvent.BRIDGE_NEW_APPLICATION);
-            bridgeEvent.data = swfBridgeGroup.parentBridge;
-            swfBridgeGroup.parentBridge.dispatchEvent(bridgeEvent);
-            addEventListener(SWFBridgeRequest.ADD_POP_UP_PLACE_HOLDER_REQUEST,addPlaceholderPopupRequestHandler);
-            root.loaderInfo.addEventListener(Event.UNLOAD,unloadHandler,false,0,true);
-         }
-         var sbRoot:DisplayObject = getSandboxRoot();
-         sbRoot.addEventListener(InterManagerRequest.INIT_MANAGER_REQUEST,initManagerHandler,false,0,true);
-         if(sbRoot == this)
-         {
-            addEventListener(InterManagerRequest.SYSTEM_MANAGER_REQUEST,systemManagerHandler);
-            addEventListener(InterManagerRequest.DRAG_MANAGER_REQUEST,multiWindowRedispatcher);
-            addEventListener("dispatchDragEvent",multiWindowRedispatcher);
-            addEventListener(SWFBridgeRequest.ADD_POP_UP_REQUEST,addPopupRequestHandler);
-            addEventListener(SWFBridgeRequest.REMOVE_POP_UP_REQUEST,removePopupRequestHandler);
-            addEventListener(SWFBridgeRequest.ADD_POP_UP_PLACE_HOLDER_REQUEST,addPlaceholderPopupRequestHandler);
-            addEventListener(SWFBridgeRequest.REMOVE_POP_UP_PLACE_HOLDER_REQUEST,removePlaceholderPopupRequestHandler);
-            addEventListener(SWFBridgeEvent.BRIDGE_WINDOW_ACTIVATE,activateFormSandboxEventHandler);
-            addEventListener(SWFBridgeEvent.BRIDGE_WINDOW_DEACTIVATE,deactivateFormSandboxEventHandler);
-            addEventListener(SWFBridgeRequest.HIDE_MOUSE_CURSOR_REQUEST,hideMouseCursorRequestHandler);
-            addEventListener(SWFBridgeRequest.SHOW_MOUSE_CURSOR_REQUEST,showMouseCursorRequestHandler);
-            addEventListener(SWFBridgeRequest.RESET_MOUSE_CURSOR_REQUEST,resetMouseCursorRequestHandler);
-         }
-         var docFrame:int = totalFrames == 1?0:1;
-         addEventListener(Event.ENTER_FRAME,docFrameListener);
-         initialize();
-      }
-      
-      mx_internal function findFocusManagerContainer(param1:SystemManagerProxy) : IFocusManagerContainer
-      {
-         var _loc5_:DisplayObject = null;
-         var _loc2_:IChildList = param1.rawChildren;
-         var _loc3_:int = _loc2_.numChildren;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc5_ = _loc2_.getChildAt(_loc4_);
-            if(_loc5_ is IFocusManagerContainer)
-            {
-               return IFocusManagerContainer(_loc5_);
-            }
-            _loc4_++;
-         }
-         return null;
-      }
-      
-      private function addPlaceholderPopupRequestHandler(param1:Event) : void
-      {
-         var _loc3_:RemotePopUp = null;
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         if(param1.target != this && param1 is SWFBridgeRequest)
-         {
-            return;
-         }
-         if(!forwardPlaceholderRequest(_loc2_,true))
-         {
-            _loc3_ = new RemotePopUp(_loc2_.data.placeHolderId,_loc2_.requestor);
-            forms.push(_loc3_);
-         }
-      }
-      
-      override public function contains(param1:DisplayObject) : Boolean
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:DisplayObject = null;
-         if(super.contains(param1))
-         {
-            if(param1.parent == this)
-            {
-               _loc2_ = super.getChildIndex(param1);
-               if(_loc2_ < noTopMostIndex)
-               {
-                  return true;
-               }
+                addChild(param1);
+                param1.x = 0;
+                param1.y = 0;
+                param1.scrollRect = null;
+                _focusPane = param1;
             }
             else
             {
-               _loc3_ = 0;
-               while(_loc3_ < noTopMostIndex)
-               {
-                  _loc4_ = super.getChildAt(_loc3_);
-                  if(_loc4_ is IRawChildrenContainer)
-                  {
-                     if(IRawChildrenContainer(_loc4_).rawChildren.contains(param1))
-                     {
-                        return true;
-                     }
-                  }
-                  if(_loc4_ is DisplayObjectContainer)
-                  {
-                     if(DisplayObjectContainer(_loc4_).contains(param1))
-                     {
-                        return true;
-                     }
-                  }
-                  _loc3_++;
-               }
+                removeChild(_focusPane);
+                _focusPane = null;
             }
-         }
-         return false;
-      }
-      
-      private function modalWindowRequestHandler(param1:Event) : void
-      {
-         if(param1 is SWFBridgeRequest)
-         {
             return;
-         }
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         if(!preProcessModalWindowRequest(_loc2_,getSandboxRoot()))
-         {
+        }// end function
+
+        function removeParentBridgeListeners() : void
+        {
+            if (!topLevel && topLevelSystemManager)
+            {
+                SystemManager(topLevelSystemManager).removeParentBridgeListeners();
+                return;
+            }
+            var _loc_1:* = swfBridgeGroup.parentBridge;
+            _loc_1.removeEventListener(SWFBridgeRequest.SET_ACTUAL_SIZE_REQUEST, setActualSizeRequestHandler);
+            _loc_1.removeEventListener(SWFBridgeRequest.GET_SIZE_REQUEST, getSizeRequestHandler);
+            _loc_1.removeEventListener(SWFBridgeRequest.ACTIVATE_POP_UP_REQUEST, activateRequestHandler);
+            _loc_1.removeEventListener(SWFBridgeRequest.DEACTIVATE_POP_UP_REQUEST, deactivateRequestHandler);
+            _loc_1.removeEventListener(SWFBridgeRequest.IS_BRIDGE_CHILD_REQUEST, isBridgeChildHandler);
+            _loc_1.removeEventListener(EventListenerRequest.ADD_EVENT_LISTENER_REQUEST, eventListenerRequestHandler);
+            _loc_1.removeEventListener(EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST, eventListenerRequestHandler);
+            _loc_1.removeEventListener(SWFBridgeRequest.CAN_ACTIVATE_POP_UP_REQUEST, canActivateHandler);
+            _loc_1.removeEventListener(SWFBridgeEvent.BRIDGE_APPLICATION_UNLOADING, beforeUnloadHandler);
             return;
-         }
-         Singleton.getInstance("mx.managers::IPopUpManager");
-         dispatchEvent(_loc2_);
-      }
-      
-      private function activateApplicationSandboxEventHandler(param1:Event) : void
-      {
-         if(!isTopLevelRoot())
-         {
-            swfBridgeGroup.parentBridge.dispatchEvent(param1);
-            return;
-         }
-         activateForm(document);
-      }
-      
-      public function getDefinitionByName(param1:String) : Object
-      {
-         var _loc3_:Object = null;
-         var _loc2_:ApplicationDomain = !topLevel && parent is Loader?Loader(parent).contentLoaderInfo.applicationDomain:info()["currentDomain"] as ApplicationDomain;
-         if(_loc2_.hasDefinition(param1))
-         {
-            _loc3_ = _loc2_.getDefinition(param1);
-         }
-         return _loc3_;
-      }
-      
-      public function removeChildFromSandboxRoot(param1:String, param2:DisplayObject) : void
-      {
-         var _loc3_:InterManagerRequest = null;
-         if(getSandboxRoot() == this)
-         {
-            this[param1].removeChild(param2);
-         }
-         else
-         {
-            removingChild(param2);
-            _loc3_ = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST);
-            _loc3_.name = param1 + ".removeChild";
-            _loc3_.value = param2;
-            getSandboxRoot().dispatchEvent(_loc3_);
-            childRemoved(param2);
-         }
-      }
-      
-      private function removeEventListenerFromOtherSystemManagers(param1:String, param2:Function, param3:Boolean = false) : void
-      {
-         var _loc4_:Array = SystemManagerGlobals.topLevelSystemManagers;
-         if(_loc4_.length < 2)
-         {
-            return;
-         }
-         SystemManagerGlobals.changingListenersInOtherSystemManagers = true;
-         var _loc5_:int = _loc4_.length;
-         var _loc6_:int = 0;
-         while(_loc6_ < _loc5_)
-         {
-            if(_loc4_[_loc6_] != this)
-            {
-               _loc4_[_loc6_].removeEventListener(param1,param2,param3);
-            }
-            _loc6_++;
-         }
-         SystemManagerGlobals.changingListenersInOtherSystemManagers = false;
-      }
-      
-      public function get embeddedFontList() : Object
-      {
-         var _loc1_:Object = null;
-         var _loc2_:* = null;
-         var _loc3_:Object = null;
-         if(_fontList == null)
-         {
-            _fontList = {};
-            _loc1_ = info()["fonts"];
-            for(_loc2_ in _loc1_)
-            {
-               _fontList[_loc2_] = _loc1_[_loc2_];
-            }
-            if(!topLevel && Boolean(_topLevelSystemManager))
-            {
-               _loc3_ = _topLevelSystemManager.embeddedFontList;
-               for(_loc2_ in _loc3_)
-               {
-                  _fontList[_loc2_] = _loc3_[_loc2_];
-               }
-            }
-         }
-         return _fontList;
-      }
-      
-      mx_internal function set cursorIndex(param1:int) : void
-      {
-         var _loc2_:int = param1 - _cursorIndex;
-         _cursorIndex = param1;
-      }
-      
-      mx_internal function addChildBridgeListeners(param1:IEventDispatcher) : void
-      {
-         if(!topLevel && Boolean(topLevelSystemManager))
-         {
-            SystemManager(topLevelSystemManager).addChildBridgeListeners(param1);
-            return;
-         }
-         param1.addEventListener(SWFBridgeRequest.ADD_POP_UP_REQUEST,addPopupRequestHandler);
-         param1.addEventListener(SWFBridgeRequest.REMOVE_POP_UP_REQUEST,removePopupRequestHandler);
-         param1.addEventListener(SWFBridgeRequest.ADD_POP_UP_PLACE_HOLDER_REQUEST,addPlaceholderPopupRequestHandler);
-         param1.addEventListener(SWFBridgeRequest.REMOVE_POP_UP_PLACE_HOLDER_REQUEST,removePlaceholderPopupRequestHandler);
-         param1.addEventListener(SWFBridgeEvent.BRIDGE_WINDOW_ACTIVATE,activateFormSandboxEventHandler);
-         param1.addEventListener(SWFBridgeEvent.BRIDGE_WINDOW_DEACTIVATE,deactivateFormSandboxEventHandler);
-         param1.addEventListener(SWFBridgeEvent.BRIDGE_APPLICATION_ACTIVATE,activateApplicationSandboxEventHandler);
-         param1.addEventListener(EventListenerRequest.ADD_EVENT_LISTENER_REQUEST,eventListenerRequestHandler,false,0,true);
-         param1.addEventListener(EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST,eventListenerRequestHandler,false,0,true);
-         param1.addEventListener(SWFBridgeRequest.CREATE_MODAL_WINDOW_REQUEST,modalWindowRequestHandler);
-         param1.addEventListener(SWFBridgeRequest.SHOW_MODAL_WINDOW_REQUEST,modalWindowRequestHandler);
-         param1.addEventListener(SWFBridgeRequest.HIDE_MODAL_WINDOW_REQUEST,modalWindowRequestHandler);
-         param1.addEventListener(SWFBridgeRequest.GET_VISIBLE_RECT_REQUEST,getVisibleRectRequestHandler);
-         param1.addEventListener(SWFBridgeRequest.HIDE_MOUSE_CURSOR_REQUEST,hideMouseCursorRequestHandler);
-         param1.addEventListener(SWFBridgeRequest.SHOW_MOUSE_CURSOR_REQUEST,showMouseCursorRequestHandler);
-         param1.addEventListener(SWFBridgeRequest.RESET_MOUSE_CURSOR_REQUEST,resetMouseCursorRequestHandler);
-      }
-      
-      public function set document(param1:Object) : void
-      {
-         _document = param1;
-      }
-      
-      override public function getChildAt(param1:int) : DisplayObject
-      {
-         return super.getChildAt(applicationIndex + param1);
-      }
-      
-      public function get rawChildren() : IChildList
-      {
-         if(!_rawChildren)
-         {
-            _rawChildren = new mx.managers.SystemRawChildrenList(this);
-         }
-         return _rawChildren;
-      }
-      
-      private function findLastActiveForm(param1:Object) : Object
-      {
-         var _loc2_:int = forms.length;
-         var _loc3_:int = forms.length - 1;
-         while(_loc3_ >= 0)
-         {
-            if(forms[_loc3_] != param1 && Boolean(canActivatePopUp(forms[_loc3_])))
-            {
-               return forms[_loc3_];
-            }
-            _loc3_--;
-         }
-         return null;
-      }
-      
-      private function multiWindowRedispatcher(param1:Event) : void
-      {
-         if(!SystemManagerGlobals.dispatchingEventToOtherSystemManagers)
-         {
-            dispatchEventToOtherSystemManagers(param1);
-         }
-      }
-      
-      public function deployMouseShields(param1:Boolean) : void
-      {
-         var _loc2_:InterManagerRequest = new InterManagerRequest(InterManagerRequest.DRAG_MANAGER_REQUEST,false,false,"mouseShield",param1);
-         getSandboxRoot().dispatchEvent(_loc2_);
-      }
-      
-      override public function addEventListener(param1:String, param2:Function, param3:Boolean = false, param4:int = 0, param5:Boolean = false) : void
-      {
-         var actualType:String = null;
-         var type:String = param1;
-         var listener:Function = param2;
-         var useCapture:Boolean = param3;
-         var priority:int = param4;
-         var useWeakReference:Boolean = param5;
-         if(type == FlexEvent.RENDER || type == FlexEvent.ENTER_FRAME)
-         {
-            if(type == FlexEvent.RENDER)
-            {
-               type = Event.RENDER;
-            }
-            else
-            {
-               type = Event.ENTER_FRAME;
-            }
+        }// end function
+
+        override public function get parent() : DisplayObjectContainer
+        {
             try
             {
-               if(stage)
-               {
-                  stage.addEventListener(type,listener,useCapture,priority,useWeakReference);
-               }
-               else
-               {
-                  super.addEventListener(type,listener,useCapture,priority,useWeakReference);
-               }
+                return super.parent;
             }
-            catch(error:SecurityError)
+            catch (e:SecurityError)
             {
-               super.addEventListener(type,listener,useCapture,priority,useWeakReference);
             }
-            if(Boolean(stage) && type == Event.RENDER)
+            return null;
+        }// end function
+
+        private function eventListenerRequestHandler(event:Event) : void
+        {
+            var _loc_2:* = null;
+            if (event is EventListenerRequest)
             {
-               stage.invalidate();
+                return;
+            }
+            var _loc_3:* = EventListenerRequest.marshal(event);
+            if (event.type == EventListenerRequest.ADD_EVENT_LISTENER_REQUEST)
+            {
+                if (!eventProxy)
+                {
+                    eventProxy = new EventProxy(this);
+                }
+                _loc_2 = EventUtil.sandboxMouseEventMap[_loc_3.eventType];
+                if (_loc_2)
+                {
+                    if (isTopLevelRoot())
+                    {
+                        stage.addEventListener(MouseEvent.MOUSE_MOVE, resetMouseCursorTracking, true, (EventPriority.CURSOR_MANAGEMENT + 1), true);
+                    }
+                    else
+                    {
+                        super.addEventListener(MouseEvent.MOUSE_MOVE, resetMouseCursorTracking, true, (EventPriority.CURSOR_MANAGEMENT + 1), true);
+                    }
+                    addEventListenerToSandboxes(_loc_3.eventType, sandboxMouseListener, true, _loc_3.priority, _loc_3.useWeakReference, event.target as IEventDispatcher);
+                    addEventListenerToOtherSystemManagers(_loc_3.eventType, otherSystemManagerMouseListener, true, _loc_3.priority, _loc_3.useWeakReference);
+                    if (getSandboxRoot() == this)
+                    {
+                        if (isTopLevelRoot() && (_loc_2 == MouseEvent.MOUSE_UP || _loc_2 == MouseEvent.MOUSE_MOVE))
+                        {
+                            stage.addEventListener(_loc_2, eventProxy.marshalListener, false, _loc_3.priority, _loc_3.useWeakReference);
+                        }
+                        super.addEventListener(_loc_2, eventProxy.marshalListener, true, _loc_3.priority, _loc_3.useWeakReference);
+                    }
+                }
+            }
+            else if (event.type == EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST)
+            {
+                _loc_2 = EventUtil.sandboxMouseEventMap[_loc_3.eventType];
+                if (_loc_2)
+                {
+                    removeEventListenerFromOtherSystemManagers(_loc_3.eventType, otherSystemManagerMouseListener, true);
+                    removeEventListenerFromSandboxes(_loc_3.eventType, sandboxMouseListener, true, event.target as IEventDispatcher);
+                    if (getSandboxRoot() == this)
+                    {
+                        if (isTopLevelRoot() && (_loc_2 == MouseEvent.MOUSE_UP || _loc_2 == MouseEvent.MOUSE_MOVE))
+                        {
+                            stage.removeEventListener(_loc_2, eventProxy.marshalListener);
+                        }
+                        super.removeEventListener(_loc_2, eventProxy.marshalListener, true);
+                    }
+                }
             }
             return;
-         }
-         if(type == MouseEvent.MOUSE_MOVE || type == MouseEvent.MOUSE_UP || type == MouseEvent.MOUSE_DOWN || type == Event.ACTIVATE || type == Event.DEACTIVATE)
-         {
-            try
+        }// end function
+
+        function set applicationIndex(param1:int) : void
+        {
+            _applicationIndex = param1;
+            return;
+        }// end function
+
+        private function showMouseCursorRequestHandler(event:Event) : void
+        {
+            var _loc_3:* = null;
+            if (!isTopLevelRoot() && event is SWFBridgeRequest)
             {
-               if(stage)
-               {
-                  stage.addEventListener(type,stageEventHandler,false,0,true);
-               }
+                return;
             }
-            catch(error:SecurityError)
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            if (!isTopLevelRoot())
             {
+                _loc_3 = swfBridgeGroup.parentBridge;
+                _loc_2.requestor = _loc_3;
+                _loc_3.dispatchEvent(_loc_2);
+                Object(event).data = _loc_2.data;
             }
-         }
-         if(type == SandboxMouseEvent.MOUSE_UP_SOMEWHERE)
-         {
-            try
+            else if (eventProxy)
             {
-               if(stage)
-               {
-                  stage.addEventListener(Event.MOUSE_LEAVE,mouseLeaveHandler,false,0,true);
-               }
-               else
-               {
-                  super.addEventListener(Event.MOUSE_LEAVE,mouseLeaveHandler,false,0,true);
-               }
-            }
-            catch(error:SecurityError)
-            {
-               super.addEventListener(Event.MOUSE_LEAVE,mouseLeaveHandler,false,0,true);
-            }
-         }
-         if(Boolean(hasSWFBridges()) || SystemManagerGlobals.topLevelSystemManagers.length > 1)
-         {
-            if(!eventProxy)
-            {
-               eventProxy = new EventProxy(this);
-            }
-            actualType = EventUtil.sandboxMouseEventMap[type];
-            if(actualType)
-            {
-               if(isTopLevelRoot())
-               {
-                  stage.addEventListener(MouseEvent.MOUSE_MOVE,resetMouseCursorTracking,true,EventPriority.CURSOR_MANAGEMENT + 1,true);
-                  addEventListenerToSandboxes(SandboxMouseEvent.MOUSE_MOVE_SOMEWHERE,resetMouseCursorTracking,true,EventPriority.CURSOR_MANAGEMENT + 1,true);
-               }
-               else
-               {
-                  super.addEventListener(MouseEvent.MOUSE_MOVE,resetMouseCursorTracking,true,EventPriority.CURSOR_MANAGEMENT + 1,true);
-               }
-               addEventListenerToSandboxes(type,sandboxMouseListener,useCapture,priority,useWeakReference);
-               if(!SystemManagerGlobals.changingListenersInOtherSystemManagers)
-               {
-                  addEventListenerToOtherSystemManagers(type,otherSystemManagerMouseListener,useCapture,priority,useWeakReference);
-               }
-               if(getSandboxRoot() == this)
-               {
-                  super.addEventListener(actualType,eventProxy.marshalListener,useCapture,priority,useWeakReference);
-                  if(actualType == MouseEvent.MOUSE_UP)
-                  {
-                     try
-                     {
-                        if(stage)
-                        {
-                           stage.addEventListener(Event.MOUSE_LEAVE,eventProxy.marshalListener,useCapture,priority,useWeakReference);
-                        }
-                        else
-                        {
-                           super.addEventListener(Event.MOUSE_LEAVE,eventProxy.marshalListener,useCapture,priority,useWeakReference);
-                        }
-                     }
-                     catch(e:SecurityError)
-                     {
-                        super.addEventListener(Event.MOUSE_LEAVE,eventProxy.marshalListener,useCapture,priority,useWeakReference);
-                     }
-                  }
-               }
-               super.addEventListener(type,listener,false,priority,useWeakReference);
-               return;
-            }
-         }
-         if(type == FlexEvent.IDLE && !idleTimer)
-         {
-            idleTimer = new Timer(IDLE_INTERVAL);
-            idleTimer.addEventListener(TimerEvent.TIMER,idleTimer_timerHandler);
-            idleTimer.start();
-            addEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler,true);
-            addEventListener(MouseEvent.MOUSE_UP,mouseUpHandler,true);
-         }
-         super.addEventListener(type,listener,useCapture,priority,useWeakReference);
-      }
-      
-      private function activateForm(param1:Object) : void
-      {
-         var _loc2_:IFocusManagerContainer = null;
-         if(form)
-         {
-            if(form != param1 && forms.length > 1)
-            {
-               if(isRemotePopUp(form))
-               {
-                  if(!areRemotePopUpsEqual(form,param1))
-                  {
-                     deactivateRemotePopUp(form);
-                  }
-               }
-               else
-               {
-                  _loc2_ = IFocusManagerContainer(form);
-                  _loc2_.focusManager.deactivate();
-               }
-            }
-         }
-         form = param1;
-         if(isRemotePopUp(param1))
-         {
-            activateRemotePopUp(param1);
-         }
-         else if(param1.focusManager)
-         {
-            param1.focusManager.activate();
-         }
-         updateLastActiveForm();
-      }
-      
-      public function removeFocusManager(param1:IFocusManagerContainer) : void
-      {
-         var _loc2_:int = forms.length;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            if(forms[_loc3_] == param1)
-            {
-               if(form == param1)
-               {
-                  deactivate(param1);
-               }
-               dispatchDeactivatedWindowEvent(DisplayObject(param1));
-               forms.splice(_loc3_,1);
-               return;
-            }
-            _loc3_++;
-         }
-      }
-      
-      private function mouseMoveHandler(param1:MouseEvent) : void
-      {
-         idleCounter = 0;
-      }
-      
-      private function getSandboxScreen() : Rectangle
-      {
-         var _loc2_:Rectangle = null;
-         var _loc3_:DisplayObject = null;
-         var _loc4_:InterManagerRequest = null;
-         var _loc1_:DisplayObject = getSandboxRoot();
-         if(_loc1_ == this)
-         {
-            _loc2_ = new Rectangle(0,0,width,height);
-         }
-         else if(_loc1_ == topLevelSystemManager)
-         {
-            _loc3_ = DisplayObject(topLevelSystemManager);
-            _loc2_ = new Rectangle(0,0,_loc3_.width,_loc3_.height);
-         }
-         else
-         {
-            _loc4_ = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST,false,false,"screen");
-            _loc1_.dispatchEvent(_loc4_);
-            _loc2_ = Rectangle(_loc4_.value);
-         }
-         return _loc2_;
-      }
-      
-      public function get focusPane() : Sprite
-      {
-         return _focusPane;
-      }
-      
-      override public function get mouseX() : Number
-      {
-         if(_mouseX === undefined)
-         {
-            return super.mouseX;
-         }
-         return _mouseX;
-      }
-      
-      private function mouseDownHandler(param1:MouseEvent) : void
-      {
-         var _loc3_:int = 0;
-         var _loc4_:DisplayObject = null;
-         var _loc5_:Boolean = false;
-         var _loc6_:int = 0;
-         var _loc7_:Object = null;
-         var _loc8_:int = 0;
-         var _loc9_:int = 0;
-         var _loc10_:int = 0;
-         var _loc11_:IChildList = null;
-         var _loc12_:DisplayObject = null;
-         var _loc13_:Boolean = false;
-         var _loc14_:int = 0;
-         idleCounter = 0;
-         var _loc2_:IEventDispatcher = getSWFBridgeOfDisplayObject(param1.target as DisplayObject);
-         if(Boolean(_loc2_) && bridgeToFocusManager[_loc2_] == document.focusManager)
-         {
-            if(isTopLevelRoot())
-            {
-               activateForm(document);
-            }
-            else
-            {
-               dispatchActivatedApplicationEvent();
+                Object(event).data = SystemManagerGlobals.showMouseCursor;
             }
             return;
-         }
-         if(numModalWindows == 0)
-         {
-            if(!isTopLevelRoot() || forms.length > 1)
+        }// end function
+
+        public function get childAllowsParent() : Boolean
+        {
+            try
             {
-               _loc3_ = forms.length;
-               _loc4_ = DisplayObject(param1.target);
-               _loc5_ = document.rawChildren.contains(_loc4_);
-               while(_loc4_)
-               {
-                  _loc6_ = 0;
-                  while(_loc6_ < _loc3_)
-                  {
-                     _loc7_ = !!isRemotePopUp(forms[_loc6_])?forms[_loc6_].window:forms[_loc6_];
-                     if(_loc7_ == _loc4_)
-                     {
-                        _loc8_ = 0;
-                        if(_loc4_ != form && _loc4_ is IFocusManagerContainer || !isTopLevelRoot() && _loc4_ == form)
+                return loaderInfo.childAllowsParent;
+            }
+            catch (error:Error)
+            {
+            }
+            return false;
+        }// end function
+
+        public function dispatchEventFromSWFBridges(event:Event, param2:IEventDispatcher = null, param3:Boolean = false, param4:Boolean = false) : void
+        {
+            var _loc_5:* = null;
+            if (param4)
+            {
+                dispatchEventToOtherSystemManagers(event);
+            }
+            if (!swfBridgeGroup)
+            {
+                return;
+            }
+            _loc_5 = event.clone();
+            if (param3)
+            {
+                currentSandboxEvent = _loc_5;
+            }
+            var _loc_6:* = swfBridgeGroup.parentBridge;
+            if (swfBridgeGroup.parentBridge && _loc_6 != param2)
+            {
+                if (_loc_5 is SWFBridgeRequest)
+                {
+                    SWFBridgeRequest(_loc_5).requestor = _loc_6;
+                }
+                _loc_6.dispatchEvent(_loc_5);
+            }
+            var _loc_7:* = swfBridgeGroup.getChildBridges();
+            var _loc_8:* = 0;
+            while (_loc_8 < _loc_7.length)
+            {
+                
+                if (_loc_7[_loc_8] != param2)
+                {
+                    _loc_5 = event.clone();
+                    if (param3)
+                    {
+                        currentSandboxEvent = _loc_5;
+                    }
+                    if (_loc_5 is SWFBridgeRequest)
+                    {
+                        SWFBridgeRequest(_loc_5).requestor = IEventDispatcher(_loc_7[_loc_8]);
+                    }
+                    IEventDispatcher(_loc_7[_loc_8]).dispatchEvent(_loc_5);
+                }
+                _loc_8++;
+            }
+            currentSandboxEvent = null;
+            return;
+        }// end function
+
+        private function setActualSizeRequestHandler(event:Event) : void
+        {
+            var _loc_2:* = Object(event);
+            setActualSize(_loc_2.data.width, _loc_2.data.height);
+            return;
+        }// end function
+
+        private function executeCallbacks() : void
+        {
+            var _loc_1:* = null;
+            if (!parent && parentAllowsChild)
+            {
+                return;
+            }
+            while (initCallbackFunctions.length > 0)
+            {
+                
+                _loc_1 = initCallbackFunctions.shift();
+                this._loc_1(this);
+            }
+            return;
+        }// end function
+
+        private function addPlaceholderId(param1:String, param2:String, param3:IEventDispatcher, param4:Object) : void
+        {
+            if (!param3)
+            {
+                throw new Error();
+            }
+            if (!idToPlaceholder)
+            {
+                idToPlaceholder = [];
+            }
+            idToPlaceholder[param1] = new PlaceholderData(param2, param3, param4);
+            return;
+        }// end function
+
+        private function canActivateHandler(event:Event) : void
+        {
+            var _loc_3:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            var _loc_10:* = null;
+            var _loc_2:* = Object(event);
+            var _loc_4:* = _loc_2.data;
+            var _loc_5:* = null;
+            if (_loc_2.data is String)
+            {
+                _loc_6 = idToPlaceholder[_loc_2.data];
+                _loc_4 = _loc_6.data;
+                _loc_5 = _loc_6.id;
+                if (_loc_5 == null)
+                {
+                    _loc_7 = findRemotePopUp(_loc_4, _loc_6.bridge);
+                    if (_loc_7)
+                    {
+                        _loc_3 = new SWFBridgeRequest(SWFBridgeRequest.CAN_ACTIVATE_POP_UP_REQUEST, false, false, IEventDispatcher(_loc_7.bridge), _loc_7.window);
+                        if (_loc_7.bridge)
                         {
-                           if(isTopLevelRoot())
-                           {
-                              activate(IFocusManagerContainer(_loc4_));
-                           }
-                           if(_loc4_ == document)
-                           {
-                              dispatchActivatedApplicationEvent();
-                           }
-                           else if(_loc4_ is DisplayObject)
-                           {
-                              dispatchActivatedWindowEvent(DisplayObject(_loc4_));
-                           }
-                        }
-                        if(popUpChildren.contains(_loc4_))
-                        {
-                           _loc11_ = popUpChildren;
-                        }
-                        else
-                        {
-                           _loc11_ = this;
-                        }
-                        _loc9_ = _loc11_.getChildIndex(_loc4_);
-                        _loc10_ = _loc9_;
-                        _loc3_ = forms.length;
-                        _loc8_ = 0;
-                        for(; _loc8_ < _loc3_; _loc8_++)
-                        {
-                           _loc13_ = isRemotePopUp(forms[_loc8_]);
-                           if(_loc13_)
-                           {
-                              if(forms[_loc8_].window is String)
-                              {
-                                 continue;
-                              }
-                              _loc12_ = forms[_loc8_].window;
-                           }
-                           else
-                           {
-                              _loc12_ = forms[_loc8_];
-                           }
-                           if(_loc13_)
-                           {
-                              _loc14_ = getChildListIndex(_loc11_,_loc12_);
-                              if(_loc14_ > _loc9_)
-                              {
-                                 _loc10_ = Math.max(_loc14_,_loc10_);
-                              }
-                           }
-                           else if(_loc11_.contains(_loc12_))
-                           {
-                              if(_loc11_.getChildIndex(_loc12_) > _loc9_)
-                              {
-                                 _loc10_ = Math.max(_loc11_.getChildIndex(_loc12_),_loc10_);
-                                 continue;
-                              }
-                              continue;
-                           }
-                        }
-                        if(_loc10_ > _loc9_ && !_loc5_)
-                        {
-                           _loc11_.setChildIndex(_loc4_,_loc10_);
+                            _loc_7.bridge.dispatchEvent(_loc_3);
+                            _loc_2.data = _loc_3.data;
                         }
                         return;
-                     }
-                     _loc6_++;
-                  }
-                  _loc4_ = _loc4_.parent;
-               }
+                    }
+                }
+            }
+            if (_loc_4 is SystemManagerProxy)
+            {
+                _loc_8 = SystemManagerProxy(_loc_4);
+                _loc_9 = findFocusManagerContainer(_loc_8);
+                _loc_2.data = _loc_8 && _loc_9 && canActivateLocalComponent(_loc_9);
+            }
+            else if (_loc_4 is IFocusManagerContainer)
+            {
+                _loc_2.data = canActivateLocalComponent(_loc_4);
+            }
+            else if (_loc_4 is IEventDispatcher)
+            {
+                _loc_10 = IEventDispatcher(_loc_4);
+                _loc_3 = new SWFBridgeRequest(SWFBridgeRequest.CAN_ACTIVATE_POP_UP_REQUEST, false, false, _loc_10, _loc_5);
+                if (_loc_10)
+                {
+                    _loc_10.dispatchEvent(_loc_3);
+                    _loc_2.data = _loc_3.data;
+                }
             }
             else
             {
-               dispatchActivatedApplicationEvent();
-            }
-         }
-      }
-      
-      public function allowInsecureDomain(... rest) : void
-      {
-      }
-      
-      private function removePopupRequestHandler(param1:Event) : void
-      {
-         var _loc3_:SWFBridgeRequest = null;
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         if(Boolean(swfBridgeGroup.parentBridge) && Boolean(SecurityUtil.hasMutualTrustBetweenParentAndChild(this)))
-         {
-            _loc2_.requestor = swfBridgeGroup.parentBridge;
-            getSandboxRoot().dispatchEvent(_loc2_);
-            return;
-         }
-         if(popUpChildren.contains(_loc2_.data.window))
-         {
-            popUpChildren.removeChild(_loc2_.data.window);
-         }
-         else
-         {
-            removeChild(DisplayObject(_loc2_.data.window));
-         }
-         if(_loc2_.data.modal)
-         {
-            numModalWindows--;
-         }
-         removeRemotePopUp(new RemotePopUp(_loc2_.data.window,_loc2_.requestor));
-         if(!isTopLevelRoot() && Boolean(swfBridgeGroup))
-         {
-            _loc3_ = new SWFBridgeRequest(SWFBridgeRequest.REMOVE_POP_UP_PLACE_HOLDER_REQUEST,false,false,_loc2_.requestor,{"placeHolderId":NameUtil.displayObjectToString(_loc2_.data.window)});
-            dispatchEvent(_loc3_);
-         }
-      }
-      
-      public function addChildBridge(param1:IEventDispatcher, param2:DisplayObject) : void
-      {
-         var _loc3_:IFocusManager = null;
-         var _loc4_:DisplayObject = param2;
-         while(_loc4_)
-         {
-            if(_loc4_ is IFocusManagerContainer)
-            {
-               _loc3_ = IFocusManagerContainer(_loc4_).focusManager;
-               break;
-            }
-            _loc4_ = _loc4_.parent;
-         }
-         if(!_loc3_)
-         {
-            return;
-         }
-         if(!swfBridgeGroup)
-         {
-            swfBridgeGroup = new SWFBridgeGroup(this);
-         }
-         swfBridgeGroup.addChildBridge(param1,ISWFBridgeProvider(param2));
-         _loc3_.addSWFBridge(param1,param2);
-         if(!bridgeToFocusManager)
-         {
-            bridgeToFocusManager = new Dictionary();
-         }
-         bridgeToFocusManager[param1] = _loc3_;
-         addChildBridgeListeners(param1);
-         dispatchEvent(new FlexChangeEvent(FlexChangeEvent.ADD_CHILD_BRIDGE,false,false,param1));
-      }
-      
-      public function get screen() : Rectangle
-      {
-         if(!_screen)
-         {
-            Stage_resizeHandler();
-         }
-         if(!isStageRoot)
-         {
-            Stage_resizeHandler();
-         }
-         return _screen;
-      }
-      
-      private function resetMouseCursorRequestHandler(param1:Event) : void
-      {
-         var _loc3_:IEventDispatcher = null;
-         if(!isTopLevelRoot() && param1 is SWFBridgeRequest)
-         {
-            return;
-         }
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         if(!isTopLevelRoot())
-         {
-            _loc3_ = swfBridgeGroup.parentBridge;
-            _loc2_.requestor = _loc3_;
-            _loc3_.dispatchEvent(_loc2_);
-         }
-         else if(eventProxy)
-         {
-            SystemManagerGlobals.showMouseCursor = true;
-         }
-      }
-      
-      private function preloader_rslCompleteHandler(param1:RSLEvent) : void
-      {
-         if(param1.loaderInfo)
-         {
-            preloadedRSLs[param1.loaderInfo] = param1.url.url;
-         }
-      }
-      
-      mx_internal function set topMostIndex(param1:int) : void
-      {
-         var _loc2_:int = param1 - _topMostIndex;
-         _topMostIndex = param1;
-         toolTipIndex = toolTipIndex + _loc2_;
-      }
-      
-      mx_internal function docFrameHandler(param1:Event = null) : void
-      {
-         var _loc3_:TextFieldFactory = null;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc7_:Class = null;
-         Singleton.registerClass("mx.managers::IBrowserManager",Class(getDefinitionByName("mx.managers::BrowserManagerImpl")));
-         Singleton.registerClass("mx.managers::ICursorManager",Class(getDefinitionByName("mx.managers::CursorManagerImpl")));
-         Singleton.registerClass("mx.managers::IHistoryManager",Class(getDefinitionByName("mx.managers::HistoryManagerImpl")));
-         Singleton.registerClass("mx.managers::ILayoutManager",Class(getDefinitionByName("mx.managers::LayoutManager")));
-         Singleton.registerClass("mx.managers::IPopUpManager",Class(getDefinitionByName("mx.managers::PopUpManagerImpl")));
-         Singleton.registerClass("mx.managers::IToolTipManager2",Class(getDefinitionByName("mx.managers::ToolTipManagerImpl")));
-         var _loc2_:Class = null;
-         _loc2_ = Class(getDefinitionByName("mx.managers::NativeDragManagerImpl"));
-         if(_loc2_ == null)
-         {
-            _loc2_ = Class(getDefinitionByName("mx.managers::DragManagerImpl"));
-         }
-         Singleton.registerClass("mx.managers::IDragManager",_loc2_);
-         Singleton.registerClass("mx.core::ITextFieldFactory",Class(getDefinitionByName("mx.core::TextFieldFactory")));
-         executeCallbacks();
-         doneExecutingInitCallbacks = true;
-         var _loc4_:Array = info()["mixins"];
-         if(Boolean(_loc4_) && _loc4_.length > 0)
-         {
-            _loc5_ = _loc4_.length;
-            _loc6_ = 0;
-            while(_loc6_ < _loc5_)
-            {
-               _loc7_ = Class(getDefinitionByName(_loc4_[_loc6_]));
-               _loc7_["init"](this);
-               _loc6_++;
-            }
-         }
-         installCompiledResourceBundles();
-         initializeTopLevelWindow(null);
-         deferredNextFrame();
-      }
-      
-      public function get explicitHeight() : Number
-      {
-         return _explicitHeight;
-      }
-      
-      public function get preloaderBackgroundSize() : String
-      {
-         return info()["backgroundSize"];
-      }
-      
-      public function isTopLevel() : Boolean
-      {
-         return topLevel;
-      }
-      
-      override public function get mouseY() : Number
-      {
-         if(_mouseY === undefined)
-         {
-            return super.mouseY;
-         }
-         return _mouseY;
-      }
-      
-      public function getExplicitOrMeasuredWidth() : Number
-      {
-         return !isNaN(explicitWidth)?Number(explicitWidth):Number(measuredWidth);
-      }
-      
-      public function deactivate(param1:IFocusManagerContainer) : void
-      {
-         deactivateForm(Object(param1));
-      }
-      
-      private function preProcessModalWindowRequest(param1:SWFBridgeRequest, param2:DisplayObject) : Boolean
-      {
-         var _loc3_:IEventDispatcher = null;
-         var _loc4_:ISWFLoader = null;
-         var _loc5_:Rectangle = null;
-         if(param1.data.skip)
-         {
-            param1.data.skip = false;
-            if(useSWFBridge())
-            {
-               _loc3_ = swfBridgeGroup.parentBridge;
-               param1.requestor = _loc3_;
-               _loc3_.dispatchEvent(param1);
-            }
-            return false;
-         }
-         if(this != param2)
-         {
-            if(param1.type == SWFBridgeRequest.CREATE_MODAL_WINDOW_REQUEST || param1.type == SWFBridgeRequest.SHOW_MODAL_WINDOW_REQUEST)
-            {
-               _loc4_ = swfBridgeGroup.getChildBridgeProvider(param1.requestor) as ISWFLoader;
-               if(_loc4_)
-               {
-                  _loc5_ = ISWFLoader(_loc4_).getVisibleApplicationRect();
-                  param1.data.excludeRect = _loc5_;
-                  if(!DisplayObjectContainer(document).contains(DisplayObject(_loc4_)))
-                  {
-                     param1.data.useExclude = false;
-                  }
-               }
-            }
-            _loc3_ = swfBridgeGroup.parentBridge;
-            param1.requestor = _loc3_;
-            if(param1.type == SWFBridgeRequest.HIDE_MODAL_WINDOW_REQUEST)
-            {
-               param2.dispatchEvent(param1);
-            }
-            else
-            {
-               _loc3_.dispatchEvent(param1);
-            }
-            return false;
-         }
-         param1.data.skip = false;
-         return true;
-      }
-      
-      private function resetMouseCursorTracking(param1:Event) : void
-      {
-         var _loc2_:SWFBridgeRequest = null;
-         var _loc3_:IEventDispatcher = null;
-         if(isTopLevelRoot())
-         {
-            SystemManagerGlobals.showMouseCursor = true;
-         }
-         else if(swfBridgeGroup.parentBridge)
-         {
-            _loc2_ = new SWFBridgeRequest(SWFBridgeRequest.RESET_MOUSE_CURSOR_REQUEST);
-            _loc3_ = swfBridgeGroup.parentBridge;
-            _loc2_.requestor = _loc3_;
-            _loc3_.dispatchEvent(_loc2_);
-         }
-      }
-      
-      mx_internal function addParentBridgeListeners() : void
-      {
-         if(!topLevel && Boolean(topLevelSystemManager))
-         {
-            SystemManager(topLevelSystemManager).addParentBridgeListeners();
-            return;
-         }
-         var _loc1_:IEventDispatcher = swfBridgeGroup.parentBridge;
-         _loc1_.addEventListener(SWFBridgeRequest.SET_ACTUAL_SIZE_REQUEST,setActualSizeRequestHandler);
-         _loc1_.addEventListener(SWFBridgeRequest.GET_SIZE_REQUEST,getSizeRequestHandler);
-         _loc1_.addEventListener(SWFBridgeRequest.ACTIVATE_POP_UP_REQUEST,activateRequestHandler);
-         _loc1_.addEventListener(SWFBridgeRequest.DEACTIVATE_POP_UP_REQUEST,deactivateRequestHandler);
-         _loc1_.addEventListener(SWFBridgeRequest.IS_BRIDGE_CHILD_REQUEST,isBridgeChildHandler);
-         _loc1_.addEventListener(EventListenerRequest.ADD_EVENT_LISTENER_REQUEST,eventListenerRequestHandler);
-         _loc1_.addEventListener(EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST,eventListenerRequestHandler);
-         _loc1_.addEventListener(SWFBridgeRequest.CAN_ACTIVATE_POP_UP_REQUEST,canActivateHandler);
-         _loc1_.addEventListener(SWFBridgeEvent.BRIDGE_APPLICATION_UNLOADING,beforeUnloadHandler);
-      }
-      
-      public function get swfBridgeGroup() : ISWFBridgeGroup
-      {
-         if(topLevel)
-         {
-            return _swfBridgeGroup;
-         }
-         if(topLevelSystemManager)
-         {
-            return topLevelSystemManager.swfBridgeGroup;
-         }
-         return null;
-      }
-      
-      override public function getChildByName(param1:String) : DisplayObject
-      {
-         return super.getChildByName(param1);
-      }
-      
-      public function get measuredWidth() : Number
-      {
-         return !!topLevelWindow?Number(topLevelWindow.getExplicitOrMeasuredWidth()):Number(loaderInfo.width);
-      }
-      
-      public function removeChildBridge(param1:IEventDispatcher) : void
-      {
-         dispatchEvent(new FlexChangeEvent(FlexChangeEvent.REMOVE_CHILD_BRIDGE,false,false,param1));
-         var _loc2_:IFocusManager = IFocusManager(bridgeToFocusManager[param1]);
-         _loc2_.removeSWFBridge(param1);
-         swfBridgeGroup.removeChildBridge(param1);
-         delete bridgeToFocusManager[param1];
-         removeChildBridgeListeners(param1);
-      }
-      
-      mx_internal function removeChildBridgeListeners(param1:IEventDispatcher) : void
-      {
-         if(!topLevel && Boolean(topLevelSystemManager))
-         {
-            SystemManager(topLevelSystemManager).removeChildBridgeListeners(param1);
-            return;
-         }
-         param1.removeEventListener(SWFBridgeRequest.ADD_POP_UP_REQUEST,addPopupRequestHandler);
-         param1.removeEventListener(SWFBridgeRequest.REMOVE_POP_UP_REQUEST,removePopupRequestHandler);
-         param1.removeEventListener(SWFBridgeRequest.ADD_POP_UP_PLACE_HOLDER_REQUEST,addPlaceholderPopupRequestHandler);
-         param1.removeEventListener(SWFBridgeRequest.REMOVE_POP_UP_PLACE_HOLDER_REQUEST,removePlaceholderPopupRequestHandler);
-         param1.removeEventListener(SWFBridgeEvent.BRIDGE_WINDOW_ACTIVATE,activateFormSandboxEventHandler);
-         param1.removeEventListener(SWFBridgeEvent.BRIDGE_WINDOW_DEACTIVATE,deactivateFormSandboxEventHandler);
-         param1.removeEventListener(SWFBridgeEvent.BRIDGE_APPLICATION_ACTIVATE,activateApplicationSandboxEventHandler);
-         param1.removeEventListener(EventListenerRequest.ADD_EVENT_LISTENER_REQUEST,eventListenerRequestHandler);
-         param1.removeEventListener(EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST,eventListenerRequestHandler);
-         param1.removeEventListener(SWFBridgeRequest.CREATE_MODAL_WINDOW_REQUEST,modalWindowRequestHandler);
-         param1.removeEventListener(SWFBridgeRequest.SHOW_MODAL_WINDOW_REQUEST,modalWindowRequestHandler);
-         param1.removeEventListener(SWFBridgeRequest.HIDE_MODAL_WINDOW_REQUEST,modalWindowRequestHandler);
-         param1.removeEventListener(SWFBridgeRequest.GET_VISIBLE_RECT_REQUEST,getVisibleRectRequestHandler);
-         param1.removeEventListener(SWFBridgeRequest.HIDE_MOUSE_CURSOR_REQUEST,hideMouseCursorRequestHandler);
-         param1.removeEventListener(SWFBridgeRequest.SHOW_MOUSE_CURSOR_REQUEST,showMouseCursorRequestHandler);
-         param1.removeEventListener(SWFBridgeRequest.RESET_MOUSE_CURSOR_REQUEST,resetMouseCursorRequestHandler);
-      }
-      
-      override public function addChildAt(param1:DisplayObject, param2:int) : DisplayObject
-      {
-         noTopMostIndex++;
-         var _loc3_:DisplayObjectContainer = param1.parent;
-         if(_loc3_)
-         {
-            _loc3_.removeChild(param1);
-         }
-         return rawChildren_addChildAt(param1,applicationIndex + param2);
-      }
-      
-      private function Stage_resizeHandler(param1:Event = null) : void
-      {
-         var m:Number = NaN;
-         var n:Number = NaN;
-         var sandboxScreen:Rectangle = null;
-         var event:Event = param1;
-         if(isDispatchingResizeEvent)
-         {
-            return;
-         }
-         var w:Number = 0;
-         var h:Number = 0;
-         try
-         {
-            m = loaderInfo.width;
-            n = loaderInfo.height;
-         }
-         catch(error:Error)
-         {
-            if(!_screen)
-            {
-               _screen = new Rectangle();
+                throw new Error();
             }
             return;
-         }
-         var align:String = StageAlign.TOP_LEFT;
-         try
-         {
-            if(stage)
+        }// end function
+
+        private function docFrameListener(event:Event) : void
+        {
+            if (currentFrame == 2)
             {
-               w = stage.stageWidth;
-               h = stage.stageHeight;
-               align = stage.align;
+                removeEventListener(Event.ENTER_FRAME, docFrameListener);
+                if (totalFrames > 2)
+                {
+                    addEventListener(Event.ENTER_FRAME, extraFrameListener);
+                }
+                docFrameHandler();
             }
-         }
-         catch(error:SecurityError)
-         {
-            sandboxScreen = getSandboxScreen();
-            w = sandboxScreen.width;
-            h = sandboxScreen.height;
-         }
-         var x:Number = (m - w) / 2;
-         var y:Number = (n - h) / 2;
-         if(align == StageAlign.TOP)
-         {
-            y = 0;
-         }
-         else if(align == StageAlign.BOTTOM)
-         {
-            y = n - h;
-         }
-         else if(align == StageAlign.LEFT)
-         {
-            x = 0;
-         }
-         else if(align == StageAlign.RIGHT)
-         {
-            x = m - w;
-         }
-         else if(align == StageAlign.TOP_LEFT || align == "LT")
-         {
-            y = 0;
-            x = 0;
-         }
-         else if(align == StageAlign.TOP_RIGHT)
-         {
-            y = 0;
-            x = m - w;
-         }
-         else if(align == StageAlign.BOTTOM_LEFT)
-         {
-            y = n - h;
-            x = 0;
-         }
-         else if(align == StageAlign.BOTTOM_RIGHT)
-         {
-            y = n - h;
-            x = m - w;
-         }
-         if(!_screen)
-         {
-            _screen = new Rectangle();
-         }
-         _screen.x = x;
-         _screen.y = y;
-         _screen.width = w;
-         _screen.height = h;
-         if(isStageRoot)
-         {
-            _width = stage.stageWidth;
-            _height = stage.stageHeight;
-         }
-         if(event)
-         {
-            resizeMouseCatcher();
-            isDispatchingResizeEvent = true;
-            dispatchEvent(event);
-            isDispatchingResizeEvent = false;
-         }
-      }
-      
-      public function get swfBridge() : IEventDispatcher
-      {
-         if(swfBridgeGroup)
-         {
-            return swfBridgeGroup.parentBridge;
-         }
-         return null;
-      }
-      
-      private function findRemotePopUp(param1:Object, param2:IEventDispatcher) : RemotePopUp
-      {
-         var _loc5_:RemotePopUp = null;
-         var _loc3_:int = forms.length;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            if(isRemotePopUp(forms[_loc4_]))
-            {
-               _loc5_ = RemotePopUp(forms[_loc4_]);
-               if(_loc5_.window == param1 && _loc5_.bridge == param2)
-               {
-                  return _loc5_;
-               }
-            }
-            _loc4_++;
-         }
-         return null;
-      }
-      
-      public function info() : Object
-      {
-         return {};
-      }
-      
-      mx_internal function get toolTipIndex() : int
-      {
-         return _toolTipIndex;
-      }
-      
-      public function setActualSize(param1:Number, param2:Number) : void
-      {
-         if(isStageRoot)
-         {
             return;
-         }
-         _width = param1;
-         _height = param2;
-         if(mouseCatcher)
-         {
-            mouseCatcher.width = param1;
-            mouseCatcher.height = param2;
-         }
-         dispatchEvent(new Event(Event.RESIZE));
-      }
-      
-      private function removePlaceholderPopupRequestHandler(param1:Event) : void
-      {
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         if(!forwardPlaceholderRequest(_loc2_,false))
-         {
-            _loc3_ = forms.length;
-            _loc4_ = 0;
-            while(_loc4_ < _loc3_)
+        }// end function
+
+        public function get popUpChildren() : IChildList
+        {
+            if (!topLevel)
             {
-               if(isRemotePopUp(forms[_loc4_]))
-               {
-                  if(forms[_loc4_].window == _loc2_.data.placeHolderId && forms[_loc4_].bridge == _loc2_.requestor)
-                  {
-                     forms.splice(_loc4_,1);
-                     break;
-                  }
-               }
-               _loc4_++;
+                return _topLevelSystemManager.popUpChildren;
             }
-         }
-      }
-      
-      public function set focusPane(param1:Sprite) : void
-      {
-         if(param1)
-         {
-            addChild(param1);
-            param1.x = 0;
-            param1.y = 0;
-            param1.scrollRect = null;
-            _focusPane = param1;
-         }
-         else
-         {
-            removeChild(_focusPane);
-            _focusPane = null;
-         }
-      }
-      
-      mx_internal function removeParentBridgeListeners() : void
-      {
-         if(!topLevel && Boolean(topLevelSystemManager))
-         {
-            SystemManager(topLevelSystemManager).removeParentBridgeListeners();
+            if (!_popUpChildren)
+            {
+                _popUpChildren = new SystemChildrenList(this, new QName(mx_internal, "noTopMostIndex"), new QName(mx_internal, "topMostIndex"));
+            }
+            return _popUpChildren;
+        }// end function
+
+        private function addEventListenerToSandboxes(param1:String, param2:Function, param3:Boolean = false, param4:int = 0, param5:Boolean = false, param6:IEventDispatcher = null) : void
+        {
+            var _loc_10:* = 0;
+            var _loc_11:* = null;
+            if (!swfBridgeGroup)
+            {
+                return;
+            }
+            var _loc_7:* = new EventListenerRequest(EventListenerRequest.ADD_EVENT_LISTENER_REQUEST, false, false, param1, param3, param4, param5);
+            var _loc_8:* = swfBridgeGroup.parentBridge;
+            if (swfBridgeGroup.parentBridge && _loc_8 != param6)
+            {
+                _loc_8.addEventListener(param1, param2, false, param4, param5);
+            }
+            var _loc_9:* = swfBridgeGroup.getChildBridges();
+            while (_loc_10 < _loc_9.length)
+            {
+                
+                _loc_11 = IEventDispatcher(_loc_9[_loc_10]);
+                if (_loc_11 != param6)
+                {
+                    _loc_11.addEventListener(param1, param2, false, param4, param5);
+                }
+                _loc_10++;
+            }
+            dispatchEventFromSWFBridges(_loc_7, param6);
             return;
-         }
-         var _loc1_:IEventDispatcher = swfBridgeGroup.parentBridge;
-         _loc1_.removeEventListener(SWFBridgeRequest.SET_ACTUAL_SIZE_REQUEST,setActualSizeRequestHandler);
-         _loc1_.removeEventListener(SWFBridgeRequest.GET_SIZE_REQUEST,getSizeRequestHandler);
-         _loc1_.removeEventListener(SWFBridgeRequest.ACTIVATE_POP_UP_REQUEST,activateRequestHandler);
-         _loc1_.removeEventListener(SWFBridgeRequest.DEACTIVATE_POP_UP_REQUEST,deactivateRequestHandler);
-         _loc1_.removeEventListener(SWFBridgeRequest.IS_BRIDGE_CHILD_REQUEST,isBridgeChildHandler);
-         _loc1_.removeEventListener(EventListenerRequest.ADD_EVENT_LISTENER_REQUEST,eventListenerRequestHandler);
-         _loc1_.removeEventListener(EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST,eventListenerRequestHandler);
-         _loc1_.removeEventListener(SWFBridgeRequest.CAN_ACTIVATE_POP_UP_REQUEST,canActivateHandler);
-         _loc1_.removeEventListener(SWFBridgeEvent.BRIDGE_APPLICATION_UNLOADING,beforeUnloadHandler);
-      }
-      
-      override public function get parent() : DisplayObjectContainer
-      {
-         try
-         {
-            return super.parent;
-         }
-         catch(e:SecurityError)
-         {
-         }
-         return null;
-      }
-      
-      private function eventListenerRequestHandler(param1:Event) : void
-      {
-         var _loc2_:String = null;
-         if(param1 is EventListenerRequest)
-         {
+        }// end function
+
+        private function forwardFormEvent(event:SWFBridgeEvent) : Boolean
+        {
+            var _loc_3:* = null;
+            if (isTopLevelRoot())
+            {
+                return false;
+            }
+            var _loc_2:* = swfBridgeGroup.parentBridge;
+            if (_loc_2)
+            {
+                _loc_3 = getSandboxRoot();
+                event.data.notifier = _loc_2;
+                if (_loc_3 == this)
+                {
+                    if (!(event.data.window is String))
+                    {
+                        event.data.window = NameUtil.displayObjectToString(DisplayObject(event.data.window));
+                    }
+                    else
+                    {
+                        event.data.window = NameUtil.displayObjectToString(DisplayObject(this)) + "." + event.data.window;
+                    }
+                    _loc_2.dispatchEvent(event);
+                }
+                else
+                {
+                    if (event.data.window is String)
+                    {
+                        event.data.window = NameUtil.displayObjectToString(DisplayObject(this)) + "." + event.data.window;
+                    }
+                    _loc_3.dispatchEvent(event);
+                }
+            }
+            return true;
+        }// end function
+
+        public function set explicitHeight(param1:Number) : void
+        {
+            _explicitHeight = param1;
             return;
-         }
-         var _loc3_:EventListenerRequest = EventListenerRequest.marshal(param1);
-         if(param1.type == EventListenerRequest.ADD_EVENT_LISTENER_REQUEST)
-         {
-            if(!eventProxy)
+        }// end function
+
+        override public function removeChild(param1:DisplayObject) : DisplayObject
+        {
+            var _loc_3:* = noTopMostIndex - 1;
+            noTopMostIndex = _loc_3;
+            return rawChildren_removeChild(param1);
+        }// end function
+
+        function rawChildren_removeChild(param1:DisplayObject) : DisplayObject
+        {
+            removingChild(param1);
+            super.removeChild(param1);
+            childRemoved(param1);
+            return param1;
+        }// end function
+
+        final function get $numChildren() : int
+        {
+            return super.numChildren;
+        }// end function
+
+        public function get toolTipChildren() : IChildList
+        {
+            if (!topLevel)
             {
-               eventProxy = new EventProxy(this);
+                return _topLevelSystemManager.toolTipChildren;
             }
-            _loc2_ = EventUtil.sandboxMouseEventMap[_loc3_.eventType];
-            if(_loc2_)
+            if (!_toolTipChildren)
             {
-               if(isTopLevelRoot())
-               {
-                  stage.addEventListener(MouseEvent.MOUSE_MOVE,resetMouseCursorTracking,true,EventPriority.CURSOR_MANAGEMENT + 1,true);
-               }
-               else
-               {
-                  super.addEventListener(MouseEvent.MOUSE_MOVE,resetMouseCursorTracking,true,EventPriority.CURSOR_MANAGEMENT + 1,true);
-               }
-               addEventListenerToSandboxes(_loc3_.eventType,sandboxMouseListener,true,_loc3_.priority,_loc3_.useWeakReference,param1.target as IEventDispatcher);
-               addEventListenerToOtherSystemManagers(_loc3_.eventType,otherSystemManagerMouseListener,true,_loc3_.priority,_loc3_.useWeakReference);
-               if(getSandboxRoot() == this)
-               {
-                  if(Boolean(isTopLevelRoot()) && (_loc2_ == MouseEvent.MOUSE_UP || _loc2_ == MouseEvent.MOUSE_MOVE))
-                  {
-                     stage.addEventListener(_loc2_,eventProxy.marshalListener,false,_loc3_.priority,_loc3_.useWeakReference);
-                  }
-                  super.addEventListener(_loc2_,eventProxy.marshalListener,true,_loc3_.priority,_loc3_.useWeakReference);
-               }
+                _toolTipChildren = new SystemChildrenList(this, new QName(mx_internal, "topMostIndex"), new QName(mx_internal, "toolTipIndex"));
             }
-         }
-         else if(param1.type == EventListenerRequest.REMOVE_EVENT_LISTENER_REQUEST)
-         {
-            _loc2_ = EventUtil.sandboxMouseEventMap[_loc3_.eventType];
-            if(_loc2_)
+            return _toolTipChildren;
+        }// end function
+
+        public function create(... args) : Object
+        {
+            var _loc_4:* = null;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            args = info()["mainClassName"];
+            if (args == null)
             {
-               removeEventListenerFromOtherSystemManagers(_loc3_.eventType,otherSystemManagerMouseListener,true);
-               removeEventListenerFromSandboxes(_loc3_.eventType,sandboxMouseListener,true,param1.target as IEventDispatcher);
-               if(getSandboxRoot() == this)
-               {
-                  if(Boolean(isTopLevelRoot()) && (_loc2_ == MouseEvent.MOUSE_UP || _loc2_ == MouseEvent.MOUSE_MOVE))
-                  {
-                     stage.removeEventListener(_loc2_,eventProxy.marshalListener);
-                  }
-                  super.removeEventListener(_loc2_,eventProxy.marshalListener,true);
-               }
+                _loc_4 = loaderInfo.loaderURL;
+                _loc_5 = _loc_4.lastIndexOf(".");
+                _loc_6 = _loc_4.lastIndexOf("/");
+                args = _loc_4.substring((_loc_6 + 1), _loc_5);
             }
-         }
-      }
-      
-      mx_internal function set applicationIndex(param1:int) : void
-      {
-         _applicationIndex = param1;
-      }
-      
-      private function showMouseCursorRequestHandler(param1:Event) : void
-      {
-         var _loc3_:IEventDispatcher = null;
-         if(!isTopLevelRoot() && param1 is SWFBridgeRequest)
-         {
-            return;
-         }
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         if(!isTopLevelRoot())
-         {
-            _loc3_ = swfBridgeGroup.parentBridge;
-            _loc2_.requestor = _loc3_;
-            _loc3_.dispatchEvent(_loc2_);
-            Object(param1).data = _loc2_.data;
-         }
-         else if(eventProxy)
-         {
-            Object(param1).data = SystemManagerGlobals.showMouseCursor;
-         }
-      }
-      
-      public function get childAllowsParent() : Boolean
-      {
-         try
-         {
-            return loaderInfo.childAllowsParent;
-         }
-         catch(error:Error)
-         {
-         }
-         return false;
-      }
-      
-      public function dispatchEventFromSWFBridges(param1:Event, param2:IEventDispatcher = null, param3:Boolean = false, param4:Boolean = false) : void
-      {
-         var _loc5_:Event = null;
-         if(param4)
-         {
-            dispatchEventToOtherSystemManagers(param1);
-         }
-         if(!swfBridgeGroup)
-         {
-            return;
-         }
-         _loc5_ = param1.clone();
-         if(param3)
-         {
-            currentSandboxEvent = _loc5_;
-         }
-         var _loc6_:IEventDispatcher = swfBridgeGroup.parentBridge;
-         if(Boolean(_loc6_) && _loc6_ != param2)
-         {
-            if(_loc5_ is SWFBridgeRequest)
+            var _loc_3:* = Class(getDefinitionByName(args));
+            return _loc_3 ? (new _loc_3) : (null);
+        }// end function
+
+        override public function get stage() : Stage
+        {
+            var _loc_2:* = null;
+            if (_stage)
             {
-               SWFBridgeRequest(_loc5_).requestor = _loc6_;
+                return _stage;
             }
-            _loc6_.dispatchEvent(_loc5_);
-         }
-         var _loc7_:Array = swfBridgeGroup.getChildBridges();
-         var _loc8_:int = 0;
-         while(_loc8_ < _loc7_.length)
-         {
-            if(_loc7_[_loc8_] != param2)
+            var _loc_1:* = super.stage;
+            if (_loc_1)
             {
-               _loc5_ = param1.clone();
-               if(param3)
-               {
-                  currentSandboxEvent = _loc5_;
-               }
-               if(_loc5_ is SWFBridgeRequest)
-               {
-                  SWFBridgeRequest(_loc5_).requestor = IEventDispatcher(_loc7_[_loc8_]);
-               }
-               IEventDispatcher(_loc7_[_loc8_]).dispatchEvent(_loc5_);
+                _stage = _loc_1;
+                return _loc_1;
             }
-            _loc8_++;
-         }
-         currentSandboxEvent = null;
-      }
-      
-      private function setActualSizeRequestHandler(param1:Event) : void
-      {
-         var _loc2_:Object = Object(param1);
-         setActualSize(_loc2_.data.width,_loc2_.data.height);
-      }
-      
-      private function executeCallbacks() : void
-      {
-         var _loc1_:Function = null;
-         if(!parent && Boolean(parentAllowsChild))
-         {
-            return;
-         }
-         while(initCallbackFunctions.length > 0)
-         {
-            _loc1_ = initCallbackFunctions.shift();
-            _loc1_(this);
-         }
-      }
-      
-      private function addPlaceholderId(param1:String, param2:String, param3:IEventDispatcher, param4:Object) : void
-      {
-         if(!param3)
-         {
-            throw new Error();
-         }
-         if(!idToPlaceholder)
-         {
-            idToPlaceholder = [];
-         }
-         idToPlaceholder[param1] = new PlaceholderData(param2,param3,param4);
-      }
-      
-      private function canActivateHandler(param1:Event) : void
-      {
-         var _loc3_:SWFBridgeRequest = null;
-         var _loc6_:PlaceholderData = null;
-         var _loc7_:RemotePopUp = null;
-         var _loc8_:SystemManagerProxy = null;
-         var _loc9_:IFocusManagerContainer = null;
-         var _loc10_:IEventDispatcher = null;
-         var _loc2_:Object = Object(param1);
-         var _loc4_:Object = _loc2_.data;
-         var _loc5_:String = null;
-         if(_loc2_.data is String)
-         {
-            _loc6_ = idToPlaceholder[_loc2_.data];
-            _loc4_ = _loc6_.data;
-            _loc5_ = _loc6_.id;
-            if(_loc5_ == null)
+            if (!topLevel && _topLevelSystemManager)
             {
-               _loc7_ = findRemotePopUp(_loc4_,_loc6_.bridge);
-               if(_loc7_)
-               {
-                  _loc3_ = new SWFBridgeRequest(SWFBridgeRequest.CAN_ACTIVATE_POP_UP_REQUEST,false,false,IEventDispatcher(_loc7_.bridge),_loc7_.window);
-                  if(_loc7_.bridge)
-                  {
-                     _loc7_.bridge.dispatchEvent(_loc3_);
-                     _loc2_.data = _loc3_.data;
-                  }
-                  return;
-               }
+                _stage = _topLevelSystemManager.stage;
+                return _stage;
             }
-         }
-         if(_loc4_ is SystemManagerProxy)
-         {
-            _loc8_ = SystemManagerProxy(_loc4_);
-            _loc9_ = findFocusManagerContainer(_loc8_);
-            _loc2_.data = _loc8_ && _loc9_ && canActivateLocalComponent(_loc9_);
-         }
-         else if(_loc4_ is IFocusManagerContainer)
-         {
-            _loc2_.data = canActivateLocalComponent(_loc4_);
-         }
-         else if(_loc4_ is IEventDispatcher)
-         {
-            _loc10_ = IEventDispatcher(_loc4_);
-            _loc3_ = new SWFBridgeRequest(SWFBridgeRequest.CAN_ACTIVATE_POP_UP_REQUEST,false,false,_loc10_,_loc5_);
-            if(_loc10_)
+            if (!isStageRoot && topLevel)
             {
-               _loc10_.dispatchEvent(_loc3_);
-               _loc2_.data = _loc3_.data;
+                _loc_2 = getTopLevelRoot();
+                if (_loc_2)
+                {
+                    _stage = _loc_2.stage;
+                    return _stage;
+                }
             }
-         }
-         else
-         {
-            throw new Error();
-         }
-      }
-      
-      private function docFrameListener(param1:Event) : void
-      {
-         if(currentFrame == 2)
-         {
-            removeEventListener(Event.ENTER_FRAME,docFrameListener);
-            if(totalFrames > 2)
+            return null;
+        }// end function
+
+        override public function addChild(param1:DisplayObject) : DisplayObject
+        {
+            var _loc_2:* = numChildren;
+            if (param1.parent == this)
             {
-               addEventListener(Event.ENTER_FRAME,extraFrameListener);
+                _loc_2 = _loc_2 - 1;
             }
-            docFrameHandler();
-         }
-      }
-      
-      public function get popUpChildren() : IChildList
-      {
-         if(!topLevel)
-         {
-            return _topLevelSystemManager.popUpChildren;
-         }
-         if(!_popUpChildren)
-         {
-            _popUpChildren = new mx.managers.SystemChildrenList(this,new QName(mx_internal,"noTopMostIndex"),new QName(mx_internal,"topMostIndex"));
-         }
-         return _popUpChildren;
-      }
-      
-      private function addEventListenerToSandboxes(param1:String, param2:Function, param3:Boolean = false, param4:int = 0, param5:Boolean = false, param6:IEventDispatcher = null) : void
-      {
-         var _loc10_:int = 0;
-         var _loc11_:IEventDispatcher = null;
-         if(!swfBridgeGroup)
-         {
-            return;
-         }
-         var _loc7_:EventListenerRequest = new EventListenerRequest(EventListenerRequest.ADD_EVENT_LISTENER_REQUEST,false,false,param1,param3,param4,param5);
-         var _loc8_:IEventDispatcher = swfBridgeGroup.parentBridge;
-         if(Boolean(_loc8_) && _loc8_ != param6)
-         {
-            _loc8_.addEventListener(param1,param2,false,param4,param5);
-         }
-         var _loc9_:Array = swfBridgeGroup.getChildBridges();
-         while(_loc10_ < _loc9_.length)
-         {
-            _loc11_ = IEventDispatcher(_loc9_[_loc10_]);
-            if(_loc11_ != param6)
+            return addChildAt(param1, _loc_2);
+        }// end function
+
+        private function removeRemotePopUp(param1:RemotePopUp) : void
+        {
+            var _loc_2:* = forms.length;
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_2)
             {
-               _loc11_.addEventListener(param1,param2,false,param4,param5);
-            }
-            _loc10_++;
-         }
-         dispatchEventFromSWFBridges(_loc7_,param6);
-      }
-      
-      private function forwardFormEvent(param1:SWFBridgeEvent) : Boolean
-      {
-         var _loc3_:DisplayObject = null;
-         if(isTopLevelRoot())
-         {
-            return false;
-         }
-         var _loc2_:IEventDispatcher = swfBridgeGroup.parentBridge;
-         if(_loc2_)
-         {
-            _loc3_ = getSandboxRoot();
-            param1.data.notifier = _loc2_;
-            if(_loc3_ == this)
-            {
-               if(!(param1.data.window is String))
-               {
-                  param1.data.window = NameUtil.displayObjectToString(DisplayObject(param1.data.window));
-               }
-               else
-               {
-                  param1.data.window = NameUtil.displayObjectToString(DisplayObject(this)) + "." + param1.data.window;
-               }
-               _loc2_.dispatchEvent(param1);
-            }
-            else
-            {
-               if(param1.data.window is String)
-               {
-                  param1.data.window = NameUtil.displayObjectToString(DisplayObject(this)) + "." + param1.data.window;
-               }
-               _loc3_.dispatchEvent(param1);
-            }
-         }
-         return true;
-      }
-      
-      public function set explicitHeight(param1:Number) : void
-      {
-         _explicitHeight = param1;
-      }
-      
-      override public function removeChild(param1:DisplayObject) : DisplayObject
-      {
-         noTopMostIndex--;
-         return rawChildren_removeChild(param1);
-      }
-      
-      mx_internal function rawChildren_removeChild(param1:DisplayObject) : DisplayObject
-      {
-         removingChild(param1);
-         super.removeChild(param1);
-         childRemoved(param1);
-         return param1;
-      }
-      
-      mx_internal final function get $numChildren() : int
-      {
-         return super.numChildren;
-      }
-      
-      public function get toolTipChildren() : IChildList
-      {
-         if(!topLevel)
-         {
-            return _topLevelSystemManager.toolTipChildren;
-         }
-         if(!_toolTipChildren)
-         {
-            _toolTipChildren = new mx.managers.SystemChildrenList(this,new QName(mx_internal,"topMostIndex"),new QName(mx_internal,"toolTipIndex"));
-         }
-         return _toolTipChildren;
-      }
-      
-      public function create(... rest) : Object
-      {
-         var _loc4_:String = null;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc2_:String = info()["mainClassName"];
-         if(_loc2_ == null)
-         {
-            _loc4_ = loaderInfo.loaderURL;
-            _loc5_ = _loc4_.lastIndexOf(".");
-            _loc6_ = _loc4_.lastIndexOf("/");
-            _loc2_ = _loc4_.substring(_loc6_ + 1,_loc5_);
-         }
-         var _loc3_:Class = Class(getDefinitionByName(_loc2_));
-         return !!_loc3_?new _loc3_():null;
-      }
-      
-      override public function get stage() : Stage
-      {
-         var _loc2_:DisplayObject = null;
-         if(_stage)
-         {
-            return _stage;
-         }
-         var _loc1_:Stage = super.stage;
-         if(_loc1_)
-         {
-            _stage = _loc1_;
-            return _loc1_;
-         }
-         if(!topLevel && Boolean(_topLevelSystemManager))
-         {
-            _stage = _topLevelSystemManager.stage;
-            return _stage;
-         }
-         if(!isStageRoot && Boolean(topLevel))
-         {
-            _loc2_ = getTopLevelRoot();
-            if(_loc2_)
-            {
-               _stage = _loc2_.stage;
-               return _stage;
-            }
-         }
-         return null;
-      }
-      
-      override public function addChild(param1:DisplayObject) : DisplayObject
-      {
-         var _loc2_:int = numChildren;
-         if(param1.parent == this)
-         {
-            _loc2_--;
-         }
-         return addChildAt(param1,_loc2_);
-      }
-      
-      private function removeRemotePopUp(param1:RemotePopUp) : void
-      {
-         var _loc2_:int = forms.length;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            if(isRemotePopUp(forms[_loc3_]))
-            {
-               if(forms[_loc3_].window == param1.window && forms[_loc3_].bridge == param1.bridge)
-               {
-                  if(forms[_loc3_] == param1)
-                  {
-                     deactivateForm(param1);
-                  }
-                  forms.splice(_loc3_,1);
-                  break;
-               }
-            }
-            _loc3_++;
-         }
-      }
-      
-      private function deactivateRemotePopUp(param1:Object) : void
-      {
-         var _loc2_:SWFBridgeRequest = new SWFBridgeRequest(SWFBridgeRequest.DEACTIVATE_POP_UP_REQUEST,false,false,param1.bridge,param1.window);
-         var _loc3_:Object = param1.bridge;
-         if(_loc3_)
-         {
-            _loc3_.dispatchEvent(_loc2_);
-         }
-      }
-      
-      override public function getChildIndex(param1:DisplayObject) : int
-      {
-         return super.getChildIndex(param1) - applicationIndex;
-      }
-      
-      mx_internal function rawChildren_getChildIndex(param1:DisplayObject) : int
-      {
-         return super.getChildIndex(param1);
-      }
-      
-      public function activate(param1:IFocusManagerContainer) : void
-      {
-         activateForm(param1);
-      }
-      
-      public function getSandboxRoot() : DisplayObject
-      {
-         var parent:DisplayObject = null;
-         var lastParent:DisplayObject = null;
-         var loader:Loader = null;
-         var loaderInfo:LoaderInfo = null;
-         var sm:mx.managers.ISystemManager = this;
-         try
-         {
-            if(sm.topLevelSystemManager)
-            {
-               sm = sm.topLevelSystemManager;
-            }
-            parent = DisplayObject(sm).parent;
-            if(parent is Stage)
-            {
-               return DisplayObject(sm);
-            }
-            if(Boolean(parent) && !parent.dispatchEvent(new Event("mx.managers.SystemManager.isBootstrapRoot",false,true)))
-            {
-               return this;
-            }
-            lastParent = this;
-            while(parent)
-            {
-               if(parent is Stage)
-               {
-                  return lastParent;
-               }
-               if(!parent.dispatchEvent(new Event("mx.managers.SystemManager.isBootstrapRoot",false,true)))
-               {
-                  return lastParent;
-               }
-               if(parent is Loader)
-               {
-                  loader = Loader(parent);
-                  loaderInfo = loader.contentLoaderInfo;
-                  if(!loaderInfo.childAllowsParent)
-                  {
-                     return loaderInfo.content;
-                  }
-               }
-               if(parent.hasEventListener(InterManagerRequest.SYSTEM_MANAGER_REQUEST))
-               {
-                  lastParent = parent;
-               }
-               parent = parent.parent;
-            }
-         }
-         catch(error:Error)
-         {
-         }
-         return lastParent != null?lastParent:DisplayObject(sm);
-      }
-      
-      private function deferredNextFrame() : void
-      {
-         if(currentFrame + 1 > totalFrames)
-         {
-            return;
-         }
-         if(currentFrame + 1 <= framesLoaded)
-         {
-            nextFrame();
-         }
-         else
-         {
-            nextFrameTimer = new Timer(100);
-            nextFrameTimer.addEventListener(TimerEvent.TIMER,nextFrameTimerHandler);
-            nextFrameTimer.start();
-         }
-      }
-      
-      mx_internal function get cursorIndex() : int
-      {
-         return _cursorIndex;
-      }
-      
-      mx_internal function rawChildren_contains(param1:DisplayObject) : Boolean
-      {
-         return super.contains(param1);
-      }
-      
-      override public function setChildIndex(param1:DisplayObject, param2:int) : void
-      {
-         super.setChildIndex(param1,applicationIndex + param2);
-      }
-      
-      public function get document() : Object
-      {
-         return _document;
-      }
-      
-      private function resizeMouseCatcher() : void
-      {
-         var g:Graphics = null;
-         var s:Rectangle = null;
-         if(mouseCatcher)
-         {
-            try
-            {
-               g = mouseCatcher.graphics;
-               s = screen;
-               g.clear();
-               g.beginFill(0,0);
-               g.drawRect(0,0,s.width,s.height);
-               g.endFill();
-               return;
-            }
-            catch(e:SecurityError)
-            {
-               return;
-            }
-         }
-      }
-      
-      private function extraFrameListener(param1:Event) : void
-      {
-         if(lastFrame == currentFrame)
-         {
-            return;
-         }
-         lastFrame = currentFrame;
-         if(currentFrame + 1 > totalFrames)
-         {
-            removeEventListener(Event.ENTER_FRAME,extraFrameListener);
-         }
-         extraFrameHandler();
-      }
-      
-      private function addPopupRequestHandler(param1:Event) : void
-      {
-         var _loc3_:* = false;
-         var _loc4_:IChildList = null;
-         var _loc6_:ISWFBridgeProvider = null;
-         var _loc7_:SWFBridgeRequest = null;
-         if(param1.target != this && param1 is SWFBridgeRequest)
-         {
-            return;
-         }
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         if(param1.target != this)
-         {
-            _loc6_ = swfBridgeGroup.getChildBridgeProvider(IEventDispatcher(param1.target));
-            if(!SecurityUtil.hasMutualTrustBetweenParentAndChild(_loc6_))
-            {
-               return;
-            }
-         }
-         if(Boolean(swfBridgeGroup.parentBridge) && Boolean(SecurityUtil.hasMutualTrustBetweenParentAndChild(this)))
-         {
-            _loc2_.requestor = swfBridgeGroup.parentBridge;
-            getSandboxRoot().dispatchEvent(_loc2_);
-            return;
-         }
-         if(!_loc2_.data.childList || _loc2_.data.childList == PopUpManagerChildList.PARENT)
-         {
-            _loc3_ = Boolean(Boolean(_loc2_.data.parent) && Boolean(popUpChildren.contains(_loc2_.data.parent)));
-         }
-         else
-         {
-            _loc3_ = _loc2_.data.childList == PopUpManagerChildList.POPUP;
-         }
-         _loc4_ = !!_loc3_?popUpChildren:this;
-         _loc4_.addChild(DisplayObject(_loc2_.data.window));
-         if(_loc2_.data.modal)
-         {
-            numModalWindows++;
-         }
-         var _loc5_:RemotePopUp = new RemotePopUp(_loc2_.data.window,_loc2_.requestor);
-         forms.push(_loc5_);
-         if(!isTopLevelRoot() && Boolean(swfBridgeGroup))
-         {
-            _loc7_ = new SWFBridgeRequest(SWFBridgeRequest.ADD_POP_UP_PLACE_HOLDER_REQUEST,false,false,_loc2_.requestor,{"window":_loc2_.data.window});
-            _loc7_.data.placeHolderId = NameUtil.displayObjectToString(DisplayObject(_loc2_.data.window));
-            dispatchEvent(_loc7_);
-         }
-      }
-      
-      override public function get height() : Number
-      {
-         return _height;
-      }
-      
-      mx_internal function rawChildren_getChildAt(param1:int) : DisplayObject
-      {
-         return super.getChildAt(param1);
-      }
-      
-      private function systemManagerHandler(param1:Event) : void
-      {
-         if(param1["name"] == "sameSandbox")
-         {
-            param1["value"] = currentSandboxEvent == param1["value"];
-            return;
-         }
-         if(param1["name"] == "hasSWFBridges")
-         {
-            param1["value"] = hasSWFBridges();
-            return;
-         }
-         if(param1 is InterManagerRequest)
-         {
-            return;
-         }
-         var _loc2_:String = param1["name"];
-         switch(_loc2_)
-         {
-            case "popUpChildren.addChild":
-               popUpChildren.addChild(param1["value"]);
-               break;
-            case "popUpChildren.removeChild":
-               popUpChildren.removeChild(param1["value"]);
-               break;
-            case "cursorChildren.addChild":
-               cursorChildren.addChild(param1["value"]);
-               break;
-            case "cursorChildren.removeChild":
-               cursorChildren.removeChild(param1["value"]);
-               break;
-            case "toolTipChildren.addChild":
-               toolTipChildren.addChild(param1["value"]);
-               break;
-            case "toolTipChildren.removeChild":
-               toolTipChildren.removeChild(param1["value"]);
-               break;
-            case "screen":
-               param1["value"] = screen;
-               break;
-            case "application":
-               param1["value"] = application;
-               break;
-            case "isTopLevelRoot":
-               param1["value"] = isTopLevelRoot();
-               break;
-            case "getVisibleApplicationRect":
-               param1["value"] = getVisibleApplicationRect();
-               break;
-            case "bringToFront":
-               if(param1["value"].topMost)
-               {
-                  popUpChildren.setChildIndex(DisplayObject(param1["value"].popUp),popUpChildren.numChildren - 1);
-               }
-               else
-               {
-                  setChildIndex(DisplayObject(param1["value"].popUp),numChildren - 1);
-               }
-         }
-      }
-      
-      private function activateRemotePopUp(param1:Object) : void
-      {
-         var _loc2_:SWFBridgeRequest = new SWFBridgeRequest(SWFBridgeRequest.ACTIVATE_POP_UP_REQUEST,false,false,param1.bridge,param1.window);
-         var _loc3_:Object = param1.bridge;
-         if(_loc3_)
-         {
-            _loc3_.dispatchEvent(_loc2_);
-         }
-      }
-      
-      mx_internal function set noTopMostIndex(param1:int) : void
-      {
-         var _loc2_:int = param1 - _noTopMostIndex;
-         _noTopMostIndex = param1;
-         topMostIndex = topMostIndex + _loc2_;
-      }
-      
-      override public function getObjectsUnderPoint(param1:Point) : Array
-      {
-         var _loc5_:DisplayObject = null;
-         var _loc6_:Array = null;
-         var _loc2_:Array = [];
-         var _loc3_:int = topMostIndex;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc5_ = super.getChildAt(_loc4_);
-            if(_loc5_ is DisplayObjectContainer)
-            {
-               _loc6_ = DisplayObjectContainer(_loc5_).getObjectsUnderPoint(param1);
-               if(_loc6_)
-               {
-                  _loc2_ = _loc2_.concat(_loc6_);
-               }
-            }
-            _loc4_++;
-         }
-         return _loc2_;
-      }
-      
-      mx_internal function get topMostIndex() : int
-      {
-         return _topMostIndex;
-      }
-      
-      mx_internal function regenerateStyleCache(param1:Boolean) : void
-      {
-         var _loc5_:IStyleClient = null;
-         var _loc2_:Boolean = false;
-         var _loc3_:int = rawChildren.numChildren;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc5_ = rawChildren.getChildAt(_loc4_) as IStyleClient;
-            if(_loc5_)
-            {
-               _loc5_.regenerateStyleCache(param1);
-            }
-            if(isTopLevelWindow(DisplayObject(_loc5_)))
-            {
-               _loc2_ = true;
-            }
-            _loc3_ = rawChildren.numChildren;
-            _loc4_++;
-         }
-         if(!_loc2_ && topLevelWindow is IStyleClient)
-         {
-            IStyleClient(topLevelWindow).regenerateStyleCache(param1);
-         }
-      }
-      
-      public function addFocusManager(param1:IFocusManagerContainer) : void
-      {
-         forms.push(param1);
-      }
-      
-      private function deactivateFormSandboxEventHandler(param1:Event) : void
-      {
-         if(param1 is SWFBridgeRequest)
-         {
-            return;
-         }
-         var _loc2_:SWFBridgeEvent = SWFBridgeEvent.marshal(param1);
-         if(!forwardFormEvent(_loc2_))
-         {
-            if(Boolean(isRemotePopUp(form)) && RemotePopUp(form).window == _loc2_.data.window && RemotePopUp(form).bridge == _loc2_.data.notifier)
-            {
-               deactivateForm(form);
-            }
-         }
-      }
-      
-      public function set swfBridgeGroup(param1:ISWFBridgeGroup) : void
-      {
-         if(topLevel)
-         {
-            _swfBridgeGroup = param1;
-         }
-         else if(topLevelSystemManager)
-         {
-            SystemManager(topLevelSystemManager).swfBridgeGroup = param1;
-         }
-      }
-      
-      mx_internal function rawChildren_setChildIndex(param1:DisplayObject, param2:int) : void
-      {
-         super.setChildIndex(param1,param2);
-      }
-      
-      private function mouseUpHandler(param1:MouseEvent) : void
-      {
-         idleCounter = 0;
-      }
-      
-      mx_internal function childAdded(param1:DisplayObject) : void
-      {
-         param1.dispatchEvent(new FlexEvent(FlexEvent.ADD));
-         if(param1 is IUIComponent)
-         {
-            IUIComponent(param1).initialize();
-         }
-      }
-      
-      public function isFontFaceEmbedded(param1:TextFormat) : Boolean
-      {
-         var _loc6_:Font = null;
-         var _loc7_:String = null;
-         var _loc2_:String = param1.font;
-         var _loc3_:Array = Font.enumerateFonts();
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_.length)
-         {
-            _loc6_ = Font(_loc3_[_loc4_]);
-            if(_loc6_.fontName == _loc2_)
-            {
-               _loc7_ = "regular";
-               if(Boolean(param1.bold) && Boolean(param1.italic))
-               {
-                  _loc7_ = "boldItalic";
-               }
-               else if(param1.bold)
-               {
-                  _loc7_ = "bold";
-               }
-               else if(param1.italic)
-               {
-                  _loc7_ = "italic";
-               }
-               if(_loc6_.fontStyle == _loc7_)
-               {
-                  return true;
-               }
-            }
-            _loc4_++;
-         }
-         if(!_loc2_ || !embeddedFontList || !embeddedFontList[_loc2_])
-         {
-            return false;
-         }
-         var _loc5_:Object = embeddedFontList[_loc2_];
-         return !(Boolean(param1.bold) && !_loc5_.bold || Boolean(param1.italic) && !_loc5_.italic || !param1.bold && !param1.italic && !_loc5_.regular);
-      }
-      
-      private function forwardPlaceholderRequest(param1:SWFBridgeRequest, param2:Boolean) : Boolean
-      {
-         if(isTopLevelRoot())
-         {
-            return false;
-         }
-         var _loc3_:Object = null;
-         var _loc4_:String = null;
-         if(param1.data.window)
-         {
-            _loc3_ = param1.data.window;
-            param1.data.window = null;
-         }
-         else
-         {
-            _loc3_ = param1.requestor;
-            _loc4_ = param1.data.placeHolderId;
-            param1.data.placeHolderId = NameUtil.displayObjectToString(this) + "." + param1.data.placeHolderId;
-         }
-         if(param2)
-         {
-            addPlaceholderId(param1.data.placeHolderId,_loc4_,param1.requestor,_loc3_);
-         }
-         else
-         {
-            removePlaceholderId(param1.data.placeHolderId);
-         }
-         var _loc5_:DisplayObject = getSandboxRoot();
-         var _loc6_:IEventDispatcher = swfBridgeGroup.parentBridge;
-         param1.requestor = _loc6_;
-         if(_loc5_ == this)
-         {
-            _loc6_.dispatchEvent(param1);
-         }
-         else
-         {
-            _loc5_.dispatchEvent(param1);
-         }
-         return true;
-      }
-      
-      public function getTopLevelRoot() : DisplayObject
-      {
-         var sm:mx.managers.ISystemManager = null;
-         var parent:DisplayObject = null;
-         var lastParent:DisplayObject = null;
-         try
-         {
-            sm = this;
-            if(sm.topLevelSystemManager)
-            {
-               sm = sm.topLevelSystemManager;
-            }
-            parent = DisplayObject(sm).parent;
-            lastParent = parent;
-            while(parent)
-            {
-               if(parent is Stage)
-               {
-                  return lastParent;
-               }
-               lastParent = parent;
-               parent = parent.parent;
-            }
-         }
-         catch(error:SecurityError)
-         {
-         }
-         return null;
-      }
-      
-      override public function removeEventListener(param1:String, param2:Function, param3:Boolean = false) : void
-      {
-         var actualType:String = null;
-         var type:String = param1;
-         var listener:Function = param2;
-         var useCapture:Boolean = param3;
-         if(type == FlexEvent.RENDER || type == FlexEvent.ENTER_FRAME)
-         {
-            if(type == FlexEvent.RENDER)
-            {
-               type = Event.RENDER;
-            }
-            else
-            {
-               type = Event.ENTER_FRAME;
-            }
-            try
-            {
-               if(stage)
-               {
-                  stage.removeEventListener(type,listener,useCapture);
-               }
-            }
-            catch(error:SecurityError)
-            {
-            }
-            super.removeEventListener(type,listener,useCapture);
-            return;
-         }
-         if(Boolean(hasSWFBridges()) || SystemManagerGlobals.topLevelSystemManagers.length > 1)
-         {
-            actualType = EventUtil.sandboxMouseEventMap[type];
-            if(actualType)
-            {
-               if(getSandboxRoot() == this && Boolean(eventProxy))
-               {
-                  super.removeEventListener(actualType,eventProxy.marshalListener,useCapture);
-                  if(actualType == MouseEvent.MOUSE_UP)
-                  {
-                     try
-                     {
-                        if(stage)
+                
+                if (isRemotePopUp(forms[_loc_3]))
+                {
+                    if (forms[_loc_3].window == param1.window && forms[_loc_3].bridge == param1.bridge)
+                    {
+                        if (forms[_loc_3] == param1)
                         {
-                           stage.removeEventListener(Event.MOUSE_LEAVE,eventProxy.marshalListener,useCapture);
+                            deactivateForm(param1);
                         }
-                     }
-                     catch(e:SecurityError)
-                     {
-                     }
-                     super.removeEventListener(Event.MOUSE_LEAVE,eventProxy.marshalListener,useCapture);
-                  }
-               }
-               if(!SystemManagerGlobals.changingListenersInOtherSystemManagers)
-               {
-                  removeEventListenerFromOtherSystemManagers(type,otherSystemManagerMouseListener,useCapture);
-               }
-               removeEventListenerFromSandboxes(type,sandboxMouseListener,useCapture);
-               super.removeEventListener(type,listener,false);
-               return;
+                        forms.splice(_loc_3, 1);
+                        break;
+                    }
+                }
+                _loc_3++;
             }
-         }
-         if(type == FlexEvent.IDLE)
-         {
-            super.removeEventListener(type,listener,useCapture);
-            if(!hasEventListener(FlexEvent.IDLE) && Boolean(idleTimer))
-            {
-               idleTimer.stop();
-               idleTimer = null;
-               removeEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler);
-               removeEventListener(MouseEvent.MOUSE_UP,mouseUpHandler);
-            }
-         }
-         else
-         {
-            super.removeEventListener(type,listener,useCapture);
-         }
-         if(type == MouseEvent.MOUSE_MOVE || type == MouseEvent.MOUSE_UP || type == MouseEvent.MOUSE_DOWN || type == Event.ACTIVATE || type == Event.DEACTIVATE)
-         {
-            if(!hasEventListener(type))
-            {
-               try
-               {
-                  if(stage)
-                  {
-                     stage.removeEventListener(type,stageEventHandler,false);
-                  }
-               }
-               catch(error:SecurityError)
-               {
-               }
-            }
-         }
-         if(type == SandboxMouseEvent.MOUSE_UP_SOMEWHERE)
-         {
-            if(!hasEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE))
-            {
-               try
-               {
-                  if(stage)
-                  {
-                     stage.removeEventListener(Event.MOUSE_LEAVE,mouseLeaveHandler);
-                  }
-               }
-               catch(error:SecurityError)
-               {
-               }
-               super.removeEventListener(Event.MOUSE_LEAVE,mouseLeaveHandler);
-            }
-         }
-      }
-      
-      private function extraFrameHandler(param1:Event = null) : void
-      {
-         var _loc3_:Class = null;
-         var _loc2_:Object = info()["frames"];
-         if(Boolean(_loc2_) && Boolean(_loc2_[currentLabel]))
-         {
-            _loc3_ = Class(getDefinitionByName(_loc2_[currentLabel]));
-            _loc3_["frame"](this);
-         }
-         deferredNextFrame();
-      }
-      
-      public function isTopLevelRoot() : Boolean
-      {
-         return Boolean(isStageRoot) || Boolean(isBootstrapRoot);
-      }
-      
-      public function get application() : IUIComponent
-      {
-         return IUIComponent(_document);
-      }
-      
-      override public function removeChildAt(param1:int) : DisplayObject
-      {
-         noTopMostIndex--;
-         return rawChildren_removeChildAt(applicationIndex + param1);
-      }
-      
-      mx_internal function rawChildren_removeChildAt(param1:int) : DisplayObject
-      {
-         var _loc2_:DisplayObject = super.getChildAt(param1);
-         removingChild(_loc2_);
-         super.removeChildAt(param1);
-         childRemoved(_loc2_);
-         return _loc2_;
-      }
-      
-      private function getSWFBridgeOfDisplayObject(param1:DisplayObject) : IEventDispatcher
-      {
-         var _loc2_:SWFBridgeRequest = null;
-         var _loc3_:Array = null;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:IEventDispatcher = null;
-         var _loc7_:ISWFBridgeProvider = null;
-         if(swfBridgeGroup)
-         {
-            _loc2_ = new SWFBridgeRequest(SWFBridgeRequest.IS_BRIDGE_CHILD_REQUEST,false,false,null,param1);
-            _loc3_ = swfBridgeGroup.getChildBridges();
-            _loc4_ = _loc3_.length;
-            _loc5_ = 0;
-            while(_loc5_ < _loc4_)
-            {
-               _loc6_ = IEventDispatcher(_loc3_[_loc5_]);
-               _loc7_ = swfBridgeGroup.getChildBridgeProvider(_loc6_);
-               if(SecurityUtil.hasMutualTrustBetweenParentAndChild(_loc7_))
-               {
-                  _loc6_.dispatchEvent(_loc2_);
-                  if(_loc2_.data == true)
-                  {
-                     return _loc6_;
-                  }
-                  _loc2_.data = param1;
-               }
-               _loc5_++;
-            }
-         }
-         return null;
-      }
-      
-      private function deactivateRequestHandler(param1:Event) : void
-      {
-         var _loc5_:PlaceholderData = null;
-         var _loc6_:RemotePopUp = null;
-         var _loc7_:SystemManagerProxy = null;
-         var _loc8_:IFocusManagerContainer = null;
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         var _loc3_:Object = _loc2_.data;
-         var _loc4_:String = null;
-         if(_loc2_.data is String)
-         {
-            _loc5_ = idToPlaceholder[_loc2_.data];
-            _loc3_ = _loc5_.data;
-            _loc4_ = _loc5_.id;
-            if(_loc4_ == null)
-            {
-               _loc6_ = findRemotePopUp(_loc3_,_loc5_.bridge);
-               if(_loc6_)
-               {
-                  deactivateRemotePopUp(_loc6_);
-                  return;
-               }
-            }
-         }
-         if(_loc3_ is SystemManagerProxy)
-         {
-            _loc7_ = SystemManagerProxy(_loc3_);
-            _loc8_ = findFocusManagerContainer(_loc7_);
-            if(Boolean(_loc7_) && Boolean(_loc8_))
-            {
-               _loc7_.deactivateByProxy(_loc8_);
-            }
-         }
-         else if(_loc3_ is IFocusManagerContainer)
-         {
-            IFocusManagerContainer(_loc3_).focusManager.deactivate();
-         }
-         else
-         {
-            if(_loc3_ is IEventDispatcher)
-            {
-               _loc2_.data = _loc4_;
-               _loc2_.requestor = IEventDispatcher(_loc3_);
-               IEventDispatcher(_loc3_).dispatchEvent(_loc2_);
-               return;
-            }
-            throw new Error();
-         }
-      }
-      
-      private function installCompiledResourceBundles() : void
-      {
-         var _loc1_:Object = this.info();
-         var _loc2_:ApplicationDomain = !topLevel && parent is Loader?Loader(parent).contentLoaderInfo.applicationDomain:_loc1_["currentDomain"];
-         var _loc3_:Array = _loc1_["compiledLocales"];
-         var _loc4_:Array = _loc1_["compiledResourceBundleNames"];
-         var _loc5_:IResourceManager = ResourceManager.getInstance();
-         _loc5_.installCompiledResourceBundles(_loc2_,_loc3_,_loc4_);
-         if(!_loc5_.localeChain)
-         {
-            _loc5_.initializeLocaleChain(_loc3_);
-         }
-      }
-      
-      private function deactivateForm(param1:Object) : void
-      {
-         if(form)
-         {
-            if(form == param1 && forms.length > 1)
-            {
-               if(isRemotePopUp(form))
-               {
-                  deactivateRemotePopUp(form);
-               }
-               else
-               {
-                  form.focusManager.deactivate();
-               }
-               form = findLastActiveForm(param1);
-               if(form)
-               {
-                  if(isRemotePopUp(form))
-                  {
-                     activateRemotePopUp(form);
-                  }
-                  else
-                  {
-                     form.focusManager.activate();
-                  }
-               }
-            }
-         }
-      }
-      
-      private function unloadHandler(param1:Event) : void
-      {
-         dispatchEvent(param1);
-      }
-      
-      mx_internal function removingChild(param1:DisplayObject) : void
-      {
-         param1.dispatchEvent(new FlexEvent(FlexEvent.REMOVE));
-      }
-      
-      mx_internal function get applicationIndex() : int
-      {
-         return _applicationIndex;
-      }
-      
-      mx_internal function set toolTipIndex(param1:int) : void
-      {
-         var _loc2_:int = param1 - _toolTipIndex;
-         _toolTipIndex = param1;
-         cursorIndex = cursorIndex + _loc2_;
-      }
-      
-      private function hasSWFBridges() : Boolean
-      {
-         if(swfBridgeGroup)
-         {
-            return true;
-         }
-         return false;
-      }
-      
-      private function updateLastActiveForm() : void
-      {
-         var _loc1_:int = forms.length;
-         if(_loc1_ < 2)
-         {
             return;
-         }
-         var _loc2_:int = -1;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc1_)
-         {
-            if(areFormsEqual(form,forms[_loc3_]))
+        }// end function
+
+        private function deactivateRemotePopUp(param1:Object) : void
+        {
+            var _loc_2:* = new SWFBridgeRequest(SWFBridgeRequest.DEACTIVATE_POP_UP_REQUEST, false, false, param1.bridge, param1.window);
+            var _loc_3:* = param1.bridge;
+            if (_loc_3)
             {
-               _loc2_ = _loc3_;
-               break;
+                _loc_3.dispatchEvent(_loc_2);
             }
-            _loc3_++;
-         }
-         if(_loc2_ >= 0)
-         {
-            forms.splice(_loc2_,1);
-            forms.push(form);
-         }
-      }
-      
-      mx_internal function set bridgeToFocusManager(param1:Dictionary) : void
-      {
-         if(topLevel)
-         {
-            _bridgeToFocusManager = param1;
-         }
-         else if(topLevelSystemManager)
-         {
-            SystemManager(topLevelSystemManager).bridgeToFocusManager = param1;
-         }
-      }
-      
-      public function get cursorChildren() : IChildList
-      {
-         if(!topLevel)
-         {
-            return _topLevelSystemManager.cursorChildren;
-         }
-         if(!_cursorChildren)
-         {
-            _cursorChildren = new mx.managers.SystemChildrenList(this,new QName(mx_internal,"toolTipIndex"),new QName(mx_internal,"cursorIndex"));
-         }
-         return _cursorChildren;
-      }
-      
-      private function sandboxMouseListener(param1:Event) : void
-      {
-         if(param1 is SandboxMouseEvent)
-         {
             return;
-         }
-         var _loc2_:Event = SandboxMouseEvent.marshal(param1);
-         dispatchEventFromSWFBridges(_loc2_,param1.target as IEventDispatcher);
-         var _loc3_:InterManagerRequest = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST);
-         _loc3_.name = "sameSandbox";
-         _loc3_.value = param1;
-         getSandboxRoot().dispatchEvent(_loc3_);
-         if(!_loc3_.value)
-         {
-            dispatchEvent(_loc2_);
-         }
-      }
-      
-      public function get preloaderBackgroundImage() : Object
-      {
-         return info()["backgroundImage"];
-      }
-      
-      public function set numModalWindows(param1:int) : void
-      {
-         _numModalWindows = param1;
-      }
-      
-      public function get preloaderBackgroundAlpha() : Number
-      {
-         return info()["backgroundAlpha"];
-      }
-      
-      mx_internal function rawChildren_getChildByName(param1:String) : DisplayObject
-      {
-         return super.getChildByName(param1);
-      }
-      
-      private function dispatchInvalidateRequest() : void
-      {
-         var _loc1_:IEventDispatcher = swfBridgeGroup.parentBridge;
-         var _loc2_:SWFBridgeRequest = new SWFBridgeRequest(SWFBridgeRequest.INVALIDATE_REQUEST,false,false,_loc1_,InvalidateRequestData.SIZE | InvalidateRequestData.DISPLAY_LIST);
-         _loc1_.dispatchEvent(_loc2_);
-      }
-      
-      public function allowDomain(... rest) : void
-      {
-      }
-      
-      public function get preloaderBackgroundColor() : uint
-      {
-         var _loc1_:* = info()["backgroundColor"];
-         if(_loc1_ == undefined)
-         {
-            return StyleManager.NOT_A_COLOR;
-         }
-         return StyleManager.getColorName(_loc1_);
-      }
-      
-      public function getVisibleApplicationRect(param1:Rectangle = null) : Rectangle
-      {
-         var _loc2_:Rectangle = null;
-         var _loc3_:Point = null;
-         var _loc4_:IEventDispatcher = null;
-         var _loc5_:SWFBridgeRequest = null;
-         if(!param1)
-         {
-            param1 = getBounds(DisplayObject(this));
-            _loc2_ = screen;
-            _loc3_ = new Point(Math.max(0,param1.x),Math.max(0,param1.y));
-            _loc3_ = localToGlobal(_loc3_);
-            param1.x = _loc3_.x;
-            param1.y = _loc3_.y;
-            param1.width = _loc2_.width;
-            param1.height = _loc2_.height;
-         }
-         if(useSWFBridge())
-         {
-            _loc4_ = swfBridgeGroup.parentBridge;
-            _loc5_ = new SWFBridgeRequest(SWFBridgeRequest.GET_VISIBLE_RECT_REQUEST,false,false,_loc4_,param1);
-            _loc4_.dispatchEvent(_loc5_);
-            param1 = Rectangle(_loc5_.data);
-         }
-         return param1;
-      }
-      
-      public function get topLevelSystemManager() : mx.managers.ISystemManager
-      {
-         if(topLevel)
-         {
-            return this;
-         }
-         return _topLevelSystemManager;
-      }
-      
-      private function appCreationCompleteHandler(param1:FlexEvent) : void
-      {
-         var _loc2_:DisplayObjectContainer = null;
-         if(!topLevel && Boolean(parent))
-         {
-            _loc2_ = parent.parent;
-            while(_loc2_)
-            {
-               if(_loc2_ is IInvalidating)
-               {
-                  IInvalidating(_loc2_).invalidateSize();
-                  IInvalidating(_loc2_).invalidateDisplayList();
-                  return;
-               }
-               _loc2_ = _loc2_.parent;
-            }
-         }
-         if(Boolean(topLevel) && Boolean(useSWFBridge()))
-         {
-            dispatchInvalidateRequest();
-         }
-      }
-      
-      public function addChildToSandboxRoot(param1:String, param2:DisplayObject) : void
-      {
-         var _loc3_:InterManagerRequest = null;
-         if(getSandboxRoot() == this)
-         {
-            this[param1].addChild(param2);
-         }
-         else
-         {
-            addingChild(param2);
-            _loc3_ = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST);
-            _loc3_.name = param1 + ".addChild";
-            _loc3_.value = param2;
-            getSandboxRoot().dispatchEvent(_loc3_);
-            childAdded(param2);
-         }
-      }
-      
-      private function dispatchDeactivatedWindowEvent(param1:DisplayObject) : void
-      {
-         var _loc3_:DisplayObject = null;
-         var _loc4_:* = false;
-         var _loc5_:SWFBridgeEvent = null;
-         var _loc2_:IEventDispatcher = !!swfBridgeGroup?swfBridgeGroup.parentBridge:null;
-         if(_loc2_)
-         {
-            _loc3_ = getSandboxRoot();
-            _loc4_ = _loc3_ != this;
-            _loc5_ = new SWFBridgeEvent(SWFBridgeEvent.BRIDGE_WINDOW_DEACTIVATE,false,false,{
-               "notifier":_loc2_,
-               "window":(!!_loc4_?param1:NameUtil.displayObjectToString(param1))
-            });
-            if(_loc4_)
-            {
-               _loc3_.dispatchEvent(_loc5_);
-            }
-            else
-            {
-               _loc2_.dispatchEvent(_loc5_);
-            }
-         }
-      }
-      
-      private function isBridgeChildHandler(param1:Event) : void
-      {
-         if(param1 is SWFBridgeRequest)
-         {
+        }// end function
+
+        override public function getChildIndex(param1:DisplayObject) : int
+        {
+            return super.getChildIndex(param1) - applicationIndex;
+        }// end function
+
+        function rawChildren_getChildIndex(param1:DisplayObject) : int
+        {
+            return super.getChildIndex(param1);
+        }// end function
+
+        public function activate(param1:IFocusManagerContainer) : void
+        {
+            activateForm(param1);
             return;
-         }
-         var _loc2_:Object = Object(param1);
-         _loc2_.data = _loc2_.data && rawChildren.contains(_loc2_.data as DisplayObject);
-      }
-      
-      public function get measuredHeight() : Number
-      {
-         return !!topLevelWindow?Number(topLevelWindow.getExplicitOrMeasuredHeight()):Number(loaderInfo.height);
-      }
-      
-      private function activateRequestHandler(param1:Event) : void
-      {
-         var _loc5_:PlaceholderData = null;
-         var _loc6_:RemotePopUp = null;
-         var _loc7_:SystemManagerProxy = null;
-         var _loc8_:IFocusManagerContainer = null;
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         var _loc3_:Object = _loc2_.data;
-         var _loc4_:String = null;
-         if(_loc2_.data is String)
-         {
-            _loc5_ = idToPlaceholder[_loc2_.data];
-            _loc3_ = _loc5_.data;
-            _loc4_ = _loc5_.id;
-            if(_loc4_ == null)
-            {
-               _loc6_ = findRemotePopUp(_loc3_,_loc5_.bridge);
-               if(_loc6_)
-               {
-                  activateRemotePopUp(_loc6_);
-                  return;
-               }
-            }
-         }
-         if(_loc3_ is SystemManagerProxy)
-         {
-            _loc7_ = SystemManagerProxy(_loc3_);
-            _loc8_ = findFocusManagerContainer(_loc7_);
-            if(Boolean(_loc7_) && Boolean(_loc8_))
-            {
-               _loc7_.activateByProxy(_loc8_);
-            }
-         }
-         else if(_loc3_ is IFocusManagerContainer)
-         {
-            IFocusManagerContainer(_loc3_).focusManager.activate();
-         }
-         else if(_loc3_ is IEventDispatcher)
-         {
-            _loc2_.data = _loc4_;
-            _loc2_.requestor = IEventDispatcher(_loc3_);
-            IEventDispatcher(_loc3_).dispatchEvent(_loc2_);
-         }
-         else
-         {
-            throw new Error();
-         }
-      }
-      
-      mx_internal function rawChildren_addChildAt(param1:DisplayObject, param2:int) : DisplayObject
-      {
-         addingChild(param1);
-         super.addChildAt(param1,param2);
-         childAdded(param1);
-         return param1;
-      }
-      
-      mx_internal function initialize() : void
-      {
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc9_:EmbeddedFontRegistry = null;
-         var _loc13_:String = null;
-         var _loc14_:Class = null;
-         var _loc15_:Object = null;
-         var _loc16_:RSLItem = null;
-         if(isStageRoot)
-         {
-            _width = stage.stageWidth;
-            _height = stage.stageHeight;
-         }
-         else
-         {
-            _width = loaderInfo.width;
-            _height = loaderInfo.height;
-         }
-         preloader = new Preloader();
-         preloader.addEventListener(FlexEvent.INIT_PROGRESS,preloader_initProgressHandler);
-         preloader.addEventListener(FlexEvent.PRELOADER_DONE,preloader_preloaderDoneHandler);
-         preloader.addEventListener(RSLEvent.RSL_COMPLETE,preloader_rslCompleteHandler);
-         if(!_popUpChildren)
-         {
-            _popUpChildren = new mx.managers.SystemChildrenList(this,new QName(mx_internal,"noTopMostIndex"),new QName(mx_internal,"topMostIndex"));
-         }
-         _popUpChildren.addChild(preloader);
-         var _loc1_:Array = info()["rsls"];
-         var _loc2_:Array = info()["cdRsls"];
-         var _loc3_:Boolean = true;
-         if(info()["usePreloader"] != undefined)
-         {
-            _loc3_ = info()["usePreloader"];
-         }
-         var _loc4_:Class = info()["preloader"] as Class;
-         if(Boolean(_loc3_) && !_loc4_)
-         {
-            _loc4_ = DownloadProgressBar;
-         }
-         var _loc5_:Array = [];
-         if(Boolean(_loc2_) && _loc2_.length > 0)
-         {
-            _loc13_ = LoaderUtil.normalizeURL(this.loaderInfo);
-            _loc14_ = Class(getDefinitionByName("mx.core::CrossDomainRSLItem"));
-            _loc6_ = _loc2_.length;
-            _loc7_ = 0;
-            while(_loc7_ < _loc6_)
-            {
-               _loc15_ = new _loc14_(_loc2_[_loc7_]["rsls"],_loc2_[_loc7_]["policyFiles"],_loc2_[_loc7_]["digests"],_loc2_[_loc7_]["types"],_loc2_[_loc7_]["isSigned"],_loc13_,this);
-               _loc5_.push(_loc15_);
-               _loc7_++;
-            }
-         }
-         if(_loc1_ != null && _loc1_.length > 0)
-         {
-            if(_loc13_ == null)
-            {
-               _loc13_ = LoaderUtil.normalizeURL(this.loaderInfo);
-            }
-            _loc6_ = _loc1_.length;
-            _loc7_ = 0;
-            while(_loc7_ < _loc6_)
-            {
-               _loc16_ = new RSLItem(_loc1_[_loc7_].url,_loc13_,this);
-               _loc5_.push(_loc16_);
-               _loc7_++;
-            }
-         }
-         Singleton.registerClass("mx.resources::IResourceManager",Class(getDefinitionByName("mx.resources::ResourceManagerImpl")));
-         var _loc8_:IResourceManager = ResourceManager.getInstance();
-         Singleton.registerClass("mx.core::IEmbeddedFontRegistry",Class(getDefinitionByName("mx.core::EmbeddedFontRegistry")));
-         Singleton.registerClass("mx.styles::IStyleManager",Class(getDefinitionByName("mx.styles::StyleManagerImpl")));
-         Singleton.registerClass("mx.styles::IStyleManager2",Class(getDefinitionByName("mx.styles::StyleManagerImpl")));
-         var _loc10_:String = loaderInfo.parameters["localeChain"];
-         if(_loc10_ != null && _loc10_ != "")
-         {
-            _loc8_.localeChain = _loc10_.split(",");
-         }
-         var _loc11_:String = loaderInfo.parameters["resourceModuleURLs"];
-         var _loc12_:Array = !!_loc11_?_loc11_.split(","):null;
-         preloader.initialize(_loc3_,_loc4_,preloaderBackgroundColor,preloaderBackgroundAlpha,preloaderBackgroundImage,preloaderBackgroundSize,!!isStageRoot?Number(stage.stageWidth):Number(loaderInfo.width),!!isStageRoot?Number(stage.stageHeight):Number(loaderInfo.height),null,null,_loc5_,_loc12_);
-      }
-      
-      public function useSWFBridge() : Boolean
-      {
-         if(isStageRoot)
-         {
-            return false;
-         }
-         if(!topLevel && Boolean(topLevelSystemManager))
-         {
-            return topLevelSystemManager.useSWFBridge();
-         }
-         var sbRoot:DisplayObject = getSandboxRoot();
-         if(Boolean(topLevel) && sbRoot != this)
-         {
-            return true;
-         }
-         if(sbRoot == this)
-         {
+        }// end function
+
+        public function getSandboxRoot() : DisplayObject
+        {
+            var parent:DisplayObject;
+            var lastParent:DisplayObject;
+            var loader:Loader;
+            var loaderInfo:LoaderInfo;
+            var sm:ISystemManager;
             try
             {
-               root.loaderInfo.parentAllowsChild;
-               if(Boolean(parentAllowsChild) && Boolean(childAllowsParent))
-               {
-                  try
-                  {
-                     if(!parent.dispatchEvent(new Event("mx.managers.SystemManager.isStageRoot",false,true)))
-                     {
+                if (sm.topLevelSystemManager)
+                {
+                    sm = sm.topLevelSystemManager;
+                }
+                parent = DisplayObject(sm).parent;
+                if (parent is Stage)
+                {
+                    return DisplayObject(sm);
+                }
+                if (parent && !parent.dispatchEvent(new Event("mx.managers.SystemManager.isBootstrapRoot", false, true)))
+                {
+                    return this;
+                }
+                lastParent;
+                while (parent)
+                {
+                    
+                    if (parent is Stage)
+                    {
+                        return lastParent;
+                    }
+                    if (!parent.dispatchEvent(new Event("mx.managers.SystemManager.isBootstrapRoot", false, true)))
+                    {
+                        return lastParent;
+                    }
+                    if (parent is Loader)
+                    {
+                        loader = Loader(parent);
+                        loaderInfo = loader.contentLoaderInfo;
+                        if (!loaderInfo.childAllowsParent)
+                        {
+                            return loaderInfo.content;
+                        }
+                    }
+                    if (parent.hasEventListener(InterManagerRequest.SYSTEM_MANAGER_REQUEST))
+                    {
+                        lastParent = parent;
+                    }
+                    parent = parent.parent;
+                }
+            }
+            catch (error:Error)
+            {
+            }
+            return lastParent != null ? (lastParent) : (DisplayObject(sm));
+        }// end function
+
+        private function deferredNextFrame() : void
+        {
+            if ((currentFrame + 1) > totalFrames)
+            {
+                return;
+            }
+            if ((currentFrame + 1) <= framesLoaded)
+            {
+                nextFrame();
+            }
+            else
+            {
+                nextFrameTimer = new Timer(100);
+                nextFrameTimer.addEventListener(TimerEvent.TIMER, nextFrameTimerHandler);
+                nextFrameTimer.start();
+            }
+            return;
+        }// end function
+
+        function get cursorIndex() : int
+        {
+            return _cursorIndex;
+        }// end function
+
+        function rawChildren_contains(param1:DisplayObject) : Boolean
+        {
+            return super.contains(param1);
+        }// end function
+
+        override public function setChildIndex(param1:DisplayObject, param2:int) : void
+        {
+            super.setChildIndex(param1, applicationIndex + param2);
+            return;
+        }// end function
+
+        public function get document() : Object
+        {
+            return _document;
+        }// end function
+
+        private function resizeMouseCatcher() : void
+        {
+            var g:Graphics;
+            var s:Rectangle;
+            if (mouseCatcher)
+            {
+                try
+                {
+                    g = mouseCatcher.graphics;
+                    s = screen;
+                    g.clear();
+                    g.beginFill(0, 0);
+                    g.drawRect(0, 0, s.width, s.height);
+                    g.endFill();
+                }
+                catch (e:SecurityError)
+                {
+                }
+            }
+            return;
+        }// end function
+
+        private function extraFrameListener(event:Event) : void
+        {
+            if (lastFrame == currentFrame)
+            {
+                return;
+            }
+            lastFrame = currentFrame;
+            if ((currentFrame + 1) > totalFrames)
+            {
+                removeEventListener(Event.ENTER_FRAME, extraFrameListener);
+            }
+            extraFrameHandler();
+            return;
+        }// end function
+
+        private function addPopupRequestHandler(event:Event) : void
+        {
+            var _loc_3:* = false;
+            var _loc_4:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            if (event.target != this && event is SWFBridgeRequest)
+            {
+                return;
+            }
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            if (event.target != this)
+            {
+                _loc_6 = swfBridgeGroup.getChildBridgeProvider(IEventDispatcher(event.target));
+                if (!SecurityUtil.hasMutualTrustBetweenParentAndChild(_loc_6))
+                {
+                    return;
+                }
+            }
+            if (swfBridgeGroup.parentBridge && SecurityUtil.hasMutualTrustBetweenParentAndChild(this))
+            {
+                _loc_2.requestor = swfBridgeGroup.parentBridge;
+                getSandboxRoot().dispatchEvent(_loc_2);
+                return;
+            }
+            if (!_loc_2.data.childList || _loc_2.data.childList == PopUpManagerChildList.PARENT)
+            {
+                _loc_3 = _loc_2.data.parent && popUpChildren.contains(_loc_2.data.parent);
+            }
+            else
+            {
+                _loc_3 = _loc_2.data.childList == PopUpManagerChildList.POPUP;
+            }
+            _loc_4 = _loc_3 ? (popUpChildren) : (this);
+            _loc_4.addChild(DisplayObject(_loc_2.data.window));
+            if (_loc_2.data.modal)
+            {
+                var _loc_9:* = numModalWindows + 1;
+                numModalWindows = _loc_9;
+            }
+            var _loc_5:* = new RemotePopUp(_loc_2.data.window, _loc_2.requestor);
+            forms.push(_loc_5);
+            if (!isTopLevelRoot() && swfBridgeGroup)
+            {
+                _loc_7 = new SWFBridgeRequest(SWFBridgeRequest.ADD_POP_UP_PLACE_HOLDER_REQUEST, false, false, _loc_2.requestor, {window:_loc_2.data.window});
+                _loc_7.data.placeHolderId = NameUtil.displayObjectToString(DisplayObject(_loc_2.data.window));
+                dispatchEvent(_loc_7);
+            }
+            return;
+        }// end function
+
+        override public function get height() : Number
+        {
+            return _height;
+        }// end function
+
+        function rawChildren_getChildAt(param1:int) : DisplayObject
+        {
+            return super.getChildAt(param1);
+        }// end function
+
+        private function systemManagerHandler(event:Event) : void
+        {
+            if (event["name"] == "sameSandbox")
+            {
+                event["value"] = currentSandboxEvent == event["value"];
+                return;
+            }
+            if (event["name"] == "hasSWFBridges")
+            {
+                event["value"] = hasSWFBridges();
+                return;
+            }
+            if (event is InterManagerRequest)
+            {
+                return;
+            }
+            var _loc_2:* = event["name"];
+            switch(_loc_2)
+            {
+                case "popUpChildren.addChild":
+                {
+                    popUpChildren.addChild(event["value"]);
+                    break;
+                }
+                case "popUpChildren.removeChild":
+                {
+                    popUpChildren.removeChild(event["value"]);
+                    break;
+                }
+                case "cursorChildren.addChild":
+                {
+                    cursorChildren.addChild(event["value"]);
+                    break;
+                }
+                case "cursorChildren.removeChild":
+                {
+                    cursorChildren.removeChild(event["value"]);
+                    break;
+                }
+                case "toolTipChildren.addChild":
+                {
+                    toolTipChildren.addChild(event["value"]);
+                    break;
+                }
+                case "toolTipChildren.removeChild":
+                {
+                    toolTipChildren.removeChild(event["value"]);
+                    break;
+                }
+                case "screen":
+                {
+                    event["value"] = screen;
+                    break;
+                }
+                case "application":
+                {
+                    event["value"] = application;
+                    break;
+                }
+                case "isTopLevelRoot":
+                {
+                    event["value"] = isTopLevelRoot();
+                    break;
+                }
+                case "getVisibleApplicationRect":
+                {
+                    event["value"] = getVisibleApplicationRect();
+                    break;
+                }
+                case "bringToFront":
+                {
+                    if (event["value"].topMost)
+                    {
+                        popUpChildren.setChildIndex(DisplayObject(event["value"].popUp), (popUpChildren.numChildren - 1));
+                    }
+                    else
+                    {
+                        setChildIndex(DisplayObject(event["value"].popUp), (numChildren - 1));
+                    }
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            return;
+        }// end function
+
+        private function activateRemotePopUp(param1:Object) : void
+        {
+            var _loc_2:* = new SWFBridgeRequest(SWFBridgeRequest.ACTIVATE_POP_UP_REQUEST, false, false, param1.bridge, param1.window);
+            var _loc_3:* = param1.bridge;
+            if (_loc_3)
+            {
+                _loc_3.dispatchEvent(_loc_2);
+            }
+            return;
+        }// end function
+
+        function set noTopMostIndex(param1:int) : void
+        {
+            var _loc_2:* = param1 - _noTopMostIndex;
+            _noTopMostIndex = param1;
+            topMostIndex = topMostIndex + _loc_2;
+            return;
+        }// end function
+
+        override public function getObjectsUnderPoint(param1:Point) : Array
+        {
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_2:* = [];
+            var _loc_3:* = topMostIndex;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                _loc_5 = super.getChildAt(_loc_4);
+                if (_loc_5 is DisplayObjectContainer)
+                {
+                    _loc_6 = DisplayObjectContainer(_loc_5).getObjectsUnderPoint(param1);
+                    if (_loc_6)
+                    {
+                        _loc_2 = _loc_2.concat(_loc_6);
+                    }
+                }
+                _loc_4++;
+            }
+            return _loc_2;
+        }// end function
+
+        function get topMostIndex() : int
+        {
+            return _topMostIndex;
+        }// end function
+
+        function regenerateStyleCache(param1:Boolean) : void
+        {
+            var _loc_5:* = null;
+            var _loc_2:* = false;
+            var _loc_3:* = rawChildren.numChildren;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                _loc_5 = rawChildren.getChildAt(_loc_4) as IStyleClient;
+                if (_loc_5)
+                {
+                    _loc_5.regenerateStyleCache(param1);
+                }
+                if (isTopLevelWindow(DisplayObject(_loc_5)))
+                {
+                    _loc_2 = true;
+                }
+                _loc_3 = rawChildren.numChildren;
+                _loc_4++;
+            }
+            if (!_loc_2 && topLevelWindow is IStyleClient)
+            {
+                IStyleClient(topLevelWindow).regenerateStyleCache(param1);
+            }
+            return;
+        }// end function
+
+        public function addFocusManager(param1:IFocusManagerContainer) : void
+        {
+            forms.push(param1);
+            return;
+        }// end function
+
+        private function deactivateFormSandboxEventHandler(event:Event) : void
+        {
+            if (event is SWFBridgeRequest)
+            {
+                return;
+            }
+            var _loc_2:* = SWFBridgeEvent.marshal(event);
+            if (!forwardFormEvent(_loc_2))
+            {
+                if (isRemotePopUp(form) && RemotePopUp(form).window == _loc_2.data.window && RemotePopUp(form).bridge == _loc_2.data.notifier)
+                {
+                    deactivateForm(form);
+                }
+            }
+            return;
+        }// end function
+
+        public function set swfBridgeGroup(param1:ISWFBridgeGroup) : void
+        {
+            if (topLevel)
+            {
+                _swfBridgeGroup = param1;
+            }
+            else if (topLevelSystemManager)
+            {
+                SystemManager(topLevelSystemManager).swfBridgeGroup = param1;
+            }
+            return;
+        }// end function
+
+        function rawChildren_setChildIndex(param1:DisplayObject, param2:int) : void
+        {
+            super.setChildIndex(param1, param2);
+            return;
+        }// end function
+
+        private function mouseUpHandler(event:MouseEvent) : void
+        {
+            idleCounter = 0;
+            return;
+        }// end function
+
+        function childAdded(param1:DisplayObject) : void
+        {
+            param1.dispatchEvent(new FlexEvent(FlexEvent.ADD));
+            if (param1 is IUIComponent)
+            {
+                IUIComponent(param1).initialize();
+            }
+            return;
+        }// end function
+
+        public function isFontFaceEmbedded(param1:TextFormat) : Boolean
+        {
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_2:* = param1.font;
+            var _loc_3:* = Font.enumerateFonts();
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3.length)
+            {
+                
+                _loc_6 = Font(_loc_3[_loc_4]);
+                if (_loc_6.fontName == _loc_2)
+                {
+                    _loc_7 = "regular";
+                    if (param1.bold && param1.italic)
+                    {
+                        _loc_7 = "boldItalic";
+                    }
+                    else if (param1.bold)
+                    {
+                        _loc_7 = "bold";
+                    }
+                    else if (param1.italic)
+                    {
+                        _loc_7 = "italic";
+                    }
+                    if (_loc_6.fontStyle == _loc_7)
+                    {
                         return true;
-                     }
-                  }
-                  catch(e:Error)
-                  {
-                  }
-               }
-               else
-               {
-                  return true;
-               }
+                    }
+                }
+                _loc_4++;
             }
-            catch(e1:Error)
+            if (!_loc_2 || !embeddedFontList || !embeddedFontList[_loc_2])
             {
-               return false;
+                return false;
             }
-         }
-         return false;
-      }
-      
-      mx_internal function childRemoved(param1:DisplayObject) : void
-      {
-         if(param1 is IUIComponent)
-         {
-            IUIComponent(param1).parentChanged(null);
-         }
-      }
-      
-      mx_internal final function $removeChildAt(param1:int) : DisplayObject
-      {
-         return super.removeChildAt(param1);
-      }
-      
-      private function canActivatePopUp(param1:Object) : Boolean
-      {
-         var _loc2_:RemotePopUp = null;
-         var _loc3_:SWFBridgeRequest = null;
-         if(isRemotePopUp(param1))
-         {
-            _loc2_ = RemotePopUp(param1);
-            _loc3_ = new SWFBridgeRequest(SWFBridgeRequest.CAN_ACTIVATE_POP_UP_REQUEST,false,false,null,_loc2_.window);
-            IEventDispatcher(_loc2_.bridge).dispatchEvent(_loc3_);
-            return _loc3_.data;
-         }
-         if(canActivateLocalComponent(param1))
-         {
-            return true;
-         }
-         return false;
-      }
-      
-      mx_internal function get noTopMostIndex() : int
-      {
-         return _noTopMostIndex;
-      }
-      
-      override public function get numChildren() : int
-      {
-         return noTopMostIndex - applicationIndex;
-      }
-      
-      private function canActivateLocalComponent(param1:Object) : Boolean
-      {
-         if(param1 is Sprite && param1 is IUIComponent && Boolean(Sprite(param1).visible) && Boolean(IUIComponent(param1).enabled))
-         {
-            return true;
-         }
-         return false;
-      }
-      
-      private function preloader_preloaderDoneHandler(param1:Event) : void
-      {
-         var _loc2_:IUIComponent = topLevelWindow;
-         preloader.removeEventListener(FlexEvent.PRELOADER_DONE,preloader_preloaderDoneHandler);
-         preloader.removeEventListener(RSLEvent.RSL_COMPLETE,preloader_rslCompleteHandler);
-         _popUpChildren.removeChild(preloader);
-         preloader = null;
-         mouseCatcher = new FlexSprite();
-         mouseCatcher.name = "mouseCatcher";
-         noTopMostIndex++;
-         super.addChildAt(mouseCatcher,0);
-         resizeMouseCatcher();
-         if(!topLevel)
-         {
-            mouseCatcher.visible = false;
-            mask = mouseCatcher;
-         }
-         noTopMostIndex++;
-         super.addChildAt(DisplayObject(_loc2_),1);
-         _loc2_.dispatchEvent(new FlexEvent(FlexEvent.APPLICATION_COMPLETE));
-         dispatchEvent(new FlexEvent(FlexEvent.APPLICATION_COMPLETE));
-      }
-      
-      private function initializeTopLevelWindow(param1:Event) : void
-      {
-         var _loc2_:IUIComponent = null;
-         var _loc3_:DisplayObjectContainer = null;
-         var _loc4_:mx.managers.ISystemManager = null;
-         var _loc5_:DisplayObject = null;
-         initialized = true;
-         if(!parent && Boolean(parentAllowsChild))
-         {
-            return;
-         }
-         if(!topLevel)
-         {
-            if(!parent)
+            var _loc_5:* = embeddedFontList[_loc_2];
+            return !(param1.bold && !_loc_5.bold || param1.italic && !_loc_5.italic || !param1.bold && !param1.italic && !_loc_5.regular);
+        }// end function
+
+        private function forwardPlaceholderRequest(param1:SWFBridgeRequest, param2:Boolean) : Boolean
+        {
+            if (isTopLevelRoot())
             {
-               return;
+                return false;
             }
-            _loc3_ = parent.parent;
-            if(!_loc3_)
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            if (param1.data.window)
             {
-               return;
-            }
-            while(_loc3_)
-            {
-               if(_loc3_ is IUIComponent)
-               {
-                  _loc4_ = IUIComponent(_loc3_).systemManager;
-                  if(Boolean(_loc4_) && !_loc4_.isTopLevel())
-                  {
-                     _loc4_ = _loc4_.topLevelSystemManager;
-                  }
-                  _topLevelSystemManager = _loc4_;
-                  break;
-               }
-               _loc3_ = _loc3_.parent;
-            }
-         }
-         if(Boolean(isTopLevelRoot()) || getSandboxRoot() == this)
-         {
-            addEventListener(MouseEvent.MOUSE_DOWN,mouseDownHandler,true);
-         }
-         if(Boolean(isTopLevelRoot()) && Boolean(stage))
-         {
-            stage.addEventListener(Event.RESIZE,Stage_resizeHandler,false,0,true);
-         }
-         else if(Boolean(topLevel) && Boolean(stage))
-         {
-            _loc5_ = getSandboxRoot();
-            if(_loc5_ != this)
-            {
-               _loc5_.addEventListener(Event.RESIZE,Stage_resizeHandler,false,0,true);
-            }
-         }
-         document = _loc2_ = topLevelWindow = IUIComponent(create());
-         if(document)
-         {
-            IEventDispatcher(_loc2_).addEventListener(FlexEvent.CREATION_COMPLETE,appCreationCompleteHandler);
-            if(!LoaderConfig._url)
-            {
-               LoaderConfig._url = loaderInfo.url;
-               LoaderConfig._parameters = loaderInfo.parameters;
-               LoaderConfig._swfVersion = loaderInfo.swfVersion;
-            }
-            if(Boolean(isStageRoot) && Boolean(stage))
-            {
-               _width = stage.stageWidth;
-               _height = stage.stageHeight;
-               IFlexDisplayObject(_loc2_).setActualSize(_width,_height);
+                _loc_3 = param1.data.window;
+                param1.data.window = null;
             }
             else
             {
-               IFlexDisplayObject(_loc2_).setActualSize(loaderInfo.width,loaderInfo.height);
+                _loc_3 = param1.requestor;
+                _loc_4 = param1.data.placeHolderId;
+                param1.data.placeHolderId = NameUtil.displayObjectToString(this) + "." + param1.data.placeHolderId;
             }
-            if(preloader)
+            if (param2)
             {
-               preloader.registerApplication(_loc2_);
-            }
-            addingChild(DisplayObject(_loc2_));
-            childAdded(DisplayObject(_loc2_));
-         }
-         else
-         {
-            document = this;
-         }
-      }
-      
-      mx_internal final function $addChildAt(param1:DisplayObject, param2:int) : DisplayObject
-      {
-         return super.addChildAt(param1,param2);
-      }
-      
-      private function stageEventHandler(param1:Event) : void
-      {
-         if(param1.target is Stage && Boolean(mouseCatcher))
-         {
-            mouseCatcher.dispatchEvent(param1);
-         }
-      }
-      
-      private function nextFrameTimerHandler(param1:TimerEvent) : void
-      {
-         if(currentFrame + 1 <= framesLoaded)
-         {
-            nextFrame();
-            nextFrameTimer.removeEventListener(TimerEvent.TIMER,nextFrameTimerHandler);
-            nextFrameTimer.reset();
-         }
-      }
-      
-      mx_internal function get bridgeToFocusManager() : Dictionary
-      {
-         if(topLevel)
-         {
-            return _bridgeToFocusManager;
-         }
-         if(topLevelSystemManager)
-         {
-            return SystemManager(topLevelSystemManager).bridgeToFocusManager;
-         }
-         return null;
-      }
-      
-      public function get numModalWindows() : int
-      {
-         return _numModalWindows;
-      }
-      
-      private function areFormsEqual(param1:Object, param2:Object) : Boolean
-      {
-         if(param1 == param2)
-         {
-            return true;
-         }
-         if(param1 is RemotePopUp && param2 is RemotePopUp)
-         {
-            return areRemotePopUpsEqual(param1,param2);
-         }
-         return false;
-      }
-      
-      public function isTopLevelWindow(param1:DisplayObject) : Boolean
-      {
-         return param1 is IUIComponent && IUIComponent(param1) == topLevelWindow;
-      }
-      
-      private function removePlaceholderId(param1:String) : void
-      {
-         delete idToPlaceholder[param1];
-      }
-      
-      mx_internal function dispatchActivatedWindowEvent(param1:DisplayObject) : void
-      {
-         var _loc3_:DisplayObject = null;
-         var _loc4_:* = false;
-         var _loc5_:SWFBridgeEvent = null;
-         var _loc2_:IEventDispatcher = !!swfBridgeGroup?swfBridgeGroup.parentBridge:null;
-         if(_loc2_)
-         {
-            _loc3_ = getSandboxRoot();
-            _loc4_ = _loc3_ != this;
-            _loc5_ = new SWFBridgeEvent(SWFBridgeEvent.BRIDGE_WINDOW_ACTIVATE,false,false,{
-               "notifier":_loc2_,
-               "window":(!!_loc4_?param1:NameUtil.displayObjectToString(param1))
-            });
-            if(_loc4_)
-            {
-               _loc3_.dispatchEvent(_loc5_);
+                addPlaceholderId(param1.data.placeHolderId, _loc_4, param1.requestor, _loc_3);
             }
             else
             {
-               _loc2_.dispatchEvent(_loc5_);
+                removePlaceholderId(param1.data.placeHolderId);
             }
-         }
-      }
-      
-      override public function get width() : Number
-      {
-         return _width;
-      }
-      
-      private function dispatchActivatedApplicationEvent() : void
-      {
-         var _loc2_:SWFBridgeEvent = null;
-         var _loc1_:IEventDispatcher = !!swfBridgeGroup?swfBridgeGroup.parentBridge:null;
-         if(_loc1_)
-         {
-            _loc2_ = new SWFBridgeEvent(SWFBridgeEvent.BRIDGE_APPLICATION_ACTIVATE,false,false);
-            _loc1_.dispatchEvent(_loc2_);
-         }
-      }
-      
-      private function otherSystemManagerMouseListener(param1:SandboxMouseEvent) : void
-      {
-         if(SystemManagerGlobals.dispatchingEventToOtherSystemManagers)
-         {
-            return;
-         }
-         dispatchEventFromSWFBridges(param1);
-         var _loc2_:InterManagerRequest = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST);
-         _loc2_.name = "sameSandbox";
-         _loc2_.value = param1;
-         getSandboxRoot().dispatchEvent(_loc2_);
-         if(!_loc2_.value)
-         {
-            dispatchEvent(param1);
-         }
-      }
-      
-      private function hideMouseCursorRequestHandler(param1:Event) : void
-      {
-         var _loc3_:IEventDispatcher = null;
-         if(!isTopLevelRoot() && param1 is SWFBridgeRequest)
-         {
-            return;
-         }
-         var _loc2_:SWFBridgeRequest = SWFBridgeRequest.marshal(param1);
-         if(!isTopLevelRoot())
-         {
-            _loc3_ = swfBridgeGroup.parentBridge;
-            _loc2_.requestor = _loc3_;
-            _loc3_.dispatchEvent(_loc2_);
-         }
-         else if(eventProxy)
-         {
-            SystemManagerGlobals.showMouseCursor = false;
-         }
-      }
-      
-      private function getTopLevelSystemManager(param1:DisplayObject) : mx.managers.ISystemManager
-      {
-         var _loc3_:mx.managers.ISystemManager = null;
-         var _loc2_:DisplayObjectContainer = DisplayObjectContainer(param1.root);
-         if((!_loc2_ || _loc2_ is Stage) && param1 is IUIComponent)
-         {
-            _loc2_ = DisplayObjectContainer(IUIComponent(param1).systemManager);
-         }
-         if(_loc2_ is mx.managers.ISystemManager)
-         {
-            _loc3_ = ISystemManager(_loc2_);
-            if(!_loc3_.isTopLevel())
+            var _loc_5:* = getSandboxRoot();
+            var _loc_6:* = swfBridgeGroup.parentBridge;
+            param1.requestor = _loc_6;
+            if (_loc_5 == this)
             {
-               _loc3_ = _loc3_.topLevelSystemManager;
+                _loc_6.dispatchEvent(param1);
             }
-         }
-         return _loc3_;
-      }
-      
-      public function isDisplayObjectInABridgedApplication(param1:DisplayObject) : Boolean
-      {
-         return getSWFBridgeOfDisplayObject(param1) != null;
-      }
-      
-      public function move(param1:Number, param2:Number) : void
-      {
-      }
-      
-      public function set explicitWidth(param1:Number) : void
-      {
-         _explicitWidth = param1;
-      }
-      
-      public function get parentAllowsChild() : Boolean
-      {
-         try
-         {
-            return loaderInfo.parentAllowsChild;
-         }
-         catch(error:Error)
-         {
-         }
-         return false;
-      }
-      
-      private function preloader_initProgressHandler(param1:Event) : void
-      {
-         preloader.removeEventListener(FlexEvent.INIT_PROGRESS,preloader_initProgressHandler);
-         deferredNextFrame();
-      }
-      
-      private function mouseLeaveHandler(param1:Event) : void
-      {
-         dispatchEvent(new SandboxMouseEvent(SandboxMouseEvent.MOUSE_UP_SOMEWHERE));
-      }
-      
-      public function get explicitWidth() : Number
-      {
-         return _explicitWidth;
-      }
-      
-      private function activateFormSandboxEventHandler(param1:Event) : void
-      {
-         var _loc2_:SWFBridgeEvent = SWFBridgeEvent.marshal(param1);
-         if(!forwardFormEvent(_loc2_))
-         {
-            activateForm(new RemotePopUp(_loc2_.data.window,_loc2_.data.notifier));
-         }
-      }
-      
-      mx_internal function rawChildren_addChild(param1:DisplayObject) : DisplayObject
-      {
-         addingChild(param1);
-         super.addChild(param1);
-         childAdded(param1);
-         return param1;
-      }
-   }
+            else
+            {
+                _loc_5.dispatchEvent(param1);
+            }
+            return true;
+        }// end function
+
+        public function getTopLevelRoot() : DisplayObject
+        {
+            var sm:ISystemManager;
+            var parent:DisplayObject;
+            var lastParent:DisplayObject;
+            try
+            {
+                sm;
+                if (sm.topLevelSystemManager)
+                {
+                    sm = sm.topLevelSystemManager;
+                }
+                parent = DisplayObject(sm).parent;
+                lastParent = parent;
+                while (parent)
+                {
+                    
+                    if (parent is Stage)
+                    {
+                        return lastParent;
+                    }
+                    lastParent = parent;
+                    parent = parent.parent;
+                }
+            }
+            catch (error:SecurityError)
+            {
+            }
+            return null;
+        }// end function
+
+        override public function removeEventListener(param1:String, param2:Function, param3:Boolean = false) : void
+        {
+            var actualType:String;
+            var type:* = param1;
+            var listener:* = param2;
+            var useCapture:* = param3;
+            if (type == FlexEvent.RENDER || type == FlexEvent.ENTER_FRAME)
+            {
+                if (type == FlexEvent.RENDER)
+                {
+                    type = Event.RENDER;
+                }
+                else
+                {
+                    type = Event.ENTER_FRAME;
+                }
+                try
+                {
+                    if (stage)
+                    {
+                        stage.removeEventListener(type, listener, useCapture);
+                    }
+                }
+                catch (error:SecurityError)
+                {
+                }
+                super.removeEventListener(type, listener, useCapture);
+                return;
+            }
+            if (hasSWFBridges() || SystemManagerGlobals.topLevelSystemManagers.length > 1)
+            {
+                actualType = EventUtil.sandboxMouseEventMap[type];
+                if (actualType)
+                {
+                    if (getSandboxRoot() == this && eventProxy)
+                    {
+                        super.removeEventListener(actualType, eventProxy.marshalListener, useCapture);
+                        if (actualType == MouseEvent.MOUSE_UP)
+                        {
+                            try
+                            {
+                                if (stage)
+                                {
+                                    stage.removeEventListener(Event.MOUSE_LEAVE, eventProxy.marshalListener, useCapture);
+                                }
+                            }
+                            catch (e:SecurityError)
+                            {
+                            }
+                            super.removeEventListener(Event.MOUSE_LEAVE, eventProxy.marshalListener, useCapture);
+                        }
+                    }
+                    if (!SystemManagerGlobals.changingListenersInOtherSystemManagers)
+                    {
+                        removeEventListenerFromOtherSystemManagers(type, otherSystemManagerMouseListener, useCapture);
+                    }
+                    removeEventListenerFromSandboxes(type, sandboxMouseListener, useCapture);
+                    super.removeEventListener(type, listener, false);
+                    return;
+                }
+            }
+            if (type == FlexEvent.IDLE)
+            {
+                super.removeEventListener(type, listener, useCapture);
+                if (!hasEventListener(FlexEvent.IDLE) && idleTimer)
+                {
+                    idleTimer.stop();
+                    idleTimer = null;
+                    removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
+                    removeEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+                }
+            }
+            else
+            {
+                super.removeEventListener(type, listener, useCapture);
+            }
+            if (type == MouseEvent.MOUSE_MOVE || type == MouseEvent.MOUSE_UP || type == MouseEvent.MOUSE_DOWN || type == Event.ACTIVATE || type == Event.DEACTIVATE)
+            {
+                if (!hasEventListener(type))
+                {
+                    try
+                    {
+                        if (stage)
+                        {
+                            stage.removeEventListener(type, stageEventHandler, false);
+                        }
+                    }
+                    catch (error:SecurityError)
+                    {
+                    }
+                }
+            }
+            if (type == SandboxMouseEvent.MOUSE_UP_SOMEWHERE)
+            {
+                if (!hasEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE))
+                {
+                    try
+                    {
+                        if (stage)
+                        {
+                            stage.removeEventListener(Event.MOUSE_LEAVE, mouseLeaveHandler);
+                        }
+                    }
+                    catch (error:SecurityError)
+                    {
+                    }
+                    super.removeEventListener(Event.MOUSE_LEAVE, mouseLeaveHandler);
+                }
+            }
+            return;
+        }// end function
+
+        private function extraFrameHandler(event:Event = null) : void
+        {
+            var _loc_3:* = null;
+            var _loc_2:* = info()["frames"];
+            if (_loc_2 && _loc_2[currentLabel])
+            {
+                _loc_3 = Class(getDefinitionByName(_loc_2[currentLabel]));
+                var _loc_4:* = _loc_3;
+                _loc_4["frame"](this);
+            }
+            deferredNextFrame();
+            return;
+        }// end function
+
+        public function isTopLevelRoot() : Boolean
+        {
+            return isStageRoot || isBootstrapRoot;
+        }// end function
+
+        public function get application() : IUIComponent
+        {
+            return IUIComponent(_document);
+        }// end function
+
+        override public function removeChildAt(param1:int) : DisplayObject
+        {
+            var _loc_3:* = noTopMostIndex - 1;
+            noTopMostIndex = _loc_3;
+            return rawChildren_removeChildAt(applicationIndex + param1);
+        }// end function
+
+        function rawChildren_removeChildAt(param1:int) : DisplayObject
+        {
+            var _loc_2:* = super.getChildAt(param1);
+            removingChild(_loc_2);
+            super.removeChildAt(param1);
+            childRemoved(_loc_2);
+            return _loc_2;
+        }// end function
+
+        private function getSWFBridgeOfDisplayObject(param1:DisplayObject) : IEventDispatcher
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            if (swfBridgeGroup)
+            {
+                _loc_2 = new SWFBridgeRequest(SWFBridgeRequest.IS_BRIDGE_CHILD_REQUEST, false, false, null, param1);
+                _loc_3 = swfBridgeGroup.getChildBridges();
+                _loc_4 = _loc_3.length;
+                _loc_5 = 0;
+                while (_loc_5 < _loc_4)
+                {
+                    
+                    _loc_6 = IEventDispatcher(_loc_3[_loc_5]);
+                    _loc_7 = swfBridgeGroup.getChildBridgeProvider(_loc_6);
+                    if (SecurityUtil.hasMutualTrustBetweenParentAndChild(_loc_7))
+                    {
+                        _loc_6.dispatchEvent(_loc_2);
+                        if (_loc_2.data == true)
+                        {
+                            return _loc_6;
+                        }
+                        _loc_2.data = param1;
+                    }
+                    _loc_5++;
+                }
+            }
+            return null;
+        }// end function
+
+        private function deactivateRequestHandler(event:Event) : void
+        {
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            var _loc_3:* = _loc_2.data;
+            var _loc_4:* = null;
+            if (_loc_2.data is String)
+            {
+                _loc_5 = idToPlaceholder[_loc_2.data];
+                _loc_3 = _loc_5.data;
+                _loc_4 = _loc_5.id;
+                if (_loc_4 == null)
+                {
+                    _loc_6 = findRemotePopUp(_loc_3, _loc_5.bridge);
+                    if (_loc_6)
+                    {
+                        deactivateRemotePopUp(_loc_6);
+                        return;
+                    }
+                }
+            }
+            if (_loc_3 is SystemManagerProxy)
+            {
+                _loc_7 = SystemManagerProxy(_loc_3);
+                _loc_8 = findFocusManagerContainer(_loc_7);
+                if (_loc_7 && _loc_8)
+                {
+                    _loc_7.deactivateByProxy(_loc_8);
+                }
+            }
+            else if (_loc_3 is IFocusManagerContainer)
+            {
+                IFocusManagerContainer(_loc_3).focusManager.deactivate();
+            }
+            else
+            {
+                if (_loc_3 is IEventDispatcher)
+                {
+                    _loc_2.data = _loc_4;
+                    _loc_2.requestor = IEventDispatcher(_loc_3);
+                    IEventDispatcher(_loc_3).dispatchEvent(_loc_2);
+                    return;
+                }
+                throw new Error();
+            }
+            return;
+        }// end function
+
+        private function installCompiledResourceBundles() : void
+        {
+            var _loc_1:* = this.info();
+            var _loc_2:* = !topLevel && parent is Loader ? (Loader(parent).contentLoaderInfo.applicationDomain) : (_loc_1["currentDomain"]);
+            var _loc_3:* = _loc_1["compiledLocales"];
+            var _loc_4:* = _loc_1["compiledResourceBundleNames"];
+            var _loc_5:* = ResourceManager.getInstance();
+            _loc_5.installCompiledResourceBundles(_loc_2, _loc_3, _loc_4);
+            if (!_loc_5.localeChain)
+            {
+                _loc_5.initializeLocaleChain(_loc_3);
+            }
+            return;
+        }// end function
+
+        private function deactivateForm(param1:Object) : void
+        {
+            if (form)
+            {
+                if (form == param1 && forms.length > 1)
+                {
+                    if (isRemotePopUp(form))
+                    {
+                        deactivateRemotePopUp(form);
+                    }
+                    else
+                    {
+                        form.focusManager.deactivate();
+                    }
+                    form = findLastActiveForm(param1);
+                    if (form)
+                    {
+                        if (isRemotePopUp(form))
+                        {
+                            activateRemotePopUp(form);
+                        }
+                        else
+                        {
+                            form.focusManager.activate();
+                        }
+                    }
+                }
+            }
+            return;
+        }// end function
+
+        private function unloadHandler(event:Event) : void
+        {
+            dispatchEvent(event);
+            return;
+        }// end function
+
+        function removingChild(param1:DisplayObject) : void
+        {
+            param1.dispatchEvent(new FlexEvent(FlexEvent.REMOVE));
+            return;
+        }// end function
+
+        function get applicationIndex() : int
+        {
+            return _applicationIndex;
+        }// end function
+
+        function set toolTipIndex(param1:int) : void
+        {
+            var _loc_2:* = param1 - _toolTipIndex;
+            _toolTipIndex = param1;
+            cursorIndex = cursorIndex + _loc_2;
+            return;
+        }// end function
+
+        private function hasSWFBridges() : Boolean
+        {
+            if (swfBridgeGroup)
+            {
+                return true;
+            }
+            return false;
+        }// end function
+
+        private function updateLastActiveForm() : void
+        {
+            var _loc_1:* = forms.length;
+            if (_loc_1 < 2)
+            {
+                return;
+            }
+            var _loc_2:* = -1;
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_1)
+            {
+                
+                if (areFormsEqual(form, forms[_loc_3]))
+                {
+                    _loc_2 = _loc_3;
+                    break;
+                }
+                _loc_3++;
+            }
+            if (_loc_2 >= 0)
+            {
+                forms.splice(_loc_2, 1);
+                forms.push(form);
+            }
+            return;
+        }// end function
+
+        function set bridgeToFocusManager(param1:Dictionary) : void
+        {
+            if (topLevel)
+            {
+                _bridgeToFocusManager = param1;
+            }
+            else if (topLevelSystemManager)
+            {
+                SystemManager(topLevelSystemManager).bridgeToFocusManager = param1;
+            }
+            return;
+        }// end function
+
+        public function get cursorChildren() : IChildList
+        {
+            if (!topLevel)
+            {
+                return _topLevelSystemManager.cursorChildren;
+            }
+            if (!_cursorChildren)
+            {
+                _cursorChildren = new SystemChildrenList(this, new QName(mx_internal, "toolTipIndex"), new QName(mx_internal, "cursorIndex"));
+            }
+            return _cursorChildren;
+        }// end function
+
+        private function sandboxMouseListener(event:Event) : void
+        {
+            if (event is SandboxMouseEvent)
+            {
+                return;
+            }
+            var _loc_2:* = SandboxMouseEvent.marshal(event);
+            dispatchEventFromSWFBridges(_loc_2, event.target as IEventDispatcher);
+            var _loc_3:* = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST);
+            _loc_3.name = "sameSandbox";
+            _loc_3.value = event;
+            getSandboxRoot().dispatchEvent(_loc_3);
+            if (!_loc_3.value)
+            {
+                dispatchEvent(_loc_2);
+            }
+            return;
+        }// end function
+
+        public function get preloaderBackgroundImage() : Object
+        {
+            return info()["backgroundImage"];
+        }// end function
+
+        public function set numModalWindows(param1:int) : void
+        {
+            _numModalWindows = param1;
+            return;
+        }// end function
+
+        public function get preloaderBackgroundAlpha() : Number
+        {
+            return info()["backgroundAlpha"];
+        }// end function
+
+        function rawChildren_getChildByName(param1:String) : DisplayObject
+        {
+            return super.getChildByName(param1);
+        }// end function
+
+        private function dispatchInvalidateRequest() : void
+        {
+            var _loc_1:* = swfBridgeGroup.parentBridge;
+            var _loc_2:* = new SWFBridgeRequest(SWFBridgeRequest.INVALIDATE_REQUEST, false, false, _loc_1, InvalidateRequestData.SIZE | InvalidateRequestData.DISPLAY_LIST);
+            _loc_1.dispatchEvent(_loc_2);
+            return;
+        }// end function
+
+        public function allowDomain(... args) : void
+        {
+            return;
+        }// end function
+
+        public function get preloaderBackgroundColor() : uint
+        {
+            var _loc_1:* = info()["backgroundColor"];
+            if (_loc_1 == undefined)
+            {
+                return StyleManager.NOT_A_COLOR;
+            }
+            return StyleManager.getColorName(_loc_1);
+        }// end function
+
+        public function getVisibleApplicationRect(param1:Rectangle = null) : Rectangle
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            if (!param1)
+            {
+                param1 = getBounds(DisplayObject(this));
+                _loc_2 = screen;
+                _loc_3 = new Point(Math.max(0, param1.x), Math.max(0, param1.y));
+                _loc_3 = localToGlobal(_loc_3);
+                param1.x = _loc_3.x;
+                param1.y = _loc_3.y;
+                param1.width = _loc_2.width;
+                param1.height = _loc_2.height;
+            }
+            if (useSWFBridge())
+            {
+                _loc_4 = swfBridgeGroup.parentBridge;
+                _loc_5 = new SWFBridgeRequest(SWFBridgeRequest.GET_VISIBLE_RECT_REQUEST, false, false, _loc_4, param1);
+                _loc_4.dispatchEvent(_loc_5);
+                param1 = Rectangle(_loc_5.data);
+            }
+            return param1;
+        }// end function
+
+        public function get topLevelSystemManager() : ISystemManager
+        {
+            if (topLevel)
+            {
+                return this;
+            }
+            return _topLevelSystemManager;
+        }// end function
+
+        private function appCreationCompleteHandler(event:FlexEvent) : void
+        {
+            var _loc_2:* = null;
+            if (!topLevel && parent)
+            {
+                _loc_2 = parent.parent;
+                while (_loc_2)
+                {
+                    
+                    if (_loc_2 is IInvalidating)
+                    {
+                        IInvalidating(_loc_2).invalidateSize();
+                        IInvalidating(_loc_2).invalidateDisplayList();
+                        return;
+                    }
+                    _loc_2 = _loc_2.parent;
+                }
+            }
+            if (topLevel && useSWFBridge())
+            {
+                dispatchInvalidateRequest();
+            }
+            return;
+        }// end function
+
+        public function addChildToSandboxRoot(param1:String, param2:DisplayObject) : void
+        {
+            var _loc_3:* = null;
+            if (getSandboxRoot() == this)
+            {
+                this[param1].addChild(param2);
+            }
+            else
+            {
+                addingChild(param2);
+                _loc_3 = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST);
+                _loc_3.name = param1 + ".addChild";
+                _loc_3.value = param2;
+                getSandboxRoot().dispatchEvent(_loc_3);
+                childAdded(param2);
+            }
+            return;
+        }// end function
+
+        private function dispatchDeactivatedWindowEvent(param1:DisplayObject) : void
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = false;
+            var _loc_5:* = null;
+            var _loc_2:* = swfBridgeGroup ? (swfBridgeGroup.parentBridge) : (null);
+            if (_loc_2)
+            {
+                _loc_3 = getSandboxRoot();
+                _loc_4 = _loc_3 != this;
+                _loc_5 = new SWFBridgeEvent(SWFBridgeEvent.BRIDGE_WINDOW_DEACTIVATE, false, false, {notifier:_loc_2, window:_loc_4 ? (param1) : (NameUtil.displayObjectToString(param1))});
+                if (_loc_4)
+                {
+                    _loc_3.dispatchEvent(_loc_5);
+                }
+                else
+                {
+                    _loc_2.dispatchEvent(_loc_5);
+                }
+            }
+            return;
+        }// end function
+
+        private function isBridgeChildHandler(event:Event) : void
+        {
+            if (event is SWFBridgeRequest)
+            {
+                return;
+            }
+            var _loc_2:* = Object(event);
+            _loc_2.data = _loc_2.data && rawChildren.contains(_loc_2.data as DisplayObject);
+            return;
+        }// end function
+
+        public function get measuredHeight() : Number
+        {
+            return topLevelWindow ? (topLevelWindow.getExplicitOrMeasuredHeight()) : (loaderInfo.height);
+        }// end function
+
+        private function activateRequestHandler(event:Event) : void
+        {
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            var _loc_3:* = _loc_2.data;
+            var _loc_4:* = null;
+            if (_loc_2.data is String)
+            {
+                _loc_5 = idToPlaceholder[_loc_2.data];
+                _loc_3 = _loc_5.data;
+                _loc_4 = _loc_5.id;
+                if (_loc_4 == null)
+                {
+                    _loc_6 = findRemotePopUp(_loc_3, _loc_5.bridge);
+                    if (_loc_6)
+                    {
+                        activateRemotePopUp(_loc_6);
+                        return;
+                    }
+                }
+            }
+            if (_loc_3 is SystemManagerProxy)
+            {
+                _loc_7 = SystemManagerProxy(_loc_3);
+                _loc_8 = findFocusManagerContainer(_loc_7);
+                if (_loc_7 && _loc_8)
+                {
+                    _loc_7.activateByProxy(_loc_8);
+                }
+            }
+            else if (_loc_3 is IFocusManagerContainer)
+            {
+                IFocusManagerContainer(_loc_3).focusManager.activate();
+            }
+            else if (_loc_3 is IEventDispatcher)
+            {
+                _loc_2.data = _loc_4;
+                _loc_2.requestor = IEventDispatcher(_loc_3);
+                IEventDispatcher(_loc_3).dispatchEvent(_loc_2);
+            }
+            else
+            {
+                throw new Error();
+            }
+            return;
+        }// end function
+
+        function rawChildren_addChildAt(param1:DisplayObject, param2:int) : DisplayObject
+        {
+            addingChild(param1);
+            super.addChildAt(param1, param2);
+            childAdded(param1);
+            return param1;
+        }// end function
+
+        function initialize() : void
+        {
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_9:* = null;
+            var _loc_13:* = null;
+            var _loc_14:* = null;
+            var _loc_15:* = null;
+            var _loc_16:* = null;
+            if (isStageRoot)
+            {
+                _width = stage.stageWidth;
+                _height = stage.stageHeight;
+            }
+            else
+            {
+                _width = loaderInfo.width;
+                _height = loaderInfo.height;
+            }
+            preloader = new Preloader();
+            preloader.addEventListener(FlexEvent.INIT_PROGRESS, preloader_initProgressHandler);
+            preloader.addEventListener(FlexEvent.PRELOADER_DONE, preloader_preloaderDoneHandler);
+            preloader.addEventListener(RSLEvent.RSL_COMPLETE, preloader_rslCompleteHandler);
+            if (!_popUpChildren)
+            {
+                _popUpChildren = new SystemChildrenList(this, new QName(mx_internal, "noTopMostIndex"), new QName(mx_internal, "topMostIndex"));
+            }
+            _popUpChildren.addChild(preloader);
+            var _loc_1:* = info()["rsls"];
+            var _loc_2:* = info()["cdRsls"];
+            var _loc_3:* = true;
+            if (info()["usePreloader"] != undefined)
+            {
+                _loc_3 = info()["usePreloader"];
+            }
+            var _loc_4:* = info()["preloader"] as Class;
+            if (_loc_3 && !_loc_4)
+            {
+                _loc_4 = DownloadProgressBar;
+            }
+            var _loc_5:* = [];
+            if (_loc_2 && _loc_2.length > 0)
+            {
+                _loc_13 = LoaderUtil.normalizeURL(this.loaderInfo);
+                _loc_14 = Class(getDefinitionByName("mx.core::CrossDomainRSLItem"));
+                _loc_6 = _loc_2.length;
+                _loc_7 = 0;
+                while (_loc_7 < _loc_6)
+                {
+                    
+                    _loc_15 = new _loc_14(_loc_2[_loc_7]["rsls"], _loc_2[_loc_7]["policyFiles"], _loc_2[_loc_7]["digests"], _loc_2[_loc_7]["types"], _loc_2[_loc_7]["isSigned"], _loc_13, this);
+                    _loc_5.push(_loc_15);
+                    _loc_7++;
+                }
+            }
+            if (_loc_1 != null && _loc_1.length > 0)
+            {
+                if (_loc_13 == null)
+                {
+                    _loc_13 = LoaderUtil.normalizeURL(this.loaderInfo);
+                }
+                _loc_6 = _loc_1.length;
+                _loc_7 = 0;
+                while (_loc_7 < _loc_6)
+                {
+                    
+                    _loc_16 = new RSLItem(_loc_1[_loc_7].url, _loc_13, this);
+                    _loc_5.push(_loc_16);
+                    _loc_7++;
+                }
+            }
+            Singleton.registerClass("mx.resources::IResourceManager", Class(getDefinitionByName("mx.resources::ResourceManagerImpl")));
+            var _loc_8:* = ResourceManager.getInstance();
+            Singleton.registerClass("mx.core::IEmbeddedFontRegistry", Class(getDefinitionByName("mx.core::EmbeddedFontRegistry")));
+            Singleton.registerClass("mx.styles::IStyleManager", Class(getDefinitionByName("mx.styles::StyleManagerImpl")));
+            Singleton.registerClass("mx.styles::IStyleManager2", Class(getDefinitionByName("mx.styles::StyleManagerImpl")));
+            var _loc_10:* = loaderInfo.parameters["localeChain"];
+            if (loaderInfo.parameters["localeChain"] != null && _loc_10 != "")
+            {
+                _loc_8.localeChain = _loc_10.split(",");
+            }
+            var _loc_11:* = loaderInfo.parameters["resourceModuleURLs"];
+            var _loc_12:* = loaderInfo.parameters["resourceModuleURLs"] ? (_loc_11.split(",")) : (null);
+            preloader.initialize(_loc_3, _loc_4, preloaderBackgroundColor, preloaderBackgroundAlpha, preloaderBackgroundImage, preloaderBackgroundSize, isStageRoot ? (stage.stageWidth) : (loaderInfo.width), isStageRoot ? (stage.stageHeight) : (loaderInfo.height), null, null, _loc_5, _loc_12);
+            return;
+        }// end function
+
+        public function useSWFBridge() : Boolean
+        {
+            if (isStageRoot)
+            {
+                return false;
+            }
+            if (!topLevel && topLevelSystemManager)
+            {
+                return topLevelSystemManager.useSWFBridge();
+            }
+            var sbRoot:* = getSandboxRoot();
+            if (topLevel && sbRoot != this)
+            {
+                return true;
+            }
+            if (sbRoot == this)
+            {
+                try
+                {
+                    if (parentAllowsChild && childAllowsParent)
+                    {
+                        try
+                        {
+                            if (!parent.dispatchEvent(new Event("mx.managers.SystemManager.isStageRoot", false, true)))
+                            {
+                                return true;
+                            }
+                        }
+                        catch (e:Error)
+                        {
+                        }
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                catch (e1:Error)
+                {
+                    return false;
+                }
+            }
+            return false;
+        }// end function
+
+        function childRemoved(param1:DisplayObject) : void
+        {
+            if (param1 is IUIComponent)
+            {
+                IUIComponent(param1).parentChanged(null);
+            }
+            return;
+        }// end function
+
+        final function $removeChildAt(param1:int) : DisplayObject
+        {
+            return super.removeChildAt(param1);
+        }// end function
+
+        private function canActivatePopUp(param1:Object) : Boolean
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            if (isRemotePopUp(param1))
+            {
+                _loc_2 = RemotePopUp(param1);
+                _loc_3 = new SWFBridgeRequest(SWFBridgeRequest.CAN_ACTIVATE_POP_UP_REQUEST, false, false, null, _loc_2.window);
+                IEventDispatcher(_loc_2.bridge).dispatchEvent(_loc_3);
+                return _loc_3.data;
+            }
+            if (canActivateLocalComponent(param1))
+            {
+                return true;
+            }
+            return false;
+        }// end function
+
+        function get noTopMostIndex() : int
+        {
+            return _noTopMostIndex;
+        }// end function
+
+        override public function get numChildren() : int
+        {
+            return noTopMostIndex - applicationIndex;
+        }// end function
+
+        private function canActivateLocalComponent(param1:Object) : Boolean
+        {
+            if (param1 is Sprite && param1 is IUIComponent && Sprite(param1).visible && IUIComponent(param1).enabled)
+            {
+                return true;
+            }
+            return false;
+        }// end function
+
+        private function preloader_preloaderDoneHandler(event:Event) : void
+        {
+            var _loc_2:* = topLevelWindow;
+            preloader.removeEventListener(FlexEvent.PRELOADER_DONE, preloader_preloaderDoneHandler);
+            preloader.removeEventListener(RSLEvent.RSL_COMPLETE, preloader_rslCompleteHandler);
+            _popUpChildren.removeChild(preloader);
+            preloader = null;
+            mouseCatcher = new FlexSprite();
+            mouseCatcher.name = "mouseCatcher";
+            var _loc_4:* = noTopMostIndex + 1;
+            noTopMostIndex = _loc_4;
+            super.addChildAt(mouseCatcher, 0);
+            resizeMouseCatcher();
+            if (!topLevel)
+            {
+                mouseCatcher.visible = false;
+                mask = mouseCatcher;
+            }
+            var _loc_4:* = noTopMostIndex + 1;
+            noTopMostIndex = _loc_4;
+            super.addChildAt(DisplayObject(_loc_2), 1);
+            _loc_2.dispatchEvent(new FlexEvent(FlexEvent.APPLICATION_COMPLETE));
+            dispatchEvent(new FlexEvent(FlexEvent.APPLICATION_COMPLETE));
+            return;
+        }// end function
+
+        private function initializeTopLevelWindow(event:Event) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            initialized = true;
+            if (!parent && parentAllowsChild)
+            {
+                return;
+            }
+            if (!topLevel)
+            {
+                if (!parent)
+                {
+                    return;
+                }
+                _loc_3 = parent.parent;
+                if (!_loc_3)
+                {
+                    return;
+                }
+                while (_loc_3)
+                {
+                    
+                    if (_loc_3 is IUIComponent)
+                    {
+                        _loc_4 = IUIComponent(_loc_3).systemManager;
+                        if (_loc_4 && !_loc_4.isTopLevel())
+                        {
+                            _loc_4 = _loc_4.topLevelSystemManager;
+                        }
+                        _topLevelSystemManager = _loc_4;
+                        break;
+                    }
+                    _loc_3 = _loc_3.parent;
+                }
+            }
+            if (isTopLevelRoot() || getSandboxRoot() == this)
+            {
+                addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, true);
+            }
+            if (isTopLevelRoot() && stage)
+            {
+                stage.addEventListener(Event.RESIZE, Stage_resizeHandler, false, 0, true);
+            }
+            else if (topLevel && stage)
+            {
+                _loc_5 = getSandboxRoot();
+                if (_loc_5 != this)
+                {
+                    _loc_5.addEventListener(Event.RESIZE, Stage_resizeHandler, false, 0, true);
+                }
+            }
+            var _loc_6:* = IUIComponent(create());
+            topLevelWindow = IUIComponent(create());
+            _loc_2 = _loc_6;
+            document = _loc_6;
+            if (document)
+            {
+                IEventDispatcher(_loc_2).addEventListener(FlexEvent.CREATION_COMPLETE, appCreationCompleteHandler);
+                if (!LoaderConfig._url)
+                {
+                    LoaderConfig._url = loaderInfo.url;
+                    LoaderConfig._parameters = loaderInfo.parameters;
+                    LoaderConfig._swfVersion = loaderInfo.swfVersion;
+                }
+                if (isStageRoot && stage)
+                {
+                    _width = stage.stageWidth;
+                    _height = stage.stageHeight;
+                    IFlexDisplayObject(_loc_2).setActualSize(_width, _height);
+                }
+                else
+                {
+                    IFlexDisplayObject(_loc_2).setActualSize(loaderInfo.width, loaderInfo.height);
+                }
+                if (preloader)
+                {
+                    preloader.registerApplication(_loc_2);
+                }
+                addingChild(DisplayObject(_loc_2));
+                childAdded(DisplayObject(_loc_2));
+            }
+            else
+            {
+                document = this;
+            }
+            return;
+        }// end function
+
+        final function $addChildAt(param1:DisplayObject, param2:int) : DisplayObject
+        {
+            return super.addChildAt(param1, param2);
+        }// end function
+
+        private function stageEventHandler(event:Event) : void
+        {
+            if (event.target is Stage && mouseCatcher)
+            {
+                mouseCatcher.dispatchEvent(event);
+            }
+            return;
+        }// end function
+
+        private function nextFrameTimerHandler(event:TimerEvent) : void
+        {
+            if ((currentFrame + 1) <= framesLoaded)
+            {
+                nextFrame();
+                nextFrameTimer.removeEventListener(TimerEvent.TIMER, nextFrameTimerHandler);
+                nextFrameTimer.reset();
+            }
+            return;
+        }// end function
+
+        function get bridgeToFocusManager() : Dictionary
+        {
+            if (topLevel)
+            {
+                return _bridgeToFocusManager;
+            }
+            if (topLevelSystemManager)
+            {
+                return SystemManager(topLevelSystemManager).bridgeToFocusManager;
+            }
+            return null;
+        }// end function
+
+        public function get numModalWindows() : int
+        {
+            return _numModalWindows;
+        }// end function
+
+        private function areFormsEqual(param1:Object, param2:Object) : Boolean
+        {
+            if (param1 == param2)
+            {
+                return true;
+            }
+            if (param1 is RemotePopUp && param2 is RemotePopUp)
+            {
+                return areRemotePopUpsEqual(param1, param2);
+            }
+            return false;
+        }// end function
+
+        public function isTopLevelWindow(param1:DisplayObject) : Boolean
+        {
+            return param1 is IUIComponent && IUIComponent(param1) == topLevelWindow;
+        }// end function
+
+        private function removePlaceholderId(param1:String) : void
+        {
+            delete idToPlaceholder[param1];
+            return;
+        }// end function
+
+        function dispatchActivatedWindowEvent(param1:DisplayObject) : void
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = false;
+            var _loc_5:* = null;
+            var _loc_2:* = swfBridgeGroup ? (swfBridgeGroup.parentBridge) : (null);
+            if (_loc_2)
+            {
+                _loc_3 = getSandboxRoot();
+                _loc_4 = _loc_3 != this;
+                _loc_5 = new SWFBridgeEvent(SWFBridgeEvent.BRIDGE_WINDOW_ACTIVATE, false, false, {notifier:_loc_2, window:_loc_4 ? (param1) : (NameUtil.displayObjectToString(param1))});
+                if (_loc_4)
+                {
+                    _loc_3.dispatchEvent(_loc_5);
+                }
+                else
+                {
+                    _loc_2.dispatchEvent(_loc_5);
+                }
+            }
+            return;
+        }// end function
+
+        override public function get width() : Number
+        {
+            return _width;
+        }// end function
+
+        private function dispatchActivatedApplicationEvent() : void
+        {
+            var _loc_2:* = null;
+            var _loc_1:* = swfBridgeGroup ? (swfBridgeGroup.parentBridge) : (null);
+            if (_loc_1)
+            {
+                _loc_2 = new SWFBridgeEvent(SWFBridgeEvent.BRIDGE_APPLICATION_ACTIVATE, false, false);
+                _loc_1.dispatchEvent(_loc_2);
+            }
+            return;
+        }// end function
+
+        private function otherSystemManagerMouseListener(event:SandboxMouseEvent) : void
+        {
+            if (SystemManagerGlobals.dispatchingEventToOtherSystemManagers)
+            {
+                return;
+            }
+            dispatchEventFromSWFBridges(event);
+            var _loc_2:* = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST);
+            _loc_2.name = "sameSandbox";
+            _loc_2.value = event;
+            getSandboxRoot().dispatchEvent(_loc_2);
+            if (!_loc_2.value)
+            {
+                dispatchEvent(event);
+            }
+            return;
+        }// end function
+
+        private function hideMouseCursorRequestHandler(event:Event) : void
+        {
+            var _loc_3:* = null;
+            if (!isTopLevelRoot() && event is SWFBridgeRequest)
+            {
+                return;
+            }
+            var _loc_2:* = SWFBridgeRequest.marshal(event);
+            if (!isTopLevelRoot())
+            {
+                _loc_3 = swfBridgeGroup.parentBridge;
+                _loc_2.requestor = _loc_3;
+                _loc_3.dispatchEvent(_loc_2);
+            }
+            else if (eventProxy)
+            {
+                SystemManagerGlobals.showMouseCursor = false;
+            }
+            return;
+        }// end function
+
+        private function getTopLevelSystemManager(param1:DisplayObject) : ISystemManager
+        {
+            var _loc_3:* = null;
+            var _loc_2:* = DisplayObjectContainer(param1.root);
+            if ((!_loc_2 || _loc_2 is Stage) && param1 is IUIComponent)
+            {
+                _loc_2 = DisplayObjectContainer(IUIComponent(param1).systemManager);
+            }
+            if (_loc_2 is ISystemManager)
+            {
+                _loc_3 = ISystemManager(_loc_2);
+                if (!_loc_3.isTopLevel())
+                {
+                    _loc_3 = _loc_3.topLevelSystemManager;
+                }
+            }
+            return _loc_3;
+        }// end function
+
+        public function isDisplayObjectInABridgedApplication(param1:DisplayObject) : Boolean
+        {
+            return getSWFBridgeOfDisplayObject(param1) != null;
+        }// end function
+
+        public function move(param1:Number, param2:Number) : void
+        {
+            return;
+        }// end function
+
+        public function set explicitWidth(param1:Number) : void
+        {
+            _explicitWidth = param1;
+            return;
+        }// end function
+
+        public function get parentAllowsChild() : Boolean
+        {
+            try
+            {
+                return loaderInfo.parentAllowsChild;
+            }
+            catch (error:Error)
+            {
+            }
+            return false;
+        }// end function
+
+        private function preloader_initProgressHandler(event:Event) : void
+        {
+            preloader.removeEventListener(FlexEvent.INIT_PROGRESS, preloader_initProgressHandler);
+            deferredNextFrame();
+            return;
+        }// end function
+
+        private function mouseLeaveHandler(event:Event) : void
+        {
+            dispatchEvent(new SandboxMouseEvent(SandboxMouseEvent.MOUSE_UP_SOMEWHERE));
+            return;
+        }// end function
+
+        public function get explicitWidth() : Number
+        {
+            return _explicitWidth;
+        }// end function
+
+        private function activateFormSandboxEventHandler(event:Event) : void
+        {
+            var _loc_2:* = SWFBridgeEvent.marshal(event);
+            if (!forwardFormEvent(_loc_2))
+            {
+                activateForm(new RemotePopUp(_loc_2.data.window, _loc_2.data.notifier));
+            }
+            return;
+        }// end function
+
+        function rawChildren_addChild(param1:DisplayObject) : DisplayObject
+        {
+            addingChild(param1);
+            super.addChild(param1);
+            childAdded(param1);
+            return param1;
+        }// end function
+
+        public static function getSWFRoot(param1:Object) : DisplayObject
+        {
+            var p:*;
+            var sm:ISystemManager;
+            var domain:ApplicationDomain;
+            var cls:Class;
+            var object:* = param1;
+            var className:* = getQualifiedClassName(object);
+            var _loc_3:* = 0;
+            var _loc_4:* = allSystemManagers;
+            do
+            {
+                
+                p = _loc_4[_loc_3];
+                sm = p as ISystemManager;
+                domain = sm.loaderInfo.applicationDomain;
+                try
+                {
+                    cls = Class(domain.getDefinition(className));
+                    if (object is cls)
+                    {
+                        return sm as DisplayObject;
+                    }
+                }
+                catch (e:Error)
+                {
+                }
+            }while (_loc_4 in _loc_3)
+            return null;
+        }// end function
+
+        private static function areRemotePopUpsEqual(param1:Object, param2:Object) : Boolean
+        {
+            if (!(param1 is RemotePopUp))
+            {
+                return false;
+            }
+            if (!(param2 is RemotePopUp))
+            {
+                return false;
+            }
+            var _loc_3:* = RemotePopUp(param1);
+            var _loc_4:* = RemotePopUp(param2);
+            if (_loc_3.window == _loc_4.window && _loc_3.bridge && _loc_4.bridge)
+            {
+                return true;
+            }
+            return false;
+        }// end function
+
+        private static function getChildListIndex(param1:IChildList, param2:Object) : int
+        {
+            var childList:* = param1;
+            var f:* = param2;
+            var index:int;
+            try
+            {
+                index = childList.getChildIndex(DisplayObject(f));
+            }
+            catch (e:ArgumentError)
+            {
+            }
+            return index;
+        }// end function
+
+        static function registerInitCallback(param1:Function) : void
+        {
+            if (!allSystemManagers || !lastSystemManager)
+            {
+                return;
+            }
+            var _loc_2:* = lastSystemManager;
+            if (_loc_2.doneExecutingInitCallbacks)
+            {
+                SystemManager.param1(_loc_2);
+            }
+            else
+            {
+                _loc_2.initCallbackFunctions.push(param1);
+            }
+            return;
+        }// end function
+
+        private static function isRemotePopUp(param1:Object) : Boolean
+        {
+            return !(param1 is IFocusManagerContainer);
+        }// end function
+
+    }
 }

@@ -1,68 +1,67 @@
-package mx.controls
+﻿package mx.controls
 {
-   import mx.core.mx_internal;
-   import flash.events.MouseEvent;
-   import flash.display.DisplayObject;
-   import mx.core.IFlexDisplayObject;
-   import mx.core.ClassFactory;
-   import mx.controls.tabBarClasses.Tab;
-   
-   use namespace mx_internal;
-   
-   public class TabBar extends ToggleButtonBar
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      mx_internal static var createAccessibilityImplementation:Function;
-       
-      public function TabBar()
-      {
-         super();
-         buttonHeightProp = "tabHeight";
-         buttonStyleNameProp = "tabStyleName";
-         firstButtonStyleNameProp = "firstTabStyleName";
-         lastButtonStyleNameProp = "lastTabStyleName";
-         buttonWidthProp = "tabWidth";
-         navItemFactory = new ClassFactory(Tab);
-         selectedButtonTextStyleNameProp = "selectedTabTextStyleName";
-      }
-      
-      override protected function clickHandler(param1:MouseEvent) : void
-      {
-         if(getChildIndex(DisplayObject(param1.currentTarget)) == selectedIndex)
-         {
-            Button(param1.currentTarget).selected = true;
-            param1.stopImmediatePropagation();
+    import flash.display.*;
+    import flash.events.*;
+    import mx.controls.tabBarClasses.*;
+    import mx.core.*;
+
+    public class TabBar extends ToggleButtonBar
+    {
+        static const VERSION:String = "3.6.0.21751";
+        static var createAccessibilityImplementation:Function;
+
+        public function TabBar()
+        {
+            buttonHeightProp = "tabHeight";
+            buttonStyleNameProp = "tabStyleName";
+            firstButtonStyleNameProp = "firstTabStyleName";
+            lastButtonStyleNameProp = "lastTabStyleName";
+            buttonWidthProp = "tabWidth";
+            navItemFactory = new ClassFactory(Tab);
+            selectedButtonTextStyleNameProp = "selectedTabTextStyleName";
             return;
-         }
-         super.clickHandler(param1);
-      }
-      
-      override protected function createNavItem(param1:String, param2:Class = null) : IFlexDisplayObject
-      {
-         var _loc3_:IFlexDisplayObject = super.createNavItem(param1,param2);
-         DisplayObject(_loc3_).addEventListener(MouseEvent.MOUSE_DOWN,tab_mouseDownHandler);
-         DisplayObject(_loc3_).addEventListener(MouseEvent.DOUBLE_CLICK,tab_doubleClickHandler);
-         return _loc3_;
-      }
-      
-      private function tab_doubleClickHandler(param1:MouseEvent) : void
-      {
-         Button(param1.currentTarget).selected = true;
-      }
-      
-      private function tab_mouseDownHandler(param1:MouseEvent) : void
-      {
-         selectButton(param1.currentTarget.parent.getChildIndex(param1.currentTarget),true,param1);
-      }
-      
-      override protected function initializeAccessibility() : void
-      {
-         if(TabBar.createAccessibilityImplementation != null)
-         {
-            TabBar.createAccessibilityImplementation(this);
-         }
-      }
-   }
+        }// end function
+
+        override protected function clickHandler(event:MouseEvent) : void
+        {
+            if (getChildIndex(DisplayObject(event.currentTarget)) == selectedIndex)
+            {
+                Button(event.currentTarget).selected = true;
+                event.stopImmediatePropagation();
+                return;
+            }
+            super.clickHandler(event);
+            return;
+        }// end function
+
+        override protected function createNavItem(param1:String, param2:Class = null) : IFlexDisplayObject
+        {
+            var _loc_3:* = super.createNavItem(param1, param2);
+            DisplayObject(_loc_3).addEventListener(MouseEvent.MOUSE_DOWN, tab_mouseDownHandler);
+            DisplayObject(_loc_3).addEventListener(MouseEvent.DOUBLE_CLICK, tab_doubleClickHandler);
+            return _loc_3;
+        }// end function
+
+        private function tab_doubleClickHandler(event:MouseEvent) : void
+        {
+            Button(event.currentTarget).selected = true;
+            return;
+        }// end function
+
+        private function tab_mouseDownHandler(event:MouseEvent) : void
+        {
+            selectButton(event.currentTarget.parent.getChildIndex(event.currentTarget), true, event);
+            return;
+        }// end function
+
+        override protected function initializeAccessibility() : void
+        {
+            if (TabBar.createAccessibilityImplementation != null)
+            {
+                TabBar.createAccessibilityImplementation(this);
+            }
+            return;
+        }// end function
+
+    }
 }

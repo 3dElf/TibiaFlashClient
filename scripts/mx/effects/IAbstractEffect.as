@@ -1,8 +1,11 @@
-package mx.effects
+﻿package mx.effects
 {
-   import flash.events.IEventDispatcher;
-   
-   public interface IAbstractEffect extends IEventDispatcher
-   {
-       }
+    import flash.events.*;
+
+    public interface IAbstractEffect extends IEventDispatcher
+    {
+
+        public function IAbstractEffect();
+
+    }
 }

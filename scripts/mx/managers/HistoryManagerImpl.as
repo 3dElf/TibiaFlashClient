@@ -1,397 +1,404 @@
-package mx.managers
+﻿package mx.managers
 {
-   import mx.core.mx_internal;
-   import mx.core.ApplicationGlobals;
-   import mx.events.BrowserChangeEvent;
-   import flash.utils.Dictionary;
-   import flash.display.LoaderInfo;
-   import flash.display.DisplayObject;
-   
-   use namespace mx_internal;
-   
-   public class HistoryManagerImpl implements mx.managers.IHistoryManager
-   {
-      
-      private static const NAME_VALUE_SEPARATOR:String = "=";
-      
-      private static var instance:mx.managers.IHistoryManager;
-      
-      private static var appID:String;
-      
-      private static const HANDSHAKE_INTERVAL:int = 500;
-      
-      private static var historyURL:String;
-      
-      private static const ID_NAME_SEPARATOR:String = "-";
-      
-      private static const MAX_HANDSHAKE_TRIES:int = 100;
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static const PROPERTY_SEPARATOR:String = "&";
-      
-      private static var systemManager:mx.managers.ISystemManager;
-       
-      private var registeredObjects:Array;
-      
-      private var pendingQueryString:String;
-      
-      private var pendingStates:Object;
-      
-      private var registrationMap:Dictionary;
-      
-      public function HistoryManagerImpl()
-      {
-         var _loc1_:LoaderInfo = null;
-         var _loc2_:String = null;
-         registeredObjects = [];
-         pendingStates = {};
-         super();
-         if(instance)
-         {
-            throw new Error("Instance already exists.");
-         }
-         if(appID)
-         {
-            return;
-         }
-         if(!ApplicationGlobals.application.historyManagementEnabled)
-         {
-            return;
-         }
-         if(HistoryManagerGlobals.loaderInfo)
-         {
-            _loc1_ = HistoryManagerGlobals.loaderInfo;
-         }
-         else
-         {
-            _loc1_ = DisplayObject(systemManager).loaderInfo;
-         }
-         if(HistoryManagerGlobals.loaderInfo)
-         {
-            _loc2_ = HistoryManagerGlobals.loaderInfo.url;
-         }
-         else
-         {
-            _loc2_ = DisplayObject(systemManager).loaderInfo.url;
-         }
-         appID = calcCRC(_loc2_);
-         BrowserManager.getInstance().addEventListener(BrowserChangeEvent.BROWSER_URL_CHANGE,browserURLChangeHandler);
-         BrowserManager.getInstance().initForHistoryManager();
-      }
-      
-      public static function getInstance() : mx.managers.IHistoryManager
-      {
-         if(!instance)
-         {
-            systemManager = SystemManagerGlobals.topLevelSystemManagers[0];
-            instance = new HistoryManagerImpl();
-         }
-         return instance;
-      }
-      
-      public function registered() : void
-      {
-      }
-      
-      public function unregister(param1:IHistoryManagerClient) : void
-      {
-         if(!ApplicationGlobals.application.historyManagementEnabled)
-         {
-            return;
-         }
-         var _loc2_:int = -1;
-         var _loc3_:int = registeredObjects.length;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            if(registeredObjects[_loc4_] == param1)
+    import flash.display.*;
+    import flash.utils.*;
+    import mx.core.*;
+    import mx.events.*;
+    import mx.managers.*;
+
+    public class HistoryManagerImpl extends Object implements IHistoryManager
+    {
+        private var registeredObjects:Array;
+        private var pendingQueryString:String;
+        private var pendingStates:Object;
+        private var registrationMap:Dictionary;
+        private static const NAME_VALUE_SEPARATOR:String = "=";
+        private static var instance:IHistoryManager;
+        private static var appID:String;
+        private static const HANDSHAKE_INTERVAL:int = 500;
+        private static var historyURL:String;
+        private static const ID_NAME_SEPARATOR:String = "-";
+        private static const MAX_HANDSHAKE_TRIES:int = 100;
+        static const VERSION:String = "3.6.0.21751";
+        private static const PROPERTY_SEPARATOR:String = "&";
+        private static var systemManager:ISystemManager;
+
+        public function HistoryManagerImpl()
+        {
+            var _loc_1:* = null;
+            var _loc_2:* = null;
+            registeredObjects = [];
+            pendingStates = {};
+            if (instance)
             {
-               _loc2_ = _loc4_;
-               break;
+                throw new Error("Instance already exists.");
             }
-            _loc4_++;
-         }
-         if(_loc2_ >= 0)
-         {
-            registeredObjects.splice(_loc2_,1);
-         }
-         if(Boolean(param1) && Boolean(registrationMap))
-         {
-            delete registrationMap[param1];
-         }
-      }
-      
-      private function updateCRC(param1:uint, param2:uint) : uint
-      {
-         var _loc6_:* = false;
-         var _loc3_:uint = 4129;
-         var _loc4_:uint = 128;
-         var _loc5_:int = 0;
-         while(_loc5_ < 8)
-         {
-            _loc6_ = (param1 & 32768) != 0;
-            param1 = param1 << 1;
-            param1 = param1 & 65535;
-            if((param2 & _loc4_) != 0)
+            if (appID)
             {
-               param1++;
+                return;
             }
-            if(_loc6_)
+            if (!ApplicationGlobals.application.historyManagementEnabled)
             {
-               param1 = param1 ^ _loc3_;
+                return;
             }
-            _loc4_ = _loc4_ >> 1;
-            _loc5_++;
-         }
-         return param1;
-      }
-      
-      private function submitQuery() : void
-      {
-         if(pendingQueryString)
-         {
-            BrowserManager.getInstance().setFragment(pendingQueryString);
-            pendingQueryString = null;
-            ApplicationGlobals.application.resetHistory = true;
-         }
-      }
-      
-      public function browserURLChangeHandler(param1:BrowserChangeEvent) : void
-      {
-         var _loc2_:* = null;
-         var _loc3_:String = null;
-         var _loc9_:Array = null;
-         var _loc10_:int = 0;
-         var _loc11_:String = null;
-         var _loc12_:Object = null;
-         var _loc13_:IHistoryManagerClient = null;
-         if(!ApplicationGlobals.application.historyManagementEnabled)
-         {
+            if (HistoryManagerGlobals.loaderInfo)
+            {
+                _loc_1 = HistoryManagerGlobals.loaderInfo;
+            }
+            else
+            {
+                _loc_1 = DisplayObject(systemManager).loaderInfo;
+            }
+            if (HistoryManagerGlobals.loaderInfo)
+            {
+                _loc_2 = HistoryManagerGlobals.loaderInfo.url;
+            }
+            else
+            {
+                _loc_2 = _loc_1.url;
+            }
+            appID = calcCRC(_loc_2);
+            BrowserManager.getInstance().addEventListener(BrowserChangeEvent.BROWSER_URL_CHANGE, browserURLChangeHandler);
+            BrowserManager.getInstance().initForHistoryManager();
             return;
-         }
-         var _loc4_:Array = param1.url.split(PROPERTY_SEPARATOR);
-         var _loc5_:Object = {};
-         var _loc6_:int = _loc4_.length;
-         var _loc7_:int = 0;
-         while(_loc7_ < _loc6_)
-         {
-            _loc9_ = _loc4_[_loc7_].split(NAME_VALUE_SEPARATOR);
-            _loc5_[_loc9_[0]] = parseString(_loc9_[1]);
-            _loc7_++;
-         }
-         var _loc8_:Object = {};
-         for(_loc2_ in _loc5_)
-         {
-            _loc10_ = _loc2_.indexOf(ID_NAME_SEPARATOR);
-            if(_loc10_ > -1)
+        }// end function
+
+        public function registered() : void
+        {
+            return;
+        }// end function
+
+        public function unregister(param1:IHistoryManagerClient) : void
+        {
+            if (!ApplicationGlobals.application.historyManagementEnabled)
             {
-               _loc3_ = _loc2_.substr(0,_loc10_);
-               _loc11_ = _loc2_.substr(_loc10_ + 1,_loc2_.length);
-               _loc12_ = _loc5_[_loc2_];
-               if(!_loc8_[_loc3_])
-               {
-                  _loc8_[_loc3_] = {};
-               }
-               _loc8_[_loc3_][_loc11_] = _loc12_;
+                return;
             }
-         }
-         _loc6_ = registeredObjects.length;
-         _loc7_ = 0;
-         while(_loc7_ < _loc6_)
-         {
-            _loc13_ = registeredObjects[_loc7_];
-            _loc3_ = getRegistrationInfo(_loc13_).crc;
-            _loc13_.loadState(_loc8_[_loc3_]);
-            delete _loc8_[_loc3_];
-            _loc7_++;
-         }
-         for(_loc2_ in _loc8_)
-         {
-            pendingStates[_loc2_] = _loc8_[_loc2_];
-         }
-      }
-      
-      public function registerHandshake() : void
-      {
-      }
-      
-      private function getRegistrationInfo(param1:IHistoryManagerClient) : RegistrationInfo
-      {
-         return !!registrationMap?registrationMap[param1]:null;
-      }
-      
-      private function getPath(param1:IHistoryManagerClient) : String
-      {
-         return param1.toString();
-      }
-      
-      public function load(param1:Object) : void
-      {
-      }
-      
-      private function depthCompare(param1:Object, param2:Object) : int
-      {
-         var _loc3_:RegistrationInfo = getRegistrationInfo(IHistoryManagerClient(param1));
-         var _loc4_:RegistrationInfo = getRegistrationInfo(IHistoryManagerClient(param2));
-         if(!_loc3_ || !_loc4_)
-         {
+            var _loc_2:* = -1;
+            var _loc_3:* = registeredObjects.length;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                if (registeredObjects[_loc_4] == param1)
+                {
+                    _loc_2 = _loc_4;
+                    break;
+                }
+                _loc_4++;
+            }
+            if (_loc_2 >= 0)
+            {
+                registeredObjects.splice(_loc_2, 1);
+            }
+            if (param1 && registrationMap)
+            {
+                delete registrationMap[param1];
+            }
+            return;
+        }// end function
+
+        private function updateCRC(param1:uint, param2:uint) : uint
+        {
+            var _loc_6:* = false;
+            var _loc_3:* = 4129;
+            var _loc_4:* = 128;
+            var _loc_5:* = 0;
+            while (_loc_5 < 8)
+            {
+                
+                _loc_6 = (param1 & 32768) != 0;
+                param1 = param1 << 1;
+                param1 = param1 & 65535;
+                if ((param2 & _loc_4) != 0)
+                {
+                    param1 = param1 + 1;
+                }
+                if (_loc_6)
+                {
+                    param1 = param1 ^ _loc_3;
+                }
+                _loc_4 = _loc_4 >> 1;
+                _loc_5++;
+            }
+            return param1;
+        }// end function
+
+        private function submitQuery() : void
+        {
+            if (pendingQueryString)
+            {
+                BrowserManager.getInstance().setFragment(pendingQueryString);
+                pendingQueryString = null;
+                ApplicationGlobals.application.resetHistory = true;
+            }
+            return;
+        }// end function
+
+        public function browserURLChangeHandler(event:BrowserChangeEvent) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_9:* = null;
+            var _loc_10:* = 0;
+            var _loc_11:* = null;
+            var _loc_12:* = null;
+            var _loc_13:* = null;
+            if (!ApplicationGlobals.application.historyManagementEnabled)
+            {
+                return;
+            }
+            var _loc_4:* = event.url.split(PROPERTY_SEPARATOR);
+            var _loc_5:* = {};
+            var _loc_6:* = _loc_4.length;
+            var _loc_7:* = 0;
+            while (_loc_7 < _loc_6)
+            {
+                
+                _loc_9 = _loc_4[_loc_7].split(NAME_VALUE_SEPARATOR);
+                _loc_5[_loc_9[0]] = parseString(_loc_9[1]);
+                _loc_7++;
+            }
+            var _loc_8:* = {};
+            for (_loc_2 in _loc_5)
+            {
+                
+                _loc_10 = _loc_2.indexOf(ID_NAME_SEPARATOR);
+                if (_loc_10 > -1)
+                {
+                    _loc_3 = _loc_2.substr(0, _loc_10);
+                    _loc_11 = _loc_2.substr((_loc_10 + 1), _loc_2.length);
+                    _loc_12 = _loc_5[_loc_2];
+                    if (!_loc_8[_loc_3])
+                    {
+                        _loc_8[_loc_3] = {};
+                    }
+                    _loc_8[_loc_3][_loc_11] = _loc_12;
+                }
+            }
+            _loc_6 = registeredObjects.length;
+            _loc_7 = 0;
+            while (_loc_7 < _loc_6)
+            {
+                
+                _loc_13 = registeredObjects[_loc_7];
+                _loc_3 = getRegistrationInfo(_loc_13).crc;
+                _loc_13.loadState(_loc_8[_loc_3]);
+                delete _loc_8[_loc_3];
+                _loc_7++;
+            }
+            for (_loc_2 in _loc_8)
+            {
+                
+                pendingStates[_loc_2] = _loc_8[_loc_2];
+            }
+            return;
+        }// end function
+
+        public function registerHandshake() : void
+        {
+            return;
+        }// end function
+
+        private function getRegistrationInfo(param1:IHistoryManagerClient) : RegistrationInfo
+        {
+            return registrationMap ? (registrationMap[param1]) : (null);
+        }// end function
+
+        private function getPath(param1:IHistoryManagerClient) : String
+        {
+            return param1.toString();
+        }// end function
+
+        public function load(param1:Object) : void
+        {
+            return;
+        }// end function
+
+        private function depthCompare(param1:Object, param2:Object) : int
+        {
+            var _loc_3:* = getRegistrationInfo(IHistoryManagerClient(param1));
+            var _loc_4:* = getRegistrationInfo(IHistoryManagerClient(param2));
+            if (!_loc_3 || !_loc_4)
+            {
+                return 0;
+            }
+            if (_loc_3.depth > _loc_4.depth)
+            {
+                return 1;
+            }
+            if (_loc_3.depth < _loc_4.depth)
+            {
+                return -1;
+            }
             return 0;
-         }
-         if(_loc3_.depth > _loc4_.depth)
-         {
-            return 1;
-         }
-         if(_loc3_.depth < _loc4_.depth)
-         {
-            return -1;
-         }
-         return 0;
-      }
-      
-      public function register(param1:IHistoryManagerClient) : void
-      {
-         if(!ApplicationGlobals.application.historyManagementEnabled)
-         {
-            return;
-         }
-         unregister(param1);
-         registeredObjects.push(param1);
-         var _loc2_:String = getPath(param1);
-         var _loc3_:String = calcCRC(_loc2_);
-         var _loc4_:int = calcDepth(_loc2_);
-         if(!registrationMap)
-         {
-            registrationMap = new Dictionary(true);
-         }
-         registrationMap[param1] = new RegistrationInfo(_loc3_,_loc4_);
-         registeredObjects.sort(depthCompare);
-         if(pendingStates[_loc3_])
-         {
-            param1.loadState(pendingStates[_loc3_]);
-            delete pendingStates[_loc3_];
-         }
-      }
-      
-      private function parseString(param1:String) : Object
-      {
-         if(param1 == "true")
-         {
-            return true;
-         }
-         if(param1 == "false")
-         {
-            return false;
-         }
-         var _loc2_:int = parseInt(param1);
-         if(_loc2_.toString() == param1)
-         {
-            return _loc2_;
-         }
-         var _loc3_:Number = parseFloat(param1);
-         if(_loc3_.toString() == param1)
-         {
-            return _loc3_;
-         }
-         return param1;
-      }
-      
-      private function calcDepth(param1:String) : int
-      {
-         return param1.split(".").length;
-      }
-      
-      public function loadInitialState() : void
-      {
-      }
-      
-      public function save() : void
-      {
-         var _loc5_:IHistoryManagerClient = null;
-         var _loc6_:Object = null;
-         var _loc7_:String = null;
-         var _loc8_:* = null;
-         var _loc9_:Object = null;
-         if(!ApplicationGlobals.application.historyManagementEnabled)
-         {
-            return;
-         }
-         var _loc1_:Boolean = false;
-         var _loc2_:String = "app=" + appID;
-         var _loc3_:int = registeredObjects.length;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc5_ = registeredObjects[_loc4_];
-            _loc6_ = _loc5_.saveState();
-            _loc7_ = getRegistrationInfo(_loc5_).crc;
-            for(_loc8_ in _loc6_)
+        }// end function
+
+        public function register(param1:IHistoryManagerClient) : void
+        {
+            if (!ApplicationGlobals.application.historyManagementEnabled)
             {
-               _loc9_ = _loc6_[_loc8_];
-               if(_loc2_.length > 0)
-               {
-                  _loc2_ = _loc2_ + PROPERTY_SEPARATOR;
-               }
-               _loc2_ = _loc2_ + _loc7_;
-               _loc2_ = _loc2_ + ID_NAME_SEPARATOR;
-               _loc2_ = _loc2_ + escape(_loc8_);
-               _loc2_ = _loc2_ + NAME_VALUE_SEPARATOR;
-               _loc2_ = _loc2_ + escape(_loc9_.toString());
-               _loc1_ = true;
+                return;
             }
-            _loc4_++;
-         }
-         if(_loc1_)
-         {
-            pendingQueryString = _loc2_;
-            ApplicationGlobals.application.callLater(this.submitQuery);
-         }
-      }
-      
-      private function calcCRC(param1:String) : String
-      {
-         var _loc5_:uint = 0;
-         var _loc6_:uint = 0;
-         var _loc7_:uint = 0;
-         var _loc2_:uint = 65535;
-         var _loc3_:int = param1.length;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc5_ = param1.charCodeAt(_loc4_);
-            _loc6_ = _loc5_ & 255;
-            _loc7_ = _loc5_ >> 8;
-            if(_loc7_ != 0)
+            unregister(param1);
+            registeredObjects.push(param1);
+            var _loc_2:* = getPath(param1);
+            var _loc_3:* = calcCRC(_loc_2);
+            var _loc_4:* = calcDepth(_loc_2);
+            if (!registrationMap)
             {
-               _loc2_ = updateCRC(_loc2_,_loc7_);
+                registrationMap = new Dictionary(true);
             }
-            _loc2_ = updateCRC(_loc2_,_loc6_);
-            _loc4_++;
-         }
-         _loc2_ = updateCRC(_loc2_,0);
-         _loc2_ = updateCRC(_loc2_,0);
-         return _loc2_.toString(16);
-      }
-   }
+            registrationMap[param1] = new RegistrationInfo(_loc_3, _loc_4);
+            registeredObjects.sort(depthCompare);
+            if (pendingStates[_loc_3])
+            {
+                param1.loadState(pendingStates[_loc_3]);
+                delete pendingStates[_loc_3];
+            }
+            return;
+        }// end function
+
+        private function parseString(param1:String) : Object
+        {
+            if (param1 == "true")
+            {
+                return true;
+            }
+            if (param1 == "false")
+            {
+                return false;
+            }
+            var _loc_2:* = parseInt(param1);
+            if (_loc_2.toString() == param1)
+            {
+                return _loc_2;
+            }
+            var _loc_3:* = parseFloat(param1);
+            if (_loc_3.toString() == param1)
+            {
+                return _loc_3;
+            }
+            return param1;
+        }// end function
+
+        private function calcDepth(param1:String) : int
+        {
+            return param1.split(".").length;
+        }// end function
+
+        public function loadInitialState() : void
+        {
+            return;
+        }// end function
+
+        public function save() : void
+        {
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            if (!ApplicationGlobals.application.historyManagementEnabled)
+            {
+                return;
+            }
+            var _loc_1:* = false;
+            var _loc_2:* = "app=" + appID;
+            var _loc_3:* = registeredObjects.length;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                _loc_5 = registeredObjects[_loc_4];
+                _loc_6 = _loc_5.saveState();
+                _loc_7 = getRegistrationInfo(_loc_5).crc;
+                for (_loc_8 in _loc_6)
+                {
+                    
+                    _loc_9 = _loc_6[_loc_8];
+                    if (_loc_2.length > 0)
+                    {
+                        _loc_2 = _loc_2 + PROPERTY_SEPARATOR;
+                    }
+                    _loc_2 = _loc_2 + _loc_7;
+                    _loc_2 = _loc_2 + ID_NAME_SEPARATOR;
+                    _loc_2 = _loc_2 + escape(_loc_8);
+                    _loc_2 = _loc_2 + NAME_VALUE_SEPARATOR;
+                    _loc_2 = _loc_2 + escape(_loc_9.toString());
+                    _loc_1 = true;
+                }
+                _loc_4++;
+            }
+            if (_loc_1)
+            {
+                pendingQueryString = _loc_2;
+                ApplicationGlobals.application.callLater(this.submitQuery);
+            }
+            return;
+        }// end function
+
+        private function calcCRC(param1:String) : String
+        {
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_2:* = 65535;
+            var _loc_3:* = param1.length;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                _loc_5 = param1.charCodeAt(_loc_4);
+                _loc_6 = _loc_5 & 255;
+                _loc_7 = _loc_5 >> 8;
+                if (_loc_7 != 0)
+                {
+                    _loc_2 = updateCRC(_loc_2, _loc_7);
+                }
+                _loc_2 = updateCRC(_loc_2, _loc_6);
+                _loc_4++;
+            }
+            _loc_2 = updateCRC(_loc_2, 0);
+            _loc_2 = updateCRC(_loc_2, 0);
+            return _loc_2.toString(16);
+        }// end function
+
+        public static function getInstance() : IHistoryManager
+        {
+            if (!instance)
+            {
+                systemManager = SystemManagerGlobals.topLevelSystemManagers[0];
+                instance = new HistoryManagerImpl;
+            }
+            return instance;
+        }// end function
+
+    }
 }
 
-import mx.core.mx_internal;
+import flash.display.*;
 
-use namespace mx_internal;
+import flash.utils.*;
 
-class RegistrationInfo
+import mx.core.*;
+
+import mx.events.*;
+
+import mx.managers.*;
+
+class RegistrationInfo extends Object
 {
-   
-   mx_internal static const VERSION:String = "3.6.0.21751";
-    
-   public var depth:int;
-   
-   public var crc:String;
-   
-   function RegistrationInfo(param1:String, param2:int)
-   {
-      super();
-      this.crc = param1;
-      this.depth = param2;
-   }
+    public var depth:int;
+    public var crc:String;
+    static const VERSION:String = "3.6.0.21751";
+
+    function RegistrationInfo(param1:String, param2:int)
+    {
+        this.crc = param1;
+        this.depth = param2;
+        return;
+    }// end function
+
 }
+

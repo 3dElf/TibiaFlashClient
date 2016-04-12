@@ -1,268 +1,252 @@
-package mx.skins
+﻿package mx.skins
 {
-   import mx.core.IRectangularBorder;
-   import mx.core.mx_internal;
-   import flash.display.Graphics;
-   import flash.display.DisplayObject;
-   import mx.core.IContainer;
-   import mx.core.EdgeMetrics;
-   import flash.display.Shape;
-   import flash.geom.Rectangle;
-   import flash.events.Event;
-   import mx.core.IChildList;
-   import mx.core.IRawChildrenContainer;
-   import flash.display.Loader;
-   import mx.styles.ISimpleStyleClient;
-   import mx.core.FlexShape;
-   import flash.display.LoaderInfo;
-   import flash.system.LoaderContext;
-   import flash.utils.getDefinitionByName;
-   import mx.core.FlexLoader;
-   import flash.events.IOErrorEvent;
-   import flash.events.ErrorEvent;
-   import flash.system.ApplicationDomain;
-   import flash.net.URLRequest;
-   import mx.resources.IResourceManager;
-   import mx.resources.ResourceManager;
-   
-   use namespace mx_internal;
-   
-   public class RectangularBorder extends Border implements IRectangularBorder
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var backgroundImage:DisplayObject;
-      
-      private var backgroundImageHeight:Number;
-      
-      private var _backgroundImageBounds:Rectangle;
-      
-      private var backgroundImageStyle:Object;
-      
-      private var backgroundImageWidth:Number;
-      
-      private var resourceManager:IResourceManager;
-      
-      public function RectangularBorder()
-      {
-         resourceManager = ResourceManager.getInstance();
-         super();
-         addEventListener(Event.REMOVED,removedHandler);
-      }
-      
-      public function layoutBackgroundImage() : void
-      {
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc7_:Number = NaN;
-         var _loc8_:Number = NaN;
-         var _loc14_:Number = NaN;
-         var _loc15_:Graphics = null;
-         var _loc1_:DisplayObject = parent;
-         var _loc2_:EdgeMetrics = _loc1_ is IContainer?IContainer(_loc1_).viewMetrics:borderMetrics;
-         var _loc3_:* = getStyle("backgroundAttachment") != "fixed";
-         if(_backgroundImageBounds)
-         {
-            _loc4_ = _backgroundImageBounds.width;
-            _loc5_ = _backgroundImageBounds.height;
-         }
-         else
-         {
-            _loc4_ = width - _loc2_.left - _loc2_.right;
-            _loc5_ = height - _loc2_.top - _loc2_.bottom;
-         }
-         var _loc6_:Number = getBackgroundSize();
-         if(isNaN(_loc6_))
-         {
-            _loc7_ = 1;
-            _loc8_ = 1;
-         }
-         else
-         {
-            _loc14_ = _loc6_ * 0.01;
-            _loc7_ = _loc14_ * _loc4_ / backgroundImageWidth;
-            _loc8_ = _loc14_ * _loc5_ / backgroundImageHeight;
-         }
-         backgroundImage.scaleX = _loc7_;
-         backgroundImage.scaleY = _loc8_;
-         var _loc9_:Number = Math.round(0.5 * (_loc4_ - backgroundImageWidth * _loc7_));
-         var _loc10_:Number = Math.round(0.5 * (_loc5_ - backgroundImageHeight * _loc8_));
-         backgroundImage.x = _loc2_.left;
-         backgroundImage.y = _loc2_.top;
-         var _loc11_:Shape = Shape(backgroundImage.mask);
-         _loc11_.x = _loc2_.left;
-         _loc11_.y = _loc2_.top;
-         if(Boolean(_loc3_) && _loc1_ is IContainer)
-         {
-            _loc9_ = _loc9_ - IContainer(_loc1_).horizontalScrollPosition;
-            _loc10_ = _loc10_ - IContainer(_loc1_).verticalScrollPosition;
-         }
-         backgroundImage.alpha = getStyle("backgroundAlpha");
-         backgroundImage.x = backgroundImage.x + _loc9_;
-         backgroundImage.y = backgroundImage.y + _loc10_;
-         var _loc12_:Number = width - _loc2_.left - _loc2_.right;
-         var _loc13_:Number = height - _loc2_.top - _loc2_.bottom;
-         if(_loc11_.width != _loc12_ || _loc11_.height != _loc13_)
-         {
-            _loc15_ = _loc11_.graphics;
-            _loc15_.clear();
-            _loc15_.beginFill(16777215);
-            _loc15_.drawRect(0,0,_loc12_,_loc13_);
-            _loc15_.endFill();
-         }
-      }
-      
-      public function set backgroundImageBounds(param1:Rectangle) : void
-      {
-         if(Boolean(_backgroundImageBounds) && Boolean(param1) && Boolean(_backgroundImageBounds.equals(param1)))
-         {
+    import flash.display.*;
+    import flash.events.*;
+    import flash.geom.*;
+    import flash.net.*;
+    import flash.system.*;
+    import flash.utils.*;
+    import mx.core.*;
+    import mx.resources.*;
+    import mx.styles.*;
+
+    public class RectangularBorder extends Border implements IRectangularBorder
+    {
+        private var backgroundImage:DisplayObject;
+        private var backgroundImageHeight:Number;
+        private var _backgroundImageBounds:Rectangle;
+        private var backgroundImageStyle:Object;
+        private var backgroundImageWidth:Number;
+        private var resourceManager:IResourceManager;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function RectangularBorder()
+        {
+            resourceManager = ResourceManager.getInstance();
+            addEventListener(Event.REMOVED, removedHandler);
             return;
-         }
-         _backgroundImageBounds = param1;
-         invalidateDisplayList();
-      }
-      
-      private function getBackgroundSize() : Number
-      {
-         var _loc3_:int = 0;
-         var _loc1_:Number = NaN;
-         var _loc2_:Object = getStyle("backgroundSize");
-         if(Boolean(_loc2_) && _loc2_ is String)
-         {
-            _loc3_ = _loc2_.indexOf("%");
-            if(_loc3_ != -1)
+        }// end function
+
+        public function layoutBackgroundImage() : void
+        {
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_7:* = NaN;
+            var _loc_8:* = NaN;
+            var _loc_14:* = NaN;
+            var _loc_15:* = null;
+            var _loc_1:* = parent;
+            var _loc_2:* = _loc_1 is IContainer ? (IContainer(_loc_1).viewMetrics) : (borderMetrics);
+            var _loc_3:* = getStyle("backgroundAttachment") != "fixed";
+            if (_backgroundImageBounds)
             {
-               _loc1_ = Number(_loc2_.substr(0,_loc3_));
+                _loc_4 = _backgroundImageBounds.width;
+                _loc_5 = _backgroundImageBounds.height;
             }
-         }
-         return _loc1_;
-      }
-      
-      private function removedHandler(param1:Event) : void
-      {
-         var _loc2_:IChildList = null;
-         if(backgroundImage)
-         {
-            _loc2_ = parent is IRawChildrenContainer?IRawChildrenContainer(parent).rawChildren:IChildList(parent);
-            _loc2_.removeChild(backgroundImage.mask);
-            _loc2_.removeChild(backgroundImage);
-            backgroundImage = null;
-         }
-      }
-      
-      private function initBackgroundImage(param1:DisplayObject) : void
-      {
-         backgroundImage = param1;
-         if(param1 is Loader)
-         {
-            backgroundImageWidth = Loader(param1).contentLoaderInfo.width;
-            backgroundImageHeight = Loader(param1).contentLoaderInfo.height;
-         }
-         else
-         {
-            backgroundImageWidth = backgroundImage.width;
-            backgroundImageHeight = backgroundImage.height;
-            if(param1 is ISimpleStyleClient)
+            else
             {
-               ISimpleStyleClient(param1).styleName = styleName;
+                _loc_4 = width - _loc_2.left - _loc_2.right;
+                _loc_5 = height - _loc_2.top - _loc_2.bottom;
             }
-         }
-         var _loc2_:IChildList = parent is IRawChildrenContainer?IRawChildrenContainer(parent).rawChildren:IChildList(parent);
-         var _loc3_:Shape = new FlexShape();
-         _loc3_.name = "backgroundMask";
-         _loc3_.x = 0;
-         _loc3_.y = 0;
-         _loc2_.addChild(_loc3_);
-         var _loc4_:int = _loc2_.getChildIndex(this);
-         _loc2_.addChildAt(backgroundImage,_loc4_ + 1);
-         backgroundImage.mask = _loc3_;
-      }
-      
-      public function get backgroundImageBounds() : Rectangle
-      {
-         return _backgroundImageBounds;
-      }
-      
-      public function get hasBackgroundImage() : Boolean
-      {
-         return backgroundImage != null;
-      }
-      
-      private function completeEventHandler(param1:Event) : void
-      {
-         if(!parent)
-         {
+            var _loc_6:* = getBackgroundSize();
+            if (isNaN(_loc_6))
+            {
+                _loc_7 = 1;
+                _loc_8 = 1;
+            }
+            else
+            {
+                _loc_14 = _loc_6 * 0.01;
+                _loc_7 = _loc_14 * _loc_4 / backgroundImageWidth;
+                _loc_8 = _loc_14 * _loc_5 / backgroundImageHeight;
+            }
+            backgroundImage.scaleX = _loc_7;
+            backgroundImage.scaleY = _loc_8;
+            var _loc_9:* = Math.round(0.5 * (_loc_4 - backgroundImageWidth * _loc_7));
+            var _loc_10:* = Math.round(0.5 * (_loc_5 - backgroundImageHeight * _loc_8));
+            backgroundImage.x = _loc_2.left;
+            backgroundImage.y = _loc_2.top;
+            var _loc_11:* = Shape(backgroundImage.mask);
+            _loc_11.x = _loc_2.left;
+            _loc_11.y = _loc_2.top;
+            if (_loc_3 && _loc_1 is IContainer)
+            {
+                _loc_9 = _loc_9 - IContainer(_loc_1).horizontalScrollPosition;
+                _loc_10 = _loc_10 - IContainer(_loc_1).verticalScrollPosition;
+            }
+            backgroundImage.alpha = getStyle("backgroundAlpha");
+            backgroundImage.x = backgroundImage.x + _loc_9;
+            backgroundImage.y = backgroundImage.y + _loc_10;
+            var _loc_12:* = width - _loc_2.left - _loc_2.right;
+            var _loc_13:* = height - _loc_2.top - _loc_2.bottom;
+            if (_loc_11.width != _loc_12 || _loc_11.height != _loc_13)
+            {
+                _loc_15 = _loc_11.graphics;
+                _loc_15.clear();
+                _loc_15.beginFill(16777215);
+                _loc_15.drawRect(0, 0, _loc_12, _loc_13);
+                _loc_15.endFill();
+            }
             return;
-         }
-         var _loc2_:DisplayObject = DisplayObject(LoaderInfo(param1.target).loader);
-         initBackgroundImage(_loc2_);
-         layoutBackgroundImage();
-         dispatchEvent(param1.clone());
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var cls:Class = null;
-         var newStyleObj:DisplayObject = null;
-         var loader:Loader = null;
-         var loaderContext:LoaderContext = null;
-         var message:String = null;
-         var unscaledWidth:Number = param1;
-         var unscaledHeight:Number = param2;
-         if(!parent)
-         {
+        }// end function
+
+        public function set backgroundImageBounds(param1:Rectangle) : void
+        {
+            if (_backgroundImageBounds && param1 && _backgroundImageBounds.equals(param1))
+            {
+                return;
+            }
+            _backgroundImageBounds = param1;
+            invalidateDisplayList();
             return;
-         }
-         var newStyle:Object = getStyle("backgroundImage");
-         if(newStyle != backgroundImageStyle)
-         {
-            removedHandler(null);
-            backgroundImageStyle = newStyle;
-            if(Boolean(newStyle) && Boolean(newStyle as Class))
+        }// end function
+
+        private function getBackgroundSize() : Number
+        {
+            var _loc_3:* = 0;
+            var _loc_1:* = NaN;
+            var _loc_2:* = getStyle("backgroundSize");
+            if (_loc_2 && _loc_2 is String)
             {
-               cls = Class(newStyle);
-               initBackgroundImage(new cls());
+                _loc_3 = _loc_2.indexOf("%");
+                if (_loc_3 != -1)
+                {
+                    _loc_1 = Number(_loc_2.substr(0, _loc_3));
+                }
             }
-            else if(Boolean(newStyle) && newStyle is String)
+            return _loc_1;
+        }// end function
+
+        private function removedHandler(event:Event) : void
+        {
+            var _loc_2:* = null;
+            if (backgroundImage)
             {
-               try
-               {
-                  cls = Class(getDefinitionByName(String(newStyle)));
-               }
-               catch(e:Error)
-               {
-               }
-               if(cls)
-               {
-                  newStyleObj = new cls();
-                  initBackgroundImage(newStyleObj);
-               }
-               else
-               {
-                  loader = new FlexLoader();
-                  loader.contentLoaderInfo.addEventListener(Event.COMPLETE,completeEventHandler);
-                  loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,errorEventHandler);
-                  loader.contentLoaderInfo.addEventListener(ErrorEvent.ERROR,errorEventHandler);
-                  loaderContext = new LoaderContext();
-                  loaderContext.applicationDomain = new ApplicationDomain(ApplicationDomain.currentDomain);
-                  loader.load(new URLRequest(String(newStyle)),loaderContext);
-               }
+                _loc_2 = parent is IRawChildrenContainer ? (IRawChildrenContainer(parent).rawChildren) : (IChildList(parent));
+                _loc_2.removeChild(backgroundImage.mask);
+                _loc_2.removeChild(backgroundImage);
+                backgroundImage = null;
             }
-            else if(newStyle)
+            return;
+        }// end function
+
+        private function initBackgroundImage(param1:DisplayObject) : void
+        {
+            backgroundImage = param1;
+            if (param1 is Loader)
             {
-               message = resourceManager.getString("skins","notLoaded",[newStyle]);
-               throw new Error(message);
+                backgroundImageWidth = Loader(param1).contentLoaderInfo.width;
+                backgroundImageHeight = Loader(param1).contentLoaderInfo.height;
             }
-         }
-         if(backgroundImage)
-         {
+            else
+            {
+                backgroundImageWidth = backgroundImage.width;
+                backgroundImageHeight = backgroundImage.height;
+                if (param1 is ISimpleStyleClient)
+                {
+                    ISimpleStyleClient(param1).styleName = styleName;
+                }
+            }
+            var _loc_2:* = parent is IRawChildrenContainer ? (IRawChildrenContainer(parent).rawChildren) : (IChildList(parent));
+            var _loc_3:* = new FlexShape();
+            _loc_3.name = "backgroundMask";
+            _loc_3.x = 0;
+            _loc_3.y = 0;
+            _loc_2.addChild(_loc_3);
+            var _loc_4:* = _loc_2.getChildIndex(this);
+            _loc_2.addChildAt(backgroundImage, (_loc_4 + 1));
+            backgroundImage.mask = _loc_3;
+            return;
+        }// end function
+
+        public function get backgroundImageBounds() : Rectangle
+        {
+            return _backgroundImageBounds;
+        }// end function
+
+        public function get hasBackgroundImage() : Boolean
+        {
+            return backgroundImage != null;
+        }// end function
+
+        private function completeEventHandler(event:Event) : void
+        {
+            if (!parent)
+            {
+                return;
+            }
+            var _loc_2:* = DisplayObject(LoaderInfo(event.target).loader);
+            initBackgroundImage(_loc_2);
             layoutBackgroundImage();
-         }
-      }
-      
-      private function errorEventHandler(param1:Event) : void
-      {
-      }
-   }
+            dispatchEvent(event.clone());
+            return;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var cls:Class;
+            var newStyleObj:DisplayObject;
+            var loader:Loader;
+            var loaderContext:LoaderContext;
+            var message:String;
+            var unscaledWidth:* = param1;
+            var unscaledHeight:* = param2;
+            if (!parent)
+            {
+                return;
+            }
+            var newStyle:* = getStyle("backgroundImage");
+            if (newStyle != backgroundImageStyle)
+            {
+                removedHandler(null);
+                backgroundImageStyle = newStyle;
+                if (newStyle && newStyle as Class)
+                {
+                    cls = Class(newStyle);
+                    initBackgroundImage(new cls);
+                }
+                else if (newStyle && newStyle is String)
+                {
+                    try
+                    {
+                        cls = Class(getDefinitionByName(String(newStyle)));
+                    }
+                    catch (e:Error)
+                    {
+                    }
+                    if (cls)
+                    {
+                        newStyleObj = new cls;
+                        initBackgroundImage(newStyleObj);
+                    }
+                    else
+                    {
+                        loader = new FlexLoader();
+                        loader.contentLoaderInfo.addEventListener(Event.COMPLETE, completeEventHandler);
+                        loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, errorEventHandler);
+                        loader.contentLoaderInfo.addEventListener(ErrorEvent.ERROR, errorEventHandler);
+                        loaderContext = new LoaderContext();
+                        loaderContext.applicationDomain = new ApplicationDomain(ApplicationDomain.currentDomain);
+                        loader.load(new URLRequest(String(newStyle)), loaderContext);
+                    }
+                }
+                else if (newStyle)
+                {
+                    message = resourceManager.getString("skins", "notLoaded", [newStyle]);
+                    throw new Error(message);
+                }
+            }
+            if (backgroundImage)
+            {
+                layoutBackgroundImage();
+            }
+            return;
+        }// end function
+
+        private function errorEventHandler(event:Event) : void
+        {
+            return;
+        }// end function
+
+    }
 }

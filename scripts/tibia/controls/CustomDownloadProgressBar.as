@@ -1,21 +1,23 @@
-package tibia.controls
+﻿package tibia.controls
 {
-   import mx.preloaders.DownloadProgressBar;
-   import mx.core.Singleton;
-   import tibia.cursors.CustomCursorManagerImpl;
-   
-   public class CustomDownloadProgressBar extends DownloadProgressBar
-   {
-       
-      public function CustomDownloadProgressBar()
-      {
-         super();
-      }
-      
-      override public function initialize() : void
-      {
-         Singleton.registerClass("mx.managers::ICursorManager",CustomCursorManagerImpl);
-         super.initialize();
-      }
-   }
+    import mx.core.*;
+    import mx.preloaders.*;
+    import tibia.cursors.*;
+
+    public class CustomDownloadProgressBar extends DownloadProgressBar
+    {
+
+        public function CustomDownloadProgressBar()
+        {
+            return;
+        }// end function
+
+        override public function initialize() : void
+        {
+            Singleton.registerClass("mx.managers::ICursorManager", CustomCursorManagerImpl);
+            super.initialize();
+            return;
+        }// end function
+
+    }
 }

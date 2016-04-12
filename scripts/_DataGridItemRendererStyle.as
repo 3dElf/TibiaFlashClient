@@ -1,33 +1,36 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   
-   public class _DataGridItemRendererStyle
-   {
-       
-      public function _DataGridItemRendererStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration("DataGridItemRenderer");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration("DataGridItemRenderer",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class _DataGridItemRendererStyle extends Object
+    {
+
+        public function _DataGridItemRendererStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration("DataGridItemRenderer");
+            if (!style)
             {
-               _DataGridItemRendererStyle.paddingLeft = 5;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration("DataGridItemRenderer", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.paddingLeft = 5;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

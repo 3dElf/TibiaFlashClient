@@ -1,38 +1,33 @@
-package mx.resources
+﻿package mx.resources
 {
-   import mx.core.mx_internal;
-   import mx.core.Singleton;
-   
-   use namespace mx_internal;
-   
-   public class ResourceManager
-   {
-      
-      private static var implClassDependency:mx.resources.ResourceManagerImpl;
-      
-      private static var instance:mx.resources.IResourceManager;
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function ResourceManager()
-      {
-         super();
-      }
-      
-      public static function getInstance() : mx.resources.IResourceManager
-      {
-         if(!instance)
-         {
-            try
+    import mx.core.*;
+
+    public class ResourceManager extends Object
+    {
+        private static var implClassDependency:ResourceManagerImpl;
+        private static var instance:IResourceManager;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function ResourceManager()
+        {
+            return;
+        }// end function
+
+        public static function getInstance() : IResourceManager
+        {
+            if (!instance)
             {
-               instance = IResourceManager(Singleton.getInstance("mx.resources::IResourceManager"));
+                try
+                {
+                    instance = IResourceManager(Singleton.getInstance("mx.resources::IResourceManager"));
+                }
+                catch (e:Error)
+                {
+                    instance = new ResourceManagerImpl();
+                }
             }
-            catch(e:Error)
-            {
-               instance = new mx.resources.ResourceManagerImpl();
-            }
-         }
-         return instance;
-      }
-   }
+            return instance;
+        }// end function
+
+    }
 }

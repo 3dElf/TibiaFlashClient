@@ -1,655 +1,652 @@
-package mx.controls
+﻿package mx.controls
 {
-   import mx.containers.Box;
-   import mx.core.mx_internal;
-   import mx.core.Container;
-   import mx.events.IndexChangedEvent;
-   import mx.core.FlexVersion;
-   import flash.events.Event;
-   import flash.display.DisplayObject;
-   import mx.collections.IList;
-   import flash.events.MouseEvent;
-   import mx.events.ItemClickEvent;
-   import flash.display.InteractiveObject;
-   import mx.core.ScrollPolicy;
-   import mx.events.ChildExistenceChangedEvent;
-   import mx.containers.ViewStack;
-   import mx.core.UIComponent;
-   import mx.core.IFlexDisplayObject;
-   import mx.core.IFactory;
-   import mx.events.CollectionEvent;
-   import mx.collections.ArrayCollection;
-   import mx.events.FlexEvent;
-   import mx.core.ClassFactory;
-   import mx.containers.BoxDirection;
-   
-   use namespace mx_internal;
-   
-   public class NavBar extends Box
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var _labelField:String = "label";
-      
-      private var _iconField:String = "icon";
-      
-      private var _dataProvider:IList;
-      
-      private var measurementHasBeenCalled:Boolean = false;
-      
-      private var _toolTipField:String = "toolTip";
-      
-      mx_internal var navItemFactory:IFactory;
-      
-      private var pendingTargetStack:Object;
-      
-      private var lastToolTip:String = null;
-      
-      private var _labelFunction:Function;
-      
-      mx_internal var targetStack:ViewStack;
-      
-      private var _selectedIndex:int = -1;
-      
-      private var dataProviderChanged:Boolean = false;
-      
-      public function NavBar()
-      {
-         navItemFactory = new ClassFactory(Button);
-         super();
-         direction = BoxDirection.HORIZONTAL;
-         showInAutomationHierarchy = true;
-      }
-      
-      [Bindable("iconFieldChanged")]
-      public function get iconField() : String
-      {
-         return _iconField;
-      }
-      
-      override public function set enabled(param1:Boolean) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         if(param1 != enabled)
-         {
-            super.enabled = param1;
-            _loc2_ = numChildren;
-            _loc3_ = 0;
-            while(_loc3_ < _loc2_)
-            {
-               if(targetStack)
-               {
-                  Button(getChildAt(_loc3_)).enabled = Boolean(param1) && Boolean(Container(targetStack.getChildAt(_loc3_)).enabled);
-               }
-               else
-               {
-                  Button(getChildAt(_loc3_)).enabled = param1;
-               }
-               _loc3_++;
-            }
-         }
-      }
-      
-      protected function updateNavItemIcon(param1:int, param2:Class) : void
-      {
-         var _loc3_:Button = Button(getChildAt(param1));
-         _loc3_.setStyle("icon",param2);
-      }
-      
-      private function childIndexChangeHandler(param1:IndexChangedEvent) : void
-      {
-         if(param1.target == this)
-         {
+    import flash.display.*;
+    import flash.events.*;
+    import mx.collections.*;
+    import mx.containers.*;
+    import mx.core.*;
+    import mx.events.*;
+
+    public class NavBar extends Box
+    {
+        private var _labelField:String = "label";
+        private var _iconField:String = "icon";
+        private var _dataProvider:IList;
+        private var measurementHasBeenCalled:Boolean = false;
+        private var _toolTipField:String = "toolTip";
+        var navItemFactory:IFactory;
+        private var pendingTargetStack:Object;
+        private var lastToolTip:String = null;
+        private var _labelFunction:Function;
+        var targetStack:ViewStack;
+        private var _selectedIndex:int = -1;
+        private var dataProviderChanged:Boolean = false;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function NavBar()
+        {
+            navItemFactory = new ClassFactory(Button);
+            direction = BoxDirection.HORIZONTAL;
+            showInAutomationHierarchy = true;
             return;
-         }
-         setChildIndex(getChildAt(param1.oldIndex),param1.newIndex);
-         resetNavItems();
-      }
-      
-      protected function hiliteSelectedNavItem(param1:int) : void
-      {
-      }
-      
-      private function checkPendingTargetStack() : void
-      {
-         if(pendingTargetStack)
-         {
-            _setTargetViewStack(pendingTargetStack);
-            pendingTargetStack = null;
-         }
-      }
-      
-      private function setTargetViewStack(param1:Object) : void
-      {
-         if(!measurementHasBeenCalled && Boolean(param1))
-         {
-            pendingTargetStack = param1;
-            invalidateProperties();
-         }
-         else
-         {
-            _setTargetViewStack(param1);
-         }
-      }
-      
-      override public function get baselinePosition() : Number
-      {
-         if(FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
-         {
-            return super.baselinePosition;
-         }
-         if(!validateBaselinePosition())
-         {
-            return NaN;
-         }
-         if(numChildren == 0)
-         {
-            return super.baselinePosition;
-         }
-         var _loc1_:Button = Button(getChildAt(0));
-         validateNow();
-         return _loc1_.y + _loc1_.baselinePosition;
-      }
-      
-      private function enabledChangedHandler(param1:Event) : void
-      {
-         var _loc2_:int = targetStack.getChildIndex(DisplayObject(param1.target));
-         Button(getChildAt(_loc2_)).enabled = Boolean(enabled) && Boolean(param1.target.enabled);
-      }
-      
-      private function labelChangedHandler(param1:Event) : void
-      {
-         var _loc2_:int = targetStack.getChildIndex(DisplayObject(param1.target));
-         updateNavItemLabel(_loc2_,Container(param1.target).label);
-      }
-      
-      override protected function createChildren() : void
-      {
-         super.createChildren();
-         if(dataProviderChanged)
-         {
-            createNavChildren();
-            dataProviderChanged = false;
-         }
-      }
-      
-      override public function notifyStyleChangeInChildren(param1:String, param2:Boolean) : void
-      {
-         super.notifyStyleChangeInChildren(param1,true);
-      }
-      
-      protected function clickHandler(param1:MouseEvent) : void
-      {
-         var _loc2_:int = getChildIndex(DisplayObject(param1.currentTarget));
-         if(targetStack)
-         {
-            targetStack.selectedIndex = _loc2_;
-         }
-         _selectedIndex = _loc2_;
-         var _loc3_:ItemClickEvent = new ItemClickEvent(ItemClickEvent.ITEM_CLICK);
-         _loc3_.label = Button(param1.currentTarget).label;
-         _loc3_.index = _loc2_;
-         _loc3_.relatedObject = InteractiveObject(param1.currentTarget);
-         _loc3_.item = !!_dataProvider?_dataProvider.getItemAt(_loc2_):null;
-         dispatchEvent(_loc3_);
-         param1.stopImmediatePropagation();
-      }
-      
-      override public function get horizontalScrollPolicy() : String
-      {
-         return ScrollPolicy.OFF;
-      }
-      
-      public function set iconField(param1:String) : void
-      {
-         _iconField = param1;
-         if(_dataProvider)
-         {
-            dataProvider = _dataProvider;
-         }
-         dispatchEvent(new Event("iconFieldChanged"));
-      }
-      
-      private function childAddHandler(param1:ChildExistenceChangedEvent) : void
-      {
-         if(param1.target == this)
-         {
+        }// end function
+
+        public function get iconField() : String
+        {
+            return _iconField;
+        }// end function
+
+        override public function set enabled(param1:Boolean) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            if (param1 != enabled)
+            {
+                super.enabled = param1;
+                _loc_2 = numChildren;
+                _loc_3 = 0;
+                while (_loc_3 < _loc_2)
+                {
+                    
+                    if (targetStack)
+                    {
+                        Button(getChildAt(_loc_3)).enabled = param1 && Container(targetStack.getChildAt(_loc_3)).enabled;
+                    }
+                    else
+                    {
+                        Button(getChildAt(_loc_3)).enabled = param1;
+                    }
+                    _loc_3++;
+                }
+            }
             return;
-         }
-         if(param1.relatedObject.parent != targetStack)
-         {
+        }// end function
+
+        protected function updateNavItemIcon(param1:int, param2:Class) : void
+        {
+            var _loc_3:* = Button(getChildAt(param1));
+            _loc_3.setStyle("icon", param2);
             return;
-         }
-         var _loc2_:Container = Container(param1.relatedObject);
-         var _loc3_:Button = Button(createNavItem(itemToLabel(_loc2_),_loc2_.icon));
-         var _loc4_:int = _loc2_.parent.getChildIndex(DisplayObject(_loc2_));
-         setChildIndex(_loc3_,_loc4_);
-         if(_loc2_.toolTip)
-         {
-            _loc3_.toolTip = _loc2_.toolTip;
-            _loc2_.toolTip = null;
-         }
-         _loc2_.addEventListener("labelChanged",labelChangedHandler);
-         _loc2_.addEventListener("iconChanged",iconChangedHandler);
-         _loc2_.addEventListener("enabledChanged",enabledChangedHandler);
-         _loc2_.addEventListener("toolTipChanged",toolTipChangedHandler);
-         _loc3_.enabled = Boolean(enabled) && Boolean(_loc2_.enabled);
-         callLater(resetNavItems);
-      }
-      
-      public function itemToLabel(param1:Object) : String
-      {
-         var data:Object = param1;
-         if(data == null)
-         {
-            return "";
-         }
-         if(labelFunction != null)
-         {
-            return labelFunction(data);
-         }
-         if(data is XML)
-         {
-            try
+        }// end function
+
+        private function childIndexChangeHandler(event:IndexChangedEvent) : void
+        {
+            if (event.target == this)
             {
-               if(data[labelField].length() != 0)
-               {
-                  data = data[labelField];
-               }
+                return;
             }
-            catch(e:Error)
-            {
-            }
-         }
-         else if(data is Object)
-         {
-            try
-            {
-               if(data[labelField] != null)
-               {
-                  data = data[labelField];
-               }
-            }
-            catch(e:Error)
-            {
-            }
-         }
-         if(data is String)
-         {
-            return String(data);
-         }
-         if(data is Number)
-         {
-            return data.toString();
-         }
-         return "";
-      }
-      
-      private function createNavChildren() : void
-      {
-         var item:Object = null;
-         var navItem:Button = null;
-         var label:String = null;
-         var iconValue:Object = null;
-         var icon:Class = null;
-         if(!_dataProvider)
-         {
+            setChildIndex(getChildAt(event.oldIndex), event.newIndex);
+            resetNavItems();
             return;
-         }
-         var n:int = _dataProvider.length;
-         var i:int = 0;
-         while(i < n)
-         {
-            item = _dataProvider.getItemAt(i);
-            if(item is String && labelFunction == null)
+        }// end function
+
+        protected function hiliteSelectedNavItem(param1:int) : void
+        {
+            return;
+        }// end function
+
+        private function checkPendingTargetStack() : void
+        {
+            if (pendingTargetStack)
             {
-               navItem = Button(createNavItem(String(item)));
+                _setTargetViewStack(pendingTargetStack);
+                pendingTargetStack = null;
+            }
+            return;
+        }// end function
+
+        private function setTargetViewStack(param1:Object) : void
+        {
+            if (!measurementHasBeenCalled && param1)
+            {
+                pendingTargetStack = param1;
+                invalidateProperties();
             }
             else
             {
-               label = itemToLabel(item);
-               if(iconField)
-               {
-                  iconValue = null;
-                  try
-                  {
-                     iconValue = item[iconField];
-                  }
-                  catch(e:Error)
-                  {
-                  }
-                  icon = iconValue is String?Class(systemManager.getDefinitionByName(String(iconValue))):Class(iconValue);
-                  navItem = Button(createNavItem(label,icon));
-               }
-               else
-               {
-                  navItem = Button(createNavItem(label,null));
-               }
-               if(toolTipField)
-               {
-                  try
-                  {
-                     navItem.toolTip = item[toolTipField] === undefined?null:item[toolTipField];
-                  }
-                  catch(e:Error)
-                  {
-                  }
-               }
+                _setTargetViewStack(param1);
             }
-            navItem.enabled = enabled;
-            i++;
-         }
-         resetNavItems();
-      }
-      
-      public function set toolTipField(param1:String) : void
-      {
-         _toolTipField = param1;
-         if(_dataProvider)
-         {
-            dataProvider = _dataProvider;
-         }
-         dispatchEvent(new Event("toolTipFieldChanged"));
-      }
-      
-      private function _setTargetViewStack(param1:Object) : void
-      {
-         var _loc2_:ViewStack = null;
-         var _loc4_:int = 0;
-         var _loc5_:Container = null;
-         var _loc6_:int = 0;
-         var _loc7_:Button = null;
-         if(param1 is ViewStack)
-         {
-            _loc2_ = ViewStack(param1);
-         }
-         else if(param1)
-         {
-            _loc2_ = parentDocument[param1];
-         }
-         else
-         {
-            _loc2_ = null;
-         }
-         if(targetStack)
-         {
-            targetStack.removeEventListener(ChildExistenceChangedEvent.CHILD_ADD,childAddHandler);
-            targetStack.removeEventListener(ChildExistenceChangedEvent.CHILD_REMOVE,childRemoveHandler);
-            targetStack.removeEventListener(Event.CHANGE,changeHandler);
-            targetStack.removeEventListener(IndexChangedEvent.CHILD_INDEX_CHANGE,childIndexChangeHandler);
-            _loc4_ = targetStack.numChildren;
-            _loc6_ = 0;
-            while(_loc6_ < _loc4_)
+            return;
+        }// end function
+
+        override public function get baselinePosition() : Number
+        {
+            if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
             {
-               _loc5_ = Container(targetStack.getChildAt(_loc6_));
-               _loc5_.removeEventListener("labelChanged",labelChangedHandler);
-               _loc5_.removeEventListener("iconChanged",iconChangedHandler);
-               _loc5_.removeEventListener("enabledChanged",enabledChangedHandler);
-               _loc5_.removeEventListener("toolTipChanged",toolTipChangedHandler);
-               _loc6_++;
+                return super.baselinePosition;
             }
-         }
-         removeAllChildren();
-         _selectedIndex = -1;
-         targetStack = _loc2_;
-         if(!targetStack)
-         {
-            return;
-         }
-         targetStack.addEventListener(ChildExistenceChangedEvent.CHILD_ADD,childAddHandler);
-         targetStack.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE,childRemoveHandler);
-         targetStack.addEventListener(Event.CHANGE,changeHandler);
-         targetStack.addEventListener(IndexChangedEvent.CHILD_INDEX_CHANGE,childIndexChangeHandler);
-         _loc4_ = targetStack.numChildren;
-         _loc6_ = 0;
-         while(_loc6_ < _loc4_)
-         {
-            _loc5_ = Container(targetStack.getChildAt(_loc6_));
-            _loc7_ = Button(createNavItem(itemToLabel(_loc5_),_loc5_.icon));
-            if(_loc5_.toolTip)
+            if (!validateBaselinePosition())
             {
-               _loc7_.toolTip = _loc5_.toolTip;
-               _loc5_.toolTip = null;
+                return NaN;
             }
-            _loc5_.addEventListener("labelChanged",labelChangedHandler);
-            _loc5_.addEventListener("iconChanged",iconChangedHandler);
-            _loc5_.addEventListener("enabledChanged",enabledChangedHandler);
-            _loc5_.addEventListener("toolTipChanged",toolTipChangedHandler);
-            _loc7_.enabled = Boolean(enabled) && Boolean(_loc5_.enabled);
-            _loc6_++;
-         }
-         var _loc3_:int = targetStack.selectedIndex;
-         if(_loc3_ == -1 && targetStack.numChildren > 0)
-         {
-            _loc3_ = 0;
-         }
-         if(_loc3_ != -1)
-         {
-            hiliteSelectedNavItem(_loc3_);
-         }
-         resetNavItems();
-         invalidateDisplayList();
-      }
-      
-      private function toolTipChangedHandler(param1:Event) : void
-      {
-         var _loc2_:int = targetStack.getChildIndex(DisplayObject(param1.target));
-         var _loc3_:UIComponent = UIComponent(getChildAt(_loc2_));
-         if(UIComponent(param1.target).toolTip)
-         {
-            _loc3_.toolTip = UIComponent(param1.target).toolTip;
-            lastToolTip = UIComponent(param1.target).toolTip;
-            UIComponent(param1.target).toolTip = null;
-         }
-         else if(!lastToolTip)
-         {
-            _loc3_.toolTip = UIComponent(param1.target).toolTip;
-            lastToolTip = "placeholder";
-            UIComponent(param1.target).toolTip = null;
-         }
-         else
-         {
-            lastToolTip = null;
-         }
-      }
-      
-      protected function createNavItem(param1:String, param2:Class = null) : IFlexDisplayObject
-      {
-         return null;
-      }
-      
-      [Bindable("collectionChange")]
-      public function get dataProvider() : Object
-      {
-         return !!targetStack?targetStack:_dataProvider;
-      }
-      
-      protected function updateNavItemLabel(param1:int, param2:String) : void
-      {
-         var _loc3_:Button = Button(getChildAt(param1));
-         _loc3_.label = param2;
-      }
-      
-      override public function set horizontalScrollPolicy(param1:String) : void
-      {
-      }
-      
-      override protected function commitProperties() : void
-      {
-         super.commitProperties();
-         if(!measurementHasBeenCalled)
-         {
-            checkPendingTargetStack();
-            measurementHasBeenCalled = true;
-         }
-         if(dataProviderChanged)
-         {
-            dataProviderChanged = false;
-            createNavChildren();
-         }
-         if(blocker)
-         {
-            blocker.visible = false;
-         }
-      }
-      
-      public function set labelField(param1:String) : void
-      {
-         _labelField = param1;
-         if(_dataProvider)
-         {
-            dataProvider = _dataProvider;
-         }
-         dispatchEvent(new Event("labelFieldChanged"));
-      }
-      
-      private function iconChangedHandler(param1:Event) : void
-      {
-         var _loc2_:int = targetStack.getChildIndex(DisplayObject(param1.target));
-         updateNavItemIcon(_loc2_,Container(param1.target).icon);
-      }
-      
-      protected function resetNavItems() : void
-      {
-      }
-      
-      [Bindable("toolTipFieldChanged")]
-      public function get toolTipField() : String
-      {
-         return _toolTipField;
-      }
-      
-      public function set labelFunction(param1:Function) : void
-      {
-         _labelFunction = param1;
-         if(_dataProvider)
-         {
-            dataProvider = _dataProvider;
-         }
-         dispatchEvent(new Event("labelFunctionChanged"));
-      }
-      
-      [Bindable("labelFieldChanged")]
-      public function get labelField() : String
-      {
-         return _labelField;
-      }
-      
-      override public function set verticalScrollPolicy(param1:String) : void
-      {
-      }
-      
-      private function childRemoveHandler(param1:ChildExistenceChangedEvent) : void
-      {
-         if(param1.target == this)
-         {
+            if (numChildren == 0)
+            {
+                return super.baselinePosition;
+            }
+            var _loc_1:* = Button(getChildAt(0));
+            validateNow();
+            return _loc_1.y + _loc_1.baselinePosition;
+        }// end function
+
+        private function enabledChangedHandler(event:Event) : void
+        {
+            var _loc_2:* = targetStack.getChildIndex(DisplayObject(event.target));
+            Button(getChildAt(_loc_2)).enabled = enabled && event.target.enabled;
             return;
-         }
-         param1.relatedObject.removeEventListener("labelChanged",labelChangedHandler);
-         param1.relatedObject.removeEventListener("iconChanged",iconChangedHandler);
-         param1.relatedObject.removeEventListener("enabledChanged",enabledChangedHandler);
-         param1.relatedObject.removeEventListener("toolTipChanged",toolTipChangedHandler);
-         var _loc2_:ViewStack = ViewStack(param1.target);
-         removeChildAt(_loc2_.getChildIndex(param1.relatedObject));
-         callLater(resetNavItems);
-      }
-      
-      [Bindable("labelFunctionChanged")]
-      public function get labelFunction() : Function
-      {
-         return _labelFunction;
-      }
-      
-      override public function get verticalScrollPolicy() : String
-      {
-         return ScrollPolicy.OFF;
-      }
-      
-      public function set dataProvider(param1:Object) : void
-      {
-         var _loc2_:String = null;
-         var _loc3_:String = null;
-         if(Boolean(param1 && !(param1 is String) && !(param1 is ViewStack)) && Boolean(!(param1 is Array)) && !(param1 is IList))
-         {
-            _loc2_ = resourceManager.getString("controls","errWrongContainer",[id]);
-            throw new Error(_loc2_);
-         }
-         if(_dataProvider)
-         {
-            _dataProvider.removeEventListener(CollectionEvent.COLLECTION_CHANGE,collectionChangeHandler);
-         }
-         if(param1 is String && (Boolean(document) && Boolean(document[param1])))
-         {
-            param1 = document[param1];
-         }
-         if(param1 is String || param1 is ViewStack)
-         {
-            setTargetViewStack(param1);
+        }// end function
+
+        private function labelChangedHandler(event:Event) : void
+        {
+            var _loc_2:* = targetStack.getChildIndex(DisplayObject(event.target));
+            updateNavItemLabel(_loc_2, Container(event.target).label);
             return;
-         }
-         if(param1 is IList && IList(param1).length > 0 && IList(param1).getItemAt(0) is DisplayObject || param1 is Array && (param1 as Array).length > 0 && param1[0] is DisplayObject)
-         {
-            _loc3_ = !!id?className + " \'" + id + "\'":"a " + className;
-            _loc2_ = resourceManager.getString("controls","errWrongType",[_loc3_]);
-            throw new Error(_loc2_);
-         }
-         setTargetViewStack(null);
-         removeAllChildren();
-         if(param1 is IList)
-         {
-            _dataProvider = IList(param1);
-         }
-         else if(param1 is Array)
-         {
-            _dataProvider = new ArrayCollection(param1 as Array);
-         }
-         else
-         {
-            _dataProvider = null;
-         }
-         dataProviderChanged = true;
-         invalidateProperties();
-         if(_dataProvider)
-         {
-            _dataProvider.addEventListener(CollectionEvent.COLLECTION_CHANGE,collectionChangeHandler,false,0,true);
-         }
-         if(inheritingStyles == UIComponent.STYLE_UNINITIALIZED)
-         {
+        }// end function
+
+        override protected function createChildren() : void
+        {
+            super.createChildren();
+            if (dataProviderChanged)
+            {
+                createNavChildren();
+                dataProviderChanged = false;
+            }
             return;
-         }
-         dispatchEvent(new Event("collectionChange"));
-      }
-      
-      private function changeHandler(param1:Event) : void
-      {
-         if(param1.target == dataProvider)
-         {
-            hiliteSelectedNavItem(Object(param1.target).selectedIndex);
-         }
-      }
-      
-      private function collectionChangeHandler(param1:Event) : void
-      {
-         dataProvider = dataProvider;
-      }
-      
-      public function set selectedIndex(param1:int) : void
-      {
-         _selectedIndex = param1;
-         if(targetStack)
-         {
-            targetStack.selectedIndex = param1;
-         }
-         dispatchEvent(new FlexEvent(FlexEvent.VALUE_COMMIT));
-      }
-      
-      [Bindable("valueCommit")]
-      [Bindable("itemClick")]
-      public function get selectedIndex() : int
-      {
-         return _selectedIndex;
-      }
-   }
+        }// end function
+
+        override public function notifyStyleChangeInChildren(param1:String, param2:Boolean) : void
+        {
+            super.notifyStyleChangeInChildren(param1, true);
+            return;
+        }// end function
+
+        protected function clickHandler(event:MouseEvent) : void
+        {
+            var _loc_2:* = getChildIndex(DisplayObject(event.currentTarget));
+            if (targetStack)
+            {
+                targetStack.selectedIndex = _loc_2;
+            }
+            _selectedIndex = _loc_2;
+            var _loc_3:* = new ItemClickEvent(ItemClickEvent.ITEM_CLICK);
+            _loc_3.label = Button(event.currentTarget).label;
+            _loc_3.index = _loc_2;
+            _loc_3.relatedObject = InteractiveObject(event.currentTarget);
+            _loc_3.item = _dataProvider ? (_dataProvider.getItemAt(_loc_2)) : (null);
+            dispatchEvent(_loc_3);
+            event.stopImmediatePropagation();
+            return;
+        }// end function
+
+        override public function get horizontalScrollPolicy() : String
+        {
+            return ScrollPolicy.OFF;
+        }// end function
+
+        public function set iconField(param1:String) : void
+        {
+            _iconField = param1;
+            if (_dataProvider)
+            {
+                dataProvider = _dataProvider;
+            }
+            dispatchEvent(new Event("iconFieldChanged"));
+            return;
+        }// end function
+
+        private function childAddHandler(event:ChildExistenceChangedEvent) : void
+        {
+            if (event.target == this)
+            {
+                return;
+            }
+            if (event.relatedObject.parent != targetStack)
+            {
+                return;
+            }
+            var _loc_2:* = Container(event.relatedObject);
+            var _loc_3:* = Button(createNavItem(itemToLabel(_loc_2), _loc_2.icon));
+            var _loc_4:* = _loc_2.parent.getChildIndex(DisplayObject(_loc_2));
+            setChildIndex(_loc_3, _loc_4);
+            if (_loc_2.toolTip)
+            {
+                _loc_3.toolTip = _loc_2.toolTip;
+                _loc_2.toolTip = null;
+            }
+            _loc_2.addEventListener("labelChanged", labelChangedHandler);
+            _loc_2.addEventListener("iconChanged", iconChangedHandler);
+            _loc_2.addEventListener("enabledChanged", enabledChangedHandler);
+            _loc_2.addEventListener("toolTipChanged", toolTipChangedHandler);
+            _loc_3.enabled = enabled && _loc_2.enabled;
+            callLater(resetNavItems);
+            return;
+        }// end function
+
+        public function itemToLabel(param1:Object) : String
+        {
+            var data:* = param1;
+            if (data == null)
+            {
+                return "";
+            }
+            if (labelFunction != null)
+            {
+                return labelFunction(data);
+            }
+            if (data is XML)
+            {
+                try
+                {
+                    if (data[labelField].length() != 0)
+                    {
+                        data = data[labelField];
+                    }
+                }
+                catch (e:Error)
+                {
+                }
+            }
+            else if (data is Object)
+            {
+                try
+                {
+                    if (data[labelField] != null)
+                    {
+                        data = data[labelField];
+                    }
+                }
+                catch (e:Error)
+                {
+                }
+            }
+            if (data is String)
+            {
+                return String(data);
+            }
+            if (data is Number)
+            {
+                return data.toString();
+            }
+            return "";
+        }// end function
+
+        private function createNavChildren() : void
+        {
+            var item:Object;
+            var navItem:Button;
+            var label:String;
+            var iconValue:Object;
+            var icon:Class;
+            if (!_dataProvider)
+            {
+                return;
+            }
+            var n:* = _dataProvider.length;
+            var i:int;
+            while (i < n)
+            {
+                
+                item = _dataProvider.getItemAt(i);
+                if (item is String && labelFunction == null)
+                {
+                    navItem = Button(createNavItem(String(item)));
+                }
+                else
+                {
+                    label = itemToLabel(item);
+                    if (iconField)
+                    {
+                        iconValue;
+                        try
+                        {
+                            iconValue = item[iconField];
+                        }
+                        catch (e:Error)
+                        {
+                        }
+                        icon = iconValue is String ? (Class(systemManager.getDefinitionByName(String(iconValue)))) : (Class(iconValue));
+                        navItem = Button(createNavItem(label, icon));
+                    }
+                    else
+                    {
+                        navItem = Button(createNavItem(label, null));
+                    }
+                    if (toolTipField)
+                    {
+                        try
+                        {
+                            navItem.toolTip = item[toolTipField] === undefined ? (null) : (item[toolTipField]);
+                        }
+                        catch (e:Error)
+                        {
+                        }
+                    }
+                }
+                navItem.enabled = enabled;
+                i = (i + 1);
+            }
+            resetNavItems();
+            return;
+        }// end function
+
+        public function set toolTipField(param1:String) : void
+        {
+            _toolTipField = param1;
+            if (_dataProvider)
+            {
+                dataProvider = _dataProvider;
+            }
+            dispatchEvent(new Event("toolTipFieldChanged"));
+            return;
+        }// end function
+
+        private function _setTargetViewStack(param1:Object) : void
+        {
+            var _loc_2:* = null;
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            var _loc_6:* = 0;
+            var _loc_7:* = null;
+            if (param1 is ViewStack)
+            {
+                _loc_2 = ViewStack(param1);
+            }
+            else if (param1)
+            {
+                _loc_2 = parentDocument[param1];
+            }
+            else
+            {
+                _loc_2 = null;
+            }
+            if (targetStack)
+            {
+                targetStack.removeEventListener(ChildExistenceChangedEvent.CHILD_ADD, childAddHandler);
+                targetStack.removeEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, childRemoveHandler);
+                targetStack.removeEventListener(Event.CHANGE, changeHandler);
+                targetStack.removeEventListener(IndexChangedEvent.CHILD_INDEX_CHANGE, childIndexChangeHandler);
+                _loc_4 = targetStack.numChildren;
+                _loc_6 = 0;
+                while (_loc_6 < _loc_4)
+                {
+                    
+                    _loc_5 = Container(targetStack.getChildAt(_loc_6));
+                    _loc_5.removeEventListener("labelChanged", labelChangedHandler);
+                    _loc_5.removeEventListener("iconChanged", iconChangedHandler);
+                    _loc_5.removeEventListener("enabledChanged", enabledChangedHandler);
+                    _loc_5.removeEventListener("toolTipChanged", toolTipChangedHandler);
+                    _loc_6++;
+                }
+            }
+            removeAllChildren();
+            _selectedIndex = -1;
+            targetStack = _loc_2;
+            if (!targetStack)
+            {
+                return;
+            }
+            targetStack.addEventListener(ChildExistenceChangedEvent.CHILD_ADD, childAddHandler);
+            targetStack.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, childRemoveHandler);
+            targetStack.addEventListener(Event.CHANGE, changeHandler);
+            targetStack.addEventListener(IndexChangedEvent.CHILD_INDEX_CHANGE, childIndexChangeHandler);
+            _loc_4 = targetStack.numChildren;
+            _loc_6 = 0;
+            while (_loc_6 < _loc_4)
+            {
+                
+                _loc_5 = Container(targetStack.getChildAt(_loc_6));
+                _loc_7 = Button(createNavItem(itemToLabel(_loc_5), _loc_5.icon));
+                if (_loc_5.toolTip)
+                {
+                    _loc_7.toolTip = _loc_5.toolTip;
+                    _loc_5.toolTip = null;
+                }
+                _loc_5.addEventListener("labelChanged", labelChangedHandler);
+                _loc_5.addEventListener("iconChanged", iconChangedHandler);
+                _loc_5.addEventListener("enabledChanged", enabledChangedHandler);
+                _loc_5.addEventListener("toolTipChanged", toolTipChangedHandler);
+                _loc_7.enabled = enabled && _loc_5.enabled;
+                _loc_6++;
+            }
+            var _loc_3:* = targetStack.selectedIndex;
+            if (_loc_3 == -1 && targetStack.numChildren > 0)
+            {
+                _loc_3 = 0;
+            }
+            if (_loc_3 != -1)
+            {
+                hiliteSelectedNavItem(_loc_3);
+            }
+            resetNavItems();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        private function toolTipChangedHandler(event:Event) : void
+        {
+            var _loc_2:* = targetStack.getChildIndex(DisplayObject(event.target));
+            var _loc_3:* = UIComponent(getChildAt(_loc_2));
+            if (UIComponent(event.target).toolTip)
+            {
+                _loc_3.toolTip = UIComponent(event.target).toolTip;
+                lastToolTip = UIComponent(event.target).toolTip;
+                UIComponent(event.target).toolTip = null;
+            }
+            else if (!lastToolTip)
+            {
+                _loc_3.toolTip = UIComponent(event.target).toolTip;
+                lastToolTip = "placeholder";
+                UIComponent(event.target).toolTip = null;
+            }
+            else
+            {
+                lastToolTip = null;
+            }
+            return;
+        }// end function
+
+        protected function createNavItem(param1:String, param2:Class = null) : IFlexDisplayObject
+        {
+            return null;
+        }// end function
+
+        public function get dataProvider() : Object
+        {
+            return targetStack ? (targetStack) : (_dataProvider);
+        }// end function
+
+        protected function updateNavItemLabel(param1:int, param2:String) : void
+        {
+            var _loc_3:* = Button(getChildAt(param1));
+            _loc_3.label = param2;
+            return;
+        }// end function
+
+        override public function set horizontalScrollPolicy(param1:String) : void
+        {
+            return;
+        }// end function
+
+        override protected function commitProperties() : void
+        {
+            super.commitProperties();
+            if (!measurementHasBeenCalled)
+            {
+                checkPendingTargetStack();
+                measurementHasBeenCalled = true;
+            }
+            if (dataProviderChanged)
+            {
+                dataProviderChanged = false;
+                createNavChildren();
+            }
+            if (blocker)
+            {
+                blocker.visible = false;
+            }
+            return;
+        }// end function
+
+        public function set labelField(param1:String) : void
+        {
+            _labelField = param1;
+            if (_dataProvider)
+            {
+                dataProvider = _dataProvider;
+            }
+            dispatchEvent(new Event("labelFieldChanged"));
+            return;
+        }// end function
+
+        private function iconChangedHandler(event:Event) : void
+        {
+            var _loc_2:* = targetStack.getChildIndex(DisplayObject(event.target));
+            updateNavItemIcon(_loc_2, Container(event.target).icon);
+            return;
+        }// end function
+
+        protected function resetNavItems() : void
+        {
+            return;
+        }// end function
+
+        public function get toolTipField() : String
+        {
+            return _toolTipField;
+        }// end function
+
+        public function set labelFunction(param1:Function) : void
+        {
+            _labelFunction = param1;
+            if (_dataProvider)
+            {
+                dataProvider = _dataProvider;
+            }
+            dispatchEvent(new Event("labelFunctionChanged"));
+            return;
+        }// end function
+
+        public function get labelField() : String
+        {
+            return _labelField;
+        }// end function
+
+        override public function set verticalScrollPolicy(param1:String) : void
+        {
+            return;
+        }// end function
+
+        private function childRemoveHandler(event:ChildExistenceChangedEvent) : void
+        {
+            if (event.target == this)
+            {
+                return;
+            }
+            event.relatedObject.removeEventListener("labelChanged", labelChangedHandler);
+            event.relatedObject.removeEventListener("iconChanged", iconChangedHandler);
+            event.relatedObject.removeEventListener("enabledChanged", enabledChangedHandler);
+            event.relatedObject.removeEventListener("toolTipChanged", toolTipChangedHandler);
+            var _loc_2:* = ViewStack(event.target);
+            removeChildAt(_loc_2.getChildIndex(event.relatedObject));
+            callLater(resetNavItems);
+            return;
+        }// end function
+
+        public function get labelFunction() : Function
+        {
+            return _labelFunction;
+        }// end function
+
+        override public function get verticalScrollPolicy() : String
+        {
+            return ScrollPolicy.OFF;
+        }// end function
+
+        public function set dataProvider(param1:Object) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            if (param1 && !(param1 is String) && !(param1 is ViewStack) && !(param1 is Array) && !(param1 is IList))
+            {
+                _loc_2 = resourceManager.getString("controls", "errWrongContainer", [id]);
+                throw new Error(_loc_2);
+            }
+            if (_dataProvider)
+            {
+                _dataProvider.removeEventListener(CollectionEvent.COLLECTION_CHANGE, collectionChangeHandler);
+            }
+            if (param1 is String && (document && document[param1]))
+            {
+                param1 = document[param1];
+            }
+            if (param1 is String || param1 is ViewStack)
+            {
+                setTargetViewStack(param1);
+                return;
+            }
+            if (param1 is IList && IList(param1).length > 0 && IList(param1).getItemAt(0) is DisplayObject || param1 is Array && (param1 as Array).length > 0 && param1[0] is DisplayObject)
+            {
+                _loc_3 = id ? (className + " \'" + id + "\'") : ("a " + className);
+                _loc_2 = resourceManager.getString("controls", "errWrongType", [_loc_3]);
+                throw new Error(_loc_2);
+            }
+            setTargetViewStack(null);
+            removeAllChildren();
+            if (param1 is IList)
+            {
+                _dataProvider = IList(param1);
+            }
+            else if (param1 is Array)
+            {
+                _dataProvider = new ArrayCollection(param1 as Array);
+            }
+            else
+            {
+                _dataProvider = null;
+            }
+            dataProviderChanged = true;
+            invalidateProperties();
+            if (_dataProvider)
+            {
+                _dataProvider.addEventListener(CollectionEvent.COLLECTION_CHANGE, collectionChangeHandler, false, 0, true);
+            }
+            if (inheritingStyles == UIComponent.STYLE_UNINITIALIZED)
+            {
+                return;
+            }
+            dispatchEvent(new Event("collectionChange"));
+            return;
+        }// end function
+
+        private function changeHandler(event:Event) : void
+        {
+            if (event.target == dataProvider)
+            {
+                hiliteSelectedNavItem(Object(event.target).selectedIndex);
+            }
+            return;
+        }// end function
+
+        private function collectionChangeHandler(event:Event) : void
+        {
+            dataProvider = dataProvider;
+            return;
+        }// end function
+
+        public function set selectedIndex(param1:int) : void
+        {
+            _selectedIndex = param1;
+            if (targetStack)
+            {
+                targetStack.selectedIndex = param1;
+            }
+            dispatchEvent(new FlexEvent(FlexEvent.VALUE_COMMIT));
+            return;
+        }// end function
+
+        public function get selectedIndex() : int
+        {
+            return _selectedIndex;
+        }// end function
+
+    }
 }

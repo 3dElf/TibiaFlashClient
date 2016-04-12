@@ -1,13 +1,14 @@
-package tibia.minimap
+﻿package tibia.minimap
 {
-   import mx.core.BitmapAsset;
-   
-   public class MiniMapStorage_MARK_HIGHLIGHT_CLASS extends BitmapAsset
-   {
-       
-      public function MiniMapStorage_MARK_HIGHLIGHT_CLASS()
-      {
-         super();
-      }
-   }
+    import mx.core.*;
+
+    public class MiniMapStorage_MARK_HIGHLIGHT_CLASS extends BitmapAsset
+    {
+
+        public function MiniMapStorage_MARK_HIGHLIGHT_CLASS()
+        {
+            return;
+        }// end function
+
+    }
 }

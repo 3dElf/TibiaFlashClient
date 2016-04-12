@@ -1,8 +1,12 @@
-package mx.styles
+﻿package mx.styles
 {
-   public interface IStyleModule
-   {
-       
-      function unload() : void;
-   }
+
+    public interface IStyleModule
+    {
+
+        public function IStyleModule();
+
+        function unload() : void;
+
+    }
 }

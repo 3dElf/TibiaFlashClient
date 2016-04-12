@@ -1,77 +1,69 @@
-package mx.utils
+﻿package mx.utils
 {
-   import flash.utils.getQualifiedClassName;
-   import flash.utils.getDefinitionByName;
-   import flash.utils.describeType;
-   import mx.core.mx_internal;
-   import mx.binding.BindabilityInfo;
-   
-   use namespace mx_internal;
-   
-   public class DescribeTypeCache
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static var cacheHandlers:Object = {};
-      
-      private static var typeCache:Object = {};
-      
-      {
-         registerCacheHandler("bindabilityInfo",bindabilityInfoHandler);
-      }
-      
-      public function DescribeTypeCache()
-      {
-         super();
-      }
-      
-      public static function describeType(param1:*) : DescribeTypeCacheRecord
-      {
-         var _loc2_:String = null;
-         var _loc3_:XML = null;
-         var _loc4_:DescribeTypeCacheRecord = null;
-         if(param1 is String)
-         {
-            _loc2_ = param1;
-         }
-         else
-         {
-            _loc2_ = getQualifiedClassName(param1);
-         }
-         if(_loc2_ in typeCache)
-         {
-            return typeCache[_loc2_];
-         }
-         if(param1 is String)
-         {
-            param1 = getDefinitionByName(param1);
-         }
-         _loc3_ = describeType(param1);
-         _loc4_ = new DescribeTypeCacheRecord();
-         _loc4_.typeDescription = _loc3_;
-         _loc4_.typeName = _loc2_;
-         typeCache[_loc2_] = _loc4_;
-         return _loc4_;
-      }
-      
-      public static function registerCacheHandler(param1:String, param2:Function) : void
-      {
-         cacheHandlers[param1] = param2;
-      }
-      
-      static function extractValue(param1:String, param2:DescribeTypeCacheRecord) : *
-      {
-         if(param1 in cacheHandlers)
-         {
-            return cacheHandlers[param1](param2);
-         }
-         return undefined;
-      }
-      
-      private static function bindabilityInfoHandler(param1:DescribeTypeCacheRecord) : *
-      {
-         return new BindabilityInfo(param1.typeDescription);
-      }
-   }
+    import flash.utils.*;
+    import mx.binding.*;
+
+    public class DescribeTypeCache extends Object
+    {
+        static const VERSION:String = "3.6.0.21751";
+        private static var cacheHandlers:Object = {};
+        private static var typeCache:Object = {};
+
+        public function DescribeTypeCache()
+        {
+            return;
+        }// end function
+
+        public static function describeType(param1) : DescribeTypeCacheRecord
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            if (param1 is String)
+            {
+                _loc_2 = param1;
+            }
+            else
+            {
+                _loc_2 = getQualifiedClassName(param1);
+            }
+            if (_loc_2 in typeCache)
+            {
+                return typeCache[_loc_2];
+            }
+            if (param1 is String)
+            {
+                param1 = getDefinitionByName(param1);
+            }
+            _loc_3 = describeType(param1);
+            _loc_4 = new DescribeTypeCacheRecord();
+            _loc_4.typeDescription = _loc_3;
+            _loc_4.typeName = _loc_2;
+            typeCache[_loc_2] = _loc_4;
+            return _loc_4;
+        }// end function
+
+        public static function registerCacheHandler(param1:String, param2:Function) : void
+        {
+            cacheHandlers[param1] = param2;
+            return;
+        }// end function
+
+        static function extractValue(param1:String, param2:DescribeTypeCacheRecord)
+        {
+            if (param1 in cacheHandlers)
+            {
+                var _loc_3:* = cacheHandlers;
+                return _loc_3[param1](param2);
+            }
+            return undefined;
+        }// end function
+
+        private static function bindabilityInfoHandler(param1:DescribeTypeCacheRecord)
+        {
+            return new BindabilityInfo(param1.typeDescription);
+        }// end function
+
+        registerCacheHandler("bindabilityInfo", bindabilityInfoHandler);
+    }
 }

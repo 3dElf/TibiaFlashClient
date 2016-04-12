@@ -1,34 +1,33 @@
-package mx.core
+﻿package mx.core
 {
-   use namespace mx_internal;
-   
-   public class ClassFactory implements IFactory
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public var properties:Object = null;
-      
-      public var generator:Class;
-      
-      public function ClassFactory(param1:Class = null)
-      {
-         super();
-         this.generator = param1;
-      }
-      
-      public function newInstance() : *
-      {
-         var _loc2_:* = null;
-         var _loc1_:Object = new generator();
-         if(properties != null)
-         {
-            for(_loc2_ in properties)
+    import mx.core.*;
+
+    public class ClassFactory extends Object implements IFactory
+    {
+        public var properties:Object = null;
+        public var generator:Class;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function ClassFactory(param1:Class = null)
+        {
+            this.generator = param1;
+            return;
+        }// end function
+
+        public function newInstance()
+        {
+            var _loc_2:* = null;
+            var _loc_1:* = new generator();
+            if (properties != null)
             {
-               _loc1_[_loc2_] = properties[_loc2_];
+                for (_loc_2 in properties)
+                {
+                    
+                    _loc_1[_loc_2] = _loc_4[_loc_2];
+                }
             }
-         }
-         return _loc1_;
-      }
-   }
+            return _loc_1;
+        }// end function
+
+    }
 }

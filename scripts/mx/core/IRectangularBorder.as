@@ -1,16 +1,20 @@
-package mx.core
+﻿package mx.core
 {
-   import flash.geom.Rectangle;
-   
-   public interface IRectangularBorder extends IBorder
-   {
-       
-      function get backgroundImageBounds() : Rectangle;
-      
-      function get hasBackgroundImage() : Boolean;
-      
-      function set backgroundImageBounds(param1:Rectangle) : void;
-      
-      function layoutBackgroundImage() : void;
-   }
+    import flash.geom.*;
+    import mx.core.*;
+
+    public interface IRectangularBorder extends IBorder
+    {
+
+        public function IRectangularBorder();
+
+        function get backgroundImageBounds() : Rectangle;
+
+        function get hasBackgroundImage() : Boolean;
+
+        function set backgroundImageBounds(param1:Rectangle) : void;
+
+        function layoutBackgroundImage() : void;
+
+    }
 }

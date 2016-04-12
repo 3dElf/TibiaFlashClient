@@ -1,588 +1,612 @@
-package mx.effects
+﻿package mx.effects
 {
-   import flash.events.EventDispatcher;
-   import mx.core.mx_internal;
-   import mx.resources.IResourceManager;
-   import flash.display.DisplayObject;
-   import flash.display.DisplayObjectContainer;
-   import flash.events.Event;
-   import flash.utils.Dictionary;
-   import mx.events.MoveEvent;
-   import mx.events.ResizeEvent;
-   import mx.events.FlexEvent;
-   import mx.core.IUIComponent;
-   import mx.core.UIComponent;
-   import mx.events.EffectEvent;
-   import mx.core.IDeferredInstantiationUIComponent;
-   import mx.core.UIComponentCachePolicy;
-   import flash.events.FocusEvent;
-   import mx.core.IFlexDisplayObject;
-   import mx.core.EventPriority;
-   import mx.core.ApplicationGlobals;
-   import mx.resources.ResourceManager;
-   
-   use namespace mx_internal;
-   
-   public class EffectManager extends EventDispatcher
-   {
-      
-      private static var _resourceManager:IResourceManager;
-      
-      private static var effects:Dictionary = new Dictionary(true);
-      
-      mx_internal static var effectsPlaying:Array = [];
-      
-      private static var targetsInfo:Array = [];
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static var effectTriggersForEvent:Object = {};
-      
-      mx_internal static var lastEffectCreated:mx.effects.Effect;
-      
-      private static var eventHandlingSuspendCount:Number = 0;
-      
-      private static var eventsForEffectTriggers:Object = {};
-       
-      public function EffectManager()
-      {
-         super();
-      }
-      
-      public static function suspendEventHandling() : void
-      {
-         eventHandlingSuspendCount++;
-      }
-      
-      mx_internal static function registerEffectTrigger(param1:String, param2:String) : void
-      {
-         var _loc3_:Number = NaN;
-         if(param1 != "")
-         {
-            if(param2 == "")
-            {
-               _loc3_ = param1.length;
-               if(_loc3_ > 6 && param1.substring(_loc3_ - 6) == "Effect")
-               {
-                  param2 = param1.substring(0,_loc3_ - 6);
-               }
-            }
-            if(param2 != "")
-            {
-               effectTriggersForEvent[param2] = param1;
-               eventsForEffectTriggers[param1] = param2;
-            }
-         }
-      }
-      
-      private static function removedEffectHandler(param1:DisplayObject, param2:DisplayObjectContainer, param3:int, param4:Event) : void
-      {
-         suspendEventHandling();
-         param2.addChildAt(param1,param3);
-         resumeEventHandling();
-         createAndPlayEffect(param4,param1);
-      }
-      
-      private static function createAndPlayEffect(param1:Event, param2:Object) : void
-      {
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc9_:String = null;
-         var _loc10_:String = null;
-         var _loc11_:Array = null;
-         var _loc12_:Array = null;
-         var _loc13_:Array = null;
-         var _loc14_:Array = null;
-         var _loc15_:EffectInstance = null;
-         var _loc3_:mx.effects.Effect = createEffectForType(param2,param1.type);
-         if(!_loc3_)
-         {
+    import flash.display.*;
+    import flash.events.*;
+    import flash.utils.*;
+    import mx.core.*;
+    import mx.events.*;
+    import mx.resources.*;
+
+    public class EffectManager extends EventDispatcher
+    {
+        private static var _resourceManager:IResourceManager;
+        private static var effects:Dictionary = new Dictionary(true);
+        static var effectsPlaying:Array = [];
+        private static var targetsInfo:Array = [];
+        static const VERSION:String = "3.6.0.21751";
+        private static var effectTriggersForEvent:Object = {};
+        static var lastEffectCreated:Effect;
+        private static var eventHandlingSuspendCount:Number = 0;
+        private static var eventsForEffectTriggers:Object = {};
+
+        public function EffectManager()
+        {
             return;
-         }
-         if(_loc3_ is Zoom && param1.type == MoveEvent.MOVE)
-         {
-            _loc9_ = resourceManager.getString("effects","incorrectTrigger");
-            throw new Error(_loc9_);
-         }
-         if(param2.initialized == false)
-         {
-            _loc10_ = param1.type;
-            if(_loc10_ == MoveEvent.MOVE || _loc10_ == ResizeEvent.RESIZE || _loc10_ == FlexEvent.SHOW || _loc10_ == FlexEvent.HIDE || _loc10_ == Event.CHANGE)
+        }// end function
+
+        public static function suspendEventHandling() : void
+        {
+            var _loc_2:* = eventHandlingSuspendCount + 1;
+            eventHandlingSuspendCount = _loc_2;
+            return;
+        }// end function
+
+        static function registerEffectTrigger(param1:String, param2:String) : void
+        {
+            var _loc_3:* = NaN;
+            if (param1 != "")
             {
-               _loc3_ = null;
-               return;
+                if (param2 == "")
+                {
+                    _loc_3 = param1.length;
+                    if (_loc_3 > 6 && param1.substring(_loc_3 - 6) == "Effect")
+                    {
+                        param2 = param1.substring(0, _loc_3 - 6);
+                    }
+                }
+                if (param2 != "")
+                {
+                    effectTriggersForEvent[param2] = param1;
+                    eventsForEffectTriggers[param1] = param2;
+                }
             }
-         }
-         if(_loc3_.target is IUIComponent)
-         {
-            _loc11_ = IUIComponent(_loc3_.target).tweeningProperties;
-            if(Boolean(_loc11_) && _loc11_.length > 0)
+            return;
+        }// end function
+
+        private static function removedEffectHandler(param1:DisplayObject, param2:DisplayObjectContainer, param3:int, param4:Event) : void
+        {
+            suspendEventHandling();
+            param2.addChildAt(param1, param3);
+            resumeEventHandling();
+            createAndPlayEffect(param4, param1);
+            return;
+        }// end function
+
+        private static function createAndPlayEffect(event:Event, param2:Object) : void
+        {
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_9:* = null;
+            var _loc_10:* = null;
+            var _loc_11:* = null;
+            var _loc_12:* = null;
+            var _loc_13:* = null;
+            var _loc_14:* = null;
+            var _loc_15:* = null;
+            var _loc_3:* = createEffectForType(param2, event.type);
+            if (!_loc_3)
             {
-               _loc12_ = _loc3_.getAffectedProperties();
-               _loc4_ = _loc11_.length;
-               _loc6_ = _loc12_.length;
-               _loc5_ = 0;
-               while(_loc5_ < _loc4_)
-               {
-                  _loc7_ = 0;
-                  while(_loc7_ < _loc6_)
-                  {
-                     if(_loc11_[_loc5_] == _loc12_[_loc7_])
-                     {
-                        _loc3_ = null;
-                        return;
-                     }
-                     _loc7_++;
-                  }
-                  _loc5_++;
-               }
+                return;
             }
-         }
-         if(_loc3_.target is UIComponent && Boolean(UIComponent(_loc3_.target).isEffectStarted))
-         {
-            _loc13_ = _loc3_.getAffectedProperties();
-            _loc5_ = 0;
-            while(_loc5_ < _loc13_.length)
+            if (_loc_3 is Zoom && event.type == MoveEvent.MOVE)
             {
-               _loc14_ = _loc3_.target.getEffectsForProperty(_loc13_[_loc5_]);
-               if(_loc14_.length > 0)
-               {
-                  if(param1.type == ResizeEvent.RESIZE)
-                  {
-                     return;
-                  }
-                  _loc7_ = 0;
-                  while(_loc7_ < _loc14_.length)
-                  {
-                     _loc15_ = _loc14_[_loc7_];
-                     if(param1.type == FlexEvent.SHOW && Boolean(_loc15_.hideOnEffectEnd))
-                     {
-                        _loc15_.target.removeEventListener(FlexEvent.SHOW,_loc15_.eventHandler);
-                        _loc15_.hideOnEffectEnd = false;
-                     }
-                     _loc15_.end();
-                     _loc7_++;
-                  }
-               }
-               _loc5_++;
+                _loc_9 = resourceManager.getString("effects", "incorrectTrigger");
+                throw new Error(_loc_9);
             }
-         }
-         _loc3_.triggerEvent = param1;
-         _loc3_.addEventListener(EffectEvent.EFFECT_END,EffectManager.effectEndHandler);
-         lastEffectCreated = _loc3_;
-         var _loc8_:Array = _loc3_.play();
-         _loc4_ = _loc8_.length;
-         _loc5_ = 0;
-         while(_loc5_ < _loc4_)
-         {
-            effectsPlaying.push(new EffectNode(_loc3_,_loc8_[_loc5_]));
-            _loc5_++;
-         }
-         if(_loc3_.suspendBackgroundProcessing)
-         {
-            UIComponent.suspendBackgroundProcessing();
-         }
-      }
-      
-      public static function endEffectsForTarget(param1:IUIComponent) : void
-      {
-         var _loc4_:EffectInstance = null;
-         var _loc2_:int = effectsPlaying.length;
-         var _loc3_:int = _loc2_ - 1;
-         while(_loc3_ >= 0)
-         {
-            _loc4_ = effectsPlaying[_loc3_].instance;
-            if(_loc4_.target == param1)
+            if (param2.initialized == false)
             {
-               _loc4_.end();
+                _loc_10 = event.type;
+                if (_loc_10 == MoveEvent.MOVE || _loc_10 == ResizeEvent.RESIZE || _loc_10 == FlexEvent.SHOW || _loc_10 == FlexEvent.HIDE || _loc_10 == Event.CHANGE)
+                {
+                    _loc_3 = null;
+                    return;
+                }
             }
-            _loc3_--;
-         }
-      }
-      
-      private static function cacheOrUncacheTargetAsBitmap(param1:IUIComponent, param2:Boolean = true, param3:Boolean = true) : void
-      {
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:Object = null;
-         _loc4_ = targetsInfo.length;
-         _loc5_ = 0;
-         while(_loc5_ < _loc4_)
-         {
-            if(targetsInfo[_loc5_].target == param1)
+            if (_loc_3.target is IUIComponent)
             {
-               _loc6_ = targetsInfo[_loc5_];
-               break;
+                _loc_11 = IUIComponent(_loc_3.target).tweeningProperties;
+                if (_loc_11 && _loc_11.length > 0)
+                {
+                    _loc_12 = _loc_3.getAffectedProperties();
+                    _loc_4 = _loc_11.length;
+                    _loc_6 = _loc_12.length;
+                    _loc_5 = 0;
+                    while (_loc_5 < _loc_4)
+                    {
+                        
+                        _loc_7 = 0;
+                        while (_loc_7 < _loc_6)
+                        {
+                            
+                            if (_loc_11[_loc_5] == _loc_12[_loc_7])
+                            {
+                                _loc_3 = null;
+                                return;
+                            }
+                            _loc_7++;
+                        }
+                        _loc_5++;
+                    }
+                }
             }
-            _loc5_++;
-         }
-         if(!_loc6_)
-         {
-            _loc6_ = {
-               "target":param1,
-               "bitmapEffectsCount":0,
-               "vectorEffectsCount":0
-            };
-            targetsInfo.push(_loc6_);
-         }
-         if(param2)
-         {
-            if(param3)
+            if (_loc_3.target is UIComponent && UIComponent(_loc_3.target).isEffectStarted)
             {
-               _loc6_.bitmapEffectsCount++;
-               if(_loc6_.vectorEffectsCount == 0 && param1 is IDeferredInstantiationUIComponent)
-               {
-                  IDeferredInstantiationUIComponent(param1).cacheHeuristic = true;
-               }
+                _loc_13 = _loc_3.getAffectedProperties();
+                _loc_5 = 0;
+                while (_loc_5 < _loc_13.length)
+                {
+                    
+                    _loc_14 = _loc_3.target.getEffectsForProperty(_loc_13[_loc_5]);
+                    if (_loc_14.length > 0)
+                    {
+                        if (event.type == ResizeEvent.RESIZE)
+                        {
+                            return;
+                        }
+                        _loc_7 = 0;
+                        while (_loc_7 < _loc_14.length)
+                        {
+                            
+                            _loc_15 = _loc_14[_loc_7];
+                            if (event.type == FlexEvent.SHOW && _loc_15.hideOnEffectEnd)
+                            {
+                                _loc_15.target.removeEventListener(FlexEvent.SHOW, _loc_15.eventHandler);
+                                _loc_15.hideOnEffectEnd = false;
+                            }
+                            _loc_15.end();
+                            _loc_7++;
+                        }
+                    }
+                    _loc_5++;
+                }
             }
-            else if(_loc6_.vectorEffectsCount++ == 0 && param1 is IDeferredInstantiationUIComponent && IDeferredInstantiationUIComponent(param1).cachePolicy == UIComponentCachePolicy.AUTO)
+            _loc_3.triggerEvent = event;
+            _loc_3.addEventListener(EffectEvent.EFFECT_END, EffectManager.effectEndHandler);
+            lastEffectCreated = _loc_3;
+            var _loc_8:* = _loc_3.play();
+            _loc_4 = _loc_8.length;
+            _loc_5 = 0;
+            while (_loc_5 < _loc_4)
             {
-               param1.cacheAsBitmap = false;
+                
+                effectsPlaying.push(new EffectNode(_loc_3, _loc_8[_loc_5]));
+                _loc_5++;
             }
-         }
-         else
-         {
-            if(param3)
+            if (_loc_3.suspendBackgroundProcessing)
             {
-               if(_loc6_.bitmapEffectsCount != 0)
-               {
-                  _loc6_.bitmapEffectsCount--;
-               }
-               if(param1 is IDeferredInstantiationUIComponent)
-               {
-                  IDeferredInstantiationUIComponent(param1).cacheHeuristic = false;
-               }
+                UIComponent.suspendBackgroundProcessing();
             }
-            else if(_loc6_.vectorEffectsCount != 0)
+            return;
+        }// end function
+
+        public static function endEffectsForTarget(param1:IUIComponent) : void
+        {
+            var _loc_4:* = null;
+            var _loc_2:* = effectsPlaying.length;
+            var _loc_3:* = _loc_2 - 1;
+            while (_loc_3 >= 0)
             {
-               if(--_loc6_.vectorEffectsCount == 0 && _loc6_.bitmapEffectsCount != 0)
-               {
-                  _loc4_ = _loc6_.bitmapEffectsCount;
-                  _loc5_ = 0;
-                  while(_loc5_ < _loc4_)
-                  {
-                     if(param1 is IDeferredInstantiationUIComponent)
-                     {
+                
+                _loc_4 = effectsPlaying[_loc_3].instance;
+                if (_loc_4.target == param1)
+                {
+                    _loc_4.end();
+                }
+                _loc_3 = _loc_3 - 1;
+            }
+            return;
+        }// end function
+
+        private static function cacheOrUncacheTargetAsBitmap(param1:IUIComponent, param2:Boolean = true, param3:Boolean = true) : void
+        {
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = null;
+            _loc_4 = targetsInfo.length;
+            _loc_5 = 0;
+            while (_loc_5 < _loc_4)
+            {
+                
+                if (targetsInfo[_loc_5].target == param1)
+                {
+                    _loc_6 = targetsInfo[_loc_5];
+                    break;
+                }
+                _loc_5++;
+            }
+            if (!_loc_6)
+            {
+                _loc_6 = {target:param1, bitmapEffectsCount:0, vectorEffectsCount:0};
+                targetsInfo.push(_loc_6);
+            }
+            if (param2)
+            {
+                if (param3)
+                {
+                    var _loc_7:* = _loc_6;
+                    var _loc_8:* = _loc_6.bitmapEffectsCount + 1;
+                    _loc_7.bitmapEffectsCount = _loc_8;
+                    if (_loc_6.vectorEffectsCount == 0 && param1 is IDeferredInstantiationUIComponent)
+                    {
                         IDeferredInstantiationUIComponent(param1).cacheHeuristic = true;
-                     }
-                     _loc5_++;
-                  }
-               }
+                    }
+                }
+                else
+                {
+                    var _loc_7:* = _loc_6;
+                    _loc_7.vectorEffectsCount = _loc_6.vectorEffectsCount + 1;
+                    if (_loc_6.vectorEffectsCount++ == 0 && param1 is IDeferredInstantiationUIComponent && IDeferredInstantiationUIComponent(param1).cachePolicy == UIComponentCachePolicy.AUTO)
+                    {
+                        param1.cacheAsBitmap = false;
+                    }
+                }
             }
-            if(_loc6_.bitmapEffectsCount == 0 && _loc6_.vectorEffectsCount == 0)
+            else
             {
-               _loc4_ = targetsInfo.length;
-               _loc5_ = 0;
-               while(_loc5_ < _loc4_)
-               {
-                  if(targetsInfo[_loc5_].target == param1)
-                  {
-                     targetsInfo.splice(_loc5_,1);
-                     break;
-                  }
-                  _loc5_++;
-               }
+                if (param3)
+                {
+                    if (_loc_6.bitmapEffectsCount != 0)
+                    {
+                        var _loc_7:* = _loc_6;
+                        var _loc_8:* = _loc_6.bitmapEffectsCount - 1;
+                        _loc_7.bitmapEffectsCount = _loc_8;
+                    }
+                    if (param1 is IDeferredInstantiationUIComponent)
+                    {
+                        IDeferredInstantiationUIComponent(param1).cacheHeuristic = false;
+                    }
+                }
+                else if (_loc_6.vectorEffectsCount != 0)
+                {
+                    var _loc_7:* = _loc_6;
+                    _loc_6.vectorEffectsCount = (_loc_6.vectorEffectsCount - 1);
+                    _loc_7.vectorEffectsCount = _loc_6.vectorEffectsCount - 1;
+                    if (_loc_6.vectorEffectsCount == 0 && _loc_6.bitmapEffectsCount != 0)
+                    {
+                        _loc_4 = _loc_6.bitmapEffectsCount;
+                        _loc_5 = 0;
+                        while (_loc_5 < _loc_4)
+                        {
+                            
+                            if (param1 is IDeferredInstantiationUIComponent)
+                            {
+                                IDeferredInstantiationUIComponent(param1).cacheHeuristic = true;
+                            }
+                            _loc_5++;
+                        }
+                    }
+                }
+                if (_loc_6.bitmapEffectsCount == 0 && _loc_6.vectorEffectsCount == 0)
+                {
+                    _loc_4 = targetsInfo.length;
+                    _loc_5 = 0;
+                    while (_loc_5 < _loc_4)
+                    {
+                        
+                        if (targetsInfo[_loc_5].target == param1)
+                        {
+                            targetsInfo.splice(_loc_5, 1);
+                            break;
+                        }
+                        _loc_5++;
+                    }
+                }
             }
-         }
-      }
-      
-      mx_internal static function eventHandler(param1:Event) : void
-      {
-         var _loc2_:FocusEvent = null;
-         var _loc3_:DisplayObject = null;
-         var _loc4_:int = 0;
-         var _loc5_:DisplayObjectContainer = null;
-         var _loc6_:int = 0;
-         if(!(param1.currentTarget is IFlexDisplayObject))
-         {
             return;
-         }
-         if(eventHandlingSuspendCount > 0)
-         {
-            return;
-         }
-         if(param1 is FocusEvent && (param1.type == FocusEvent.FOCUS_OUT || param1.type == FocusEvent.FOCUS_IN))
-         {
-            _loc2_ = FocusEvent(param1);
-            if(Boolean(_loc2_.relatedObject) && (Boolean(_loc2_.currentTarget.contains(_loc2_.relatedObject)) || Boolean(_loc2_.currentTarget == _loc2_.relatedObject)))
+        }// end function
+
+        static function eventHandler(event:Event) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            var _loc_6:* = 0;
+            if (!(event.currentTarget is IFlexDisplayObject))
             {
-               return;
+                return;
             }
-         }
-         if((param1.type == Event.ADDED || param1.type == Event.REMOVED) && param1.target != param1.currentTarget)
-         {
-            return;
-         }
-         if(param1.type == Event.REMOVED)
-         {
-            if(param1.target is UIComponent)
+            if (eventHandlingSuspendCount > 0)
             {
-               if(UIComponent(param1.target).initialized == false)
-               {
-                  return;
-               }
-               if(UIComponent(param1.target).isEffectStarted)
-               {
-                  _loc4_ = 0;
-                  while(_loc4_ < UIComponent(param1.target)._effectsStarted.length)
-                  {
-                     if(UIComponent(param1.target)._effectsStarted[_loc4_].triggerEvent.type == Event.REMOVED)
-                     {
+                return;
+            }
+            if (event is FocusEvent && (event.type == FocusEvent.FOCUS_OUT || event.type == FocusEvent.FOCUS_IN))
+            {
+                _loc_2 = FocusEvent(event);
+                if (_loc_2.relatedObject && (_loc_2.currentTarget.contains(_loc_2.relatedObject) || _loc_2.currentTarget == _loc_2.relatedObject))
+                {
+                    return;
+                }
+            }
+            if ((event.type == Event.ADDED || event.type == Event.REMOVED) && event.target != event.currentTarget)
+            {
+                return;
+            }
+            if (event.type == Event.REMOVED)
+            {
+                if (event.target is UIComponent)
+                {
+                    if (UIComponent(event.target).initialized == false)
+                    {
                         return;
-                     }
-                     _loc4_++;
-                  }
-               }
+                    }
+                    if (UIComponent(event.target).isEffectStarted)
+                    {
+                        _loc_4 = 0;
+                        while (_loc_4 < UIComponent(event.target)._effectsStarted.length)
+                        {
+                            
+                            if (UIComponent(event.target)._effectsStarted[_loc_4].triggerEvent.type == Event.REMOVED)
+                            {
+                                return;
+                            }
+                            _loc_4++;
+                        }
+                    }
+                }
+                _loc_3 = event.target as DisplayObject;
+                if (_loc_3 != null)
+                {
+                    _loc_5 = _loc_3.parent as DisplayObjectContainer;
+                    if (_loc_5 != null)
+                    {
+                        _loc_6 = _loc_5.getChildIndex(_loc_3);
+                        if (_loc_6 >= 0)
+                        {
+                            if (_loc_3 is UIComponent)
+                            {
+                                UIComponent(_loc_3).callLater(removedEffectHandler, [_loc_3, _loc_5, _loc_6, event]);
+                            }
+                        }
+                    }
+                }
             }
-            _loc3_ = param1.target as DisplayObject;
-            if(_loc3_ != null)
+            else
             {
-               _loc5_ = _loc3_.parent as DisplayObjectContainer;
-               if(_loc5_ != null)
-               {
-                  _loc6_ = _loc5_.getChildIndex(_loc3_);
-                  if(_loc6_ >= 0)
-                  {
-                     if(_loc3_ is UIComponent)
-                     {
-                        UIComponent(_loc3_).callLater(removedEffectHandler,[_loc3_,_loc5_,_loc6_,param1]);
-                     }
-                  }
-               }
+                createAndPlayEffect(event, event.currentTarget);
             }
-         }
-         else
-         {
-            createAndPlayEffect(param1,param1.currentTarget);
-         }
-      }
-      
-      mx_internal static function endBitmapEffect(param1:IUIComponent) : void
-      {
-         cacheOrUncacheTargetAsBitmap(param1,false,true);
-      }
-      
-      private static function animateSameProperty(param1:mx.effects.Effect, param2:mx.effects.Effect, param3:EffectInstance) : Boolean
-      {
-         var _loc4_:Array = null;
-         var _loc5_:Array = null;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc8_:int = 0;
-         var _loc9_:int = 0;
-         if(param1.target == param3.target)
-         {
-            _loc4_ = param1.getAffectedProperties();
-            _loc5_ = param2.getAffectedProperties();
-            _loc6_ = _loc4_.length;
-            _loc7_ = _loc5_.length;
-            _loc8_ = 0;
-            while(_loc8_ < _loc6_)
+            return;
+        }// end function
+
+        static function endBitmapEffect(param1:IUIComponent) : void
+        {
+            cacheOrUncacheTargetAsBitmap(param1, false, true);
+            return;
+        }// end function
+
+        private static function animateSameProperty(param1:Effect, param2:Effect, param3:EffectInstance) : Boolean
+        {
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_8:* = 0;
+            var _loc_9:* = 0;
+            if (param1.target == param3.target)
             {
-               _loc9_ = 0;
-               while(_loc9_ < _loc7_)
-               {
-                  if(_loc4_[_loc8_] == _loc5_[_loc9_])
-                  {
-                     return true;
-                  }
-                  _loc9_++;
-               }
-               _loc8_++;
+                _loc_4 = param1.getAffectedProperties();
+                _loc_5 = param2.getAffectedProperties();
+                _loc_6 = _loc_4.length;
+                _loc_7 = _loc_5.length;
+                _loc_8 = 0;
+                while (_loc_8 < _loc_6)
+                {
+                    
+                    _loc_9 = 0;
+                    while (_loc_9 < _loc_7)
+                    {
+                        
+                        if (_loc_4[_loc_8] == _loc_5[_loc_9])
+                        {
+                            return true;
+                        }
+                        _loc_9++;
+                    }
+                    _loc_8++;
+                }
             }
-         }
-         return false;
-      }
-      
-      mx_internal static function effectFinished(param1:EffectInstance) : void
-      {
-         delete effects[param1];
-      }
-      
-      mx_internal static function effectsInEffect() : Boolean
-      {
-         var _loc1_:* = undefined;
-         for(_loc1_ in effects)
-         {
-            return true;
-         }
-         return false;
-      }
-      
-      mx_internal static function effectEndHandler(param1:EffectEvent) : void
-      {
-         var _loc5_:DisplayObject = null;
-         var _loc6_:DisplayObjectContainer = null;
-         var _loc2_:IEffectInstance = param1.effectInstance;
-         var _loc3_:int = effectsPlaying.length;
-         var _loc4_:int = _loc3_ - 1;
-         while(_loc4_ >= 0)
-         {
-            if(effectsPlaying[_loc4_].instance == _loc2_)
+            return false;
+        }// end function
+
+        static function effectFinished(param1:EffectInstance) : void
+        {
+            delete effects[param1];
+            return;
+        }// end function
+
+        static function effectsInEffect() : Boolean
+        {
+            var _loc_1:* = undefined;
+            for (_loc_1 in effects)
             {
-               effectsPlaying.splice(_loc4_,1);
-               break;
+                
+                return true;
             }
-            _loc4_--;
-         }
-         if(Object(_loc2_).hideOnEffectEnd == true)
-         {
-            _loc2_.target.removeEventListener(FlexEvent.SHOW,Object(_loc2_).eventHandler);
-            _loc2_.target.setVisible(false,true);
-         }
-         if(Boolean(_loc2_.triggerEvent) && _loc2_.triggerEvent.type == Event.REMOVED)
-         {
-            _loc5_ = _loc2_.target as DisplayObject;
-            if(_loc5_ != null)
+            return false;
+        }// end function
+
+        static function effectEndHandler(event:EffectEvent) : void
+        {
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_2:* = event.effectInstance;
+            var _loc_3:* = effectsPlaying.length;
+            var _loc_4:* = _loc_3 - 1;
+            while (_loc_4 >= 0)
             {
-               _loc6_ = _loc5_.parent as DisplayObjectContainer;
-               if(_loc6_ != null)
-               {
-                  suspendEventHandling();
-                  _loc6_.removeChild(_loc5_);
-                  resumeEventHandling();
-               }
+                
+                if (effectsPlaying[_loc_4].instance == _loc_2)
+                {
+                    effectsPlaying.splice(_loc_4, 1);
+                    break;
+                }
+                _loc_4 = _loc_4 - 1;
             }
-         }
-         if(_loc2_.suspendBackgroundProcessing)
-         {
-            UIComponent.resumeBackgroundProcessing();
-         }
-      }
-      
-      mx_internal static function startBitmapEffect(param1:IUIComponent) : void
-      {
-         cacheOrUncacheTargetAsBitmap(param1,true,true);
-      }
-      
-      mx_internal static function setStyle(param1:String, param2:*) : void
-      {
-         var _loc3_:String = eventsForEffectTriggers[param1];
-         if(_loc3_ != null && _loc3_ != "")
-         {
-            param2.addEventListener(_loc3_,EffectManager.eventHandler,false,EventPriority.EFFECT);
-         }
-      }
-      
-      mx_internal static function getEventForEffectTrigger(param1:String) : String
-      {
-         var effectTrigger:String = param1;
-         if(eventsForEffectTriggers)
-         {
-            try
+            if (Object(_loc_2).hideOnEffectEnd == true)
             {
-               return eventsForEffectTriggers[effectTrigger];
+                _loc_2.target.removeEventListener(FlexEvent.SHOW, Object(_loc_2).eventHandler);
+                _loc_2.target.setVisible(false, true);
             }
-            catch(e:Error)
+            if (_loc_2.triggerEvent && _loc_2.triggerEvent.type == Event.REMOVED)
             {
-               return "";
+                _loc_5 = _loc_2.target as DisplayObject;
+                if (_loc_5 != null)
+                {
+                    _loc_6 = _loc_5.parent as DisplayObjectContainer;
+                    if (_loc_6 != null)
+                    {
+                        suspendEventHandling();
+                        _loc_6.removeChild(_loc_5);
+                        resumeEventHandling();
+                    }
+                }
+            }
+            if (_loc_2.suspendBackgroundProcessing)
+            {
+                UIComponent.resumeBackgroundProcessing();
+            }
+            return;
+        }// end function
+
+        static function startBitmapEffect(param1:IUIComponent) : void
+        {
+            cacheOrUncacheTargetAsBitmap(param1, true, true);
+            return;
+        }// end function
+
+        static function setStyle(param1:String, param2) : void
+        {
+            var _loc_3:* = eventsForEffectTriggers[param1];
+            if (_loc_3 != null && _loc_3 != "")
+            {
+                param2.addEventListener(_loc_3, EffectManager.eventHandler, false, EventPriority.EFFECT);
+            }
+            return;
+        }// end function
+
+        static function getEventForEffectTrigger(param1:String) : String
+        {
+            var effectTrigger:* = param1;
+            if (eventsForEffectTriggers)
+            {
+                try
+                {
+                    return eventsForEffectTriggers[effectTrigger];
+                }
+                catch (e:Error)
+                {
+                    return "";
+                }
             }
             return "";
-         }
-         return "";
-      }
-      
-      mx_internal static function createEffectForType(param1:Object, param2:String) : mx.effects.Effect
-      {
-         var cls:Class = null;
-         var effectObj:mx.effects.Effect = null;
-         var doc:Object = null;
-         var target:Object = param1;
-         var type:String = param2;
-         var trigger:String = effectTriggersForEvent[type];
-         if(trigger == "")
-         {
-            trigger = type + "Effect";
-         }
-         var value:Object = target.getStyle(trigger);
-         if(!value)
-         {
+        }// end function
+
+        static function createEffectForType(param1:Object, param2:String) : Effect
+        {
+            var cls:Class;
+            var effectObj:Effect;
+            var doc:Object;
+            var target:* = param1;
+            var type:* = param2;
+            var trigger:* = effectTriggersForEvent[type];
+            if (trigger == "")
+            {
+                trigger = type + "Effect";
+            }
+            var value:* = target.getStyle(trigger);
+            if (!value)
+            {
+                return null;
+            }
+            if (value is Class)
+            {
+                cls = Class(value);
+                return new cls(target);
+            }
+            try
+            {
+                if (value is String)
+                {
+                    doc = target.parentDocument;
+                    if (!doc)
+                    {
+                        doc = ApplicationGlobals.application;
+                    }
+                    effectObj = doc[value];
+                }
+                else if (value is Effect)
+                {
+                    effectObj = Effect(value);
+                }
+                if (effectObj)
+                {
+                    effectObj.target = target;
+                    return effectObj;
+                }
+            }
+            catch (e:Error)
+            {
+            }
+            var effectClass:* = Class(target.systemManager.getDefinitionByName("mx.effects." + value));
+            if (effectClass)
+            {
+                return new effectClass(target);
+            }
             return null;
-         }
-         if(value is Class)
-         {
-            cls = Class(value);
-            return new cls(target);
-         }
-         try
-         {
-            if(value is String)
+        }// end function
+
+        static function effectStarted(param1:EffectInstance) : void
+        {
+            effects[param1] = 1;
+            return;
+        }// end function
+
+        public static function resumeEventHandling() : void
+        {
+            var _loc_2:* = eventHandlingSuspendCount - 1;
+            eventHandlingSuspendCount = _loc_2;
+            return;
+        }// end function
+
+        static function startVectorEffect(param1:IUIComponent) : void
+        {
+            cacheOrUncacheTargetAsBitmap(param1, true, false);
+            return;
+        }// end function
+
+        static function endVectorEffect(param1:IUIComponent) : void
+        {
+            cacheOrUncacheTargetAsBitmap(param1, false, false);
+            return;
+        }// end function
+
+        private static function get resourceManager() : IResourceManager
+        {
+            if (!_resourceManager)
             {
-               doc = target.parentDocument;
-               if(!doc)
-               {
-                  doc = ApplicationGlobals.application;
-               }
-               effectObj = doc[value];
+                _resourceManager = ResourceManager.getInstance();
             }
-            else if(value is mx.effects.Effect)
-            {
-               effectObj = Effect(value);
-            }
-            if(effectObj)
-            {
-               effectObj.target = target;
-               return effectObj;
-            }
-         }
-         catch(e:Error)
-         {
-         }
-         var effectClass:Class = Class(target.systemManager.getDefinitionByName("mx.effects." + value));
-         if(effectClass)
-         {
-            return new effectClass(target);
-         }
-         return null;
-      }
-      
-      mx_internal static function effectStarted(param1:EffectInstance) : void
-      {
-         effects[param1] = 1;
-      }
-      
-      public static function resumeEventHandling() : void
-      {
-         eventHandlingSuspendCount--;
-      }
-      
-      mx_internal static function startVectorEffect(param1:IUIComponent) : void
-      {
-         cacheOrUncacheTargetAsBitmap(param1,true,false);
-      }
-      
-      mx_internal static function endVectorEffect(param1:IUIComponent) : void
-      {
-         cacheOrUncacheTargetAsBitmap(param1,false,false);
-      }
-      
-      private static function get resourceManager() : IResourceManager
-      {
-         if(!_resourceManager)
-         {
-            _resourceManager = ResourceManager.getInstance();
-         }
-         return _resourceManager;
-      }
-   }
+            return _resourceManager;
+        }// end function
+
+    }
 }
 
-import mx.effects.Effect;
-import mx.effects.EffectInstance;
+import flash.display.*;
 
-class EffectNode
+import flash.events.*;
+
+import flash.utils.*;
+
+import mx.core.*;
+
+import mx.events.*;
+
+import mx.resources.*;
+
+class EffectNode extends Object
 {
-    
-   public var factory:Effect;
-   
-   public var instance:EffectInstance;
-   
-   function EffectNode(param1:Effect, param2:EffectInstance)
-   {
-      super();
-      this.factory = param1;
-      this.instance = param2;
-   }
+    public var factory:Effect;
+    public var instance:EffectInstance;
+
+    function EffectNode(param1:Effect, param2:EffectInstance)
+    {
+        this.factory = param1;
+        this.instance = param2;
+        return;
+    }// end function
+
 }
+

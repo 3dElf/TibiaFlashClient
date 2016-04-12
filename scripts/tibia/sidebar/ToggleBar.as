@@ -1,377 +1,400 @@
-package tibia.sidebar
+﻿package tibia.sidebar
 {
-   import mx.core.UIComponent;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   import flash.display.DisplayObject;
-   import mx.controls.Button;
-   import flash.events.MouseEvent;
-   import shared.controls.CustomButton;
-   import mx.events.PropertyChangeEvent;
-   import mx.core.IFlexDisplayObject;
-   import mx.styles.ISimpleStyleClient;
-   import mx.core.IInvalidating;
-   import tibia.options.OptionsStorage;
-   import mx.core.EdgeMetrics;
-   import mx.core.IBorder;
-   
-   public class ToggleBar extends UIComponent
-   {
-      
-      {
-         s_InitializeStyle();
-      }
-      
-      private var m_UIRawChildren:int = 0;
-      
-      private var m_UncommittedLocations:Boolean = false;
-      
-      private var m_UncommittedOptions:Boolean = false;
-      
-      protected var m_UIBorderStyle:Object = null;
-      
-      protected var m_Location:Array = null;
-      
-      protected var m_Options:OptionsStorage = null;
-      
-      private var m_UIConstructed:Boolean = false;
-      
-      protected var m_SideBarSet:tibia.sidebar.SideBarSet = null;
-      
-      protected var m_UIButtons:Array = null;
-      
-      private var m_UncommittedSideBarSet:Boolean = false;
-      
-      protected var m_UIBorderInstance:IFlexDisplayObject = null;
-      
-      public function ToggleBar()
-      {
-         super();
-      }
-      
-      private static function s_InitializeStyle() : void
-      {
-         var Style:CSSStyleDeclaration = StyleManager.getStyleDeclaration("ToggleBar");
-         if(Style == null)
-         {
-            Style = new CSSStyleDeclaration();
-         }
-         Style.defaultFactory = function():void
-         {
-            ToggleBar.borderSkin = undefined;
-            ToggleBar.verticalGap = 4;
-            ToggleBar.paddingLeft = 0;
-            ToggleBar.paddingRight = 0;
-            ToggleBar.paddingTop = 0;
-            ToggleBar.paddingBottom = 0;
-         };
-         StyleManager.setStyleDeclaration("ToggleBar",Style,true);
-      }
-      
-      private function layoutChrome(param1:Number, param2:Number) : void
-      {
-         if(this.m_UIBorderInstance != null)
-         {
-            this.m_UIBorderInstance.move(0,0);
-            this.m_UIBorderInstance.setActualSize(param1,param2);
-         }
-      }
-      
-      function get sideBarSet() : tibia.sidebar.SideBarSet
-      {
-         return this.m_SideBarSet;
-      }
-      
-      override protected function commitProperties() : void
-      {
-         super.commitProperties();
-         if(this.m_UncommittedOptions)
-         {
-            this.m_UncommittedOptions = false;
-         }
-         if(this.m_UncommittedSideBarSet)
-         {
-            this.updateToggleButtons();
-            this.m_UncommittedSideBarSet = false;
-         }
-         if(this.m_UncommittedLocations)
-         {
-            this.updateToggleButtons();
-            this.m_UncommittedLocations = false;
-         }
-      }
-      
-      private function updateToggleButtons() : void
-      {
-         var _loc3_:DisplayObject = null;
-         var _loc4_:Button = null;
-         var _loc1_:int = 0;
-         var _loc2_:int = 0;
-         _loc1_ = numChildren - 1;
-         while(_loc1_ >= this.m_UIRawChildren)
-         {
-            _loc3_ = removeChildAt(_loc1_);
-            _loc3_.removeEventListener(MouseEvent.CLICK,this.onToggleButtonClick);
-            _loc1_--;
-         }
-         if(this.m_Location != null)
-         {
-            _loc1_ = 0;
-            _loc2_ = this.m_Location.length;
-            while(_loc1_ < _loc2_)
+    import flash.display.*;
+    import flash.events.*;
+    import mx.controls.*;
+    import mx.core.*;
+    import mx.events.*;
+    import mx.styles.*;
+    import shared.controls.*;
+    import tibia.options.*;
+
+    public class ToggleBar extends UIComponent
+    {
+        private var m_UIRawChildren:int = 0;
+        private var m_UncommittedLocations:Boolean = false;
+        private var m_UncommittedOptions:Boolean = false;
+        protected var m_UIBorderStyle:Object = null;
+        protected var m_Location:Array = null;
+        protected var m_Options:OptionsStorage = null;
+        private var m_UIConstructed:Boolean = false;
+        protected var m_SideBarSet:SideBarSet = null;
+        protected var m_UIButtons:Array = null;
+        private var m_UncommittedSideBarSet:Boolean = false;
+        protected var m_UIBorderInstance:IFlexDisplayObject = null;
+
+        public function ToggleBar()
+        {
+            return;
+        }// end function
+
+        private function layoutChrome(param1:Number, param2:Number) : void
+        {
+            if (this.m_UIBorderInstance != null)
             {
-               _loc4_ = new CustomButton();
-               _loc4_.data = this.m_Location[_loc1_];
-               _loc4_.selected = this.m_SideBarSet != null && Boolean(this.m_SideBarSet.getSideBar(this.m_Location[_loc1_]).visible);
-               _loc4_.styleName = getStyle("toggleButtonStyle");
-               _loc4_.toggle = true;
-               _loc4_.addEventListener(MouseEvent.CLICK,this.onToggleButtonClick);
-               addChild(_loc4_);
-               _loc1_++;
+                this.m_UIBorderInstance.move(0, 0);
+                this.m_UIBorderInstance.setActualSize(param1, param2);
             }
-         }
-      }
-      
-      function set sideBarSet(param1:tibia.sidebar.SideBarSet) : void
-      {
-         if(this.m_SideBarSet != param1)
-         {
-            if(this.m_SideBarSet != null)
+            return;
+        }// end function
+
+        function get sideBarSet() : SideBarSet
+        {
+            return this.m_SideBarSet;
+        }// end function
+
+        override protected function commitProperties() : void
+        {
+            super.commitProperties();
+            if (this.m_UncommittedOptions)
             {
-               this.m_SideBarSet.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onSideBarSetPropertyChange);
+                this.m_UncommittedOptions = false;
             }
-            this.m_SideBarSet = param1;
-            if(this.m_SideBarSet != null)
+            if (this.m_UncommittedSideBarSet)
             {
-               this.m_SideBarSet.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onSideBarSetPropertyChange);
+                this.updateToggleButtons();
+                this.m_UncommittedSideBarSet = false;
             }
-            this.m_UncommittedSideBarSet = true;
-            invalidateProperties();
-         }
-      }
-      
-      protected function onOptionsChange(param1:PropertyChangeEvent) : void
-      {
-         if(param1 != null)
-         {
-            switch(param1.property)
+            if (this.m_UncommittedLocations)
             {
-               case "sideBarSet":
-               case "*":
-                  this.updateSideBarSet();
+                this.updateToggleButtons();
+                this.m_UncommittedLocations = false;
             }
-         }
-      }
-      
-      protected function onSideBarSetPropertyChange(param1:PropertyChangeEvent) : void
-      {
-         var _loc2_:SideBar = null;
-         var _loc3_:int = 0;
-         var _loc4_:Button = null;
-         if(param1 != null)
-         {
-            switch(param1.property as String)
+            return;
+        }// end function
+
+        private function updateToggleButtons() : void
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_1:* = 0;
+            var _loc_2:* = 0;
+            _loc_1 = numChildren - 1;
+            while (_loc_1 >= this.m_UIRawChildren)
             {
-               case "sideBarInstanceOptions":
-                  _loc2_ = param1.source as SideBar;
-                  if(_loc2_ != null)
-                  {
-                     _loc3_ = numChildren - 1;
-                     while(_loc3_ >= 0)
-                     {
-                        _loc4_ = getChildAt(_loc3_) as Button;
-                        if(_loc4_ != null && int(_loc4_.data) == _loc2_.location)
+                
+                _loc_3 = removeChildAt(_loc_1);
+                _loc_3.removeEventListener(MouseEvent.CLICK, this.onToggleButtonClick);
+                _loc_1 = _loc_1 - 1;
+            }
+            if (this.m_Location != null)
+            {
+                _loc_1 = 0;
+                _loc_2 = this.m_Location.length;
+                while (_loc_1 < _loc_2)
+                {
+                    
+                    _loc_4 = new CustomButton();
+                    _loc_4.data = this.m_Location[_loc_1];
+                    _loc_4.selected = this.m_SideBarSet != null && this.m_SideBarSet.getSideBar(this.m_Location[_loc_1]).visible;
+                    _loc_4.styleName = getStyle("toggleButtonStyle");
+                    _loc_4.toggle = true;
+                    _loc_4.addEventListener(MouseEvent.CLICK, this.onToggleButtonClick);
+                    addChild(_loc_4);
+                    _loc_1++;
+                }
+            }
+            return;
+        }// end function
+
+        function set sideBarSet(param1:SideBarSet) : void
+        {
+            if (this.m_SideBarSet != param1)
+            {
+                if (this.m_SideBarSet != null)
+                {
+                    this.m_SideBarSet.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, this.onSideBarSetPropertyChange);
+                }
+                this.m_SideBarSet = param1;
+                if (this.m_SideBarSet != null)
+                {
+                    this.m_SideBarSet.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, this.onSideBarSetPropertyChange);
+                }
+                this.m_UncommittedSideBarSet = true;
+                invalidateProperties();
+            }
+            return;
+        }// end function
+
+        protected function onOptionsChange(event:PropertyChangeEvent) : void
+        {
+            if (event != null)
+            {
+                switch(event.property)
+                {
+                    case "sideBarSet":
+                    case "*":
+                    {
+                        this.updateSideBarSet();
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                        break;
+                    }
+                }
+            }
+            return;
+        }// end function
+
+        protected function onSideBarSetPropertyChange(event:PropertyChangeEvent) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
+            if (event != null)
+            {
+                switch(event.property as String)
+                {
+                    case "sideBarInstanceOptions":
+                    {
+                        _loc_2 = event.source as SideBar;
+                        if (_loc_2 != null)
                         {
-                           _loc4_.selected = _loc2_.visible;
-                           break;
+                            _loc_3 = numChildren - 1;
+                            while (_loc_3 >= 0)
+                            {
+                                
+                                _loc_4 = getChildAt(_loc_3) as Button;
+                                if (_loc_4 != null && int(_loc_4.data) == _loc_2.location)
+                                {
+                                    _loc_4.selected = _loc_2.visible;
+                                    break;
+                                }
+                                _loc_3 = _loc_3 - 1;
+                            }
                         }
-                        _loc3_--;
-                     }
-                  }
+                        break;
+                    }
+                    default:
+                    {
+                        break;
+                        break;
+                    }
+                }
             }
-         }
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc10_:UIComponent = null;
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         super.updateDisplayList(param1,param2);
-         this.layoutChrome(param1,param2);
-         var _loc3_:Number = getStyle("verticalGap");
-         var _loc4_:Number = getStyle("paddingLeft");
-         var _loc5_:Number = getStyle("paddingTop");
-         var _loc6_:Number = param2 - _loc5_ - getStyle("paddingBottom");
-         var _loc7_:Number = param1 - _loc4_ - getStyle("paddingRight");
-         _loc5_ = _loc5_ + (_loc6_ - measuredHeight) / 2;
-         var _loc8_:int = this.m_UIRawChildren;
-         var _loc9_:int = numChildren;
-         while(_loc8_ < _loc9_)
-         {
-            _loc10_ = UIComponent(getChildAt(_loc8_));
-            _loc11_ = _loc10_.getExplicitOrMeasuredWidth();
-            _loc12_ = _loc10_.getExplicitOrMeasuredHeight();
-            _loc10_.move(_loc4_ + (_loc7_ - _loc11_) / 2,_loc5_);
-            _loc10_.setActualSize(_loc11_,_loc12_);
-            _loc5_ = _loc5_ + (_loc12_ + _loc3_);
-            _loc8_++;
-         }
-      }
-      
-      override protected function createChildren() : void
-      {
-         if(!this.m_UIConstructed)
-         {
-            super.createChildren();
-            this.updateToggleButtons();
-            this.m_UIConstructed = true;
-         }
-      }
-      
-      private function updateBorder() : void
-      {
-         var _loc1_:Class = getStyle("borderSkin") as Class;
-         if(this.m_UIBorderStyle != _loc1_)
-         {
-            if(this.m_UIBorderInstance != null)
+            return;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_10:* = null;
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            super.updateDisplayList(param1, param2);
+            this.layoutChrome(param1, param2);
+            var _loc_3:* = getStyle("verticalGap");
+            var _loc_4:* = getStyle("paddingLeft");
+            var _loc_5:* = getStyle("paddingTop");
+            var _loc_6:* = param2 - _loc_5 - getStyle("paddingBottom");
+            var _loc_7:* = param1 - _loc_4 - getStyle("paddingRight");
+            _loc_5 = _loc_5 + (_loc_6 - measuredHeight) / 2;
+            var _loc_8:* = this.m_UIRawChildren;
+            var _loc_9:* = numChildren;
+            while (_loc_8 < _loc_9)
             {
-               removeChildAt(0);
-               this.m_UIRawChildren = 0;
+                
+                _loc_10 = UIComponent(getChildAt(_loc_8));
+                _loc_11 = _loc_10.getExplicitOrMeasuredWidth();
+                _loc_12 = _loc_10.getExplicitOrMeasuredHeight();
+                _loc_10.move(_loc_4 + (_loc_7 - _loc_11) / 2, _loc_5);
+                _loc_10.setActualSize(_loc_11, _loc_12);
+                _loc_5 = _loc_5 + (_loc_12 + _loc_3);
+                _loc_8++;
             }
-            this.m_UIBorderStyle = _loc1_;
-            if(this.m_UIBorderStyle != null)
+            return;
+        }// end function
+
+        override protected function createChildren() : void
+        {
+            if (!this.m_UIConstructed)
             {
-               this.m_UIBorderInstance = IFlexDisplayObject(new this.m_UIBorderStyle());
-               if(this.m_UIBorderInstance is ISimpleStyleClient)
-               {
-                  ISimpleStyleClient(this.m_UIBorderInstance).styleName = this;
-               }
-               if(this.m_UIBorderInstance is IInvalidating)
-               {
-                  IInvalidating(this.m_UIBorderInstance).validateNow();
-               }
-               addChildAt(DisplayObject(this.m_UIBorderInstance),0);
-               this.m_UIRawChildren = 1;
+                super.createChildren();
+                this.updateToggleButtons();
+                this.m_UIConstructed = true;
+            }
+            return;
+        }// end function
+
+        private function updateBorder() : void
+        {
+            var _loc_1:* = getStyle("borderSkin") as Class;
+            if (this.m_UIBorderStyle != _loc_1)
+            {
+                if (this.m_UIBorderInstance != null)
+                {
+                    removeChildAt(0);
+                    this.m_UIRawChildren = 0;
+                }
+                this.m_UIBorderStyle = _loc_1;
+                if (this.m_UIBorderStyle != null)
+                {
+                    this.m_UIBorderInstance = IFlexDisplayObject(new this.m_UIBorderStyle());
+                    if (this.m_UIBorderInstance is ISimpleStyleClient)
+                    {
+                        ISimpleStyleClient(this.m_UIBorderInstance).styleName = this;
+                    }
+                    if (this.m_UIBorderInstance is IInvalidating)
+                    {
+                        IInvalidating(this.m_UIBorderInstance).validateNow();
+                    }
+                    addChildAt(DisplayObject(this.m_UIBorderInstance), 0);
+                    this.m_UIRawChildren = 1;
+                }
+                else
+                {
+                    this.m_UIBorderInstance = null;
+                }
+            }
+            return;
+        }// end function
+
+        public function get options() : OptionsStorage
+        {
+            return this.m_Options;
+        }// end function
+
+        protected function onToggleButtonClick(event:MouseEvent) : void
+        {
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
+            var _loc_2:* = null;
+            if (event != null)
+            {
+                _loc_2 = event.currentTarget as Button;
+            }
+            if (_loc_2 != null && this.m_SideBarSet != null)
+            {
+                _loc_3 = int(_loc_2.data);
+                _loc_4 = this.m_SideBarSet.getSideBar(_loc_3);
+                if (_loc_4 != null)
+                {
+                    _loc_4.visible = !_loc_4.visible;
+                }
+            }
+            return;
+        }// end function
+
+        override protected function measure() : void
+        {
+            var _loc_6:* = null;
+            super.measure();
+            var _loc_1:* = getStyle("verticalGap");
+            var _loc_2:* = 0;
+            var _loc_3:* = -_loc_1;
+            var _loc_4:* = numChildren - 1;
+            while (_loc_4 >= this.m_UIRawChildren)
+            {
+                
+                _loc_6 = UIComponent(getChildAt(_loc_4));
+                _loc_2 = Math.max(_loc_2, _loc_6.getExplicitOrMeasuredWidth());
+                _loc_3 = _loc_3 + (_loc_6.getExplicitOrMeasuredHeight() + _loc_1);
+                _loc_4 = _loc_4 - 1;
+            }
+            _loc_3 = Math.max(0, _loc_3);
+            this.updateBorder();
+            var _loc_5:* = EdgeMetrics.EMPTY;
+            if (this.m_UIBorderInstance is IBorder)
+            {
+                _loc_5 = IBorder(this.m_UIBorderInstance).borderMetrics;
+            }
+            var _loc_7:* = Math.max(_loc_5.left + _loc_5.right, getStyle("paddingLeft") + _loc_2 + getStyle("paddingRight"));
+            measuredMinWidth = Math.max(_loc_5.left + _loc_5.right, getStyle("paddingLeft") + _loc_2 + getStyle("paddingRight"));
+            measuredWidth = _loc_7;
+            var _loc_7:* = Math.max(_loc_5.top + _loc_5.bottom, getStyle("paddingTop") + _loc_3 + getStyle("paddingBottom"));
+            measuredMinHeight = Math.max(_loc_5.top + _loc_5.bottom, getStyle("paddingTop") + _loc_3 + getStyle("paddingBottom"));
+            measuredHeight = _loc_7;
+            return;
+        }// end function
+
+        public function set location(param1:Array) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            if (param1 != null)
+            {
+                _loc_2 = param1.length - 1;
+                while (_loc_2 >= 0)
+                {
+                    
+                    _loc_3 = int(param1[_loc_2]);
+                    if (!SideBarSet.s_CheckLocation(_loc_3))
+                    {
+                        throw new ArgumentError("ToggleBar.set location: Invalid location ID.");
+                    }
+                    _loc_2 = _loc_2 - 1;
+                }
+            }
+            if (this.m_Location != param1)
+            {
+                this.m_Location = param1;
+                this.m_UncommittedLocations = true;
+                invalidateProperties();
+            }
+            return;
+        }// end function
+
+        private function updateSideBarSet() : void
+        {
+            if (this.m_Options != null)
+            {
+                this.sideBarSet = this.m_Options.getSideBarSet(SideBarSet.DEFAULT_SET);
             }
             else
             {
-               this.m_UIBorderInstance = null;
+                this.sideBarSet = null;
             }
-         }
-      }
-      
-      public function get options() : OptionsStorage
-      {
-         return this.m_Options;
-      }
-      
-      protected function onToggleButtonClick(param1:MouseEvent) : void
-      {
-         var _loc3_:int = 0;
-         var _loc4_:SideBar = null;
-         var _loc2_:Button = null;
-         if(param1 != null)
-         {
-            _loc2_ = param1.currentTarget as Button;
-         }
-         if(_loc2_ != null && this.m_SideBarSet != null)
-         {
-            _loc3_ = int(_loc2_.data);
-            _loc4_ = this.m_SideBarSet.getSideBar(_loc3_);
-            if(_loc4_ != null)
+            return;
+        }// end function
+
+        public function get location() : Array
+        {
+            return this.m_Location;
+        }// end function
+
+        public function set options(param1:OptionsStorage) : void
+        {
+            if (this.m_Options != param1)
             {
-               _loc4_.visible = !_loc4_.visible;
+                if (this.m_Options != null)
+                {
+                    this.m_Options.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, this.onOptionsChange);
+                }
+                this.m_Options = param1;
+                if (this.m_Options != null)
+                {
+                    this.m_Options.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, this.onOptionsChange);
+                }
+                this.m_UncommittedOptions = true;
+                invalidateProperties();
+                this.updateSideBarSet();
             }
-         }
-      }
-      
-      override protected function measure() : void
-      {
-         var _loc5_:EdgeMetrics = null;
-         var _loc6_:UIComponent = null;
-         super.measure();
-         var _loc1_:Number = getStyle("verticalGap");
-         var _loc2_:Number = 0;
-         var _loc3_:Number = -_loc1_;
-         var _loc4_:int = numChildren - 1;
-         while(_loc4_ >= this.m_UIRawChildren)
-         {
-            _loc6_ = UIComponent(getChildAt(_loc4_));
-            _loc2_ = Math.max(_loc2_,_loc6_.getExplicitOrMeasuredWidth());
-            _loc3_ = _loc3_ + (_loc6_.getExplicitOrMeasuredHeight() + _loc1_);
-            _loc4_--;
-         }
-         _loc3_ = Math.max(0,_loc3_);
-         this.updateBorder();
-         _loc5_ = EdgeMetrics.EMPTY;
-         if(this.m_UIBorderInstance is IBorder)
-         {
-            _loc5_ = IBorder(this.m_UIBorderInstance).borderMetrics;
-         }
-         measuredWidth = measuredMinWidth = Math.max(_loc5_.left + _loc5_.right,getStyle("paddingLeft") + _loc2_ + getStyle("paddingRight"));
-         measuredHeight = measuredMinHeight = Math.max(_loc5_.top + _loc5_.bottom,getStyle("paddingTop") + _loc3_ + getStyle("paddingBottom"));
-      }
-      
-      public function set location(param1:Array) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         if(param1 != null)
-         {
-            _loc2_ = param1.length - 1;
-            while(_loc2_ >= 0)
+            return;
+        }// end function
+
+        private static function s_InitializeStyle() : void
+        {
+            var Style:* = StyleManager.getStyleDeclaration("ToggleBar");
+            if (Style == null)
             {
-               _loc3_ = int(param1[_loc2_]);
-               if(!tibia.sidebar.SideBarSet.s_CheckLocation(_loc3_))
-               {
-                  throw new ArgumentError("ToggleBar.set location: Invalid location ID.");
-               }
-               _loc2_--;
+                Style = new CSSStyleDeclaration();
             }
-         }
-         if(this.m_Location != param1)
-         {
-            this.m_Location = param1;
-            this.m_UncommittedLocations = true;
-            invalidateProperties();
-         }
-      }
-      
-      private function updateSideBarSet() : void
-      {
-         if(this.m_Options != null)
-         {
-            this.sideBarSet = this.m_Options.getSideBarSet(tibia.sidebar.SideBarSet.DEFAULT_SET);
-         }
-         else
-         {
-            this.sideBarSet = null;
-         }
-      }
-      
-      public function get location() : Array
-      {
-         return this.m_Location;
-      }
-      
-      public function set options(param1:OptionsStorage) : void
-      {
-         if(this.m_Options != param1)
-         {
-            if(this.m_Options != null)
+            Style.defaultFactory = function () : void
             {
-               this.m_Options.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
-            }
-            this.m_Options = param1;
-            if(this.m_Options != null)
-            {
-               this.m_Options.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE,this.onOptionsChange);
-            }
-            this.m_UncommittedOptions = true;
-            invalidateProperties();
-            this.updateSideBarSet();
-         }
-      }
-   }
+                this.borderSkin = undefined;
+                this.verticalGap = 4;
+                this.paddingLeft = 0;
+                this.paddingRight = 0;
+                this.paddingTop = 0;
+                this.paddingBottom = 0;
+                return;
+            }// end function
+            ;
+            StyleManager.setStyleDeclaration("ToggleBar", Style, true);
+            return;
+        }// end function
+
+        s_InitializeStyle();
+    }
 }

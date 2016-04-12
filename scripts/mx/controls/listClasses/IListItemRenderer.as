@@ -1,13 +1,14 @@
-package mx.controls.listClasses
+﻿package mx.controls.listClasses
 {
-   import mx.core.IDataRenderer;
-   import flash.events.IEventDispatcher;
-   import mx.core.IFlexDisplayObject;
-   import mx.managers.ILayoutManagerClient;
-   import mx.styles.ISimpleStyleClient;
-   import mx.core.IUIComponent;
-   
-   public interface IListItemRenderer extends IDataRenderer, IEventDispatcher, IFlexDisplayObject, ILayoutManagerClient, ISimpleStyleClient, IUIComponent
-   {
-       }
+    import flash.events.*;
+    import mx.core.*;
+    import mx.managers.*;
+    import mx.styles.*;
+
+    public interface IListItemRenderer extends IDataRenderer, IEventDispatcher, IFlexDisplayObject, ILayoutManagerClient, ISimpleStyleClient, IUIComponent
+    {
+
+        public function IListItemRenderer();
+
+    }
 }

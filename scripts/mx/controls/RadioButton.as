@@ -1,397 +1,410 @@
-package mx.controls
+﻿package mx.controls
 {
-   import mx.managers.IFocusManagerGroup;
-   import mx.core.IToggleButton;
-   import mx.core.mx_internal;
-   import mx.events.FlexEvent;
-   import mx.managers.IFocusManager;
-   import flash.events.MouseEvent;
-   import mx.events.ItemClickEvent;
-   import flash.events.KeyboardEvent;
-   import flash.ui.Keyboard;
-   import flash.events.Event;
-   import mx.core.FlexVersion;
-   import mx.core.IFlexDisplayObject;
-   
-   use namespace mx_internal;
-   
-   public class RadioButton extends Button implements IFocusManagerGroup, IToggleButton
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      mx_internal static var createAccessibilityImplementation:Function;
-       
-      private var _group:mx.controls.RadioButtonGroup;
-      
-      mx_internal var _groupName:String;
-      
-      private var _value:Object;
-      
-      private var groupChanged:Boolean = false;
-      
-      mx_internal var indexNumber:int = 0;
-      
-      public function RadioButton()
-      {
-         super();
-         _labelPlacement = "";
-         _toggle = true;
-         groupName = "radioGroup";
-         addEventListener(FlexEvent.ADD,addHandler);
-         centerContent = false;
-         extraSpacing = 8;
-      }
-      
-      private function addHandler(param1:FlexEvent) : void
-      {
-         if(!_group && Boolean(initialized))
-         {
-            addToGroup();
-         }
-      }
-      
-      private function setNext(param1:Boolean = true) : void
-      {
-         var _loc5_:RadioButton = null;
-         var _loc2_:mx.controls.RadioButtonGroup = group;
-         var _loc3_:IFocusManager = focusManager;
-         if(_loc3_)
-         {
-            _loc3_.showFocusIndicator = true;
-         }
-         var _loc4_:int = indexNumber + 1;
-         while(_loc4_ < _loc2_.numRadioButtons)
-         {
-            _loc5_ = _loc2_.getRadioButtonAt(_loc4_);
-            if(Boolean(_loc5_) && Boolean(_loc5_.enabled))
-            {
-               if(param1)
-               {
-                  _loc2_.setSelection(_loc5_);
-               }
-               _loc5_.setFocus();
-               return;
-            }
-            _loc4_++;
-         }
-         if(Boolean(param1) && _loc2_.getRadioButtonAt(indexNumber) != _loc2_.selection)
-         {
-            _loc2_.setSelection(this);
-         }
-         this.drawFocus(true);
-      }
-      
-      private function addToGroup() : Object
-      {
-         var _loc1_:mx.controls.RadioButtonGroup = group;
-         if(_loc1_)
-         {
-            _loc1_.addInstance(this);
-         }
-         return _loc1_;
-      }
-      
-      override protected function commitProperties() : void
-      {
-         super.commitProperties();
-         if(groupChanged)
-         {
-            addToGroup();
-            groupChanged = false;
-         }
-      }
-      
-      override protected function clickHandler(param1:MouseEvent) : void
-      {
-         if(!enabled || Boolean(selected))
-         {
-            return;
-         }
-         if(!_group)
-         {
-            addToGroup();
-         }
-         super.clickHandler(param1);
-         group.setSelection(this);
-         var _loc2_:ItemClickEvent = new ItemClickEvent(ItemClickEvent.ITEM_CLICK);
-         _loc2_.label = label;
-         _loc2_.index = indexNumber;
-         _loc2_.relatedObject = this;
-         _loc2_.item = value;
-         group.dispatchEvent(_loc2_);
-      }
-      
-      override protected function keyUpHandler(param1:KeyboardEvent) : void
-      {
-         super.keyUpHandler(param1);
-         if(param1.keyCode == Keyboard.SPACE && !_toggle)
-         {
+    import flash.events.*;
+    import flash.ui.*;
+    import mx.core.*;
+    import mx.events.*;
+    import mx.managers.*;
+
+    public class RadioButton extends Button implements IFocusManagerGroup, IToggleButton
+    {
+        private var _group:RadioButtonGroup;
+        var _groupName:String;
+        private var _value:Object;
+        private var groupChanged:Boolean = false;
+        var indexNumber:int = 0;
+        static const VERSION:String = "3.6.0.21751";
+        static var createAccessibilityImplementation:Function;
+
+        public function RadioButton()
+        {
+            _labelPlacement = "";
             _toggle = true;
-         }
-      }
-      
-      [Bindable("labelPlacementChanged")]
-      override public function get labelPlacement() : String
-      {
-         var _loc1_:String = ButtonLabelPlacement.RIGHT;
-         if(_labelPlacement != "")
-         {
-            _loc1_ = _labelPlacement;
-         }
-         else if(Boolean(_group) && _group.labelPlacement != "")
-         {
-            _loc1_ = _group.labelPlacement;
-         }
-         return _loc1_;
-      }
-      
-      public function set groupName(param1:String) : void
-      {
-         if(!param1 || param1 == "")
-         {
+            groupName = "radioGroup";
+            addEventListener(FlexEvent.ADD, addHandler);
+            centerContent = false;
+            extraSpacing = 8;
             return;
-         }
-         deleteGroup();
-         _groupName = param1;
-         groupChanged = true;
-         invalidateProperties();
-         invalidateDisplayList();
-         dispatchEvent(new Event("groupNameChanged"));
-      }
-      
-      override protected function initializeAccessibility() : void
-      {
-         if(RadioButton.createAccessibilityImplementation != null)
-         {
-            RadioButton.createAccessibilityImplementation(this);
-         }
-      }
-      
-      private function setThis() : void
-      {
-         if(!_group)
-         {
-            addToGroup();
-         }
-         var _loc1_:mx.controls.RadioButtonGroup = group;
-         if(_loc1_.selection != this)
-         {
-            _loc1_.setSelection(this);
-         }
-      }
-      
-      override public function get emphasized() : Boolean
-      {
-         return false;
-      }
-      
-      override public function get toggle() : Boolean
-      {
-         return super.toggle;
-      }
-      
-      override protected function measure() : void
-      {
-         var _loc1_:Number = NaN;
-         var _loc2_:Number = NaN;
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = NaN;
-         super.measure();
-         if(FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
-         {
-            _loc1_ = measureText(label).height;
-            _loc2_ = !!currentIcon?Number(currentIcon.height):Number(0);
-            if(labelPlacement == ButtonLabelPlacement.LEFT || labelPlacement == ButtonLabelPlacement.RIGHT)
+        }// end function
+
+        private function addHandler(event:FlexEvent) : void
+        {
+            if (!_group && initialized)
             {
-               _loc3_ = Math.max(_loc1_,_loc2_);
-            }
-            else
-            {
-               _loc3_ = _loc1_ + _loc2_;
-               _loc4_ = getStyle("verticalGap");
-               if(_loc2_ != 0 && !isNaN(_loc4_))
-               {
-                  _loc3_ = _loc3_ + _loc4_;
-               }
-            }
-            measuredMinHeight = measuredHeight = Math.max(_loc3_,18);
-         }
-      }
-      
-      override public function set toggle(param1:Boolean) : void
-      {
-      }
-      
-      mx_internal function deleteGroup() : void
-      {
-         try
-         {
-            if(document[groupName])
-            {
-               delete document[groupName];
+                addToGroup();
             }
             return;
-         }
-         catch(e:Error)
-         {
+        }// end function
+
+        private function setNext(param1:Boolean = true) : void
+        {
+            var _loc_5:* = null;
+            var _loc_2:* = group;
+            var _loc_3:* = focusManager;
+            if (_loc_3)
+            {
+                _loc_3.showFocusIndicator = true;
+            }
+            var _loc_4:* = indexNumber + 1;
+            while (_loc_4 < _loc_2.numRadioButtons)
+            {
+                
+                _loc_5 = _loc_2.getRadioButtonAt(_loc_4);
+                if (_loc_5 && _loc_5.enabled)
+                {
+                    if (param1)
+                    {
+                        _loc_2.setSelection(_loc_5);
+                    }
+                    _loc_5.setFocus();
+                    return;
+                }
+                _loc_4++;
+            }
+            if (param1 && _loc_2.getRadioButtonAt(indexNumber) != _loc_2.selection)
+            {
+                _loc_2.setSelection(this);
+            }
+            this.drawFocus(true);
+            return;
+        }// end function
+
+        private function addToGroup() : Object
+        {
+            var _loc_1:* = group;
+            if (_loc_1)
+            {
+                _loc_1.addInstance(this);
+            }
+            return _loc_1;
+        }// end function
+
+        override protected function commitProperties() : void
+        {
+            super.commitProperties();
+            if (groupChanged)
+            {
+                addToGroup();
+                groupChanged = false;
+            }
+            return;
+        }// end function
+
+        override protected function clickHandler(event:MouseEvent) : void
+        {
+            if (!enabled || selected)
+            {
+                return;
+            }
+            if (!_group)
+            {
+                addToGroup();
+            }
+            super.clickHandler(event);
+            group.setSelection(this);
+            var _loc_2:* = new ItemClickEvent(ItemClickEvent.ITEM_CLICK);
+            _loc_2.label = label;
+            _loc_2.index = indexNumber;
+            _loc_2.relatedObject = this;
+            _loc_2.item = value;
+            group.dispatchEvent(_loc_2);
+            return;
+        }// end function
+
+        override protected function keyUpHandler(event:KeyboardEvent) : void
+        {
+            super.keyUpHandler(event);
+            if (event.keyCode == Keyboard.SPACE && !_toggle)
+            {
+                _toggle = true;
+            }
+            return;
+        }// end function
+
+        override public function get labelPlacement() : String
+        {
+            var _loc_1:* = ButtonLabelPlacement.RIGHT;
+            if (_labelPlacement != "")
+            {
+                _loc_1 = _labelPlacement;
+            }
+            else if (_group && _group.labelPlacement != "")
+            {
+                _loc_1 = _group.labelPlacement;
+            }
+            return _loc_1;
+        }// end function
+
+        public function set groupName(param1:String) : void
+        {
+            if (!param1 || param1 == "")
+            {
+                return;
+            }
+            deleteGroup();
+            _groupName = param1;
+            groupChanged = true;
+            invalidateProperties();
+            invalidateDisplayList();
+            dispatchEvent(new Event("groupNameChanged"));
+            return;
+        }// end function
+
+        override protected function initializeAccessibility() : void
+        {
+            if (RadioButton.createAccessibilityImplementation != null)
+            {
+                RadioButton.createAccessibilityImplementation(this);
+            }
+            return;
+        }// end function
+
+        private function setThis() : void
+        {
+            if (!_group)
+            {
+                addToGroup();
+            }
+            var _loc_1:* = group;
+            if (_loc_1.selection != this)
+            {
+                _loc_1.setSelection(this);
+            }
+            return;
+        }// end function
+
+        override public function get emphasized() : Boolean
+        {
+            return false;
+        }// end function
+
+        override public function get toggle() : Boolean
+        {
+            return super.toggle;
+        }// end function
+
+        override protected function measure() : void
+        {
+            var _loc_1:* = NaN;
+            var _loc_2:* = NaN;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            super.measure();
+            if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
+            {
+                _loc_1 = measureText(label).height;
+                _loc_2 = currentIcon ? (currentIcon.height) : (0);
+                if (labelPlacement == ButtonLabelPlacement.LEFT || labelPlacement == ButtonLabelPlacement.RIGHT)
+                {
+                    _loc_3 = Math.max(_loc_1, _loc_2);
+                }
+                else
+                {
+                    _loc_3 = _loc_1 + _loc_2;
+                    _loc_4 = getStyle("verticalGap");
+                    if (_loc_2 != 0 && !isNaN(_loc_4))
+                    {
+                        _loc_3 = _loc_3 + _loc_4;
+                    }
+                }
+                var _loc_5:* = Math.max(_loc_3, 18);
+                measuredHeight = Math.max(_loc_3, 18);
+                measuredMinHeight = _loc_5;
+            }
+            return;
+        }// end function
+
+        override public function set toggle(param1:Boolean) : void
+        {
+            return;
+        }// end function
+
+        function deleteGroup() : void
+        {
             try
             {
-               if(document.automaticRadioButtonGroups[groupName])
-               {
-                  delete document.automaticRadioButtonGroups[groupName];
-               }
+                if (document[groupName])
+                {
+                    delete document[groupName];
+                }
             }
-            catch(e1:Error)
+            catch (e:Error)
             {
+                try
+                {
+                    if (document.automaticRadioButtonGroups[groupName])
+                    {
+                        delete document.automaticRadioButtonGroups[groupName];
+                    }
+                }
+                catch (e1:Error)
+                {
+                }
+                return;
+        }// end function
+
+        override protected function keyDownHandler(event:KeyboardEvent) : void
+        {
+            if (!enabled)
+            {
+                return;
+            }
+            switch(event.keyCode)
+            {
+                case Keyboard.DOWN:
+                {
+                    setNext(!event.ctrlKey);
+                    event.stopPropagation();
+                    break;
+                }
+                case Keyboard.UP:
+                {
+                    setPrev(!event.ctrlKey);
+                    event.stopPropagation();
+                    break;
+                }
+                case Keyboard.LEFT:
+                {
+                    setPrev(!event.ctrlKey);
+                    event.stopPropagation();
+                    break;
+                }
+                case Keyboard.RIGHT:
+                {
+                    setNext(!event.ctrlKey);
+                    event.stopPropagation();
+                    break;
+                }
+                case Keyboard.SPACE:
+                {
+                    setThis();
+                    _toggle = false;
+                }
+                default:
+                {
+                    super.keyDownHandler(event);
+                    break;
+                    break;
+                }
             }
             return;
-         }
-      }
-      
-      override protected function keyDownHandler(param1:KeyboardEvent) : void
-      {
-         if(!enabled)
-         {
-            return;
-         }
-         switch(param1.keyCode)
-         {
-            case Keyboard.DOWN:
-               setNext(!param1.ctrlKey);
-               param1.stopPropagation();
-               break;
-            case Keyboard.UP:
-               setPrev(!param1.ctrlKey);
-               param1.stopPropagation();
-               break;
-            case Keyboard.LEFT:
-               setPrev(!param1.ctrlKey);
-               param1.stopPropagation();
-               break;
-            case Keyboard.RIGHT:
-               setNext(!param1.ctrlKey);
-               param1.stopPropagation();
-               break;
-            case Keyboard.SPACE:
-               setThis();
-               _toggle = false;
-            default:
-               super.keyDownHandler(param1);
-         }
-      }
-      
-      [Bindable("groupNameChanged")]
-      public function get groupName() : String
-      {
-         return _groupName;
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         super.updateDisplayList(param1,param2);
-         if(groupChanged)
-         {
-            addToGroup();
-            groupChanged = false;
-         }
-         if(Boolean(_group) && Boolean(_selected) && _group.selection != this)
-         {
-            group.setSelection(this,false);
-         }
-      }
-      
-      [Bindable("valueChanged")]
-      public function get value() : Object
-      {
-         return _value;
-      }
-      
-      public function set value(param1:Object) : void
-      {
-         _value = param1;
-         dispatchEvent(new Event("valueChanged"));
-         if(Boolean(selected) && Boolean(group))
-         {
-            group.dispatchEvent(new FlexEvent(FlexEvent.VALUE_COMMIT));
-         }
-      }
-      
-      private function setPrev(param1:Boolean = true) : void
-      {
-         var _loc5_:RadioButton = null;
-         var _loc2_:mx.controls.RadioButtonGroup = group;
-         var _loc3_:IFocusManager = focusManager;
-         if(_loc3_)
-         {
-            _loc3_.showFocusIndicator = true;
-         }
-         var _loc4_:int = 1;
-         while(_loc4_ <= indexNumber)
-         {
-            _loc5_ = _loc2_.getRadioButtonAt(indexNumber - _loc4_);
-            if(Boolean(_loc5_) && Boolean(_loc5_.enabled))
+        }// end function
+
+        public function get groupName() : String
+        {
+            return _groupName;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            super.updateDisplayList(param1, param2);
+            if (groupChanged)
             {
-               if(param1)
-               {
-                  _loc2_.setSelection(_loc5_);
-               }
-               _loc5_.setFocus();
-               return;
+                addToGroup();
+                groupChanged = false;
             }
-            _loc4_++;
-         }
-         if(Boolean(param1) && _loc2_.getRadioButtonAt(indexNumber) != _loc2_.selection)
-         {
-            _loc2_.setSelection(this);
-         }
-         this.drawFocus(true);
-      }
-      
-      public function set group(param1:mx.controls.RadioButtonGroup) : void
-      {
-         _group = param1;
-      }
-      
-      public function get group() : mx.controls.RadioButtonGroup
-      {
-         var g:mx.controls.RadioButtonGroup = null;
-         if(!document)
-         {
+            if (_group && _selected && _group.selection != this)
+            {
+                group.setSelection(this, false);
+            }
+            return;
+        }// end function
+
+        public function get value() : Object
+        {
+            return _value;
+        }// end function
+
+        public function set value(param1:Object) : void
+        {
+            _value = param1;
+            dispatchEvent(new Event("valueChanged"));
+            if (selected && group)
+            {
+                group.dispatchEvent(new FlexEvent(FlexEvent.VALUE_COMMIT));
+            }
+            return;
+        }// end function
+
+        private function setPrev(param1:Boolean = true) : void
+        {
+            var _loc_5:* = null;
+            var _loc_2:* = group;
+            var _loc_3:* = focusManager;
+            if (_loc_3)
+            {
+                _loc_3.showFocusIndicator = true;
+            }
+            var _loc_4:* = 1;
+            while (_loc_4 <= indexNumber)
+            {
+                
+                _loc_5 = _loc_2.getRadioButtonAt(indexNumber - _loc_4);
+                if (_loc_5 && _loc_5.enabled)
+                {
+                    if (param1)
+                    {
+                        _loc_2.setSelection(_loc_5);
+                    }
+                    _loc_5.setFocus();
+                    return;
+                }
+                _loc_4++;
+            }
+            if (param1 && _loc_2.getRadioButtonAt(indexNumber) != _loc_2.selection)
+            {
+                _loc_2.setSelection(this);
+            }
+            this.drawFocus(true);
+            return;
+        }// end function
+
+        public function set group(param1:RadioButtonGroup) : void
+        {
+            _group = param1;
+            return;
+        }// end function
+
+        public function get group() : RadioButtonGroup
+        {
+            var g:RadioButtonGroup;
+            if (!document)
+            {
+                return _group;
+            }
+            if (!_group)
+            {
+                if (groupName && groupName != "")
+                {
+                    try
+                    {
+                        g = RadioButtonGroup(document[groupName]);
+                    }
+                    catch (e:Error)
+                    {
+                        if (document.automaticRadioButtonGroups && document.automaticRadioButtonGroups[groupName])
+                        {
+                            g = RadioButtonGroup(document.automaticRadioButtonGroups[groupName]);
+                        }
+                    }
+                    if (!g)
+                    {
+                        g = new RadioButtonGroup(IFlexDisplayObject(document));
+                        if (!document.automaticRadioButtonGroups)
+                        {
+                            document.automaticRadioButtonGroups = {};
+                        }
+                        document.automaticRadioButtonGroups[groupName] = g;
+                    }
+                    else if (!(g is RadioButtonGroup))
+                    {
+                        return null;
+                    }
+                    _group = g;
+                }
+            }
             return _group;
-         }
-         if(!_group)
-         {
-            if(Boolean(groupName) && groupName != "")
-            {
-               try
-               {
-                  g = RadioButtonGroup(document[groupName]);
-               }
-               catch(e:Error)
-               {
-                  if(Boolean(document.automaticRadioButtonGroups) && Boolean(document.automaticRadioButtonGroups[groupName]))
-                  {
-                     g = RadioButtonGroup(document.automaticRadioButtonGroups[groupName]);
-                  }
-               }
-               if(!g)
-               {
-                  g = new mx.controls.RadioButtonGroup(IFlexDisplayObject(document));
-                  if(!document.automaticRadioButtonGroups)
-                  {
-                     document.automaticRadioButtonGroups = {};
-                  }
-                  document.automaticRadioButtonGroups[groupName] = g;
-               }
-               else if(!(g is mx.controls.RadioButtonGroup))
-               {
-                  return null;
-               }
-               _group = g;
-            }
-         }
-         return _group;
-      }
-   }
+        }// end function
+
+    }
 }

@@ -1,8 +1,11 @@
-package tibia.game.contextMenuClasses
+﻿package tibia.game.contextMenuClasses
 {
-   import flash.events.IEventDispatcher;
-   
-   public interface IContextMenuItem extends IEventDispatcher
-   {
-       }
+    import flash.events.*;
+
+    public interface IContextMenuItem extends IEventDispatcher
+    {
+
+        public function IContextMenuItem();
+
+    }
 }

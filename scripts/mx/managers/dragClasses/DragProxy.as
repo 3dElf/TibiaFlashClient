@@ -1,474 +1,468 @@
-package mx.managers.dragClasses
+﻿package mx.managers.dragClasses
 {
-   import mx.core.UIComponent;
-   import mx.core.mx_internal;
-   import flash.display.DisplayObject;
-   import flash.geom.Point;
-   import flash.display.DisplayObjectContainer;
-   import flash.display.InteractiveObject;
-   import flash.events.IEventDispatcher;
-   import flash.events.MouseEvent;
-   import mx.events.DragEvent;
-   import mx.effects.Move;
-   import mx.effects.Zoom;
-   import mx.managers.ISystemManager;
-   import flash.events.KeyboardEvent;
-   import mx.events.SandboxMouseEvent;
-   import mx.managers.DragManager;
-   import mx.events.EffectEvent;
-   import mx.managers.CursorManager;
-   import mx.managers.SystemManager;
-   import mx.events.InterManagerRequest;
-   import mx.styles.StyleManager;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.core.IUIComponent;
-   import flash.events.Event;
-   import mx.events.InterDragManagerEvent;
-   import mx.core.DragSource;
-   
-   use namespace mx_internal;
-   
-   public class DragProxy extends UIComponent
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public var allowMove:Boolean = true;
-      
-      private var cursorClass:Class = null;
-      
-      public var action:String;
-      
-      private var sandboxRoot:IEventDispatcher;
-      
-      public var target:DisplayObject = null;
-      
-      public var dragInitiator:IUIComponent;
-      
-      public var xOffset:Number;
-      
-      public var yOffset:Number;
-      
-      public var dragSource:DragSource;
-      
-      private var cursorID:int = 0;
-      
-      private var lastMouseEvent:MouseEvent;
-      
-      public var startX:Number;
-      
-      public var startY:Number;
-      
-      private var lastKeyEvent:KeyboardEvent;
-      
-      public function DragProxy(param1:IUIComponent, param2:DragSource)
-      {
-         super();
-         this.dragInitiator = param1;
-         this.dragSource = param2;
-         var _loc3_:ISystemManager = param1.systemManager.topLevelSystemManager as ISystemManager;
-         var _loc4_:IEventDispatcher = sandboxRoot = _loc3_.getSandboxRoot();
-         _loc4_.addEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler,true);
-         _loc4_.addEventListener(MouseEvent.MOUSE_UP,mouseUpHandler,true);
-         _loc4_.addEventListener(KeyboardEvent.KEY_DOWN,keyDownHandler);
-         _loc4_.addEventListener(KeyboardEvent.KEY_UP,keyUpHandler);
-      }
-      
-      private static function getObjectsUnderPoint(param1:DisplayObject, param2:Point, param3:Array) : void
-      {
-         var doc:DisplayObjectContainer = null;
-         var rc:Object = null;
-         var n:int = 0;
-         var i:int = 0;
-         var child:DisplayObject = null;
-         var obj:DisplayObject = param1;
-         var pt:Point = param2;
-         var arr:Array = param3;
-         if(!obj.visible)
-         {
+    import flash.display.*;
+    import flash.events.*;
+    import flash.geom.*;
+    import mx.core.*;
+    import mx.effects.*;
+    import mx.events.*;
+    import mx.managers.*;
+    import mx.styles.*;
+
+    public class DragProxy extends UIComponent
+    {
+        public var allowMove:Boolean = true;
+        private var cursorClass:Class = null;
+        public var action:String;
+        private var sandboxRoot:IEventDispatcher;
+        public var target:DisplayObject = null;
+        public var dragInitiator:IUIComponent;
+        public var xOffset:Number;
+        public var yOffset:Number;
+        public var dragSource:DragSource;
+        private var cursorID:int = 0;
+        private var lastMouseEvent:MouseEvent;
+        public var startX:Number;
+        public var startY:Number;
+        private var lastKeyEvent:KeyboardEvent;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function DragProxy(param1:IUIComponent, param2:DragSource)
+        {
+            this.dragInitiator = param1;
+            this.dragSource = param2;
+            var _loc_3:* = param1.systemManager.topLevelSystemManager as ISystemManager;
+            var _loc_5:* = _loc_3.getSandboxRoot();
+            sandboxRoot = _loc_3.getSandboxRoot();
+            var _loc_4:* = _loc_5;
+            _loc_5.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler, true);
+            _loc_4.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, true);
+            _loc_4.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+            _loc_4.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
             return;
-         }
-         if(obj is UIComponent && !UIComponent(obj).$visible)
-         {
+        }// end function
+
+        public function mouseUpHandler(event:MouseEvent) : void
+        {
+            var _loc_2:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            var _loc_3:* = dragInitiator.systemManager.topLevelSystemManager as ISystemManager;
+            var _loc_4:* = sandboxRoot;
+            _loc_4.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler, true);
+            _loc_4.removeEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, true);
+            _loc_4.removeEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+            _loc_4.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, mouseLeaveHandler);
+            _loc_4.removeEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
+            var _loc_5:* = automationDelegate;
+            if (target && action != DragManager.NONE)
+            {
+                _loc_2 = new DragEvent(DragEvent.DRAG_DROP);
+                _loc_2.dragInitiator = dragInitiator;
+                _loc_2.dragSource = dragSource;
+                _loc_2.action = action;
+                _loc_2.ctrlKey = event.ctrlKey;
+                _loc_2.altKey = event.altKey;
+                _loc_2.shiftKey = event.shiftKey;
+                _loc_6 = new Point();
+                _loc_6.x = lastMouseEvent.localX;
+                _loc_6.y = lastMouseEvent.localY;
+                _loc_6 = DisplayObject(lastMouseEvent.target).localToGlobal(_loc_6);
+                _loc_6 = DisplayObject(target).globalToLocal(_loc_6);
+                _loc_2.localX = _loc_6.x;
+                _loc_2.localY = _loc_6.y;
+                if (_loc_5)
+                {
+                    _loc_5.recordAutomatableDragDrop(target, _loc_2);
+                }
+                _dispatchDragEvent(target, _loc_2);
+            }
+            else
+            {
+                action = DragManager.NONE;
+            }
+            if (action == DragManager.NONE)
+            {
+                _loc_7 = new Move(this);
+                _loc_7.addEventListener(EffectEvent.EFFECT_END, effectEndHandler);
+                _loc_7.xFrom = x;
+                _loc_7.yFrom = y;
+                _loc_7.xTo = startX;
+                _loc_7.yTo = startY;
+                _loc_7.duration = 200;
+                _loc_7.play();
+            }
+            else
+            {
+                _loc_8 = new Zoom(this);
+                var _loc_10:* = 1;
+                _loc_8.zoomHeightFrom = 1;
+                _loc_8.zoomWidthFrom = _loc_10;
+                var _loc_10:* = 0;
+                _loc_8.zoomHeightTo = 0;
+                _loc_8.zoomWidthTo = _loc_10;
+                _loc_8.duration = 200;
+                _loc_8.play();
+                _loc_9 = new Move(this);
+                _loc_9.addEventListener(EffectEvent.EFFECT_END, effectEndHandler);
+                _loc_9.xFrom = x;
+                _loc_9.yFrom = this.y;
+                _loc_9.xTo = parent.mouseX;
+                _loc_9.yTo = parent.mouseY;
+                _loc_9.duration = 200;
+                _loc_9.play();
+            }
+            _loc_2 = new DragEvent(DragEvent.DRAG_COMPLETE);
+            _loc_2.dragInitiator = dragInitiator;
+            _loc_2.dragSource = dragSource;
+            _loc_2.relatedObject = InteractiveObject(target);
+            _loc_2.action = action;
+            _loc_2.ctrlKey = event.ctrlKey;
+            _loc_2.altKey = event.altKey;
+            _loc_2.shiftKey = event.shiftKey;
+            dragInitiator.dispatchEvent(_loc_2);
+            if (_loc_5 && action == DragManager.NONE)
+            {
+                _loc_5.recordAutomatableDragCancel(dragInitiator, _loc_2);
+            }
+            cursorManager.removeCursor(cursorID);
+            cursorID = CursorManager.NO_CURSOR;
+            this.lastMouseEvent = null;
             return;
-         }
-         if(obj.hitTestPoint(pt.x,pt.y,true))
-         {
-            if(obj is InteractiveObject && Boolean(InteractiveObject(obj).mouseEnabled))
+        }// end function
+
+        private function isSameOrChildApplicationDomain(param1:Object) : Boolean
+        {
+            var _loc_2:* = SystemManager.getSWFRoot(param1);
+            if (_loc_2)
             {
-               arr.push(obj);
+                return true;
             }
-            if(obj is DisplayObjectContainer)
+            var _loc_3:* = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST);
+            _loc_3.name = "hasSWFBridges";
+            sandboxRoot.dispatchEvent(_loc_3);
+            if (!_loc_3.value)
             {
-               doc = obj as DisplayObjectContainer;
-               if(doc.mouseChildren)
-               {
-                  if("rawChildren" in doc)
-                  {
-                     rc = doc["rawChildren"];
-                     n = rc.numChildren;
-                     i = 0;
-                     while(i < n)
-                     {
-                        try
-                        {
-                           getObjectsUnderPoint(rc.getChildAt(i),pt,arr);
-                        }
-                        catch(e:Error)
-                        {
-                        }
-                        i++;
-                     }
-                  }
-                  else if(doc.numChildren)
-                  {
-                     n = doc.numChildren;
-                     i = 0;
-                     while(i < n)
-                     {
-                        try
-                        {
-                           child = doc.getChildAt(i);
-                           getObjectsUnderPoint(child,pt,arr);
-                        }
-                        catch(e:Error)
-                        {
-                        }
-                        i++;
-                     }
-                  }
-               }
+                return true;
             }
-         }
-      }
-      
-      public function mouseUpHandler(param1:MouseEvent) : void
-      {
-         var _loc2_:DragEvent = null;
-         var _loc6_:Point = null;
-         var _loc7_:Move = null;
-         var _loc8_:Zoom = null;
-         var _loc9_:Move = null;
-         var _loc3_:ISystemManager = dragInitiator.systemManager.topLevelSystemManager as ISystemManager;
-         var _loc4_:IEventDispatcher = sandboxRoot;
-         _loc4_.removeEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler,true);
-         _loc4_.removeEventListener(MouseEvent.MOUSE_UP,mouseUpHandler,true);
-         _loc4_.removeEventListener(KeyboardEvent.KEY_DOWN,keyDownHandler);
-         _loc4_.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,mouseLeaveHandler);
-         _loc4_.removeEventListener(KeyboardEvent.KEY_UP,keyUpHandler);
-         var _loc5_:Object = automationDelegate;
-         if(Boolean(target) && action != DragManager.NONE)
-         {
-            _loc2_ = new DragEvent(DragEvent.DRAG_DROP);
-            _loc2_.dragInitiator = dragInitiator;
-            _loc2_.dragSource = dragSource;
-            _loc2_.action = action;
-            _loc2_.ctrlKey = param1.ctrlKey;
-            _loc2_.altKey = param1.altKey;
-            _loc2_.shiftKey = param1.shiftKey;
-            _loc6_ = new Point();
-            _loc6_.x = lastMouseEvent.localX;
-            _loc6_.y = lastMouseEvent.localY;
-            _loc6_ = DisplayObject(lastMouseEvent.target).localToGlobal(_loc6_);
-            _loc6_ = DisplayObject(target).globalToLocal(_loc6_);
-            _loc2_.localX = _loc6_.x;
-            _loc2_.localY = _loc6_.y;
-            if(_loc5_)
+            return false;
+        }// end function
+
+        public function showFeedback() : void
+        {
+            var _loc_1:* = cursorClass;
+            var _loc_2:* = StyleManager.getStyleDeclaration("DragManager");
+            if (action == DragManager.COPY)
             {
-               _loc5_.recordAutomatableDragDrop(target,_loc2_);
+                _loc_1 = _loc_2.getStyle("copyCursor");
             }
-            _dispatchDragEvent(target,_loc2_);
-         }
-         else
-         {
-            action = DragManager.NONE;
-         }
-         if(action == DragManager.NONE)
-         {
-            _loc7_ = new Move(this);
-            _loc7_.addEventListener(EffectEvent.EFFECT_END,effectEndHandler);
-            _loc7_.xFrom = x;
-            _loc7_.yFrom = y;
-            _loc7_.xTo = startX;
-            _loc7_.yTo = startY;
-            _loc7_.duration = 200;
-            _loc7_.play();
-         }
-         else
-         {
-            _loc8_ = new Zoom(this);
-            _loc8_.zoomWidthFrom = _loc8_.zoomHeightFrom = 1;
-            _loc8_.zoomWidthTo = _loc8_.zoomHeightTo = 0;
-            _loc8_.duration = 200;
-            _loc8_.play();
-            _loc9_ = new Move(this);
-            _loc9_.addEventListener(EffectEvent.EFFECT_END,effectEndHandler);
-            _loc9_.xFrom = x;
-            _loc9_.yFrom = this.y;
-            _loc9_.xTo = parent.mouseX;
-            _loc9_.yTo = parent.mouseY;
-            _loc9_.duration = 200;
-            _loc9_.play();
-         }
-         _loc2_ = new DragEvent(DragEvent.DRAG_COMPLETE);
-         _loc2_.dragInitiator = dragInitiator;
-         _loc2_.dragSource = dragSource;
-         _loc2_.relatedObject = InteractiveObject(target);
-         _loc2_.action = action;
-         _loc2_.ctrlKey = param1.ctrlKey;
-         _loc2_.altKey = param1.altKey;
-         _loc2_.shiftKey = param1.shiftKey;
-         dragInitiator.dispatchEvent(_loc2_);
-         if(Boolean(_loc5_) && action == DragManager.NONE)
-         {
-            _loc5_.recordAutomatableDragCancel(dragInitiator,_loc2_);
-         }
-         cursorManager.removeCursor(cursorID);
-         cursorID = CursorManager.NO_CURSOR;
-         this.lastMouseEvent = null;
-      }
-      
-      private function isSameOrChildApplicationDomain(param1:Object) : Boolean
-      {
-         var _loc2_:DisplayObject = SystemManager.getSWFRoot(param1);
-         if(_loc2_)
-         {
-            return true;
-         }
-         var _loc3_:InterManagerRequest = new InterManagerRequest(InterManagerRequest.SYSTEM_MANAGER_REQUEST);
-         _loc3_.name = "hasSWFBridges";
-         sandboxRoot.dispatchEvent(_loc3_);
-         if(!_loc3_.value)
-         {
-            return true;
-         }
-         return false;
-      }
-      
-      public function showFeedback() : void
-      {
-         var _loc1_:Class = cursorClass;
-         var _loc2_:CSSStyleDeclaration = StyleManager.getStyleDeclaration("DragManager");
-         if(action == DragManager.COPY)
-         {
-            _loc1_ = _loc2_.getStyle("copyCursor");
-         }
-         else if(action == DragManager.LINK)
-         {
-            _loc1_ = _loc2_.getStyle("linkCursor");
-         }
-         else if(action == DragManager.NONE)
-         {
-            _loc1_ = _loc2_.getStyle("rejectCursor");
-         }
-         else
-         {
-            _loc1_ = _loc2_.getStyle("moveCursor");
-         }
-         if(_loc1_ != cursorClass)
-         {
-            cursorClass = _loc1_;
-            if(cursorID != CursorManager.NO_CURSOR)
+            else if (action == DragManager.LINK)
             {
-               cursorManager.removeCursor(cursorID);
+                _loc_1 = _loc_2.getStyle("linkCursor");
             }
-            cursorID = cursorManager.setCursor(cursorClass,2,0,0);
-         }
-      }
-      
-      override public function initialize() : void
-      {
-         super.initialize();
-         dragInitiator.systemManager.getSandboxRoot().addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,mouseLeaveHandler);
-         if(!getFocus())
-         {
-            setFocus();
-         }
-      }
-      
-      public function mouseMoveHandler(param1:MouseEvent) : void
-      {
-         var _loc2_:DragEvent = null;
-         var _loc3_:DisplayObject = null;
-         var _loc4_:int = 0;
-         var _loc10_:Array = null;
-         var _loc14_:Boolean = false;
-         var _loc15_:DisplayObject = null;
-         lastMouseEvent = param1;
-         var _loc5_:Point = new Point();
-         var _loc6_:Point = new Point(param1.localX,param1.localY);
-         var _loc7_:Point = DisplayObject(param1.target).localToGlobal(_loc6_);
-         _loc6_ = DisplayObject(sandboxRoot).globalToLocal(_loc7_);
-         var _loc8_:Number = _loc6_.x;
-         var _loc9_:Number = _loc6_.y;
-         x = _loc8_ - xOffset;
-         y = _loc9_ - yOffset;
-         if(!param1)
-         {
+            else if (action == DragManager.NONE)
+            {
+                _loc_1 = _loc_2.getStyle("rejectCursor");
+            }
+            else
+            {
+                _loc_1 = _loc_2.getStyle("moveCursor");
+            }
+            if (_loc_1 != cursorClass)
+            {
+                cursorClass = _loc_1;
+                if (cursorID != CursorManager.NO_CURSOR)
+                {
+                    cursorManager.removeCursor(cursorID);
+                }
+                cursorID = cursorManager.setCursor(cursorClass, 2, 0, 0);
+            }
             return;
-         }
-         var _loc11_:IEventDispatcher = systemManager.getTopLevelRoot();
-         _loc10_ = [];
-         DragProxy.getObjectsUnderPoint(DisplayObject(sandboxRoot),_loc7_,_loc10_);
-         var _loc12_:DisplayObject = null;
-         var _loc13_:int = _loc10_.length - 1;
-         while(_loc13_ >= 0)
-         {
-            _loc12_ = _loc10_[_loc13_];
-            if(_loc12_ != this && !contains(_loc12_))
+        }// end function
+
+        override public function initialize() : void
+        {
+            super.initialize();
+            dragInitiator.systemManager.getSandboxRoot().addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, mouseLeaveHandler);
+            if (!getFocus())
             {
-               break;
+                setFocus();
             }
-            _loc13_--;
-         }
-         if(target)
-         {
-            _loc14_ = false;
-            _loc15_ = target;
-            _loc3_ = _loc12_;
-            while(_loc3_)
+            return;
+        }// end function
+
+        public function mouseMoveHandler(event:MouseEvent) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            var _loc_10:* = null;
+            var _loc_14:* = false;
+            var _loc_15:* = null;
+            lastMouseEvent = event;
+            var _loc_5:* = new Point();
+            var _loc_6:* = new Point(event.localX, event.localY);
+            var _loc_7:* = DisplayObject(event.target).localToGlobal(_loc_6);
+            _loc_6 = DisplayObject(sandboxRoot).globalToLocal(_loc_7);
+            var _loc_8:* = _loc_6.x;
+            var _loc_9:* = _loc_6.y;
+            x = _loc_8 - xOffset;
+            y = _loc_9 - yOffset;
+            if (!event)
             {
-               if(_loc3_ == target)
-               {
-                  dispatchDragEvent(DragEvent.DRAG_OVER,param1,_loc3_);
-                  _loc14_ = true;
-                  break;
-               }
-               dispatchDragEvent(DragEvent.DRAG_ENTER,param1,_loc3_);
-               if(target == _loc3_)
-               {
-                  _loc14_ = false;
-                  break;
-               }
-               _loc3_ = _loc3_.parent;
+                return;
             }
-            if(!_loc14_)
+            var _loc_11:* = systemManager.getTopLevelRoot();
+            _loc_10 = [];
+            DragProxy.getObjectsUnderPoint(DisplayObject(sandboxRoot), _loc_7, _loc_10);
+            var _loc_12:* = null;
+            var _loc_13:* = _loc_10.length - 1;
+            while (_loc_13 >= 0)
             {
-               dispatchDragEvent(DragEvent.DRAG_EXIT,param1,_loc15_);
-               if(target == _loc15_)
-               {
-                  target = null;
-               }
+                
+                _loc_12 = _loc_10[_loc_13];
+                if (_loc_12 != this && !contains(_loc_12))
+                {
+                    break;
+                }
+                _loc_13 = _loc_13 - 1;
             }
-         }
-         if(!target)
-         {
-            action = DragManager.MOVE;
-            _loc3_ = _loc12_;
-            while(_loc3_)
+            if (target)
             {
-               if(_loc3_ != this)
-               {
-                  dispatchDragEvent(DragEvent.DRAG_ENTER,param1,_loc3_);
-                  if(target)
-                  {
-                     break;
-                  }
-               }
-               _loc3_ = _loc3_.parent;
+                _loc_14 = false;
+                _loc_15 = target;
+                _loc_3 = _loc_12;
+                while (_loc_3)
+                {
+                    
+                    if (_loc_3 == target)
+                    {
+                        dispatchDragEvent(DragEvent.DRAG_OVER, event, _loc_3);
+                        _loc_14 = true;
+                        break;
+                    }
+                    else
+                    {
+                        dispatchDragEvent(DragEvent.DRAG_ENTER, event, _loc_3);
+                        if (target == _loc_3)
+                        {
+                            _loc_14 = false;
+                            break;
+                        }
+                    }
+                    _loc_3 = _loc_3.parent;
+                }
+                if (!_loc_14)
+                {
+                    dispatchDragEvent(DragEvent.DRAG_EXIT, event, _loc_15);
+                    if (target == _loc_15)
+                    {
+                        target = null;
+                    }
+                }
             }
-            if(!target)
+            if (!target)
             {
-               action = DragManager.NONE;
+                action = DragManager.MOVE;
+                _loc_3 = _loc_12;
+                while (_loc_3)
+                {
+                    
+                    if (_loc_3 != this)
+                    {
+                        dispatchDragEvent(DragEvent.DRAG_ENTER, event, _loc_3);
+                        if (target)
+                        {
+                            break;
+                        }
+                    }
+                    _loc_3 = _loc_3.parent;
+                }
+                if (!target)
+                {
+                    action = DragManager.NONE;
+                }
             }
-         }
-         showFeedback();
-      }
-      
-      private function dispatchDragEvent(param1:String, param2:MouseEvent, param3:Object) : void
-      {
-         var _loc4_:DragEvent = new DragEvent(param1);
-         var _loc5_:Point = new Point();
-         _loc4_.dragInitiator = dragInitiator;
-         _loc4_.dragSource = dragSource;
-         _loc4_.action = action;
-         _loc4_.ctrlKey = param2.ctrlKey;
-         _loc4_.altKey = param2.altKey;
-         _loc4_.shiftKey = param2.shiftKey;
-         _loc5_.x = lastMouseEvent.localX;
-         _loc5_.y = lastMouseEvent.localY;
-         _loc5_ = DisplayObject(lastMouseEvent.target).localToGlobal(_loc5_);
-         _loc5_ = DisplayObject(param3).globalToLocal(_loc5_);
-         _loc4_.localX = _loc5_.x;
-         _loc4_.localY = _loc5_.y;
-         _dispatchDragEvent(DisplayObject(param3),_loc4_);
-      }
-      
-      override protected function keyUpHandler(param1:KeyboardEvent) : void
-      {
-         checkKeyEvent(param1);
-      }
-      
-      private function effectEndHandler(param1:EffectEvent) : void
-      {
-         DragManager.endDrag();
-      }
-      
-      public function checkKeyEvent(param1:KeyboardEvent) : void
-      {
-         var _loc2_:DragEvent = null;
-         var _loc3_:Point = null;
-         if(target)
-         {
-            if(Boolean(lastKeyEvent) && Boolean(param1.type == lastKeyEvent.type) && param1.keyCode == lastKeyEvent.keyCode)
-            {
-               return;
-            }
-            lastKeyEvent = param1;
-            _loc2_ = new DragEvent(DragEvent.DRAG_OVER);
-            _loc2_.dragInitiator = dragInitiator;
-            _loc2_.dragSource = dragSource;
-            _loc2_.action = action;
-            _loc2_.ctrlKey = param1.ctrlKey;
-            _loc2_.altKey = param1.altKey;
-            _loc2_.shiftKey = param1.shiftKey;
-            _loc3_ = new Point();
-            _loc3_.x = lastMouseEvent.localX;
-            _loc3_.y = lastMouseEvent.localY;
-            _loc3_ = DisplayObject(lastMouseEvent.target).localToGlobal(_loc3_);
-            _loc3_ = DisplayObject(target).globalToLocal(_loc3_);
-            _loc2_.localX = _loc3_.x;
-            _loc2_.localY = _loc3_.y;
-            _dispatchDragEvent(target,_loc2_);
             showFeedback();
-         }
-      }
-      
-      public function mouseLeaveHandler(param1:Event) : void
-      {
-         mouseUpHandler(lastMouseEvent);
-      }
-      
-      private function _dispatchDragEvent(param1:DisplayObject, param2:DragEvent) : void
-      {
-         var _loc3_:InterManagerRequest = null;
-         var _loc4_:InterDragManagerEvent = null;
-         if(isSameOrChildApplicationDomain(param1))
-         {
-            param1.dispatchEvent(param2);
-         }
-         else
-         {
-            _loc3_ = new InterManagerRequest(InterManagerRequest.INIT_MANAGER_REQUEST);
-            _loc3_.name = "mx.managers::IDragManager";
-            sandboxRoot.dispatchEvent(_loc3_);
-            _loc4_ = new InterDragManagerEvent(InterDragManagerEvent.DISPATCH_DRAG_EVENT,false,false,param2.localX,param2.localY,param2.relatedObject,param2.ctrlKey,param2.altKey,param2.shiftKey,param2.buttonDown,param2.delta,param1,param2.type,param2.dragInitiator,param2.dragSource,param2.action,param2.draggedItem);
-            sandboxRoot.dispatchEvent(_loc4_);
-         }
-      }
-      
-      override protected function keyDownHandler(param1:KeyboardEvent) : void
-      {
-         checkKeyEvent(param1);
-      }
-      
-      public function stage_mouseMoveHandler(param1:MouseEvent) : void
-      {
-         if(param1.target != stage)
-         {
             return;
-         }
-         mouseMoveHandler(param1);
-      }
-   }
+        }// end function
+
+        private function dispatchDragEvent(param1:String, param2:MouseEvent, param3:Object) : void
+        {
+            var _loc_4:* = new DragEvent(param1);
+            var _loc_5:* = new Point();
+            _loc_4.dragInitiator = dragInitiator;
+            _loc_4.dragSource = dragSource;
+            _loc_4.action = action;
+            _loc_4.ctrlKey = param2.ctrlKey;
+            _loc_4.altKey = param2.altKey;
+            _loc_4.shiftKey = param2.shiftKey;
+            _loc_5.x = lastMouseEvent.localX;
+            _loc_5.y = lastMouseEvent.localY;
+            _loc_5 = DisplayObject(lastMouseEvent.target).localToGlobal(_loc_5);
+            _loc_5 = DisplayObject(param3).globalToLocal(_loc_5);
+            _loc_4.localX = _loc_5.x;
+            _loc_4.localY = _loc_5.y;
+            _dispatchDragEvent(DisplayObject(param3), _loc_4);
+            return;
+        }// end function
+
+        override protected function keyUpHandler(event:KeyboardEvent) : void
+        {
+            checkKeyEvent(event);
+            return;
+        }// end function
+
+        private function effectEndHandler(event:EffectEvent) : void
+        {
+            DragManager.endDrag();
+            return;
+        }// end function
+
+        public function checkKeyEvent(event:KeyboardEvent) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            if (target)
+            {
+                if (lastKeyEvent && event.type == lastKeyEvent.type && event.keyCode == lastKeyEvent.keyCode)
+                {
+                    return;
+                }
+                lastKeyEvent = event;
+                _loc_2 = new DragEvent(DragEvent.DRAG_OVER);
+                _loc_2.dragInitiator = dragInitiator;
+                _loc_2.dragSource = dragSource;
+                _loc_2.action = action;
+                _loc_2.ctrlKey = event.ctrlKey;
+                _loc_2.altKey = event.altKey;
+                _loc_2.shiftKey = event.shiftKey;
+                _loc_3 = new Point();
+                _loc_3.x = lastMouseEvent.localX;
+                _loc_3.y = lastMouseEvent.localY;
+                _loc_3 = DisplayObject(lastMouseEvent.target).localToGlobal(_loc_3);
+                _loc_3 = DisplayObject(target).globalToLocal(_loc_3);
+                _loc_2.localX = _loc_3.x;
+                _loc_2.localY = _loc_3.y;
+                _dispatchDragEvent(target, _loc_2);
+                showFeedback();
+            }
+            return;
+        }// end function
+
+        public function mouseLeaveHandler(event:Event) : void
+        {
+            mouseUpHandler(lastMouseEvent);
+            return;
+        }// end function
+
+        private function _dispatchDragEvent(param1:DisplayObject, param2:DragEvent) : void
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            if (isSameOrChildApplicationDomain(param1))
+            {
+                param1.dispatchEvent(param2);
+            }
+            else
+            {
+                _loc_3 = new InterManagerRequest(InterManagerRequest.INIT_MANAGER_REQUEST);
+                _loc_3.name = "mx.managers::IDragManager";
+                sandboxRoot.dispatchEvent(_loc_3);
+                _loc_4 = new InterDragManagerEvent(InterDragManagerEvent.DISPATCH_DRAG_EVENT, false, false, param2.localX, param2.localY, param2.relatedObject, param2.ctrlKey, param2.altKey, param2.shiftKey, param2.buttonDown, param2.delta, param1, param2.type, param2.dragInitiator, param2.dragSource, param2.action, param2.draggedItem);
+                sandboxRoot.dispatchEvent(_loc_4);
+            }
+            return;
+        }// end function
+
+        override protected function keyDownHandler(event:KeyboardEvent) : void
+        {
+            checkKeyEvent(event);
+            return;
+        }// end function
+
+        public function stage_mouseMoveHandler(event:MouseEvent) : void
+        {
+            if (event.target != stage)
+            {
+                return;
+            }
+            mouseMoveHandler(event);
+            return;
+        }// end function
+
+        private static function getObjectsUnderPoint(param1:DisplayObject, param2:Point, param3:Array) : void
+        {
+            var doc:DisplayObjectContainer;
+            var rc:Object;
+            var n:int;
+            var i:int;
+            var child:DisplayObject;
+            var obj:* = param1;
+            var pt:* = param2;
+            var arr:* = param3;
+            if (!obj.visible)
+            {
+                return;
+            }
+            if (obj is UIComponent && !UIComponent(obj).$visible)
+            {
+                return;
+            }
+            if (obj.hitTestPoint(pt.x, pt.y, true))
+            {
+                if (obj is InteractiveObject && InteractiveObject(obj).mouseEnabled)
+                {
+                    arr.push(obj);
+                }
+                if (obj is DisplayObjectContainer)
+                {
+                    doc = obj as DisplayObjectContainer;
+                    if (doc.mouseChildren)
+                    {
+                        if ("rawChildren" in doc)
+                        {
+                            rc = doc["rawChildren"];
+                            n = rc.numChildren;
+                            i;
+                            while (i < n)
+                            {
+                                
+                                try
+                                {
+                                    getObjectsUnderPoint(rc.getChildAt(i), pt, arr);
+                                }
+                                catch (e:Error)
+                                {
+                                }
+                                i = (i + 1);
+                            }
+                        }
+                        else if (doc.numChildren)
+                        {
+                            n = doc.numChildren;
+                            i;
+                            while (i < n)
+                            {
+                                
+                                try
+                                {
+                                    child = doc.getChildAt(i);
+                                    getObjectsUnderPoint(child, pt, arr);
+                                }
+                                catch (e:Error)
+                                {
+                                }
+                                i = (i + 1);
+                            }
+                        }
+                    }
+                }
+            }
+            return;
+        }// end function
+
+    }
 }

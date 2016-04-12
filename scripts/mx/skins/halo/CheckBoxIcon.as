@@ -1,206 +1,189 @@
-package mx.skins.halo
+﻿package mx.skins.halo
 {
-   import mx.skins.Border;
-   import mx.core.mx_internal;
-   import mx.utils.ColorUtil;
-   import mx.styles.StyleManager;
-   import flash.display.Graphics;
-   import flash.display.GradientType;
-   
-   use namespace mx_internal;
-   
-   public class CheckBoxIcon extends Border
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static var cache:Object = {};
-       
-      public function CheckBoxIcon()
-      {
-         super();
-      }
-      
-      private static function calcDerivedStyles(param1:uint, param2:uint, param3:uint, param4:uint) : Object
-      {
-         var _loc6_:Object = null;
-         var _loc5_:String = HaloColors.getCacheKey(param1,param2,param3,param4);
-         if(!cache[_loc5_])
-         {
-            _loc6_ = cache[_loc5_] = {};
-            HaloColors.addHaloColors(_loc6_,param1,param3,param4);
-            _loc6_.borderColorDrk1 = ColorUtil.adjustBrightness2(param2,-50);
-         }
-         return cache[_loc5_];
-      }
-      
-      override public function get measuredWidth() : Number
-      {
-         return 14;
-      }
-      
-      override public function get measuredHeight() : Number
-      {
-         return 14;
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc13_:Array = null;
-         var _loc14_:Array = null;
-         var _loc15_:Array = null;
-         var _loc16_:Array = null;
-         var _loc17_:Array = null;
-         var _loc18_:Array = null;
-         super.updateDisplayList(param1,param2);
-         var _loc3_:uint = getStyle("borderColor");
-         var _loc4_:uint = getStyle("iconColor");
-         var _loc5_:Array = getStyle("fillAlphas");
-         var _loc6_:Array = getStyle("fillColors");
-         StyleManager.getColorNames(_loc6_);
-         var _loc7_:Array = getStyle("highlightAlphas");
-         var _loc8_:uint = getStyle("themeColor");
-         var _loc9_:Object = calcDerivedStyles(_loc8_,_loc3_,_loc6_[0],_loc6_[1]);
-         var _loc10_:Number = ColorUtil.adjustBrightness2(_loc3_,-50);
-         var _loc11_:Number = ColorUtil.adjustBrightness2(_loc8_,-25);
-         var _loc12_:Boolean = false;
-         var _loc19_:Graphics = graphics;
-         _loc19_.clear();
-         switch(name)
-         {
-            case "upIcon":
-               _loc13_ = [_loc6_[0],_loc6_[1]];
-               _loc14_ = [_loc5_[0],_loc5_[1]];
-               drawRoundRect(0,0,param1,param2,0,[_loc3_,_loc10_],1,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-                  "x":1,
-                  "y":1,
-                  "w":param1 - 2,
-                  "h":param2 - 2,
-                  "r":0
-               });
-               drawRoundRect(1,1,param1 - 2,param2 - 2,0,_loc13_,_loc14_,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-               drawRoundRect(1,1,param1 - 2,(param2 - 2) / 2,0,[16777215,16777215],_loc7_,verticalGradientMatrix(1,1,param1 - 2,(param2 - 2) / 2));
-               break;
-            case "overIcon":
-               if(_loc6_.length > 2)
-               {
-                  _loc15_ = [_loc6_[2],_loc6_[3]];
-               }
-               else
-               {
-                  _loc15_ = [_loc6_[0],_loc6_[1]];
-               }
-               if(_loc5_.length > 2)
-               {
-                  _loc16_ = [_loc5_[2],_loc5_[3]];
-               }
-               else
-               {
-                  _loc16_ = [_loc5_[0],_loc5_[1]];
-               }
-               drawRoundRect(0,0,param1,param2,0,[_loc8_,_loc11_],1,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-                  "x":1,
-                  "y":1,
-                  "w":param1 - 2,
-                  "h":param2 - 2,
-                  "r":0
-               });
-               drawRoundRect(1,1,param1 - 2,param2 - 2,0,_loc15_,_loc16_,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-               drawRoundRect(1,1,param1 - 2,(param2 - 2) / 2,0,[16777215,16777215],_loc7_,verticalGradientMatrix(1,1,param1 - 2,(param2 - 2) / 2));
-               break;
-            case "downIcon":
-               drawRoundRect(0,0,param1,param2,0,[_loc8_,_loc11_],1,verticalGradientMatrix(0,0,param1,param2));
-               drawRoundRect(1,1,param1 - 2,param2 - 2,0,[_loc9_.fillColorPress1,_loc9_.fillColorPress2],1,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-               drawRoundRect(1,1,param1 - 2,(param2 - 2) / 2,0,[16777215,16777215],_loc7_,verticalGradientMatrix(1,1,param1 - 2,(param2 - 2) / 2));
-               break;
-            case "disabledIcon":
-               _loc17_ = [_loc6_[0],_loc6_[1]];
-               _loc18_ = [Math.max(0,_loc5_[0] - 0.15),Math.max(0,_loc5_[1] - 0.15)];
-               drawRoundRect(0,0,param1,param2,0,[_loc3_,_loc10_],0.5,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-                  "x":1,
-                  "y":1,
-                  "w":param1 - 2,
-                  "h":param2 - 2,
-                  "r":0
-               });
-               drawRoundRect(1,1,param1 - 2,param2 - 2,0,_loc17_,_loc18_,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-               break;
-            case "selectedUpIcon":
-               _loc12_ = true;
-               _loc13_ = [_loc6_[0],_loc6_[1]];
-               _loc14_ = [_loc5_[0],_loc5_[1]];
-               drawRoundRect(0,0,param1,param2,0,[_loc3_,_loc10_],1,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-                  "x":1,
-                  "y":1,
-                  "w":param1 - 2,
-                  "h":param2 - 2,
-                  "r":0
-               });
-               drawRoundRect(1,1,param1 - 2,param2 - 2,0,_loc13_,_loc14_,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-               drawRoundRect(1,1,param1 - 2,(param2 - 2) / 2,0,[16777215,16777215],_loc7_,verticalGradientMatrix(1,1,param1 - 2,(param2 - 2) / 2));
-               break;
-            case "selectedOverIcon":
-               _loc12_ = true;
-               if(_loc6_.length > 2)
-               {
-                  _loc15_ = [_loc6_[2],_loc6_[3]];
-               }
-               else
-               {
-                  _loc15_ = [_loc6_[0],_loc6_[1]];
-               }
-               if(_loc5_.length > 2)
-               {
-                  _loc16_ = [_loc5_[2],_loc5_[3]];
-               }
-               else
-               {
-                  _loc16_ = [_loc5_[0],_loc5_[1]];
-               }
-               drawRoundRect(0,0,param1,param2,0,[_loc8_,_loc11_],1,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-                  "x":1,
-                  "y":1,
-                  "w":param1 - 2,
-                  "h":param2 - 2,
-                  "r":0
-               });
-               drawRoundRect(1,1,param1 - 2,param2 - 2,0,_loc15_,_loc16_,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-               drawRoundRect(1,1,param1 - 2,(param2 - 2) / 2,0,[16777215,16777215],_loc7_,verticalGradientMatrix(1,1,param1 - 2,(param2 - 2) / 2));
-               break;
-            case "selectedDownIcon":
-               _loc12_ = true;
-               drawRoundRect(0,0,param1,param2,0,[_loc8_,_loc11_],1,verticalGradientMatrix(0,0,param1,param2));
-               drawRoundRect(1,1,param1 - 2,param2 - 2,0,[_loc9_.fillColorPress1,_loc9_.fillColorPress2],1,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-               drawRoundRect(1,1,param1 - 2,(param2 - 2) / 2,0,[16777215,16777215],_loc7_,verticalGradientMatrix(1,1,param1 - 2,(param2 - 2) / 2));
-               break;
-            case "selectedDisabledIcon":
-               _loc12_ = true;
-               _loc4_ = getStyle("disabledIconColor");
-               _loc17_ = [_loc6_[0],_loc6_[1]];
-               _loc18_ = [Math.max(0,_loc5_[0] - 0.15),Math.max(0,_loc5_[1] - 0.15)];
-               drawRoundRect(0,0,param1,param2,0,[_loc3_,_loc10_],0.5,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-                  "x":1,
-                  "y":1,
-                  "w":param1 - 2,
-                  "h":param2 - 2,
-                  "r":0
-               });
-               drawRoundRect(1,1,param1 - 2,param2 - 2,0,_loc17_,_loc18_,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-         }
-         if(_loc12_)
-         {
-            _loc19_.beginFill(_loc4_);
-            _loc19_.moveTo(3,5);
-            _loc19_.lineTo(5,10);
-            _loc19_.lineTo(7,10);
-            _loc19_.lineTo(12,2);
-            _loc19_.lineTo(13,1);
-            _loc19_.lineTo(11,1);
-            _loc19_.lineTo(6.5,7);
-            _loc19_.lineTo(5,5);
-            _loc19_.lineTo(3,5);
-            _loc19_.endFill();
-         }
-      }
-   }
+    import flash.display.*;
+    import mx.skins.*;
+    import mx.styles.*;
+    import mx.utils.*;
+
+    public class CheckBoxIcon extends Border
+    {
+        static const VERSION:String = "3.6.0.21751";
+        private static var cache:Object = {};
+
+        public function CheckBoxIcon()
+        {
+            return;
+        }// end function
+
+        override public function get measuredWidth() : Number
+        {
+            return 14;
+        }// end function
+
+        override public function get measuredHeight() : Number
+        {
+            return 14;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_13:* = null;
+            var _loc_14:* = null;
+            var _loc_15:* = null;
+            var _loc_16:* = null;
+            var _loc_17:* = null;
+            var _loc_18:* = null;
+            super.updateDisplayList(param1, param2);
+            var _loc_3:* = getStyle("borderColor");
+            var _loc_4:* = getStyle("iconColor");
+            var _loc_5:* = getStyle("fillAlphas");
+            var _loc_6:* = getStyle("fillColors");
+            StyleManager.getColorNames(_loc_6);
+            var _loc_7:* = getStyle("highlightAlphas");
+            var _loc_8:* = getStyle("themeColor");
+            var _loc_9:* = calcDerivedStyles(_loc_8, _loc_3, _loc_6[0], _loc_6[1]);
+            var _loc_10:* = ColorUtil.adjustBrightness2(_loc_3, -50);
+            var _loc_11:* = ColorUtil.adjustBrightness2(_loc_8, -25);
+            var _loc_12:* = false;
+            var _loc_19:* = graphics;
+            _loc_19.clear();
+            switch(name)
+            {
+                case "upIcon":
+                {
+                    _loc_13 = [_loc_6[0], _loc_6[1]];
+                    _loc_14 = [_loc_5[0], _loc_5[1]];
+                    drawRoundRect(0, 0, param1, param2, 0, [_loc_3, _loc_10], 1, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:1, y:1, w:param1 - 2, h:param2 - 2, r:0});
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, 0, _loc_13, _loc_14, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    drawRoundRect(1, 1, param1 - 2, (param2 - 2) / 2, 0, [16777215, 16777215], _loc_7, verticalGradientMatrix(1, 1, param1 - 2, (param2 - 2) / 2));
+                    break;
+                }
+                case "overIcon":
+                {
+                    if (_loc_6.length > 2)
+                    {
+                        _loc_15 = [_loc_6[2], _loc_6[3]];
+                    }
+                    else
+                    {
+                        _loc_15 = [_loc_6[0], _loc_6[1]];
+                    }
+                    if (_loc_5.length > 2)
+                    {
+                        _loc_16 = [_loc_5[2], _loc_5[3]];
+                    }
+                    else
+                    {
+                        _loc_16 = [_loc_5[0], _loc_5[1]];
+                    }
+                    drawRoundRect(0, 0, param1, param2, 0, [_loc_8, _loc_11], 1, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:1, y:1, w:param1 - 2, h:param2 - 2, r:0});
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, 0, _loc_15, _loc_16, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    drawRoundRect(1, 1, param1 - 2, (param2 - 2) / 2, 0, [16777215, 16777215], _loc_7, verticalGradientMatrix(1, 1, param1 - 2, (param2 - 2) / 2));
+                    break;
+                }
+                case "downIcon":
+                {
+                    drawRoundRect(0, 0, param1, param2, 0, [_loc_8, _loc_11], 1, verticalGradientMatrix(0, 0, param1, param2));
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, 0, [_loc_9.fillColorPress1, _loc_9.fillColorPress2], 1, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    drawRoundRect(1, 1, param1 - 2, (param2 - 2) / 2, 0, [16777215, 16777215], _loc_7, verticalGradientMatrix(1, 1, param1 - 2, (param2 - 2) / 2));
+                    break;
+                }
+                case "disabledIcon":
+                {
+                    _loc_17 = [_loc_6[0], _loc_6[1]];
+                    _loc_18 = [Math.max(0, _loc_5[0] - 0.15), Math.max(0, _loc_5[1] - 0.15)];
+                    drawRoundRect(0, 0, param1, param2, 0, [_loc_3, _loc_10], 0.5, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:1, y:1, w:param1 - 2, h:param2 - 2, r:0});
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, 0, _loc_17, _loc_18, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    break;
+                }
+                case "selectedUpIcon":
+                {
+                    _loc_12 = true;
+                    _loc_13 = [_loc_6[0], _loc_6[1]];
+                    _loc_14 = [_loc_5[0], _loc_5[1]];
+                    drawRoundRect(0, 0, param1, param2, 0, [_loc_3, _loc_10], 1, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:1, y:1, w:param1 - 2, h:param2 - 2, r:0});
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, 0, _loc_13, _loc_14, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    drawRoundRect(1, 1, param1 - 2, (param2 - 2) / 2, 0, [16777215, 16777215], _loc_7, verticalGradientMatrix(1, 1, param1 - 2, (param2 - 2) / 2));
+                    break;
+                }
+                case "selectedOverIcon":
+                {
+                    _loc_12 = true;
+                    if (_loc_6.length > 2)
+                    {
+                        _loc_15 = [_loc_6[2], _loc_6[3]];
+                    }
+                    else
+                    {
+                        _loc_15 = [_loc_6[0], _loc_6[1]];
+                    }
+                    if (_loc_5.length > 2)
+                    {
+                        _loc_16 = [_loc_5[2], _loc_5[3]];
+                    }
+                    else
+                    {
+                        _loc_16 = [_loc_5[0], _loc_5[1]];
+                    }
+                    drawRoundRect(0, 0, param1, param2, 0, [_loc_8, _loc_11], 1, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:1, y:1, w:param1 - 2, h:param2 - 2, r:0});
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, 0, _loc_15, _loc_16, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    drawRoundRect(1, 1, param1 - 2, (param2 - 2) / 2, 0, [16777215, 16777215], _loc_7, verticalGradientMatrix(1, 1, param1 - 2, (param2 - 2) / 2));
+                    break;
+                }
+                case "selectedDownIcon":
+                {
+                    _loc_12 = true;
+                    drawRoundRect(0, 0, param1, param2, 0, [_loc_8, _loc_11], 1, verticalGradientMatrix(0, 0, param1, param2));
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, 0, [_loc_9.fillColorPress1, _loc_9.fillColorPress2], 1, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    drawRoundRect(1, 1, param1 - 2, (param2 - 2) / 2, 0, [16777215, 16777215], _loc_7, verticalGradientMatrix(1, 1, param1 - 2, (param2 - 2) / 2));
+                    break;
+                }
+                case "selectedDisabledIcon":
+                {
+                    _loc_12 = true;
+                    _loc_4 = getStyle("disabledIconColor");
+                    _loc_17 = [_loc_6[0], _loc_6[1]];
+                    _loc_18 = [Math.max(0, _loc_5[0] - 0.15), Math.max(0, _loc_5[1] - 0.15)];
+                    drawRoundRect(0, 0, param1, param2, 0, [_loc_3, _loc_10], 0.5, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:1, y:1, w:param1 - 2, h:param2 - 2, r:0});
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, 0, _loc_17, _loc_18, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            if (_loc_12)
+            {
+                _loc_19.beginFill(_loc_4);
+                _loc_19.moveTo(3, 5);
+                _loc_19.lineTo(5, 10);
+                _loc_19.lineTo(7, 10);
+                _loc_19.lineTo(12, 2);
+                _loc_19.lineTo(13, 1);
+                _loc_19.lineTo(11, 1);
+                _loc_19.lineTo(6.5, 7);
+                _loc_19.lineTo(5, 5);
+                _loc_19.lineTo(3, 5);
+                _loc_19.endFill();
+            }
+            return;
+        }// end function
+
+        private static function calcDerivedStyles(param1:uint, param2:uint, param3:uint, param4:uint) : Object
+        {
+            var _loc_6:* = null;
+            var _loc_5:* = HaloColors.getCacheKey(param1, param2, param3, param4);
+            if (!cache[_loc_5])
+            {
+                var _loc_7:* = {};
+                cache[_loc_5] = {};
+                _loc_6 = _loc_7;
+                HaloColors.addHaloColors(_loc_6, param1, param3, param4);
+                _loc_6.borderColorDrk1 = ColorUtil.adjustBrightness2(param2, -50);
+            }
+            return cache[_loc_5];
+        }// end function
+
+    }
 }

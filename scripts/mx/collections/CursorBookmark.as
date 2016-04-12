@@ -1,63 +1,56 @@
-package mx.collections
+﻿package mx.collections
 {
-   import mx.core.mx_internal;
-   
-   use namespace mx_internal;
-   
-   public class CursorBookmark
-   {
-      
-      private static var _first:mx.collections.CursorBookmark;
-      
-      private static var _last:mx.collections.CursorBookmark;
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static var _current:mx.collections.CursorBookmark;
-       
-      private var _value:Object;
-      
-      public function CursorBookmark(param1:Object)
-      {
-         super();
-         _value = param1;
-      }
-      
-      public static function get LAST() : mx.collections.CursorBookmark
-      {
-         if(!_last)
-         {
-            _last = new mx.collections.CursorBookmark("${L}");
-         }
-         return _last;
-      }
-      
-      public static function get FIRST() : mx.collections.CursorBookmark
-      {
-         if(!_first)
-         {
-            _first = new mx.collections.CursorBookmark("${F}");
-         }
-         return _first;
-      }
-      
-      public static function get CURRENT() : mx.collections.CursorBookmark
-      {
-         if(!_current)
-         {
-            _current = new mx.collections.CursorBookmark("${C}");
-         }
-         return _current;
-      }
-      
-      public function get value() : Object
-      {
-         return _value;
-      }
-      
-      public function getViewIndex() : int
-      {
-         return -1;
-      }
-   }
+
+    public class CursorBookmark extends Object
+    {
+        private var _value:Object;
+        private static var _first:CursorBookmark;
+        private static var _last:CursorBookmark;
+        static const VERSION:String = "3.6.0.21751";
+        private static var _current:CursorBookmark;
+
+        public function CursorBookmark(param1:Object)
+        {
+            _value = param1;
+            return;
+        }// end function
+
+        public function get value() : Object
+        {
+            return _value;
+        }// end function
+
+        public function getViewIndex() : int
+        {
+            return -1;
+        }// end function
+
+        public static function get LAST() : CursorBookmark
+        {
+            if (!_last)
+            {
+                _last = new CursorBookmark("${L}");
+            }
+            return _last;
+        }// end function
+
+        public static function get FIRST() : CursorBookmark
+        {
+            if (!_first)
+            {
+                _first = new CursorBookmark("${F}");
+            }
+            return _first;
+        }// end function
+
+        public static function get CURRENT() : CursorBookmark
+        {
+            if (!_current)
+            {
+                _current = new CursorBookmark("${C}");
+            }
+            return _current;
+        }// end function
+
+    }
 }

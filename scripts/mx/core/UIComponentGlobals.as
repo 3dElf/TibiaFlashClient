@@ -1,51 +1,45 @@
-package mx.core
+﻿package mx.core
 {
-   import mx.managers.ILayoutManager;
-   import flash.display.InteractiveObject;
-   import flash.geom.Matrix;
-   
-   use namespace mx_internal;
-   
-   public class UIComponentGlobals
-   {
-      
-      mx_internal static var callLaterSuspendCount:int = 0;
-      
-      mx_internal static var layoutManager:ILayoutManager;
-      
-      mx_internal static var nextFocusObject:InteractiveObject;
-      
-      mx_internal static var designTime:Boolean = false;
-      
-      mx_internal static var tempMatrix:Matrix = new Matrix();
-      
-      mx_internal static var callLaterDispatcherCount:int = 0;
-      
-      private static var _catchCallLaterExceptions:Boolean = false;
-       
-      public function UIComponentGlobals()
-      {
-         super();
-      }
-      
-      public static function set catchCallLaterExceptions(param1:Boolean) : void
-      {
-         _catchCallLaterExceptions = param1;
-      }
-      
-      public static function get designMode() : Boolean
-      {
-         return designTime;
-      }
-      
-      public static function set designMode(param1:Boolean) : void
-      {
-         designTime = param1;
-      }
-      
-      public static function get catchCallLaterExceptions() : Boolean
-      {
-         return _catchCallLaterExceptions;
-      }
-   }
+    import flash.display.*;
+    import flash.geom.*;
+    import mx.managers.*;
+
+    public class UIComponentGlobals extends Object
+    {
+        static var callLaterSuspendCount:int = 0;
+        static var layoutManager:ILayoutManager;
+        static var nextFocusObject:InteractiveObject;
+        static var designTime:Boolean = false;
+        static var tempMatrix:Matrix = new Matrix();
+        static var callLaterDispatcherCount:int = 0;
+        private static var _catchCallLaterExceptions:Boolean = false;
+
+        public function UIComponentGlobals()
+        {
+            return;
+        }// end function
+
+        public static function set catchCallLaterExceptions(param1:Boolean) : void
+        {
+            _catchCallLaterExceptions = param1;
+            return;
+        }// end function
+
+        public static function get designMode() : Boolean
+        {
+            return designTime;
+        }// end function
+
+        public static function set designMode(param1:Boolean) : void
+        {
+            designTime = param1;
+            return;
+        }// end function
+
+        public static function get catchCallLaterExceptions() : Boolean
+        {
+            return _catchCallLaterExceptions;
+        }// end function
+
+    }
 }

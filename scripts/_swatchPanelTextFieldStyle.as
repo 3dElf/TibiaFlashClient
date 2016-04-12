@@ -1,42 +1,45 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   
-   public class _swatchPanelTextFieldStyle
-   {
-       
-      public function _swatchPanelTextFieldStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration(".swatchPanelTextField");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration(".swatchPanelTextField",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class _swatchPanelTextFieldStyle extends Object
+    {
+
+        public function _swatchPanelTextFieldStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration(".swatchPanelTextField");
+            if (!style)
             {
-               _swatchPanelTextFieldStyle.borderStyle = "inset";
-               _swatchPanelTextFieldStyle.borderColor = 14015965;
-               _swatchPanelTextFieldStyle.highlightColor = 12897484;
-               _swatchPanelTextFieldStyle.backgroundColor = 16777215;
-               _swatchPanelTextFieldStyle.shadowCapColor = 14015965;
-               _swatchPanelTextFieldStyle.shadowColor = 14015965;
-               _swatchPanelTextFieldStyle.paddingLeft = 5;
-               _swatchPanelTextFieldStyle.buttonColor = 7305079;
-               _swatchPanelTextFieldStyle.borderCapColor = 9542041;
-               _swatchPanelTextFieldStyle.paddingRight = 5;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration(".swatchPanelTextField", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.borderStyle = "inset";
+                this.borderColor = 14015965;
+                this.highlightColor = 12897484;
+                this.backgroundColor = 16777215;
+                this.shadowCapColor = 14015965;
+                this.shadowColor = 14015965;
+                this.paddingLeft = 5;
+                this.buttonColor = 7305079;
+                this.borderCapColor = 9542041;
+                this.paddingRight = 5;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

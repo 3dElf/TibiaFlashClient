@@ -1,346 +1,353 @@
-package mx.containers
+﻿package mx.containers
 {
-   import mx.core.Container;
-   import mx.core.mx_internal;
-   import mx.core.IUIComponent;
-   import mx.core.EdgeMetrics;
-   import flash.events.Event;
-   
-   use namespace mx_internal;
-   
-   public class Tile extends Container
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var _direction:String = "horizontal";
-      
-      mx_internal var cellWidth:Number;
-      
-      mx_internal var cellHeight:Number;
-      
-      private var _tileHeight:Number;
-      
-      private var _tileWidth:Number;
-      
-      public function Tile()
-      {
-         super();
-      }
-      
-      override protected function measure() : void
-      {
-         var _loc1_:Number = NaN;
-         var _loc2_:Number = NaN;
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = NaN;
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         var _loc13_:Number = NaN;
-         var _loc14_:Number = NaN;
-         var _loc15_:Number = NaN;
-         var _loc16_:Number = NaN;
-         super.measure();
-         findCellSize();
-         _loc3_ = cellWidth;
-         _loc4_ = cellHeight;
-         var _loc5_:int = numChildren;
-         var _loc6_:int = _loc5_;
-         var _loc7_:int = 0;
-         while(_loc7_ < _loc5_)
-         {
-            if(!IUIComponent(getChildAt(_loc7_)).includeInLayout)
-            {
-               _loc6_--;
-            }
-            _loc7_++;
-         }
-         _loc5_ = _loc6_;
-         if(_loc5_ > 0)
-         {
-            _loc11_ = getStyle("horizontalGap");
-            _loc12_ = getStyle("verticalGap");
-            if(direction == TileDirection.HORIZONTAL)
-            {
-               _loc15_ = explicitWidth / Math.abs(scaleX);
-               if(!isNaN(_loc15_))
-               {
-                  _loc13_ = Math.floor((_loc15_ + _loc11_) / (cellWidth + _loc11_));
-               }
-            }
-            else
-            {
-               _loc16_ = explicitHeight / Math.abs(scaleY);
-               if(!isNaN(_loc16_))
-               {
-                  _loc13_ = Math.floor((_loc16_ + _loc12_) / (cellHeight + _loc12_));
-               }
-            }
-            if(isNaN(_loc13_))
-            {
-               _loc13_ = Math.ceil(Math.sqrt(_loc5_));
-            }
-            if(_loc13_ < 1)
-            {
-               _loc13_ = 1;
-            }
-            _loc14_ = Math.ceil(_loc5_ / _loc13_);
-            if(direction == TileDirection.HORIZONTAL)
-            {
-               _loc1_ = _loc13_ * cellWidth + (_loc13_ - 1) * _loc11_;
-               _loc2_ = _loc14_ * cellHeight + (_loc14_ - 1) * _loc12_;
-            }
-            else
-            {
-               _loc1_ = _loc14_ * cellWidth + (_loc14_ - 1) * _loc11_;
-               _loc2_ = _loc13_ * cellHeight + (_loc13_ - 1) * _loc12_;
-            }
-         }
-         else
-         {
-            _loc1_ = _loc3_;
-            _loc2_ = _loc4_;
-         }
-         var _loc8_:EdgeMetrics = viewMetricsAndPadding;
-         var _loc9_:Number = _loc8_.left + _loc8_.right;
-         var _loc10_:Number = _loc8_.top + _loc8_.bottom;
-         _loc3_ = _loc3_ + _loc9_;
-         _loc1_ = _loc1_ + _loc9_;
-         _loc4_ = _loc4_ + _loc10_;
-         _loc2_ = _loc2_ + _loc10_;
-         measuredMinWidth = Math.ceil(_loc3_);
-         measuredMinHeight = Math.ceil(_loc4_);
-         measuredWidth = Math.ceil(_loc1_);
-         measuredHeight = Math.ceil(_loc2_);
-      }
-      
-      public function set tileHeight(param1:Number) : void
-      {
-         _tileHeight = param1;
-         invalidateSize();
-      }
-      
-      mx_internal function calcHorizontalOffset(param1:Number, param2:String) : Number
-      {
-         var _loc3_:Number = NaN;
-         if(param2 == "left")
-         {
-            _loc3_ = 0;
-         }
-         else if(param2 == "center")
-         {
-            _loc3_ = (cellWidth - param1) / 2;
-         }
-         else if(param2 == "right")
-         {
-            _loc3_ = cellWidth - param1;
-         }
-         return _loc3_;
-      }
-      
-      mx_internal function calcVerticalOffset(param1:Number, param2:String) : Number
-      {
-         var _loc3_:Number = NaN;
-         if(param2 == "top")
-         {
-            _loc3_ = 0;
-         }
-         else if(param2 == "middle")
-         {
-            _loc3_ = (cellHeight - param1) / 2;
-         }
-         else if(param2 == "bottom")
-         {
-            _loc3_ = cellHeight - param1;
-         }
-         return _loc3_;
-      }
-      
-      public function set tileWidth(param1:Number) : void
-      {
-         _tileWidth = param1;
-         invalidateSize();
-      }
-      
-      [Bindable("resize")]
-      public function get tileHeight() : Number
-      {
-         return _tileHeight;
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc12_:Number = NaN;
-         var _loc13_:Number = NaN;
-         var _loc15_:int = 0;
-         var _loc16_:IUIComponent = null;
-         var _loc17_:Number = NaN;
-         var _loc18_:Number = NaN;
-         super.updateDisplayList(param1,param2);
-         if(Boolean(isNaN(cellWidth)) || Boolean(isNaN(cellHeight)))
-         {
-            findCellSize();
-         }
-         var _loc3_:EdgeMetrics = viewMetricsAndPadding;
-         var _loc4_:Number = getStyle("paddingLeft");
-         var _loc5_:Number = getStyle("paddingTop");
-         var _loc6_:Number = getStyle("horizontalGap");
-         var _loc7_:Number = getStyle("verticalGap");
-         var _loc8_:String = getStyle("horizontalAlign");
-         var _loc9_:String = getStyle("verticalAlign");
-         var _loc10_:Number = _loc4_;
-         var _loc11_:Number = _loc5_;
-         var _loc14_:int = numChildren;
-         if(direction == TileDirection.HORIZONTAL)
-         {
-            _loc17_ = Math.ceil(param1) - _loc3_.right;
-            _loc15_ = 0;
-            while(_loc15_ < _loc14_)
-            {
-               _loc16_ = IUIComponent(getChildAt(_loc15_));
-               if(_loc16_.includeInLayout)
-               {
-                  if(_loc10_ + cellWidth > _loc17_)
-                  {
-                     if(_loc10_ != _loc4_)
-                     {
-                        _loc11_ = _loc11_ + (cellHeight + _loc7_);
-                        _loc10_ = _loc4_;
-                     }
-                  }
-                  setChildSize(_loc16_);
-                  _loc12_ = Math.floor(calcHorizontalOffset(_loc16_.width,_loc8_));
-                  _loc13_ = Math.floor(calcVerticalOffset(_loc16_.height,_loc9_));
-                  _loc16_.move(_loc10_ + _loc12_,_loc11_ + _loc13_);
-                  _loc10_ = _loc10_ + (cellWidth + _loc6_);
-               }
-               _loc15_++;
-            }
-         }
-         else
-         {
-            _loc18_ = Math.ceil(param2) - _loc3_.bottom;
-            _loc15_ = 0;
-            while(_loc15_ < _loc14_)
-            {
-               _loc16_ = IUIComponent(getChildAt(_loc15_));
-               if(_loc16_.includeInLayout)
-               {
-                  if(_loc11_ + cellHeight > _loc18_)
-                  {
-                     if(_loc11_ != _loc5_)
-                     {
-                        _loc10_ = _loc10_ + (cellWidth + _loc6_);
-                        _loc11_ = _loc5_;
-                     }
-                  }
-                  setChildSize(_loc16_);
-                  _loc12_ = Math.floor(calcHorizontalOffset(_loc16_.width,_loc8_));
-                  _loc13_ = Math.floor(calcVerticalOffset(_loc16_.height,_loc9_));
-                  _loc16_.move(_loc10_ + _loc12_,_loc11_ + _loc13_);
-                  _loc11_ = _loc11_ + (cellHeight + _loc7_);
-               }
-               _loc15_++;
-            }
-         }
-         cellWidth = NaN;
-         cellHeight = NaN;
-      }
-      
-      [Bindable("resize")]
-      public function get tileWidth() : Number
-      {
-         return _tileWidth;
-      }
-      
-      private function setChildSize(param1:IUIComponent) : void
-      {
-         var _loc2_:Number = NaN;
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         if(param1.percentWidth > 0)
-         {
-            _loc2_ = Math.min(cellWidth,cellWidth * param1.percentWidth / 100);
-         }
-         else
-         {
-            _loc2_ = param1.getExplicitOrMeasuredWidth();
-            if(_loc2_ > cellWidth)
-            {
-               _loc4_ = !!isNaN(param1.explicitWidth)?Number(0):Number(param1.explicitWidth);
-               _loc5_ = !!isNaN(param1.explicitMinWidth)?Number(0):Number(param1.explicitMinWidth);
-               _loc2_ = _loc4_ > cellWidth || _loc5_ > cellWidth?Number(Math.max(_loc5_,_loc4_)):Number(cellWidth);
-            }
-         }
-         if(param1.percentHeight > 0)
-         {
-            _loc3_ = Math.min(cellHeight,cellHeight * param1.percentHeight / 100);
-         }
-         else
-         {
-            _loc3_ = param1.getExplicitOrMeasuredHeight();
-            if(_loc3_ > cellHeight)
-            {
-               _loc4_ = !!isNaN(param1.explicitHeight)?Number(0):Number(param1.explicitHeight);
-               _loc5_ = !!isNaN(param1.explicitMinHeight)?Number(0):Number(param1.explicitMinHeight);
-               _loc3_ = _loc4_ > cellHeight || _loc5_ > cellHeight?Number(Math.max(_loc5_,_loc4_)):Number(cellHeight);
-            }
-         }
-         param1.setActualSize(_loc2_,_loc3_);
-      }
-      
-      mx_internal function findCellSize() : void
-      {
-         var _loc7_:IUIComponent = null;
-         var _loc8_:Number = NaN;
-         var _loc9_:Number = NaN;
-         var _loc1_:* = !isNaN(tileWidth);
-         var _loc2_:* = !isNaN(tileHeight);
-         if(Boolean(_loc1_) && Boolean(_loc2_))
-         {
-            cellWidth = tileWidth;
-            cellHeight = tileHeight;
+    import flash.events.*;
+    import mx.core.*;
+
+    public class Tile extends Container
+    {
+        private var _direction:String = "horizontal";
+        var cellWidth:Number;
+        var cellHeight:Number;
+        private var _tileHeight:Number;
+        private var _tileWidth:Number;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function Tile()
+        {
             return;
-         }
-         var _loc3_:Number = 0;
-         var _loc4_:Number = 0;
-         var _loc5_:int = numChildren;
-         var _loc6_:int = 0;
-         while(_loc6_ < _loc5_)
-         {
-            _loc7_ = IUIComponent(getChildAt(_loc6_));
-            if(_loc7_.includeInLayout)
+        }// end function
+
+        override protected function measure() : void
+        {
+            var _loc_1:* = NaN;
+            var _loc_2:* = NaN;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            var _loc_13:* = NaN;
+            var _loc_14:* = NaN;
+            var _loc_15:* = NaN;
+            var _loc_16:* = NaN;
+            super.measure();
+            findCellSize();
+            _loc_3 = cellWidth;
+            _loc_4 = cellHeight;
+            var _loc_5:* = numChildren;
+            var _loc_6:* = numChildren;
+            var _loc_7:* = 0;
+            while (_loc_7 < _loc_5)
             {
-               _loc8_ = _loc7_.getExplicitOrMeasuredWidth();
-               if(_loc8_ > _loc3_)
-               {
-                  _loc3_ = _loc8_;
-               }
-               _loc9_ = _loc7_.getExplicitOrMeasuredHeight();
-               if(_loc9_ > _loc4_)
-               {
-                  _loc4_ = _loc9_;
-               }
+                
+                if (!IUIComponent(getChildAt(_loc_7)).includeInLayout)
+                {
+                    _loc_6 = _loc_6 - 1;
+                }
+                _loc_7++;
             }
-            _loc6_++;
-         }
-         cellWidth = !!_loc1_?Number(tileWidth):Number(_loc3_);
-         cellHeight = !!_loc2_?Number(tileHeight):Number(_loc4_);
-      }
-      
-      public function set direction(param1:String) : void
-      {
-         _direction = param1;
-         invalidateSize();
-         invalidateDisplayList();
-         dispatchEvent(new Event("directionChanged"));
-      }
-      
-      [Bindable("directionChanged")]
-      public function get direction() : String
-      {
-         return _direction;
-      }
-   }
+            _loc_5 = _loc_6;
+            if (_loc_5 > 0)
+            {
+                _loc_11 = getStyle("horizontalGap");
+                _loc_12 = getStyle("verticalGap");
+                if (direction == TileDirection.HORIZONTAL)
+                {
+                    _loc_15 = explicitWidth / Math.abs(scaleX);
+                    if (!isNaN(_loc_15))
+                    {
+                        _loc_13 = Math.floor((_loc_15 + _loc_11) / (cellWidth + _loc_11));
+                    }
+                }
+                else
+                {
+                    _loc_16 = explicitHeight / Math.abs(scaleY);
+                    if (!isNaN(_loc_16))
+                    {
+                        _loc_13 = Math.floor((_loc_16 + _loc_12) / (cellHeight + _loc_12));
+                    }
+                }
+                if (isNaN(_loc_13))
+                {
+                    _loc_13 = Math.ceil(Math.sqrt(_loc_5));
+                }
+                if (_loc_13 < 1)
+                {
+                    _loc_13 = 1;
+                }
+                _loc_14 = Math.ceil(_loc_5 / _loc_13);
+                if (direction == TileDirection.HORIZONTAL)
+                {
+                    _loc_1 = _loc_13 * cellWidth + (_loc_13 - 1) * _loc_11;
+                    _loc_2 = _loc_14 * cellHeight + (_loc_14 - 1) * _loc_12;
+                }
+                else
+                {
+                    _loc_1 = _loc_14 * cellWidth + (_loc_14 - 1) * _loc_11;
+                    _loc_2 = _loc_13 * cellHeight + (_loc_13 - 1) * _loc_12;
+                }
+            }
+            else
+            {
+                _loc_1 = _loc_3;
+                _loc_2 = _loc_4;
+            }
+            var _loc_8:* = viewMetricsAndPadding;
+            var _loc_9:* = _loc_8.left + _loc_8.right;
+            var _loc_10:* = _loc_8.top + _loc_8.bottom;
+            _loc_3 = _loc_3 + _loc_9;
+            _loc_1 = _loc_1 + _loc_9;
+            _loc_4 = _loc_4 + _loc_10;
+            _loc_2 = _loc_2 + _loc_10;
+            measuredMinWidth = Math.ceil(_loc_3);
+            measuredMinHeight = Math.ceil(_loc_4);
+            measuredWidth = Math.ceil(_loc_1);
+            measuredHeight = Math.ceil(_loc_2);
+            return;
+        }// end function
+
+        public function set tileHeight(param1:Number) : void
+        {
+            _tileHeight = param1;
+            invalidateSize();
+            return;
+        }// end function
+
+        function calcHorizontalOffset(param1:Number, param2:String) : Number
+        {
+            var _loc_3:* = NaN;
+            if (param2 == "left")
+            {
+                _loc_3 = 0;
+            }
+            else if (param2 == "center")
+            {
+                _loc_3 = (cellWidth - param1) / 2;
+            }
+            else if (param2 == "right")
+            {
+                _loc_3 = cellWidth - param1;
+            }
+            return _loc_3;
+        }// end function
+
+        function calcVerticalOffset(param1:Number, param2:String) : Number
+        {
+            var _loc_3:* = NaN;
+            if (param2 == "top")
+            {
+                _loc_3 = 0;
+            }
+            else if (param2 == "middle")
+            {
+                _loc_3 = (cellHeight - param1) / 2;
+            }
+            else if (param2 == "bottom")
+            {
+                _loc_3 = cellHeight - param1;
+            }
+            return _loc_3;
+        }// end function
+
+        public function set tileWidth(param1:Number) : void
+        {
+            _tileWidth = param1;
+            invalidateSize();
+            return;
+        }// end function
+
+        public function get tileHeight() : Number
+        {
+            return _tileHeight;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_12:* = NaN;
+            var _loc_13:* = NaN;
+            var _loc_15:* = 0;
+            var _loc_16:* = null;
+            var _loc_17:* = NaN;
+            var _loc_18:* = NaN;
+            super.updateDisplayList(param1, param2);
+            if (isNaN(cellWidth) || isNaN(cellHeight))
+            {
+                findCellSize();
+            }
+            var _loc_3:* = viewMetricsAndPadding;
+            var _loc_4:* = getStyle("paddingLeft");
+            var _loc_5:* = getStyle("paddingTop");
+            var _loc_6:* = getStyle("horizontalGap");
+            var _loc_7:* = getStyle("verticalGap");
+            var _loc_8:* = getStyle("horizontalAlign");
+            var _loc_9:* = getStyle("verticalAlign");
+            var _loc_10:* = _loc_4;
+            var _loc_11:* = _loc_5;
+            var _loc_14:* = numChildren;
+            if (direction == TileDirection.HORIZONTAL)
+            {
+                _loc_17 = Math.ceil(param1) - _loc_3.right;
+                _loc_15 = 0;
+                while (_loc_15 < _loc_14)
+                {
+                    
+                    _loc_16 = IUIComponent(getChildAt(_loc_15));
+                    if (!_loc_16.includeInLayout)
+                    {
+                    }
+                    else
+                    {
+                        if (_loc_10 + cellWidth > _loc_17)
+                        {
+                            if (_loc_10 != _loc_4)
+                            {
+                                _loc_11 = _loc_11 + (cellHeight + _loc_7);
+                                _loc_10 = _loc_4;
+                            }
+                        }
+                        setChildSize(_loc_16);
+                        _loc_12 = Math.floor(calcHorizontalOffset(_loc_16.width, _loc_8));
+                        _loc_13 = Math.floor(calcVerticalOffset(_loc_16.height, _loc_9));
+                        _loc_16.move(_loc_10 + _loc_12, _loc_11 + _loc_13);
+                        _loc_10 = _loc_10 + (cellWidth + _loc_6);
+                    }
+                    _loc_15++;
+                }
+            }
+            else
+            {
+                _loc_18 = Math.ceil(param2) - _loc_3.bottom;
+                _loc_15 = 0;
+                while (_loc_15 < _loc_14)
+                {
+                    
+                    _loc_16 = IUIComponent(getChildAt(_loc_15));
+                    if (!_loc_16.includeInLayout)
+                    {
+                    }
+                    else
+                    {
+                        if (_loc_11 + cellHeight > _loc_18)
+                        {
+                            if (_loc_11 != _loc_5)
+                            {
+                                _loc_10 = _loc_10 + (cellWidth + _loc_6);
+                                _loc_11 = _loc_5;
+                            }
+                        }
+                        setChildSize(_loc_16);
+                        _loc_12 = Math.floor(calcHorizontalOffset(_loc_16.width, _loc_8));
+                        _loc_13 = Math.floor(calcVerticalOffset(_loc_16.height, _loc_9));
+                        _loc_16.move(_loc_10 + _loc_12, _loc_11 + _loc_13);
+                        _loc_11 = _loc_11 + (cellHeight + _loc_7);
+                    }
+                    _loc_15++;
+                }
+            }
+            cellWidth = NaN;
+            cellHeight = NaN;
+            return;
+        }// end function
+
+        public function get tileWidth() : Number
+        {
+            return _tileWidth;
+        }// end function
+
+        private function setChildSize(param1:IUIComponent) : void
+        {
+            var _loc_2:* = NaN;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            if (param1.percentWidth > 0)
+            {
+                _loc_2 = Math.min(cellWidth, cellWidth * param1.percentWidth / 100);
+            }
+            else
+            {
+                _loc_2 = param1.getExplicitOrMeasuredWidth();
+                if (_loc_2 > cellWidth)
+                {
+                    _loc_4 = isNaN(param1.explicitWidth) ? (0) : (param1.explicitWidth);
+                    _loc_5 = isNaN(param1.explicitMinWidth) ? (0) : (param1.explicitMinWidth);
+                    _loc_2 = _loc_4 > cellWidth || _loc_5 > cellWidth ? (Math.max(_loc_5, _loc_4)) : (cellWidth);
+                }
+            }
+            if (param1.percentHeight > 0)
+            {
+                _loc_3 = Math.min(cellHeight, cellHeight * param1.percentHeight / 100);
+            }
+            else
+            {
+                _loc_3 = param1.getExplicitOrMeasuredHeight();
+                if (_loc_3 > cellHeight)
+                {
+                    _loc_4 = isNaN(param1.explicitHeight) ? (0) : (param1.explicitHeight);
+                    _loc_5 = isNaN(param1.explicitMinHeight) ? (0) : (param1.explicitMinHeight);
+                    _loc_3 = _loc_4 > cellHeight || _loc_5 > cellHeight ? (Math.max(_loc_5, _loc_4)) : (cellHeight);
+                }
+            }
+            param1.setActualSize(_loc_2, _loc_3);
+            return;
+        }// end function
+
+        function findCellSize() : void
+        {
+            var _loc_7:* = null;
+            var _loc_8:* = NaN;
+            var _loc_9:* = NaN;
+            var _loc_1:* = !isNaN(tileWidth);
+            var _loc_2:* = !isNaN(tileHeight);
+            if (_loc_1 && _loc_2)
+            {
+                cellWidth = tileWidth;
+                cellHeight = tileHeight;
+                return;
+            }
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = numChildren;
+            var _loc_6:* = 0;
+            while (_loc_6 < _loc_5)
+            {
+                
+                _loc_7 = IUIComponent(getChildAt(_loc_6));
+                if (!_loc_7.includeInLayout)
+                {
+                }
+                else
+                {
+                    _loc_8 = _loc_7.getExplicitOrMeasuredWidth();
+                    if (_loc_8 > _loc_3)
+                    {
+                        _loc_3 = _loc_8;
+                    }
+                    _loc_9 = _loc_7.getExplicitOrMeasuredHeight();
+                    if (_loc_9 > _loc_4)
+                    {
+                        _loc_4 = _loc_9;
+                    }
+                }
+                _loc_6++;
+            }
+            cellWidth = _loc_1 ? (tileWidth) : (_loc_3);
+            cellHeight = _loc_2 ? (tileHeight) : (_loc_4);
+            return;
+        }// end function
+
+        public function set direction(param1:String) : void
+        {
+            _direction = param1;
+            invalidateSize();
+            invalidateDisplayList();
+            dispatchEvent(new Event("directionChanged"));
+            return;
+        }// end function
+
+        public function get direction() : String
+        {
+            return _direction;
+        }// end function
+
+    }
 }

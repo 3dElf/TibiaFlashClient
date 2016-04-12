@@ -1,10 +1,13 @@
-package mx.core
+﻿package mx.core
 {
-   import flash.text.TextField;
-   
-   public interface ITextFieldFactory
-   {
-       
-      function createTextField(param1:IFlexModuleFactory) : TextField;
-   }
+    import flash.text.*;
+
+    public interface ITextFieldFactory
+    {
+
+        public function ITextFieldFactory();
+
+        function createTextField(param1:IFlexModuleFactory) : TextField;
+
+    }
 }

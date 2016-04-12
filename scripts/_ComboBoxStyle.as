@@ -1,42 +1,45 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   import mx.skins.halo.ComboBoxArrowSkin;
-   
-   public class _ComboBoxStyle
-   {
-       
-      public function _ComboBoxStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration("ComboBox");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration("ComboBox",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.skins.halo.*;
+    import mx.styles.*;
+
+    public class _ComboBoxStyle extends Object
+    {
+
+        public function _ComboBoxStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration("ComboBox");
+            if (!style)
             {
-               _ComboBoxStyle.fontWeight = "bold";
-               _ComboBoxStyle.disabledIconColor = 9542041;
-               _ComboBoxStyle.dropdownStyleName = "comboDropdown";
-               _ComboBoxStyle.leading = 0;
-               _ComboBoxStyle.arrowButtonWidth = 22;
-               _ComboBoxStyle.cornerRadius = 5;
-               _ComboBoxStyle.skin = ComboBoxArrowSkin;
-               _ComboBoxStyle.paddingLeft = 5;
-               _ComboBoxStyle.paddingRight = 5;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration("ComboBox", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.fontWeight = "bold";
+                this.disabledIconColor = 9542041;
+                this.dropdownStyleName = "comboDropdown";
+                this.leading = 0;
+                this.arrowButtonWidth = 22;
+                this.cornerRadius = 5;
+                this.skin = ComboBoxArrowSkin;
+                this.paddingLeft = 5;
+                this.paddingRight = 5;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

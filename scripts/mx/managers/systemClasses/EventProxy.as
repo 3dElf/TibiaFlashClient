@@ -1,39 +1,38 @@
-package mx.managers.systemClasses
+﻿package mx.managers.systemClasses
 {
-   import flash.events.EventDispatcher;
-   import flash.events.Event;
-   import flash.events.MouseEvent;
-   import mx.events.SandboxMouseEvent;
-   import mx.utils.EventUtil;
-   import mx.managers.ISystemManager;
-   
-   public class EventProxy extends EventDispatcher
-   {
-       
-      private var systemManager:ISystemManager;
-      
-      public function EventProxy(param1:ISystemManager)
-      {
-         super();
-         this.systemManager = param1;
-      }
-      
-      public function marshalListener(param1:Event) : void
-      {
-         var _loc2_:MouseEvent = null;
-         var _loc3_:SandboxMouseEvent = null;
-         if(param1 is MouseEvent)
-         {
-            _loc2_ = param1 as MouseEvent;
-            _loc3_ = new SandboxMouseEvent(EventUtil.mouseEventMap[param1.type],false,false,_loc2_.ctrlKey,_loc2_.altKey,_loc2_.shiftKey,_loc2_.buttonDown);
-            systemManager.dispatchEventFromSWFBridges(_loc3_,null,true,true);
-         }
-         else if(param1.type == Event.MOUSE_LEAVE)
-         {
-            _loc3_ = new SandboxMouseEvent(SandboxMouseEvent.MOUSE_UP_SOMEWHERE);
-            systemManager.dispatchEventFromSWFBridges(_loc3_,null,true,true);
-            systemManager.dispatchEvent(_loc3_);
-         }
-      }
-   }
+    import flash.events.*;
+    import mx.events.*;
+    import mx.managers.*;
+    import mx.utils.*;
+
+    public class EventProxy extends EventDispatcher
+    {
+        private var systemManager:ISystemManager;
+
+        public function EventProxy(param1:ISystemManager)
+        {
+            this.systemManager = param1;
+            return;
+        }// end function
+
+        public function marshalListener(event:Event) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            if (event is MouseEvent)
+            {
+                _loc_2 = event as MouseEvent;
+                _loc_3 = new SandboxMouseEvent(EventUtil.mouseEventMap[event.type], false, false, _loc_2.ctrlKey, _loc_2.altKey, _loc_2.shiftKey, _loc_2.buttonDown);
+                systemManager.dispatchEventFromSWFBridges(_loc_3, null, true, true);
+            }
+            else if (event.type == Event.MOUSE_LEAVE)
+            {
+                _loc_3 = new SandboxMouseEvent(SandboxMouseEvent.MOUSE_UP_SOMEWHERE);
+                systemManager.dispatchEventFromSWFBridges(_loc_3, null, true, true);
+                systemManager.dispatchEvent(_loc_3);
+            }
+            return;
+        }// end function
+
+    }
 }

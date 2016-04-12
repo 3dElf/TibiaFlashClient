@@ -1,55 +1,47 @@
-package mx.skins.halo
+﻿package mx.skins.halo
 {
-   import mx.skins.Border;
-   import mx.core.mx_internal;
-   import mx.styles.StyleManager;
-   import mx.utils.ColorUtil;
-   import mx.core.FlexVersion;
-   import flash.display.GradientType;
-   
-   use namespace mx_internal;
-   
-   public class ScrollTrackSkin extends Border
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function ScrollTrackSkin()
-      {
-         super();
-      }
-      
-      override public function get measuredWidth() : Number
-      {
-         return 16;
-      }
-      
-      override public function get measuredHeight() : Number
-      {
-         return 1;
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         super.updateDisplayList(param1,param2);
-         var _loc3_:Array = getStyle("trackColors");
-         StyleManager.getColorNames(_loc3_);
-         var _loc4_:uint = ColorUtil.adjustBrightness2(getStyle("borderColor"),-20);
-         var _loc5_:uint = ColorUtil.adjustBrightness2(_loc4_,-30);
-         graphics.clear();
-         var _loc6_:Number = 1;
-         if(name == "trackDisabledSkin" && FlexVersion.compatibilityVersion >= FlexVersion.VERSION_3_0)
-         {
-            _loc6_ = 0.2;
-         }
-         drawRoundRect(0,0,param1,param2,0,[_loc4_,_loc5_],_loc6_,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-            "x":1,
-            "y":1,
-            "w":param1 - 2,
-            "h":param2 - 2,
-            "r":0
-         });
-         drawRoundRect(1,1,param1 - 2,param2 - 2,0,_loc3_,_loc6_,horizontalGradientMatrix(1,1,param1 / 3 * 2,param2 - 2));
-      }
-   }
+    import flash.display.*;
+    import mx.core.*;
+    import mx.skins.*;
+    import mx.styles.*;
+    import mx.utils.*;
+
+    public class ScrollTrackSkin extends Border
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function ScrollTrackSkin()
+        {
+            return;
+        }// end function
+
+        override public function get measuredWidth() : Number
+        {
+            return 16;
+        }// end function
+
+        override public function get measuredHeight() : Number
+        {
+            return 1;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            super.updateDisplayList(param1, param2);
+            var _loc_3:* = getStyle("trackColors");
+            StyleManager.getColorNames(_loc_3);
+            var _loc_4:* = ColorUtil.adjustBrightness2(getStyle("borderColor"), -20);
+            var _loc_5:* = ColorUtil.adjustBrightness2(_loc_4, -30);
+            graphics.clear();
+            var _loc_6:* = 1;
+            if (name == "trackDisabledSkin" && FlexVersion.compatibilityVersion >= FlexVersion.VERSION_3_0)
+            {
+                _loc_6 = 0.2;
+            }
+            drawRoundRect(0, 0, param1, param2, 0, [_loc_4, _loc_5], _loc_6, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:1, y:1, w:param1 - 2, h:param2 - 2, r:0});
+            drawRoundRect(1, 1, param1 - 2, param2 - 2, 0, _loc_3, _loc_6, horizontalGradientMatrix(1, 1, param1 / 3 * 2, param2 - 2));
+            return;
+        }// end function
+
+    }
 }

@@ -1,34 +1,32 @@
-package mx.collections.errors
+﻿package mx.collections.errors
 {
-   import mx.core.mx_internal;
-   import mx.rpc.IResponder;
-   
-   use namespace mx_internal;
-   
-   public class ItemPendingError extends Error
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var _responders:Array;
-      
-      public function ItemPendingError(param1:String)
-      {
-         super(param1);
-      }
-      
-      public function get responders() : Array
-      {
-         return _responders;
-      }
-      
-      public function addResponder(param1:IResponder) : void
-      {
-         if(!_responders)
-         {
-            _responders = [];
-         }
-         _responders.push(param1);
-      }
-   }
+    import mx.rpc.*;
+
+    public class ItemPendingError extends Error
+    {
+        private var _responders:Array;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function ItemPendingError(param1:String)
+        {
+            super(param1);
+            return;
+        }// end function
+
+        public function get responders() : Array
+        {
+            return _responders;
+        }// end function
+
+        public function addResponder(param1:IResponder) : void
+        {
+            if (!_responders)
+            {
+                _responders = [];
+            }
+            _responders.push(param1);
+            return;
+        }// end function
+
+    }
 }

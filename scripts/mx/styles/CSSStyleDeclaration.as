@@ -1,335 +1,340 @@
-package mx.styles
+﻿package mx.styles
 {
-   import flash.events.EventDispatcher;
-   import mx.core.mx_internal;
-   import flash.display.DisplayObject;
-   import mx.managers.SystemManagerGlobals;
-   import flash.utils.Dictionary;
-   import mx.core.Singleton;
-   
-   use namespace mx_internal;
-   
-   public class CSSStyleDeclaration extends EventDispatcher
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static const NOT_A_COLOR:uint = 4294967295;
-      
-      private static const FILTERMAP_PROP:String = "__reserved__filterMap";
-       
-      mx_internal var effects:Array;
-      
-      protected var overrides:Object;
-      
-      public var defaultFactory:Function;
-      
-      public var factory:Function;
-      
-      mx_internal var selectorRefCount:int = 0;
-      
-      private var styleManager:mx.styles.IStyleManager2;
-      
-      private var clones:Dictionary;
-      
-      public function CSSStyleDeclaration(param1:String = null)
-      {
-         clones = new Dictionary(true);
-         super();
-         if(param1)
-         {
-            styleManager = Singleton.getInstance("mx.styles::IStyleManager2") as mx.styles.IStyleManager2;
-            styleManager.setStyleDeclaration(param1,this,false);
-         }
-      }
-      
-      mx_internal function addStyleToProtoChain(param1:Object, param2:DisplayObject, param3:Object = null) : Object
-      {
-         var p:String = null;
-         var emptyObjectFactory:Function = null;
-         var filteredChain:Object = null;
-         var filterObjectFactory:Function = null;
-         var i:String = null;
-         var chain:Object = param1;
-         var target:DisplayObject = param2;
-         var filterMap:Object = param3;
-         var nodeAddedToChain:Boolean = false;
-         var originalChain:Object = chain;
-         if(filterMap)
-         {
-            chain = {};
-         }
-         if(defaultFactory != null)
-         {
-            defaultFactory.prototype = chain;
-            chain = new defaultFactory();
-            nodeAddedToChain = true;
-         }
-         if(factory != null)
-         {
-            factory.prototype = chain;
-            chain = new factory();
-            nodeAddedToChain = true;
-         }
-         if(overrides)
-         {
-            if(defaultFactory == null && factory == null)
+    import flash.display.*;
+    import flash.events.*;
+    import flash.utils.*;
+    import mx.core.*;
+    import mx.managers.*;
+
+    public class CSSStyleDeclaration extends EventDispatcher
+    {
+        var effects:Array;
+        protected var overrides:Object;
+        public var defaultFactory:Function;
+        public var factory:Function;
+        var selectorRefCount:int = 0;
+        private var styleManager:IStyleManager2;
+        private var clones:Dictionary;
+        static const VERSION:String = "3.6.0.21751";
+        private static const NOT_A_COLOR:uint = 4.29497e+009;
+        private static const FILTERMAP_PROP:String = "__reserved__filterMap";
+
+        public function CSSStyleDeclaration(param1:String = null)
+        {
+            clones = new Dictionary(true);
+            if (param1)
             {
-               emptyObjectFactory = function():void
-               {
-               };
-               emptyObjectFactory.prototype = chain;
-               chain = new emptyObjectFactory();
-               nodeAddedToChain = true;
+                styleManager = Singleton.getInstance("mx.styles::IStyleManager2") as IStyleManager2;
+                styleManager.setStyleDeclaration(param1, this, false);
             }
-            for(p in overrides)
-            {
-               if(overrides[p] === undefined)
-               {
-                  delete chain[p];
-               }
-               else
-               {
-                  chain[p] = overrides[p];
-               }
-            }
-         }
-         if(filterMap)
-         {
-            if(nodeAddedToChain)
-            {
-               filteredChain = {};
-               filterObjectFactory = function():void
-               {
-               };
-               filterObjectFactory.prototype = originalChain;
-               filteredChain = new filterObjectFactory();
-               for(i in chain)
-               {
-                  if(filterMap[i] != null)
-                  {
-                     filteredChain[filterMap[i]] = chain[i];
-                  }
-               }
-               chain = filteredChain;
-               chain[FILTERMAP_PROP] = filterMap;
-            }
-            else
-            {
-               chain = originalChain;
-            }
-         }
-         if(nodeAddedToChain)
-         {
-            clones[chain] = 1;
-         }
-         return chain;
-      }
-      
-      public function getStyle(param1:String) : *
-      {
-         var _loc2_:* = undefined;
-         var _loc3_:* = undefined;
-         if(overrides)
-         {
-            if(param1 in overrides && overrides[param1] === undefined)
-            {
-               return undefined;
-            }
-            _loc3_ = overrides[param1];
-            if(_loc3_ !== undefined)
-            {
-               return _loc3_;
-            }
-         }
-         if(factory != null)
-         {
-            factory.prototype = {};
-            _loc2_ = new factory();
-            _loc3_ = _loc2_[param1];
-            if(_loc3_ !== undefined)
-            {
-               return _loc3_;
-            }
-         }
-         if(defaultFactory != null)
-         {
-            defaultFactory.prototype = {};
-            _loc2_ = new defaultFactory();
-            _loc3_ = _loc2_[param1];
-            if(_loc3_ !== undefined)
-            {
-               return _loc3_;
-            }
-         }
-         return undefined;
-      }
-      
-      public function clearStyle(param1:String) : void
-      {
-         setStyle(param1,undefined);
-      }
-      
-      public function setStyle(param1:String, param2:*) : void
-      {
-         var _loc7_:int = 0;
-         var _loc8_:Object = null;
-         var _loc3_:Object = getStyle(param1);
-         var _loc4_:Boolean = false;
-         if(selectorRefCount > 0 && factory == null && defaultFactory == null && !overrides && _loc3_ !== param2)
-         {
-            _loc4_ = true;
-         }
-         if(param2 !== undefined)
-         {
-            setStyle(param1,param2);
-         }
-         else
-         {
-            if(param2 == _loc3_)
-            {
-               return;
-            }
-            setStyle(param1,param2);
-         }
-         var _loc5_:Array = SystemManagerGlobals.topLevelSystemManagers;
-         var _loc6_:int = _loc5_.length;
-         if(_loc4_)
-         {
-            _loc7_ = 0;
-            while(_loc7_ < _loc6_)
-            {
-               _loc8_ = _loc5_[_loc7_];
-               _loc8_.regenerateStyleCache(true);
-               _loc7_++;
-            }
-         }
-         _loc7_ = 0;
-         while(_loc7_ < _loc6_)
-         {
-            _loc8_ = _loc5_[_loc7_];
-            _loc8_.notifyStyleChangeInChildren(param1,true);
-            _loc7_++;
-         }
-      }
-      
-      private function clearStyleAttr(param1:String) : void
-      {
-         var _loc2_:* = undefined;
-         if(!overrides)
-         {
-            overrides = {};
-         }
-         overrides[param1] = undefined;
-         for(_loc2_ in clones)
-         {
-            delete _loc2_[param1];
-         }
-      }
-      
-      mx_internal function createProtoChainRoot() : Object
-      {
-         var _loc1_:Object = {};
-         if(defaultFactory != null)
-         {
-            defaultFactory.prototype = _loc1_;
-            _loc1_ = new defaultFactory();
-         }
-         if(factory != null)
-         {
-            factory.prototype = _loc1_;
-            _loc1_ = new factory();
-         }
-         clones[_loc1_] = 1;
-         return _loc1_;
-      }
-      
-      mx_internal function clearOverride(param1:String) : void
-      {
-         if(Boolean(overrides) && Boolean(overrides[param1]))
-         {
-            delete overrides[param1];
-         }
-      }
-      
-      mx_internal function setStyle(param1:String, param2:*) : void
-      {
-         var _loc3_:Object = null;
-         var _loc4_:* = undefined;
-         var _loc5_:Number = NaN;
-         var _loc6_:Object = null;
-         if(param2 === undefined)
-         {
-            clearStyleAttr(param1);
             return;
-         }
-         if(param2 is String)
-         {
-            if(!styleManager)
+        }// end function
+
+        function addStyleToProtoChain(param1:Object, param2:DisplayObject, param3:Object = null) : Object
+        {
+            var p:String;
+            var emptyObjectFactory:Function;
+            var filteredChain:Object;
+            var filterObjectFactory:Function;
+            var i:String;
+            var chain:* = param1;
+            var target:* = param2;
+            var filterMap:* = param3;
+            var nodeAddedToChain:Boolean;
+            var originalChain:* = chain;
+            if (filterMap)
             {
-               styleManager = Singleton.getInstance("mx.styles::IStyleManager2") as mx.styles.IStyleManager2;
+                chain;
             }
-            _loc5_ = styleManager.getColorName(param2);
-            if(_loc5_ != NOT_A_COLOR)
+            if (defaultFactory != null)
             {
-               param2 = _loc5_;
+                defaultFactory.prototype = chain;
+                chain = new defaultFactory();
+                nodeAddedToChain;
             }
-         }
-         if(defaultFactory != null)
-         {
-            _loc3_ = new defaultFactory();
-            if(_loc3_[param1] !== param2)
+            if (factory != null)
             {
-               if(!overrides)
-               {
-                  overrides = {};
-               }
-               overrides[param1] = param2;
+                factory.prototype = chain;
+                chain = new factory();
+                nodeAddedToChain;
             }
-            else if(overrides)
+            if (overrides)
             {
-               delete overrides[param1];
+                if (defaultFactory == null && factory == null)
+                {
+                    emptyObjectFactory = function () : void
+            {
+                return;
+            }// end function
+            ;
+                    emptyObjectFactory.prototype = chain;
+                    chain = new emptyObjectFactory;
+                    nodeAddedToChain;
+                }
+                var _loc_5:* = 0;
+                var _loc_6:* = overrides;
+                while (_loc_6 in _loc_5)
+                {
+                    
+                    p = _loc_6[_loc_5];
+                    if (_loc_6[p] === undefined)
+                    {
+                        delete chain[p];
+                        continue;
+                    }
+                    chain[p] = _loc_6[p];
+                }
             }
-         }
-         if(factory != null)
-         {
-            _loc3_ = new factory();
-            if(_loc3_[param1] !== param2)
+            if (filterMap)
             {
-               if(!overrides)
-               {
-                  overrides = {};
-               }
-               overrides[param1] = param2;
+                if (nodeAddedToChain)
+                {
+                    filteredChain;
+                    filterObjectFactory = function () : void
+            {
+                return;
+            }// end function
+            ;
+                    filterObjectFactory.prototype = originalChain;
+                    filteredChain = new filterObjectFactory;
+                    var _loc_5:* = 0;
+                    var _loc_6:* = chain;
+                    while (_loc_6 in _loc_5)
+                    {
+                        
+                        i = _loc_6[_loc_5];
+                        if (filterMap[i] != null)
+                        {
+                            filteredChain[filterMap[i]] = _loc_6[i];
+                        }
+                    }
+                    chain = filteredChain;
+                    _loc_6[FILTERMAP_PROP] = filterMap;
+                }
+                else
+                {
+                    chain = originalChain;
+                }
             }
-            else if(overrides)
+            if (nodeAddedToChain)
             {
-               delete overrides[param1];
+                clones[chain] = 1;
             }
-         }
-         if(defaultFactory == null && factory == null)
-         {
-            if(!overrides)
+            return chain;
+        }// end function
+
+        public function getStyle(param1:String)
+        {
+            var _loc_2:* = undefined;
+            var _loc_3:* = undefined;
+            if (overrides)
             {
-               overrides = {};
+                if (param1 in overrides && overrides[param1] === undefined)
+                {
+                    return undefined;
+                }
+                _loc_3 = overrides[param1];
+                if (_loc_3 !== undefined)
+                {
+                    return _loc_3;
+                }
             }
-            overrides[param1] = param2;
-         }
-         for(_loc4_ in clones)
-         {
-            _loc6_ = _loc4_[FILTERMAP_PROP];
-            if(_loc6_)
+            if (factory != null)
             {
-               if(_loc6_[param1] != null)
-               {
-                  _loc4_[_loc6_[param1]] = param2;
-               }
+                factory.prototype = {};
+                _loc_2 = new factory();
+                _loc_3 = _loc_2[param1];
+                if (_loc_3 !== undefined)
+                {
+                    return _loc_3;
+                }
+            }
+            if (defaultFactory != null)
+            {
+                defaultFactory.prototype = {};
+                _loc_2 = new defaultFactory();
+                _loc_3 = _loc_2[param1];
+                if (_loc_3 !== undefined)
+                {
+                    return _loc_3;
+                }
+            }
+            return undefined;
+        }// end function
+
+        public function clearStyle(param1:String) : void
+        {
+            setStyle(param1, undefined);
+            return;
+        }// end function
+
+        public function setStyle(param1:String, param2) : void
+        {
+            var _loc_7:* = 0;
+            var _loc_8:* = null;
+            var _loc_3:* = getStyle(param1);
+            var _loc_4:* = false;
+            if (selectorRefCount > 0 && factory == null && defaultFactory == null && !overrides && _loc_3 !== param2)
+            {
+                _loc_4 = true;
+            }
+            if (param2 !== undefined)
+            {
+                setStyle(param1, param2);
             }
             else
             {
-               _loc4_[param1] = param2;
+                if (param2 == _loc_3)
+                {
+                    return;
+                }
+                setStyle(param1, param2);
             }
-         }
-      }
-   }
+            var _loc_5:* = SystemManagerGlobals.topLevelSystemManagers;
+            var _loc_6:* = _loc_5.length;
+            if (_loc_4)
+            {
+                _loc_7 = 0;
+                while (_loc_7 < _loc_6)
+                {
+                    
+                    _loc_8 = _loc_5[_loc_7];
+                    _loc_8.regenerateStyleCache(true);
+                    _loc_7++;
+                }
+            }
+            _loc_7 = 0;
+            while (_loc_7 < _loc_6)
+            {
+                
+                _loc_8 = _loc_5[_loc_7];
+                _loc_8.notifyStyleChangeInChildren(param1, true);
+                _loc_7++;
+            }
+            return;
+        }// end function
+
+        private function clearStyleAttr(param1:String) : void
+        {
+            var _loc_2:* = undefined;
+            if (!overrides)
+            {
+                overrides = {};
+            }
+            overrides[param1] = undefined;
+            for (_loc_2 in clones)
+            {
+                
+                delete _loc_2[param1];
+            }
+            return;
+        }// end function
+
+        function createProtoChainRoot() : Object
+        {
+            var _loc_1:* = {};
+            if (defaultFactory != null)
+            {
+                defaultFactory.prototype = _loc_1;
+                _loc_1 = new defaultFactory();
+            }
+            if (factory != null)
+            {
+                factory.prototype = _loc_1;
+                _loc_1 = new factory();
+            }
+            clones[_loc_1] = 1;
+            return _loc_1;
+        }// end function
+
+        function clearOverride(param1:String) : void
+        {
+            if (overrides && overrides[param1])
+            {
+                delete overrides[param1];
+            }
+            return;
+        }// end function
+
+        function setStyle(param1:String, param2) : void
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = undefined;
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            if (param2 === undefined)
+            {
+                clearStyleAttr(param1);
+                return;
+            }
+            if (param2 is String)
+            {
+                if (!styleManager)
+                {
+                    styleManager = Singleton.getInstance("mx.styles::IStyleManager2") as IStyleManager2;
+                }
+                _loc_5 = styleManager.getColorName(param2);
+                if (_loc_5 != NOT_A_COLOR)
+                {
+                    param2 = _loc_5;
+                }
+            }
+            if (defaultFactory != null)
+            {
+                _loc_3 = new defaultFactory();
+                if (_loc_3[param1] !== param2)
+                {
+                    if (!overrides)
+                    {
+                        overrides = {};
+                    }
+                    overrides[param1] = param2;
+                }
+                else if (overrides)
+                {
+                    delete overrides[param1];
+                }
+            }
+            if (factory != null)
+            {
+                _loc_3 = new factory();
+                if (_loc_3[param1] !== param2)
+                {
+                    if (!overrides)
+                    {
+                        overrides = {};
+                    }
+                    overrides[param1] = param2;
+                }
+                else if (overrides)
+                {
+                    delete overrides[param1];
+                }
+            }
+            if (defaultFactory == null && factory == null)
+            {
+                if (!overrides)
+                {
+                    overrides = {};
+                }
+                overrides[param1] = param2;
+            }
+            for (_loc_4 in clones)
+            {
+                
+                _loc_6 = _loc_4[FILTERMAP_PROP];
+                if (_loc_6)
+                {
+                    if (_loc_6[param1] != null)
+                    {
+                        _loc_4[_loc_6[param1]] = param2;
+                    }
+                    continue;
+                }
+                _loc_4[param1] = param2;
+            }
+            return;
+        }// end function
+
+    }
 }

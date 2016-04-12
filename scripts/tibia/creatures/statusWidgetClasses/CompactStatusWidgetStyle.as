@@ -1,130 +1,128 @@
-package tibia.creatures.statusWidgetClasses
+﻿package tibia.creatures.statusWidgetClasses
 {
-   import mx.containers.utilityClasses.BoxLayout;
-   import mx.core.EdgeMetrics;
-   
-   public class CompactStatusWidgetStyle extends BoxLayout
-   {
-      
-      public static const DIRECTION_LEFT_TO_RIGHT:String = "lr";
-      
-      public static const DIRECTION_BOTTOM_TO_TOP:String = "bt";
-      
-      public static const DIRECTION_RIGHT_TO_LEFT:String = "rl";
-      
-      public static const DIRECTION_TOP_TO_BOTTOM:String = "tb";
-      
-      public static const DIRECTION_AUTO:String = "a";
-       
-      public function CompactStatusWidgetStyle()
-      {
-         super();
-      }
-      
-      override public function measure() : void
-      {
-         var _loc1_:EdgeMetrics = null;
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc18_:Number = NaN;
-         var _loc19_:Number = NaN;
-         _loc1_ = target.viewMetricsAndPadding;
-         var _loc2_:Number = 0;
-         var _loc3_:Number = 0;
-         _loc4_ = 0;
-         _loc5_ = 0;
-         var _loc6_:Number = target.getStyle("horizontalGap");
-         var _loc7_:Number = target.getStyle("horizontalBigGap");
-         var _loc8_:Number = target.getStyle("verticalGap");
-         var _loc9_:Number = target.getStyle("verticalBigGap");
-         var _loc10_:BitmapProgressBar = BitmapProgressBar(target.getChildByName("hitpoints"));
-         var _loc11_:Number = target.getStyle("hitpointsOffsetX");
-         var _loc12_:Number = target.getStyle("hitpointsOffsetY");
-         var _loc13_:BitmapProgressBar = BitmapProgressBar(target.getChildByName("mana"));
-         var _loc14_:Number = target.getStyle("manaOffsetX");
-         var _loc15_:Number = target.getStyle("manaOffsetY");
-         var _loc16_:SkillProgressBar = SkillProgressBar(target.getChildByName("skill"));
-         var _loc17_:StateRenderer = StateRenderer(target.getChildByName("state"));
-         _loc3_ = _loc10_.measuredMinWidth + _loc11_ + _loc7_ + _loc17_.measuredMinWidth + _loc7_ + _loc13_.measuredMinWidth + _loc14_;
-         _loc2_ = _loc10_.getExplicitOrMeasuredWidth() + _loc11_ + _loc7_ + _loc17_.getExplicitOrMeasuredWidth() + _loc7_ + _loc13_.getExplicitOrMeasuredWidth() + _loc14_;
-         _loc5_ = Math.max(_loc10_.measuredMinHeight + _loc12_,_loc17_.measuredMinHeight,_loc13_.measuredMinHeight + _loc15_);
-         _loc4_ = Math.max(_loc10_.getExplicitOrMeasuredHeight() + _loc12_,_loc17_.getExplicitOrMeasuredHeight(),_loc13_.getExplicitOrMeasuredHeight() + _loc15_);
-         if(_loc16_.includeInLayout)
-         {
-            _loc3_ = Math.max(_loc3_,_loc16_.measuredMinWidth);
-            _loc2_ = Math.max(_loc2_,_loc16_.getExplicitOrMeasuredWidth());
-            _loc5_ = _loc5_ + (_loc8_ + _loc16_.measuredMinHeight);
-            _loc4_ = _loc4_ + (_loc8_ + _loc16_.getExplicitOrMeasuredHeight());
-         }
-         else
-         {
-            _loc18_ = target.getStyle("paddingBottom");
-            _loc19_ = Math.max(_loc10_.getStyle("paddingBottom"),_loc13_.getStyle("paddingBottom"));
-            _loc5_ = _loc5_ - (_loc18_ + _loc19_);
-            _loc4_ = _loc4_ - (_loc18_ + _loc19_);
-         }
-         target.measuredMinWidth = _loc3_ + _loc1_.left + _loc1_.right;
-         target.measuredWidth = _loc2_ + _loc1_.left + _loc1_.right;
-         target.measuredMinHeight = _loc5_ + _loc1_.top + _loc1_.bottom;
-         target.measuredHeight = _loc4_ + _loc1_.top + _loc1_.bottom;
-      }
-      
-      override public function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc11_:BitmapProgressBar = null;
-         var _loc15_:BitmapProgressBar = null;
-         var _loc3_:EdgeMetrics = target.borderMetrics;
-         var _loc4_:EdgeMetrics = target.viewMetricsAndPadding;
-         var _loc5_:Number = target.getStyle("horizontalGap");
-         var _loc6_:Number = target.getStyle("horizontalBigGap");
-         var _loc7_:Number = target.getStyle("verticalGap");
-         var _loc8_:Number = target.getStyle("verticalBigGap");
-         var _loc9_:Number = param1 - _loc4_.left - _loc4_.right;
-         var _loc10_:Number = param2 - _loc4_.top - _loc4_.bottom;
-         _loc11_ = BitmapProgressBar(target.getChildByName("hitpoints"));
-         var _loc12_:Number = target.getStyle("hitpointsOffsetX");
-         var _loc13_:Number = target.getStyle("hitpointsOffsetY");
-         var _loc14_:Number = _loc11_.getStyle("paddingBottom");
-         _loc15_ = BitmapProgressBar(target.getChildByName("mana"));
-         var _loc16_:Number = target.getStyle("manaOffsetX");
-         var _loc17_:Number = target.getStyle("manaOffsetY");
-         var _loc18_:Number = _loc15_.getStyle("paddingBottom");
-         var _loc19_:SkillProgressBar = SkillProgressBar(target.getChildByName("skill"));
-         var _loc20_:StateRenderer = StateRenderer(target.getChildByName("state"));
-         var _loc21_:Number = Math.max(_loc20_.getExplicitOrMeasuredWidth(),_loc20_.measuredMinWidth);
-         var _loc22_:Number = Math.round((_loc9_ - _loc21_ - 2 * _loc6_) / 2);
-         var _loc23_:Number = Math.max(_loc11_.getExplicitOrMeasuredHeight() + _loc13_ - _loc14_,_loc15_.getExplicitOrMeasuredHeight() + _loc17_ - _loc18_);
-         var _loc24_:Number = 0;
-         var _loc25_:Number = 0;
-         var _loc26_:Number = 0;
-         _loc25_ = _loc11_.getExplicitOrMeasuredHeight();
-         if(!_loc19_.includeInLayout)
-         {
-            _loc25_ = _loc25_ - _loc14_;
-         }
-         _loc11_.direction = DIRECTION_LEFT_TO_RIGHT;
-         _loc11_.move(_loc4_.left + _loc12_,_loc4_.top + _loc13_);
-         _loc11_.setActualSize(_loc22_,_loc25_);
-         _loc26_ = _loc25_ + _loc13_;
-         _loc25_ = _loc15_.getExplicitOrMeasuredHeight();
-         if(!_loc19_.includeInLayout)
-         {
-            _loc25_ = _loc25_ - _loc18_;
-         }
-         _loc15_.direction = DIRECTION_RIGHT_TO_LEFT;
-         _loc15_.move(_loc4_.left + _loc9_ - _loc22_ + _loc16_,_loc4_.top + _loc17_);
-         _loc15_.setActualSize(_loc22_,_loc25_);
-         _loc26_ = _loc4_.top + Math.max(_loc26_,_loc25_ + _loc17_) + _loc7_;
-         _loc25_ = _loc20_.getExplicitOrMeasuredHeight();
-         _loc20_.move(_loc4_.left + _loc22_ + _loc6_,_loc4_.top + (_loc23_ - _loc25_) / 2);
-         _loc20_.setActualSize(_loc21_,_loc25_);
-         if(_loc19_.includeInLayout)
-         {
-            _loc25_ = _loc19_.getExplicitOrMeasuredHeight();
-            _loc19_.progressDirection = direction == DIRECTION_TOP_TO_BOTTOM?DIRECTION_RIGHT_TO_LEFT:DIRECTION_LEFT_TO_RIGHT;
-            _loc19_.move(_loc4_.left,_loc26_);
-            _loc19_.setActualSize(_loc9_,_loc25_);
-         }
-      }
-   }
+    import mx.containers.utilityClasses.*;
+    import mx.core.*;
+
+    public class CompactStatusWidgetStyle extends BoxLayout
+    {
+        public static const DIRECTION_LEFT_TO_RIGHT:String = "lr";
+        public static const DIRECTION_BOTTOM_TO_TOP:String = "bt";
+        public static const DIRECTION_RIGHT_TO_LEFT:String = "rl";
+        public static const DIRECTION_TOP_TO_BOTTOM:String = "tb";
+        public static const DIRECTION_AUTO:String = "a";
+
+        public function CompactStatusWidgetStyle()
+        {
+            return;
+        }// end function
+
+        override public function measure() : void
+        {
+            var _loc_1:* = null;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_18:* = NaN;
+            var _loc_19:* = NaN;
+            _loc_1 = target.viewMetricsAndPadding;
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            _loc_4 = 0;
+            _loc_5 = 0;
+            var _loc_6:* = target.getStyle("horizontalGap");
+            var _loc_7:* = target.getStyle("horizontalBigGap");
+            var _loc_8:* = target.getStyle("verticalGap");
+            var _loc_9:* = target.getStyle("verticalBigGap");
+            var _loc_10:* = BitmapProgressBar(target.getChildByName("hitpoints"));
+            var _loc_11:* = target.getStyle("hitpointsOffsetX");
+            var _loc_12:* = target.getStyle("hitpointsOffsetY");
+            var _loc_13:* = BitmapProgressBar(target.getChildByName("mana"));
+            var _loc_14:* = target.getStyle("manaOffsetX");
+            var _loc_15:* = target.getStyle("manaOffsetY");
+            var _loc_16:* = SkillProgressBar(target.getChildByName("skill"));
+            var _loc_17:* = StateRenderer(target.getChildByName("state"));
+            _loc_3 = _loc_10.measuredMinWidth + _loc_11 + _loc_7 + _loc_17.measuredMinWidth + _loc_7 + _loc_13.measuredMinWidth + _loc_14;
+            _loc_2 = _loc_10.getExplicitOrMeasuredWidth() + _loc_11 + _loc_7 + _loc_17.getExplicitOrMeasuredWidth() + _loc_7 + _loc_13.getExplicitOrMeasuredWidth() + _loc_14;
+            _loc_5 = Math.max(_loc_10.measuredMinHeight + _loc_12, _loc_17.measuredMinHeight, _loc_13.measuredMinHeight + _loc_15);
+            _loc_4 = Math.max(_loc_10.getExplicitOrMeasuredHeight() + _loc_12, _loc_17.getExplicitOrMeasuredHeight(), _loc_13.getExplicitOrMeasuredHeight() + _loc_15);
+            if (_loc_16.includeInLayout)
+            {
+                _loc_3 = Math.max(_loc_3, _loc_16.measuredMinWidth);
+                _loc_2 = Math.max(_loc_2, _loc_16.getExplicitOrMeasuredWidth());
+                _loc_5 = _loc_5 + (_loc_8 + _loc_16.measuredMinHeight);
+                _loc_4 = _loc_4 + (_loc_8 + _loc_16.getExplicitOrMeasuredHeight());
+            }
+            else
+            {
+                _loc_18 = target.getStyle("paddingBottom");
+                _loc_19 = Math.max(_loc_10.getStyle("paddingBottom"), _loc_13.getStyle("paddingBottom"));
+                _loc_5 = _loc_5 - (_loc_18 + _loc_19);
+                _loc_4 = _loc_4 - (_loc_18 + _loc_19);
+            }
+            target.measuredMinWidth = _loc_3 + _loc_1.left + _loc_1.right;
+            target.measuredWidth = _loc_2 + _loc_1.left + _loc_1.right;
+            target.measuredMinHeight = _loc_5 + _loc_1.top + _loc_1.bottom;
+            target.measuredHeight = _loc_4 + _loc_1.top + _loc_1.bottom;
+            return;
+        }// end function
+
+        override public function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_11:* = null;
+            var _loc_15:* = null;
+            var _loc_3:* = target.borderMetrics;
+            var _loc_4:* = target.viewMetricsAndPadding;
+            var _loc_5:* = target.getStyle("horizontalGap");
+            var _loc_6:* = target.getStyle("horizontalBigGap");
+            var _loc_7:* = target.getStyle("verticalGap");
+            var _loc_8:* = target.getStyle("verticalBigGap");
+            var _loc_9:* = param1 - _loc_4.left - _loc_4.right;
+            var _loc_10:* = param2 - _loc_4.top - _loc_4.bottom;
+            _loc_11 = BitmapProgressBar(target.getChildByName("hitpoints"));
+            var _loc_12:* = target.getStyle("hitpointsOffsetX");
+            var _loc_13:* = target.getStyle("hitpointsOffsetY");
+            var _loc_14:* = _loc_11.getStyle("paddingBottom");
+            _loc_15 = BitmapProgressBar(target.getChildByName("mana"));
+            var _loc_16:* = target.getStyle("manaOffsetX");
+            var _loc_17:* = target.getStyle("manaOffsetY");
+            var _loc_18:* = _loc_15.getStyle("paddingBottom");
+            var _loc_19:* = SkillProgressBar(target.getChildByName("skill"));
+            var _loc_20:* = StateRenderer(target.getChildByName("state"));
+            var _loc_21:* = Math.max(_loc_20.getExplicitOrMeasuredWidth(), _loc_20.measuredMinWidth);
+            var _loc_22:* = Math.round((_loc_9 - _loc_21 - 2 * _loc_6) / 2);
+            var _loc_23:* = Math.max(_loc_11.getExplicitOrMeasuredHeight() + _loc_13 - _loc_14, _loc_15.getExplicitOrMeasuredHeight() + _loc_17 - _loc_18);
+            var _loc_24:* = 0;
+            var _loc_25:* = 0;
+            var _loc_26:* = 0;
+            _loc_25 = _loc_11.getExplicitOrMeasuredHeight();
+            if (!_loc_19.includeInLayout)
+            {
+                _loc_25 = _loc_25 - _loc_14;
+            }
+            _loc_11.direction = DIRECTION_LEFT_TO_RIGHT;
+            _loc_11.move(_loc_4.left + _loc_12, _loc_4.top + _loc_13);
+            _loc_11.setActualSize(_loc_22, _loc_25);
+            _loc_26 = _loc_25 + _loc_13;
+            _loc_25 = _loc_15.getExplicitOrMeasuredHeight();
+            if (!_loc_19.includeInLayout)
+            {
+                _loc_25 = _loc_25 - _loc_18;
+            }
+            _loc_15.direction = DIRECTION_RIGHT_TO_LEFT;
+            _loc_15.move(_loc_4.left + _loc_9 - _loc_22 + _loc_16, _loc_4.top + _loc_17);
+            _loc_15.setActualSize(_loc_22, _loc_25);
+            _loc_26 = _loc_4.top + Math.max(_loc_26, _loc_25 + _loc_17) + _loc_7;
+            _loc_25 = _loc_20.getExplicitOrMeasuredHeight();
+            _loc_20.move(_loc_4.left + _loc_22 + _loc_6, _loc_4.top + (_loc_23 - _loc_25) / 2);
+            _loc_20.setActualSize(_loc_21, _loc_25);
+            if (_loc_19.includeInLayout)
+            {
+                _loc_25 = _loc_19.getExplicitOrMeasuredHeight();
+                _loc_19.progressDirection = direction == DIRECTION_TOP_TO_BOTTOM ? (DIRECTION_RIGHT_TO_LEFT) : (DIRECTION_LEFT_TO_RIGHT);
+                _loc_19.move(_loc_4.left, _loc_26);
+                _loc_19.setActualSize(_loc_9, _loc_25);
+            }
+            return;
+        }// end function
+
+    }
 }

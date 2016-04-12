@@ -1,397 +1,395 @@
-package mx.graphics
+﻿package mx.graphics
 {
-   import mx.core.IUIComponent;
-   import flash.display.DisplayObject;
-   import mx.core.UIComponent;
-   import flash.display.Stage;
-   import flash.utils.ByteArray;
-   import mx.utils.Base64Encoder;
-   import flash.display.IBitmapDrawable;
-   import mx.graphics.codec.IImageEncoder;
-   import flash.geom.Matrix;
-   import flash.display.BitmapData;
-   import flash.display.Bitmap;
-   import flash.geom.Rectangle;
-   import flash.system.Capabilities;
-   import mx.core.IFlexDisplayObject;
-   import mx.core.mx_internal;
-   import flash.geom.ColorTransform;
-   import mx.graphics.codec.PNGEncoder;
-   
-   use namespace mx_internal;
-   
-   public dynamic class ImageSnapshot
-   {
-      
-      public static var defaultEncoder:Class = PNGEncoder;
-      
-      public static const MAX_BITMAP_DIMENSION:int = 2880;
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var _data:ByteArray;
-      
-      private var _height:int;
-      
-      private var _contentType:String;
-      
-      private var _width:int;
-      
-      private var _properties:Object;
-      
-      public function ImageSnapshot(param1:int = 0, param2:int = 0, param3:ByteArray = null, param4:String = null)
-      {
-         _properties = {};
-         super();
-         this.contentType = param4;
-         this.width = param1;
-         this.height = param2;
-         this.data = param3;
-      }
-      
-      private static function finishPrintObject(param1:IUIComponent, param2:Array) : void
-      {
-         var _loc3_:DisplayObject = param1 is DisplayObject?DisplayObject(param1):null;
-         var _loc4_:Number = 0;
-         while(_loc3_ != null)
-         {
-            if(_loc3_ is UIComponent)
+    import flash.display.*;
+    import flash.geom.*;
+    import flash.system.*;
+    import flash.utils.*;
+    import mx.core.*;
+    import mx.graphics.codec.*;
+    import mx.utils.*;
+
+    dynamic public class ImageSnapshot extends Object
+    {
+        private var _data:ByteArray;
+        private var _height:int;
+        private var _contentType:String;
+        private var _width:int;
+        private var _properties:Object;
+        public static var defaultEncoder:Class = PNGEncoder;
+        public static const MAX_BITMAP_DIMENSION:int = 2880;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function ImageSnapshot(param1:int = 0, param2:int = 0, param3:ByteArray = null, param4:String = null)
+        {
+            _properties = {};
+            this.contentType = param4;
+            this.width = param1;
+            this.height = param2;
+            this.data = param3;
+            return;
+        }// end function
+
+        public function get properties() : Object
+        {
+            return _properties;
+        }// end function
+
+        public function set width(param1:int) : void
+        {
+            _width = param1;
+            return;
+        }// end function
+
+        public function set contentType(param1:String) : void
+        {
+            _contentType = param1;
+            return;
+        }// end function
+
+        public function get height() : int
+        {
+            return _height;
+        }// end function
+
+        public function get data() : ByteArray
+        {
+            return _data;
+        }// end function
+
+        public function set height(param1:int) : void
+        {
+            _height = param1;
+            return;
+        }// end function
+
+        public function get contentType() : String
+        {
+            return _contentType;
+        }// end function
+
+        public function set properties(param1:Object) : void
+        {
+            _properties = param1;
+            return;
+        }// end function
+
+        public function set data(param1:ByteArray) : void
+        {
+            _data = param1;
+            return;
+        }// end function
+
+        public function get width() : int
+        {
+            return _width;
+        }// end function
+
+        private static function finishPrintObject(param1:IUIComponent, param2:Array) : void
+        {
+            var _loc_3:* = param1 is DisplayObject ? (DisplayObject(param1)) : (null);
+            var _loc_4:* = 0;
+            while (_loc_3 != null)
             {
-               UIComponent(_loc3_).finishPrint(param2[_loc4_++],UIComponent(param1));
+                
+                if (_loc_3 is UIComponent)
+                {
+                    UIComponent(_loc_3).finishPrint(param2[_loc_4++], UIComponent(param1));
+                }
+                else if (_loc_3 is DisplayObject && !(_loc_3 is Stage))
+                {
+                    DisplayObject(_loc_3).mask = param2[_loc_4++];
+                }
+                _loc_3 = _loc_3.parent is DisplayObject ? (DisplayObject(_loc_3.parent)) : (null);
             }
-            else if(_loc3_ is DisplayObject && !(_loc3_ is Stage))
+            return;
+        }// end function
+
+        public static function encodeImageAsBase64(param1:ImageSnapshot) : String
+        {
+            var _loc_2:* = param1.data;
+            var _loc_3:* = new Base64Encoder();
+            _loc_3.encodeBytes(_loc_2);
+            var _loc_4:* = _loc_3.drain();
+            return _loc_3.drain();
+        }// end function
+
+        private static function mergePixelRows(param1:ByteArray, param2:int, param3:ByteArray, param4:int, param5:int) : ByteArray
+        {
+            var _loc_6:* = new ByteArray();
+            var _loc_7:* = param2 * 4;
+            var _loc_8:* = param4 * 4;
+            var _loc_9:* = 0;
+            while (_loc_9 < param5)
             {
-               DisplayObject(_loc3_).mask = param2[_loc4_++];
+                
+                _loc_6.writeBytes(param1, _loc_9 * _loc_7, _loc_7);
+                _loc_6.writeBytes(param3, _loc_9 * _loc_8, _loc_8);
+                _loc_9++;
             }
-            _loc3_ = _loc3_.parent is DisplayObject?DisplayObject(_loc3_.parent):null;
-         }
-      }
-      
-      public static function encodeImageAsBase64(param1:ImageSnapshot) : String
-      {
-         var _loc2_:ByteArray = param1.data;
-         var _loc3_:Base64Encoder = new Base64Encoder();
-         _loc3_.encodeBytes(_loc2_);
-         var _loc4_:String = _loc3_.drain();
-         return _loc4_;
-      }
-      
-      private static function mergePixelRows(param1:ByteArray, param2:int, param3:ByteArray, param4:int, param5:int) : ByteArray
-      {
-         var _loc6_:ByteArray = new ByteArray();
-         var _loc7_:int = param2 * 4;
-         var _loc8_:int = param4 * 4;
-         var _loc9_:int = 0;
-         while(_loc9_ < param5)
-         {
-            _loc6_.writeBytes(param1,_loc9_ * _loc7_,_loc7_);
-            _loc6_.writeBytes(param3,_loc9_ * _loc8_,_loc8_);
-            _loc9_++;
-         }
-         _loc6_.position = 0;
-         return _loc6_;
-      }
-      
-      public static function captureImage(param1:IBitmapDrawable, param2:Number = 0, param3:IImageEncoder = null, param4:Boolean = true) : ImageSnapshot
-      {
-         var snapshot:ImageSnapshot = null;
-         var width:int = 0;
-         var height:int = 0;
-         var normalState:Array = null;
-         var bytes:ByteArray = null;
-         var data:BitmapData = null;
-         var bitmap:Bitmap = null;
-         var bounds:Rectangle = null;
-         var source:IBitmapDrawable = param1;
-         var dpi:Number = param2;
-         var encoder:IImageEncoder = param3;
-         var scaleLimited:Boolean = param4;
-         var screenDPI:Number = Capabilities.screenDPI;
-         if(dpi <= 0)
-         {
-            dpi = screenDPI;
-         }
-         var scale:Number = dpi / screenDPI;
-         var matrix:Matrix = new Matrix(scale,0,0,scale);
-         if(source is IUIComponent)
-         {
-            normalState = prepareToPrintObject(IUIComponent(source));
-         }
-         try
-         {
-            if(source != null)
+            _loc_6.position = 0;
+            return _loc_6;
+        }// end function
+
+        public static function captureImage(param1:IBitmapDrawable, param2:Number = 0, param3:IImageEncoder = null, param4:Boolean = true) : ImageSnapshot
+        {
+            var snapshot:ImageSnapshot;
+            var width:int;
+            var height:int;
+            var normalState:Array;
+            var bytes:ByteArray;
+            var data:BitmapData;
+            var bitmap:Bitmap;
+            var bounds:Rectangle;
+            var source:* = param1;
+            var dpi:* = param2;
+            var encoder:* = param3;
+            var scaleLimited:* = param4;
+            var screenDPI:* = Capabilities.screenDPI;
+            if (dpi <= 0)
             {
-               if(source is DisplayObject)
-               {
-                  width = DisplayObject(source).width;
-                  height = DisplayObject(source).height;
-               }
-               else if(source is BitmapData)
-               {
-                  width = BitmapData(source).width;
-                  height = BitmapData(source).height;
-               }
-               else if(source is IFlexDisplayObject)
-               {
-                  width = IFlexDisplayObject(source).width;
-                  height = IFlexDisplayObject(source).height;
-               }
+                dpi = screenDPI;
             }
-            if(!encoder)
+            var scale:* = dpi / screenDPI;
+            var matrix:* = new Matrix(scale, 0, 0, scale);
+            if (source is IUIComponent)
             {
-               encoder = new defaultEncoder();
+                normalState = prepareToPrintObject(IUIComponent(source));
             }
-            width = width * matrix.a;
-            height = height * matrix.d;
-            if(Boolean(scaleLimited) || width <= MAX_BITMAP_DIMENSION && height <= MAX_BITMAP_DIMENSION)
+            try
             {
-               data = captureBitmapData(source,matrix);
-               bitmap = new Bitmap(data);
-               width = bitmap.width;
-               height = bitmap.height;
-               bytes = encoder.encode(data);
+                if (source != null)
+                {
+                    if (source is DisplayObject)
+                    {
+                        width = DisplayObject(source).width;
+                        height = DisplayObject(source).height;
+                    }
+                    else if (source is BitmapData)
+                    {
+                        width = BitmapData(source).width;
+                        height = BitmapData(source).height;
+                    }
+                    else if (source is IFlexDisplayObject)
+                    {
+                        width = IFlexDisplayObject(source).mx.core:IFlexDisplayObject::width;
+                        height = IFlexDisplayObject(source).mx.core:IFlexDisplayObject::height;
+                    }
+                }
+                if (!encoder)
+                {
+                    encoder = new defaultEncoder();
+                }
+                width = width * matrix.a;
+                height = height * matrix.d;
+                if (scaleLimited || width <= MAX_BITMAP_DIMENSION && height <= MAX_BITMAP_DIMENSION)
+                {
+                    data = captureBitmapData(source, matrix);
+                    bitmap = new Bitmap(data);
+                    width = bitmap.width;
+                    height = bitmap.height;
+                    bytes = encoder.encode(data);
+                }
+                else
+                {
+                    bounds = new Rectangle(0, 0, width, height);
+                    bytes = captureAll(source, bounds, matrix);
+                    bytes = encoder.encodeByteArray(bytes, width, height);
+                }
+                snapshot = new ImageSnapshot(width, height, bytes, encoder.contentType);
             }
-            else
+            catch (e:Error)
             {
-               bounds = new Rectangle(0,0,width,height);
-               bytes = captureAll(source,bounds,matrix);
-               bytes = encoder.encodeByteArray(bytes,width,height);
+                throw null;
             }
-            snapshot = new ImageSnapshot(width,height,bytes,encoder.contentType);
-         }
-         finally
-         {
-            if(source is IUIComponent)
+            finally
             {
-               finishPrintObject(IUIComponent(source),normalState);
+                if (source is IUIComponent)
+                {
+                    finishPrintObject(IUIComponent(source), normalState);
+                }
             }
-         }
-         return snapshot;
-      }
-      
-      private static function prepareToPrintObject(param1:IUIComponent) : Array
-      {
-         var _loc2_:Array = [];
-         var _loc3_:DisplayObject = param1 is DisplayObject?DisplayObject(param1):null;
-         var _loc4_:Number = 0;
-         while(_loc3_ != null)
-         {
-            if(_loc3_ is UIComponent)
+            return snapshot;
+        }// end function
+
+        private static function prepareToPrintObject(param1:IUIComponent) : Array
+        {
+            var _loc_2:* = [];
+            var _loc_3:* = param1 is DisplayObject ? (DisplayObject(param1)) : (null);
+            var _loc_4:* = 0;
+            while (_loc_3 != null)
             {
-               _loc2_[_loc4_++] = UIComponent(_loc3_).prepareToPrint(UIComponent(param1));
+                
+                if (_loc_3 is UIComponent)
+                {
+                    _loc_2[++_loc_4] = UIComponent(_loc_3).prepareToPrint(UIComponent(param1));
+                }
+                else if (_loc_3 is DisplayObject && !(_loc_3 is Stage))
+                {
+                    _loc_2[++_loc_4] = DisplayObject(_loc_3).mask;
+                    DisplayObject(_loc_3).mask = null;
+                }
+                _loc_3 = _loc_3.parent is DisplayObject ? (DisplayObject(_loc_3.parent)) : (null);
             }
-            else if(_loc3_ is DisplayObject && !(_loc3_ is Stage))
+            return _loc_2;
+        }// end function
+
+        private static function captureAll(param1:IBitmapDrawable, param2:Rectangle, param3:Matrix, param4:ColorTransform = null, param5:String = null, param6:Rectangle = null, param7:Boolean = false) : ByteArray
+        {
+            var _loc_10:* = null;
+            var _loc_11:* = null;
+            var _loc_12:* = null;
+            var _loc_15:* = null;
+            var _loc_16:* = null;
+            var _loc_17:* = null;
+            var _loc_8:* = param3.clone();
+            var _loc_9:* = param2.clone();
+            if (param2.width > MAX_BITMAP_DIMENSION)
             {
-               _loc2_[_loc4_++] = DisplayObject(_loc3_).mask;
-               DisplayObject(_loc3_).mask = null;
+                _loc_9.width = MAX_BITMAP_DIMENSION;
+                _loc_10 = new Rectangle();
+                _loc_10.x = _loc_9.width;
+                _loc_10.y = param2.y;
+                _loc_10.width = param2.width - _loc_9.width;
+                _loc_10.height = param2.height;
             }
-            _loc3_ = _loc3_.parent is DisplayObject?DisplayObject(_loc3_.parent):null;
-         }
-         return _loc2_;
-      }
-      
-      private static function captureAll(param1:IBitmapDrawable, param2:Rectangle, param3:Matrix, param4:ColorTransform = null, param5:String = null, param6:Rectangle = null, param7:Boolean = false) : ByteArray
-      {
-         var _loc10_:Rectangle = null;
-         var _loc11_:Rectangle = null;
-         var _loc12_:Rectangle = null;
-         var _loc15_:ByteArray = null;
-         var _loc16_:ByteArray = null;
-         var _loc17_:ByteArray = null;
-         var _loc8_:Matrix = param3.clone();
-         var _loc9_:Rectangle = param2.clone();
-         if(param2.width > MAX_BITMAP_DIMENSION)
-         {
-            _loc9_.width = MAX_BITMAP_DIMENSION;
-            _loc10_ = new Rectangle();
-            _loc10_.x = _loc9_.width;
-            _loc10_.y = param2.y;
-            _loc10_.width = param2.width - _loc9_.width;
-            _loc10_.height = param2.height;
-         }
-         if(param2.height > MAX_BITMAP_DIMENSION)
-         {
-            _loc9_.height = MAX_BITMAP_DIMENSION;
-            if(_loc10_ != null)
+            if (param2.height > MAX_BITMAP_DIMENSION)
             {
-               _loc10_.height = _loc9_.height;
+                _loc_9.height = MAX_BITMAP_DIMENSION;
+                if (_loc_10 != null)
+                {
+                    _loc_10.height = _loc_9.height;
+                }
+                _loc_11 = new Rectangle();
+                _loc_11.x = param2.x;
+                _loc_11.y = _loc_9.height;
+                _loc_11.width = _loc_9.width;
+                _loc_11.height = param2.height - _loc_9.height;
+                if (param2.width > MAX_BITMAP_DIMENSION)
+                {
+                    _loc_12 = new Rectangle();
+                    _loc_12.x = _loc_9.width;
+                    _loc_12.y = _loc_9.height;
+                    _loc_12.width = param2.width - _loc_9.width;
+                    _loc_12.height = param2.height - _loc_9.height;
+                }
             }
-            _loc11_ = new Rectangle();
-            _loc11_.x = param2.x;
-            _loc11_.y = _loc9_.height;
-            _loc11_.width = _loc9_.width;
-            _loc11_.height = param2.height - _loc9_.height;
-            if(param2.width > MAX_BITMAP_DIMENSION)
+            _loc_8.translate(-_loc_9.x, -_loc_9.y);
+            _loc_9.x = 0;
+            _loc_9.y = 0;
+            var _loc_13:* = new BitmapData(_loc_9.width, _loc_9.height, true, 0);
+            _loc_13.draw(param1, _loc_8, param4, param5, param6, param7);
+            var _loc_14:* = _loc_13.getPixels(_loc_9);
+            _loc_14.position = 0;
+            if (_loc_10 != null)
             {
-               _loc12_ = new Rectangle();
-               _loc12_.x = _loc9_.width;
-               _loc12_.y = _loc9_.height;
-               _loc12_.width = param2.width - _loc9_.width;
-               _loc12_.height = param2.height - _loc9_.height;
+                _loc_8 = param3.clone();
+                _loc_8.translate(-_loc_10.x, -_loc_10.y);
+                _loc_10.x = 0;
+                _loc_10.y = 0;
+                _loc_15 = captureAll(param1, _loc_10, _loc_8);
+                _loc_14 = mergePixelRows(_loc_14, _loc_9.width, _loc_15, _loc_10.width, _loc_10.height);
             }
-         }
-         _loc8_.translate(-_loc9_.x,-_loc9_.y);
-         _loc9_.x = 0;
-         _loc9_.y = 0;
-         var _loc13_:BitmapData = new BitmapData(_loc9_.width,_loc9_.height,true,0);
-         _loc13_.draw(param1,_loc8_,param4,param5,param6,param7);
-         var _loc14_:ByteArray = _loc13_.getPixels(_loc9_);
-         _loc14_.position = 0;
-         if(_loc10_ != null)
-         {
-            _loc8_ = param3.clone();
-            _loc8_.translate(-_loc10_.x,-_loc10_.y);
-            _loc10_.x = 0;
-            _loc10_.y = 0;
-            _loc15_ = captureAll(param1,_loc10_,_loc8_);
-            _loc14_ = mergePixelRows(_loc14_,_loc9_.width,_loc15_,_loc10_.width,_loc10_.height);
-         }
-         if(_loc11_ != null)
-         {
-            _loc8_ = param3.clone();
-            _loc8_.translate(-_loc11_.x,-_loc11_.y);
-            _loc11_.x = 0;
-            _loc11_.y = 0;
-            _loc16_ = captureAll(param1,_loc11_,_loc8_);
-            if(_loc12_ != null)
+            if (_loc_11 != null)
             {
-               _loc8_ = param3.clone();
-               _loc8_.translate(-_loc12_.x,-_loc12_.y);
-               _loc12_.x = 0;
-               _loc12_.y = 0;
-               _loc17_ = captureAll(param1,_loc12_,_loc8_);
-               _loc16_ = mergePixelRows(_loc16_,_loc11_.width,_loc17_,_loc12_.width,_loc12_.height);
+                _loc_8 = param3.clone();
+                _loc_8.translate(-_loc_11.x, -_loc_11.y);
+                _loc_11.x = 0;
+                _loc_11.y = 0;
+                _loc_16 = captureAll(param1, _loc_11, _loc_8);
+                if (_loc_12 != null)
+                {
+                    _loc_8 = param3.clone();
+                    _loc_8.translate(-_loc_12.x, -_loc_12.y);
+                    _loc_12.x = 0;
+                    _loc_12.y = 0;
+                    _loc_17 = captureAll(param1, _loc_12, _loc_8);
+                    _loc_16 = mergePixelRows(_loc_16, _loc_11.width, _loc_17, _loc_12.width, _loc_12.height);
+                }
+                _loc_14.position = _loc_14.length;
+                _loc_14.writeBytes(_loc_16);
             }
-            _loc14_.position = _loc14_.length;
-            _loc14_.writeBytes(_loc16_);
-         }
-         _loc14_.position = 0;
-         return _loc14_;
-      }
-      
-      public static function captureBitmapData(param1:IBitmapDrawable, param2:Matrix = null, param3:ColorTransform = null, param4:String = null, param5:Rectangle = null, param6:Boolean = false) : BitmapData
-      {
-         var data:BitmapData = null;
-         var width:int = 0;
-         var height:int = 0;
-         var normalState:Array = null;
-         var scaledWidth:Number = NaN;
-         var scaledHeight:Number = NaN;
-         var reductionScale:Number = NaN;
-         var source:IBitmapDrawable = param1;
-         var matrix:Matrix = param2;
-         var colorTransform:ColorTransform = param3;
-         var blendMode:String = param4;
-         var clipRect:Rectangle = param5;
-         var smoothing:Boolean = param6;
-         if(source is IUIComponent)
-         {
-            normalState = prepareToPrintObject(IUIComponent(source));
-         }
-         try
-         {
-            if(source != null)
+            _loc_14.position = 0;
+            return _loc_14;
+        }// end function
+
+        public static function captureBitmapData(param1:IBitmapDrawable, param2:Matrix = null, param3:ColorTransform = null, param4:String = null, param5:Rectangle = null, param6:Boolean = false) : BitmapData
+        {
+            var data:BitmapData;
+            var width:int;
+            var height:int;
+            var normalState:Array;
+            var scaledWidth:Number;
+            var scaledHeight:Number;
+            var reductionScale:Number;
+            var source:* = param1;
+            var matrix:* = param2;
+            var colorTransform:* = param3;
+            var blendMode:* = param4;
+            var clipRect:* = param5;
+            var smoothing:* = param6;
+            if (source is IUIComponent)
             {
-               if(source is DisplayObject)
-               {
-                  width = DisplayObject(source).width;
-                  height = DisplayObject(source).height;
-               }
-               else if(source is BitmapData)
-               {
-                  width = BitmapData(source).width;
-                  height = BitmapData(source).height;
-               }
-               else if(source is IFlexDisplayObject)
-               {
-                  width = IFlexDisplayObject(source).width;
-                  height = IFlexDisplayObject(source).height;
-               }
+                normalState = prepareToPrintObject(IUIComponent(source));
             }
-            if(!matrix)
+            try
             {
-               matrix = new Matrix(1,0,0,1);
+                if (source != null)
+                {
+                    if (source is DisplayObject)
+                    {
+                        width = DisplayObject(source).width;
+                        height = DisplayObject(source).height;
+                    }
+                    else if (source is BitmapData)
+                    {
+                        width = BitmapData(source).width;
+                        height = BitmapData(source).height;
+                    }
+                    else if (source is IFlexDisplayObject)
+                    {
+                        width = IFlexDisplayObject(source).mx.core:IFlexDisplayObject::width;
+                        height = IFlexDisplayObject(source).mx.core:IFlexDisplayObject::height;
+                    }
+                }
+                if (!matrix)
+                {
+                    matrix = new Matrix(1, 0, 0, 1);
+                }
+                scaledWidth = width * matrix.a;
+                scaledHeight = height * matrix.d;
+                reductionScale;
+                if (scaledWidth > MAX_BITMAP_DIMENSION)
+                {
+                    reductionScale = scaledWidth / MAX_BITMAP_DIMENSION;
+                    scaledWidth = MAX_BITMAP_DIMENSION;
+                    scaledHeight = scaledHeight / reductionScale;
+                    matrix.a = scaledWidth / width;
+                    matrix.d = scaledHeight / height;
+                }
+                if (scaledHeight > MAX_BITMAP_DIMENSION)
+                {
+                    reductionScale = scaledHeight / MAX_BITMAP_DIMENSION;
+                    scaledHeight = MAX_BITMAP_DIMENSION;
+                    scaledWidth = scaledWidth / reductionScale;
+                    matrix.a = scaledWidth / width;
+                    matrix.d = scaledHeight / height;
+                }
+                data = new BitmapData(scaledWidth, scaledHeight, true, 0);
+                data.draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
             }
-            scaledWidth = width * matrix.a;
-            scaledHeight = height * matrix.d;
-            reductionScale = 1;
-            if(scaledWidth > MAX_BITMAP_DIMENSION)
+            catch (e:Error)
             {
-               reductionScale = scaledWidth / MAX_BITMAP_DIMENSION;
-               scaledWidth = MAX_BITMAP_DIMENSION;
-               scaledHeight = scaledHeight / reductionScale;
-               matrix.a = scaledWidth / width;
-               matrix.d = scaledHeight / height;
+                throw null;
             }
-            if(scaledHeight > MAX_BITMAP_DIMENSION)
+            finally
             {
-               reductionScale = scaledHeight / MAX_BITMAP_DIMENSION;
-               scaledHeight = MAX_BITMAP_DIMENSION;
-               scaledWidth = scaledWidth / reductionScale;
-               matrix.a = scaledWidth / width;
-               matrix.d = scaledHeight / height;
+                if (source is IUIComponent)
+                {
+                    finishPrintObject(IUIComponent(source), normalState);
+                }
             }
-            data = new BitmapData(scaledWidth,scaledHeight,true,0);
-            data.draw(source,matrix,colorTransform,blendMode,clipRect,smoothing);
-         }
-         finally
-         {
-            if(source is IUIComponent)
-            {
-               finishPrintObject(IUIComponent(source),normalState);
-            }
-         }
-         return data;
-      }
-      
-      public function get properties() : Object
-      {
-         return _properties;
-      }
-      
-      public function set width(param1:int) : void
-      {
-         _width = param1;
-      }
-      
-      public function set contentType(param1:String) : void
-      {
-         _contentType = param1;
-      }
-      
-      public function get height() : int
-      {
-         return _height;
-      }
-      
-      public function get data() : ByteArray
-      {
-         return _data;
-      }
-      
-      public function set height(param1:int) : void
-      {
-         _height = param1;
-      }
-      
-      public function get contentType() : String
-      {
-         return _contentType;
-      }
-      
-      public function set properties(param1:Object) : void
-      {
-         _properties = param1;
-      }
-      
-      public function set data(param1:ByteArray) : void
-      {
-         _data = param1;
-      }
-      
-      public function get width() : int
-      {
-         return _width;
-      }
-   }
+            return data;
+        }// end function
+
+    }
 }

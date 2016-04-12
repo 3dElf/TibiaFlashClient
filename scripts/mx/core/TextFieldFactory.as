@@ -1,64 +1,63 @@
-package mx.core
+﻿package mx.core
 {
-   import flash.text.TextField;
-   import flash.utils.Dictionary;
-   
-   use namespace mx_internal;
-   
-   public class TextFieldFactory implements mx.core.ITextFieldFactory
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static var instance:mx.core.ITextFieldFactory;
-       
-      private var textFields:Dictionary;
-      
-      public function TextFieldFactory()
-      {
-         textFields = new Dictionary(true);
-         super();
-      }
-      
-      public static function getInstance() : mx.core.ITextFieldFactory
-      {
-         if(!instance)
-         {
-            instance = new TextFieldFactory();
-         }
-         return instance;
-      }
-      
-      public function createTextField(param1:IFlexModuleFactory) : TextField
-      {
-         var _loc4_:* = null;
-         var _loc2_:TextField = null;
-         var _loc3_:Dictionary = textFields[param1];
-         if(_loc3_)
-         {
-            for(_loc4_ in _loc3_)
+    import flash.text.*;
+    import flash.utils.*;
+    import mx.core.*;
+
+    public class TextFieldFactory extends Object implements ITextFieldFactory
+    {
+        private var textFields:Dictionary;
+        static const VERSION:String = "3.6.0.21751";
+        private static var instance:ITextFieldFactory;
+
+        public function TextFieldFactory()
+        {
+            textFields = new Dictionary(true);
+            return;
+        }// end function
+
+        public function createTextField(param1:IFlexModuleFactory) : TextField
+        {
+            var _loc_4:* = null;
+            var _loc_2:* = null;
+            var _loc_3:* = textFields[param1];
+            if (_loc_3)
             {
-               _loc2_ = TextField(_loc4_);
+                for (_loc_4 in _loc_3)
+                {
+                    
+                    _loc_2 = TextField(_loc_4);
+                    break;
+                }
             }
-         }
-         if(!_loc2_)
-         {
-            if(param1)
+            if (!_loc_2)
             {
-               _loc2_ = TextField(param1.create("flash.text.TextField"));
+                if (param1)
+                {
+                    _loc_2 = TextField(param1.create("flash.text.TextField"));
+                }
+                else
+                {
+                    _loc_2 = new TextField();
+                }
+                if (!_loc_3)
+                {
+                    _loc_3 = new Dictionary(true);
+                }
+                _loc_3[_loc_2] = 1;
+                textFields[param1] = _loc_3;
             }
-            else
+            return _loc_2;
+        }// end function
+
+        public static function getInstance() : ITextFieldFactory
+        {
+            if (!instance)
             {
-               _loc2_ = new TextField();
+                instance = new TextFieldFactory;
             }
-            if(!_loc3_)
-            {
-               _loc3_ = new Dictionary(true);
-            }
-            _loc3_[_loc2_] = 1;
-            textFields[param1] = _loc3_;
-         }
-         return _loc2_;
-      }
-   }
+            return instance;
+        }// end function
+
+    }
 }

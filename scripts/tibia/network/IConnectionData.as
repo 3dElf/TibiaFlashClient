@@ -1,6 +1,10 @@
-package tibia.network
+﻿package tibia.network
 {
-   public interface IConnectionData
-   {
-       }
+
+    public interface IConnectionData
+    {
+
+        public function IConnectionData();
+
+    }
 }

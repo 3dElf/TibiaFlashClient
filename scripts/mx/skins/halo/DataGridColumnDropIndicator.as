@@ -1,36 +1,34 @@
-package mx.skins.halo
+﻿package mx.skins.halo
 {
-   import mx.skins.ProgrammaticSkin;
-   import mx.core.mx_internal;
-   import flash.display.Graphics;
-   import mx.utils.ColorUtil;
-   
-   use namespace mx_internal;
-   
-   public class DataGridColumnDropIndicator extends ProgrammaticSkin
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function DataGridColumnDropIndicator()
-      {
-         super();
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         super.updateDisplayList(param1,param2);
-         var _loc3_:Graphics = graphics;
-         _loc3_.clear();
-         _loc3_.lineStyle(1,getStyle("rollOverColor"));
-         _loc3_.moveTo(0,0);
-         _loc3_.lineTo(0,param2);
-         _loc3_.lineStyle(1,ColorUtil.adjustBrightness(getStyle("themeColor"),-75));
-         _loc3_.moveTo(1,0);
-         _loc3_.lineTo(1,param2);
-         _loc3_.lineStyle(1,getStyle("rollOverColor"));
-         _loc3_.moveTo(2,0);
-         _loc3_.lineTo(2,param2);
-      }
-   }
+    import flash.display.*;
+    import mx.skins.*;
+    import mx.utils.*;
+
+    public class DataGridColumnDropIndicator extends ProgrammaticSkin
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function DataGridColumnDropIndicator()
+        {
+            return;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            super.updateDisplayList(param1, param2);
+            var _loc_3:* = graphics;
+            _loc_3.clear();
+            _loc_3.lineStyle(1, getStyle("rollOverColor"));
+            _loc_3.moveTo(0, 0);
+            _loc_3.lineTo(0, param2);
+            _loc_3.lineStyle(1, ColorUtil.adjustBrightness(getStyle("themeColor"), -75));
+            _loc_3.moveTo(1, 0);
+            _loc_3.lineTo(1, param2);
+            _loc_3.lineStyle(1, getStyle("rollOverColor"));
+            _loc_3.moveTo(2, 0);
+            _loc_3.lineTo(2, param2);
+            return;
+        }// end function
+
+    }
 }

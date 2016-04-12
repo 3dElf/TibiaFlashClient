@@ -1,6 +1,10 @@
-package mx.binding
+﻿package mx.binding
 {
-   public interface IBindingClient
-   {
-       }
+
+    public interface IBindingClient
+    {
+
+        public function IBindingClient();
+
+    }
 }

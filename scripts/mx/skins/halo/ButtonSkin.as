@@ -1,179 +1,148 @@
-package mx.skins.halo
+﻿package mx.skins.halo
 {
-   import mx.skins.Border;
-   import mx.core.mx_internal;
-   import mx.core.UIComponent;
-   import mx.styles.StyleManager;
-   import mx.utils.ColorUtil;
-   import mx.core.IButton;
-   import flash.display.GradientType;
-   
-   use namespace mx_internal;
-   
-   public class ButtonSkin extends Border
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static var cache:Object = {};
-       
-      public function ButtonSkin()
-      {
-         super();
-      }
-      
-      private static function calcDerivedStyles(param1:uint, param2:uint, param3:uint) : Object
-      {
-         var _loc5_:Object = null;
-         var _loc4_:String = HaloColors.getCacheKey(param1,param2,param3);
-         if(!cache[_loc4_])
-         {
-            _loc5_ = cache[_loc4_] = {};
-            HaloColors.addHaloColors(_loc5_,param1,param2,param3);
-         }
-         return cache[_loc4_];
-      }
-      
-      override public function get measuredWidth() : Number
-      {
-         return UIComponent.DEFAULT_MEASURED_MIN_WIDTH;
-      }
-      
-      override public function get measuredHeight() : Number
-      {
-         return UIComponent.DEFAULT_MEASURED_MIN_HEIGHT;
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc16_:Number = NaN;
-         var _loc17_:Array = null;
-         var _loc18_:Array = null;
-         var _loc19_:Array = null;
-         var _loc20_:Array = null;
-         var _loc21_:Array = null;
-         var _loc22_:Array = null;
-         super.updateDisplayList(param1,param2);
-         var _loc3_:uint = getStyle("borderColor");
-         var _loc4_:Number = getStyle("cornerRadius");
-         var _loc5_:Array = getStyle("fillAlphas");
-         var _loc6_:Array = getStyle("fillColors");
-         StyleManager.getColorNames(_loc6_);
-         var _loc7_:Array = getStyle("highlightAlphas");
-         var _loc8_:uint = getStyle("themeColor");
-         var _loc9_:Object = calcDerivedStyles(_loc8_,_loc6_[0],_loc6_[1]);
-         var _loc10_:Number = ColorUtil.adjustBrightness2(_loc3_,-50);
-         var _loc11_:Number = ColorUtil.adjustBrightness2(_loc8_,-25);
-         var _loc12_:Boolean = false;
-         if(parent is IButton)
-         {
-            _loc12_ = IButton(parent).emphasized;
-         }
-         var _loc13_:Number = Math.max(0,_loc4_);
-         var _loc14_:Number = Math.max(0,_loc4_ - 1);
-         var _loc15_:Number = Math.max(0,_loc4_ - 2);
-         graphics.clear();
-         switch(name)
-         {
-            case "selectedUpSkin":
-            case "selectedOverSkin":
-               drawRoundRect(0,0,param1,param2,_loc13_,[_loc8_,_loc11_],1,verticalGradientMatrix(0,0,param1,param2));
-               drawRoundRect(1,1,param1 - 2,param2 - 2,_loc14_,[_loc6_[1],_loc6_[1]],1,verticalGradientMatrix(0,0,param1 - 2,param2 - 2));
-               break;
-            case "upSkin":
-               _loc17_ = [_loc6_[0],_loc6_[1]];
-               _loc18_ = [_loc5_[0],_loc5_[1]];
-               if(_loc12_)
-               {
-                  drawRoundRect(0,0,param1,param2,_loc13_,[_loc8_,_loc11_],1,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-                     "x":2,
-                     "y":2,
-                     "w":param1 - 4,
-                     "h":param2 - 4,
-                     "r":_loc4_ - 2
-                  });
-                  drawRoundRect(2,2,param1 - 4,param2 - 4,_loc15_,_loc17_,_loc18_,verticalGradientMatrix(2,2,param1 - 2,param2 - 2));
-                  drawRoundRect(2,2,param1 - 4,(param2 - 4) / 2,{
-                     "tl":_loc15_,
-                     "tr":_loc15_,
-                     "bl":0,
-                     "br":0
-                  },[16777215,16777215],_loc7_,verticalGradientMatrix(1,1,param1 - 2,(param2 - 2) / 2));
-               }
-               else
-               {
-                  drawRoundRect(0,0,param1,param2,_loc13_,[_loc3_,_loc10_],1,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-                     "x":1,
-                     "y":1,
-                     "w":param1 - 2,
-                     "h":param2 - 2,
-                     "r":_loc4_ - 1
-                  });
-                  drawRoundRect(1,1,param1 - 2,param2 - 2,_loc14_,_loc17_,_loc18_,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-                  drawRoundRect(1,1,param1 - 2,(param2 - 2) / 2,{
-                     "tl":_loc14_,
-                     "tr":_loc14_,
-                     "bl":0,
-                     "br":0
-                  },[16777215,16777215],_loc7_,verticalGradientMatrix(1,1,param1 - 2,(param2 - 2) / 2));
-               }
-               break;
-            case "overSkin":
-               if(_loc6_.length > 2)
-               {
-                  _loc19_ = [_loc6_[2],_loc6_[3]];
-               }
-               else
-               {
-                  _loc19_ = [_loc6_[0],_loc6_[1]];
-               }
-               if(_loc5_.length > 2)
-               {
-                  _loc20_ = [_loc5_[2],_loc5_[3]];
-               }
-               else
-               {
-                  _loc20_ = [_loc5_[0],_loc5_[1]];
-               }
-               drawRoundRect(0,0,param1,param2,_loc13_,[_loc8_,_loc11_],1,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-                  "x":1,
-                  "y":1,
-                  "w":param1 - 2,
-                  "h":param2 - 2,
-                  "r":_loc4_ - 1
-               });
-               drawRoundRect(1,1,param1 - 2,param2 - 2,_loc14_,_loc19_,_loc20_,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-               drawRoundRect(1,1,param1 - 2,(param2 - 2) / 2,{
-                  "tl":_loc14_,
-                  "tr":_loc14_,
-                  "bl":0,
-                  "br":0
-               },[16777215,16777215],_loc7_,verticalGradientMatrix(1,1,param1 - 2,(param2 - 2) / 2));
-               break;
-            case "downSkin":
-            case "selectedDownSkin":
-               drawRoundRect(0,0,param1,param2,_loc13_,[_loc8_,_loc11_],1,verticalGradientMatrix(0,0,param1,param2));
-               drawRoundRect(1,1,param1 - 2,param2 - 2,_loc14_,[_loc9_.fillColorPress1,_loc9_.fillColorPress2],1,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-               drawRoundRect(2,2,param1 - 4,(param2 - 4) / 2,{
-                  "tl":_loc15_,
-                  "tr":_loc15_,
-                  "bl":0,
-                  "br":0
-               },[16777215,16777215],_loc7_,verticalGradientMatrix(1,1,param1 - 2,(param2 - 2) / 2));
-               break;
-            case "disabledSkin":
-            case "selectedDisabledSkin":
-               _loc21_ = [_loc6_[0],_loc6_[1]];
-               _loc22_ = [Math.max(0,_loc5_[0] - 0.15),Math.max(0,_loc5_[1] - 0.15)];
-               drawRoundRect(0,0,param1,param2,_loc13_,[_loc3_,_loc10_],0.5,verticalGradientMatrix(0,0,param1,param2),GradientType.LINEAR,null,{
-                  "x":1,
-                  "y":1,
-                  "w":param1 - 2,
-                  "h":param2 - 2,
-                  "r":_loc4_ - 1
-               });
-               drawRoundRect(1,1,param1 - 2,param2 - 2,_loc14_,_loc21_,_loc22_,verticalGradientMatrix(1,1,param1 - 2,param2 - 2));
-         }
-      }
-   }
+    import flash.display.*;
+    import mx.core.*;
+    import mx.skins.*;
+    import mx.styles.*;
+    import mx.utils.*;
+
+    public class ButtonSkin extends Border
+    {
+        static const VERSION:String = "3.6.0.21751";
+        private static var cache:Object = {};
+
+        public function ButtonSkin()
+        {
+            return;
+        }// end function
+
+        override public function get measuredWidth() : Number
+        {
+            return UIComponent.DEFAULT_MEASURED_MIN_WIDTH;
+        }// end function
+
+        override public function get measuredHeight() : Number
+        {
+            return UIComponent.DEFAULT_MEASURED_MIN_HEIGHT;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_16:* = NaN;
+            var _loc_17:* = null;
+            var _loc_18:* = null;
+            var _loc_19:* = null;
+            var _loc_20:* = null;
+            var _loc_21:* = null;
+            var _loc_22:* = null;
+            super.updateDisplayList(param1, param2);
+            var _loc_3:* = getStyle("borderColor");
+            var _loc_4:* = getStyle("cornerRadius");
+            var _loc_5:* = getStyle("fillAlphas");
+            var _loc_6:* = getStyle("fillColors");
+            StyleManager.getColorNames(_loc_6);
+            var _loc_7:* = getStyle("highlightAlphas");
+            var _loc_8:* = getStyle("themeColor");
+            var _loc_9:* = calcDerivedStyles(_loc_8, _loc_6[0], _loc_6[1]);
+            var _loc_10:* = ColorUtil.adjustBrightness2(_loc_3, -50);
+            var _loc_11:* = ColorUtil.adjustBrightness2(_loc_8, -25);
+            var _loc_12:* = false;
+            if (parent is IButton)
+            {
+                _loc_12 = IButton(parent).emphasized;
+            }
+            var _loc_13:* = Math.max(0, _loc_4);
+            var _loc_14:* = Math.max(0, (_loc_4 - 1));
+            var _loc_15:* = Math.max(0, _loc_4 - 2);
+            graphics.clear();
+            switch(name)
+            {
+                case "selectedUpSkin":
+                case "selectedOverSkin":
+                {
+                    drawRoundRect(0, 0, param1, param2, _loc_13, [_loc_8, _loc_11], 1, verticalGradientMatrix(0, 0, param1, param2));
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, _loc_14, [_loc_6[1], _loc_6[1]], 1, verticalGradientMatrix(0, 0, param1 - 2, param2 - 2));
+                    break;
+                }
+                case "upSkin":
+                {
+                    _loc_17 = [_loc_6[0], _loc_6[1]];
+                    _loc_18 = [_loc_5[0], _loc_5[1]];
+                    if (_loc_12)
+                    {
+                        drawRoundRect(0, 0, param1, param2, _loc_13, [_loc_8, _loc_11], 1, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:2, y:2, w:param1 - 4, h:param2 - 4, r:_loc_4 - 2});
+                        drawRoundRect(2, 2, param1 - 4, param2 - 4, _loc_15, _loc_17, _loc_18, verticalGradientMatrix(2, 2, param1 - 2, param2 - 2));
+                        drawRoundRect(2, 2, param1 - 4, (param2 - 4) / 2, {tl:_loc_15, tr:_loc_15, bl:0, br:0}, [16777215, 16777215], _loc_7, verticalGradientMatrix(1, 1, param1 - 2, (param2 - 2) / 2));
+                    }
+                    else
+                    {
+                        drawRoundRect(0, 0, param1, param2, _loc_13, [_loc_3, _loc_10], 1, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:1, y:1, w:param1 - 2, h:param2 - 2, r:(_loc_4 - 1)});
+                        drawRoundRect(1, 1, param1 - 2, param2 - 2, _loc_14, _loc_17, _loc_18, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                        drawRoundRect(1, 1, param1 - 2, (param2 - 2) / 2, {tl:_loc_14, tr:_loc_14, bl:0, br:0}, [16777215, 16777215], _loc_7, verticalGradientMatrix(1, 1, param1 - 2, (param2 - 2) / 2));
+                    }
+                    break;
+                }
+                case "overSkin":
+                {
+                    if (_loc_6.length > 2)
+                    {
+                        _loc_19 = [_loc_6[2], _loc_6[3]];
+                    }
+                    else
+                    {
+                        _loc_19 = [_loc_6[0], _loc_6[1]];
+                    }
+                    if (_loc_5.length > 2)
+                    {
+                        _loc_20 = [_loc_5[2], _loc_5[3]];
+                    }
+                    else
+                    {
+                        _loc_20 = [_loc_5[0], _loc_5[1]];
+                    }
+                    drawRoundRect(0, 0, param1, param2, _loc_13, [_loc_8, _loc_11], 1, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:1, y:1, w:param1 - 2, h:param2 - 2, r:(_loc_4 - 1)});
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, _loc_14, _loc_19, _loc_20, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    drawRoundRect(1, 1, param1 - 2, (param2 - 2) / 2, {tl:_loc_14, tr:_loc_14, bl:0, br:0}, [16777215, 16777215], _loc_7, verticalGradientMatrix(1, 1, param1 - 2, (param2 - 2) / 2));
+                    break;
+                }
+                case "downSkin":
+                case "selectedDownSkin":
+                {
+                    drawRoundRect(0, 0, param1, param2, _loc_13, [_loc_8, _loc_11], 1, verticalGradientMatrix(0, 0, param1, param2));
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, _loc_14, [_loc_9.fillColorPress1, _loc_9.fillColorPress2], 1, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    drawRoundRect(2, 2, param1 - 4, (param2 - 4) / 2, {tl:_loc_15, tr:_loc_15, bl:0, br:0}, [16777215, 16777215], _loc_7, verticalGradientMatrix(1, 1, param1 - 2, (param2 - 2) / 2));
+                    break;
+                }
+                case "disabledSkin":
+                case "selectedDisabledSkin":
+                {
+                    _loc_21 = [_loc_6[0], _loc_6[1]];
+                    _loc_22 = [Math.max(0, _loc_5[0] - 0.15), Math.max(0, _loc_5[1] - 0.15)];
+                    drawRoundRect(0, 0, param1, param2, _loc_13, [_loc_3, _loc_10], 0.5, verticalGradientMatrix(0, 0, param1, param2), GradientType.LINEAR, null, {x:1, y:1, w:param1 - 2, h:param2 - 2, r:(_loc_4 - 1)});
+                    drawRoundRect(1, 1, param1 - 2, param2 - 2, _loc_14, _loc_21, _loc_22, verticalGradientMatrix(1, 1, param1 - 2, param2 - 2));
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+            return;
+        }// end function
+
+        private static function calcDerivedStyles(param1:uint, param2:uint, param3:uint) : Object
+        {
+            var _loc_5:* = null;
+            var _loc_4:* = HaloColors.getCacheKey(param1, param2, param3);
+            if (!cache[_loc_4])
+            {
+                var _loc_6:* = {};
+                cache[_loc_4] = {};
+                _loc_5 = _loc_6;
+                HaloColors.addHaloColors(_loc_5, param1, param2, param3);
+            }
+            return cache[_loc_4];
+        }// end function
+
+    }
 }

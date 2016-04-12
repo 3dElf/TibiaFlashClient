@@ -1,70 +1,70 @@
-package mx.core
+﻿package mx.core
 {
-   use namespace mx_internal;
-   
-   public class DragSource
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var formatHandlers:Object;
-      
-      private var dataHolder:Object;
-      
-      private var _formats:Array;
-      
-      public function DragSource()
-      {
-         dataHolder = {};
-         formatHandlers = {};
-         _formats = [];
-         super();
-      }
-      
-      public function hasFormat(param1:String) : Boolean
-      {
-         var _loc2_:int = _formats.length;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            if(_formats[_loc3_] == param1)
+
+    public class DragSource extends Object
+    {
+        private var formatHandlers:Object;
+        private var dataHolder:Object;
+        private var _formats:Array;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function DragSource()
+        {
+            dataHolder = {};
+            formatHandlers = {};
+            _formats = [];
+            return;
+        }// end function
+
+        public function hasFormat(param1:String) : Boolean
+        {
+            var _loc_2:* = _formats.length;
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_2)
             {
-               return true;
+                
+                if (_formats[_loc_3] == param1)
+                {
+                    return true;
+                }
+                _loc_3++;
             }
-            _loc3_++;
-         }
-         return false;
-      }
-      
-      public function addData(param1:Object, param2:String) : void
-      {
-         _formats.push(param2);
-         dataHolder[param2] = param1;
-      }
-      
-      public function dataForFormat(param1:String) : Object
-      {
-         var _loc2_:Object = dataHolder[param1];
-         if(_loc2_)
-         {
-            return _loc2_;
-         }
-         if(formatHandlers[param1])
-         {
-            return formatHandlers[param1]();
-         }
-         return null;
-      }
-      
-      public function addHandler(param1:Function, param2:String) : void
-      {
-         _formats.push(param2);
-         formatHandlers[param2] = param1;
-      }
-      
-      public function get formats() : Array
-      {
-         return _formats;
-      }
-   }
+            return false;
+        }// end function
+
+        public function addData(param1:Object, param2:String) : void
+        {
+            _formats.push(param2);
+            dataHolder[param2] = param1;
+            return;
+        }// end function
+
+        public function dataForFormat(param1:String) : Object
+        {
+            var _loc_2:* = dataHolder[param1];
+            if (_loc_2)
+            {
+                return _loc_2;
+            }
+            if (formatHandlers[param1])
+            {
+                var _loc_3:* = formatHandlers;
+                return _loc_3[param1]();
+            }
+            return null;
+        }// end function
+
+        public function addHandler(param1:Function, param2:String) : void
+        {
+            _formats.push(param2);
+            formatHandlers[param2] = param1;
+            return;
+        }// end function
+
+        public function get formats() : Array
+        {
+            return _formats;
+        }// end function
+
+    }
 }

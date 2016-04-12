@@ -1,106 +1,108 @@
-package tibia.trade
+﻿package tibia.trade
 {
-   import tibia.sidebar.Widget;
-   import mx.collections.IList;
-   import tibia.trade.safeTradeWidgetClasses.SafeTradeWidgetView;
-   import tibia.network.Communication;
-   
-   public class SafeTradeWidget extends Widget
-   {
-       
-      protected var m_OtherItems:IList = null;
-      
-      protected var m_OtherName:String = null;
-      
-      protected var m_OwnItems:IList = null;
-      
-      protected var m_OwnName:String = null;
-      
-      public function SafeTradeWidget()
-      {
-         super();
-      }
-      
-      public function set otherItems(param1:IList) : void
-      {
-         if(this.m_OtherItems != param1)
-         {
-            this.m_OtherItems = param1;
-            if(m_ViewInstance is SafeTradeWidgetView)
+    import mx.collections.*;
+    import tibia.network.*;
+    import tibia.sidebar.*;
+    import tibia.trade.safeTradeWidgetClasses.*;
+
+    public class SafeTradeWidget extends Widget
+    {
+        protected var m_OtherItems:IList = null;
+        protected var m_OtherName:String = null;
+        protected var m_OwnItems:IList = null;
+        protected var m_OwnName:String = null;
+
+        public function SafeTradeWidget()
+        {
+            return;
+        }// end function
+
+        public function set otherItems(param1:IList) : void
+        {
+            if (this.m_OtherItems != param1)
             {
-               SafeTradeWidgetView(m_ViewInstance).otherItems = this.m_OtherItems;
+                this.m_OtherItems = param1;
+                if (m_ViewInstance is SafeTradeWidgetView)
+                {
+                    SafeTradeWidgetView(m_ViewInstance).otherItems = this.m_OtherItems;
+                }
             }
-         }
-      }
-      
-      override public function close(param1:Boolean = false) : void
-      {
-         var _loc2_:Communication = null;
-         if(Boolean(param1) || Boolean(closable) && !closed)
-         {
-            _loc2_ = Tibia.s_GetCommunication();
-            if(_loc2_ != null && Boolean(_loc2_.isGameRunning))
+            return;
+        }// end function
+
+        override public function close(param1:Boolean = false) : void
+        {
+            var _loc_2:* = null;
+            if (param1 || closable && !closed)
             {
-               _loc2_.sendCREJECTTRADE();
+                _loc_2 = Tibia.s_GetCommunication();
+                if (_loc_2 != null && _loc_2.isGameRunning)
+                {
+                    _loc_2.sendCREJECTTRADE();
+                }
             }
-         }
-         super.close(param1);
-      }
-      
-      public function set ownName(param1:String) : void
-      {
-         if(this.m_OwnName != param1)
-         {
-            this.m_OwnName = param1;
-            if(m_ViewInstance is SafeTradeWidgetView)
+            super.close(param1);
+            return;
+        }// end function
+
+        public function set ownName(param1:String) : void
+        {
+            if (this.m_OwnName != param1)
             {
-               SafeTradeWidgetView(m_ViewInstance).ownName = this.m_OwnName;
+                this.m_OwnName = param1;
+                if (m_ViewInstance is SafeTradeWidgetView)
+                {
+                    SafeTradeWidgetView(m_ViewInstance).ownName = this.m_OwnName;
+                }
             }
-         }
-      }
-      
-      public function get otherItems() : IList
-      {
-         return this.m_OtherItems;
-      }
-      
-      public function get ownName() : String
-      {
-         return this.m_OwnName;
-      }
-      
-      public function set ownItems(param1:IList) : void
-      {
-         if(this.m_OwnItems != param1)
-         {
-            this.m_OwnItems = param1;
-            if(m_ViewInstance is SafeTradeWidgetView)
+            return;
+        }// end function
+
+        public function get otherItems() : IList
+        {
+            return this.m_OtherItems;
+        }// end function
+
+        public function get ownName() : String
+        {
+            return this.m_OwnName;
+        }// end function
+
+        public function set ownItems(param1:IList) : void
+        {
+            if (this.m_OwnItems != param1)
             {
-               SafeTradeWidgetView(m_ViewInstance).ownItems = this.m_OwnItems;
+                this.m_OwnItems = param1;
+                if (m_ViewInstance is SafeTradeWidgetView)
+                {
+                    SafeTradeWidgetView(m_ViewInstance).ownItems = this.m_OwnItems;
+                }
             }
-         }
-      }
-      
-      public function set otherName(param1:String) : void
-      {
-         if(this.m_OtherName != param1)
-         {
-            this.m_OtherName = param1;
-            if(m_ViewInstance is SafeTradeWidgetView)
+            return;
+        }// end function
+
+        public function set otherName(param1:String) : void
+        {
+            if (this.m_OtherName != param1)
             {
-               SafeTradeWidgetView(m_ViewInstance).otherName = this.m_OtherName;
+                this.m_OtherName = param1;
+                if (m_ViewInstance is SafeTradeWidgetView)
+                {
+                    SafeTradeWidgetView(m_ViewInstance).otherName = this.m_OtherName;
+                }
             }
-         }
-      }
-      
-      public function get ownItems() : IList
-      {
-         return this.m_OwnItems;
-      }
-      
-      public function get otherName() : String
-      {
-         return this.m_OtherName;
-      }
-   }
+            return;
+        }// end function
+
+        public function get ownItems() : IList
+        {
+            return this.m_OwnItems;
+        }// end function
+
+        public function get otherName() : String
+        {
+            return this.m_OtherName;
+        }// end function
+
+    }
 }

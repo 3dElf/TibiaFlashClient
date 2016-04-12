@@ -1,102 +1,101 @@
-package mx.effects.effectClasses
+﻿package mx.effects.effectClasses
 {
-   import mx.core.mx_internal;
-   
-   use namespace mx_internal;
-   
-   public class SetPropertyActionInstance extends ActionEffectInstance
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var _value;
-      
-      public var name:String;
-      
-      public function SetPropertyActionInstance(param1:Object)
-      {
-         super(param1);
-      }
-      
-      public function get value() : *
-      {
-         var _loc1_:* = undefined;
-         if(mx_internal::playReversed)
-         {
-            _loc1_ = getStartValue();
-            if(_loc1_ != undefined)
+    import mx.core.*;
+
+    public class SetPropertyActionInstance extends ActionEffectInstance
+    {
+        private var _value:Object;
+        public var name:String;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function SetPropertyActionInstance(param1:Object)
+        {
+            super(param1);
+            return;
+        }// end function
+
+        public function get value()
+        {
+            var _loc_1:* = undefined;
+            if (mx_internal::playReversed)
             {
-               return _loc1_;
+                _loc_1 = getStartValue();
+                if (_loc_1 != undefined)
+                {
+                    return _loc_1;
+                }
             }
-         }
-         return _value;
-      }
-      
-      public function set value(param1:*) : void
-      {
-         _value = param1;
-      }
-      
-      override public function play() : void
-      {
-         var _loc1_:String = null;
-         var _loc2_:Object = null;
-         super.play();
-         if(value === undefined && Boolean(propertyChanges))
-         {
-            if(name in propertyChanges.end && propertyChanges.start[name] != propertyChanges.end[name])
+            return _value;
+        }// end function
+
+        public function set value(param1) : void
+        {
+            _value = param1;
+            return;
+        }// end function
+
+        override public function play() : void
+        {
+            var _loc_1:* = null;
+            var _loc_2:* = null;
+            super.play();
+            if (value === undefined && propertyChanges)
             {
-               value = propertyChanges.end[name];
+                if (name in propertyChanges.end && propertyChanges.start[name] != propertyChanges.end[name])
+                {
+                    value = propertyChanges.end[name];
+                }
             }
-         }
-         if(Boolean(target) && Boolean(name) && value !== undefined)
-         {
-            if(target[name] is Number)
+            if (target && name && value !== undefined)
             {
-               _loc1_ = name;
-               _loc2_ = value;
-               if(name == "width" || name == "height")
-               {
-                  if(_loc2_ is String && _loc2_.indexOf("%") >= 0)
-                  {
-                     _loc1_ = name == "width"?"percentWidth":"percentHeight";
-                     _loc2_ = _loc2_.slice(0,_loc2_.indexOf("%"));
-                  }
-               }
-               target[_loc1_] = Number(_loc2_);
+                if (target[name] is Number)
+                {
+                    _loc_1 = name;
+                    _loc_2 = value;
+                    if (name == "width" || name == "height")
+                    {
+                        if (_loc_2 is String && _loc_2.indexOf("%") >= 0)
+                        {
+                            _loc_1 = name == "width" ? ("percentWidth") : ("percentHeight");
+                            _loc_2 = _loc_2.slice(0, _loc_2.indexOf("%"));
+                        }
+                    }
+                    target[_loc_1] = Number(_loc_2);
+                }
+                else if (target[name] is Boolean)
+                {
+                    if (value is String)
+                    {
+                        target[name] = value.toLowerCase() == "true";
+                    }
+                    else
+                    {
+                        target[name] = value;
+                    }
+                }
+                else
+                {
+                    target[name] = value;
+                }
             }
-            else if(target[name] is Boolean)
+            finishRepeat();
+            return;
+        }// end function
+
+        override protected function saveStartValue()
+        {
+            if (name != null)
             {
-               if(value is String)
-               {
-                  target[name] = value.toLowerCase() == "true";
-               }
-               else
-               {
-                  target[name] = value;
-               }
+                try
+                {
+                    return target[name];
+                }
+                catch (e:Error)
+                {
+                }
             }
-            else
-            {
-               target[name] = value;
-            }
-         }
-         finishRepeat();
-      }
-      
-      override protected function saveStartValue() : *
-      {
-         if(name != null)
-         {
-            try
-            {
-               return target[name];
-            }
-            catch(e:Error)
-            {
-            }
-         }
-         return undefined;
-      }
-   }
+            return undefined;
+        }// end function
+
+    }
 }

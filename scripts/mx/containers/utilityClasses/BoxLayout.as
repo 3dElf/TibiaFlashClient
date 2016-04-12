@@ -1,279 +1,279 @@
-package mx.containers.utilityClasses
+﻿package mx.containers.utilityClasses
 {
-   import mx.core.mx_internal;
-   import mx.containers.BoxDirection;
-   import mx.core.IUIComponent;
-   import mx.core.Container;
-   import mx.core.EdgeMetrics;
-   import mx.controls.scrollClasses.ScrollBar;
-   import mx.core.ScrollPolicy;
-   
-   use namespace mx_internal;
-   
-   public class BoxLayout extends Layout
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public var direction:String = "vertical";
-      
-      public function BoxLayout()
-      {
-         super();
-      }
-      
-      private function isVertical() : Boolean
-      {
-         return direction != BoxDirection.HORIZONTAL;
-      }
-      
-      mx_internal function getHorizontalAlignValue() : Number
-      {
-         var _loc1_:String = target.getStyle("horizontalAlign");
-         if(_loc1_ == "center")
-         {
-            return 0.5;
-         }
-         if(_loc1_ == "right")
-         {
-            return 1;
-         }
-         return 0;
-      }
-      
-      override public function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc16_:Number = NaN;
-         var _loc17_:int = 0;
-         var _loc18_:Number = NaN;
-         var _loc19_:Number = NaN;
-         var _loc20_:Number = NaN;
-         var _loc21_:int = 0;
-         var _loc22_:IUIComponent = null;
-         var _loc23_:IUIComponent = null;
-         var _loc24_:Number = NaN;
-         var _loc25_:Number = NaN;
-         var _loc26_:Number = NaN;
-         var _loc27_:Number = NaN;
-         var _loc3_:Container = super.target;
-         var _loc4_:int = _loc3_.numChildren;
-         if(_loc4_ == 0)
-         {
+    import mx.containers.*;
+    import mx.controls.scrollClasses.*;
+    import mx.core.*;
+
+    public class BoxLayout extends Layout
+    {
+        public var direction:String = "vertical";
+        static const VERSION:String = "3.6.0.21751";
+
+        public function BoxLayout()
+        {
             return;
-         }
-         var _loc5_:EdgeMetrics = _loc3_.viewMetricsAndPadding;
-         var _loc6_:Number = _loc3_.getStyle("paddingLeft");
-         var _loc7_:Number = _loc3_.getStyle("paddingTop");
-         var _loc8_:Number = getHorizontalAlignValue();
-         var _loc9_:Number = getVerticalAlignValue();
-         var _loc10_:Number = _loc3_.scaleX > 0 && _loc3_.scaleX != 1?Number(_loc3_.minWidth / Math.abs(_loc3_.scaleX)):Number(_loc3_.minWidth);
-         var _loc11_:Number = _loc3_.scaleY > 0 && _loc3_.scaleY != 1?Number(_loc3_.minHeight / Math.abs(_loc3_.scaleY)):Number(_loc3_.minHeight);
-         var _loc12_:Number = Math.max(param1,_loc10_) - _loc5_.right - _loc5_.left;
-         var _loc13_:Number = Math.max(param2,_loc11_) - _loc5_.bottom - _loc5_.top;
-         var _loc14_:ScrollBar = _loc3_.horizontalScrollBar;
-         var _loc15_:ScrollBar = _loc3_.verticalScrollBar;
-         if(_loc4_ == 1)
-         {
-            _loc23_ = IUIComponent(_loc3_.getChildAt(0));
-            _loc24_ = _loc23_.percentWidth;
-            _loc25_ = _loc23_.percentHeight;
-            if(_loc24_)
+        }// end function
+
+        private function isVertical() : Boolean
+        {
+            return direction != BoxDirection.HORIZONTAL;
+        }// end function
+
+        function getHorizontalAlignValue() : Number
+        {
+            var _loc_1:* = target.getStyle("horizontalAlign");
+            if (_loc_1 == "center")
             {
-               _loc26_ = Math.max(_loc23_.minWidth,Math.min(_loc23_.maxWidth,_loc24_ >= 100?Number(_loc12_):Number(_loc12_ * _loc24_ / 100)));
+                return 0.5;
+            }
+            if (_loc_1 == "right")
+            {
+                return 1;
+            }
+            return 0;
+        }// end function
+
+        override public function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_16:* = NaN;
+            var _loc_17:* = 0;
+            var _loc_18:* = NaN;
+            var _loc_19:* = NaN;
+            var _loc_20:* = NaN;
+            var _loc_21:* = 0;
+            var _loc_22:* = null;
+            var _loc_23:* = null;
+            var _loc_24:* = NaN;
+            var _loc_25:* = NaN;
+            var _loc_26:* = NaN;
+            var _loc_27:* = NaN;
+            var _loc_3:* = super.target;
+            var _loc_4:* = _loc_3.numChildren;
+            if (_loc_3.numChildren == 0)
+            {
+                return;
+            }
+            var _loc_5:* = _loc_3.viewMetricsAndPadding;
+            var _loc_6:* = _loc_3.getStyle("paddingLeft");
+            var _loc_7:* = _loc_3.getStyle("paddingTop");
+            var _loc_8:* = getHorizontalAlignValue();
+            var _loc_9:* = getVerticalAlignValue();
+            var _loc_10:* = _loc_3.scaleX > 0 && _loc_3.scaleX != 1 ? (_loc_3.minWidth / Math.abs(_loc_3.scaleX)) : (_loc_3.minWidth);
+            var _loc_11:* = _loc_3.scaleY > 0 && _loc_3.scaleY != 1 ? (_loc_3.minHeight / Math.abs(_loc_3.scaleY)) : (_loc_3.minHeight);
+            var _loc_12:* = Math.max(param1, _loc_10) - _loc_5.right - _loc_5.left;
+            var _loc_13:* = Math.max(param2, _loc_11) - _loc_5.bottom - _loc_5.top;
+            var _loc_14:* = _loc_3.horizontalScrollBar;
+            var _loc_15:* = _loc_3.verticalScrollBar;
+            if (_loc_4 == 1)
+            {
+                _loc_23 = IUIComponent(_loc_3.getChildAt(0));
+                _loc_24 = _loc_23.percentWidth;
+                _loc_25 = _loc_23.percentHeight;
+                if (_loc_24)
+                {
+                    _loc_26 = Math.max(_loc_23.minWidth, Math.min(_loc_23.maxWidth, _loc_24 >= 100 ? (_loc_12) : (_loc_12 * _loc_24 / 100)));
+                }
+                else
+                {
+                    _loc_26 = _loc_23.getExplicitOrMeasuredWidth();
+                }
+                if (_loc_25)
+                {
+                    _loc_27 = Math.max(_loc_23.minHeight, Math.min(_loc_23.maxHeight, _loc_25 >= 100 ? (_loc_13) : (_loc_13 * _loc_25 / 100)));
+                }
+                else
+                {
+                    _loc_27 = _loc_23.getExplicitOrMeasuredHeight();
+                }
+                if (_loc_23.scaleX == 1 && _loc_23.scaleY == 1)
+                {
+                    _loc_23.setActualSize(Math.floor(_loc_26), Math.floor(_loc_27));
+                }
+                else
+                {
+                    _loc_23.setActualSize(_loc_26, _loc_27);
+                }
+                if (_loc_15 != null && _loc_3.verticalScrollPolicy == ScrollPolicy.AUTO)
+                {
+                    _loc_12 = _loc_12 + _loc_15.minWidth;
+                }
+                if (_loc_14 != null && _loc_3.horizontalScrollPolicy == ScrollPolicy.AUTO)
+                {
+                    _loc_13 = _loc_13 + _loc_14.minHeight;
+                }
+                _loc_20 = (_loc_12 - _loc_23.width) * _loc_8 + _loc_6;
+                _loc_19 = (_loc_13 - _loc_23.height) * _loc_9 + _loc_7;
+                _loc_23.move(Math.floor(_loc_20), Math.floor(_loc_19));
+            }
+            else if (isVertical())
+            {
+                _loc_16 = _loc_3.getStyle("verticalGap");
+                _loc_17 = _loc_4;
+                _loc_21 = 0;
+                while (_loc_21 < _loc_4)
+                {
+                    
+                    if (!IUIComponent(_loc_3.getChildAt(_loc_21)).includeInLayout)
+                    {
+                        _loc_17 = _loc_17 - 1;
+                    }
+                    _loc_21++;
+                }
+                _loc_18 = Flex.flexChildHeightsProportionally(_loc_3, _loc_13 - (_loc_17 - 1) * _loc_16, _loc_12);
+                if (_loc_14 != null && _loc_3.horizontalScrollPolicy == ScrollPolicy.AUTO)
+                {
+                    _loc_18 = _loc_18 + _loc_14.minHeight;
+                }
+                if (_loc_15 != null && _loc_3.verticalScrollPolicy == ScrollPolicy.AUTO)
+                {
+                    _loc_12 = _loc_12 + _loc_15.minWidth;
+                }
+                _loc_19 = _loc_7 + _loc_18 * _loc_9;
+                _loc_21 = 0;
+                while (_loc_21 < _loc_4)
+                {
+                    
+                    _loc_22 = IUIComponent(_loc_3.getChildAt(_loc_21));
+                    _loc_20 = (_loc_12 - _loc_22.width) * _loc_8 + _loc_6;
+                    _loc_22.move(Math.floor(_loc_20), Math.floor(_loc_19));
+                    if (_loc_22.includeInLayout)
+                    {
+                        _loc_19 = _loc_19 + (_loc_22.height + _loc_16);
+                    }
+                    _loc_21++;
+                }
             }
             else
             {
-               _loc26_ = _loc23_.getExplicitOrMeasuredWidth();
+                _loc_16 = _loc_3.getStyle("horizontalGap");
+                _loc_17 = _loc_4;
+                _loc_21 = 0;
+                while (_loc_21 < _loc_4)
+                {
+                    
+                    if (!_loc_22.includeInLayout)
+                    {
+                        _loc_17 = _loc_17 - 1;
+                    }
+                    _loc_21++;
+                }
+                _loc_18 = Flex.flexChildWidthsProportionally(_loc_3, _loc_12 - (_loc_17 - 1) * _loc_16, _loc_13);
+                if (_loc_14 != null && _loc_3.horizontalScrollPolicy == ScrollPolicy.AUTO)
+                {
+                    _loc_13 = _loc_13 + _loc_14.minHeight;
+                }
+                if (_loc_15 != null && _loc_3.verticalScrollPolicy == ScrollPolicy.AUTO)
+                {
+                    _loc_18 = _loc_18 + _loc_15.minWidth;
+                }
+                _loc_20 = _loc_6 + _loc_18 * _loc_8;
+                _loc_21 = 0;
+                while (_loc_21 < _loc_4)
+                {
+                    
+                    _loc_22 = IUIComponent(_loc_3.getChildAt(_loc_21));
+                    _loc_19 = (_loc_13 - _loc_22.height) * _loc_9 + _loc_7;
+                    _loc_22.move(Math.floor(_loc_20), Math.floor(_loc_19));
+                    if (_loc_22.includeInLayout)
+                    {
+                        _loc_20 = _loc_20 + (_loc_22.width + _loc_16);
+                    }
+                    _loc_21++;
+                }
             }
-            if(_loc25_)
+            return;
+        }// end function
+
+        function getVerticalAlignValue() : Number
+        {
+            var _loc_1:* = target.getStyle("verticalAlign");
+            if (_loc_1 == "middle")
             {
-               _loc27_ = Math.max(_loc23_.minHeight,Math.min(_loc23_.maxHeight,_loc25_ >= 100?Number(_loc13_):Number(_loc13_ * _loc25_ / 100)));
+                return 0.5;
             }
-            else
+            if (_loc_1 == "bottom")
             {
-               _loc27_ = _loc23_.getExplicitOrMeasuredHeight();
+                return 1;
             }
-            if(_loc23_.scaleX == 1 && _loc23_.scaleY == 1)
+            return 0;
+        }// end function
+
+        function heightPadding(param1:Number) : Number
+        {
+            var _loc_2:* = target.viewMetricsAndPadding;
+            var _loc_3:* = _loc_2.top + _loc_2.bottom;
+            if (param1 > 1 && isVertical())
             {
-               _loc23_.setActualSize(Math.floor(_loc26_),Math.floor(_loc27_));
+                _loc_3 = _loc_3 + target.getStyle("verticalGap") * (param1 - 1);
             }
-            else
+            return _loc_3;
+        }// end function
+
+        function widthPadding(param1:Number) : Number
+        {
+            var _loc_2:* = target.viewMetricsAndPadding;
+            var _loc_3:* = _loc_2.left + _loc_2.right;
+            if (param1 > 1 && isVertical() == false)
             {
-               _loc23_.setActualSize(_loc26_,_loc27_);
+                _loc_3 = _loc_3 + target.getStyle("horizontalGap") * (param1 - 1);
             }
-            if(_loc15_ != null && _loc3_.verticalScrollPolicy == ScrollPolicy.AUTO)
+            return _loc_3;
+        }// end function
+
+        override public function measure() : void
+        {
+            var _loc_1:* = null;
+            var _loc_10:* = NaN;
+            var _loc_11:* = NaN;
+            var _loc_12:* = null;
+            var _loc_13:* = NaN;
+            var _loc_14:* = NaN;
+            _loc_1 = super.target;
+            var _loc_2:* = isVertical();
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = _loc_1.numChildren;
+            var _loc_8:* = _loc_1.numChildren;
+            var _loc_9:* = 0;
+            while (_loc_9 < _loc_7)
             {
-               _loc12_ = _loc12_ + _loc15_.minWidth;
+                
+                _loc_12 = IUIComponent(_loc_1.getChildAt(_loc_9));
+                if (!_loc_12.includeInLayout)
+                {
+                    _loc_8 = _loc_8 - 1;
+                }
+                else
+                {
+                    _loc_13 = _loc_12.getExplicitOrMeasuredWidth();
+                    _loc_14 = _loc_12.getExplicitOrMeasuredHeight();
+                    if (_loc_2)
+                    {
+                        _loc_3 = Math.max(!isNaN(_loc_12.percentWidth) ? (_loc_12.minWidth) : (_loc_13), _loc_3);
+                        _loc_5 = Math.max(_loc_13, _loc_5);
+                        _loc_4 = _loc_4 + (!isNaN(_loc_12.percentHeight) ? (_loc_12.minHeight) : (_loc_14));
+                        _loc_6 = _loc_6 + _loc_14;
+                    }
+                    else
+                    {
+                        _loc_3 = _loc_3 + (!isNaN(_loc_12.percentWidth) ? (_loc_12.minWidth) : (_loc_13));
+                        _loc_5 = _loc_5 + _loc_13;
+                        _loc_4 = Math.max(!isNaN(_loc_12.percentHeight) ? (_loc_12.minHeight) : (_loc_14), _loc_4);
+                        _loc_6 = Math.max(_loc_14, _loc_6);
+                    }
+                }
+                _loc_9++;
             }
-            if(_loc14_ != null && _loc3_.horizontalScrollPolicy == ScrollPolicy.AUTO)
-            {
-               _loc13_ = _loc13_ + _loc14_.minHeight;
-            }
-            _loc20_ = (_loc12_ - _loc23_.width) * _loc8_ + _loc6_;
-            _loc19_ = (_loc13_ - _loc23_.height) * _loc9_ + _loc7_;
-            _loc23_.move(Math.floor(_loc20_),Math.floor(_loc19_));
-         }
-         else if(isVertical())
-         {
-            _loc16_ = _loc3_.getStyle("verticalGap");
-            _loc17_ = _loc4_;
-            _loc21_ = 0;
-            while(_loc21_ < _loc4_)
-            {
-               if(!IUIComponent(_loc3_.getChildAt(_loc21_)).includeInLayout)
-               {
-                  _loc17_--;
-               }
-               _loc21_++;
-            }
-            _loc18_ = Flex.flexChildHeightsProportionally(_loc3_,_loc13_ - (_loc17_ - 1) * _loc16_,_loc12_);
-            if(_loc14_ != null && _loc3_.horizontalScrollPolicy == ScrollPolicy.AUTO)
-            {
-               _loc18_ = _loc18_ + _loc14_.minHeight;
-            }
-            if(_loc15_ != null && _loc3_.verticalScrollPolicy == ScrollPolicy.AUTO)
-            {
-               _loc12_ = _loc12_ + _loc15_.minWidth;
-            }
-            _loc19_ = _loc7_ + _loc18_ * _loc9_;
-            _loc21_ = 0;
-            while(_loc21_ < _loc4_)
-            {
-               _loc22_ = IUIComponent(_loc3_.getChildAt(_loc21_));
-               _loc20_ = (_loc12_ - _loc22_.width) * _loc8_ + _loc6_;
-               _loc22_.move(Math.floor(_loc20_),Math.floor(_loc19_));
-               if(_loc22_.includeInLayout)
-               {
-                  _loc19_ = _loc19_ + (_loc22_.height + _loc16_);
-               }
-               _loc21_++;
-            }
-         }
-         else
-         {
-            _loc16_ = _loc3_.getStyle("horizontalGap");
-            _loc17_ = _loc4_;
-            _loc21_ = 0;
-            while(_loc21_ < _loc4_)
-            {
-               if(!IUIComponent(_loc3_.getChildAt(_loc21_)).includeInLayout)
-               {
-                  _loc17_--;
-               }
-               _loc21_++;
-            }
-            _loc18_ = Flex.flexChildWidthsProportionally(_loc3_,_loc12_ - (_loc17_ - 1) * _loc16_,_loc13_);
-            if(_loc14_ != null && _loc3_.horizontalScrollPolicy == ScrollPolicy.AUTO)
-            {
-               _loc13_ = _loc13_ + _loc14_.minHeight;
-            }
-            if(_loc15_ != null && _loc3_.verticalScrollPolicy == ScrollPolicy.AUTO)
-            {
-               _loc18_ = _loc18_ + _loc15_.minWidth;
-            }
-            _loc20_ = _loc6_ + _loc18_ * _loc8_;
-            _loc21_ = 0;
-            while(_loc21_ < _loc4_)
-            {
-               _loc22_ = IUIComponent(_loc3_.getChildAt(_loc21_));
-               _loc19_ = (_loc13_ - _loc22_.height) * _loc9_ + _loc7_;
-               _loc22_.move(Math.floor(_loc20_),Math.floor(_loc19_));
-               if(_loc22_.includeInLayout)
-               {
-                  _loc20_ = _loc20_ + (_loc22_.width + _loc16_);
-               }
-               _loc21_++;
-            }
-         }
-      }
-      
-      mx_internal function getVerticalAlignValue() : Number
-      {
-         var _loc1_:String = target.getStyle("verticalAlign");
-         if(_loc1_ == "middle")
-         {
-            return 0.5;
-         }
-         if(_loc1_ == "bottom")
-         {
-            return 1;
-         }
-         return 0;
-      }
-      
-      mx_internal function heightPadding(param1:Number) : Number
-      {
-         var _loc2_:EdgeMetrics = target.viewMetricsAndPadding;
-         var _loc3_:Number = _loc2_.top + _loc2_.bottom;
-         if(param1 > 1 && Boolean(isVertical()))
-         {
-            _loc3_ = _loc3_ + target.getStyle("verticalGap") * (param1 - 1);
-         }
-         return _loc3_;
-      }
-      
-      mx_internal function widthPadding(param1:Number) : Number
-      {
-         var _loc2_:EdgeMetrics = target.viewMetricsAndPadding;
-         var _loc3_:Number = _loc2_.left + _loc2_.right;
-         if(param1 > 1 && isVertical() == false)
-         {
-            _loc3_ = _loc3_ + target.getStyle("horizontalGap") * (param1 - 1);
-         }
-         return _loc3_;
-      }
-      
-      override public function measure() : void
-      {
-         var _loc1_:Container = null;
-         var _loc10_:Number = NaN;
-         var _loc11_:Number = NaN;
-         var _loc12_:IUIComponent = null;
-         var _loc13_:Number = NaN;
-         var _loc14_:Number = NaN;
-         _loc1_ = super.target;
-         var _loc2_:Boolean = isVertical();
-         var _loc3_:Number = 0;
-         var _loc4_:Number = 0;
-         var _loc5_:Number = 0;
-         var _loc6_:Number = 0;
-         var _loc7_:int = _loc1_.numChildren;
-         var _loc8_:int = _loc7_;
-         var _loc9_:int = 0;
-         while(_loc9_ < _loc7_)
-         {
-            _loc12_ = IUIComponent(_loc1_.getChildAt(_loc9_));
-            if(!_loc12_.includeInLayout)
-            {
-               _loc8_--;
-            }
-            else
-            {
-               _loc13_ = _loc12_.getExplicitOrMeasuredWidth();
-               _loc14_ = _loc12_.getExplicitOrMeasuredHeight();
-               if(_loc2_)
-               {
-                  _loc3_ = Math.max(!isNaN(_loc12_.percentWidth)?Number(_loc12_.minWidth):Number(_loc13_),_loc3_);
-                  _loc5_ = Math.max(_loc13_,_loc5_);
-                  _loc4_ = _loc4_ + (!isNaN(_loc12_.percentHeight)?_loc12_.minHeight:_loc14_);
-                  _loc6_ = _loc6_ + _loc14_;
-               }
-               else
-               {
-                  _loc3_ = _loc3_ + (!isNaN(_loc12_.percentWidth)?_loc12_.minWidth:_loc13_);
-                  _loc5_ = _loc5_ + _loc13_;
-                  _loc4_ = Math.max(!isNaN(_loc12_.percentHeight)?Number(_loc12_.minHeight):Number(_loc14_),_loc4_);
-                  _loc6_ = Math.max(_loc14_,_loc6_);
-               }
-            }
-            _loc9_++;
-         }
-         _loc10_ = widthPadding(_loc8_);
-         _loc11_ = heightPadding(_loc8_);
-         _loc1_.measuredMinWidth = _loc3_ + _loc10_;
-         _loc1_.measuredMinHeight = _loc4_ + _loc11_;
-         _loc1_.measuredWidth = _loc5_ + _loc10_;
-         _loc1_.measuredHeight = _loc6_ + _loc11_;
-      }
-   }
+            _loc_10 = widthPadding(_loc_8);
+            _loc_11 = heightPadding(_loc_8);
+            _loc_1.measuredMinWidth = _loc_3 + _loc_10;
+            _loc_1.measuredMinHeight = _loc_4 + _loc_11;
+            _loc_1.measuredWidth = _loc_5 + _loc_10;
+            _loc_1.measuredHeight = _loc_6 + _loc_11;
+            return;
+        }// end function
+
+    }
 }

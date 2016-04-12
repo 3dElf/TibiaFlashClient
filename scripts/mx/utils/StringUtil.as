@@ -1,104 +1,110 @@
-package mx.utils
+﻿package mx.utils
 {
-   import mx.core.mx_internal;
-   
-   use namespace mx_internal;
-   
-   public class StringUtil
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function StringUtil()
-      {
-         super();
-      }
-      
-      public static function trim(param1:String) : String
-      {
-         if(param1 == null)
-         {
-            return "";
-         }
-         var _loc2_:int = 0;
-         while(isWhitespace(param1.charAt(_loc2_)))
-         {
-            _loc2_++;
-         }
-         var _loc3_:int = param1.length - 1;
-         while(isWhitespace(param1.charAt(_loc3_)))
-         {
-            _loc3_--;
-         }
-         if(_loc3_ >= _loc2_)
-         {
-            return param1.slice(_loc2_,_loc3_ + 1);
-         }
-         return "";
-      }
-      
-      public static function isWhitespace(param1:String) : Boolean
-      {
-         switch(param1)
-         {
-            case " ":
-            case "\t":
-            case "\r":
-            case "\n":
-            case "\f":
-               return true;
-            default:
-               return false;
-         }
-      }
-      
-      public static function substitute(param1:String, ... rest) : String
-      {
-         var _loc4_:Array = null;
-         if(param1 == null)
-         {
-            return "";
-         }
-         var _loc3_:uint = rest.length;
-         if(_loc3_ == 1 && rest[0] is Array)
-         {
-            _loc4_ = rest[0] as Array;
-            _loc3_ = _loc4_.length;
-         }
-         else
-         {
-            _loc4_ = rest;
-         }
-         var _loc5_:int = 0;
-         while(_loc5_ < _loc3_)
-         {
-            param1 = param1.replace(new RegExp("\\{" + _loc5_ + "\\}","g"),_loc4_[_loc5_]);
-            _loc5_++;
-         }
-         return param1;
-      }
-      
-      public static function trimArrayElements(param1:String, param2:String) : String
-      {
-         var _loc3_:Array = null;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         if(param1 != "" && param1 != null)
-         {
-            _loc3_ = param1.split(param2);
-            _loc4_ = _loc3_.length;
-            _loc5_ = 0;
-            while(_loc5_ < _loc4_)
+
+    public class StringUtil extends Object
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function StringUtil()
+        {
+            return;
+        }// end function
+
+        public static function trim(param1:String) : String
+        {
+            if (param1 == null)
             {
-               _loc3_[_loc5_] = StringUtil.trim(_loc3_[_loc5_]);
-               _loc5_++;
+                return "";
             }
-            if(_loc4_ > 0)
+            var _loc_2:* = 0;
+            while (isWhitespace(param1.charAt(_loc_2)))
             {
-               param1 = _loc3_.join(param2);
+                
+                _loc_2++;
             }
-         }
-         return param1;
-      }
-   }
+            var _loc_3:* = param1.length - 1;
+            while (isWhitespace(param1.charAt(_loc_3)))
+            {
+                
+                _loc_3 = _loc_3 - 1;
+            }
+            if (_loc_3 >= _loc_2)
+            {
+                return param1.slice(_loc_2, (_loc_3 + 1));
+            }
+            return "";
+        }// end function
+
+        public static function isWhitespace(param1:String) : Boolean
+        {
+            switch(param1)
+            {
+                case " ":
+                case "\t":
+                case "\r":
+                case "\n":
+                case "\f":
+                {
+                    return true;
+                }
+                default:
+                {
+                    return false;
+                    break;
+                }
+            }
+        }// end function
+
+        public static function substitute(param1:String, ... args) : String
+        {
+            var _loc_4:* = null;
+            if (param1 == null)
+            {
+                return "";
+            }
+            args = args.length;
+            if (args == 1 && args[0] is Array)
+            {
+                _loc_4 = args[0] as Array;
+                args = _loc_4.length;
+            }
+            else
+            {
+                _loc_4 = args;
+            }
+            var _loc_5:* = 0;
+            while (_loc_5 < args)
+            {
+                
+                param1 = param1.replace(new RegExp("\\{" + _loc_5 + "\\}", "g"), _loc_4[_loc_5]);
+                _loc_5++;
+            }
+            return param1;
+        }// end function
+
+        public static function trimArrayElements(param1:String, param2:String) : String
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            if (param1 != "" && param1 != null)
+            {
+                _loc_3 = param1.split(param2);
+                _loc_4 = _loc_3.length;
+                _loc_5 = 0;
+                while (_loc_5 < _loc_4)
+                {
+                    
+                    _loc_3[_loc_5] = StringUtil.trim(_loc_3[_loc_5]);
+                    _loc_5++;
+                }
+                if (_loc_4 > 0)
+                {
+                    param1 = _loc_3.join(param2);
+                }
+            }
+            return param1;
+        }// end function
+
+    }
 }

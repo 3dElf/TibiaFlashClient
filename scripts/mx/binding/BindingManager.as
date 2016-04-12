@@ -1,91 +1,93 @@
-package mx.binding
+﻿package mx.binding
 {
-   import mx.core.mx_internal;
-   
-   use namespace mx_internal;
-   
-   public class BindingManager
-   {
-      
-      static var debugDestinationStrings:Object = {};
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function BindingManager()
-      {
-         super();
-      }
-      
-      public static function executeBindings(param1:Object, param2:String, param3:Object) : void
-      {
-         var _loc4_:* = null;
-         if(!param2 || param2 == "")
-         {
+
+    public class BindingManager extends Object
+    {
+        static var debugDestinationStrings:Object = {};
+        static const VERSION:String = "3.6.0.21751";
+
+        public function BindingManager()
+        {
             return;
-         }
-         if(Boolean(param1) && (Boolean(param1 is IBindingClient || param1.hasOwnProperty("_bindingsByDestination"))) && Boolean(param1._bindingsByDestination) && Boolean(param1._bindingsBeginWithWord[getFirstWord(param2)]))
-         {
-            for(_loc4_ in param1._bindingsByDestination)
+        }// end function
+
+        public static function executeBindings(param1:Object, param2:String, param3:Object) : void
+        {
+            var _loc_4:* = null;
+            if (!param2 || param2 == "")
             {
-               if(_loc4_.charAt(0) == param2.charAt(0))
-               {
-                  if(_loc4_.indexOf(param2 + ".") == 0 || _loc4_.indexOf(param2 + "[") == 0 || _loc4_ == param2)
-                  {
-                     param1._bindingsByDestination[_loc4_].execute(param3);
-                  }
-               }
+                return;
             }
-         }
-      }
-      
-      public static function addBinding(param1:Object, param2:String, param3:Binding) : void
-      {
-         if(!param1._bindingsByDestination)
-         {
-            param1._bindingsByDestination = {};
-            param1._bindingsBeginWithWord = {};
-         }
-         param1._bindingsByDestination[param2] = param3;
-         param1._bindingsBeginWithWord[getFirstWord(param2)] = true;
-      }
-      
-      public static function debugBinding(param1:String) : void
-      {
-         debugDestinationStrings[param1] = true;
-      }
-      
-      private static function getFirstWord(param1:String) : String
-      {
-         var _loc2_:int = param1.indexOf(".");
-         var _loc3_:int = param1.indexOf("[");
-         if(_loc2_ == _loc3_)
-         {
-            return param1;
-         }
-         var _loc4_:int = Math.min(_loc2_,_loc3_);
-         if(_loc4_ == -1)
-         {
-            _loc4_ = Math.max(_loc2_,_loc3_);
-         }
-         return param1.substr(0,_loc4_);
-      }
-      
-      public static function setEnabled(param1:Object, param2:Boolean) : void
-      {
-         var _loc3_:Array = null;
-         var _loc4_:uint = 0;
-         var _loc5_:Binding = null;
-         if(param1 is IBindingClient && Boolean(param1._bindings))
-         {
-            _loc3_ = param1._bindings as Array;
-            _loc4_ = 0;
-            while(_loc4_ < _loc3_.length)
+            if (param1 && (param1 is IBindingClient || param1.hasOwnProperty("_bindingsByDestination")) && param1._bindingsByDestination && param1._bindingsBeginWithWord[getFirstWord(param2)])
             {
-               _loc5_ = _loc3_[_loc4_];
-               _loc5_.isEnabled = param2;
-               _loc4_++;
+                for (_loc_4 in param1._bindingsByDestination)
+                {
+                    
+                    if (_loc_4.charAt(0) == param2.charAt(0))
+                    {
+                        if (_loc_4.indexOf(param2 + ".") == 0 || _loc_4.indexOf(param2 + "[") == 0 || _loc_4 == param2)
+                        {
+                            _loc_6[_loc_4].execute(param3);
+                        }
+                    }
+                }
             }
-         }
-      }
-   }
+            return;
+        }// end function
+
+        public static function addBinding(param1:Object, param2:String, param3:Binding) : void
+        {
+            if (!param1._bindingsByDestination)
+            {
+                param1._bindingsByDestination = {};
+                param1._bindingsBeginWithWord = {};
+            }
+            param1._bindingsByDestination[param2] = param3;
+            param1._bindingsBeginWithWord[getFirstWord(param2)] = true;
+            return;
+        }// end function
+
+        public static function debugBinding(param1:String) : void
+        {
+            debugDestinationStrings[param1] = true;
+            return;
+        }// end function
+
+        private static function getFirstWord(param1:String) : String
+        {
+            var _loc_2:* = param1.indexOf(".");
+            var _loc_3:* = param1.indexOf("[");
+            if (_loc_2 == _loc_3)
+            {
+                return param1;
+            }
+            var _loc_4:* = Math.min(_loc_2, _loc_3);
+            if (Math.min(_loc_2, _loc_3) == -1)
+            {
+                _loc_4 = Math.max(_loc_2, _loc_3);
+            }
+            return param1.substr(0, _loc_4);
+        }// end function
+
+        public static function setEnabled(param1:Object, param2:Boolean) : void
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            if (param1 is IBindingClient && param1._bindings)
+            {
+                _loc_3 = param1._bindings as Array;
+                _loc_4 = 0;
+                while (_loc_4 < _loc_3.length)
+                {
+                    
+                    _loc_5 = _loc_3[_loc_4];
+                    _loc_5.isEnabled = param2;
+                    _loc_4 = _loc_4 + 1;
+                }
+            }
+            return;
+        }// end function
+
+    }
 }

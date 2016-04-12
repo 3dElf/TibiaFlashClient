@@ -1,4432 +1,4502 @@
-package mx.core
+﻿package mx.core
 {
-   import mx.automation.IAutomationObject;
-   import mx.managers.ILayoutManagerClient;
-   import mx.styles.ISimpleStyleClient;
-   import mx.styles.IStyleClient;
-   import mx.managers.IToolTipManagerClient;
-   import mx.validators.IValidatorListener;
-   import mx.managers.ISystemManager;
-   import mx.managers.SystemManagerGlobals;
-   import mx.events.EffectEvent;
-   import flash.display.DisplayObject;
-   import flash.geom.Point;
-   import mx.managers.IFocusManager;
-   import flash.display.DisplayObjectContainer;
-   import flash.events.Event;
-   import mx.events.DynamicEvent;
-   import mx.styles.StyleManager;
-   import flash.utils.getQualifiedClassName;
-   import flash.system.Capabilities;
-   import flash.accessibility.AccessibilityProperties;
-   import flash.accessibility.Accessibility;
-   import flash.geom.Matrix;
-   import mx.events.FlexEvent;
-   import mx.states.State;
-   import flash.geom.Rectangle;
-   import mx.styles.CSSStyleDeclaration;
-   import flash.display.Stage;
-   import flash.display.Sprite;
-   import flash.events.KeyboardEvent;
-   import mx.utils.StringUtil;
-   import flash.events.FocusEvent;
-   import mx.graphics.RoundedRectangle;
-   import mx.events.ResizeEvent;
-   import mx.events.ChildExistenceChangedEvent;
-   import mx.managers.ToolTipManager;
-   import mx.events.ValidationResultEvent;
-   import mx.validators.ValidationResult;
-   import mx.effects.EffectManager;
-   import flash.display.Loader;
-   import mx.utils.ColorUtil;
-   import mx.binding.BindingManager;
-   import mx.effects.IEffectInstance;
-   import flash.display.Graphics;
-   import mx.managers.SystemManager;
-   import mx.events.StateChangeEvent;
-   import mx.effects.IEffect;
-   import mx.resources.IResourceManager;
-   import mx.managers.SystemManagerProxy;
-   import mx.states.Transition;
-   import mx.events.PropertyChangeEvent;
-   import mx.events.MoveEvent;
-   import mx.controls.IFlexContextMenu;
-   import flash.display.InteractiveObject;
-   import mx.styles.StyleProtoChain;
-   import flash.text.TextLineMetrics;
-   import flash.events.EventPhase;
-   import flash.system.ApplicationDomain;
-   import mx.modules.ModuleManager;
-   import flash.utils.getQualifiedSuperclassName;
-   import mx.managers.ICursorManager;
-   import mx.managers.CursorManager;
-   import mx.managers.IFocusManagerContainer;
-   import flash.display.GradientType;
-   import mx.utils.GraphicsUtil;
-   import flash.events.IEventDispatcher;
-   import mx.resources.ResourceManager;
-   import mx.managers.IFocusManagerComponent;
-   
-   use namespace mx_internal;
-   
-   public class UIComponent extends FlexSprite implements IAutomationObject, IChildList, IDeferredInstantiationUIComponent, IFlexDisplayObject, IFlexModule, IInvalidating, ILayoutManagerClient, IPropertyChangeNotifier, IRepeaterClient, ISimpleStyleClient, IStyleClient, IToolTipManagerClient, IUIComponent, IValidatorListener, IStateClient, IConstraintClient
-   {
-      
-      mx_internal static var dispatchEventHook:Function;
-      
-      private static var fakeMouseY:QName = new QName(mx_internal,"_mouseY");
-      
-      public static const DEFAULT_MEASURED_WIDTH:Number = 160;
-      
-      public static const DEFAULT_MAX_WIDTH:Number = 10000;
-      
-      public static const DEFAULT_MEASURED_MIN_HEIGHT:Number = 22;
-      
-      mx_internal static var createAccessibilityImplementation:Function;
-      
-      mx_internal static var STYLE_UNINITIALIZED:Object = {};
-      
-      private static var fakeMouseX:QName = new QName(mx_internal,"_mouseX");
-      
-      public static const DEFAULT_MAX_HEIGHT:Number = 10000;
-      
-      public static const DEFAULT_MEASURED_HEIGHT:Number = 22;
-      
-      private static var _embeddedFontRegistry:mx.core.IEmbeddedFontRegistry;
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      public static const DEFAULT_MEASURED_MIN_WIDTH:Number = 40;
-       
-      private var cachedEmbeddedFont:mx.core.EmbeddedFont = null;
-      
-      private var errorStringChanged:Boolean = false;
-      
-      mx_internal var overlay:mx.core.UIComponent;
-      
-      mx_internal var automaticRadioButtonGroups:Object;
-      
-      private var _currentState:String;
-      
-      private var _isPopUp:Boolean;
-      
-      private var _repeaters:Array;
-      
-      private var _systemManager:ISystemManager;
-      
-      private var _measuredWidth:Number = 0;
-      
-      private var methodQueue:Array;
-      
-      mx_internal var _width:Number;
-      
-      private var _tweeningProperties:Array;
-      
-      private var _validationSubField:String;
-      
-      private var _endingEffectInstances:Array;
-      
-      mx_internal var saveBorderColor:Boolean = true;
-      
-      mx_internal var overlayColor:uint;
-      
-      mx_internal var overlayReferenceCount:int = 0;
-      
-      private var hasFontContextBeenSaved:Boolean = false;
-      
-      private var _repeaterIndices:Array;
-      
-      private var oldExplicitWidth:Number;
-      
-      mx_internal var _descriptor:mx.core.UIComponentDescriptor;
-      
-      private var _initialized:Boolean = false;
-      
-      private var _focusEnabled:Boolean = true;
-      
-      private var cacheAsBitmapCount:int = 0;
-      
-      private var errorArray:Array;
-      
-      private var requestedCurrentState:String;
-      
-      private var listeningForRender:Boolean = false;
-      
-      mx_internal var invalidateDisplayListFlag:Boolean = false;
-      
-      private var oldScaleX:Number = 1.0;
-      
-      private var oldScaleY:Number = 1.0;
-      
-      mx_internal var _explicitMaxHeight:Number;
-      
-      mx_internal var invalidatePropertiesFlag:Boolean = false;
-      
-      private var hasFocusRect:Boolean = false;
-      
-      mx_internal var invalidateSizeFlag:Boolean = false;
-      
-      private var _scaleX:Number = 1.0;
-      
-      private var _scaleY:Number = 1.0;
-      
-      private var _styleDeclaration:CSSStyleDeclaration;
-      
-      private var _resourceManager:IResourceManager;
-      
-      mx_internal var _affectedProperties:Object;
-      
-      mx_internal var _documentDescriptor:mx.core.UIComponentDescriptor;
-      
-      private var _processedDescriptors:Boolean = false;
-      
-      mx_internal var origBorderColor:Number;
-      
-      private var _focusManager:IFocusManager;
-      
-      private var _cachePolicy:String = "auto";
-      
-      private var _measuredHeight:Number = 0;
-      
-      private var _id:String;
-      
-      private var _owner:DisplayObjectContainer;
-      
-      public var transitions:Array;
-      
-      mx_internal var _parent:DisplayObjectContainer;
-      
-      private var _measuredMinWidth:Number = 0;
-      
-      private var oldMinWidth:Number;
-      
-      private var _explicitWidth:Number;
-      
-      private var _enabled:Boolean = false;
-      
-      public var states:Array;
-      
-      private var _mouseFocusEnabled:Boolean = true;
-      
-      private var oldHeight:Number = 0;
-      
-      private var _currentStateChanged:Boolean;
-      
-      private var cachedTextFormat:mx.core.UITextFormat;
-      
-      mx_internal var _height:Number;
-      
-      private var _automationDelegate:IAutomationObject;
-      
-      private var _percentWidth:Number;
-      
-      private var _automationName:String = null;
-      
-      private var _isEffectStarted:Boolean = false;
-      
-      private var _styleName:Object;
-      
-      private var lastUnscaledWidth:Number;
-      
-      mx_internal var _document:Object;
-      
-      mx_internal var _errorString:String = "";
-      
-      private var oldExplicitHeight:Number;
-      
-      private var _nestLevel:int = 0;
-      
-      private var _systemManagerDirty:Boolean = false;
-      
-      private var _explicitHeight:Number;
-      
-      mx_internal var _toolTip:String;
-      
-      private var _filters:Array;
-      
-      private var _focusPane:Sprite;
-      
-      private var playStateTransition:Boolean = true;
-      
-      private var _nonInheritingStyles:Object;
-      
-      private var _showInAutomationHierarchy:Boolean = true;
-      
-      private var _moduleFactory:mx.core.IFlexModuleFactory;
-      
-      private var preventDrawFocus:Boolean = false;
-      
-      private var oldX:Number = 0;
-      
-      private var oldY:Number = 0;
-      
-      private var _instanceIndices:Array;
-      
-      private var errorObjectArray:Array;
-      
-      private var _visible:Boolean = true;
-      
-      private var _inheritingStyles:Object;
-      
-      private var _includeInLayout:Boolean = true;
-      
-      mx_internal var _effectsStarted:Array;
-      
-      mx_internal var _explicitMinWidth:Number;
-      
-      private var lastUnscaledHeight:Number;
-      
-      mx_internal var _explicitMaxWidth:Number;
-      
-      private var _measuredMinHeight:Number = 0;
-      
-      private var _uid:String;
-      
-      private var _currentTransitionEffect:IEffect;
-      
-      private var _updateCompletePendingFlag:Boolean = false;
-      
-      private var oldMinHeight:Number;
-      
-      private var _flexContextMenu:IFlexContextMenu;
-      
-      mx_internal var _explicitMinHeight:Number;
-      
-      private var _percentHeight:Number;
-      
-      private var oldEmbeddedFontContext:mx.core.IFlexModuleFactory = null;
-      
-      private var oldWidth:Number = 0;
-      
-      public function UIComponent()
-      {
-         methodQueue = [];
-         _resourceManager = ResourceManager.getInstance();
-         _inheritingStyles = mx.core.UIComponent.STYLE_UNINITIALIZED;
-         _nonInheritingStyles = mx.core.UIComponent.STYLE_UNINITIALIZED;
-         states = [];
-         transitions = [];
-         _effectsStarted = [];
-         _affectedProperties = {};
-         _endingEffectInstances = [];
-         super();
-         focusRect = false;
-         tabEnabled = this is IFocusManagerComponent;
-         tabChildren = false;
-         enabled = true;
-         $visible = false;
-         addEventListener(Event.ADDED,addedHandler);
-         addEventListener(Event.REMOVED,removedHandler);
-         if(this is IFocusManagerComponent)
-         {
-            addEventListener(FocusEvent.FOCUS_IN,focusInHandler);
-            addEventListener(FocusEvent.FOCUS_OUT,focusOutHandler);
-            addEventListener(KeyboardEvent.KEY_DOWN,keyDownHandler);
-            addEventListener(KeyboardEvent.KEY_UP,keyUpHandler);
-         }
-         resourcesChanged();
-         resourceManager.addEventListener(Event.CHANGE,resourceManager_changeHandler,false,0,true);
-         _width = super.width;
-         _height = super.height;
-      }
-      
-      private static function get embeddedFontRegistry() : mx.core.IEmbeddedFontRegistry
-      {
-         if(!_embeddedFontRegistry)
-         {
-            _embeddedFontRegistry = IEmbeddedFontRegistry(Singleton.getInstance("mx.core::IEmbeddedFontRegistry"));
-         }
-         return _embeddedFontRegistry;
-      }
-      
-      public static function resumeBackgroundProcessing() : void
-      {
-         var _loc1_:ISystemManager = null;
-         if(UIComponentGlobals.callLaterSuspendCount > 0)
-         {
-            UIComponentGlobals.callLaterSuspendCount--;
-            if(UIComponentGlobals.callLaterSuspendCount == 0)
+    import flash.accessibility.*;
+    import flash.display.*;
+    import flash.events.*;
+    import flash.geom.*;
+    import flash.system.*;
+    import flash.text.*;
+    import flash.utils.*;
+    import mx.automation.*;
+    import mx.binding.*;
+    import mx.controls.*;
+    import mx.core.*;
+    import mx.effects.*;
+    import mx.events.*;
+    import mx.graphics.*;
+    import mx.managers.*;
+    import mx.modules.*;
+    import mx.resources.*;
+    import mx.states.*;
+    import mx.styles.*;
+    import mx.utils.*;
+    import mx.validators.*;
+
+    public class UIComponent extends FlexSprite implements IAutomationObject, IChildList, IDeferredInstantiationUIComponent, IFlexDisplayObject, IFlexModule, IInvalidating, ILayoutManagerClient, IPropertyChangeNotifier, IRepeaterClient, ISimpleStyleClient, IStyleClient, IToolTipManagerClient, IUIComponent, IValidatorListener, IStateClient, IConstraintClient
+    {
+        private var cachedEmbeddedFont:EmbeddedFont = null;
+        private var errorStringChanged:Boolean = false;
+        var overlay:UIComponent;
+        var automaticRadioButtonGroups:Object;
+        private var _currentState:String;
+        private var _isPopUp:Boolean;
+        private var _repeaters:Array;
+        private var _systemManager:ISystemManager;
+        private var _measuredWidth:Number = 0;
+        private var methodQueue:Array;
+        var _width:Number;
+        private var _tweeningProperties:Array;
+        private var _validationSubField:String;
+        private var _endingEffectInstances:Array;
+        var saveBorderColor:Boolean = true;
+        var overlayColor:uint;
+        var overlayReferenceCount:int = 0;
+        private var hasFontContextBeenSaved:Boolean = false;
+        private var _repeaterIndices:Array;
+        private var oldExplicitWidth:Number;
+        var _descriptor:UIComponentDescriptor;
+        private var _initialized:Boolean = false;
+        private var _focusEnabled:Boolean = true;
+        private var cacheAsBitmapCount:int = 0;
+        private var errorArray:Array;
+        private var requestedCurrentState:String;
+        private var listeningForRender:Boolean = false;
+        var invalidateDisplayListFlag:Boolean = false;
+        private var oldScaleX:Number = 1;
+        private var oldScaleY:Number = 1;
+        var _explicitMaxHeight:Number;
+        var invalidatePropertiesFlag:Boolean = false;
+        private var hasFocusRect:Boolean = false;
+        var invalidateSizeFlag:Boolean = false;
+        private var _scaleX:Number = 1;
+        private var _scaleY:Number = 1;
+        private var _styleDeclaration:CSSStyleDeclaration;
+        private var _resourceManager:IResourceManager;
+        var _affectedProperties:Object;
+        var _documentDescriptor:UIComponentDescriptor;
+        private var _processedDescriptors:Boolean = false;
+        var origBorderColor:Number;
+        private var _focusManager:IFocusManager;
+        private var _cachePolicy:String = "auto";
+        private var _measuredHeight:Number = 0;
+        private var _id:String;
+        private var _owner:DisplayObjectContainer;
+        public var transitions:Array;
+        var _parent:DisplayObjectContainer;
+        private var _measuredMinWidth:Number = 0;
+        private var oldMinWidth:Number;
+        private var _explicitWidth:Number;
+        private var _enabled:Boolean = false;
+        public var states:Array;
+        private var _mouseFocusEnabled:Boolean = true;
+        private var oldHeight:Number = 0;
+        private var _currentStateChanged:Boolean;
+        private var cachedTextFormat:UITextFormat;
+        var _height:Number;
+        private var _automationDelegate:IAutomationObject;
+        private var _percentWidth:Number;
+        private var _automationName:String = null;
+        private var _isEffectStarted:Boolean = false;
+        private var _styleName:Object;
+        private var lastUnscaledWidth:Number;
+        var _document:Object;
+        var _errorString:String = "";
+        private var oldExplicitHeight:Number;
+        private var _nestLevel:int = 0;
+        private var _systemManagerDirty:Boolean = false;
+        private var _explicitHeight:Number;
+        var _toolTip:String;
+        private var _filters:Array;
+        private var _focusPane:Sprite;
+        private var playStateTransition:Boolean = true;
+        private var _nonInheritingStyles:Object;
+        private var _showInAutomationHierarchy:Boolean = true;
+        private var _moduleFactory:IFlexModuleFactory;
+        private var preventDrawFocus:Boolean = false;
+        private var oldX:Number = 0;
+        private var oldY:Number = 0;
+        private var _instanceIndices:Array;
+        private var errorObjectArray:Array;
+        private var _visible:Boolean = true;
+        private var _inheritingStyles:Object;
+        private var _includeInLayout:Boolean = true;
+        var _effectsStarted:Array;
+        var _explicitMinWidth:Number;
+        private var lastUnscaledHeight:Number;
+        var _explicitMaxWidth:Number;
+        private var _measuredMinHeight:Number = 0;
+        private var _uid:String;
+        private var _currentTransitionEffect:IEffect;
+        private var _updateCompletePendingFlag:Boolean = false;
+        private var oldMinHeight:Number;
+        private var _flexContextMenu:IFlexContextMenu;
+        var _explicitMinHeight:Number;
+        private var _percentHeight:Number;
+        private var oldEmbeddedFontContext:IFlexModuleFactory = null;
+        private var oldWidth:Number = 0;
+        static var dispatchEventHook:Function;
+        private static var fakeMouseY:QName = new QName(mx_internal, "_mouseY");
+        public static const DEFAULT_MEASURED_WIDTH:Number = 160;
+        public static const DEFAULT_MAX_WIDTH:Number = 10000;
+        public static const DEFAULT_MEASURED_MIN_HEIGHT:Number = 22;
+        static var createAccessibilityImplementation:Function;
+        static var STYLE_UNINITIALIZED:Object = {};
+        private static var fakeMouseX:QName = new QName(mx_internal, "_mouseX");
+        public static const DEFAULT_MAX_HEIGHT:Number = 10000;
+        public static const DEFAULT_MEASURED_HEIGHT:Number = 22;
+        private static var _embeddedFontRegistry:IEmbeddedFontRegistry;
+        static const VERSION:String = "3.6.0.21751";
+        public static const DEFAULT_MEASURED_MIN_WIDTH:Number = 40;
+
+        public function UIComponent()
+        {
+            methodQueue = [];
+            _resourceManager = ResourceManager.getInstance();
+            _inheritingStyles = UIComponent.STYLE_UNINITIALIZED;
+            _nonInheritingStyles = UIComponent.STYLE_UNINITIALIZED;
+            states = [];
+            transitions = [];
+            _effectsStarted = [];
+            _affectedProperties = {};
+            _endingEffectInstances = [];
+            focusRect = false;
+            tabEnabled = this is IFocusManagerComponent;
+            tabChildren = false;
+            enabled = true;
+            $visible = false;
+            addEventListener(Event.ADDED, addedHandler);
+            addEventListener(Event.REMOVED, removedHandler);
+            if (this is IFocusManagerComponent)
             {
-               _loc1_ = SystemManagerGlobals.topLevelSystemManagers[0];
-               if(Boolean(_loc1_) && Boolean(_loc1_.stage))
-               {
-                  _loc1_.stage.invalidate();
-               }
+                addEventListener(FocusEvent.FOCUS_IN, focusInHandler);
+                addEventListener(FocusEvent.FOCUS_OUT, focusOutHandler);
+                addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+                addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
             }
-         }
-      }
-      
-      public static function suspendBackgroundProcessing() : void
-      {
-         UIComponentGlobals.callLaterSuspendCount++;
-      }
-      
-      override public function get filters() : Array
-      {
-         return !!_filters?_filters:super.filters;
-      }
-      
-      [Bindable("toolTipChanged")]
-      public function get toolTip() : String
-      {
-         return _toolTip;
-      }
-      
-      private function transition_effectEndHandler(param1:EffectEvent) : void
-      {
-         _currentTransitionEffect = null;
-      }
-      
-      public function get nestLevel() : int
-      {
-         return _nestLevel;
-      }
-      
-      protected function adjustFocusRect(param1:DisplayObject = null) : void
-      {
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:Point = null;
-         var _loc7_:Number = NaN;
-         if(!param1)
-         {
-            param1 = this;
-         }
-         if(Boolean(isNaN(param1.width)) || Boolean(isNaN(param1.height)))
-         {
+            resourcesChanged();
+            resourceManager.addEventListener(Event.CHANGE, resourceManager_changeHandler, false, 0, true);
+            _width = super.width;
+            _height = super.height;
             return;
-         }
-         var _loc2_:IFocusManager = focusManager;
-         if(!_loc2_)
-         {
+        }// end function
+
+        override public function get filters() : Array
+        {
+            return _filters ? (_filters) : (super.filters);
+        }// end function
+
+        public function get toolTip() : String
+        {
+            return _toolTip;
+        }// end function
+
+        private function transition_effectEndHandler(event:EffectEvent) : void
+        {
+            _currentTransitionEffect = null;
             return;
-         }
-         var _loc3_:IFlexDisplayObject = IFlexDisplayObject(getFocusObject());
-         if(_loc3_)
-         {
-            if(Boolean(errorString) && errorString != "")
+        }// end function
+
+        public function get nestLevel() : int
+        {
+            return _nestLevel;
+        }// end function
+
+        protected function adjustFocusRect(param1:DisplayObject = null) : void
+        {
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            var _loc_7:* = NaN;
+            if (!param1)
             {
-               _loc4_ = getStyle("errorColor");
+                param1 = this;
             }
-            else
+            if (isNaN(param1.width) || isNaN(param1.height))
             {
-               _loc4_ = getStyle("themeColor");
+                return;
             }
-            _loc5_ = getStyle("focusThickness");
-            if(_loc3_ is IStyleClient)
+            var _loc_2:* = focusManager;
+            if (!_loc_2)
             {
-               IStyleClient(_loc3_).setStyle("focusColor",_loc4_);
+                return;
             }
-            _loc3_.setActualSize(param1.width + 2 * _loc5_,param1.height + 2 * _loc5_);
-            if(rotation)
+            var _loc_3:* = IFlexDisplayObject(getFocusObject());
+            if (_loc_3)
             {
-               _loc7_ = rotation * Math.PI / 180;
-               _loc6_ = new Point(param1.x - _loc5_ * (Math.cos(_loc7_) - Math.sin(_loc7_)),param1.y - _loc5_ * (Math.cos(_loc7_) + Math.sin(_loc7_)));
-               DisplayObject(_loc3_).rotation = rotation;
+                if (errorString && errorString != "")
+                {
+                    _loc_4 = getStyle("errorColor");
+                }
+                else
+                {
+                    _loc_4 = getStyle("themeColor");
+                }
+                _loc_5 = getStyle("focusThickness");
+                if (_loc_3 is IStyleClient)
+                {
+                    IStyleClient(_loc_3).setStyle("focusColor", _loc_4);
+                }
+                _loc_3.setActualSize(param1.width + 2 * _loc_5, param1.height + 2 * _loc_5);
+                if (rotation)
+                {
+                    _loc_7 = rotation * Math.PI / 180;
+                    _loc_6 = new Point(param1.x - _loc_5 * (Math.cos(_loc_7) - Math.sin(_loc_7)), param1.y - _loc_5 * (Math.cos(_loc_7) + Math.sin(_loc_7)));
+                    DisplayObject(_loc_3).rotation = rotation;
+                }
+                else
+                {
+                    _loc_6 = new Point(param1.x - _loc_5, param1.y - _loc_5);
+                }
+                if (param1.parent == this)
+                {
+                    _loc_6.x = _loc_6.x + x;
+                    _loc_6.y = _loc_6.y + y;
+                }
+                _loc_6 = parent.localToGlobal(_loc_6);
+                _loc_6 = parent.globalToLocal(_loc_6);
+                _loc_3.move(_loc_6.x, _loc_6.y);
+                if (_loc_3 is IInvalidating)
+                {
+                    IInvalidating(_loc_3).validateNow();
+                }
+                else if (_loc_3 is IProgrammaticSkin)
+                {
+                    IProgrammaticSkin(_loc_3).mx.core:IProgrammaticSkin::validateNow();
+                }
             }
-            else
-            {
-               _loc6_ = new Point(param1.x - _loc5_,param1.y - _loc5_);
-            }
-            if(param1.parent == this)
-            {
-               _loc6_.x = _loc6_.x + x;
-               _loc6_.y = _loc6_.y + y;
-            }
-            _loc6_ = parent.localToGlobal(_loc6_);
-            _loc6_ = parent.globalToLocal(_loc6_);
-            _loc3_.move(_loc6_.x,_loc6_.y);
-            if(_loc3_ is IInvalidating)
-            {
-               IInvalidating(_loc3_).validateNow();
-            }
-            else if(_loc3_ is IProgrammaticSkin)
-            {
-               IProgrammaticSkin(_loc3_).validateNow();
-            }
-         }
-      }
-      
-      mx_internal function setUnscaledWidth(param1:Number) : void
-      {
-         var _loc2_:Number = param1 * Math.abs(oldScaleX);
-         if(_explicitWidth == _loc2_)
-         {
             return;
-         }
-         if(!isNaN(_loc2_))
-         {
-            _percentWidth = NaN;
-         }
-         _explicitWidth = _loc2_;
-         invalidateSize();
-         var _loc3_:IInvalidating = parent as IInvalidating;
-         if(Boolean(_loc3_) && Boolean(includeInLayout))
-         {
-            _loc3_.invalidateSize();
-            _loc3_.invalidateDisplayList();
-         }
-      }
-      
-      private function isOnDisplayList() : Boolean
-      {
-         var p:DisplayObjectContainer = null;
-         try
-         {
-            p = !!_parent?_parent:super.parent;
-         }
-         catch(e:SecurityError)
-         {
-            return true;
-         }
-         return !!p?true:false;
-      }
-      
-      public function set nestLevel(param1:int) : void
-      {
-         var _loc2_:IChildList = null;
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc5_:ILayoutManagerClient = null;
-         var _loc6_:IUITextField = null;
-         if(param1 > 1 && _nestLevel != param1)
-         {
-            _nestLevel = param1;
-            updateCallbacks();
-            _loc2_ = this is IRawChildrenContainer?IRawChildrenContainer(this).rawChildren:IChildList(this);
-            _loc3_ = _loc2_.numChildren;
-            _loc4_ = 0;
-            while(_loc4_ < _loc3_)
+        }// end function
+
+        function setUnscaledWidth(param1:Number) : void
+        {
+            var _loc_2:* = param1 * Math.abs(oldScaleX);
+            if (_explicitWidth == _loc_2)
             {
-               _loc5_ = _loc2_.getChildAt(_loc4_) as ILayoutManagerClient;
-               if(_loc5_)
-               {
-                  _loc5_.nestLevel = param1 + 1;
-               }
-               else
-               {
-                  _loc6_ = _loc2_.getChildAt(_loc4_) as IUITextField;
-                  if(_loc6_)
-                  {
-                     _loc6_.nestLevel = param1 + 1;
-                  }
-               }
-               _loc4_++;
+                return;
             }
-         }
-      }
-      
-      public function getExplicitOrMeasuredHeight() : Number
-      {
-         return !isNaN(explicitHeight)?Number(explicitHeight):Number(measuredHeight);
-      }
-      
-      private function callLaterDispatcher(param1:Event) : void
-      {
-         var callLaterErrorEvent:DynamicEvent = null;
-         var event:Event = param1;
-         UIComponentGlobals.callLaterDispatcherCount++;
-         if(!UIComponentGlobals.catchCallLaterExceptions)
-         {
-            callLaterDispatcher2(event);
-         }
-         else
-         {
+            if (!isNaN(_loc_2))
+            {
+                _percentWidth = NaN;
+            }
+            _explicitWidth = _loc_2;
+            invalidateSize();
+            var _loc_3:* = parent as IInvalidating;
+            if (_loc_3 && includeInLayout)
+            {
+                _loc_3.invalidateSize();
+                _loc_3.invalidateDisplayList();
+            }
+            return;
+        }// end function
+
+        private function isOnDisplayList() : Boolean
+        {
+            var p:DisplayObjectContainer;
             try
             {
-               callLaterDispatcher2(event);
+                p = _parent ? (_parent) : (super.parent);
             }
-            catch(e:Error)
+            catch (e:SecurityError)
             {
-               callLaterErrorEvent = new DynamicEvent("callLaterError");
-               callLaterErrorEvent.error = e;
-               systemManager.dispatchEvent(callLaterErrorEvent);
+                return true;
             }
-         }
-         UIComponentGlobals.callLaterDispatcherCount--;
-      }
-      
-      public function getStyle(param1:String) : *
-      {
-         return !!StyleManager.inheritingStyles[param1]?_inheritingStyles[param1]:_nonInheritingStyles[param1];
-      }
-      
-      mx_internal final function get $width() : Number
-      {
-         return super.width;
-      }
-      
-      public function get className() : String
-      {
-         var _loc1_:String = getQualifiedClassName(this);
-         var _loc2_:int = _loc1_.indexOf("::");
-         if(_loc2_ != -1)
-         {
-            _loc1_ = _loc1_.substr(_loc2_ + 2);
-         }
-         return _loc1_;
-      }
-      
-      public function set accessibilityEnabled(param1:Boolean) : void
-      {
-         if(!Capabilities.hasAccessibility)
-         {
-            return;
-         }
-         if(!accessibilityProperties)
-         {
-            accessibilityProperties = new AccessibilityProperties();
-         }
-         accessibilityProperties.silent = !param1;
-         Accessibility.updateProperties();
-      }
-      
-      public function verticalGradientMatrix(param1:Number, param2:Number, param3:Number, param4:Number) : Matrix
-      {
-         UIComponentGlobals.tempMatrix.createGradientBox(param3,param4,Math.PI / 2,param1,param2);
-         return UIComponentGlobals.tempMatrix;
-      }
-      
-      public function setCurrentState(param1:String, param2:Boolean = true) : void
-      {
-         if(param1 != currentState && !(Boolean(isBaseState(param1)) && Boolean(isBaseState(currentState))))
-         {
-            requestedCurrentState = param1;
-            playStateTransition = param2;
-            if(initialized)
+            return p ? (true) : (false);
+        }// end function
+
+        public function set nestLevel(param1:int) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            if (param1 > 1 && _nestLevel != param1)
             {
-               commitCurrentState();
-            }
-            else
-            {
-               _currentStateChanged = true;
-               addEventListener(FlexEvent.CREATION_COMPLETE,creationCompleteHandler);
-            }
-         }
-      }
-      
-      private function getBaseStates(param1:State) : Array
-      {
-         var _loc2_:Array = [];
-         while(Boolean(param1) && Boolean(param1.basedOn))
-         {
-            _loc2_.push(param1.basedOn);
-            param1 = getState(param1.basedOn);
-         }
-         return _loc2_;
-      }
-      
-      public function set minHeight(param1:Number) : void
-      {
-         if(explicitMinHeight == param1)
-         {
-            return;
-         }
-         explicitMinHeight = param1;
-      }
-      
-      protected function isOurFocus(param1:DisplayObject) : Boolean
-      {
-         return param1 == this;
-      }
-      
-      [Bindable("errorStringChanged")]
-      public function get errorString() : String
-      {
-         return _errorString;
-      }
-      
-      mx_internal function setUnscaledHeight(param1:Number) : void
-      {
-         var _loc2_:Number = param1 * Math.abs(oldScaleY);
-         if(_explicitHeight == _loc2_)
-         {
-            return;
-         }
-         if(!isNaN(_loc2_))
-         {
-            _percentHeight = NaN;
-         }
-         _explicitHeight = _loc2_;
-         invalidateSize();
-         var _loc3_:IInvalidating = parent as IInvalidating;
-         if(Boolean(_loc3_) && Boolean(includeInLayout))
-         {
-            _loc3_.invalidateSize();
-            _loc3_.invalidateDisplayList();
-         }
-      }
-      
-      public function get automationName() : String
-      {
-         if(_automationName)
-         {
-            return _automationName;
-         }
-         if(automationDelegate)
-         {
-            return automationDelegate.automationName;
-         }
-         return "";
-      }
-      
-      mx_internal final function set $width(param1:Number) : void
-      {
-         super.width = param1;
-      }
-      
-      public function getVisibleRect(param1:DisplayObject = null) : Rectangle
-      {
-         if(!param1)
-         {
-            param1 = DisplayObject(systemManager);
-         }
-         var _loc2_:DisplayObject = !!$parent?$parent:parent;
-         if(!_loc2_)
-         {
-            return new Rectangle();
-         }
-         var _loc3_:Point = new Point(x,y);
-         _loc3_ = _loc2_.localToGlobal(_loc3_);
-         var _loc4_:Rectangle = new Rectangle(_loc3_.x,_loc3_.y,width,height);
-         var _loc5_:DisplayObject = this;
-         var _loc6_:Rectangle = new Rectangle();
-         do
-         {
-            if(_loc5_ is mx.core.UIComponent)
-            {
-               if(UIComponent(_loc5_).$parent)
-               {
-                  _loc5_ = UIComponent(_loc5_).$parent;
-               }
-               else
-               {
-                  _loc5_ = UIComponent(_loc5_).parent;
-               }
-            }
-            else
-            {
-               _loc5_ = _loc5_.parent;
-            }
-            if(Boolean(_loc5_) && Boolean(_loc5_.scrollRect))
-            {
-               _loc6_ = _loc5_.scrollRect.clone();
-               _loc3_ = _loc5_.localToGlobal(_loc6_.topLeft);
-               _loc6_.x = _loc3_.x;
-               _loc6_.y = _loc3_.y;
-               _loc4_ = _loc4_.intersection(_loc6_);
-            }
-         }
-         while(Boolean(_loc5_) && _loc5_ != param1);
-         
-         return _loc4_;
-      }
-      
-      public function invalidateDisplayList() : void
-      {
-         if(!invalidateDisplayListFlag)
-         {
-            invalidateDisplayListFlag = true;
-            if(Boolean(isOnDisplayList()) && Boolean(UIComponentGlobals.layoutManager))
-            {
-               UIComponentGlobals.layoutManager.invalidateDisplayList(this);
-            }
-         }
-      }
-      
-      mx_internal function initThemeColor() : Boolean
-      {
-         var _loc2_:Object = null;
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = NaN;
-         var _loc5_:Object = null;
-         var _loc6_:Array = null;
-         var _loc7_:int = 0;
-         var _loc8_:CSSStyleDeclaration = null;
-         var _loc1_:Object = _styleName;
-         if(_styleDeclaration)
-         {
-            _loc2_ = _styleDeclaration.getStyle("themeColor");
-            _loc3_ = _styleDeclaration.getStyle("rollOverColor");
-            _loc4_ = _styleDeclaration.getStyle("selectionColor");
-         }
-         if((_loc2_ === null || !StyleManager.isValidStyleValue(_loc2_)) && (Boolean(_loc1_) && Boolean(!(_loc1_ is ISimpleStyleClient))))
-         {
-            _loc5_ = _loc1_ is String?StyleManager.getStyleDeclaration("." + _loc1_):_loc1_;
-            if(_loc5_)
-            {
-               _loc2_ = _loc5_.getStyle("themeColor");
-               _loc3_ = _loc5_.getStyle("rollOverColor");
-               _loc4_ = _loc5_.getStyle("selectionColor");
-            }
-         }
-         if(_loc2_ === null || !StyleManager.isValidStyleValue(_loc2_))
-         {
-            _loc6_ = getClassStyleDeclarations();
-            _loc7_ = 0;
-            while(_loc7_ < _loc6_.length)
-            {
-               _loc8_ = _loc6_[_loc7_];
-               if(_loc8_)
-               {
-                  _loc2_ = _loc8_.getStyle("themeColor");
-                  _loc3_ = _loc8_.getStyle("rollOverColor");
-                  _loc4_ = _loc8_.getStyle("selectionColor");
-               }
-               if(_loc2_ !== null && Boolean(StyleManager.isValidStyleValue(_loc2_)))
-               {
-                  break;
-               }
-               _loc7_++;
-            }
-         }
-         if(_loc2_ !== null && Boolean(StyleManager.isValidStyleValue(_loc2_)) && Boolean(isNaN(_loc3_)) && Boolean(isNaN(_loc4_)))
-         {
-            setThemeColor(_loc2_);
-            return true;
-         }
-         return _loc2_ !== null && Boolean(StyleManager.isValidStyleValue(_loc2_)) && !isNaN(_loc3_) && !isNaN(_loc4_);
-      }
-      
-      [Bindable("scaleXChanged")]
-      override public function get scaleX() : Number
-      {
-         return _scaleX;
-      }
-      
-      public function get uid() : String
-      {
-         if(!_uid)
-         {
-            _uid = toString();
-         }
-         return _uid;
-      }
-      
-      override public function get mouseX() : Number
-      {
-         if(!root || root is Stage || root[fakeMouseX] === undefined)
-         {
-            return super.mouseX;
-         }
-         return globalToLocal(new Point(root[fakeMouseX],0)).x;
-      }
-      
-      public function set tweeningProperties(param1:Array) : void
-      {
-         _tweeningProperties = param1;
-      }
-      
-      override public function stopDrag() : void
-      {
-         super.stopDrag();
-         invalidateProperties();
-         dispatchEvent(new Event("xChanged"));
-         dispatchEvent(new Event("yChanged"));
-      }
-      
-      public function get focusPane() : Sprite
-      {
-         return _focusPane;
-      }
-      
-      public function horizontalGradientMatrix(param1:Number, param2:Number, param3:Number, param4:Number) : Matrix
-      {
-         UIComponentGlobals.tempMatrix.createGradientBox(param3,param4,0,param1,param2);
-         return UIComponentGlobals.tempMatrix;
-      }
-      
-      public function get isDocument() : Boolean
-      {
-         return document == this;
-      }
-      
-      public function set validationSubField(param1:String) : void
-      {
-         _validationSubField = param1;
-      }
-      
-      [Bindable("scaleYChanged")]
-      override public function get scaleY() : Number
-      {
-         return _scaleY;
-      }
-      
-      protected function keyDownHandler(param1:KeyboardEvent) : void
-      {
-      }
-      
-      protected function createInFontContext(param1:Class) : Object
-      {
-         hasFontContextBeenSaved = true;
-         var _loc2_:String = StringUtil.trimArrayElements(getStyle("fontFamily"),",");
-         var _loc3_:String = getStyle("fontWeight");
-         var _loc4_:String = getStyle("fontStyle");
-         var _loc5_:* = _loc3_ == "bold";
-         var _loc6_:* = _loc4_ == "italic";
-         oldEmbeddedFontContext = getFontContext(_loc2_,_loc5_,_loc6_);
-         var _loc7_:Object = createInModuleContext(!!oldEmbeddedFontContext?oldEmbeddedFontContext:moduleFactory,getQualifiedClassName(param1));
-         if(_loc7_ == null)
-         {
-            _loc7_ = new param1();
-         }
-         return _loc7_;
-      }
-      
-      public function get screen() : Rectangle
-      {
-         var _loc1_:ISystemManager = systemManager;
-         return !!_loc1_?_loc1_.screen:null;
-      }
-      
-      protected function focusInHandler(param1:FocusEvent) : void
-      {
-         var _loc2_:IFocusManager = null;
-         if(isOurFocus(DisplayObject(param1.target)))
-         {
-            _loc2_ = focusManager;
-            if(Boolean(_loc2_) && Boolean(_loc2_.showFocusIndicator))
-            {
-               drawFocus(true);
-            }
-            ContainerGlobals.checkFocus(param1.relatedObject,this);
-         }
-      }
-      
-      public function hasFontContextChanged() : Boolean
-      {
-         if(!hasFontContextBeenSaved)
-         {
-            return false;
-         }
-         var _loc1_:String = StringUtil.trimArrayElements(getStyle("fontFamily"),",");
-         var _loc2_:String = getStyle("fontWeight");
-         var _loc3_:String = getStyle("fontStyle");
-         var _loc4_:* = _loc2_ == "bold";
-         var _loc5_:* = _loc3_ == "italic";
-         var _loc6_:mx.core.EmbeddedFont = getEmbeddedFont(_loc1_,_loc4_,_loc5_);
-         var _loc7_:mx.core.IFlexModuleFactory = embeddedFontRegistry.getAssociatedModuleFactory(_loc6_,moduleFactory);
-         return _loc7_ != oldEmbeddedFontContext;
-      }
-      
-      [Bindable("explicitHeightChanged")]
-      public function get explicitHeight() : Number
-      {
-         return _explicitHeight;
-      }
-      
-      [Bindable("xChanged")]
-      override public function get x() : Number
-      {
-         return super.x;
-      }
-      
-      [Bindable("yChanged")]
-      override public function get y() : Number
-      {
-         return super.y;
-      }
-      
-      [Bindable("show")]
-      [Bindable("hide")]
-      override public function get visible() : Boolean
-      {
-         return _visible;
-      }
-      
-      mx_internal function addOverlay(param1:uint, param2:RoundedRectangle = null) : void
-      {
-         if(!overlay)
-         {
-            overlayColor = param1;
-            overlay = new mx.core.UIComponent();
-            overlay.name = "overlay";
-            overlay.$visible = true;
-            fillOverlay(overlay,param1,param2);
-            attachOverlay();
-            if(!param2)
-            {
-               addEventListener(ResizeEvent.RESIZE,overlay_resizeHandler);
-            }
-            overlay.x = 0;
-            overlay.y = 0;
-            invalidateDisplayList();
-            overlayReferenceCount = 1;
-         }
-         else
-         {
-            overlayReferenceCount++;
-         }
-         dispatchEvent(new ChildExistenceChangedEvent(ChildExistenceChangedEvent.OVERLAY_CREATED,true,false,overlay));
-      }
-      
-      [Bindable("resize")]
-      public function get percentWidth() : Number
-      {
-         return _percentWidth;
-      }
-      
-      public function set explicitMinHeight(param1:Number) : void
-      {
-         if(_explicitMinHeight == param1)
-         {
-            return;
-         }
-         _explicitMinHeight = param1;
-         invalidateSize();
-         var _loc2_:IInvalidating = parent as IInvalidating;
-         if(_loc2_)
-         {
-            _loc2_.invalidateSize();
-            _loc2_.invalidateDisplayList();
-         }
-         dispatchEvent(new Event("explicitMinHeightChanged"));
-      }
-      
-      public function set automationName(param1:String) : void
-      {
-         _automationName = param1;
-      }
-      
-      public function get mouseFocusEnabled() : Boolean
-      {
-         return _mouseFocusEnabled;
-      }
-      
-      mx_internal function getEmbeddedFont(param1:String, param2:Boolean, param3:Boolean) : mx.core.EmbeddedFont
-      {
-         if(cachedEmbeddedFont)
-         {
-            if(cachedEmbeddedFont.fontName == param1 && cachedEmbeddedFont.fontStyle == EmbeddedFontRegistry.getFontStyle(param2,param3))
-            {
-               return cachedEmbeddedFont;
-            }
-         }
-         cachedEmbeddedFont = new mx.core.EmbeddedFont(param1,param2,param3);
-         return cachedEmbeddedFont;
-      }
-      
-      public function stylesInitialized() : void
-      {
-      }
-      
-      public function set errorString(param1:String) : void
-      {
-         var _loc2_:String = _errorString;
-         _errorString = param1;
-         ToolTipManager.registerErrorString(this,_loc2_,param1);
-         errorStringChanged = true;
-         invalidateProperties();
-         dispatchEvent(new Event("errorStringChanged"));
-      }
-      
-      public function getExplicitOrMeasuredWidth() : Number
-      {
-         return !isNaN(explicitWidth)?Number(explicitWidth):Number(measuredWidth);
-      }
-      
-      mx_internal final function set $height(param1:Number) : void
-      {
-         super.height = param1;
-      }
-      
-      protected function keyUpHandler(param1:KeyboardEvent) : void
-      {
-      }
-      
-      mx_internal final function $removeChild(param1:DisplayObject) : DisplayObject
-      {
-         return super.removeChild(param1);
-      }
-      
-      override public function set scaleX(param1:Number) : void
-      {
-         if(_scaleX == param1)
-         {
-            return;
-         }
-         _scaleX = param1;
-         invalidateProperties();
-         invalidateSize();
-         dispatchEvent(new Event("scaleXChanged"));
-      }
-      
-      override public function set scaleY(param1:Number) : void
-      {
-         if(_scaleY == param1)
-         {
-            return;
-         }
-         _scaleY = param1;
-         invalidateProperties();
-         invalidateSize();
-         dispatchEvent(new Event("scaleYChanged"));
-      }
-      
-      public function set uid(param1:String) : void
-      {
-         this._uid = param1;
-      }
-      
-      public function createAutomationIDPart(param1:IAutomationObject) : Object
-      {
-         if(automationDelegate)
-         {
-            return automationDelegate.createAutomationIDPart(param1);
-         }
-         return null;
-      }
-      
-      public function getAutomationChildAt(param1:int) : IAutomationObject
-      {
-         if(automationDelegate)
-         {
-            return automationDelegate.getAutomationChildAt(param1);
-         }
-         return null;
-      }
-      
-      mx_internal function get isEffectStarted() : Boolean
-      {
-         return _isEffectStarted;
-      }
-      
-      override public function get parent() : DisplayObjectContainer
-      {
-         try
-         {
-            return !!_parent?_parent:super.parent;
-         }
-         catch(e:SecurityError)
-         {
-         }
-         return null;
-      }
-      
-      override public function get mouseY() : Number
-      {
-         if(!root || root is Stage || root[fakeMouseY] === undefined)
-         {
-            return super.mouseY;
-         }
-         return globalToLocal(new Point(0,root[fakeMouseY])).y;
-      }
-      
-      public function setActualSize(param1:Number, param2:Number) : void
-      {
-         var _loc3_:Boolean = false;
-         if(_width != param1)
-         {
-            _width = param1;
-            dispatchEvent(new Event("widthChanged"));
-            _loc3_ = true;
-         }
-         if(_height != param2)
-         {
-            _height = param2;
-            dispatchEvent(new Event("heightChanged"));
-            _loc3_ = true;
-         }
-         if(_loc3_)
-         {
-            invalidateDisplayList();
-            dispatchResizeEvent();
-         }
-      }
-      
-      private function focusObj_resizeHandler(param1:ResizeEvent) : void
-      {
-         adjustFocusRect();
-      }
-      
-      mx_internal function adjustSizesForScaleChanges() : void
-      {
-         var _loc3_:Number = NaN;
-         var _loc1_:Number = scaleX;
-         var _loc2_:Number = scaleY;
-         if(_loc1_ != oldScaleX)
-         {
-            _loc3_ = Math.abs(_loc1_ / oldScaleX);
-            if(explicitMinWidth)
-            {
-               explicitMinWidth = explicitMinWidth * _loc3_;
-            }
-            if(!isNaN(explicitWidth))
-            {
-               explicitWidth = explicitWidth * _loc3_;
-            }
-            if(explicitMaxWidth)
-            {
-               explicitMaxWidth = explicitMaxWidth * _loc3_;
-            }
-            oldScaleX = _loc1_;
-         }
-         if(_loc2_ != oldScaleY)
-         {
-            _loc3_ = Math.abs(_loc2_ / oldScaleY);
-            if(explicitMinHeight)
-            {
-               explicitMinHeight = explicitMinHeight * _loc3_;
-            }
-            if(explicitHeight)
-            {
-               explicitHeight = explicitHeight * _loc3_;
-            }
-            if(explicitMaxHeight)
-            {
-               explicitMaxHeight = explicitMaxHeight * _loc3_;
-            }
-            oldScaleY = _loc2_;
-         }
-      }
-      
-      public function set focusPane(param1:Sprite) : void
-      {
-         if(param1)
-         {
-            addChild(param1);
-            param1.x = 0;
-            param1.y = 0;
-            param1.scrollRect = null;
-            _focusPane = param1;
-         }
-         else
-         {
-            removeChild(_focusPane);
-            _focusPane.mask = null;
-            _focusPane = null;
-         }
-      }
-      
-      public function determineTextFormatFromStyles() : mx.core.UITextFormat
-      {
-         var _loc2_:String = null;
-         var _loc1_:mx.core.UITextFormat = cachedTextFormat;
-         if(!_loc1_)
-         {
-            _loc2_ = StringUtil.trimArrayElements(_inheritingStyles.fontFamily,",");
-            _loc1_ = new mx.core.UITextFormat(getNonNullSystemManager(),_loc2_);
-            _loc1_.moduleFactory = moduleFactory;
-            _loc1_.align = _inheritingStyles.textAlign;
-            _loc1_.bold = _inheritingStyles.fontWeight == "bold";
-            _loc1_.color = !!enabled?_inheritingStyles.color:_inheritingStyles.disabledColor;
-            _loc1_.font = _loc2_;
-            _loc1_.indent = _inheritingStyles.textIndent;
-            _loc1_.italic = _inheritingStyles.fontStyle == "italic";
-            _loc1_.kerning = _inheritingStyles.kerning;
-            _loc1_.leading = _nonInheritingStyles.leading;
-            _loc1_.leftMargin = _nonInheritingStyles.paddingLeft;
-            _loc1_.letterSpacing = _inheritingStyles.letterSpacing;
-            _loc1_.rightMargin = _nonInheritingStyles.paddingRight;
-            _loc1_.size = _inheritingStyles.fontSize;
-            _loc1_.underline = _nonInheritingStyles.textDecoration == "underline";
-            _loc1_.antiAliasType = _inheritingStyles.fontAntiAliasType;
-            _loc1_.gridFitType = _inheritingStyles.fontGridFitType;
-            _loc1_.sharpness = _inheritingStyles.fontSharpness;
-            _loc1_.thickness = _inheritingStyles.fontThickness;
-            cachedTextFormat = _loc1_;
-         }
-         return _loc1_;
-      }
-      
-      public function validationResultHandler(param1:ValidationResultEvent) : void
-      {
-         var _loc3_:String = null;
-         var _loc4_:ValidationResult = null;
-         var _loc5_:int = 0;
-         if(errorObjectArray === null)
-         {
-            errorObjectArray = new Array();
-            errorArray = new Array();
-         }
-         var _loc2_:int = errorObjectArray.indexOf(param1.target);
-         if(param1.type == ValidationResultEvent.VALID)
-         {
-            if(_loc2_ != -1)
-            {
-               errorObjectArray.splice(_loc2_,1);
-               errorArray.splice(_loc2_,1);
-               errorString = errorArray.join("\n");
-               if(errorArray.length == 0)
-               {
-                  dispatchEvent(new FlexEvent(FlexEvent.VALID));
-               }
-            }
-         }
-         else
-         {
-            if(validationSubField != null && validationSubField != "" && Boolean(param1.results))
-            {
-               _loc5_ = 0;
-               while(_loc5_ < param1.results.length)
-               {
-                  _loc4_ = param1.results[_loc5_];
-                  if(_loc4_.subField == validationSubField)
-                  {
-                     if(_loc4_.isError)
-                     {
-                        _loc3_ = _loc4_.errorMessage;
-                     }
-                     else if(_loc2_ != -1)
-                     {
-                        errorObjectArray.splice(_loc2_,1);
-                        errorArray.splice(_loc2_,1);
-                        errorString = errorArray.join("\n");
-                        if(errorArray.length == 0)
+                _nestLevel = param1;
+                updateCallbacks();
+                _loc_2 = this is IRawChildrenContainer ? (IRawChildrenContainer(this).rawChildren) : (IChildList(this));
+                _loc_3 = _loc_2.numChildren;
+                _loc_4 = 0;
+                while (_loc_4 < _loc_3)
+                {
+                    
+                    _loc_5 = _loc_2.getChildAt(_loc_4) as ILayoutManagerClient;
+                    if (_loc_5)
+                    {
+                        _loc_5.nestLevel = param1 + 1;
+                    }
+                    else
+                    {
+                        _loc_6 = _loc_2.getChildAt(_loc_4) as IUITextField;
+                        if (_loc_6)
                         {
-                           dispatchEvent(new FlexEvent(FlexEvent.VALID));
+                            _loc_6.mx.core:IUITextField::nestLevel = param1 + 1;
                         }
-                     }
-                     break;
-                  }
-                  _loc5_++;
-               }
+                    }
+                    _loc_4++;
+                }
             }
-            else if(Boolean(param1.results) && param1.results.length > 0)
-            {
-               _loc3_ = param1.results[0].errorMessage;
-            }
-            if(Boolean(_loc3_) && _loc2_ != -1)
-            {
-               errorArray[_loc2_] = _loc3_;
-               errorString = errorArray.join("\n");
-               dispatchEvent(new FlexEvent(FlexEvent.INVALID));
-            }
-            else if(Boolean(_loc3_) && _loc2_ == -1)
-            {
-               errorObjectArray.push(param1.target);
-               errorArray.push(_loc3_);
-               errorString = errorArray.join("\n");
-               dispatchEvent(new FlexEvent(FlexEvent.INVALID));
-            }
-         }
-      }
-      
-      public function invalidateProperties() : void
-      {
-         if(!invalidatePropertiesFlag)
-         {
-            invalidatePropertiesFlag = true;
-            if(Boolean(parent) && Boolean(UIComponentGlobals.layoutManager))
-            {
-               UIComponentGlobals.layoutManager.invalidateProperties(this);
-            }
-         }
-      }
-      
-      public function get inheritingStyles() : Object
-      {
-         return _inheritingStyles;
-      }
-      
-      private function focusObj_scrollHandler(param1:Event) : void
-      {
-         adjustFocusRect();
-      }
-      
-      mx_internal final function get $x() : Number
-      {
-         return super.x;
-      }
-      
-      mx_internal final function get $y() : Number
-      {
-         return super.y;
-      }
-      
-      public function setConstraintValue(param1:String, param2:*) : void
-      {
-         setStyle(param1,param2);
-      }
-      
-      protected function resourcesChanged() : void
-      {
-      }
-      
-      public function registerEffects(param1:Array) : void
-      {
-         var _loc4_:String = null;
-         var _loc2_:int = param1.length;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            _loc4_ = EffectManager.getEventForEffectTrigger(param1[_loc3_]);
-            if(_loc4_ != null && _loc4_ != "")
-            {
-               addEventListener(_loc4_,EffectManager.eventHandler,false,EventPriority.EFFECT);
-            }
-            _loc3_++;
-         }
-      }
-      
-      [Bindable("explicitMinWidthChanged")]
-      public function get explicitMinWidth() : Number
-      {
-         return _explicitMinWidth;
-      }
-      
-      private function filterChangeHandler(param1:Event) : void
-      {
-         super.filters = _filters;
-      }
-      
-      override public function set visible(param1:Boolean) : void
-      {
-         setVisible(param1);
-      }
-      
-      override public function set y(param1:Number) : void
-      {
-         if(super.y == param1)
-         {
             return;
-         }
-         super.y = param1;
-         invalidateProperties();
-         dispatchEvent(new Event("yChanged"));
-      }
-      
-      public function set explicitHeight(param1:Number) : void
-      {
-         if(_explicitHeight == param1)
-         {
-            return;
-         }
-         if(!isNaN(param1))
-         {
-            _percentHeight = NaN;
-         }
-         _explicitHeight = param1;
-         invalidateSize();
-         var _loc2_:IInvalidating = parent as IInvalidating;
-         if(Boolean(_loc2_) && Boolean(includeInLayout))
-         {
-            _loc2_.invalidateSize();
-            _loc2_.invalidateDisplayList();
-         }
-         dispatchEvent(new Event("explicitHeightChanged"));
-      }
-      
-      override public function set x(param1:Number) : void
-      {
-         if(super.x == param1)
-         {
-            return;
-         }
-         super.x = param1;
-         invalidateProperties();
-         dispatchEvent(new Event("xChanged"));
-      }
-      
-      public function set showInAutomationHierarchy(param1:Boolean) : void
-      {
-         _showInAutomationHierarchy = param1;
-      }
-      
-      private function resourceManager_changeHandler(param1:Event) : void
-      {
-         resourcesChanged();
-      }
-      
-      public function set systemManager(param1:ISystemManager) : void
-      {
-         _systemManager = param1;
-         _systemManagerDirty = false;
-      }
-      
-      public function get accessibilityName() : String
-      {
-         return !!accessibilityProperties?accessibilityProperties.name:"";
-      }
-      
-      mx_internal function getFocusObject() : DisplayObject
-      {
-         var _loc1_:IFocusManager = focusManager;
-         if(!_loc1_ || !_loc1_.focusPane)
-         {
-            return null;
-         }
-         return _loc1_.focusPane.numChildren == 0?null:_loc1_.focusPane.getChildAt(0);
-      }
-      
-      public function set percentWidth(param1:Number) : void
-      {
-         if(_percentWidth == param1)
-         {
-            return;
-         }
-         if(!isNaN(param1))
-         {
-            _explicitWidth = NaN;
-         }
-         _percentWidth = param1;
-         var _loc2_:IInvalidating = parent as IInvalidating;
-         if(_loc2_)
-         {
-            _loc2_.invalidateSize();
-            _loc2_.invalidateDisplayList();
-         }
-      }
-      
-      public function get moduleFactory() : mx.core.IFlexModuleFactory
-      {
-         return _moduleFactory;
-      }
-      
-      override public function addChild(param1:DisplayObject) : DisplayObject
-      {
-         var _loc2_:DisplayObjectContainer = param1.parent;
-         if(Boolean(_loc2_) && !(_loc2_ is Loader))
-         {
-            _loc2_.removeChild(param1);
-         }
-         var _loc3_:int = Boolean(overlayReferenceCount) && param1 != overlay?int(Math.max(0,super.numChildren - 1)):int(super.numChildren);
-         addingChild(param1);
-         $addChildAt(param1,_loc3_);
-         childAdded(param1);
-         return param1;
-      }
-      
-      public function get document() : Object
-      {
-         return _document;
-      }
-      
-      public function set mouseFocusEnabled(param1:Boolean) : void
-      {
-         _mouseFocusEnabled = param1;
-      }
-      
-      mx_internal final function $addChild(param1:DisplayObject) : DisplayObject
-      {
-         return super.addChild(param1);
-      }
-      
-      mx_internal function setThemeColor(param1:Object) : void
-      {
-         var _loc2_:Number = NaN;
-         if(_loc2_ is String)
-         {
-            _loc2_ = parseInt(String(param1));
-         }
-         else
-         {
-            _loc2_ = Number(param1);
-         }
-         if(isNaN(_loc2_))
-         {
-            _loc2_ = StyleManager.getColorName(param1);
-         }
-         var _loc3_:Number = ColorUtil.adjustBrightness2(_loc2_,50);
-         var _loc4_:Number = ColorUtil.adjustBrightness2(_loc2_,70);
-         setStyle("selectionColor",_loc3_);
-         setStyle("rollOverColor",_loc4_);
-      }
-      
-      [Bindable("explicitMaxWidthChanged")]
-      public function get explicitMaxWidth() : Number
-      {
-         return _explicitMaxWidth;
-      }
-      
-      public function get id() : String
-      {
-         return _id;
-      }
-      
-      [Bindable("heightChanged")]
-      override public function get height() : Number
-      {
-         return _height;
-      }
-      
-      public function set minWidth(param1:Number) : void
-      {
-         if(explicitMinWidth == param1)
-         {
-            return;
-         }
-         explicitMinWidth = param1;
-      }
-      
-      public function set currentState(param1:String) : void
-      {
-         setCurrentState(param1,true);
-      }
-      
-      public function executeBindings(param1:Boolean = false) : void
-      {
-         var _loc2_:Object = Boolean(descriptor) && Boolean(descriptor.document)?descriptor.document:parentDocument;
-         BindingManager.executeBindings(_loc2_,id,this);
-      }
-      
-      public function replayAutomatableEvent(param1:Event) : Boolean
-      {
-         if(automationDelegate)
-         {
-            return automationDelegate.replayAutomatableEvent(param1);
-         }
-         return false;
-      }
-      
-      mx_internal function getFontContext(param1:String, param2:Boolean, param3:Boolean) : mx.core.IFlexModuleFactory
-      {
-         return embeddedFontRegistry.getAssociatedModuleFactory(getEmbeddedFont(param1,param2,param3),moduleFactory);
-      }
-      
-      public function get instanceIndex() : int
-      {
-         return !!_instanceIndices?int(_instanceIndices[_instanceIndices.length - 1]):-1;
-      }
-      
-      public function set measuredWidth(param1:Number) : void
-      {
-         _measuredWidth = param1;
-      }
-      
-      public function effectFinished(param1:IEffectInstance) : void
-      {
-         _endingEffectInstances.push(param1);
-         invalidateProperties();
-         UIComponentGlobals.layoutManager.addEventListener(FlexEvent.UPDATE_COMPLETE,updateCompleteHandler,false,0,true);
-      }
-      
-      public function getRepeaterItem(param1:int = -1) : Object
-      {
-         var _loc2_:Array = repeaters;
-         if(_loc2_.length == 0)
-         {
-            return null;
-         }
-         if(param1 == -1)
-         {
-            param1 = _loc2_.length - 1;
-         }
-         return _loc2_[param1].getItemAt(repeaterIndices[param1]);
-      }
-      
-      mx_internal function set isEffectStarted(param1:Boolean) : void
-      {
-         _isEffectStarted = param1;
-      }
-      
-      mx_internal function fillOverlay(param1:mx.core.UIComponent, param2:uint, param3:RoundedRectangle = null) : void
-      {
-         if(!param3)
-         {
-            param3 = new RoundedRectangle(0,0,unscaledWidth,unscaledHeight,0);
-         }
-         var _loc4_:Graphics = param1.graphics;
-         _loc4_.clear();
-         _loc4_.beginFill(param2);
-         _loc4_.drawRoundRect(param3.x,param3.y,param3.width,param3.height,param3.cornerRadius * 2,param3.cornerRadius * 2);
-         _loc4_.endFill();
-      }
-      
-      public function get instanceIndices() : Array
-      {
-         return !!_instanceIndices?_instanceIndices.slice(0):null;
-      }
-      
-      mx_internal function childAdded(param1:DisplayObject) : void
-      {
-         if(param1 is mx.core.UIComponent)
-         {
-            if(!UIComponent(param1).initialized)
+        }// end function
+
+        public function getExplicitOrMeasuredHeight() : Number
+        {
+            return !isNaN(explicitHeight) ? (explicitHeight) : (measuredHeight);
+        }// end function
+
+        private function callLaterDispatcher(event:Event) : void
+        {
+            var callLaterErrorEvent:DynamicEvent;
+            var event:* = event;
+            var _loc_3:* = UIComponentGlobals;
+            var _loc_4:* = _loc_3.callLaterDispatcherCount + 1;
+            _loc_3.callLaterDispatcherCount = _loc_4;
+            if (!_loc_3.catchCallLaterExceptions)
             {
-               UIComponent(param1).initialize();
-            }
-         }
-         else if(param1 is IUIComponent)
-         {
-            IUIComponent(param1).initialize();
-         }
-      }
-      
-      public function globalToContent(param1:Point) : Point
-      {
-         return globalToLocal(param1);
-      }
-      
-      mx_internal function removingChild(param1:DisplayObject) : void
-      {
-      }
-      
-      mx_internal function getEffectsForProperty(param1:String) : Array
-      {
-         return _affectedProperties[param1] != undefined?_affectedProperties[param1]:[];
-      }
-      
-      override public function removeChildAt(param1:int) : DisplayObject
-      {
-         var _loc2_:DisplayObject = getChildAt(param1);
-         removingChild(_loc2_);
-         $removeChild(_loc2_);
-         childRemoved(_loc2_);
-         return _loc2_;
-      }
-      
-      protected function measure() : void
-      {
-         measuredMinWidth = 0;
-         measuredMinHeight = 0;
-         measuredWidth = 0;
-         measuredHeight = 0;
-      }
-      
-      public function set owner(param1:DisplayObjectContainer) : void
-      {
-         _owner = param1;
-      }
-      
-      mx_internal function getNonNullSystemManager() : ISystemManager
-      {
-         var _loc1_:ISystemManager = systemManager;
-         if(!_loc1_)
-         {
-            _loc1_ = ISystemManager(SystemManager.getSWFRoot(this));
-         }
-         if(!_loc1_)
-         {
-            return SystemManagerGlobals.topLevelSystemManagers[0];
-         }
-         return _loc1_;
-      }
-      
-      protected function get unscaledWidth() : Number
-      {
-         return width / Math.abs(scaleX);
-      }
-      
-      public function set processedDescriptors(param1:Boolean) : void
-      {
-         _processedDescriptors = param1;
-         if(param1)
-         {
-            dispatchEvent(new FlexEvent(FlexEvent.INITIALIZE));
-         }
-      }
-      
-      private function processEffectFinished(param1:Array) : void
-      {
-         var _loc3_:int = 0;
-         var _loc4_:IEffectInstance = null;
-         var _loc5_:IEffectInstance = null;
-         var _loc6_:Array = null;
-         var _loc7_:int = 0;
-         var _loc8_:String = null;
-         var _loc9_:int = 0;
-         var _loc2_:int = _effectsStarted.length - 1;
-         while(_loc2_ >= 0)
-         {
-            _loc3_ = 0;
-            while(_loc3_ < param1.length)
-            {
-               _loc4_ = param1[_loc3_];
-               if(_loc4_ == _effectsStarted[_loc2_])
-               {
-                  _loc5_ = _effectsStarted[_loc2_];
-                  _effectsStarted.splice(_loc2_,1);
-                  _loc6_ = _loc5_.effect.getAffectedProperties();
-                  _loc7_ = 0;
-                  while(_loc7_ < _loc6_.length)
-                  {
-                     _loc8_ = _loc6_[_loc7_];
-                     if(_affectedProperties[_loc8_] != undefined)
-                     {
-                        _loc9_ = 0;
-                        while(_loc9_ < _affectedProperties[_loc8_].length)
-                        {
-                           if(_affectedProperties[_loc8_][_loc9_] == _loc4_)
-                           {
-                              _affectedProperties[_loc8_].splice(_loc9_,1);
-                              break;
-                           }
-                           _loc9_++;
-                        }
-                        if(_affectedProperties[_loc8_].length == 0)
-                        {
-                           delete _affectedProperties[_loc8_];
-                        }
-                     }
-                     _loc7_++;
-                  }
-                  break;
-               }
-               _loc3_++;
-            }
-            _loc2_--;
-         }
-         isEffectStarted = _effectsStarted.length > 0?true:false;
-         if(Boolean(_loc4_) && Boolean(_loc4_.hideFocusRing))
-         {
-            preventDrawFocus = false;
-         }
-      }
-      
-      private function commitCurrentState() : void
-      {
-         var _loc3_:StateChangeEvent = null;
-         var _loc1_:IEffect = !!playStateTransition?getTransition(_currentState,requestedCurrentState):null;
-         var _loc2_:String = findCommonBaseState(_currentState,requestedCurrentState);
-         var _loc4_:String = !!_currentState?_currentState:"";
-         var _loc5_:State = getState(requestedCurrentState);
-         if(_currentTransitionEffect)
-         {
-            _currentTransitionEffect.end();
-         }
-         initializeState(requestedCurrentState);
-         if(_loc1_)
-         {
-            _loc1_.captureStartValues();
-         }
-         _loc3_ = new StateChangeEvent(StateChangeEvent.CURRENT_STATE_CHANGING);
-         _loc3_.oldState = _loc4_;
-         _loc3_.newState = !!requestedCurrentState?requestedCurrentState:"";
-         dispatchEvent(_loc3_);
-         if(isBaseState(_currentState))
-         {
-            dispatchEvent(new FlexEvent(FlexEvent.EXIT_STATE));
-         }
-         removeState(_currentState,_loc2_);
-         _currentState = requestedCurrentState;
-         if(isBaseState(currentState))
-         {
-            dispatchEvent(new FlexEvent(FlexEvent.ENTER_STATE));
-         }
-         else
-         {
-            applyState(_currentState,_loc2_);
-         }
-         _loc3_ = new StateChangeEvent(StateChangeEvent.CURRENT_STATE_CHANGE);
-         _loc3_.oldState = _loc4_;
-         _loc3_.newState = !!_currentState?_currentState:"";
-         dispatchEvent(_loc3_);
-         if(_loc1_)
-         {
-            UIComponentGlobals.layoutManager.validateNow();
-            _currentTransitionEffect = _loc1_;
-            _loc1_.addEventListener(EffectEvent.EFFECT_END,transition_effectEndHandler);
-            _loc1_.play();
-         }
-      }
-      
-      [Bindable("includeInLayoutChanged")]
-      public function get includeInLayout() : Boolean
-      {
-         return _includeInLayout;
-      }
-      
-      private function dispatchResizeEvent() : void
-      {
-         var _loc1_:ResizeEvent = new ResizeEvent(ResizeEvent.RESIZE);
-         _loc1_.oldWidth = oldWidth;
-         _loc1_.oldHeight = oldHeight;
-         dispatchEvent(_loc1_);
-         oldWidth = width;
-         oldHeight = height;
-      }
-      
-      public function set maxWidth(param1:Number) : void
-      {
-         if(explicitMaxWidth == param1)
-         {
-            return;
-         }
-         explicitMaxWidth = param1;
-      }
-      
-      public function validateDisplayList() : void
-      {
-         var _loc1_:ISystemManager = null;
-         var _loc2_:Number = NaN;
-         var _loc3_:Number = NaN;
-         if(invalidateDisplayListFlag)
-         {
-            _loc1_ = parent as ISystemManager;
-            if(_loc1_)
-            {
-               if(_loc1_ is SystemManagerProxy || _loc1_ == systemManager.topLevelSystemManager && _loc1_.document != this)
-               {
-                  setActualSize(getExplicitOrMeasuredWidth(),getExplicitOrMeasuredHeight());
-               }
-            }
-            _loc2_ = scaleX == 0?Number(0):Number(width / scaleX);
-            _loc3_ = scaleY == 0?Number(0):Number(height / scaleY);
-            if(Math.abs(_loc2_ - lastUnscaledWidth) < 0.00001)
-            {
-               _loc2_ = lastUnscaledWidth;
-            }
-            if(Math.abs(_loc3_ - lastUnscaledHeight) < 0.00001)
-            {
-               _loc3_ = lastUnscaledHeight;
-            }
-            updateDisplayList(_loc2_,_loc3_);
-            lastUnscaledWidth = _loc2_;
-            lastUnscaledHeight = _loc3_;
-            invalidateDisplayListFlag = false;
-         }
-      }
-      
-      public function contentToGlobal(param1:Point) : Point
-      {
-         return localToGlobal(param1);
-      }
-      
-      public function resolveAutomationIDPart(param1:Object) : Array
-      {
-         if(automationDelegate)
-         {
-            return automationDelegate.resolveAutomationIDPart(param1);
-         }
-         return [];
-      }
-      
-      public function set inheritingStyles(param1:Object) : void
-      {
-         _inheritingStyles = param1;
-      }
-      
-      public function setFocus() : void
-      {
-         var _loc1_:ISystemManager = systemManager;
-         if(Boolean(_loc1_) && (Boolean(_loc1_.stage) || Boolean(_loc1_.useSWFBridge())))
-         {
-            if(UIComponentGlobals.callLaterDispatcherCount == 0)
-            {
-               _loc1_.stage.focus = this;
-               UIComponentGlobals.nextFocusObject = null;
+                callLaterDispatcher2(event);
             }
             else
             {
-               UIComponentGlobals.nextFocusObject = this;
-               _loc1_.addEventListener(FlexEvent.ENTER_FRAME,setFocusLater);
+                try
+                {
+                    callLaterDispatcher2(event);
+                }
+                catch (e:Error)
+                {
+                    callLaterErrorEvent = new DynamicEvent("callLaterError");
+                    callLaterErrorEvent.error = e;
+                    systemManager.dispatchEvent(callLaterErrorEvent);
+                }
             }
-         }
-         else
-         {
-            UIComponentGlobals.nextFocusObject = this;
-            callLater(setFocusLater);
-         }
-      }
-      
-      private function getTransition(param1:String, param2:String) : IEffect
-      {
-         var _loc6_:Transition = null;
-         var _loc3_:IEffect = null;
-         var _loc4_:int = 0;
-         if(!transitions)
-         {
-            return null;
-         }
-         if(!param1)
-         {
-            param1 = "";
-         }
-         if(!param2)
-         {
-            param2 = "";
-         }
-         var _loc5_:int = 0;
-         while(_loc5_ < transitions.length)
-         {
-            _loc6_ = transitions[_loc5_];
-            if(_loc6_.fromState == "*" && _loc6_.toState == "*" && _loc4_ < 1)
-            {
-               _loc3_ = _loc6_.effect;
-               _loc4_ = 1;
-            }
-            else if(_loc6_.fromState == param1 && _loc6_.toState == "*" && _loc4_ < 2)
-            {
-               _loc3_ = _loc6_.effect;
-               _loc4_ = 2;
-            }
-            else if(_loc6_.fromState == "*" && _loc6_.toState == param2 && _loc4_ < 3)
-            {
-               _loc3_ = _loc6_.effect;
-               _loc4_ = 3;
-            }
-            else if(_loc6_.fromState == param1 && _loc6_.toState == param2 && _loc4_ < 4)
-            {
-               _loc3_ = _loc6_.effect;
-               _loc4_ = 4;
-               break;
-            }
-            _loc5_++;
-         }
-         return _loc3_;
-      }
-      
-      public function set initialized(param1:Boolean) : void
-      {
-         _initialized = param1;
-         if(param1)
-         {
-            setVisible(_visible,true);
-            dispatchEvent(new FlexEvent(FlexEvent.CREATION_COMPLETE));
-         }
-      }
-      
-      mx_internal final function set $y(param1:Number) : void
-      {
-         super.y = param1;
-      }
-      
-      public function owns(param1:DisplayObject) : Boolean
-      {
-         var child:DisplayObject = param1;
-         var childList:IChildList = this is IRawChildrenContainer?IRawChildrenContainer(this).rawChildren:IChildList(this);
-         if(childList.contains(child))
-         {
-            return true;
-         }
-         try
-         {
-            while(Boolean(child) && child != this)
-            {
-               if(child is IUIComponent)
-               {
-                  child = IUIComponent(child).owner;
-               }
-               else
-               {
-                  child = child.parent;
-               }
-            }
-         }
-         catch(e:SecurityError)
-         {
-            return false;
-         }
-         return child == this;
-      }
-      
-      public function setVisible(param1:Boolean, param2:Boolean = false) : void
-      {
-         _visible = param1;
-         if(!initialized)
-         {
+            var _loc_3:* = UIComponentGlobals;
+            var _loc_4:* = _loc_3.callLaterDispatcherCount - 1;
+            _loc_3.callLaterDispatcherCount = _loc_4;
             return;
-         }
-         if($visible == param1)
-         {
+        }// end function
+
+        public function getStyle(param1:String)
+        {
+            return StyleManager.inheritingStyles[param1] ? (_inheritingStyles[param1]) : (_nonInheritingStyles[param1]);
+        }// end function
+
+        final function get $width() : Number
+        {
+            return super.width;
+        }// end function
+
+        public function get className() : String
+        {
+            var _loc_1:* = getQualifiedClassName(this);
+            var _loc_2:* = _loc_1.indexOf("::");
+            if (_loc_2 != -1)
+            {
+                _loc_1 = _loc_1.substr(_loc_2 + 2);
+            }
+            return _loc_1;
+        }// end function
+
+        public function set accessibilityEnabled(param1:Boolean) : void
+        {
+            if (!Capabilities.hasAccessibility)
+            {
+                return;
+            }
+            if (!accessibilityProperties)
+            {
+                accessibilityProperties = new AccessibilityProperties();
+            }
+            accessibilityProperties.silent = !param1;
+            Accessibility.updateProperties();
             return;
-         }
-         $visible = param1;
-         if(!param2)
-         {
-            dispatchEvent(new FlexEvent(!!param1?FlexEvent.SHOW:FlexEvent.HIDE));
-         }
-      }
-      
-      mx_internal final function $addChildAt(param1:DisplayObject, param2:int) : DisplayObject
-      {
-         return super.addChildAt(param1,param2);
-      }
-      
-      public function deleteReferenceOnParentDocument(param1:IFlexDisplayObject) : void
-      {
-         var _loc2_:Array = null;
-         var _loc3_:Object = null;
-         var _loc4_:Array = null;
-         var _loc5_:int = 0;
-         var _loc6_:int = 0;
-         var _loc7_:int = 0;
-         var _loc8_:Object = null;
-         var _loc9_:PropertyChangeEvent = null;
-         if(Boolean(id) && id != "")
-         {
-            _loc2_ = _instanceIndices;
-            if(!_loc2_)
+        }// end function
+
+        public function verticalGradientMatrix(param1:Number, param2:Number, param3:Number, param4:Number) : Matrix
+        {
+            UIComponentGlobals.tempMatrix.createGradientBox(param3, param4, Math.PI / 2, param1, param2);
+            return UIComponentGlobals.tempMatrix;
+        }// end function
+
+        public function setCurrentState(param1:String, param2:Boolean = true) : void
+        {
+            if (param1 != currentState && !(isBaseState(param1) && isBaseState(currentState)))
             {
-               param1[id] = null;
+                requestedCurrentState = param1;
+                playStateTransition = param2;
+                if (initialized)
+                {
+                    commitCurrentState();
+                }
+                else
+                {
+                    _currentStateChanged = true;
+                    addEventListener(FlexEvent.CREATION_COMPLETE, creationCompleteHandler);
+                }
             }
-            else
-            {
-               _loc3_ = param1[id];
-               if(!_loc3_)
-               {
-                  return;
-               }
-               _loc4_ = [];
-               _loc4_.push(_loc3_);
-               _loc5_ = _loc2_.length;
-               _loc6_ = 0;
-               while(_loc6_ < _loc5_ - 1)
-               {
-                  _loc8_ = _loc3_[_loc2_[_loc6_]];
-                  if(!_loc8_)
-                  {
-                     return;
-                  }
-                  _loc3_ = _loc8_;
-                  _loc4_.push(_loc3_);
-                  _loc6_++;
-               }
-               _loc3_.splice(_loc2_[_loc5_ - 1],1);
-               _loc7_ = _loc4_.length - 1;
-               while(_loc7_ > 0)
-               {
-                  if(_loc4_[_loc7_].length == 0)
-                  {
-                     _loc4_[_loc7_ - 1].splice(_loc2_[_loc7_],1);
-                  }
-                  _loc7_--;
-               }
-               if(_loc4_.length > 0 && _loc4_[0].length == 0)
-               {
-                  param1[id] = null;
-               }
-               else
-               {
-                  _loc9_ = PropertyChangeEvent.createUpdateEvent(param1,id,param1[id],param1[id]);
-                  param1.dispatchEvent(_loc9_);
-               }
-            }
-         }
-      }
-      
-      public function get nonInheritingStyles() : Object
-      {
-         return _nonInheritingStyles;
-      }
-      
-      public function effectStarted(param1:IEffectInstance) : void
-      {
-         var _loc4_:String = null;
-         _effectsStarted.push(param1);
-         var _loc2_:Array = param1.effect.getAffectedProperties();
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_.length)
-         {
-            _loc4_ = _loc2_[_loc3_];
-            if(_affectedProperties[_loc4_] == undefined)
-            {
-               _affectedProperties[_loc4_] = [];
-            }
-            _affectedProperties[_loc4_].push(param1);
-            _loc3_++;
-         }
-         isEffectStarted = true;
-         if(param1.hideFocusRing)
-         {
-            preventDrawFocus = true;
-            drawFocus(false);
-         }
-      }
-      
-      mx_internal final function set $x(param1:Number) : void
-      {
-         super.x = param1;
-      }
-      
-      private function applyState(param1:String, param2:String) : void
-      {
-         var _loc4_:Array = null;
-         var _loc5_:int = 0;
-         var _loc3_:State = getState(param1);
-         if(param1 == param2)
-         {
             return;
-         }
-         if(_loc3_)
-         {
-            if(_loc3_.basedOn != param2)
+        }// end function
+
+        private function getBaseStates(param1:State) : Array
+        {
+            var _loc_2:* = [];
+            while (param1 && param1.basedOn)
             {
-               applyState(_loc3_.basedOn,param2);
+                
+                _loc_2.push(param1.basedOn);
+                param1 = getState(param1.basedOn);
             }
-            _loc4_ = _loc3_.overrides;
-            _loc5_ = 0;
-            while(_loc5_ < _loc4_.length)
+            return _loc_2;
+        }// end function
+
+        public function set minHeight(param1:Number) : void
+        {
+            if (explicitMinHeight == param1)
             {
-               _loc4_[_loc5_].apply(this);
-               _loc5_++;
+                return;
             }
-            _loc3_.dispatchEnterState();
-         }
-      }
-      
-      protected function commitProperties() : void
-      {
-         var _loc1_:Number = NaN;
-         var _loc2_:Number = NaN;
-         if(_scaleX != oldScaleX)
-         {
-            _loc1_ = Math.abs(_scaleX / oldScaleX);
-            if(!isNaN(explicitMinWidth))
-            {
-               explicitMinWidth = explicitMinWidth * _loc1_;
-            }
-            if(!isNaN(explicitWidth))
-            {
-               explicitWidth = explicitWidth * _loc1_;
-            }
-            if(!isNaN(explicitMaxWidth))
-            {
-               explicitMaxWidth = explicitMaxWidth * _loc1_;
-            }
-            _width = _width * _loc1_;
-            super.scaleX = oldScaleX = _scaleX;
-         }
-         if(_scaleY != oldScaleY)
-         {
-            _loc2_ = Math.abs(_scaleY / oldScaleY);
-            if(!isNaN(explicitMinHeight))
-            {
-               explicitMinHeight = explicitMinHeight * _loc2_;
-            }
-            if(!isNaN(explicitHeight))
-            {
-               explicitHeight = explicitHeight * _loc2_;
-            }
-            if(!isNaN(explicitMaxHeight))
-            {
-               explicitMaxHeight = explicitMaxHeight * _loc2_;
-            }
-            _height = _height * _loc2_;
-            super.scaleY = oldScaleY = _scaleY;
-         }
-         if(x != oldX || y != oldY)
-         {
-            dispatchMoveEvent();
-         }
-         if(width != oldWidth || height != oldHeight)
-         {
-            dispatchResizeEvent();
-         }
-         if(errorStringChanged)
-         {
-            errorStringChanged = false;
-            setBorderColorForErrorString();
-         }
-      }
-      
-      [Bindable("resize")]
-      public function get percentHeight() : Number
-      {
-         return _percentHeight;
-      }
-      
-      [Bindable("widthChanged")]
-      override public function get width() : Number
-      {
-         return _width;
-      }
-      
-      public function get accessibilityDescription() : String
-      {
-         return !!accessibilityProperties?accessibilityProperties.description:"";
-      }
-      
-      public function set explicitMinWidth(param1:Number) : void
-      {
-         if(_explicitMinWidth == param1)
-         {
+            explicitMinHeight = param1;
             return;
-         }
-         _explicitMinWidth = param1;
-         invalidateSize();
-         var _loc2_:IInvalidating = parent as IInvalidating;
-         if(_loc2_)
-         {
-            _loc2_.invalidateSize();
-            _loc2_.invalidateDisplayList();
-         }
-         dispatchEvent(new Event("explicitMinWidthChanged"));
-      }
-      
-      public function get isPopUp() : Boolean
-      {
-         return _isPopUp;
-      }
-      
-      private function measureSizes() : Boolean
-      {
-         var _loc2_:Number = NaN;
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc1_:Boolean = false;
-         if(!invalidateSizeFlag)
-         {
-            return _loc1_;
-         }
-         if(Boolean(isNaN(explicitWidth)) || Boolean(isNaN(explicitHeight)))
-         {
-            _loc4_ = Math.abs(scaleX);
-            _loc5_ = Math.abs(scaleY);
-            if(_loc4_ != 1)
+        }// end function
+
+        protected function isOurFocus(param1:DisplayObject) : Boolean
+        {
+            return param1 == this;
+        }// end function
+
+        public function get errorString() : String
+        {
+            return _errorString;
+        }// end function
+
+        function setUnscaledHeight(param1:Number) : void
+        {
+            var _loc_2:* = param1 * Math.abs(oldScaleY);
+            if (_explicitHeight == _loc_2)
             {
-               _measuredMinWidth = _measuredMinWidth / _loc4_;
-               _measuredWidth = _measuredWidth / _loc4_;
+                return;
             }
-            if(_loc5_ != 1)
+            if (!isNaN(_loc_2))
             {
-               _measuredMinHeight = _measuredMinHeight / _loc5_;
-               _measuredHeight = _measuredHeight / _loc5_;
+                _percentHeight = NaN;
             }
-            measure();
-            invalidateSizeFlag = false;
-            if(!isNaN(explicitMinWidth) && measuredWidth < explicitMinWidth)
-            {
-               measuredWidth = explicitMinWidth;
-            }
-            if(!isNaN(explicitMaxWidth) && measuredWidth > explicitMaxWidth)
-            {
-               measuredWidth = explicitMaxWidth;
-            }
-            if(!isNaN(explicitMinHeight) && measuredHeight < explicitMinHeight)
-            {
-               measuredHeight = explicitMinHeight;
-            }
-            if(!isNaN(explicitMaxHeight) && measuredHeight > explicitMaxHeight)
-            {
-               measuredHeight = explicitMaxHeight;
-            }
-            if(_loc4_ != 1)
-            {
-               _measuredMinWidth = _measuredMinWidth * _loc4_;
-               _measuredWidth = _measuredWidth * _loc4_;
-            }
-            if(_loc5_ != 1)
-            {
-               _measuredMinHeight = _measuredMinHeight * _loc5_;
-               _measuredHeight = _measuredHeight * _loc5_;
-            }
-         }
-         else
-         {
-            invalidateSizeFlag = false;
-            _measuredMinWidth = 0;
-            _measuredMinHeight = 0;
-         }
-         adjustSizesForScaleChanges();
-         if(isNaN(oldMinWidth))
-         {
-            oldMinWidth = !isNaN(explicitMinWidth)?Number(explicitMinWidth):Number(measuredMinWidth);
-            oldMinHeight = !isNaN(explicitMinHeight)?Number(explicitMinHeight):Number(measuredMinHeight);
-            oldExplicitWidth = !isNaN(explicitWidth)?Number(explicitWidth):Number(measuredWidth);
-            oldExplicitHeight = !isNaN(explicitHeight)?Number(explicitHeight):Number(measuredHeight);
-            _loc1_ = true;
-         }
-         else
-         {
-            _loc3_ = !isNaN(explicitMinWidth)?Number(explicitMinWidth):Number(measuredMinWidth);
-            if(_loc3_ != oldMinWidth)
-            {
-               oldMinWidth = _loc3_;
-               _loc1_ = true;
-            }
-            _loc3_ = !isNaN(explicitMinHeight)?Number(explicitMinHeight):Number(measuredMinHeight);
-            if(_loc3_ != oldMinHeight)
-            {
-               oldMinHeight = _loc3_;
-               _loc1_ = true;
-            }
-            _loc3_ = !isNaN(explicitWidth)?Number(explicitWidth):Number(measuredWidth);
-            if(_loc3_ != oldExplicitWidth)
-            {
-               oldExplicitWidth = _loc3_;
-               _loc1_ = true;
-            }
-            _loc3_ = !isNaN(explicitHeight)?Number(explicitHeight):Number(measuredHeight);
-            if(_loc3_ != oldExplicitHeight)
-            {
-               oldExplicitHeight = _loc3_;
-               _loc1_ = true;
-            }
-         }
-         return _loc1_;
-      }
-      
-      mx_internal final function get $parent() : DisplayObjectContainer
-      {
-         return super.parent;
-      }
-      
-      public function get automationTabularData() : Object
-      {
-         if(automationDelegate)
-         {
-            return automationDelegate.automationTabularData;
-         }
-         return null;
-      }
-      
-      public function validateNow() : void
-      {
-         UIComponentGlobals.layoutManager.validateClient(this);
-      }
-      
-      public function finishPrint(param1:Object, param2:IFlexDisplayObject) : void
-      {
-      }
-      
-      public function get repeaters() : Array
-      {
-         return !!_repeaters?_repeaters.slice(0):[];
-      }
-      
-      private function dispatchMoveEvent() : void
-      {
-         var _loc1_:MoveEvent = new MoveEvent(MoveEvent.MOVE);
-         _loc1_.oldX = oldX;
-         _loc1_.oldY = oldY;
-         dispatchEvent(_loc1_);
-         oldX = x;
-         oldY = y;
-      }
-      
-      public function drawFocus(param1:Boolean) : void
-      {
-         var _loc4_:DisplayObjectContainer = null;
-         var _loc5_:Class = null;
-         if(!parent)
-         {
-            return;
-         }
-         var _loc2_:DisplayObject = getFocusObject();
-         var _loc3_:Sprite = !!focusManager?focusManager.focusPane:null;
-         if(Boolean(param1) && !preventDrawFocus)
-         {
-            _loc4_ = _loc3_.parent;
-            if(_loc4_ != parent)
-            {
-               if(_loc4_)
-               {
-                  if(_loc4_ is ISystemManager)
-                  {
-                     ISystemManager(_loc4_).focusPane = null;
-                  }
-                  else
-                  {
-                     IUIComponent(_loc4_).focusPane = null;
-                  }
-               }
-               if(parent is ISystemManager)
-               {
-                  ISystemManager(parent).focusPane = _loc3_;
-               }
-               else
-               {
-                  IUIComponent(parent).focusPane = _loc3_;
-               }
-            }
-            _loc5_ = getStyle("focusSkin");
-            if(Boolean(_loc2_) && !(_loc2_ is _loc5_))
-            {
-               _loc3_.removeChild(_loc2_);
-               _loc2_ = null;
-            }
-            if(!_loc2_)
-            {
-               _loc2_ = new _loc5_();
-               _loc2_.name = "focus";
-               _loc3_.addChild(_loc2_);
-            }
-            if(_loc2_ is ILayoutManagerClient)
-            {
-               ILayoutManagerClient(_loc2_).nestLevel = nestLevel;
-            }
-            if(_loc2_ is ISimpleStyleClient)
-            {
-               ISimpleStyleClient(_loc2_).styleName = this;
-            }
-            addEventListener(MoveEvent.MOVE,focusObj_moveHandler,true);
-            addEventListener(MoveEvent.MOVE,focusObj_moveHandler);
-            addEventListener(ResizeEvent.RESIZE,focusObj_resizeHandler,true);
-            addEventListener(ResizeEvent.RESIZE,focusObj_resizeHandler);
-            addEventListener(Event.REMOVED,focusObj_removedHandler,true);
-            _loc2_.visible = true;
-            hasFocusRect = true;
-            adjustFocusRect();
-         }
-         else if(hasFocusRect)
-         {
-            hasFocusRect = false;
-            if(_loc2_)
-            {
-               _loc2_.visible = false;
-               if(_loc2_ is ISimpleStyleClient)
-               {
-                  ISimpleStyleClient(_loc2_).styleName = null;
-               }
-            }
-            removeEventListener(MoveEvent.MOVE,focusObj_moveHandler);
-            removeEventListener(MoveEvent.MOVE,focusObj_moveHandler,true);
-            removeEventListener(ResizeEvent.RESIZE,focusObj_resizeHandler,true);
-            removeEventListener(ResizeEvent.RESIZE,focusObj_resizeHandler);
-            removeEventListener(Event.REMOVED,focusObj_removedHandler,true);
-         }
-      }
-      
-      public function get flexContextMenu() : IFlexContextMenu
-      {
-         return _flexContextMenu;
-      }
-      
-      public function set accessibilityName(param1:String) : void
-      {
-         if(!Capabilities.hasAccessibility)
-         {
-            return;
-         }
-         if(!accessibilityProperties)
-         {
-            accessibilityProperties = new AccessibilityProperties();
-         }
-         accessibilityProperties.name = param1;
-         Accessibility.updateProperties();
-      }
-      
-      public function get measuredMinHeight() : Number
-      {
-         return _measuredMinHeight;
-      }
-      
-      mx_internal function addingChild(param1:DisplayObject) : void
-      {
-         if(param1 is IUIComponent && !IUIComponent(param1).document)
-         {
-            IUIComponent(param1).document = !!document?document:ApplicationGlobals.application;
-         }
-         if(param1 is mx.core.UIComponent && UIComponent(param1).moduleFactory == null)
-         {
-            if(moduleFactory != null)
-            {
-               UIComponent(param1).moduleFactory = moduleFactory;
-            }
-            else if(document is IFlexModule && document.moduleFactory != null)
-            {
-               UIComponent(param1).moduleFactory = document.moduleFactory;
-            }
-            else if(parent is mx.core.UIComponent && UIComponent(parent).moduleFactory != null)
-            {
-               UIComponent(param1).moduleFactory = UIComponent(parent).moduleFactory;
-            }
-         }
-         if(param1 is IFontContextComponent && !param1 is mx.core.UIComponent && IFontContextComponent(param1).fontContext == null)
-         {
-            IFontContextComponent(param1).fontContext = moduleFactory;
-         }
-         if(param1 is IUIComponent)
-         {
-            IUIComponent(param1).parentChanged(this);
-         }
-         if(param1 is ILayoutManagerClient)
-         {
-            ILayoutManagerClient(param1).nestLevel = nestLevel + 1;
-         }
-         else if(param1 is IUITextField)
-         {
-            IUITextField(param1).nestLevel = nestLevel + 1;
-         }
-         if(param1 is InteractiveObject)
-         {
-            if(doubleClickEnabled)
-            {
-               InteractiveObject(param1).doubleClickEnabled = true;
-            }
-         }
-         if(param1 is IStyleClient)
-         {
-            IStyleClient(param1).regenerateStyleCache(true);
-         }
-         else if(param1 is IUITextField && Boolean(IUITextField(param1).inheritingStyles))
-         {
-            StyleProtoChain.initTextField(IUITextField(param1));
-         }
-         if(param1 is ISimpleStyleClient)
-         {
-            ISimpleStyleClient(param1).styleChanged(null);
-         }
-         if(param1 is IStyleClient)
-         {
-            IStyleClient(param1).notifyStyleChangeInChildren(null,true);
-         }
-         if(param1 is mx.core.UIComponent)
-         {
-            UIComponent(param1).initThemeColor();
-         }
-         if(param1 is mx.core.UIComponent)
-         {
-            UIComponent(param1).stylesInitialized();
-         }
-      }
-      
-      public function set repeaterIndices(param1:Array) : void
-      {
-         _repeaterIndices = param1;
-      }
-      
-      protected function initializationComplete() : void
-      {
-         processedDescriptors = true;
-      }
-      
-      public function set moduleFactory(param1:mx.core.IFlexModuleFactory) : void
-      {
-         var _loc4_:mx.core.UIComponent = null;
-         var _loc2_:int = numChildren;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            _loc4_ = getChildAt(_loc3_) as mx.core.UIComponent;
-            if(_loc4_)
-            {
-               if(_loc4_.moduleFactory == null || _loc4_.moduleFactory == _moduleFactory)
-               {
-                  _loc4_.moduleFactory = param1;
-               }
-            }
-            _loc3_++;
-         }
-         _moduleFactory = param1;
-      }
-      
-      private function focusObj_removedHandler(param1:Event) : void
-      {
-         if(param1.target != this)
-         {
-            return;
-         }
-         var _loc2_:DisplayObject = getFocusObject();
-         if(_loc2_)
-         {
-            _loc2_.visible = false;
-         }
-      }
-      
-      mx_internal function updateCallbacks() : void
-      {
-         if(invalidateDisplayListFlag)
-         {
-            UIComponentGlobals.layoutManager.invalidateDisplayList(this);
-         }
-         if(invalidateSizeFlag)
-         {
-            UIComponentGlobals.layoutManager.invalidateSize(this);
-         }
-         if(invalidatePropertiesFlag)
-         {
-            UIComponentGlobals.layoutManager.invalidateProperties(this);
-         }
-         if(Boolean(systemManager) && (Boolean(_systemManager.stage) || Boolean(_systemManager.useSWFBridge())))
-         {
-            if(methodQueue.length > 0 && !listeningForRender)
-            {
-               _systemManager.addEventListener(FlexEvent.RENDER,callLaterDispatcher);
-               _systemManager.addEventListener(FlexEvent.ENTER_FRAME,callLaterDispatcher);
-               listeningForRender = true;
-            }
-            if(_systemManager.stage)
-            {
-               _systemManager.stage.invalidate();
-            }
-         }
-      }
-      
-      public function set styleDeclaration(param1:CSSStyleDeclaration) : void
-      {
-         _styleDeclaration = param1;
-      }
-      
-      public function get accessibilityEnabled() : Boolean
-      {
-         return !!accessibilityProperties?!accessibilityProperties.silent:true;
-      }
-      
-      override public function set doubleClickEnabled(param1:Boolean) : void
-      {
-         var _loc2_:IChildList = null;
-         var _loc4_:InteractiveObject = null;
-         super.doubleClickEnabled = param1;
-         if(this is IRawChildrenContainer)
-         {
-            _loc2_ = IRawChildrenContainer(this).rawChildren;
-         }
-         else
-         {
-            _loc2_ = IChildList(this);
-         }
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_.numChildren)
-         {
-            _loc4_ = _loc2_.getChildAt(_loc3_) as InteractiveObject;
-            if(_loc4_)
-            {
-               _loc4_.doubleClickEnabled = param1;
-            }
-            _loc3_++;
-         }
-      }
-      
-      public function prepareToPrint(param1:IFlexDisplayObject) : Object
-      {
-         return null;
-      }
-      
-      [Bindable("explicitMinHeightChanged")]
-      public function get minHeight() : Number
-      {
-         if(!isNaN(explicitMinHeight))
-         {
-            return explicitMinHeight;
-         }
-         return measuredMinHeight;
-      }
-      
-      public function notifyStyleChangeInChildren(param1:String, param2:Boolean) : void
-      {
-         var _loc5_:ISimpleStyleClient = null;
-         cachedTextFormat = null;
-         var _loc3_:int = numChildren;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc5_ = getChildAt(_loc4_) as ISimpleStyleClient;
-            if(_loc5_)
-            {
-               _loc5_.styleChanged(param1);
-               if(_loc5_ is IStyleClient)
-               {
-                  IStyleClient(_loc5_).notifyStyleChangeInChildren(param1,param2);
-               }
-            }
-            _loc4_++;
-         }
-      }
-      
-      public function get contentMouseX() : Number
-      {
-         return mouseX;
-      }
-      
-      public function get contentMouseY() : Number
-      {
-         return mouseY;
-      }
-      
-      private function get indexedID() : String
-      {
-         var _loc1_:String = id;
-         var _loc2_:Array = instanceIndices;
-         if(_loc2_)
-         {
-            _loc1_ = _loc1_ + ("[" + _loc2_.join("][") + "]");
-         }
-         return _loc1_;
-      }
-      
-      public function get tweeningProperties() : Array
-      {
-         return _tweeningProperties;
-      }
-      
-      public function set explicitMaxWidth(param1:Number) : void
-      {
-         if(_explicitMaxWidth == param1)
-         {
-            return;
-         }
-         _explicitMaxWidth = param1;
-         invalidateSize();
-         var _loc2_:IInvalidating = parent as IInvalidating;
-         if(_loc2_)
-         {
-            _loc2_.invalidateSize();
-            _loc2_.invalidateDisplayList();
-         }
-         dispatchEvent(new Event("explicitMaxWidthChanged"));
-      }
-      
-      public function set document(param1:Object) : void
-      {
-         var _loc4_:IUIComponent = null;
-         var _loc2_:int = numChildren;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            _loc4_ = getChildAt(_loc3_) as IUIComponent;
-            if(_loc4_)
-            {
-               if(_loc4_.document == _document || _loc4_.document == ApplicationGlobals.application)
-               {
-                  _loc4_.document = param1;
-               }
-            }
-            _loc3_++;
-         }
-         _document = param1;
-      }
-      
-      public function validateSize(param1:Boolean = false) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:DisplayObject = null;
-         var _loc4_:Boolean = false;
-         var _loc5_:IInvalidating = null;
-         if(param1)
-         {
-            _loc2_ = 0;
-            while(_loc2_ < numChildren)
-            {
-               _loc3_ = getChildAt(_loc2_);
-               if(_loc3_ is ILayoutManagerClient)
-               {
-                  (_loc3_ as ILayoutManagerClient).validateSize(true);
-               }
-               _loc2_++;
-            }
-         }
-         if(invalidateSizeFlag)
-         {
-            _loc4_ = measureSizes();
-            if(Boolean(_loc4_) && Boolean(includeInLayout))
-            {
-               invalidateDisplayList();
-               _loc5_ = parent as IInvalidating;
-               if(_loc5_)
-               {
-                  _loc5_.invalidateSize();
-                  _loc5_.invalidateDisplayList();
-               }
-            }
-         }
-      }
-      
-      public function get validationSubField() : String
-      {
-         return _validationSubField;
-      }
-      
-      override public function dispatchEvent(param1:Event) : Boolean
-      {
-         if(dispatchEventHook != null)
-         {
-            dispatchEventHook(param1,this);
-         }
-         return super.dispatchEvent(param1);
-      }
-      
-      public function set id(param1:String) : void
-      {
-         _id = param1;
-      }
-      
-      private function overlay_resizeHandler(param1:Event) : void
-      {
-         fillOverlay(overlay,overlayColor,null);
-      }
-      
-      public function set updateCompletePendingFlag(param1:Boolean) : void
-      {
-         _updateCompletePendingFlag = param1;
-      }
-      
-      mx_internal final function get $height() : Number
-      {
-         return super.height;
-      }
-      
-      protected function attachOverlay() : void
-      {
-         addChild(overlay);
-      }
-      
-      [Bindable("explictMinHeightChanged")]
-      public function get explicitMinHeight() : Number
-      {
-         return _explicitMinHeight;
-      }
-      
-      override public function set height(param1:Number) : void
-      {
-         var _loc2_:IInvalidating = null;
-         if(explicitHeight != param1)
-         {
-            explicitHeight = param1;
+            _explicitHeight = _loc_2;
             invalidateSize();
-         }
-         if(_height != param1)
-         {
-            invalidateProperties();
-            invalidateDisplayList();
-            _loc2_ = parent as IInvalidating;
-            if(Boolean(_loc2_) && Boolean(includeInLayout))
+            var _loc_3:* = parent as IInvalidating;
+            if (_loc_3 && includeInLayout)
             {
-               _loc2_.invalidateSize();
-               _loc2_.invalidateDisplayList();
-            }
-            _height = param1;
-            dispatchEvent(new Event("heightChanged"));
-         }
-      }
-      
-      public function get numAutomationChildren() : int
-      {
-         if(automationDelegate)
-         {
-            return automationDelegate.numAutomationChildren;
-         }
-         return 0;
-      }
-      
-      [Bindable("initialize")]
-      public function get parentApplication() : Object
-      {
-         var _loc2_:mx.core.UIComponent = null;
-         var _loc1_:Object = systemManager.document;
-         if(_loc1_ == this)
-         {
-            _loc2_ = _loc1_.systemManager.parent as mx.core.UIComponent;
-            _loc1_ = !!_loc2_?_loc2_.systemManager.document:null;
-         }
-         return _loc1_;
-      }
-      
-      public function get repeaterIndex() : int
-      {
-         return !!_repeaterIndices?int(_repeaterIndices[_repeaterIndices.length - 1]):-1;
-      }
-      
-      private function removeState(param1:String, param2:String) : void
-      {
-         var _loc4_:Array = null;
-         var _loc5_:int = 0;
-         var _loc3_:State = getState(param1);
-         if(param1 == param2)
-         {
-            return;
-         }
-         if(_loc3_)
-         {
-            _loc3_.dispatchExitState();
-            _loc4_ = _loc3_.overrides;
-            _loc5_ = _loc4_.length;
-            while(_loc5_)
-            {
-               _loc4_[_loc5_ - 1].remove(this);
-               _loc5_--;
-            }
-            if(_loc3_.basedOn != param2)
-            {
-               removeState(_loc3_.basedOn,param2);
-            }
-         }
-      }
-      
-      public function setStyle(param1:String, param2:*) : void
-      {
-         if(param1 == "styleName")
-         {
-            styleName = param2;
-            return;
-         }
-         if(EffectManager.getEventForEffectTrigger(param1) != "")
-         {
-            EffectManager.setStyle(param1,this);
-         }
-         var _loc3_:Boolean = StyleManager.isInheritingStyle(param1);
-         var _loc4_:* = inheritingStyles != mx.core.UIComponent.STYLE_UNINITIALIZED;
-         var _loc5_:* = getStyle(param1) != param2;
-         if(!_styleDeclaration)
-         {
-            _styleDeclaration = new CSSStyleDeclaration();
-            _styleDeclaration.setStyle(param1,param2);
-            if(_loc4_)
-            {
-               regenerateStyleCache(_loc3_);
-            }
-         }
-         else
-         {
-            _styleDeclaration.setStyle(param1,param2);
-         }
-         if(Boolean(_loc4_) && Boolean(_loc5_))
-         {
-            styleChanged(param1);
-            notifyStyleChangeInChildren(param1,_loc3_);
-         }
-      }
-      
-      public function get showInAutomationHierarchy() : Boolean
-      {
-         return _showInAutomationHierarchy;
-      }
-      
-      public function get systemManager() : ISystemManager
-      {
-         var _loc1_:DisplayObject = null;
-         var _loc2_:DisplayObjectContainer = null;
-         var _loc3_:IUIComponent = null;
-         if(!_systemManager || Boolean(_systemManagerDirty))
-         {
-            _loc1_ = root;
-            if(!(_systemManager is SystemManagerProxy))
-            {
-               if(Boolean(_loc1_) && !(_loc1_ is Stage))
-               {
-                  _systemManager = _loc1_ as ISystemManager;
-               }
-               else if(_loc1_)
-               {
-                  _systemManager = Stage(_loc1_).getChildAt(0) as ISystemManager;
-               }
-               else
-               {
-                  _loc2_ = parent;
-                  while(_loc2_)
-                  {
-                     _loc3_ = _loc2_ as IUIComponent;
-                     if(_loc3_)
-                     {
-                        _systemManager = _loc3_.systemManager;
-                        break;
-                     }
-                     if(_loc2_ is ISystemManager)
-                     {
-                        _systemManager = _loc2_ as ISystemManager;
-                        break;
-                     }
-                     _loc2_ = _loc2_.parent;
-                  }
-               }
-            }
-            _systemManagerDirty = false;
-         }
-         return _systemManager;
-      }
-      
-      public function localToContent(param1:Point) : Point
-      {
-         return param1;
-      }
-      
-      private function isBaseState(param1:String) : Boolean
-      {
-         return !param1 || param1 == "";
-      }
-      
-      public function set enabled(param1:Boolean) : void
-      {
-         _enabled = param1;
-         cachedTextFormat = null;
-         invalidateDisplayList();
-         dispatchEvent(new Event("enabledChanged"));
-      }
-      
-      public function set focusEnabled(param1:Boolean) : void
-      {
-         _focusEnabled = param1;
-      }
-      
-      [Bindable("explicitMinWidthChanged")]
-      public function get minWidth() : Number
-      {
-         if(!isNaN(explicitMinWidth))
-         {
-            return explicitMinWidth;
-         }
-         return measuredMinWidth;
-      }
-      
-      private function setFocusLater(param1:Event = null) : void
-      {
-         var _loc2_:ISystemManager = systemManager;
-         if(Boolean(_loc2_) && Boolean(_loc2_.stage))
-         {
-            _loc2_.stage.removeEventListener(Event.ENTER_FRAME,setFocusLater);
-            if(UIComponentGlobals.nextFocusObject)
-            {
-               _loc2_.stage.focus = UIComponentGlobals.nextFocusObject;
-            }
-            UIComponentGlobals.nextFocusObject = null;
-         }
-      }
-      
-      [Bindable("currentStateChange")]
-      public function get currentState() : String
-      {
-         return !!_currentStateChanged?requestedCurrentState:_currentState;
-      }
-      
-      public function initializeRepeaterArrays(param1:IRepeaterClient) : void
-      {
-         if(Boolean(param1 && param1.instanceIndices) && (Boolean(!param1.isDocument || param1 != descriptor.document)) && !_instanceIndices)
-         {
-            _instanceIndices = param1.instanceIndices;
-            _repeaters = param1.repeaters;
-            _repeaterIndices = param1.repeaterIndices;
-         }
-      }
-      
-      public function get baselinePosition() : Number
-      {
-         if(FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
-         {
-            return NaN;
-         }
-         if(!validateBaselinePosition())
-         {
-            return NaN;
-         }
-         var _loc1_:TextLineMetrics = measureText("Wj");
-         if(height < 2 + _loc1_.ascent + 2)
-         {
-            return int(height + (_loc1_.ascent - height) / 2);
-         }
-         return 2 + _loc1_.ascent;
-      }
-      
-      public function get measuredWidth() : Number
-      {
-         return _measuredWidth;
-      }
-      
-      public function set instanceIndices(param1:Array) : void
-      {
-         _instanceIndices = param1;
-      }
-      
-      public function set cachePolicy(param1:String) : void
-      {
-         if(_cachePolicy != param1)
-         {
-            _cachePolicy = param1;
-            if(param1 == UIComponentCachePolicy.OFF)
-            {
-               cacheAsBitmap = false;
-            }
-            else if(param1 == UIComponentCachePolicy.ON)
-            {
-               cacheAsBitmap = true;
-            }
-            else
-            {
-               cacheAsBitmap = cacheAsBitmapCount > 0;
-            }
-         }
-      }
-      
-      public function get automationValue() : Array
-      {
-         if(automationDelegate)
-         {
-            return automationDelegate.automationValue;
-         }
-         return [];
-      }
-      
-      private function addedHandler(param1:Event) : void
-      {
-         var event:Event = param1;
-         if(event.eventPhase != EventPhase.AT_TARGET)
-         {
-            return;
-         }
-         try
-         {
-            if(parent is IContainer && Boolean(IContainer(parent).creatingContentPane))
-            {
-               event.stopImmediatePropagation();
-               return;
+                _loc_3.invalidateSize();
+                _loc_3.invalidateDisplayList();
             }
             return;
-         }
-         catch(error:SecurityError)
-         {
-            return;
-         }
-      }
-      
-      public function parentChanged(param1:DisplayObjectContainer) : void
-      {
-         if(!param1)
-         {
-            _parent = null;
-            _nestLevel = 0;
-         }
-         else if(param1 is IStyleClient)
-         {
-            _parent = param1;
-         }
-         else if(param1 is ISystemManager)
-         {
-            _parent = param1;
-         }
-         else
-         {
-            _parent = param1.parent;
-         }
-      }
-      
-      public function get owner() : DisplayObjectContainer
-      {
-         return !!_owner?_owner:parent;
-      }
-      
-      public function get processedDescriptors() : Boolean
-      {
-         return _processedDescriptors;
-      }
-      
-      override public function addChildAt(param1:DisplayObject, param2:int) : DisplayObject
-      {
-         var _loc3_:DisplayObjectContainer = param1.parent;
-         if(Boolean(_loc3_) && !(_loc3_ is Loader))
-         {
-            _loc3_.removeChild(param1);
-         }
-         if(Boolean(overlayReferenceCount) && param1 != overlay)
-         {
-            param2 = Math.min(param2,Math.max(0,super.numChildren - 1));
-         }
-         addingChild(param1);
-         $addChildAt(param1,param2);
-         childAdded(param1);
-         return param1;
-      }
-      
-      [Bindable("explicitMaxWidthChanged")]
-      public function get maxWidth() : Number
-      {
-         return !isNaN(explicitMaxWidth)?Number(explicitMaxWidth):Number(DEFAULT_MAX_WIDTH);
-      }
-      
-      [Bindable("alphaChanged")]
-      override public function set alpha(param1:Number) : void
-      {
-         super.alpha = param1;
-         dispatchEvent(new Event("alphaChanged"));
-      }
-      
-      private function removedHandler(param1:Event) : void
-      {
-         var event:Event = param1;
-         if(event.eventPhase != EventPhase.AT_TARGET)
-         {
-            return;
-         }
-         try
-         {
-            if(parent is IContainer && Boolean(IContainer(parent).creatingContentPane))
+        }// end function
+
+        public function get automationName() : String
+        {
+            if (_automationName)
             {
-               event.stopImmediatePropagation();
-               return;
+                return _automationName;
             }
-         }
-         catch(error:SecurityError)
-         {
-         }
-         _systemManagerDirty = true;
-      }
-      
-      public function callLater(param1:Function, param2:Array = null) : void
-      {
-         methodQueue.push(new MethodQueueElement(param1,param2));
-         var _loc3_:ISystemManager = systemManager;
-         if(Boolean(_loc3_) && (Boolean(_loc3_.stage) || Boolean(_loc3_.useSWFBridge())))
-         {
-            if(!listeningForRender)
+            if (automationDelegate)
             {
-               _loc3_.addEventListener(FlexEvent.RENDER,callLaterDispatcher);
-               _loc3_.addEventListener(FlexEvent.ENTER_FRAME,callLaterDispatcher);
-               listeningForRender = true;
+                return automationDelegate.automationName;
             }
-            if(_loc3_.stage)
-            {
-               _loc3_.stage.invalidate();
-            }
-         }
-      }
-      
-      public function get initialized() : Boolean
-      {
-         return _initialized;
-      }
-      
-      private function callLaterDispatcher2(param1:Event) : void
-      {
-         var _loc6_:MethodQueueElement = null;
-         if(UIComponentGlobals.callLaterSuspendCount > 0)
-         {
-            return;
-         }
-         var _loc2_:ISystemManager = systemManager;
-         if(Boolean(_loc2_) && (Boolean(_loc2_.stage || _loc2_.useSWFBridge())) && Boolean(listeningForRender))
-         {
-            _loc2_.removeEventListener(FlexEvent.RENDER,callLaterDispatcher);
-            _loc2_.removeEventListener(FlexEvent.ENTER_FRAME,callLaterDispatcher);
-            listeningForRender = false;
-         }
-         var _loc3_:Array = methodQueue;
-         methodQueue = [];
-         var _loc4_:int = _loc3_.length;
-         var _loc5_:int = 0;
-         while(_loc5_ < _loc4_)
-         {
-            _loc6_ = MethodQueueElement(_loc3_[_loc5_]);
-            _loc6_.method.apply(null,_loc6_.args);
-            _loc5_++;
-         }
-      }
-      
-      public function measureHTMLText(param1:String) : TextLineMetrics
-      {
-         return determineTextFormatFromStyles().measureHTMLText(param1);
-      }
-      
-      public function set descriptor(param1:mx.core.UIComponentDescriptor) : void
-      {
-         _descriptor = param1;
-      }
-      
-      private function getState(param1:String) : State
-      {
-         if(!states || Boolean(isBaseState(param1)))
-         {
-            return null;
-         }
-         var _loc2_:int = 0;
-         while(_loc2_ < states.length)
-         {
-            if(states[_loc2_].name == param1)
-            {
-               return states[_loc2_];
-            }
-            _loc2_++;
-         }
-         var _loc3_:String = resourceManager.getString("core","stateUndefined",[param1]);
-         throw new ArgumentError(_loc3_);
-      }
-      
-      public function validateProperties() : void
-      {
-         if(invalidatePropertiesFlag)
-         {
-            commitProperties();
-            invalidatePropertiesFlag = false;
-         }
-      }
-      
-      mx_internal function get documentDescriptor() : mx.core.UIComponentDescriptor
-      {
-         return _documentDescriptor;
-      }
-      
-      public function set includeInLayout(param1:Boolean) : void
-      {
-         var _loc2_:IInvalidating = null;
-         if(_includeInLayout != param1)
-         {
-            _includeInLayout = param1;
-            _loc2_ = parent as IInvalidating;
-            if(_loc2_)
-            {
-               _loc2_.invalidateSize();
-               _loc2_.invalidateDisplayList();
-            }
-            dispatchEvent(new Event("includeInLayoutChanged"));
-         }
-      }
-      
-      public function getClassStyleDeclarations() : Array
-      {
-         var myApplicationDomain:ApplicationDomain = null;
-         var cache:Array = null;
-         var myRoot:DisplayObject = null;
-         var s:CSSStyleDeclaration = null;
-         var factory:mx.core.IFlexModuleFactory = ModuleManager.getAssociatedFactory(this);
-         if(factory != null)
-         {
-            myApplicationDomain = ApplicationDomain(factory.info()["currentDomain"]);
-         }
-         else
-         {
-            myRoot = SystemManager.getSWFRoot(this);
-            if(!myRoot)
-            {
-               return [];
-            }
-            myApplicationDomain = myRoot.loaderInfo.applicationDomain;
-         }
-         var className:String = getQualifiedClassName(this);
-         className = className.replace("::",".");
-         cache = StyleManager.typeSelectorCache[className];
-         if(cache)
-         {
-            return cache;
-         }
-         var decls:Array = [];
-         var classNames:Array = [];
-         var caches:Array = [];
-         var declcache:Array = [];
-         while(className != null && className != "mx.core.UIComponent" && className != "mx.core.UITextField")
-         {
-            cache = StyleManager.typeSelectorCache[className];
-            if(cache)
-            {
-               decls = decls.concat(cache);
-               break;
-            }
-            s = StyleManager.getStyleDeclaration(className);
-            if(s)
-            {
-               decls.unshift(s);
-               classNames.push(className);
-               caches.push(classNames);
-               declcache.push(decls);
-               decls = [];
-               classNames = [];
-            }
-            else
-            {
-               classNames.push(className);
-            }
-            try
-            {
-               className = getQualifiedSuperclassName(myApplicationDomain.getDefinition(className));
-               className = className.replace("::",".");
-            }
-            catch(e:ReferenceError)
-            {
-               className = null;
-               continue;
-            }
-         }
-         caches.push(classNames);
-         declcache.push(decls);
-         decls = [];
-         while(caches.length)
-         {
-            classNames = caches.pop();
-            decls = decls.concat(declcache.pop());
-            while(classNames.length)
-            {
-               StyleManager.typeSelectorCache[classNames.pop()] = decls;
-            }
-         }
-         return decls;
-      }
-      
-      public function set measuredMinWidth(param1:Number) : void
-      {
-         _measuredMinWidth = param1;
-      }
-      
-      private function initializeState(param1:String) : void
-      {
-         var _loc2_:State = getState(param1);
-         while(_loc2_)
-         {
-            _loc2_.initialize();
-            _loc2_ = getState(_loc2_.basedOn);
-         }
-      }
-      
-      mx_internal function initProtoChain() : void
-      {
-         var _loc1_:CSSStyleDeclaration = null;
-         var _loc7_:Object = null;
-         var _loc8_:CSSStyleDeclaration = null;
-         if(styleName)
-         {
-            if(styleName is CSSStyleDeclaration)
-            {
-               _loc1_ = CSSStyleDeclaration(styleName);
-            }
-            else
-            {
-               if(styleName is IFlexDisplayObject || styleName is IStyleClient)
-               {
-                  StyleProtoChain.initProtoChainForUIComponentStyleName(this);
-                  return;
-               }
-               if(styleName is String)
-               {
-                  _loc1_ = StyleManager.getStyleDeclaration("." + styleName);
-               }
-            }
-         }
-         var _loc2_:Object = StyleManager.stylesRoot;
-         if(Boolean(_loc2_) && Boolean(_loc2_.effects))
-         {
-            registerEffects(_loc2_.effects);
-         }
-         var _loc3_:IStyleClient = parent as IStyleClient;
-         if(_loc3_)
-         {
-            _loc7_ = _loc3_.inheritingStyles;
-            if(_loc7_ == mx.core.UIComponent.STYLE_UNINITIALIZED)
-            {
-               _loc7_ = _loc2_;
-            }
-         }
-         else if(isPopUp)
-         {
-            if(Boolean(FlexVersion.compatibilityVersion >= FlexVersion.VERSION_3_0) && Boolean(_owner) && _owner is IStyleClient)
-            {
-               _loc7_ = IStyleClient(_owner).inheritingStyles;
-            }
-            else
-            {
-               _loc7_ = ApplicationGlobals.application.inheritingStyles;
-            }
-         }
-         else
-         {
-            _loc7_ = StyleManager.stylesRoot;
-         }
-         var _loc4_:Array = getClassStyleDeclarations();
-         var _loc5_:int = _loc4_.length;
-         var _loc6_:int = 0;
-         while(_loc6_ < _loc5_)
-         {
-            _loc8_ = _loc4_[_loc6_];
-            _loc7_ = _loc8_.addStyleToProtoChain(_loc7_,this);
-            _loc2_ = _loc8_.addStyleToProtoChain(_loc2_,this);
-            if(_loc8_.effects)
-            {
-               registerEffects(_loc8_.effects);
-            }
-            _loc6_++;
-         }
-         if(_loc1_)
-         {
-            _loc7_ = _loc1_.addStyleToProtoChain(_loc7_,this);
-            _loc2_ = _loc1_.addStyleToProtoChain(_loc2_,this);
-            if(_loc1_.effects)
-            {
-               registerEffects(_loc1_.effects);
-            }
-         }
-         inheritingStyles = !!_styleDeclaration?_styleDeclaration.addStyleToProtoChain(_loc7_,this):_loc7_;
-         nonInheritingStyles = !!_styleDeclaration?_styleDeclaration.addStyleToProtoChain(_loc2_,this):_loc2_;
-      }
-      
-      public function get repeaterIndices() : Array
-      {
-         return !!_repeaterIndices?_repeaterIndices.slice():[];
-      }
-      
-      override public function removeChild(param1:DisplayObject) : DisplayObject
-      {
-         removingChild(param1);
-         $removeChild(param1);
-         childRemoved(param1);
-         return param1;
-      }
-      
-      private function focusObj_moveHandler(param1:MoveEvent) : void
-      {
-         adjustFocusRect();
-      }
-      
-      public function get styleDeclaration() : CSSStyleDeclaration
-      {
-         return _styleDeclaration;
-      }
-      
-      override public function get doubleClickEnabled() : Boolean
-      {
-         return super.doubleClickEnabled;
-      }
-      
-      public function contentToLocal(param1:Point) : Point
-      {
-         return param1;
-      }
-      
-      private function creationCompleteHandler(param1:FlexEvent) : void
-      {
-         if(_currentStateChanged)
-         {
-            _currentStateChanged = false;
-            commitCurrentState();
-            validateNow();
-         }
-         removeEventListener(FlexEvent.CREATION_COMPLETE,creationCompleteHandler);
-      }
-      
-      public function set measuredHeight(param1:Number) : void
-      {
-         _measuredHeight = param1;
-      }
-      
-      protected function createChildren() : void
-      {
-      }
-      
-      public function get activeEffects() : Array
-      {
-         return _effectsStarted;
-      }
-      
-      override public function setChildIndex(param1:DisplayObject, param2:int) : void
-      {
-         if(Boolean(overlayReferenceCount) && param1 != overlay)
-         {
-            param2 = Math.min(param2,Math.max(0,super.numChildren - 2));
-         }
-         super.setChildIndex(param1,param2);
-      }
-      
-      public function regenerateStyleCache(param1:Boolean) : void
-      {
-         var _loc5_:DisplayObject = null;
-         initProtoChain();
-         var _loc2_:IChildList = this is IRawChildrenContainer?IRawChildrenContainer(this).rawChildren:IChildList(this);
-         var _loc3_:int = _loc2_.numChildren;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc5_ = _loc2_.getChildAt(_loc4_);
-            if(_loc5_ is IStyleClient)
-            {
-               if(IStyleClient(_loc5_).inheritingStyles != mx.core.UIComponent.STYLE_UNINITIALIZED)
-               {
-                  IStyleClient(_loc5_).regenerateStyleCache(param1);
-               }
-            }
-            else if(_loc5_ is IUITextField)
-            {
-               if(IUITextField(_loc5_).inheritingStyles)
-               {
-                  StyleProtoChain.initTextField(IUITextField(_loc5_));
-               }
-            }
-            _loc4_++;
-         }
-      }
-      
-      public function get updateCompletePendingFlag() : Boolean
-      {
-         return _updateCompletePendingFlag;
-      }
-      
-      protected function focusOutHandler(param1:FocusEvent) : void
-      {
-         if(isOurFocus(DisplayObject(param1.target)))
-         {
-            drawFocus(false);
-         }
-      }
-      
-      public function getFocus() : InteractiveObject
-      {
-         var _loc1_:ISystemManager = systemManager;
-         if(!_loc1_)
-         {
-            return null;
-         }
-         if(UIComponentGlobals.nextFocusObject)
-         {
-            return UIComponentGlobals.nextFocusObject;
-         }
-         return _loc1_.stage.focus;
-      }
-      
-      public function endEffectsStarted() : void
-      {
-         var _loc1_:int = _effectsStarted.length;
-         var _loc2_:int = 0;
-         while(_loc2_ < _loc1_)
-         {
-            _effectsStarted[_loc2_].end();
-            _loc2_++;
-         }
-      }
-      
-      protected function get unscaledHeight() : Number
-      {
-         return height / Math.abs(scaleY);
-      }
-      
-      [Bindable("enabledChanged")]
-      public function get enabled() : Boolean
-      {
-         return _enabled;
-      }
-      
-      public function get focusEnabled() : Boolean
-      {
-         return _focusEnabled;
-      }
-      
-      override public function set cacheAsBitmap(param1:Boolean) : void
-      {
-         super.cacheAsBitmap = param1;
-         cacheAsBitmapCount = !!param1?1:0;
-      }
-      
-      mx_internal function removeOverlay() : void
-      {
-         if(overlayReferenceCount > 0 && --overlayReferenceCount == 0 && Boolean(overlay))
-         {
-            removeEventListener("resize",overlay_resizeHandler);
-            if(super.getChildByName("overlay"))
-            {
-               $removeChild(overlay);
-            }
-            overlay = null;
-         }
-      }
-      
-      public function set cacheHeuristic(param1:Boolean) : void
-      {
-         if(_cachePolicy == UIComponentCachePolicy.AUTO)
-         {
-            if(param1)
-            {
-               cacheAsBitmapCount++;
-            }
-            else if(cacheAsBitmapCount != 0)
-            {
-               cacheAsBitmapCount--;
-            }
-            super.cacheAsBitmap = cacheAsBitmapCount != 0;
-         }
-      }
-      
-      public function get cachePolicy() : String
-      {
-         return _cachePolicy;
-      }
-      
-      public function set maxHeight(param1:Number) : void
-      {
-         if(explicitMaxHeight == param1)
-         {
-            return;
-         }
-         explicitMaxHeight = param1;
-      }
-      
-      public function getConstraintValue(param1:String) : *
-      {
-         return getStyle(param1);
-      }
-      
-      public function set accessibilityShortcut(param1:String) : void
-      {
-         if(!Capabilities.hasAccessibility)
-         {
-            return;
-         }
-         if(!accessibilityProperties)
-         {
-            accessibilityProperties = new AccessibilityProperties();
-         }
-         accessibilityProperties.shortcut = param1;
-         Accessibility.updateProperties();
-      }
-      
-      public function set focusManager(param1:IFocusManager) : void
-      {
-         _focusManager = param1;
-      }
-      
-      public function clearStyle(param1:String) : void
-      {
-         setStyle(param1,undefined);
-      }
-      
-      public function get descriptor() : mx.core.UIComponentDescriptor
-      {
-         return _descriptor;
-      }
-      
-      public function set nonInheritingStyles(param1:Object) : void
-      {
-         _nonInheritingStyles = param1;
-      }
-      
-      public function set automationDelegate(param1:Object) : void
-      {
-         _automationDelegate = param1 as IAutomationObject;
-      }
-      
-      public function get measuredMinWidth() : Number
-      {
-         return _measuredMinWidth;
-      }
-      
-      public function createReferenceOnParentDocument(param1:IFlexDisplayObject) : void
-      {
-         var _loc2_:Array = null;
-         var _loc3_:Object = null;
-         var _loc4_:int = 0;
-         var _loc5_:int = 0;
-         var _loc6_:PropertyChangeEvent = null;
-         var _loc7_:Object = null;
-         if(Boolean(id) && id != "")
-         {
-            _loc2_ = _instanceIndices;
-            if(!_loc2_)
-            {
-               param1[id] = this;
-            }
-            else
-            {
-               _loc3_ = param1[id];
-               if(!(_loc3_ is Array))
-               {
-                  _loc3_ = param1[id] = [];
-               }
-               _loc4_ = _loc2_.length;
-               _loc5_ = 0;
-               while(_loc5_ < _loc4_ - 1)
-               {
-                  _loc7_ = _loc3_[_loc2_[_loc5_]];
-                  if(!(_loc7_ is Array))
-                  {
-                     _loc7_ = _loc3_[_loc2_[_loc5_]] = [];
-                  }
-                  _loc3_ = _loc7_;
-                  _loc5_++;
-               }
-               _loc3_[_loc2_[_loc4_ - 1]] = this;
-               _loc6_ = PropertyChangeEvent.createUpdateEvent(param1,id,param1[id],param1[id]);
-               param1.dispatchEvent(_loc6_);
-            }
-         }
-      }
-      
-      public function get cursorManager() : ICursorManager
-      {
-         var _loc2_:ICursorManager = null;
-         var _loc1_:DisplayObject = parent;
-         while(_loc1_)
-         {
-            if(_loc1_ is IUIComponent && "cursorManager" in _loc1_)
-            {
-               _loc2_ = _loc1_["cursorManager"];
-               return _loc2_;
-            }
-            _loc1_ = _loc1_.parent;
-         }
-         return CursorManager.getInstance();
-      }
-      
-      public function get repeater() : IRepeater
-      {
-         return !!_repeaters?_repeaters[_repeaters.length - 1]:null;
-      }
-      
-      public function set isPopUp(param1:Boolean) : void
-      {
-         _isPopUp = param1;
-      }
-      
-      public function get measuredHeight() : Number
-      {
-         return _measuredHeight;
-      }
-      
-      public function initialize() : void
-      {
-         if(initialized)
-         {
-            return;
-         }
-         dispatchEvent(new FlexEvent(FlexEvent.PREINITIALIZE));
-         createChildren();
-         childrenCreated();
-         initializeAccessibility();
-         initializationComplete();
-      }
-      
-      override public function set width(param1:Number) : void
-      {
-         var _loc2_:IInvalidating = null;
-         if(explicitWidth != param1)
-         {
-            explicitWidth = param1;
-            invalidateSize();
-         }
-         if(_width != param1)
-         {
-            invalidateProperties();
-            invalidateDisplayList();
-            _loc2_ = parent as IInvalidating;
-            if(Boolean(_loc2_) && Boolean(includeInLayout))
-            {
-               _loc2_.invalidateSize();
-               _loc2_.invalidateDisplayList();
-            }
-            _width = param1;
-            dispatchEvent(new Event("widthChanged"));
-         }
-      }
-      
-      public function set percentHeight(param1:Number) : void
-      {
-         if(_percentHeight == param1)
-         {
-            return;
-         }
-         if(!isNaN(param1))
-         {
-            _explicitHeight = NaN;
-         }
-         _percentHeight = param1;
-         var _loc2_:IInvalidating = parent as IInvalidating;
-         if(_loc2_)
-         {
-            _loc2_.invalidateSize();
-            _loc2_.invalidateDisplayList();
-         }
-      }
-      
-      public function set accessibilityDescription(param1:String) : void
-      {
-         if(!Capabilities.hasAccessibility)
-         {
-            return;
-         }
-         if(!accessibilityProperties)
-         {
-            accessibilityProperties = new AccessibilityProperties();
-         }
-         accessibilityProperties.description = param1;
-         Accessibility.updateProperties();
-      }
-      
-      mx_internal final function set $visible(param1:Boolean) : void
-      {
-         super.visible = param1;
-      }
-      
-      mx_internal function childRemoved(param1:DisplayObject) : void
-      {
-         if(param1 is IUIComponent)
-         {
-            if(IUIComponent(param1).document != param1)
-            {
-               IUIComponent(param1).document = null;
-            }
-            IUIComponent(param1).parentChanged(null);
-         }
-      }
-      
-      mx_internal final function $removeChildAt(param1:int) : DisplayObject
-      {
-         return super.removeChildAt(param1);
-      }
-      
-      [Bindable("explicitMaxHeightChanged")]
-      public function get maxHeight() : Number
-      {
-         return !isNaN(explicitMaxHeight)?Number(explicitMaxHeight):Number(DEFAULT_MAX_HEIGHT);
-      }
-      
-      protected function initializeAccessibility() : void
-      {
-         if(mx.core.UIComponent.createAccessibilityImplementation != null)
-         {
-            mx.core.UIComponent.createAccessibilityImplementation(this);
-         }
-      }
-      
-      public function set explicitMaxHeight(param1:Number) : void
-      {
-         if(_explicitMaxHeight == param1)
-         {
-            return;
-         }
-         _explicitMaxHeight = param1;
-         invalidateSize();
-         var _loc2_:IInvalidating = parent as IInvalidating;
-         if(_loc2_)
-         {
-            _loc2_.invalidateSize();
-            _loc2_.invalidateDisplayList();
-         }
-         dispatchEvent(new Event("explicitMaxHeightChanged"));
-      }
-      
-      public function get accessibilityShortcut() : String
-      {
-         return !!accessibilityProperties?accessibilityProperties.shortcut:"";
-      }
-      
-      public function get focusManager() : IFocusManager
-      {
-         if(_focusManager)
-         {
-            return _focusManager;
-         }
-         var _loc1_:DisplayObject = parent;
-         while(_loc1_)
-         {
-            if(_loc1_ is IFocusManagerContainer)
-            {
-               return IFocusManagerContainer(_loc1_).focusManager;
-            }
-            _loc1_ = _loc1_.parent;
-         }
-         return null;
-      }
-      
-      public function set styleName(param1:Object) : void
-      {
-         if(_styleName === param1)
-         {
-            return;
-         }
-         _styleName = param1;
-         if(inheritingStyles == mx.core.UIComponent.STYLE_UNINITIALIZED)
-         {
-            return;
-         }
-         regenerateStyleCache(true);
-         initThemeColor();
-         styleChanged("styleName");
-         notifyStyleChangeInChildren("styleName",true);
-      }
-      
-      public function get automationDelegate() : Object
-      {
-         return _automationDelegate;
-      }
-      
-      [Bindable("unused")]
-      protected function get resourceManager() : IResourceManager
-      {
-         return _resourceManager;
-      }
-      
-      mx_internal function validateBaselinePosition() : Boolean
-      {
-         var _loc1_:Number = NaN;
-         var _loc2_:Number = NaN;
-         if(!parent)
-         {
-            return false;
-         }
-         if(width == 0 && height == 0)
-         {
-            validateNow();
-            _loc1_ = getExplicitOrMeasuredWidth();
-            _loc2_ = getExplicitOrMeasuredHeight();
-            setActualSize(_loc1_,_loc2_);
-         }
-         validateNow();
-         return true;
-      }
-      
-      mx_internal function cancelAllCallLaters() : void
-      {
-         var _loc1_:ISystemManager = systemManager;
-         if(Boolean(_loc1_) && (Boolean(_loc1_.stage) || Boolean(_loc1_.useSWFBridge())))
-         {
-            if(listeningForRender)
-            {
-               _loc1_.removeEventListener(FlexEvent.RENDER,callLaterDispatcher);
-               _loc1_.removeEventListener(FlexEvent.ENTER_FRAME,callLaterDispatcher);
-               listeningForRender = false;
-            }
-         }
-         methodQueue.splice(0);
-      }
-      
-      private function updateCompleteHandler(param1:FlexEvent) : void
-      {
-         UIComponentGlobals.layoutManager.removeEventListener(FlexEvent.UPDATE_COMPLETE,updateCompleteHandler);
-         processEffectFinished(_endingEffectInstances);
-         _endingEffectInstances = [];
-      }
-      
-      private function findCommonBaseState(param1:String, param2:String) : String
-      {
-         var _loc3_:State = getState(param1);
-         var _loc4_:State = getState(param2);
-         if(!_loc3_ || !_loc4_)
-         {
             return "";
-         }
-         if(Boolean(isBaseState(_loc3_.basedOn)) && Boolean(isBaseState(_loc4_.basedOn)))
-         {
-            return "";
-         }
-         var _loc5_:Array = getBaseStates(_loc3_);
-         var _loc6_:Array = getBaseStates(_loc4_);
-         var _loc7_:String = "";
-         while(_loc5_[_loc5_.length - 1] == _loc6_[_loc6_.length - 1])
-         {
-            _loc7_ = _loc5_.pop();
-            _loc6_.pop();
-            if(!_loc5_.length || !_loc6_.length)
-            {
-               break;
-            }
-         }
-         if(Boolean(_loc5_.length) && _loc5_[_loc5_.length - 1] == _loc4_.name)
-         {
-            _loc7_ = _loc4_.name;
-         }
-         else if(Boolean(_loc6_.length) && _loc6_[_loc6_.length - 1] == _loc3_.name)
-         {
-            _loc7_ = _loc3_.name;
-         }
-         return _loc7_;
-      }
-      
-      public function styleChanged(param1:String) : void
-      {
-         if(this is IFontContextComponent && Boolean(hasFontContextChanged()))
-         {
-            invalidateProperties();
-         }
-         if(!param1 || param1 == "styleName" || Boolean(StyleManager.isSizeInvalidatingStyle(param1)))
-         {
-            invalidateSize();
-         }
-         if(!param1 || param1 == "styleName" || param1 == "themeColor")
-         {
-            initThemeColor();
-         }
-         invalidateDisplayList();
-         if(parent is IInvalidating)
-         {
-            if(StyleManager.isParentSizeInvalidatingStyle(param1))
-            {
-               IInvalidating(parent).invalidateSize();
-            }
-            if(StyleManager.isParentDisplayListInvalidatingStyle(param1))
-            {
-               IInvalidating(parent).invalidateDisplayList();
-            }
-         }
-      }
-      
-      mx_internal final function get $visible() : Boolean
-      {
-         return super.visible;
-      }
-      
-      public function drawRoundRect(param1:Number, param2:Number, param3:Number, param4:Number, param5:Object = null, param6:Object = null, param7:Object = null, param8:Object = null, param9:String = null, param10:Array = null, param11:Object = null) : void
-      {
-         var _loc13_:Number = NaN;
-         var _loc14_:Array = null;
-         var _loc15_:Matrix = null;
-         var _loc16_:Object = null;
-         var _loc12_:Graphics = graphics;
-         if(!param3 || !param4)
-         {
+        }// end function
+
+        final function set $width(param1:Number) : void
+        {
+            super.width = param1;
             return;
-         }
-         if(param6 !== null)
-         {
-            if(param6 is Array)
+        }// end function
+
+        public function getVisibleRect(param1:DisplayObject = null) : Rectangle
+        {
+            if (!param1)
             {
-               if(param7 is Array)
-               {
-                  _loc14_ = param7 as Array;
-               }
-               else
-               {
-                  _loc14_ = [param7,param7];
-               }
-               if(!param10)
-               {
-                  param10 = [0,255];
-               }
-               _loc15_ = null;
-               if(param8)
-               {
-                  if(param8 is Matrix)
-                  {
-                     _loc15_ = Matrix(param8);
-                  }
-                  else
-                  {
-                     _loc15_ = new Matrix();
-                     if(param8 is Number)
-                     {
-                        _loc15_.createGradientBox(param3,param4,Number(param8) * Math.PI / 180,param1,param2);
-                     }
-                     else
-                     {
-                        _loc15_.createGradientBox(param8.w,param8.h,param8.r,param8.x,param8.y);
-                     }
-                  }
-               }
-               if(param9 == GradientType.RADIAL)
-               {
-                  _loc12_.beginGradientFill(GradientType.RADIAL,param6 as Array,_loc14_,param10,_loc15_);
-               }
-               else
-               {
-                  _loc12_.beginGradientFill(GradientType.LINEAR,param6 as Array,_loc14_,param10,_loc15_);
-               }
+                param1 = DisplayObject(systemManager);
             }
-            else
+            var _loc_2:* = $parent ? ($parent) : (parent);
+            if (!_loc_2)
             {
-               _loc12_.beginFill(Number(param6),Number(param7));
+                return new Rectangle();
             }
-         }
-         if(!param5)
-         {
-            _loc12_.drawRect(param1,param2,param3,param4);
-         }
-         else if(param5 is Number)
-         {
-            _loc13_ = Number(param5) * 2;
-            _loc12_.drawRoundRect(param1,param2,param3,param4,_loc13_,_loc13_);
-         }
-         else
-         {
-            GraphicsUtil.drawRoundRectComplex(_loc12_,param1,param2,param3,param4,param5.tl,param5.tr,param5.bl,param5.br);
-         }
-         if(param11)
-         {
-            _loc16_ = param11.r;
-            if(_loc16_ is Number)
+            var _loc_3:* = new Point(x, y);
+            _loc_3 = _loc_2.localToGlobal(_loc_3);
+            var _loc_4:* = new Rectangle(_loc_3.x, _loc_3.y, width, height);
+            var _loc_5:* = this;
+            var _loc_6:* = new Rectangle();
+            do
             {
-               _loc13_ = Number(_loc16_) * 2;
-               _loc12_.drawRoundRect(param11.x,param11.y,param11.w,param11.h,_loc13_,_loc13_);
-            }
-            else
+                
+                if (_loc_5 is UIComponent)
+                {
+                    if (UIComponent(_loc_5).$parent)
+                    {
+                        _loc_5 = UIComponent(_loc_5).$parent;
+                    }
+                    else
+                    {
+                        _loc_5 = UIComponent(_loc_5).parent;
+                    }
+                }
+                else
+                {
+                    _loc_5 = _loc_5.parent;
+                }
+                if (_loc_5 && _loc_5.scrollRect)
+                {
+                    _loc_6 = _loc_5.scrollRect.clone();
+                    _loc_3 = _loc_5.localToGlobal(_loc_6.topLeft);
+                    _loc_6.x = _loc_3.x;
+                    _loc_6.y = _loc_3.y;
+                    _loc_4 = _loc_4.intersection(_loc_6);
+                }
+            }while (_loc_5 && _loc_5 != param1)
+            return _loc_4;
+        }// end function
+
+        public function invalidateDisplayList() : void
+        {
+            if (!invalidateDisplayListFlag)
             {
-               GraphicsUtil.drawRoundRectComplex(_loc12_,param11.x,param11.y,param11.w,param11.h,_loc16_.tl,_loc16_.tr,_loc16_.bl,_loc16_.br);
+                invalidateDisplayListFlag = true;
+                if (isOnDisplayList() && UIComponentGlobals.layoutManager)
+                {
+                    UIComponentGlobals.layoutManager.mx.managers:ILayoutManager::invalidateDisplayList(this);
+                }
             }
-         }
-         if(param6 !== null)
-         {
-            _loc12_.endFill();
-         }
-      }
-      
-      public function move(param1:Number, param2:Number) : void
-      {
-         var _loc3_:Boolean = false;
-         if(param1 != super.x)
-         {
-            super.x = param1;
+            return;
+        }// end function
+
+        function initThemeColor() : Boolean
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = 0;
+            var _loc_8:* = null;
+            var _loc_1:* = _styleName;
+            if (_styleDeclaration)
+            {
+                _loc_2 = _styleDeclaration.getStyle("themeColor");
+                _loc_3 = _styleDeclaration.getStyle("rollOverColor");
+                _loc_4 = _styleDeclaration.getStyle("selectionColor");
+            }
+            if ((_loc_2 === null || !StyleManager.isValidStyleValue(_loc_2)) && (_loc_1 && !(_loc_1 is ISimpleStyleClient)))
+            {
+                _loc_5 = _loc_1 is String ? (StyleManager.getStyleDeclaration("." + _loc_1)) : (_loc_1);
+                if (_loc_5)
+                {
+                    _loc_2 = _loc_5.getStyle("themeColor");
+                    _loc_3 = _loc_5.getStyle("rollOverColor");
+                    _loc_4 = _loc_5.getStyle("selectionColor");
+                }
+            }
+            if (_loc_2 === null || !StyleManager.isValidStyleValue(_loc_2))
+            {
+                _loc_6 = getClassStyleDeclarations();
+                _loc_7 = 0;
+                while (_loc_7 < _loc_6.length)
+                {
+                    
+                    _loc_8 = _loc_6[_loc_7];
+                    if (_loc_8)
+                    {
+                        _loc_2 = _loc_8.getStyle("themeColor");
+                        _loc_3 = _loc_8.getStyle("rollOverColor");
+                        _loc_4 = _loc_8.getStyle("selectionColor");
+                    }
+                    if (_loc_2 !== null && StyleManager.isValidStyleValue(_loc_2))
+                    {
+                        break;
+                    }
+                    _loc_7++;
+                }
+            }
+            if (_loc_2 !== null && StyleManager.isValidStyleValue(_loc_2) && isNaN(_loc_3) && isNaN(_loc_4))
+            {
+                setThemeColor(_loc_2);
+                return true;
+            }
+            return _loc_2 !== null && StyleManager.isValidStyleValue(_loc_2) && !isNaN(_loc_3) && !isNaN(_loc_4);
+        }// end function
+
+        override public function get scaleX() : Number
+        {
+            return _scaleX;
+        }// end function
+
+        public function get uid() : String
+        {
+            if (!_uid)
+            {
+                _uid = toString();
+            }
+            return _uid;
+        }// end function
+
+        override public function get mouseX() : Number
+        {
+            if (!root || root is Stage || root[fakeMouseX] === undefined)
+            {
+                return super.mouseX;
+            }
+            return globalToLocal(new Point(root[fakeMouseX], 0)).x;
+        }// end function
+
+        public function set tweeningProperties(param1:Array) : void
+        {
+            _tweeningProperties = param1;
+            return;
+        }// end function
+
+        override public function stopDrag() : void
+        {
+            super.stopDrag();
+            invalidateProperties();
             dispatchEvent(new Event("xChanged"));
-            _loc3_ = true;
-         }
-         if(param2 != super.y)
-         {
-            super.y = param2;
             dispatchEvent(new Event("yChanged"));
-            _loc3_ = true;
-         }
-         if(_loc3_)
-         {
-            dispatchMoveEvent();
-         }
-      }
-      
-      public function set toolTip(param1:String) : void
-      {
-         var _loc2_:String = _toolTip;
-         _toolTip = param1;
-         ToolTipManager.registerToolTip(this,_loc2_,param1);
-         dispatchEvent(new Event("toolTipChanged"));
-      }
-      
-      public function set repeaters(param1:Array) : void
-      {
-         _repeaters = param1;
-      }
-      
-      [Bindable("explicitMaxHeightChanged")]
-      public function get explicitMaxHeight() : Number
-      {
-         return _explicitMaxHeight;
-      }
-      
-      public function measureText(param1:String) : TextLineMetrics
-      {
-         return determineTextFormatFromStyles().measureText(param1);
-      }
-      
-      public function get styleName() : Object
-      {
-         return _styleName;
-      }
-      
-      protected function createInModuleContext(param1:mx.core.IFlexModuleFactory, param2:String) : Object
-      {
-         var _loc3_:Object = null;
-         if(param1)
-         {
-            _loc3_ = param1.create(param2);
-         }
-         return _loc3_;
-      }
-      
-      [Bindable("initialize")]
-      public function get parentDocument() : Object
-      {
-         var _loc1_:IUIComponent = null;
-         var _loc2_:ISystemManager = null;
-         if(document == this)
-         {
-            _loc1_ = parent as IUIComponent;
-            if(_loc1_)
+            return;
+        }// end function
+
+        public function get focusPane() : Sprite
+        {
+            return _focusPane;
+        }// end function
+
+        public function horizontalGradientMatrix(param1:Number, param2:Number, param3:Number, param4:Number) : Matrix
+        {
+            UIComponentGlobals.tempMatrix.createGradientBox(param3, param4, 0, param1, param2);
+            return UIComponentGlobals.tempMatrix;
+        }// end function
+
+        public function get isDocument() : Boolean
+        {
+            return document == this;
+        }// end function
+
+        public function set validationSubField(param1:String) : void
+        {
+            _validationSubField = param1;
+            return;
+        }// end function
+
+        override public function get scaleY() : Number
+        {
+            return _scaleY;
+        }// end function
+
+        protected function keyDownHandler(event:KeyboardEvent) : void
+        {
+            return;
+        }// end function
+
+        protected function createInFontContext(param1:Class) : Object
+        {
+            hasFontContextBeenSaved = true;
+            var _loc_2:* = StringUtil.trimArrayElements(getStyle("fontFamily"), ",");
+            var _loc_3:* = getStyle("fontWeight");
+            var _loc_4:* = getStyle("fontStyle");
+            var _loc_5:* = _loc_3 == "bold";
+            var _loc_6:* = _loc_4 == "italic";
+            oldEmbeddedFontContext = getFontContext(_loc_2, _loc_5, _loc_6);
+            var _loc_7:* = createInModuleContext(oldEmbeddedFontContext ? (oldEmbeddedFontContext) : (moduleFactory), getQualifiedClassName(param1));
+            if (createInModuleContext(oldEmbeddedFontContext ? (oldEmbeddedFontContext) : (moduleFactory), getQualifiedClassName(param1)) == null)
             {
-               return _loc1_.document;
+                _loc_7 = new param1;
             }
-            _loc2_ = parent as ISystemManager;
-            if(_loc2_)
+            return _loc_7;
+        }// end function
+
+        public function get screen() : Rectangle
+        {
+            var _loc_1:* = systemManager;
+            return _loc_1 ? (_loc_1.screen) : (null);
+        }// end function
+
+        protected function focusInHandler(event:FocusEvent) : void
+        {
+            var _loc_2:* = null;
+            if (isOurFocus(DisplayObject(event.target)))
             {
-               return _loc2_.document;
+                _loc_2 = focusManager;
+                if (_loc_2 && _loc_2.showFocusIndicator)
+                {
+                    drawFocus(true);
+                }
+                ContainerGlobals.checkFocus(event.relatedObject, this);
+            }
+            return;
+        }// end function
+
+        public function hasFontContextChanged() : Boolean
+        {
+            if (!hasFontContextBeenSaved)
+            {
+                return false;
+            }
+            var _loc_1:* = StringUtil.trimArrayElements(getStyle("fontFamily"), ",");
+            var _loc_2:* = getStyle("fontWeight");
+            var _loc_3:* = getStyle("fontStyle");
+            var _loc_4:* = _loc_2 == "bold";
+            var _loc_5:* = _loc_3 == "italic";
+            var _loc_6:* = getEmbeddedFont(_loc_1, _loc_4, _loc_5);
+            var _loc_7:* = embeddedFontRegistry.getAssociatedModuleFactory(_loc_6, moduleFactory);
+            return embeddedFontRegistry.getAssociatedModuleFactory(_loc_6, moduleFactory) != oldEmbeddedFontContext;
+        }// end function
+
+        public function get explicitHeight() : Number
+        {
+            return _explicitHeight;
+        }// end function
+
+        override public function get x() : Number
+        {
+            return super.x;
+        }// end function
+
+        override public function get y() : Number
+        {
+            return super.y;
+        }// end function
+
+        override public function get visible() : Boolean
+        {
+            return _visible;
+        }// end function
+
+        function addOverlay(param1:uint, param2:RoundedRectangle = null) : void
+        {
+            if (!overlay)
+            {
+                overlayColor = param1;
+                overlay = new UIComponent();
+                overlay.name = "overlay";
+                overlay.$visible = true;
+                fillOverlay(overlay, param1, param2);
+                attachOverlay();
+                if (!param2)
+                {
+                    addEventListener(ResizeEvent.RESIZE, overlay_resizeHandler);
+                }
+                overlay.x = 0;
+                overlay.y = 0;
+                invalidateDisplayList();
+                overlayReferenceCount = 1;
+            }
+            else
+            {
+                var _loc_4:* = overlayReferenceCount + 1;
+                overlayReferenceCount = _loc_4;
+            }
+            dispatchEvent(new ChildExistenceChangedEvent(ChildExistenceChangedEvent.OVERLAY_CREATED, true, false, overlay));
+            return;
+        }// end function
+
+        public function get percentWidth() : Number
+        {
+            return _percentWidth;
+        }// end function
+
+        public function set explicitMinHeight(param1:Number) : void
+        {
+            if (_explicitMinHeight == param1)
+            {
+                return;
+            }
+            _explicitMinHeight = param1;
+            invalidateSize();
+            var _loc_2:* = parent as IInvalidating;
+            if (_loc_2)
+            {
+                _loc_2.invalidateSize();
+                _loc_2.invalidateDisplayList();
+            }
+            dispatchEvent(new Event("explicitMinHeightChanged"));
+            return;
+        }// end function
+
+        public function set automationName(param1:String) : void
+        {
+            _automationName = param1;
+            return;
+        }// end function
+
+        public function get mouseFocusEnabled() : Boolean
+        {
+            return _mouseFocusEnabled;
+        }// end function
+
+        function getEmbeddedFont(param1:String, param2:Boolean, param3:Boolean) : EmbeddedFont
+        {
+            if (cachedEmbeddedFont)
+            {
+                if (cachedEmbeddedFont.fontName == param1 && cachedEmbeddedFont.fontStyle == EmbeddedFontRegistry.getFontStyle(param2, param3))
+                {
+                    return cachedEmbeddedFont;
+                }
+            }
+            cachedEmbeddedFont = new EmbeddedFont(param1, param2, param3);
+            return cachedEmbeddedFont;
+        }// end function
+
+        public function stylesInitialized() : void
+        {
+            return;
+        }// end function
+
+        public function set errorString(param1:String) : void
+        {
+            var _loc_2:* = _errorString;
+            _errorString = param1;
+            ToolTipManager.registerErrorString(this, _loc_2, param1);
+            errorStringChanged = true;
+            invalidateProperties();
+            dispatchEvent(new Event("errorStringChanged"));
+            return;
+        }// end function
+
+        public function getExplicitOrMeasuredWidth() : Number
+        {
+            return !isNaN(explicitWidth) ? (explicitWidth) : (measuredWidth);
+        }// end function
+
+        final function set $height(param1:Number) : void
+        {
+            super.height = param1;
+            return;
+        }// end function
+
+        protected function keyUpHandler(event:KeyboardEvent) : void
+        {
+            return;
+        }// end function
+
+        final function $removeChild(param1:DisplayObject) : DisplayObject
+        {
+            return super.removeChild(param1);
+        }// end function
+
+        override public function set scaleX(param1:Number) : void
+        {
+            if (_scaleX == param1)
+            {
+                return;
+            }
+            _scaleX = param1;
+            invalidateProperties();
+            invalidateSize();
+            dispatchEvent(new Event("scaleXChanged"));
+            return;
+        }// end function
+
+        override public function set scaleY(param1:Number) : void
+        {
+            if (_scaleY == param1)
+            {
+                return;
+            }
+            _scaleY = param1;
+            invalidateProperties();
+            invalidateSize();
+            dispatchEvent(new Event("scaleYChanged"));
+            return;
+        }// end function
+
+        public function set uid(param1:String) : void
+        {
+            this._uid = param1;
+            return;
+        }// end function
+
+        public function createAutomationIDPart(param1:IAutomationObject) : Object
+        {
+            if (automationDelegate)
+            {
+                return automationDelegate.createAutomationIDPart(param1);
             }
             return null;
-         }
-         return document;
-      }
-      
-      protected function childrenCreated() : void
-      {
-         invalidateProperties();
-         invalidateSize();
-         invalidateDisplayList();
-      }
-      
-      public function set flexContextMenu(param1:IFlexContextMenu) : void
-      {
-         if(_flexContextMenu)
-         {
-            _flexContextMenu.unsetContextMenu(this);
-         }
-         _flexContextMenu = param1;
-         if(param1 != null)
-         {
-            _flexContextMenu.setContextMenu(this);
-         }
-      }
-      
-      public function set explicitWidth(param1:Number) : void
-      {
-         if(_explicitWidth == param1)
-         {
+        }// end function
+
+        public function getAutomationChildAt(param1:int) : IAutomationObject
+        {
+            if (automationDelegate)
+            {
+                return automationDelegate.getAutomationChildAt(param1);
+            }
+            return null;
+        }// end function
+
+        function get isEffectStarted() : Boolean
+        {
+            return _isEffectStarted;
+        }// end function
+
+        override public function get parent() : DisplayObjectContainer
+        {
+            try
+            {
+                return _parent ? (_parent) : (super.parent);
+            }
+            catch (e:SecurityError)
+            {
+            }
+            return null;
+        }// end function
+
+        override public function get mouseY() : Number
+        {
+            if (!root || root is Stage || root[fakeMouseY] === undefined)
+            {
+                return super.mouseY;
+            }
+            return globalToLocal(new Point(0, root[fakeMouseY])).y;
+        }// end function
+
+        public function setActualSize(param1:Number, param2:Number) : void
+        {
+            var _loc_3:* = false;
+            if (_width != param1)
+            {
+                _width = param1;
+                dispatchEvent(new Event("widthChanged"));
+                _loc_3 = true;
+            }
+            if (_height != param2)
+            {
+                _height = param2;
+                dispatchEvent(new Event("heightChanged"));
+                _loc_3 = true;
+            }
+            if (_loc_3)
+            {
+                invalidateDisplayList();
+                dispatchResizeEvent();
+            }
             return;
-         }
-         if(!isNaN(param1))
-         {
-            _percentWidth = NaN;
-         }
-         _explicitWidth = param1;
-         invalidateSize();
-         var _loc2_:IInvalidating = parent as IInvalidating;
-         if(Boolean(_loc2_) && Boolean(includeInLayout))
-         {
-            _loc2_.invalidateSize();
-            _loc2_.invalidateDisplayList();
-         }
-         dispatchEvent(new Event("explicitWidthChanged"));
-      }
-      
-      private function setBorderColorForErrorString() : void
-      {
-         if(!_errorString || _errorString.length == 0)
-         {
-            if(!isNaN(origBorderColor))
+        }// end function
+
+        private function focusObj_resizeHandler(event:ResizeEvent) : void
+        {
+            adjustFocusRect();
+            return;
+        }// end function
+
+        function adjustSizesForScaleChanges() : void
+        {
+            var _loc_3:* = NaN;
+            var _loc_1:* = scaleX;
+            var _loc_2:* = scaleY;
+            if (_loc_1 != oldScaleX)
             {
-               setStyle("borderColor",origBorderColor);
-               saveBorderColor = true;
+                _loc_3 = Math.abs(_loc_1 / oldScaleX);
+                if (explicitMinWidth)
+                {
+                    explicitMinWidth = explicitMinWidth * _loc_3;
+                }
+                if (!isNaN(explicitWidth))
+                {
+                    explicitWidth = explicitWidth * _loc_3;
+                }
+                if (explicitMaxWidth)
+                {
+                    explicitMaxWidth = explicitMaxWidth * _loc_3;
+                }
+                oldScaleX = _loc_1;
             }
-         }
-         else
-         {
-            if(saveBorderColor)
+            if (_loc_2 != oldScaleY)
             {
-               saveBorderColor = false;
-               origBorderColor = getStyle("borderColor");
+                _loc_3 = Math.abs(_loc_2 / oldScaleY);
+                if (explicitMinHeight)
+                {
+                    explicitMinHeight = explicitMinHeight * _loc_3;
+                }
+                if (explicitHeight)
+                {
+                    explicitHeight = explicitHeight * _loc_3;
+                }
+                if (explicitMaxHeight)
+                {
+                    explicitMaxHeight = explicitMaxHeight * _loc_3;
+                }
+                oldScaleY = _loc_2;
             }
-            setStyle("borderColor",getStyle("errorColor"));
-         }
-         styleChanged("themeColor");
-         var _loc1_:IFocusManager = focusManager;
-         var _loc2_:DisplayObject = !!_loc1_?DisplayObject(_loc1_.getFocus()):null;
-         if(Boolean(_loc1_) && Boolean(_loc1_.showFocusIndicator) && _loc2_ == this)
-         {
-            drawFocus(true);
-         }
-      }
-      
-      public function invalidateSize() : void
-      {
-         if(!invalidateSizeFlag)
-         {
-            invalidateSizeFlag = true;
-            if(Boolean(parent) && Boolean(UIComponentGlobals.layoutManager))
+            return;
+        }// end function
+
+        public function set focusPane(param1:Sprite) : void
+        {
+            if (param1)
             {
-               UIComponentGlobals.layoutManager.invalidateSize(this);
+                addChild(param1);
+                param1.x = 0;
+                param1.y = 0;
+                param1.scrollRect = null;
+                _focusPane = param1;
             }
-         }
-      }
-      
-      public function set measuredMinHeight(param1:Number) : void
-      {
-         _measuredMinHeight = param1;
-      }
-      
-      protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-      }
-      
-      [Bindable("explicitWidthChanged")]
-      public function get explicitWidth() : Number
-      {
-         return _explicitWidth;
-      }
-      
-      override public function set filters(param1:Array) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         var _loc4_:IEventDispatcher = null;
-         if(_filters)
-         {
-            _loc2_ = _filters.length;
-            _loc3_ = 0;
-            while(_loc3_ < _loc2_)
+            else
             {
-               _loc4_ = _filters[_loc3_] as IEventDispatcher;
-               if(_loc4_)
-               {
-                  _loc4_.removeEventListener("change",filterChangeHandler);
-               }
-               _loc3_++;
+                removeChild(_focusPane);
+                _focusPane.mask = null;
+                _focusPane = null;
             }
-         }
-         _filters = param1;
-         if(_filters)
-         {
-            _loc2_ = _filters.length;
-            _loc3_ = 0;
-            while(_loc3_ < _loc2_)
+            return;
+        }// end function
+
+        public function determineTextFormatFromStyles() : UITextFormat
+        {
+            var _loc_2:* = null;
+            var _loc_1:* = cachedTextFormat;
+            if (!_loc_1)
             {
-               _loc4_ = _filters[_loc3_] as IEventDispatcher;
-               if(_loc4_)
-               {
-                  _loc4_.addEventListener("change",filterChangeHandler);
-               }
-               _loc3_++;
+                _loc_2 = StringUtil.trimArrayElements(_inheritingStyles.fontFamily, ",");
+                _loc_1 = new UITextFormat(getNonNullSystemManager(), _loc_2);
+                _loc_1.moduleFactory = moduleFactory;
+                _loc_1.align = _inheritingStyles.textAlign;
+                _loc_1.bold = _inheritingStyles.fontWeight == "bold";
+                _loc_1.color = enabled ? (_inheritingStyles.color) : (_inheritingStyles.disabledColor);
+                _loc_1.font = _loc_2;
+                _loc_1.indent = _inheritingStyles.textIndent;
+                _loc_1.italic = _inheritingStyles.fontStyle == "italic";
+                _loc_1.kerning = _inheritingStyles.kerning;
+                _loc_1.leading = _nonInheritingStyles.leading;
+                _loc_1.leftMargin = _nonInheritingStyles.paddingLeft;
+                _loc_1.letterSpacing = _inheritingStyles.letterSpacing;
+                _loc_1.rightMargin = _nonInheritingStyles.paddingRight;
+                _loc_1.size = _inheritingStyles.fontSize;
+                _loc_1.underline = _nonInheritingStyles.textDecoration == "underline";
+                _loc_1.antiAliasType = _inheritingStyles.fontAntiAliasType;
+                _loc_1.gridFitType = _inheritingStyles.fontGridFitType;
+                _loc_1.sharpness = _inheritingStyles.fontSharpness;
+                _loc_1.thickness = _inheritingStyles.fontThickness;
+                cachedTextFormat = _loc_1;
             }
-         }
-         super.filters = _filters;
-      }
-   }
+            return _loc_1;
+        }// end function
+
+        public function validationResultHandler(event:ValidationResultEvent) : void
+        {
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_5:* = 0;
+            if (errorObjectArray === null)
+            {
+                errorObjectArray = new Array();
+                errorArray = new Array();
+            }
+            var _loc_2:* = errorObjectArray.indexOf(event.target);
+            if (event.type == ValidationResultEvent.VALID)
+            {
+                if (_loc_2 != -1)
+                {
+                    errorObjectArray.splice(_loc_2, 1);
+                    errorArray.splice(_loc_2, 1);
+                    errorString = errorArray.join("\n");
+                    if (errorArray.length == 0)
+                    {
+                        dispatchEvent(new FlexEvent(FlexEvent.VALID));
+                    }
+                }
+            }
+            else
+            {
+                if (validationSubField != null && validationSubField != "" && event.results)
+                {
+                    _loc_5 = 0;
+                    while (_loc_5 < event.results.length)
+                    {
+                        
+                        _loc_4 = event.results[_loc_5];
+                        if (_loc_4.subField == validationSubField)
+                        {
+                            if (_loc_4.isError)
+                            {
+                                _loc_3 = _loc_4.errorMessage;
+                            }
+                            else if (_loc_2 != -1)
+                            {
+                                errorObjectArray.splice(_loc_2, 1);
+                                errorArray.splice(_loc_2, 1);
+                                errorString = errorArray.join("\n");
+                                if (errorArray.length == 0)
+                                {
+                                    dispatchEvent(new FlexEvent(FlexEvent.VALID));
+                                }
+                            }
+                            break;
+                        }
+                        _loc_5++;
+                    }
+                }
+                else if (event.results && event.results.length > 0)
+                {
+                    _loc_3 = event.results[0].errorMessage;
+                }
+                if (_loc_3 && _loc_2 != -1)
+                {
+                    errorArray[_loc_2] = _loc_3;
+                    errorString = errorArray.join("\n");
+                    dispatchEvent(new FlexEvent(FlexEvent.INVALID));
+                }
+                else if (_loc_3 && _loc_2 == -1)
+                {
+                    errorObjectArray.push(event.target);
+                    errorArray.push(_loc_3);
+                    errorString = errorArray.join("\n");
+                    dispatchEvent(new FlexEvent(FlexEvent.INVALID));
+                }
+            }
+            return;
+        }// end function
+
+        public function invalidateProperties() : void
+        {
+            if (!invalidatePropertiesFlag)
+            {
+                invalidatePropertiesFlag = true;
+                if (parent && UIComponentGlobals.layoutManager)
+                {
+                    UIComponentGlobals.layoutManager.invalidateProperties(this);
+                }
+            }
+            return;
+        }// end function
+
+        public function get inheritingStyles() : Object
+        {
+            return _inheritingStyles;
+        }// end function
+
+        private function focusObj_scrollHandler(event:Event) : void
+        {
+            adjustFocusRect();
+            return;
+        }// end function
+
+        final function get $x() : Number
+        {
+            return super.x;
+        }// end function
+
+        final function get $y() : Number
+        {
+            return super.y;
+        }// end function
+
+        public function setConstraintValue(param1:String, param2) : void
+        {
+            setStyle(param1, param2);
+            return;
+        }// end function
+
+        protected function resourcesChanged() : void
+        {
+            return;
+        }// end function
+
+        public function registerEffects(param1:Array) : void
+        {
+            var _loc_4:* = null;
+            var _loc_2:* = param1.length;
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_2)
+            {
+                
+                _loc_4 = EffectManager.getEventForEffectTrigger(param1[_loc_3]);
+                if (_loc_4 != null && _loc_4 != "")
+                {
+                    addEventListener(_loc_4, EffectManager.eventHandler, false, EventPriority.EFFECT);
+                }
+                _loc_3++;
+            }
+            return;
+        }// end function
+
+        public function get explicitMinWidth() : Number
+        {
+            return _explicitMinWidth;
+        }// end function
+
+        private function filterChangeHandler(event:Event) : void
+        {
+            super.filters = _filters;
+            return;
+        }// end function
+
+        override public function set visible(param1:Boolean) : void
+        {
+            setVisible(param1);
+            return;
+        }// end function
+
+        override public function set y(param1:Number) : void
+        {
+            if (super.y == param1)
+            {
+                return;
+            }
+            super.y = param1;
+            invalidateProperties();
+            dispatchEvent(new Event("yChanged"));
+            return;
+        }// end function
+
+        public function set explicitHeight(param1:Number) : void
+        {
+            if (_explicitHeight == param1)
+            {
+                return;
+            }
+            if (!isNaN(param1))
+            {
+                _percentHeight = NaN;
+            }
+            _explicitHeight = param1;
+            invalidateSize();
+            var _loc_2:* = parent as IInvalidating;
+            if (_loc_2 && includeInLayout)
+            {
+                _loc_2.invalidateSize();
+                _loc_2.invalidateDisplayList();
+            }
+            dispatchEvent(new Event("explicitHeightChanged"));
+            return;
+        }// end function
+
+        override public function set x(param1:Number) : void
+        {
+            if (super.x == param1)
+            {
+                return;
+            }
+            super.x = param1;
+            invalidateProperties();
+            dispatchEvent(new Event("xChanged"));
+            return;
+        }// end function
+
+        public function set showInAutomationHierarchy(param1:Boolean) : void
+        {
+            _showInAutomationHierarchy = param1;
+            return;
+        }// end function
+
+        private function resourceManager_changeHandler(event:Event) : void
+        {
+            resourcesChanged();
+            return;
+        }// end function
+
+        public function set systemManager(param1:ISystemManager) : void
+        {
+            _systemManager = param1;
+            _systemManagerDirty = false;
+            return;
+        }// end function
+
+        public function get accessibilityName() : String
+        {
+            return accessibilityProperties ? (accessibilityProperties.name) : ("");
+        }// end function
+
+        function getFocusObject() : DisplayObject
+        {
+            var _loc_1:* = focusManager;
+            if (!_loc_1 || !_loc_1.focusPane)
+            {
+                return null;
+            }
+            return _loc_1.focusPane.numChildren == 0 ? (null) : (_loc_1.focusPane.getChildAt(0));
+        }// end function
+
+        public function set percentWidth(param1:Number) : void
+        {
+            if (_percentWidth == param1)
+            {
+                return;
+            }
+            if (!isNaN(param1))
+            {
+                _explicitWidth = NaN;
+            }
+            _percentWidth = param1;
+            var _loc_2:* = parent as IInvalidating;
+            if (_loc_2)
+            {
+                _loc_2.invalidateSize();
+                _loc_2.invalidateDisplayList();
+            }
+            return;
+        }// end function
+
+        public function get moduleFactory() : IFlexModuleFactory
+        {
+            return _moduleFactory;
+        }// end function
+
+        override public function addChild(param1:DisplayObject) : DisplayObject
+        {
+            var _loc_2:* = param1.parent;
+            if (_loc_2 && !(_loc_2 is Loader))
+            {
+                _loc_2.removeChild(param1);
+            }
+            var _loc_3:* = overlayReferenceCount && param1 != overlay ? (Math.max(0, (super.numChildren - 1))) : (super.numChildren);
+            addingChild(param1);
+            $addChildAt(param1, _loc_3);
+            childAdded(param1);
+            return param1;
+        }// end function
+
+        public function get document() : Object
+        {
+            return _document;
+        }// end function
+
+        public function set mouseFocusEnabled(param1:Boolean) : void
+        {
+            _mouseFocusEnabled = param1;
+            return;
+        }// end function
+
+        final function $addChild(param1:DisplayObject) : DisplayObject
+        {
+            return super.addChild(param1);
+        }// end function
+
+        function setThemeColor(param1:Object) : void
+        {
+            var _loc_2:* = NaN;
+            if (_loc_2 is String)
+            {
+                _loc_2 = parseInt(String(param1));
+            }
+            else
+            {
+                _loc_2 = Number(param1);
+            }
+            if (isNaN(_loc_2))
+            {
+                _loc_2 = StyleManager.getColorName(param1);
+            }
+            var _loc_3:* = ColorUtil.adjustBrightness2(_loc_2, 50);
+            var _loc_4:* = ColorUtil.adjustBrightness2(_loc_2, 70);
+            setStyle("selectionColor", _loc_3);
+            setStyle("rollOverColor", _loc_4);
+            return;
+        }// end function
+
+        public function get explicitMaxWidth() : Number
+        {
+            return _explicitMaxWidth;
+        }// end function
+
+        public function get id() : String
+        {
+            return _id;
+        }// end function
+
+        override public function get height() : Number
+        {
+            return _height;
+        }// end function
+
+        public function set minWidth(param1:Number) : void
+        {
+            if (explicitMinWidth == param1)
+            {
+                return;
+            }
+            explicitMinWidth = param1;
+            return;
+        }// end function
+
+        public function set currentState(param1:String) : void
+        {
+            setCurrentState(param1, true);
+            return;
+        }// end function
+
+        public function executeBindings(param1:Boolean = false) : void
+        {
+            var _loc_2:* = descriptor && descriptor.document ? (descriptor.document) : (parentDocument);
+            BindingManager.executeBindings(_loc_2, id, this);
+            return;
+        }// end function
+
+        public function replayAutomatableEvent(event:Event) : Boolean
+        {
+            if (automationDelegate)
+            {
+                return automationDelegate.replayAutomatableEvent(event);
+            }
+            return false;
+        }// end function
+
+        function getFontContext(param1:String, param2:Boolean, param3:Boolean) : IFlexModuleFactory
+        {
+            return embeddedFontRegistry.getAssociatedModuleFactory(getEmbeddedFont(param1, param2, param3), moduleFactory);
+        }// end function
+
+        public function get instanceIndex() : int
+        {
+            return _instanceIndices ? (_instanceIndices[(_instanceIndices.length - 1)]) : (-1);
+        }// end function
+
+        public function set measuredWidth(param1:Number) : void
+        {
+            _measuredWidth = param1;
+            return;
+        }// end function
+
+        public function effectFinished(param1:IEffectInstance) : void
+        {
+            _endingEffectInstances.push(param1);
+            invalidateProperties();
+            UIComponentGlobals.layoutManager.addEventListener(FlexEvent.UPDATE_COMPLETE, updateCompleteHandler, false, 0, true);
+            return;
+        }// end function
+
+        public function getRepeaterItem(param1:int = -1) : Object
+        {
+            var _loc_2:* = repeaters;
+            if (_loc_2.length == 0)
+            {
+                return null;
+            }
+            if (param1 == -1)
+            {
+                param1 = _loc_2.length - 1;
+            }
+            return _loc_2[param1].getItemAt(repeaterIndices[param1]);
+        }// end function
+
+        function set isEffectStarted(param1:Boolean) : void
+        {
+            _isEffectStarted = param1;
+            return;
+        }// end function
+
+        function fillOverlay(param1:UIComponent, param2:uint, param3:RoundedRectangle = null) : void
+        {
+            if (!param3)
+            {
+                param3 = new RoundedRectangle(0, 0, unscaledWidth, unscaledHeight, 0);
+            }
+            var _loc_4:* = param1.graphics;
+            _loc_4.clear();
+            _loc_4.beginFill(param2);
+            _loc_4.drawRoundRect(param3.x, param3.y, param3.width, param3.height, param3.cornerRadius * 2, param3.cornerRadius * 2);
+            _loc_4.endFill();
+            return;
+        }// end function
+
+        public function get instanceIndices() : Array
+        {
+            return _instanceIndices ? (_instanceIndices.slice(0)) : (null);
+        }// end function
+
+        function childAdded(param1:DisplayObject) : void
+        {
+            if (param1 is UIComponent)
+            {
+                if (!UIComponent(param1).initialized)
+                {
+                    UIComponent(param1).initialize();
+                }
+            }
+            else if (param1 is IUIComponent)
+            {
+                IUIComponent(param1).initialize();
+            }
+            return;
+        }// end function
+
+        public function globalToContent(param1:Point) : Point
+        {
+            return globalToLocal(param1);
+        }// end function
+
+        function removingChild(param1:DisplayObject) : void
+        {
+            return;
+        }// end function
+
+        function getEffectsForProperty(param1:String) : Array
+        {
+            return _affectedProperties[param1] != undefined ? (_affectedProperties[param1]) : ([]);
+        }// end function
+
+        override public function removeChildAt(param1:int) : DisplayObject
+        {
+            var _loc_2:* = getChildAt(param1);
+            removingChild(_loc_2);
+            $removeChild(_loc_2);
+            childRemoved(_loc_2);
+            return _loc_2;
+        }// end function
+
+        protected function measure() : void
+        {
+            measuredMinWidth = 0;
+            measuredMinHeight = 0;
+            measuredWidth = 0;
+            measuredHeight = 0;
+            return;
+        }// end function
+
+        public function set owner(param1:DisplayObjectContainer) : void
+        {
+            _owner = param1;
+            return;
+        }// end function
+
+        function getNonNullSystemManager() : ISystemManager
+        {
+            var _loc_1:* = systemManager;
+            if (!_loc_1)
+            {
+                _loc_1 = ISystemManager(SystemManager.getSWFRoot(this));
+            }
+            if (!_loc_1)
+            {
+                return SystemManagerGlobals.topLevelSystemManagers[0];
+            }
+            return _loc_1;
+        }// end function
+
+        protected function get unscaledWidth() : Number
+        {
+            return width / Math.abs(scaleX);
+        }// end function
+
+        public function set processedDescriptors(param1:Boolean) : void
+        {
+            _processedDescriptors = param1;
+            if (param1)
+            {
+                dispatchEvent(new FlexEvent(FlexEvent.INITIALIZE));
+            }
+            return;
+        }// end function
+
+        private function processEffectFinished(param1:Array) : void
+        {
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = 0;
+            var _loc_8:* = null;
+            var _loc_9:* = 0;
+            var _loc_2:* = _effectsStarted.length - 1;
+            while (_loc_2 >= 0)
+            {
+                
+                _loc_3 = 0;
+                while (_loc_3 < param1.length)
+                {
+                    
+                    _loc_4 = param1[_loc_3];
+                    if (_loc_4 == _effectsStarted[_loc_2])
+                    {
+                        _loc_5 = _effectsStarted[_loc_2];
+                        _effectsStarted.splice(_loc_2, 1);
+                        _loc_6 = _loc_5.effect.getAffectedProperties();
+                        _loc_7 = 0;
+                        while (_loc_7 < _loc_6.length)
+                        {
+                            
+                            _loc_8 = _loc_6[_loc_7];
+                            if (_affectedProperties[_loc_8] != undefined)
+                            {
+                                _loc_9 = 0;
+                                while (_loc_9 < _affectedProperties[_loc_8].length)
+                                {
+                                    
+                                    if (_affectedProperties[_loc_8][_loc_9] == _loc_4)
+                                    {
+                                        _affectedProperties[_loc_8].splice(_loc_9, 1);
+                                        break;
+                                    }
+                                    _loc_9++;
+                                }
+                                if (_affectedProperties[_loc_8].length == 0)
+                                {
+                                    delete _affectedProperties[_loc_8];
+                                }
+                            }
+                            _loc_7++;
+                        }
+                        break;
+                    }
+                    _loc_3++;
+                }
+                _loc_2 = _loc_2 - 1;
+            }
+            isEffectStarted = _effectsStarted.length > 0 ? (true) : (false);
+            if (_loc_4 && _loc_4.hideFocusRing)
+            {
+                preventDrawFocus = false;
+            }
+            return;
+        }// end function
+
+        private function commitCurrentState() : void
+        {
+            var _loc_3:* = null;
+            var _loc_1:* = playStateTransition ? (getTransition(_currentState, requestedCurrentState)) : (null);
+            var _loc_2:* = findCommonBaseState(_currentState, requestedCurrentState);
+            var _loc_4:* = _currentState ? (_currentState) : ("");
+            var _loc_5:* = getState(requestedCurrentState);
+            if (_currentTransitionEffect)
+            {
+                _currentTransitionEffect.end();
+            }
+            initializeState(requestedCurrentState);
+            if (_loc_1)
+            {
+                _loc_1.captureStartValues();
+            }
+            _loc_3 = new StateChangeEvent(StateChangeEvent.CURRENT_STATE_CHANGING);
+            _loc_3.oldState = _loc_4;
+            _loc_3.newState = requestedCurrentState ? (requestedCurrentState) : ("");
+            dispatchEvent(_loc_3);
+            if (isBaseState(_currentState))
+            {
+                dispatchEvent(new FlexEvent(FlexEvent.EXIT_STATE));
+            }
+            removeState(_currentState, _loc_2);
+            _currentState = requestedCurrentState;
+            if (isBaseState(currentState))
+            {
+                dispatchEvent(new FlexEvent(FlexEvent.ENTER_STATE));
+            }
+            else
+            {
+                applyState(_currentState, _loc_2);
+            }
+            _loc_3 = new StateChangeEvent(StateChangeEvent.CURRENT_STATE_CHANGE);
+            _loc_3.oldState = _loc_4;
+            _loc_3.newState = _currentState ? (_currentState) : ("");
+            dispatchEvent(_loc_3);
+            if (_loc_1)
+            {
+                UIComponentGlobals.layoutManager.validateNow();
+                _currentTransitionEffect = _loc_1;
+                _loc_1.addEventListener(EffectEvent.EFFECT_END, transition_effectEndHandler);
+                _loc_1.play();
+            }
+            return;
+        }// end function
+
+        public function get includeInLayout() : Boolean
+        {
+            return _includeInLayout;
+        }// end function
+
+        private function dispatchResizeEvent() : void
+        {
+            var _loc_1:* = new ResizeEvent(ResizeEvent.RESIZE);
+            _loc_1.oldWidth = oldWidth;
+            _loc_1.oldHeight = oldHeight;
+            dispatchEvent(_loc_1);
+            oldWidth = width;
+            oldHeight = height;
+            return;
+        }// end function
+
+        public function set maxWidth(param1:Number) : void
+        {
+            if (explicitMaxWidth == param1)
+            {
+                return;
+            }
+            explicitMaxWidth = param1;
+            return;
+        }// end function
+
+        public function validateDisplayList() : void
+        {
+            var _loc_1:* = null;
+            var _loc_2:* = NaN;
+            var _loc_3:* = NaN;
+            if (invalidateDisplayListFlag)
+            {
+                _loc_1 = parent as ISystemManager;
+                if (_loc_1)
+                {
+                    if (_loc_1 is SystemManagerProxy || _loc_1 == systemManager.topLevelSystemManager && _loc_1.document != this)
+                    {
+                        setActualSize(getExplicitOrMeasuredWidth(), getExplicitOrMeasuredHeight());
+                    }
+                }
+                _loc_2 = scaleX == 0 ? (0) : (width / scaleX);
+                _loc_3 = scaleY == 0 ? (0) : (height / scaleY);
+                if (Math.abs(_loc_2 - lastUnscaledWidth) < 1e-005)
+                {
+                    _loc_2 = lastUnscaledWidth;
+                }
+                if (Math.abs(_loc_3 - lastUnscaledHeight) < 1e-005)
+                {
+                    _loc_3 = lastUnscaledHeight;
+                }
+                updateDisplayList(_loc_2, _loc_3);
+                lastUnscaledWidth = _loc_2;
+                lastUnscaledHeight = _loc_3;
+                invalidateDisplayListFlag = false;
+            }
+            return;
+        }// end function
+
+        public function contentToGlobal(param1:Point) : Point
+        {
+            return localToGlobal(param1);
+        }// end function
+
+        public function resolveAutomationIDPart(param1:Object) : Array
+        {
+            if (automationDelegate)
+            {
+                return automationDelegate.resolveAutomationIDPart(param1);
+            }
+            return [];
+        }// end function
+
+        public function set inheritingStyles(param1:Object) : void
+        {
+            _inheritingStyles = param1;
+            return;
+        }// end function
+
+        public function setFocus() : void
+        {
+            var _loc_1:* = systemManager;
+            if (_loc_1 && (_loc_1.stage || _loc_1.useSWFBridge()))
+            {
+                if (UIComponentGlobals.callLaterDispatcherCount == 0)
+                {
+                    _loc_1.stage.focus = this;
+                    UIComponentGlobals.nextFocusObject = null;
+                }
+                else
+                {
+                    UIComponentGlobals.nextFocusObject = this;
+                    _loc_1.addEventListener(FlexEvent.ENTER_FRAME, setFocusLater);
+                }
+            }
+            else
+            {
+                UIComponentGlobals.nextFocusObject = this;
+                callLater(setFocusLater);
+            }
+            return;
+        }// end function
+
+        private function getTransition(param1:String, param2:String) : IEffect
+        {
+            var _loc_6:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            if (!transitions)
+            {
+                return null;
+            }
+            if (!param1)
+            {
+                param1 = "";
+            }
+            if (!param2)
+            {
+                param2 = "";
+            }
+            var _loc_5:* = 0;
+            while (_loc_5 < transitions.length)
+            {
+                
+                _loc_6 = transitions[_loc_5];
+                if (_loc_6.fromState == "*" && _loc_6.toState == "*" && _loc_4 < 1)
+                {
+                    _loc_3 = _loc_6.effect;
+                    _loc_4 = 1;
+                }
+                else if (_loc_6.fromState == param1 && _loc_6.toState == "*" && _loc_4 < 2)
+                {
+                    _loc_3 = _loc_6.effect;
+                    _loc_4 = 2;
+                }
+                else if (_loc_6.fromState == "*" && _loc_6.toState == param2 && _loc_4 < 3)
+                {
+                    _loc_3 = _loc_6.effect;
+                    _loc_4 = 3;
+                }
+                else if (_loc_6.fromState == param1 && _loc_6.toState == param2 && _loc_4 < 4)
+                {
+                    _loc_3 = _loc_6.effect;
+                    _loc_4 = 4;
+                    break;
+                }
+                _loc_5++;
+            }
+            return _loc_3;
+        }// end function
+
+        public function set initialized(param1:Boolean) : void
+        {
+            _initialized = param1;
+            if (param1)
+            {
+                setVisible(_visible, true);
+                dispatchEvent(new FlexEvent(FlexEvent.CREATION_COMPLETE));
+            }
+            return;
+        }// end function
+
+        final function set $y(param1:Number) : void
+        {
+            super.y = param1;
+            return;
+        }// end function
+
+        public function owns(param1:DisplayObject) : Boolean
+        {
+            var child:* = param1;
+            var childList:* = this is IRawChildrenContainer ? (IRawChildrenContainer(this).rawChildren) : (IChildList(this));
+            if (childList.contains(child))
+            {
+                return true;
+            }
+            try
+            {
+                while (child && child != this)
+                {
+                    
+                    if (child is IUIComponent)
+                    {
+                        child = IUIComponent(child).owner;
+                        continue;
+                    }
+                    child = child.parent;
+                }
+            }
+            catch (e:SecurityError)
+            {
+                return false;
+            }
+            return child == this;
+        }// end function
+
+        public function setVisible(param1:Boolean, param2:Boolean = false) : void
+        {
+            _visible = param1;
+            if (!initialized)
+            {
+                return;
+            }
+            if ($visible == param1)
+            {
+                return;
+            }
+            $visible = param1;
+            if (!param2)
+            {
+                dispatchEvent(new FlexEvent(param1 ? (FlexEvent.SHOW) : (FlexEvent.HIDE)));
+            }
+            return;
+        }// end function
+
+        final function $addChildAt(param1:DisplayObject, param2:int) : DisplayObject
+        {
+            return super.addChildAt(param1, param2);
+        }// end function
+
+        public function deleteReferenceOnParentDocument(param1:IFlexDisplayObject) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            if (id && id != "")
+            {
+                _loc_2 = _instanceIndices;
+                if (!_loc_2)
+                {
+                    param1[id] = null;
+                }
+                else
+                {
+                    _loc_3 = param1[id];
+                    if (!_loc_3)
+                    {
+                        return;
+                    }
+                    _loc_4 = [];
+                    _loc_4.push(_loc_3);
+                    _loc_5 = _loc_2.length;
+                    _loc_6 = 0;
+                    while (_loc_6 < (_loc_5 - 1))
+                    {
+                        
+                        _loc_8 = _loc_3[_loc_2[_loc_6]];
+                        if (!_loc_8)
+                        {
+                            return;
+                        }
+                        _loc_3 = _loc_8;
+                        _loc_4.push(_loc_3);
+                        _loc_6++;
+                    }
+                    _loc_3.splice(_loc_2[(_loc_5 - 1)], 1);
+                    _loc_7 = _loc_4.length - 1;
+                    while (_loc_7 > 0)
+                    {
+                        
+                        if (_loc_4[_loc_7].length == 0)
+                        {
+                            _loc_4[(_loc_7 - 1)].splice(_loc_2[_loc_7], 1);
+                        }
+                        _loc_7 = _loc_7 - 1;
+                    }
+                    if (_loc_4.length > 0 && _loc_4[0].length == 0)
+                    {
+                        param1[id] = null;
+                    }
+                    else
+                    {
+                        _loc_9 = PropertyChangeEvent.createUpdateEvent(param1, id, param1[id], param1[id]);
+                        param1.dispatchEvent(_loc_9);
+                    }
+                }
+            }
+            return;
+        }// end function
+
+        public function get nonInheritingStyles() : Object
+        {
+            return _nonInheritingStyles;
+        }// end function
+
+        public function effectStarted(param1:IEffectInstance) : void
+        {
+            var _loc_4:* = null;
+            _effectsStarted.push(param1);
+            var _loc_2:* = param1.effect.getAffectedProperties();
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_2.length)
+            {
+                
+                _loc_4 = _loc_2[_loc_3];
+                if (_affectedProperties[_loc_4] == undefined)
+                {
+                    _affectedProperties[_loc_4] = [];
+                }
+                _affectedProperties[_loc_4].push(param1);
+                _loc_3++;
+            }
+            isEffectStarted = true;
+            if (param1.hideFocusRing)
+            {
+                preventDrawFocus = true;
+                drawFocus(false);
+            }
+            return;
+        }// end function
+
+        final function set $x(param1:Number) : void
+        {
+            super.x = param1;
+            return;
+        }// end function
+
+        private function applyState(param1:String, param2:String) : void
+        {
+            var _loc_4:* = null;
+            var _loc_5:* = 0;
+            var _loc_3:* = getState(param1);
+            if (param1 == param2)
+            {
+                return;
+            }
+            if (_loc_3)
+            {
+                if (_loc_3.basedOn != param2)
+                {
+                    applyState(_loc_3.basedOn, param2);
+                }
+                _loc_4 = _loc_3.overrides;
+                _loc_5 = 0;
+                while (_loc_5 < _loc_4.length)
+                {
+                    
+                    _loc_4[_loc_5].apply(this);
+                    _loc_5++;
+                }
+                _loc_3.dispatchEnterState();
+            }
+            return;
+        }// end function
+
+        protected function commitProperties() : void
+        {
+            var _loc_1:* = NaN;
+            var _loc_2:* = NaN;
+            if (_scaleX != oldScaleX)
+            {
+                _loc_1 = Math.abs(_scaleX / oldScaleX);
+                if (!isNaN(explicitMinWidth))
+                {
+                    explicitMinWidth = explicitMinWidth * _loc_1;
+                }
+                if (!isNaN(explicitWidth))
+                {
+                    explicitWidth = explicitWidth * _loc_1;
+                }
+                if (!isNaN(explicitMaxWidth))
+                {
+                    explicitMaxWidth = explicitMaxWidth * _loc_1;
+                }
+                _width = _width * _loc_1;
+                var _loc_3:* = _scaleX;
+                oldScaleX = _scaleX;
+                super.scaleX = _loc_3;
+            }
+            if (_scaleY != oldScaleY)
+            {
+                _loc_2 = Math.abs(_scaleY / oldScaleY);
+                if (!isNaN(explicitMinHeight))
+                {
+                    explicitMinHeight = explicitMinHeight * _loc_2;
+                }
+                if (!isNaN(explicitHeight))
+                {
+                    explicitHeight = explicitHeight * _loc_2;
+                }
+                if (!isNaN(explicitMaxHeight))
+                {
+                    explicitMaxHeight = explicitMaxHeight * _loc_2;
+                }
+                _height = _height * _loc_2;
+                var _loc_3:* = _scaleY;
+                oldScaleY = _scaleY;
+                super.scaleY = _loc_3;
+            }
+            if (x != oldX || y != oldY)
+            {
+                dispatchMoveEvent();
+            }
+            if (width != oldWidth || height != oldHeight)
+            {
+                dispatchResizeEvent();
+            }
+            if (errorStringChanged)
+            {
+                errorStringChanged = false;
+                setBorderColorForErrorString();
+            }
+            return;
+        }// end function
+
+        public function get percentHeight() : Number
+        {
+            return _percentHeight;
+        }// end function
+
+        override public function get width() : Number
+        {
+            return _width;
+        }// end function
+
+        public function get accessibilityDescription() : String
+        {
+            return accessibilityProperties ? (accessibilityProperties.description) : ("");
+        }// end function
+
+        public function set explicitMinWidth(param1:Number) : void
+        {
+            if (_explicitMinWidth == param1)
+            {
+                return;
+            }
+            _explicitMinWidth = param1;
+            invalidateSize();
+            var _loc_2:* = parent as IInvalidating;
+            if (_loc_2)
+            {
+                _loc_2.invalidateSize();
+                _loc_2.invalidateDisplayList();
+            }
+            dispatchEvent(new Event("explicitMinWidthChanged"));
+            return;
+        }// end function
+
+        public function get isPopUp() : Boolean
+        {
+            return _isPopUp;
+        }// end function
+
+        private function measureSizes() : Boolean
+        {
+            var _loc_2:* = NaN;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_1:* = false;
+            if (!invalidateSizeFlag)
+            {
+                return _loc_1;
+            }
+            if (isNaN(explicitWidth) || isNaN(explicitHeight))
+            {
+                _loc_4 = Math.abs(scaleX);
+                _loc_5 = Math.abs(scaleY);
+                if (_loc_4 != 1)
+                {
+                    _measuredMinWidth = _measuredMinWidth / _loc_4;
+                    _measuredWidth = _measuredWidth / _loc_4;
+                }
+                if (_loc_5 != 1)
+                {
+                    _measuredMinHeight = _measuredMinHeight / _loc_5;
+                    _measuredHeight = _measuredHeight / _loc_5;
+                }
+                measure();
+                invalidateSizeFlag = false;
+                if (!isNaN(explicitMinWidth) && measuredWidth < explicitMinWidth)
+                {
+                    measuredWidth = explicitMinWidth;
+                }
+                if (!isNaN(explicitMaxWidth) && measuredWidth > explicitMaxWidth)
+                {
+                    measuredWidth = explicitMaxWidth;
+                }
+                if (!isNaN(explicitMinHeight) && measuredHeight < explicitMinHeight)
+                {
+                    measuredHeight = explicitMinHeight;
+                }
+                if (!isNaN(explicitMaxHeight) && measuredHeight > explicitMaxHeight)
+                {
+                    measuredHeight = explicitMaxHeight;
+                }
+                if (_loc_4 != 1)
+                {
+                    _measuredMinWidth = _measuredMinWidth * _loc_4;
+                    _measuredWidth = _measuredWidth * _loc_4;
+                }
+                if (_loc_5 != 1)
+                {
+                    _measuredMinHeight = _measuredMinHeight * _loc_5;
+                    _measuredHeight = _measuredHeight * _loc_5;
+                }
+            }
+            else
+            {
+                invalidateSizeFlag = false;
+                _measuredMinWidth = 0;
+                _measuredMinHeight = 0;
+            }
+            adjustSizesForScaleChanges();
+            if (isNaN(oldMinWidth))
+            {
+                oldMinWidth = !isNaN(explicitMinWidth) ? (explicitMinWidth) : (measuredMinWidth);
+                oldMinHeight = !isNaN(explicitMinHeight) ? (explicitMinHeight) : (measuredMinHeight);
+                oldExplicitWidth = !isNaN(explicitWidth) ? (explicitWidth) : (measuredWidth);
+                oldExplicitHeight = !isNaN(explicitHeight) ? (explicitHeight) : (measuredHeight);
+                _loc_1 = true;
+            }
+            else
+            {
+                _loc_3 = !isNaN(explicitMinWidth) ? (explicitMinWidth) : (measuredMinWidth);
+                if (_loc_3 != oldMinWidth)
+                {
+                    oldMinWidth = _loc_3;
+                    _loc_1 = true;
+                }
+                _loc_3 = !isNaN(explicitMinHeight) ? (explicitMinHeight) : (measuredMinHeight);
+                if (_loc_3 != oldMinHeight)
+                {
+                    oldMinHeight = _loc_3;
+                    _loc_1 = true;
+                }
+                _loc_3 = !isNaN(explicitWidth) ? (explicitWidth) : (measuredWidth);
+                if (_loc_3 != oldExplicitWidth)
+                {
+                    oldExplicitWidth = _loc_3;
+                    _loc_1 = true;
+                }
+                _loc_3 = !isNaN(explicitHeight) ? (explicitHeight) : (measuredHeight);
+                if (_loc_3 != oldExplicitHeight)
+                {
+                    oldExplicitHeight = _loc_3;
+                    _loc_1 = true;
+                }
+            }
+            return _loc_1;
+        }// end function
+
+        final function get $parent() : DisplayObjectContainer
+        {
+            return super.parent;
+        }// end function
+
+        public function get automationTabularData() : Object
+        {
+            if (automationDelegate)
+            {
+                return automationDelegate.automationTabularData;
+            }
+            return null;
+        }// end function
+
+        public function validateNow() : void
+        {
+            UIComponentGlobals.layoutManager.validateClient(this);
+            return;
+        }// end function
+
+        public function finishPrint(param1:Object, param2:IFlexDisplayObject) : void
+        {
+            return;
+        }// end function
+
+        public function get repeaters() : Array
+        {
+            return _repeaters ? (_repeaters.slice(0)) : ([]);
+        }// end function
+
+        private function dispatchMoveEvent() : void
+        {
+            var _loc_1:* = new MoveEvent(MoveEvent.MOVE);
+            _loc_1.oldX = oldX;
+            _loc_1.oldY = oldY;
+            dispatchEvent(_loc_1);
+            oldX = x;
+            oldY = y;
+            return;
+        }// end function
+
+        public function drawFocus(param1:Boolean) : void
+        {
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            if (!parent)
+            {
+                return;
+            }
+            var _loc_2:* = getFocusObject();
+            var _loc_3:* = focusManager ? (focusManager.focusPane) : (null);
+            if (param1 && !preventDrawFocus)
+            {
+                _loc_4 = _loc_3.parent;
+                if (_loc_4 != parent)
+                {
+                    if (_loc_4)
+                    {
+                        if (_loc_4 is ISystemManager)
+                        {
+                            ISystemManager(_loc_4).focusPane = null;
+                        }
+                        else
+                        {
+                            IUIComponent(_loc_4).focusPane = null;
+                        }
+                    }
+                    if (parent is ISystemManager)
+                    {
+                        ISystemManager(parent).focusPane = _loc_3;
+                    }
+                    else
+                    {
+                        IUIComponent(parent).focusPane = _loc_3;
+                    }
+                }
+                _loc_5 = getStyle("focusSkin");
+                if (_loc_2 && !(_loc_2 is _loc_5))
+                {
+                    _loc_3.removeChild(_loc_2);
+                    _loc_2 = null;
+                }
+                if (!_loc_2)
+                {
+                    _loc_2 = new _loc_5;
+                    _loc_2.name = "focus";
+                    _loc_3.addChild(_loc_2);
+                }
+                if (_loc_2 is ILayoutManagerClient)
+                {
+                    ILayoutManagerClient(_loc_2).nestLevel = nestLevel;
+                }
+                if (_loc_2 is ISimpleStyleClient)
+                {
+                    ISimpleStyleClient(_loc_2).styleName = this;
+                }
+                addEventListener(MoveEvent.MOVE, focusObj_moveHandler, true);
+                addEventListener(MoveEvent.MOVE, focusObj_moveHandler);
+                addEventListener(ResizeEvent.RESIZE, focusObj_resizeHandler, true);
+                addEventListener(ResizeEvent.RESIZE, focusObj_resizeHandler);
+                addEventListener(Event.REMOVED, focusObj_removedHandler, true);
+                _loc_2.visible = true;
+                hasFocusRect = true;
+                adjustFocusRect();
+            }
+            else if (hasFocusRect)
+            {
+                hasFocusRect = false;
+                if (_loc_2)
+                {
+                    _loc_2.visible = false;
+                    if (_loc_2 is ISimpleStyleClient)
+                    {
+                        ISimpleStyleClient(_loc_2).styleName = null;
+                    }
+                }
+                removeEventListener(MoveEvent.MOVE, focusObj_moveHandler);
+                removeEventListener(MoveEvent.MOVE, focusObj_moveHandler, true);
+                removeEventListener(ResizeEvent.RESIZE, focusObj_resizeHandler, true);
+                removeEventListener(ResizeEvent.RESIZE, focusObj_resizeHandler);
+                removeEventListener(Event.REMOVED, focusObj_removedHandler, true);
+            }
+            return;
+        }// end function
+
+        public function get flexContextMenu() : IFlexContextMenu
+        {
+            return _flexContextMenu;
+        }// end function
+
+        public function set accessibilityName(param1:String) : void
+        {
+            if (!Capabilities.hasAccessibility)
+            {
+                return;
+            }
+            if (!accessibilityProperties)
+            {
+                accessibilityProperties = new AccessibilityProperties();
+            }
+            accessibilityProperties.name = param1;
+            Accessibility.updateProperties();
+            return;
+        }// end function
+
+        public function get measuredMinHeight() : Number
+        {
+            return _measuredMinHeight;
+        }// end function
+
+        function addingChild(param1:DisplayObject) : void
+        {
+            if (param1 is IUIComponent && !IUIComponent(param1).document)
+            {
+                IUIComponent(param1).document = document ? (document) : (ApplicationGlobals.application);
+            }
+            if (param1 is UIComponent && UIComponent(param1).moduleFactory == null)
+            {
+                if (moduleFactory != null)
+                {
+                    UIComponent(param1).moduleFactory = moduleFactory;
+                }
+                else if (document is IFlexModule && document.moduleFactory != null)
+                {
+                    UIComponent(param1).moduleFactory = document.moduleFactory;
+                }
+                else if (parent is UIComponent && UIComponent(parent).moduleFactory != null)
+                {
+                    UIComponent(param1).moduleFactory = UIComponent(parent).moduleFactory;
+                }
+            }
+            if (param1 is IFontContextComponent && !param1 is UIComponent && IFontContextComponent(param1).fontContext == null)
+            {
+                IFontContextComponent(param1).fontContext = moduleFactory;
+            }
+            if (param1 is IUIComponent)
+            {
+                IUIComponent(param1).parentChanged(this);
+            }
+            if (param1 is ILayoutManagerClient)
+            {
+                ILayoutManagerClient(param1).nestLevel = nestLevel + 1;
+            }
+            else if (param1 is IUITextField)
+            {
+                IUITextField(param1).mx.core:IUITextField::nestLevel = nestLevel + 1;
+            }
+            if (param1 is InteractiveObject)
+            {
+                if (doubleClickEnabled)
+                {
+                    InteractiveObject(param1).doubleClickEnabled = true;
+                }
+            }
+            if (param1 is IStyleClient)
+            {
+                IStyleClient(param1).regenerateStyleCache(true);
+            }
+            else if (param1 is IUITextField && IUITextField(param1).inheritingStyles)
+            {
+                StyleProtoChain.initTextField(IUITextField(param1));
+            }
+            if (param1 is ISimpleStyleClient)
+            {
+                ISimpleStyleClient(param1).styleChanged(null);
+            }
+            if (param1 is IStyleClient)
+            {
+                IStyleClient(param1).notifyStyleChangeInChildren(null, true);
+            }
+            if (param1 is UIComponent)
+            {
+                UIComponent(param1).initThemeColor();
+            }
+            if (param1 is UIComponent)
+            {
+                UIComponent(param1).stylesInitialized();
+            }
+            return;
+        }// end function
+
+        public function set repeaterIndices(param1:Array) : void
+        {
+            _repeaterIndices = param1;
+            return;
+        }// end function
+
+        protected function initializationComplete() : void
+        {
+            processedDescriptors = true;
+            return;
+        }// end function
+
+        public function set moduleFactory(param1:IFlexModuleFactory) : void
+        {
+            var _loc_4:* = null;
+            var _loc_2:* = numChildren;
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_2)
+            {
+                
+                _loc_4 = getChildAt(_loc_3) as UIComponent;
+                if (!_loc_4)
+                {
+                }
+                else if (_loc_4.moduleFactory == null || _loc_4.moduleFactory == _moduleFactory)
+                {
+                    _loc_4.moduleFactory = param1;
+                }
+                _loc_3++;
+            }
+            _moduleFactory = param1;
+            return;
+        }// end function
+
+        private function focusObj_removedHandler(event:Event) : void
+        {
+            if (event.target != this)
+            {
+                return;
+            }
+            var _loc_2:* = getFocusObject();
+            if (_loc_2)
+            {
+                _loc_2.visible = false;
+            }
+            return;
+        }// end function
+
+        function updateCallbacks() : void
+        {
+            if (invalidateDisplayListFlag)
+            {
+                UIComponentGlobals.layoutManager.invalidateDisplayList(this);
+            }
+            if (invalidateSizeFlag)
+            {
+                UIComponentGlobals.layoutManager.invalidateSize(this);
+            }
+            if (invalidatePropertiesFlag)
+            {
+                UIComponentGlobals.layoutManager.invalidateProperties(this);
+            }
+            if (systemManager && (_systemManager.stage || _systemManager.useSWFBridge()))
+            {
+                if (methodQueue.length > 0 && !listeningForRender)
+                {
+                    _systemManager.addEventListener(FlexEvent.RENDER, callLaterDispatcher);
+                    _systemManager.addEventListener(FlexEvent.ENTER_FRAME, callLaterDispatcher);
+                    listeningForRender = true;
+                }
+                if (_systemManager.stage)
+                {
+                    _systemManager.stage.invalidate();
+                }
+            }
+            return;
+        }// end function
+
+        public function set styleDeclaration(param1:CSSStyleDeclaration) : void
+        {
+            _styleDeclaration = param1;
+            return;
+        }// end function
+
+        public function get accessibilityEnabled() : Boolean
+        {
+            return accessibilityProperties ? (!accessibilityProperties.silent) : (true);
+        }// end function
+
+        override public function set doubleClickEnabled(param1:Boolean) : void
+        {
+            var _loc_2:* = null;
+            var _loc_4:* = null;
+            super.doubleClickEnabled = param1;
+            if (this is IRawChildrenContainer)
+            {
+                _loc_2 = IRawChildrenContainer(this).rawChildren;
+            }
+            else
+            {
+                _loc_2 = IChildList(this);
+            }
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_2.numChildren)
+            {
+                
+                _loc_4 = _loc_2.getChildAt(_loc_3) as InteractiveObject;
+                if (_loc_4)
+                {
+                    _loc_4.doubleClickEnabled = param1;
+                }
+                _loc_3++;
+            }
+            return;
+        }// end function
+
+        public function prepareToPrint(param1:IFlexDisplayObject) : Object
+        {
+            return null;
+        }// end function
+
+        public function get minHeight() : Number
+        {
+            if (!isNaN(explicitMinHeight))
+            {
+                return explicitMinHeight;
+            }
+            return measuredMinHeight;
+        }// end function
+
+        public function notifyStyleChangeInChildren(param1:String, param2:Boolean) : void
+        {
+            var _loc_5:* = null;
+            cachedTextFormat = null;
+            var _loc_3:* = numChildren;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                _loc_5 = getChildAt(_loc_4) as ISimpleStyleClient;
+                if (_loc_5)
+                {
+                    _loc_5.styleChanged(param1);
+                    if (_loc_5 is IStyleClient)
+                    {
+                        IStyleClient(_loc_5).notifyStyleChangeInChildren(param1, param2);
+                    }
+                }
+                _loc_4++;
+            }
+            return;
+        }// end function
+
+        public function get contentMouseX() : Number
+        {
+            return mouseX;
+        }// end function
+
+        public function get contentMouseY() : Number
+        {
+            return mouseY;
+        }// end function
+
+        private function get indexedID() : String
+        {
+            var _loc_1:* = id;
+            var _loc_2:* = instanceIndices;
+            if (_loc_2)
+            {
+                _loc_1 = _loc_1 + ("[" + _loc_2.join("][") + "]");
+            }
+            return _loc_1;
+        }// end function
+
+        public function get tweeningProperties() : Array
+        {
+            return _tweeningProperties;
+        }// end function
+
+        public function set explicitMaxWidth(param1:Number) : void
+        {
+            if (_explicitMaxWidth == param1)
+            {
+                return;
+            }
+            _explicitMaxWidth = param1;
+            invalidateSize();
+            var _loc_2:* = parent as IInvalidating;
+            if (_loc_2)
+            {
+                _loc_2.invalidateSize();
+                _loc_2.invalidateDisplayList();
+            }
+            dispatchEvent(new Event("explicitMaxWidthChanged"));
+            return;
+        }// end function
+
+        public function set document(param1:Object) : void
+        {
+            var _loc_4:* = null;
+            var _loc_2:* = numChildren;
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_2)
+            {
+                
+                _loc_4 = getChildAt(_loc_3) as IUIComponent;
+                if (!_loc_4)
+                {
+                }
+                else if (_loc_4.document == _document || _loc_4.document == ApplicationGlobals.application)
+                {
+                    _loc_4.document = param1;
+                }
+                _loc_3++;
+            }
+            _document = param1;
+            return;
+        }// end function
+
+        public function validateSize(param1:Boolean = false) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = null;
+            var _loc_4:* = false;
+            var _loc_5:* = null;
+            if (param1)
+            {
+                _loc_2 = 0;
+                while (_loc_2 < numChildren)
+                {
+                    
+                    _loc_3 = getChildAt(_loc_2);
+                    if (_loc_3 is ILayoutManagerClient)
+                    {
+                        (_loc_3 as ILayoutManagerClient).validateSize(true);
+                    }
+                    _loc_2++;
+                }
+            }
+            if (invalidateSizeFlag)
+            {
+                _loc_4 = measureSizes();
+                if (_loc_4 && includeInLayout)
+                {
+                    invalidateDisplayList();
+                    _loc_5 = parent as IInvalidating;
+                    if (_loc_5)
+                    {
+                        _loc_5.invalidateSize();
+                        _loc_5.invalidateDisplayList();
+                    }
+                }
+            }
+            return;
+        }// end function
+
+        public function get validationSubField() : String
+        {
+            return _validationSubField;
+        }// end function
+
+        override public function dispatchEvent(event:Event) : Boolean
+        {
+            if (dispatchEventHook != null)
+            {
+                dispatchEventHook(event, this);
+            }
+            return super.dispatchEvent(event);
+        }// end function
+
+        public function set id(param1:String) : void
+        {
+            _id = param1;
+            return;
+        }// end function
+
+        private function overlay_resizeHandler(event:Event) : void
+        {
+            fillOverlay(overlay, overlayColor, null);
+            return;
+        }// end function
+
+        public function set updateCompletePendingFlag(param1:Boolean) : void
+        {
+            _updateCompletePendingFlag = param1;
+            return;
+        }// end function
+
+        final function get $height() : Number
+        {
+            return super.height;
+        }// end function
+
+        protected function attachOverlay() : void
+        {
+            addChild(overlay);
+            return;
+        }// end function
+
+        public function get explicitMinHeight() : Number
+        {
+            return _explicitMinHeight;
+        }// end function
+
+        override public function set height(param1:Number) : void
+        {
+            var _loc_2:* = null;
+            if (explicitHeight != param1)
+            {
+                explicitHeight = param1;
+                invalidateSize();
+            }
+            if (_height != param1)
+            {
+                invalidateProperties();
+                invalidateDisplayList();
+                _loc_2 = parent as IInvalidating;
+                if (_loc_2 && includeInLayout)
+                {
+                    _loc_2.invalidateSize();
+                    _loc_2.invalidateDisplayList();
+                }
+                _height = param1;
+                dispatchEvent(new Event("heightChanged"));
+            }
+            return;
+        }// end function
+
+        public function get numAutomationChildren() : int
+        {
+            if (automationDelegate)
+            {
+                return automationDelegate.numAutomationChildren;
+            }
+            return 0;
+        }// end function
+
+        public function get parentApplication() : Object
+        {
+            var _loc_2:* = null;
+            var _loc_1:* = systemManager.document;
+            if (_loc_1 == this)
+            {
+                _loc_2 = _loc_1.systemManager.parent as UIComponent;
+                _loc_1 = _loc_2 ? (_loc_2.systemManager.document) : (null);
+            }
+            return _loc_1;
+        }// end function
+
+        public function get repeaterIndex() : int
+        {
+            return _repeaterIndices ? (_repeaterIndices[(_repeaterIndices.length - 1)]) : (-1);
+        }// end function
+
+        private function removeState(param1:String, param2:String) : void
+        {
+            var _loc_4:* = null;
+            var _loc_5:* = 0;
+            var _loc_3:* = getState(param1);
+            if (param1 == param2)
+            {
+                return;
+            }
+            if (_loc_3)
+            {
+                _loc_3.dispatchExitState();
+                _loc_4 = _loc_3.overrides;
+                _loc_5 = _loc_4.length;
+                while (_loc_5)
+                {
+                    
+                    _loc_4[(_loc_5 - 1)].remove(this);
+                    _loc_5 = _loc_5 - 1;
+                }
+                if (_loc_3.basedOn != param2)
+                {
+                    removeState(_loc_3.basedOn, param2);
+                }
+            }
+            return;
+        }// end function
+
+        public function setStyle(param1:String, param2) : void
+        {
+            if (param1 == "styleName")
+            {
+                styleName = param2;
+                return;
+            }
+            if (EffectManager.getEventForEffectTrigger(param1) != "")
+            {
+                EffectManager.setStyle(param1, this);
+            }
+            var _loc_3:* = StyleManager.isInheritingStyle(param1);
+            var _loc_4:* = inheritingStyles != UIComponent.STYLE_UNINITIALIZED;
+            var _loc_5:* = getStyle(param1) != param2;
+            if (!_styleDeclaration)
+            {
+                _styleDeclaration = new CSSStyleDeclaration();
+                _styleDeclaration.setStyle(param1, param2);
+                if (_loc_4)
+                {
+                    regenerateStyleCache(_loc_3);
+                }
+            }
+            else
+            {
+                _styleDeclaration.setStyle(param1, param2);
+            }
+            if (_loc_4 && _loc_5)
+            {
+                styleChanged(param1);
+                notifyStyleChangeInChildren(param1, _loc_3);
+            }
+            return;
+        }// end function
+
+        public function get showInAutomationHierarchy() : Boolean
+        {
+            return _showInAutomationHierarchy;
+        }// end function
+
+        public function get systemManager() : ISystemManager
+        {
+            var _loc_1:* = null;
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            if (!_systemManager || _systemManagerDirty)
+            {
+                _loc_1 = root;
+                if (_systemManager is SystemManagerProxy)
+                {
+                }
+                else if (_loc_1 && !(_loc_1 is Stage))
+                {
+                    _systemManager = _loc_1 as ISystemManager;
+                }
+                else if (_loc_1)
+                {
+                    _systemManager = Stage(_loc_1).getChildAt(0) as ISystemManager;
+                }
+                else
+                {
+                    _loc_2 = parent;
+                    while (_loc_2)
+                    {
+                        
+                        _loc_3 = _loc_2 as IUIComponent;
+                        if (_loc_3)
+                        {
+                            _systemManager = _loc_3.systemManager;
+                            break;
+                        }
+                        else if (_loc_2 is ISystemManager)
+                        {
+                            _systemManager = _loc_2 as ISystemManager;
+                            break;
+                        }
+                        _loc_2 = _loc_2.parent;
+                    }
+                }
+                _systemManagerDirty = false;
+            }
+            return _systemManager;
+        }// end function
+
+        public function localToContent(param1:Point) : Point
+        {
+            return param1;
+        }// end function
+
+        private function isBaseState(param1:String) : Boolean
+        {
+            return !param1 || param1 == "";
+        }// end function
+
+        public function set enabled(param1:Boolean) : void
+        {
+            _enabled = param1;
+            cachedTextFormat = null;
+            invalidateDisplayList();
+            dispatchEvent(new Event("enabledChanged"));
+            return;
+        }// end function
+
+        public function set focusEnabled(param1:Boolean) : void
+        {
+            _focusEnabled = param1;
+            return;
+        }// end function
+
+        public function get minWidth() : Number
+        {
+            if (!isNaN(explicitMinWidth))
+            {
+                return explicitMinWidth;
+            }
+            return measuredMinWidth;
+        }// end function
+
+        private function setFocusLater(event:Event = null) : void
+        {
+            var _loc_2:* = systemManager;
+            if (_loc_2 && _loc_2.stage)
+            {
+                _loc_2.stage.removeEventListener(Event.ENTER_FRAME, setFocusLater);
+                if (UIComponentGlobals.nextFocusObject)
+                {
+                    _loc_2.stage.focus = UIComponentGlobals.nextFocusObject;
+                }
+                UIComponentGlobals.nextFocusObject = null;
+            }
+            return;
+        }// end function
+
+        public function get currentState() : String
+        {
+            return _currentStateChanged ? (requestedCurrentState) : (_currentState);
+        }// end function
+
+        public function initializeRepeaterArrays(param1:IRepeaterClient) : void
+        {
+            if (param1 && param1.instanceIndices && (!param1.isDocument || param1 != descriptor.document) && !_instanceIndices)
+            {
+                _instanceIndices = param1.instanceIndices;
+                _repeaters = param1.repeaters;
+                _repeaterIndices = param1.repeaterIndices;
+            }
+            return;
+        }// end function
+
+        public function get baselinePosition() : Number
+        {
+            if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
+            {
+                return NaN;
+            }
+            if (!validateBaselinePosition())
+            {
+                return NaN;
+            }
+            var _loc_1:* = measureText("Wj");
+            if (height < 2 + _loc_1.ascent + 2)
+            {
+                return int(height + (_loc_1.ascent - height) / 2);
+            }
+            return 2 + _loc_1.ascent;
+        }// end function
+
+        public function get measuredWidth() : Number
+        {
+            return _measuredWidth;
+        }// end function
+
+        public function set instanceIndices(param1:Array) : void
+        {
+            _instanceIndices = param1;
+            return;
+        }// end function
+
+        public function set cachePolicy(param1:String) : void
+        {
+            if (_cachePolicy != param1)
+            {
+                _cachePolicy = param1;
+                if (param1 == UIComponentCachePolicy.OFF)
+                {
+                    cacheAsBitmap = false;
+                }
+                else if (param1 == UIComponentCachePolicy.ON)
+                {
+                    cacheAsBitmap = true;
+                }
+                else
+                {
+                    cacheAsBitmap = cacheAsBitmapCount > 0;
+                }
+            }
+            return;
+        }// end function
+
+        public function get automationValue() : Array
+        {
+            if (automationDelegate)
+            {
+                return automationDelegate.automationValue;
+            }
+            return [];
+        }// end function
+
+        private function addedHandler(event:Event) : void
+        {
+            var event:* = event;
+            if (event.eventPhase != EventPhase.AT_TARGET)
+            {
+                return;
+            }
+            try
+            {
+                if (parent is IContainer && IContainer(parent).creatingContentPane)
+                {
+                    event.stopImmediatePropagation();
+                    return;
+                }
+            }
+            catch (error:SecurityError)
+            {
+            }
+            return;
+        }// end function
+
+        public function parentChanged(param1:DisplayObjectContainer) : void
+        {
+            if (!param1)
+            {
+                _parent = null;
+                _nestLevel = 0;
+            }
+            else if (param1 is IStyleClient)
+            {
+                _parent = param1;
+            }
+            else if (param1 is ISystemManager)
+            {
+                _parent = param1;
+            }
+            else
+            {
+                _parent = param1.parent;
+            }
+            return;
+        }// end function
+
+        public function get owner() : DisplayObjectContainer
+        {
+            return _owner ? (_owner) : (parent);
+        }// end function
+
+        public function get processedDescriptors() : Boolean
+        {
+            return _processedDescriptors;
+        }// end function
+
+        override public function addChildAt(param1:DisplayObject, param2:int) : DisplayObject
+        {
+            var _loc_3:* = param1.parent;
+            if (_loc_3 && !(_loc_3 is Loader))
+            {
+                _loc_3.removeChild(param1);
+            }
+            if (overlayReferenceCount && param1 != overlay)
+            {
+                param2 = Math.min(param2, Math.max(0, (super.numChildren - 1)));
+            }
+            addingChild(param1);
+            $addChildAt(param1, param2);
+            childAdded(param1);
+            return param1;
+        }// end function
+
+        public function get maxWidth() : Number
+        {
+            return !isNaN(explicitMaxWidth) ? (explicitMaxWidth) : (DEFAULT_MAX_WIDTH);
+        }// end function
+
+        override public function set alpha(param1:Number) : void
+        {
+            super.alpha = param1;
+            dispatchEvent(new Event("alphaChanged"));
+            return;
+        }// end function
+
+        private function removedHandler(event:Event) : void
+        {
+            var event:* = event;
+            if (event.eventPhase != EventPhase.AT_TARGET)
+            {
+                return;
+            }
+            try
+            {
+                if (parent is IContainer && IContainer(parent).creatingContentPane)
+                {
+                    event.stopImmediatePropagation();
+                    return;
+                }
+            }
+            catch (error:SecurityError)
+            {
+            }
+            _systemManagerDirty = true;
+            return;
+        }// end function
+
+        public function callLater(param1:Function, param2:Array = null) : void
+        {
+            methodQueue.push(new MethodQueueElement(param1, param2));
+            var _loc_3:* = systemManager;
+            if (_loc_3 && (_loc_3.stage || _loc_3.useSWFBridge()))
+            {
+                if (!listeningForRender)
+                {
+                    _loc_3.addEventListener(FlexEvent.RENDER, callLaterDispatcher);
+                    _loc_3.addEventListener(FlexEvent.ENTER_FRAME, callLaterDispatcher);
+                    listeningForRender = true;
+                }
+                if (_loc_3.stage)
+                {
+                    _loc_3.stage.invalidate();
+                }
+            }
+            return;
+        }// end function
+
+        public function get initialized() : Boolean
+        {
+            return _initialized;
+        }// end function
+
+        private function callLaterDispatcher2(event:Event) : void
+        {
+            var _loc_6:* = null;
+            if (UIComponentGlobals.callLaterSuspendCount > 0)
+            {
+                return;
+            }
+            var _loc_2:* = systemManager;
+            if (_loc_2 && (_loc_2.stage || _loc_2.useSWFBridge()) && listeningForRender)
+            {
+                _loc_2.removeEventListener(FlexEvent.RENDER, callLaterDispatcher);
+                _loc_2.removeEventListener(FlexEvent.ENTER_FRAME, callLaterDispatcher);
+                listeningForRender = false;
+            }
+            var _loc_3:* = methodQueue;
+            methodQueue = [];
+            var _loc_4:* = _loc_3.length;
+            var _loc_5:* = 0;
+            while (_loc_5 < _loc_4)
+            {
+                
+                _loc_6 = MethodQueueElement(_loc_3[_loc_5]);
+                _loc_6.method.apply(null, _loc_6.args);
+                _loc_5++;
+            }
+            return;
+        }// end function
+
+        public function measureHTMLText(param1:String) : TextLineMetrics
+        {
+            return determineTextFormatFromStyles().measureHTMLText(param1);
+        }// end function
+
+        public function set descriptor(param1:UIComponentDescriptor) : void
+        {
+            _descriptor = param1;
+            return;
+        }// end function
+
+        private function getState(param1:String) : State
+        {
+            if (!states || isBaseState(param1))
+            {
+                return null;
+            }
+            var _loc_2:* = 0;
+            while (_loc_2 < states.length)
+            {
+                
+                if (states[_loc_2].name == param1)
+                {
+                    return states[_loc_2];
+                }
+                _loc_2++;
+            }
+            var _loc_3:* = resourceManager.getString("core", "stateUndefined", [param1]);
+            throw new ArgumentError(_loc_3);
+        }// end function
+
+        public function validateProperties() : void
+        {
+            if (invalidatePropertiesFlag)
+            {
+                commitProperties();
+                invalidatePropertiesFlag = false;
+            }
+            return;
+        }// end function
+
+        function get documentDescriptor() : UIComponentDescriptor
+        {
+            return _documentDescriptor;
+        }// end function
+
+        public function set includeInLayout(param1:Boolean) : void
+        {
+            var _loc_2:* = null;
+            if (_includeInLayout != param1)
+            {
+                _includeInLayout = param1;
+                _loc_2 = parent as IInvalidating;
+                if (_loc_2)
+                {
+                    _loc_2.invalidateSize();
+                    _loc_2.invalidateDisplayList();
+                }
+                dispatchEvent(new Event("includeInLayoutChanged"));
+            }
+            return;
+        }// end function
+
+        public function getClassStyleDeclarations() : Array
+        {
+            var myApplicationDomain:ApplicationDomain;
+            var cache:Array;
+            var myRoot:DisplayObject;
+            var s:CSSStyleDeclaration;
+            var factory:* = ModuleManager.getAssociatedFactory(this);
+            if (factory != null)
+            {
+                myApplicationDomain = ApplicationDomain(factory.info()["currentDomain"]);
+            }
+            else
+            {
+                myRoot = SystemManager.getSWFRoot(this);
+                if (!myRoot)
+                {
+                    return [];
+                }
+                myApplicationDomain = myRoot.loaderInfo.applicationDomain;
+            }
+            var className:* = getQualifiedClassName(this);
+            className = className.replace("::", ".");
+            cache = StyleManager.typeSelectorCache[className];
+            if (cache)
+            {
+                return cache;
+            }
+            var decls:Array;
+            var classNames:Array;
+            var caches:Array;
+            var declcache:Array;
+            do
+            {
+                
+                cache = StyleManager.typeSelectorCache[className];
+                if (cache)
+                {
+                    decls = decls.concat(cache);
+                    break;
+                }
+                s = StyleManager.getStyleDeclaration(className);
+                if (s)
+                {
+                    decls.unshift(s);
+                    classNames.push(className);
+                    caches.push(classNames);
+                    declcache.push(decls);
+                    decls;
+                    classNames;
+                }
+                else
+                {
+                    classNames.push(className);
+                }
+                try
+                {
+                    className = getQualifiedSuperclassName(myApplicationDomain.getDefinition(className));
+                    className = className.replace("::", ".");
+                }
+                catch (e:ReferenceError)
+                {
+                    className;
+                }
+            }while (className != null && className != "mx.core.UIComponent" && className != "mx.core.UITextField")
+            caches.push(classNames);
+            declcache.push(decls);
+            decls;
+            while (caches.length)
+            {
+                
+                classNames = caches.pop();
+                decls = decls.concat(declcache.pop());
+                while (classNames.length)
+                {
+                    
+                    StyleManager.typeSelectorCache[classNames.pop()] = decls;
+                }
+            }
+            return decls;
+        }// end function
+
+        public function set measuredMinWidth(param1:Number) : void
+        {
+            _measuredMinWidth = param1;
+            return;
+        }// end function
+
+        private function initializeState(param1:String) : void
+        {
+            var _loc_2:* = getState(param1);
+            while (_loc_2)
+            {
+                
+                _loc_2.initialize();
+                _loc_2 = getState(_loc_2.basedOn);
+            }
+            return;
+        }// end function
+
+        function initProtoChain() : void
+        {
+            var _loc_1:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            if (styleName)
+            {
+                if (styleName is CSSStyleDeclaration)
+                {
+                    _loc_1 = CSSStyleDeclaration(styleName);
+                }
+                else
+                {
+                    if (styleName is IFlexDisplayObject || styleName is IStyleClient)
+                    {
+                        StyleProtoChain.initProtoChainForUIComponentStyleName(this);
+                        return;
+                    }
+                    if (styleName is String)
+                    {
+                        _loc_1 = StyleManager.getStyleDeclaration("." + styleName);
+                    }
+                }
+            }
+            var _loc_2:* = StyleManager.stylesRoot;
+            if (_loc_2 && _loc_2.effects)
+            {
+                registerEffects(_loc_2.effects);
+            }
+            var _loc_3:* = parent as IStyleClient;
+            if (_loc_3)
+            {
+                _loc_7 = _loc_3.inheritingStyles;
+                if (_loc_7 == UIComponent.STYLE_UNINITIALIZED)
+                {
+                    _loc_7 = _loc_2;
+                }
+            }
+            else if (isPopUp)
+            {
+                if (FlexVersion.compatibilityVersion >= FlexVersion.VERSION_3_0 && _owner && _owner is IStyleClient)
+                {
+                    _loc_7 = IStyleClient(_owner).inheritingStyles;
+                }
+                else
+                {
+                    _loc_7 = ApplicationGlobals.application.inheritingStyles;
+                }
+            }
+            else
+            {
+                _loc_7 = StyleManager.stylesRoot;
+            }
+            var _loc_4:* = getClassStyleDeclarations();
+            var _loc_5:* = _loc_4.length;
+            var _loc_6:* = 0;
+            while (_loc_6 < _loc_5)
+            {
+                
+                _loc_8 = _loc_4[_loc_6];
+                _loc_7 = _loc_8.addStyleToProtoChain(_loc_7, this);
+                _loc_2 = _loc_8.addStyleToProtoChain(_loc_2, this);
+                if (_loc_8.effects)
+                {
+                    registerEffects(_loc_8.effects);
+                }
+                _loc_6++;
+            }
+            if (_loc_1)
+            {
+                _loc_7 = _loc_1.addStyleToProtoChain(_loc_7, this);
+                _loc_2 = _loc_1.addStyleToProtoChain(_loc_2, this);
+                if (_loc_1.effects)
+                {
+                    registerEffects(_loc_1.effects);
+                }
+            }
+            inheritingStyles = _styleDeclaration ? (_styleDeclaration.addStyleToProtoChain(_loc_7, this)) : (_loc_7);
+            nonInheritingStyles = _styleDeclaration ? (_styleDeclaration.addStyleToProtoChain(_loc_2, this)) : (_loc_2);
+            return;
+        }// end function
+
+        public function get repeaterIndices() : Array
+        {
+            return _repeaterIndices ? (_repeaterIndices.slice()) : ([]);
+        }// end function
+
+        override public function removeChild(param1:DisplayObject) : DisplayObject
+        {
+            removingChild(param1);
+            $removeChild(param1);
+            childRemoved(param1);
+            return param1;
+        }// end function
+
+        private function focusObj_moveHandler(event:MoveEvent) : void
+        {
+            adjustFocusRect();
+            return;
+        }// end function
+
+        public function get styleDeclaration() : CSSStyleDeclaration
+        {
+            return _styleDeclaration;
+        }// end function
+
+        override public function get doubleClickEnabled() : Boolean
+        {
+            return super.doubleClickEnabled;
+        }// end function
+
+        public function contentToLocal(param1:Point) : Point
+        {
+            return param1;
+        }// end function
+
+        private function creationCompleteHandler(event:FlexEvent) : void
+        {
+            if (_currentStateChanged)
+            {
+                _currentStateChanged = false;
+                commitCurrentState();
+                validateNow();
+            }
+            removeEventListener(FlexEvent.CREATION_COMPLETE, creationCompleteHandler);
+            return;
+        }// end function
+
+        public function set measuredHeight(param1:Number) : void
+        {
+            _measuredHeight = param1;
+            return;
+        }// end function
+
+        protected function createChildren() : void
+        {
+            return;
+        }// end function
+
+        public function get activeEffects() : Array
+        {
+            return _effectsStarted;
+        }// end function
+
+        override public function setChildIndex(param1:DisplayObject, param2:int) : void
+        {
+            if (overlayReferenceCount && param1 != overlay)
+            {
+                param2 = Math.min(param2, Math.max(0, super.numChildren - 2));
+            }
+            super.setChildIndex(param1, param2);
+            return;
+        }// end function
+
+        public function regenerateStyleCache(param1:Boolean) : void
+        {
+            var _loc_5:* = null;
+            initProtoChain();
+            var _loc_2:* = this is IRawChildrenContainer ? (IRawChildrenContainer(this).rawChildren) : (IChildList(this));
+            var _loc_3:* = _loc_2.numChildren;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                _loc_5 = _loc_2.getChildAt(_loc_4);
+                if (_loc_5 is IStyleClient)
+                {
+                    if (IStyleClient(_loc_5).inheritingStyles != UIComponent.STYLE_UNINITIALIZED)
+                    {
+                        IStyleClient(_loc_5).regenerateStyleCache(param1);
+                    }
+                }
+                else if (_loc_5 is IUITextField)
+                {
+                    if (IUITextField(_loc_5).inheritingStyles)
+                    {
+                        StyleProtoChain.initTextField(IUITextField(_loc_5));
+                    }
+                }
+                _loc_4++;
+            }
+            return;
+        }// end function
+
+        public function get updateCompletePendingFlag() : Boolean
+        {
+            return _updateCompletePendingFlag;
+        }// end function
+
+        protected function focusOutHandler(event:FocusEvent) : void
+        {
+            if (isOurFocus(DisplayObject(event.target)))
+            {
+                drawFocus(false);
+            }
+            return;
+        }// end function
+
+        public function getFocus() : InteractiveObject
+        {
+            var _loc_1:* = systemManager;
+            if (!_loc_1)
+            {
+                return null;
+            }
+            if (UIComponentGlobals.nextFocusObject)
+            {
+                return UIComponentGlobals.nextFocusObject;
+            }
+            return _loc_1.stage.focus;
+        }// end function
+
+        public function endEffectsStarted() : void
+        {
+            var _loc_1:* = _effectsStarted.length;
+            var _loc_2:* = 0;
+            while (_loc_2 < _loc_1)
+            {
+                
+                _effectsStarted[_loc_2].end();
+                _loc_2++;
+            }
+            return;
+        }// end function
+
+        protected function get unscaledHeight() : Number
+        {
+            return height / Math.abs(scaleY);
+        }// end function
+
+        public function get enabled() : Boolean
+        {
+            return _enabled;
+        }// end function
+
+        public function get focusEnabled() : Boolean
+        {
+            return _focusEnabled;
+        }// end function
+
+        override public function set cacheAsBitmap(param1:Boolean) : void
+        {
+            super.cacheAsBitmap = param1;
+            cacheAsBitmapCount = param1 ? (1) : (0);
+            return;
+        }// end function
+
+        function removeOverlay() : void
+        {
+            overlayReferenceCount = (overlayReferenceCount - 1);
+            if (overlayReferenceCount > 0 && overlayReferenceCount == 0 && overlay)
+            {
+                removeEventListener("resize", overlay_resizeHandler);
+                if (super.getChildByName("overlay"))
+                {
+                    $removeChild(overlay);
+                }
+                overlay = null;
+            }
+            return;
+        }// end function
+
+        public function set cacheHeuristic(param1:Boolean) : void
+        {
+            if (_cachePolicy == UIComponentCachePolicy.AUTO)
+            {
+                if (param1)
+                {
+                    var _loc_3:* = cacheAsBitmapCount + 1;
+                    cacheAsBitmapCount = _loc_3;
+                }
+                else if (cacheAsBitmapCount != 0)
+                {
+                    var _loc_3:* = cacheAsBitmapCount - 1;
+                    cacheAsBitmapCount = _loc_3;
+                }
+                super.cacheAsBitmap = cacheAsBitmapCount != 0;
+            }
+            return;
+        }// end function
+
+        public function get cachePolicy() : String
+        {
+            return _cachePolicy;
+        }// end function
+
+        public function set maxHeight(param1:Number) : void
+        {
+            if (explicitMaxHeight == param1)
+            {
+                return;
+            }
+            explicitMaxHeight = param1;
+            return;
+        }// end function
+
+        public function getConstraintValue(param1:String)
+        {
+            return getStyle(param1);
+        }// end function
+
+        public function set accessibilityShortcut(param1:String) : void
+        {
+            if (!Capabilities.hasAccessibility)
+            {
+                return;
+            }
+            if (!accessibilityProperties)
+            {
+                accessibilityProperties = new AccessibilityProperties();
+            }
+            accessibilityProperties.shortcut = param1;
+            Accessibility.updateProperties();
+            return;
+        }// end function
+
+        public function set focusManager(param1:IFocusManager) : void
+        {
+            _focusManager = param1;
+            return;
+        }// end function
+
+        public function clearStyle(param1:String) : void
+        {
+            setStyle(param1, undefined);
+            return;
+        }// end function
+
+        public function get descriptor() : UIComponentDescriptor
+        {
+            return _descriptor;
+        }// end function
+
+        public function set nonInheritingStyles(param1:Object) : void
+        {
+            _nonInheritingStyles = param1;
+            return;
+        }// end function
+
+        public function set automationDelegate(param1:Object) : void
+        {
+            _automationDelegate = param1 as IAutomationObject;
+            return;
+        }// end function
+
+        public function get measuredMinWidth() : Number
+        {
+            return _measuredMinWidth;
+        }// end function
+
+        public function createReferenceOnParentDocument(param1:IFlexDisplayObject) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            if (id && id != "")
+            {
+                _loc_2 = _instanceIndices;
+                if (!_loc_2)
+                {
+                    param1[id] = this;
+                }
+                else
+                {
+                    _loc_3 = param1[id];
+                    if (!(_loc_3 is Array))
+                    {
+                        var _loc_8:* = [];
+                        param1[id] = [];
+                        _loc_3 = _loc_8;
+                    }
+                    _loc_4 = _loc_2.length;
+                    _loc_5 = 0;
+                    while (_loc_5 < (_loc_4 - 1))
+                    {
+                        
+                        _loc_7 = _loc_3[_loc_2[_loc_5]];
+                        if (!(_loc_7 is Array))
+                        {
+                            var _loc_8:* = [];
+                            _loc_3[_loc_2[_loc_5]] = [];
+                            _loc_7 = _loc_8;
+                        }
+                        _loc_3 = _loc_7;
+                        _loc_5++;
+                    }
+                    _loc_3[_loc_2[(_loc_4 - 1)]] = this;
+                    _loc_6 = PropertyChangeEvent.createUpdateEvent(param1, id, param1[id], param1[id]);
+                    param1.dispatchEvent(_loc_6);
+                }
+            }
+            return;
+        }// end function
+
+        public function get cursorManager() : ICursorManager
+        {
+            var _loc_2:* = null;
+            var _loc_1:* = parent;
+            while (_loc_1)
+            {
+                
+                if (_loc_1 is IUIComponent && "cursorManager" in _loc_1)
+                {
+                    _loc_2 = _loc_1["cursorManager"];
+                    return _loc_2;
+                }
+                _loc_1 = _loc_1.parent;
+            }
+            return CursorManager.getInstance();
+        }// end function
+
+        public function get repeater() : IRepeater
+        {
+            return _repeaters ? (_repeaters[(_repeaters.length - 1)]) : (null);
+        }// end function
+
+        public function set isPopUp(param1:Boolean) : void
+        {
+            _isPopUp = param1;
+            return;
+        }// end function
+
+        public function get measuredHeight() : Number
+        {
+            return _measuredHeight;
+        }// end function
+
+        public function initialize() : void
+        {
+            if (initialized)
+            {
+                return;
+            }
+            dispatchEvent(new FlexEvent(FlexEvent.PREINITIALIZE));
+            createChildren();
+            childrenCreated();
+            initializeAccessibility();
+            initializationComplete();
+            return;
+        }// end function
+
+        override public function set width(param1:Number) : void
+        {
+            var _loc_2:* = null;
+            if (explicitWidth != param1)
+            {
+                explicitWidth = param1;
+                invalidateSize();
+            }
+            if (_width != param1)
+            {
+                invalidateProperties();
+                invalidateDisplayList();
+                _loc_2 = parent as IInvalidating;
+                if (_loc_2 && includeInLayout)
+                {
+                    _loc_2.invalidateSize();
+                    _loc_2.invalidateDisplayList();
+                }
+                _width = param1;
+                dispatchEvent(new Event("widthChanged"));
+            }
+            return;
+        }// end function
+
+        public function set percentHeight(param1:Number) : void
+        {
+            if (_percentHeight == param1)
+            {
+                return;
+            }
+            if (!isNaN(param1))
+            {
+                _explicitHeight = NaN;
+            }
+            _percentHeight = param1;
+            var _loc_2:* = parent as IInvalidating;
+            if (_loc_2)
+            {
+                _loc_2.invalidateSize();
+                _loc_2.invalidateDisplayList();
+            }
+            return;
+        }// end function
+
+        public function set accessibilityDescription(param1:String) : void
+        {
+            if (!Capabilities.hasAccessibility)
+            {
+                return;
+            }
+            if (!accessibilityProperties)
+            {
+                accessibilityProperties = new AccessibilityProperties();
+            }
+            accessibilityProperties.description = param1;
+            Accessibility.updateProperties();
+            return;
+        }// end function
+
+        final function set $visible(param1:Boolean) : void
+        {
+            super.visible = param1;
+            return;
+        }// end function
+
+        function childRemoved(param1:DisplayObject) : void
+        {
+            if (param1 is IUIComponent)
+            {
+                if (IUIComponent(param1).document != param1)
+                {
+                    IUIComponent(param1).document = null;
+                }
+                IUIComponent(param1).parentChanged(null);
+            }
+            return;
+        }// end function
+
+        final function $removeChildAt(param1:int) : DisplayObject
+        {
+            return super.removeChildAt(param1);
+        }// end function
+
+        public function get maxHeight() : Number
+        {
+            return !isNaN(explicitMaxHeight) ? (explicitMaxHeight) : (DEFAULT_MAX_HEIGHT);
+        }// end function
+
+        protected function initializeAccessibility() : void
+        {
+            if (UIComponent.createAccessibilityImplementation != null)
+            {
+                UIComponent.createAccessibilityImplementation(this);
+            }
+            return;
+        }// end function
+
+        public function set explicitMaxHeight(param1:Number) : void
+        {
+            if (_explicitMaxHeight == param1)
+            {
+                return;
+            }
+            _explicitMaxHeight = param1;
+            invalidateSize();
+            var _loc_2:* = parent as IInvalidating;
+            if (_loc_2)
+            {
+                _loc_2.invalidateSize();
+                _loc_2.invalidateDisplayList();
+            }
+            dispatchEvent(new Event("explicitMaxHeightChanged"));
+            return;
+        }// end function
+
+        public function get accessibilityShortcut() : String
+        {
+            return accessibilityProperties ? (accessibilityProperties.shortcut) : ("");
+        }// end function
+
+        public function get focusManager() : IFocusManager
+        {
+            if (_focusManager)
+            {
+                return _focusManager;
+            }
+            var _loc_1:* = parent;
+            while (_loc_1)
+            {
+                
+                if (_loc_1 is IFocusManagerContainer)
+                {
+                    return IFocusManagerContainer(_loc_1).focusManager;
+                }
+                _loc_1 = _loc_1.parent;
+            }
+            return null;
+        }// end function
+
+        public function set styleName(param1:Object) : void
+        {
+            if (_styleName === param1)
+            {
+                return;
+            }
+            _styleName = param1;
+            if (inheritingStyles == UIComponent.STYLE_UNINITIALIZED)
+            {
+                return;
+            }
+            regenerateStyleCache(true);
+            initThemeColor();
+            styleChanged("styleName");
+            notifyStyleChangeInChildren("styleName", true);
+            return;
+        }// end function
+
+        public function get automationDelegate() : Object
+        {
+            return _automationDelegate;
+        }// end function
+
+        protected function get resourceManager() : IResourceManager
+        {
+            return _resourceManager;
+        }// end function
+
+        function validateBaselinePosition() : Boolean
+        {
+            var _loc_1:* = NaN;
+            var _loc_2:* = NaN;
+            if (!parent)
+            {
+                return false;
+            }
+            if (width == 0 && height == 0)
+            {
+                validateNow();
+                _loc_1 = getExplicitOrMeasuredWidth();
+                _loc_2 = getExplicitOrMeasuredHeight();
+                setActualSize(_loc_1, _loc_2);
+            }
+            validateNow();
+            return true;
+        }// end function
+
+        function cancelAllCallLaters() : void
+        {
+            var _loc_1:* = systemManager;
+            if (_loc_1 && (_loc_1.stage || _loc_1.useSWFBridge()))
+            {
+                if (listeningForRender)
+                {
+                    _loc_1.removeEventListener(FlexEvent.RENDER, callLaterDispatcher);
+                    _loc_1.removeEventListener(FlexEvent.ENTER_FRAME, callLaterDispatcher);
+                    listeningForRender = false;
+                }
+            }
+            methodQueue.splice(0);
+            return;
+        }// end function
+
+        private function updateCompleteHandler(event:FlexEvent) : void
+        {
+            UIComponentGlobals.layoutManager.removeEventListener(FlexEvent.UPDATE_COMPLETE, updateCompleteHandler);
+            processEffectFinished(_endingEffectInstances);
+            _endingEffectInstances = [];
+            return;
+        }// end function
+
+        private function findCommonBaseState(param1:String, param2:String) : String
+        {
+            var _loc_3:* = getState(param1);
+            var _loc_4:* = getState(param2);
+            if (!_loc_3 || !_loc_4)
+            {
+                return "";
+            }
+            if (isBaseState(_loc_3.basedOn) && isBaseState(_loc_4.basedOn))
+            {
+                return "";
+            }
+            var _loc_5:* = getBaseStates(_loc_3);
+            var _loc_6:* = getBaseStates(_loc_4);
+            var _loc_7:* = "";
+            while (_loc_5[(_loc_5.length - 1)] == _loc_6[(_loc_6.length - 1)])
+            {
+                
+                _loc_7 = _loc_5.pop();
+                _loc_6.pop();
+                if (!_loc_5.length || !_loc_6.length)
+                {
+                    break;
+                }
+            }
+            if (_loc_5.length && _loc_5[(_loc_5.length - 1)] == _loc_4.name)
+            {
+                _loc_7 = _loc_4.name;
+            }
+            else if (_loc_6.length && _loc_6[(_loc_6.length - 1)] == _loc_3.name)
+            {
+                _loc_7 = _loc_3.name;
+            }
+            return _loc_7;
+        }// end function
+
+        public function styleChanged(param1:String) : void
+        {
+            if (this is IFontContextComponent && hasFontContextChanged())
+            {
+                invalidateProperties();
+            }
+            if (!param1 || param1 == "styleName" || StyleManager.isSizeInvalidatingStyle(param1))
+            {
+                invalidateSize();
+            }
+            if (!param1 || param1 == "styleName" || param1 == "themeColor")
+            {
+                initThemeColor();
+            }
+            invalidateDisplayList();
+            if (parent is IInvalidating)
+            {
+                if (StyleManager.isParentSizeInvalidatingStyle(param1))
+                {
+                    IInvalidating(parent).invalidateSize();
+                }
+                if (StyleManager.isParentDisplayListInvalidatingStyle(param1))
+                {
+                    IInvalidating(parent).invalidateDisplayList();
+                }
+            }
+            return;
+        }// end function
+
+        final function get $visible() : Boolean
+        {
+            return super.visible;
+        }// end function
+
+        public function drawRoundRect(param1:Number, param2:Number, param3:Number, param4:Number, param5:Object = null, param6:Object = null, param7:Object = null, param8:Object = null, param9:String = null, param10:Array = null, param11:Object = null) : void
+        {
+            var _loc_13:* = NaN;
+            var _loc_14:* = null;
+            var _loc_15:* = null;
+            var _loc_16:* = null;
+            var _loc_12:* = graphics;
+            if (!param3 || !param4)
+            {
+                return;
+            }
+            if (param6 !== null)
+            {
+                if (param6 is Array)
+                {
+                    if (param7 is Array)
+                    {
+                        _loc_14 = param7 as Array;
+                    }
+                    else
+                    {
+                        _loc_14 = [param7, param7];
+                    }
+                    if (!param10)
+                    {
+                        param10 = [0, 255];
+                    }
+                    _loc_15 = null;
+                    if (param8)
+                    {
+                        if (param8 is Matrix)
+                        {
+                            _loc_15 = Matrix(param8);
+                        }
+                        else
+                        {
+                            _loc_15 = new Matrix();
+                            if (param8 is Number)
+                            {
+                                _loc_15.createGradientBox(param3, param4, Number(param8) * Math.PI / 180, param1, param2);
+                            }
+                            else
+                            {
+                                _loc_15.createGradientBox(param8.w, param8.h, param8.r, param8.x, param8.y);
+                            }
+                        }
+                    }
+                    if (param9 == GradientType.RADIAL)
+                    {
+                        _loc_12.beginGradientFill(GradientType.RADIAL, param6 as Array, _loc_14, param10, _loc_15);
+                    }
+                    else
+                    {
+                        _loc_12.beginGradientFill(GradientType.LINEAR, param6 as Array, _loc_14, param10, _loc_15);
+                    }
+                }
+                else
+                {
+                    _loc_12.beginFill(Number(param6), Number(param7));
+                }
+            }
+            if (!param5)
+            {
+                _loc_12.drawRect(param1, param2, param3, param4);
+            }
+            else if (param5 is Number)
+            {
+                _loc_13 = Number(param5) * 2;
+                _loc_12.drawRoundRect(param1, param2, param3, param4, _loc_13, _loc_13);
+            }
+            else
+            {
+                GraphicsUtil.drawRoundRectComplex(_loc_12, param1, param2, param3, param4, param5.tl, param5.tr, param5.bl, param5.br);
+            }
+            if (param11)
+            {
+                _loc_16 = param11.r;
+                if (_loc_16 is Number)
+                {
+                    _loc_13 = Number(_loc_16) * 2;
+                    _loc_12.drawRoundRect(param11.x, param11.y, param11.w, param11.h, _loc_13, _loc_13);
+                }
+                else
+                {
+                    GraphicsUtil.drawRoundRectComplex(_loc_12, param11.x, param11.y, param11.w, param11.h, _loc_16.tl, _loc_16.tr, _loc_16.bl, _loc_16.br);
+                }
+            }
+            if (param6 !== null)
+            {
+                _loc_12.endFill();
+            }
+            return;
+        }// end function
+
+        public function move(param1:Number, param2:Number) : void
+        {
+            var _loc_3:* = false;
+            if (param1 != super.x)
+            {
+                super.x = param1;
+                dispatchEvent(new Event("xChanged"));
+                _loc_3 = true;
+            }
+            if (param2 != super.y)
+            {
+                super.y = param2;
+                dispatchEvent(new Event("yChanged"));
+                _loc_3 = true;
+            }
+            if (_loc_3)
+            {
+                dispatchMoveEvent();
+            }
+            return;
+        }// end function
+
+        public function set toolTip(param1:String) : void
+        {
+            var _loc_2:* = _toolTip;
+            _toolTip = param1;
+            ToolTipManager.registerToolTip(this, _loc_2, param1);
+            dispatchEvent(new Event("toolTipChanged"));
+            return;
+        }// end function
+
+        public function set repeaters(param1:Array) : void
+        {
+            _repeaters = param1;
+            return;
+        }// end function
+
+        public function get explicitMaxHeight() : Number
+        {
+            return _explicitMaxHeight;
+        }// end function
+
+        public function measureText(param1:String) : TextLineMetrics
+        {
+            return determineTextFormatFromStyles().measureText(param1);
+        }// end function
+
+        public function get styleName() : Object
+        {
+            return _styleName;
+        }// end function
+
+        protected function createInModuleContext(param1:IFlexModuleFactory, param2:String) : Object
+        {
+            var _loc_3:* = null;
+            if (param1)
+            {
+                _loc_3 = param1.create(param2);
+            }
+            return _loc_3;
+        }// end function
+
+        public function get parentDocument() : Object
+        {
+            var _loc_1:* = null;
+            var _loc_2:* = null;
+            if (document == this)
+            {
+                _loc_1 = parent as IUIComponent;
+                if (_loc_1)
+                {
+                    return _loc_1.document;
+                }
+                _loc_2 = parent as ISystemManager;
+                if (_loc_2)
+                {
+                    return _loc_2.document;
+                }
+                return null;
+            }
+            else
+            {
+                return document;
+            }
+        }// end function
+
+        protected function childrenCreated() : void
+        {
+            invalidateProperties();
+            invalidateSize();
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        public function set flexContextMenu(param1:IFlexContextMenu) : void
+        {
+            if (_flexContextMenu)
+            {
+                _flexContextMenu.unsetContextMenu(this);
+            }
+            _flexContextMenu = param1;
+            if (param1 != null)
+            {
+                _flexContextMenu.setContextMenu(this);
+            }
+            return;
+        }// end function
+
+        public function set explicitWidth(param1:Number) : void
+        {
+            if (_explicitWidth == param1)
+            {
+                return;
+            }
+            if (!isNaN(param1))
+            {
+                _percentWidth = NaN;
+            }
+            _explicitWidth = param1;
+            invalidateSize();
+            var _loc_2:* = parent as IInvalidating;
+            if (_loc_2 && includeInLayout)
+            {
+                _loc_2.invalidateSize();
+                _loc_2.invalidateDisplayList();
+            }
+            dispatchEvent(new Event("explicitWidthChanged"));
+            return;
+        }// end function
+
+        private function setBorderColorForErrorString() : void
+        {
+            if (!_errorString || _errorString.length == 0)
+            {
+                if (!isNaN(origBorderColor))
+                {
+                    setStyle("borderColor", origBorderColor);
+                    saveBorderColor = true;
+                }
+            }
+            else
+            {
+                if (saveBorderColor)
+                {
+                    saveBorderColor = false;
+                    origBorderColor = getStyle("borderColor");
+                }
+                setStyle("borderColor", getStyle("errorColor"));
+            }
+            styleChanged("themeColor");
+            var _loc_1:* = focusManager;
+            var _loc_2:* = _loc_1 ? (DisplayObject(_loc_1.getFocus())) : (null);
+            if (_loc_1 && _loc_1.showFocusIndicator && _loc_2 == this)
+            {
+                drawFocus(true);
+            }
+            return;
+        }// end function
+
+        public function invalidateSize() : void
+        {
+            if (!invalidateSizeFlag)
+            {
+                invalidateSizeFlag = true;
+                if (parent && UIComponentGlobals.layoutManager)
+                {
+                    UIComponentGlobals.layoutManager.invalidateSize(this);
+                }
+            }
+            return;
+        }// end function
+
+        public function set measuredMinHeight(param1:Number) : void
+        {
+            _measuredMinHeight = param1;
+            return;
+        }// end function
+
+        protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            return;
+        }// end function
+
+        public function get explicitWidth() : Number
+        {
+            return _explicitWidth;
+        }// end function
+
+        override public function set filters(param1:Array) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
+            if (_filters)
+            {
+                _loc_2 = _filters.length;
+                _loc_3 = 0;
+                while (_loc_3 < _loc_2)
+                {
+                    
+                    _loc_4 = _filters[_loc_3] as IEventDispatcher;
+                    if (_loc_4)
+                    {
+                        _loc_4.removeEventListener("change", filterChangeHandler);
+                    }
+                    _loc_3++;
+                }
+            }
+            _filters = param1;
+            if (_filters)
+            {
+                _loc_2 = _filters.length;
+                _loc_3 = 0;
+                while (_loc_3 < _loc_2)
+                {
+                    
+                    _loc_4 = _filters[_loc_3] as IEventDispatcher;
+                    if (_loc_4)
+                    {
+                        _loc_4.addEventListener("change", filterChangeHandler);
+                    }
+                    _loc_3++;
+                }
+            }
+            super.filters = _filters;
+            return;
+        }// end function
+
+        private static function get embeddedFontRegistry() : IEmbeddedFontRegistry
+        {
+            if (!_embeddedFontRegistry)
+            {
+                _embeddedFontRegistry = IEmbeddedFontRegistry(Singleton.getInstance("mx.core::IEmbeddedFontRegistry"));
+            }
+            return _embeddedFontRegistry;
+        }// end function
+
+        public static function resumeBackgroundProcessing() : void
+        {
+            var _loc_1:* = null;
+            if (UIComponentGlobals.callLaterSuspendCount > 0)
+            {
+                var _loc_2:* = UIComponentGlobals;
+                var _loc_3:* = _loc_2.callLaterSuspendCount - 1;
+                _loc_2.callLaterSuspendCount = _loc_3;
+                if (_loc_2.callLaterSuspendCount == 0)
+                {
+                    _loc_1 = SystemManagerGlobals.topLevelSystemManagers[0];
+                    if (_loc_1 && _loc_1.stage)
+                    {
+                        _loc_1.stage.invalidate();
+                    }
+                }
+            }
+            return;
+        }// end function
+
+        public static function suspendBackgroundProcessing() : void
+        {
+            var _loc_1:* = UIComponentGlobals;
+            var _loc_2:* = _loc_1.callLaterSuspendCount + 1;
+            _loc_1.callLaterSuspendCount = _loc_2;
+            return;
+        }// end function
+
+    }
 }
 
-class MethodQueueElement
+import flash.accessibility.*;
+
+import flash.display.*;
+
+import flash.events.*;
+
+import flash.geom.*;
+
+import flash.system.*;
+
+import flash.text.*;
+
+import flash.utils.*;
+
+import mx.automation.*;
+
+import mx.binding.*;
+
+import mx.controls.*;
+
+import mx.core.*;
+
+import mx.effects.*;
+
+import mx.events.*;
+
+import mx.graphics.*;
+
+import mx.managers.*;
+
+import mx.modules.*;
+
+import mx.resources.*;
+
+import mx.states.*;
+
+import mx.styles.*;
+
+import mx.utils.*;
+
+import mx.validators.*;
+
+class MethodQueueElement extends Object
 {
-    
-   public var method:Function;
-   
-   public var args:Array;
-   
-   function MethodQueueElement(param1:Function, param2:Array = null)
-   {
-      super();
-      this.method = param1;
-      this.args = param2;
-   }
+    public var method:Function;
+    public var args:Array;
+
+    function MethodQueueElement(param1:Function, param2:Array = null)
+    {
+        this.method = param1;
+        this.args = param2;
+        return;
+    }// end function
+
 }
+

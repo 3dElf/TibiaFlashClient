@@ -1,170 +1,171 @@
-package mx.styles
+﻿package mx.styles
 {
-   import mx.core.mx_internal;
-   import flash.display.DisplayObject;
-   import mx.core.UIComponent;
-   import mx.core.IUITextField;
-   
-   use namespace mx_internal;
-   
-   public class StyleProtoChain
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function StyleProtoChain()
-      {
-         super();
-      }
-      
-      public static function initProtoChainForUIComponentStyleName(param1:IStyleClient) : void
-      {
-         var _loc9_:CSSStyleDeclaration = null;
-         var _loc2_:IStyleClient = IStyleClient(param1.styleName);
-         var _loc3_:DisplayObject = param1 as DisplayObject;
-         var _loc4_:Object = _loc2_.nonInheritingStyles;
-         if(!_loc4_ || _loc4_ == UIComponent.STYLE_UNINITIALIZED)
-         {
-            _loc4_ = StyleManager.stylesRoot;
-            if(_loc4_.effects)
+    import flash.display.*;
+    import mx.core.*;
+
+    public class StyleProtoChain extends Object
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function StyleProtoChain()
+        {
+            return;
+        }// end function
+
+        public static function initProtoChainForUIComponentStyleName(param1:IStyleClient) : void
+        {
+            var _loc_9:* = null;
+            var _loc_2:* = IStyleClient(param1.styleName);
+            var _loc_3:* = param1 as DisplayObject;
+            var _loc_4:* = _loc_2.nonInheritingStyles;
+            if (!_loc_2.nonInheritingStyles || _loc_4 == UIComponent.STYLE_UNINITIALIZED)
             {
-               param1.registerEffects(_loc4_.effects);
+                _loc_4 = StyleManager.stylesRoot;
+                if (_loc_4.effects)
+                {
+                    param1.registerEffects(_loc_4.effects);
+                }
             }
-         }
-         var _loc5_:Object = _loc2_.inheritingStyles;
-         if(!_loc5_ || _loc5_ == UIComponent.STYLE_UNINITIALIZED)
-         {
-            _loc5_ = StyleManager.stylesRoot;
-         }
-         var _loc6_:Array = param1.getClassStyleDeclarations();
-         var _loc7_:int = _loc6_.length;
-         if(_loc2_ is StyleProxy)
-         {
-            if(_loc7_ == 0)
+            var _loc_5:* = _loc_2.inheritingStyles;
+            if (!_loc_2.inheritingStyles || _loc_5 == UIComponent.STYLE_UNINITIALIZED)
             {
-               _loc4_ = addProperties(_loc4_,_loc2_,false);
+                _loc_5 = StyleManager.stylesRoot;
             }
-            _loc3_ = StyleProxy(_loc2_).source as DisplayObject;
-         }
-         var _loc8_:int = 0;
-         while(_loc8_ < _loc7_)
-         {
-            _loc9_ = _loc6_[_loc8_];
-            _loc5_ = _loc9_.addStyleToProtoChain(_loc5_,_loc3_);
-            _loc5_ = addProperties(_loc5_,_loc2_,true);
-            _loc4_ = _loc9_.addStyleToProtoChain(_loc4_,_loc3_);
-            _loc4_ = addProperties(_loc4_,_loc2_,false);
-            if(_loc9_.effects)
+            var _loc_6:* = param1.getClassStyleDeclarations();
+            var _loc_7:* = _loc_6.length;
+            if (_loc_2 is StyleProxy)
             {
-               param1.registerEffects(_loc9_.effects);
+                if (_loc_7 == 0)
+                {
+                    _loc_4 = addProperties(_loc_4, _loc_2, false);
+                }
+                _loc_3 = StyleProxy(_loc_2).source as DisplayObject;
             }
-            _loc8_++;
-         }
-         param1.inheritingStyles = !!param1.styleDeclaration?param1.styleDeclaration.addStyleToProtoChain(_loc5_,_loc3_):_loc5_;
-         param1.nonInheritingStyles = !!param1.styleDeclaration?param1.styleDeclaration.addStyleToProtoChain(_loc4_,_loc3_):_loc4_;
-      }
-      
-      private static function addProperties(param1:Object, param2:IStyleClient, param3:Boolean) : Object
-      {
-         var _loc11_:CSSStyleDeclaration = null;
-         var _loc12_:CSSStyleDeclaration = null;
-         var _loc4_:Object = param2 is StyleProxy && !param3?StyleProxy(param2).filterMap:null;
-         var _loc5_:IStyleClient = param2;
-         while(_loc5_ is StyleProxy)
-         {
-            _loc5_ = StyleProxy(_loc5_).source;
-         }
-         var _loc6_:DisplayObject = _loc5_ as DisplayObject;
-         var _loc7_:Array = param2.getClassStyleDeclarations();
-         var _loc8_:int = _loc7_.length;
-         var _loc9_:int = 0;
-         while(_loc9_ < _loc8_)
-         {
-            _loc11_ = _loc7_[_loc9_];
-            param1 = _loc11_.addStyleToProtoChain(param1,_loc6_,_loc4_);
-            if(_loc11_.effects)
+            var _loc_8:* = 0;
+            while (_loc_8 < _loc_7)
             {
-               param2.registerEffects(_loc11_.effects);
+                
+                _loc_9 = _loc_6[_loc_8];
+                _loc_5 = _loc_9.addStyleToProtoChain(_loc_5, _loc_3);
+                _loc_5 = addProperties(_loc_5, _loc_2, true);
+                _loc_4 = _loc_9.addStyleToProtoChain(_loc_4, _loc_3);
+                _loc_4 = addProperties(_loc_4, _loc_2, false);
+                if (_loc_9.effects)
+                {
+                    param1.registerEffects(_loc_9.effects);
+                }
+                _loc_8++;
             }
-            _loc9_++;
-         }
-         var _loc10_:Object = param2.styleName;
-         if(_loc10_)
-         {
-            if(typeof _loc10_ == "object")
+            param1.inheritingStyles = param1.styleDeclaration ? (param1.styleDeclaration.addStyleToProtoChain(_loc_5, _loc_3)) : (_loc_5);
+            param1.nonInheritingStyles = param1.styleDeclaration ? (param1.styleDeclaration.addStyleToProtoChain(_loc_4, _loc_3)) : (_loc_4);
+            return;
+        }// end function
+
+        private static function addProperties(param1:Object, param2:IStyleClient, param3:Boolean) : Object
+        {
+            var _loc_11:* = null;
+            var _loc_12:* = null;
+            var _loc_4:* = param2 is StyleProxy && !param3 ? (StyleProxy(param2).filterMap) : (null);
+            var _loc_5:* = param2;
+            while (_loc_5 is StyleProxy)
             {
-               if(_loc10_ is CSSStyleDeclaration)
-               {
-                  _loc12_ = CSSStyleDeclaration(_loc10_);
-               }
-               else
-               {
-                  param1 = addProperties(param1,IStyleClient(_loc10_),param3);
-               }
+                
+                _loc_5 = StyleProxy(_loc_5).source;
             }
-            else
+            var _loc_6:* = _loc_5 as DisplayObject;
+            var _loc_7:* = param2.getClassStyleDeclarations();
+            var _loc_8:* = _loc_7.length;
+            var _loc_9:* = 0;
+            while (_loc_9 < _loc_8)
             {
-               _loc12_ = StyleManager.getStyleDeclaration("." + _loc10_);
+                
+                _loc_11 = _loc_7[_loc_9];
+                param1 = _loc_11.addStyleToProtoChain(param1, _loc_6, _loc_4);
+                if (_loc_11.effects)
+                {
+                    param2.registerEffects(_loc_11.effects);
+                }
+                _loc_9++;
             }
-            if(_loc12_)
+            var _loc_10:* = param2.styleName;
+            if (param2.styleName)
             {
-               param1 = _loc12_.addStyleToProtoChain(param1,_loc6_,_loc4_);
-               if(_loc12_.effects)
-               {
-                  param2.registerEffects(_loc12_.effects);
-               }
+                if (typeof(_loc_10) == "object")
+                {
+                    if (_loc_10 is CSSStyleDeclaration)
+                    {
+                        _loc_12 = CSSStyleDeclaration(_loc_10);
+                    }
+                    else
+                    {
+                        param1 = addProperties(param1, IStyleClient(_loc_10), param3);
+                    }
+                }
+                else
+                {
+                    _loc_12 = StyleManager.getStyleDeclaration("." + _loc_10);
+                }
+                if (_loc_12)
+                {
+                    param1 = _loc_12.addStyleToProtoChain(param1, _loc_6, _loc_4);
+                    if (_loc_12.effects)
+                    {
+                        param2.registerEffects(_loc_12.effects);
+                    }
+                }
             }
-         }
-         if(param2.styleDeclaration)
-         {
-            param1 = param2.styleDeclaration.addStyleToProtoChain(param1,_loc6_,_loc4_);
-         }
-         return param1;
-      }
-      
-      public static function initTextField(param1:IUITextField) : void
-      {
-         var _loc3_:CSSStyleDeclaration = null;
-         var _loc2_:Object = param1.styleName;
-         if(_loc2_)
-         {
-            if(typeof _loc2_ == "object")
+            if (param2.styleDeclaration)
             {
-               if(_loc2_ is CSSStyleDeclaration)
-               {
-                  _loc3_ = CSSStyleDeclaration(_loc2_);
-               }
-               else
-               {
-                  if(_loc2_ is StyleProxy)
-                  {
-                     param1.inheritingStyles = IStyleClient(_loc2_).inheritingStyles;
-                     param1.nonInheritingStyles = addProperties(StyleManager.stylesRoot,IStyleClient(_loc2_),false);
-                     return;
-                  }
-                  param1.inheritingStyles = IStyleClient(_loc2_).inheritingStyles;
-                  param1.nonInheritingStyles = IStyleClient(_loc2_).nonInheritingStyles;
-                  return;
-               }
+                param1 = param2.styleDeclaration.addStyleToProtoChain(param1, _loc_6, _loc_4);
             }
-            else
+            return param1;
+        }// end function
+
+        public static function initTextField(param1:IUITextField) : void
+        {
+            var _loc_3:* = null;
+            var _loc_2:* = param1.styleName;
+            if (_loc_2)
             {
-               _loc3_ = StyleManager.getStyleDeclaration("." + _loc2_);
+                if (typeof(_loc_2) == "object")
+                {
+                    if (_loc_2 is CSSStyleDeclaration)
+                    {
+                        _loc_3 = CSSStyleDeclaration(_loc_2);
+                    }
+                    else
+                    {
+                        if (_loc_2 is StyleProxy)
+                        {
+                            param1.mx.core:IUITextField::inheritingStyles = IStyleClient(_loc_2).inheritingStyles;
+                            param1.mx.core:IUITextField::nonInheritingStyles = addProperties(StyleManager.stylesRoot, IStyleClient(_loc_2), false);
+                            return;
+                        }
+                        param1.mx.core:IUITextField::inheritingStyles = IStyleClient(_loc_2).inheritingStyles;
+                        param1.mx.core:IUITextField::nonInheritingStyles = IStyleClient(_loc_2).nonInheritingStyles;
+                        return;
+                    }
+                }
+                else
+                {
+                    _loc_3 = StyleManager.getStyleDeclaration("." + _loc_2);
+                }
             }
-         }
-         var _loc4_:Object = IStyleClient(param1.parent).inheritingStyles;
-         var _loc5_:Object = StyleManager.stylesRoot;
-         if(!_loc4_)
-         {
-            _loc4_ = StyleManager.stylesRoot;
-         }
-         if(_loc3_)
-         {
-            _loc4_ = _loc3_.addStyleToProtoChain(_loc4_,DisplayObject(param1));
-            _loc5_ = _loc3_.addStyleToProtoChain(_loc5_,DisplayObject(param1));
-         }
-         param1.inheritingStyles = _loc4_;
-         param1.nonInheritingStyles = _loc5_;
-      }
-   }
+            var _loc_4:* = IStyleClient(param1.parent).inheritingStyles;
+            var _loc_5:* = StyleManager.stylesRoot;
+            if (!_loc_4)
+            {
+                _loc_4 = StyleManager.stylesRoot;
+            }
+            if (_loc_3)
+            {
+                _loc_4 = _loc_3.addStyleToProtoChain(_loc_4, DisplayObject(param1));
+                _loc_5 = _loc_3.addStyleToProtoChain(_loc_5, DisplayObject(param1));
+            }
+            param1.mx.core:IUITextField::inheritingStyles = _loc_4;
+            param1.mx.core:IUITextField::nonInheritingStyles = _loc_5;
+            return;
+        }// end function
+
+    }
 }

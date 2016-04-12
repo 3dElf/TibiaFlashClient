@@ -1,38 +1,35 @@
-package mx.effects.effectClasses
+﻿package mx.effects.effectClasses
 {
-   import mx.effects.EffectTargetFilter;
-   import mx.core.mx_internal;
-   
-   use namespace mx_internal;
-   
-   public class HideShowEffectTargetFilter extends EffectTargetFilter
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public var show:Boolean = true;
-      
-      public function HideShowEffectTargetFilter()
-      {
-         super();
-         filterProperties = ["visible"];
-      }
-      
-      override protected function defaultFilterFunction(param1:Array, param2:Object) : Boolean
-      {
-         var _loc5_:PropertyChanges = null;
-         var _loc3_:int = param1.length;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc5_ = param1[_loc4_];
-            if(_loc5_.target == param2)
+    import mx.effects.*;
+
+    public class HideShowEffectTargetFilter extends EffectTargetFilter
+    {
+        public var show:Boolean = true;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function HideShowEffectTargetFilter()
+        {
+            filterProperties = ["visible"];
+            return;
+        }// end function
+
+        override protected function defaultFilterFunction(param1:Array, param2:Object) : Boolean
+        {
+            var _loc_5:* = null;
+            var _loc_3:* = param1.length;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
             {
-               return _loc5_.end["visible"] == show;
+                
+                _loc_5 = param1[_loc_4];
+                if (_loc_5.target == param2)
+                {
+                    return _loc_5.end["visible"] == show;
+                }
+                _loc_4++;
             }
-            _loc4_++;
-         }
-         return false;
-      }
-   }
+            return false;
+        }// end function
+
+    }
 }

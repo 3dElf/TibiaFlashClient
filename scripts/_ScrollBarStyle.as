@@ -1,47 +1,48 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   import mx.skins.halo.ScrollTrackSkin;
-   import mx.skins.halo.ScrollArrowSkin;
-   import mx.skins.halo.ScrollThumbSkin;
-   
-   public class _ScrollBarStyle
-   {
-       
-      public function _ScrollBarStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration("ScrollBar");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration("ScrollBar",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.skins.halo.*;
+    import mx.styles.*;
+
+    public class _ScrollBarStyle extends Object
+    {
+
+        public function _ScrollBarStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration("ScrollBar");
+            if (!style)
             {
-               _ScrollBarStyle.thumbOffset = 0;
-               _ScrollBarStyle.paddingTop = 0;
-               _ScrollBarStyle.borderColor = 12040892;
-               _ScrollBarStyle.trackColors = [9738651,15198183];
-               _ScrollBarStyle.trackSkin = ScrollTrackSkin;
-               _ScrollBarStyle.downArrowSkin = ScrollArrowSkin;
-               _ScrollBarStyle.cornerRadius = 4;
-               _ScrollBarStyle.upArrowSkin = ScrollArrowSkin;
-               _ScrollBarStyle.paddingLeft = 0;
-               _ScrollBarStyle.paddingBottom = 0;
-               _ScrollBarStyle.thumbSkin = ScrollThumbSkin;
-               _ScrollBarStyle.paddingRight = 0;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration("ScrollBar", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.thumbOffset = 0;
+                this.paddingTop = 0;
+                this.borderColor = 12040892;
+                this.trackColors = [9738651, 15198183];
+                this.trackSkin = ScrollTrackSkin;
+                this.downArrowSkin = ScrollArrowSkin;
+                this.cornerRadius = 4;
+                this.upArrowSkin = ScrollArrowSkin;
+                this.paddingLeft = 0;
+                this.paddingBottom = 0;
+                this.thumbSkin = ScrollThumbSkin;
+                this.paddingRight = 0;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

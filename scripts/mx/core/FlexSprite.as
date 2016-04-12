@@ -1,32 +1,28 @@
-package mx.core
+﻿package mx.core
 {
-   import flash.display.Sprite;
-   import mx.utils.NameUtil;
-   
-   use namespace mx_internal;
-   
-   public class FlexSprite extends Sprite
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function FlexSprite()
-      {
-         super();
-         try
-         {
-            name = NameUtil.createUniqueName(this);
+    import flash.display.*;
+    import mx.utils.*;
+
+    public class FlexSprite extends Sprite
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function FlexSprite()
+        {
+            try
+            {
+                name = NameUtil.createUniqueName(this);
+            }
+            catch (e:Error)
+            {
+            }
             return;
-         }
-         catch(e:Error)
-         {
-            return;
-         }
-      }
-      
-      override public function toString() : String
-      {
-         return NameUtil.displayObjectToString(this);
-      }
-   }
+        }// end function
+
+        override public function toString() : String
+        {
+            return NameUtil.displayObjectToString(this);
+        }// end function
+
+    }
 }

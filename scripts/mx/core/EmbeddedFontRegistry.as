@@ -1,201 +1,207 @@
-package mx.core
+﻿package mx.core
 {
-   import flash.text.FontStyle;
-   import flash.utils.Dictionary;
-   
-   use namespace mx_internal;
-   
-   public class EmbeddedFontRegistry implements mx.core.IEmbeddedFontRegistry
-   {
-      
-      private static var fonts:Object = {};
-      
-      private static var instance:mx.core.IEmbeddedFontRegistry;
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function EmbeddedFontRegistry()
-      {
-         super();
-      }
-      
-      public static function registerFonts(param1:Object, param2:IFlexModuleFactory) : void
-      {
-         var _loc4_:* = null;
-         var _loc5_:Object = null;
-         var _loc6_:* = null;
-         var _loc7_:Boolean = false;
-         var _loc8_:Boolean = false;
-         var _loc3_:mx.core.IEmbeddedFontRegistry = IEmbeddedFontRegistry(Singleton.getInstance("mx.core::IEmbeddedFontRegistry"));
-         for(_loc4_ in param1)
-         {
-            _loc5_ = param1[_loc4_];
-            for(_loc6_ in _loc5_)
+    import flash.text.*;
+    import flash.utils.*;
+    import mx.core.*;
+
+    public class EmbeddedFontRegistry extends Object implements IEmbeddedFontRegistry
+    {
+        private static var fonts:Object = {};
+        private static var instance:IEmbeddedFontRegistry;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function EmbeddedFontRegistry()
+        {
+            return;
+        }// end function
+
+        public function getAssociatedModuleFactory(param1:EmbeddedFont, param2:IFlexModuleFactory) : IFlexModuleFactory
+        {
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            var _loc_3:* = fonts[createFontKey(param1)];
+            if (_loc_3)
             {
-               if(_loc5_[_loc6_] != false)
-               {
-                  if(_loc6_ == "regular")
-                  {
-                     _loc7_ = false;
-                     _loc8_ = false;
-                  }
-                  else if(_loc6_ == "boldItalic")
-                  {
-                     _loc7_ = true;
-                     _loc8_ = true;
-                  }
-                  else if(_loc6_ == "bold")
-                  {
-                     _loc7_ = true;
-                     _loc8_ = false;
-                  }
-                  else if(_loc6_ == "italic")
-                  {
-                     _loc7_ = false;
-                     _loc8_ = true;
-                  }
-                  _loc3_.registerFont(new EmbeddedFont(String(_loc4_),_loc7_,_loc8_),param2);
-               }
+                _loc_4 = _loc_3[param2];
+                if (_loc_4)
+                {
+                    return param2;
+                }
+                for (_loc_5 in _loc_3)
+                {
+                    
+                    return _loc_5 as IFlexModuleFactory;
+                }
             }
-         }
-      }
-      
-      public static function getInstance() : mx.core.IEmbeddedFontRegistry
-      {
-         if(!instance)
-         {
-            instance = new EmbeddedFontRegistry();
-         }
-         return instance;
-      }
-      
-      public static function getFontStyle(param1:Boolean, param2:Boolean) : String
-      {
-         var _loc3_:String = FontStyle.REGULAR;
-         if(Boolean(param1) && Boolean(param2))
-         {
-            _loc3_ = FontStyle.BOLD_ITALIC;
-         }
-         else if(param1)
-         {
-            _loc3_ = FontStyle.BOLD;
-         }
-         else if(param2)
-         {
-            _loc3_ = FontStyle.ITALIC;
-         }
-         return _loc3_;
-      }
-      
-      private static function createFontKey(param1:EmbeddedFont) : String
-      {
-         return param1.fontName + param1.fontStyle;
-      }
-      
-      private static function createEmbeddedFont(param1:String) : EmbeddedFont
-      {
-         var _loc2_:String = null;
-         var _loc3_:Boolean = false;
-         var _loc4_:Boolean = false;
-         var _loc5_:int = endsWith(param1,FontStyle.REGULAR);
-         if(_loc5_ > 0)
-         {
-            _loc2_ = param1.substring(0,_loc5_);
-            return new EmbeddedFont(_loc2_,false,false);
-         }
-         _loc5_ = endsWith(param1,FontStyle.BOLD);
-         if(_loc5_ > 0)
-         {
-            _loc2_ = param1.substring(0,_loc5_);
-            return new EmbeddedFont(_loc2_,true,false);
-         }
-         _loc5_ = endsWith(param1,FontStyle.BOLD_ITALIC);
-         if(_loc5_ > 0)
-         {
-            _loc2_ = param1.substring(0,_loc5_);
-            return new EmbeddedFont(_loc2_,true,true);
-         }
-         _loc5_ = endsWith(param1,FontStyle.ITALIC);
-         if(_loc5_ > 0)
-         {
-            _loc2_ = param1.substring(0,_loc5_);
-            return new EmbeddedFont(_loc2_,false,true);
-         }
-         return new EmbeddedFont("",false,false);
-      }
-      
-      private static function endsWith(param1:String, param2:String) : int
-      {
-         var _loc3_:int = param1.lastIndexOf(param2);
-         if(_loc3_ > 0 && _loc3_ + param2.length == param1.length)
-         {
-            return _loc3_;
-         }
-         return -1;
-      }
-      
-      public function getAssociatedModuleFactory(param1:EmbeddedFont, param2:IFlexModuleFactory) : IFlexModuleFactory
-      {
-         var _loc4_:int = 0;
-         var _loc5_:* = null;
-         var _loc3_:Dictionary = fonts[createFontKey(param1)];
-         if(_loc3_)
-         {
-            _loc4_ = _loc3_[param2];
-            if(_loc4_)
+            return null;
+        }// end function
+
+        public function deregisterFont(param1:EmbeddedFont, param2:IFlexModuleFactory) : void
+        {
+            var _loc_5:* = 0;
+            var _loc_6:* = null;
+            var _loc_3:* = createFontKey(param1);
+            var _loc_4:* = fonts[_loc_3];
+            if (fonts[_loc_3] != null)
             {
-               return param2;
+                delete _loc_4[param2];
+                _loc_5 = 0;
+                for (_loc_6 in _loc_4)
+                {
+                    
+                    _loc_5++;
+                }
+                if (_loc_5 == 0)
+                {
+                    delete fonts[_loc_3];
+                }
             }
-            for(_loc5_ in _loc3_)
+            return;
+        }// end function
+
+        public function getFonts() : Array
+        {
+            var _loc_2:* = null;
+            var _loc_1:* = [];
+            for (_loc_2 in fonts)
             {
-               return _loc5_ as IFlexModuleFactory;
+                
+                _loc_1.push(createEmbeddedFont(_loc_2));
             }
-         }
-         return null;
-      }
-      
-      public function deregisterFont(param1:EmbeddedFont, param2:IFlexModuleFactory) : void
-      {
-         var _loc5_:int = 0;
-         var _loc6_:* = null;
-         var _loc3_:String = createFontKey(param1);
-         var _loc4_:Dictionary = fonts[_loc3_];
-         if(_loc4_ != null)
-         {
-            delete _loc4_[param2];
-            _loc5_ = 0;
-            for(_loc6_ in _loc4_)
+            return _loc_1;
+        }// end function
+
+        public function registerFont(param1:EmbeddedFont, param2:IFlexModuleFactory) : void
+        {
+            var _loc_3:* = createFontKey(param1);
+            var _loc_4:* = fonts[_loc_3];
+            if (!fonts[_loc_3])
             {
-               _loc5_++;
+                _loc_4 = new Dictionary(true);
+                fonts[_loc_3] = _loc_4;
             }
-            if(_loc5_ == 0)
+            _loc_4[param2] = 1;
+            return;
+        }// end function
+
+        public static function registerFonts(param1:Object, param2:IFlexModuleFactory) : void
+        {
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = false;
+            var _loc_8:* = false;
+            var _loc_3:* = IEmbeddedFontRegistry(Singleton.getInstance("mx.core::IEmbeddedFontRegistry"));
+            for (_loc_4 in param1)
             {
-               delete fonts[_loc3_];
+                
+                _loc_5 = _loc_10[_loc_4];
+                for (_loc_6 in _loc_5)
+                {
+                    
+                    if (_loc_5[_loc_6] == false)
+                    {
+                        continue;
+                    }
+                    if (_loc_6 == "regular")
+                    {
+                        _loc_7 = false;
+                        _loc_8 = false;
+                    }
+                    else if (_loc_6 == "boldItalic")
+                    {
+                        _loc_7 = true;
+                        _loc_8 = true;
+                    }
+                    else if (_loc_6 == "bold")
+                    {
+                        _loc_7 = true;
+                        _loc_8 = false;
+                    }
+                    else if (_loc_6 == "italic")
+                    {
+                        _loc_7 = false;
+                        _loc_8 = true;
+                    }
+                    _loc_3.registerFont(new EmbeddedFont(String(_loc_4), _loc_7, _loc_8), param2);
+                }
             }
-         }
-      }
-      
-      public function getFonts() : Array
-      {
-         var _loc2_:* = null;
-         var _loc1_:Array = [];
-         for(_loc2_ in fonts)
-         {
-            _loc1_.push(createEmbeddedFont(_loc2_));
-         }
-         return _loc1_;
-      }
-      
-      public function registerFont(param1:EmbeddedFont, param2:IFlexModuleFactory) : void
-      {
-         var _loc3_:String = createFontKey(param1);
-         var _loc4_:Dictionary = fonts[_loc3_];
-         if(!_loc4_)
-         {
-            _loc4_ = new Dictionary(true);
-            fonts[_loc3_] = _loc4_;
-         }
-         _loc4_[param2] = 1;
-      }
-   }
+            return;
+        }// end function
+
+        public static function getInstance() : IEmbeddedFontRegistry
+        {
+            if (!instance)
+            {
+                instance = new EmbeddedFontRegistry;
+            }
+            return instance;
+        }// end function
+
+        public static function getFontStyle(param1:Boolean, param2:Boolean) : String
+        {
+            var _loc_3:* = FontStyle.REGULAR;
+            if (param1 && param2)
+            {
+                _loc_3 = FontStyle.BOLD_ITALIC;
+            }
+            else if (param1)
+            {
+                _loc_3 = FontStyle.BOLD;
+            }
+            else if (param2)
+            {
+                _loc_3 = FontStyle.ITALIC;
+            }
+            return _loc_3;
+        }// end function
+
+        private static function createFontKey(param1:EmbeddedFont) : String
+        {
+            return param1.fontName + param1.fontStyle;
+        }// end function
+
+        private static function createEmbeddedFont(param1:String) : EmbeddedFont
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = false;
+            var _loc_4:* = false;
+            var _loc_5:* = endsWith(param1, FontStyle.REGULAR);
+            if (endsWith(param1, FontStyle.REGULAR) > 0)
+            {
+                _loc_2 = param1.substring(0, _loc_5);
+                return new EmbeddedFont(_loc_2, false, false);
+            }
+            _loc_5 = endsWith(param1, FontStyle.BOLD);
+            if (_loc_5 > 0)
+            {
+                _loc_2 = param1.substring(0, _loc_5);
+                return new EmbeddedFont(_loc_2, true, false);
+            }
+            _loc_5 = endsWith(param1, FontStyle.BOLD_ITALIC);
+            if (_loc_5 > 0)
+            {
+                _loc_2 = param1.substring(0, _loc_5);
+                return new EmbeddedFont(_loc_2, true, true);
+            }
+            _loc_5 = endsWith(param1, FontStyle.ITALIC);
+            if (_loc_5 > 0)
+            {
+                _loc_2 = param1.substring(0, _loc_5);
+                return new EmbeddedFont(_loc_2, false, true);
+            }
+            return new EmbeddedFont("", false, false);
+        }// end function
+
+        private static function endsWith(param1:String, param2:String) : int
+        {
+            var _loc_3:* = param1.lastIndexOf(param2);
+            if (_loc_3 > 0 && _loc_3 + param2.length == param1.length)
+            {
+                return _loc_3;
+            }
+            return -1;
+        }// end function
+
+    }
 }

@@ -1,151 +1,158 @@
-package tibia.sessiondump.hints.gameaction
+﻿package tibia.sessiondump.hints.gameaction
 {
-   import tibia.input.gameaction.UseActionImpl;
-   import tibia.input.gameaction.AutowalkActionImpl;
-   import tibia.network.Communication;
-   import tibia.creatures.CreatureStorage;
-   import tibia.container.ContainerStorage;
-   import tibia.creatures.Player;
-   import tibia.magic.SpellStorage;
-   import tibia.container.BodyContainerView;
-   import tibia.sessiondump.controller.SessiondumpHintActionsController;
-   import shared.utility.Vector3D;
-   import flash.events.MouseEvent;
-   import tibia.creatures.Creature;
-   import flash.display.DisplayObject;
-   import flash.geom.Point;
-   import tibia.game.IUseWidget;
-   import tibia.appearances.ObjectInstance;
-   import tibia.appearances.AppearanceInstance;
-   import tibia.sessiondump.hints.condition.HintConditionUse;
-   
-   public class SessiondumpHintsUseActionImpl extends UseActionImpl
-   {
-      
-      protected static var concurrentMultiUse:tibia.sessiondump.hints.gameaction.SessiondumpHintsUseActionImpl = null;
-       
-      private var m_DestinationAbsolute:Vector3D = null;
-      
-      private var m_DestinationPosition:int = -1;
-      
-      private var m_DestinationObjectID:int = -1;
-      
-      public function SessiondumpHintsUseActionImpl(param1:Vector3D, param2:*, param3:int, param4:int = 0)
-      {
-         super(param1,param2,param3,param4);
-      }
-      
-      override public function perform(param1:Boolean = false) : void
-      {
-         var _loc6_:int = 0;
-         var _loc7_:AutowalkActionImpl = null;
-         var _loc2_:Communication = Tibia.s_GetCommunication();
-         var _loc3_:CreatureStorage = Tibia.s_GetCreatureStorage();
-         var _loc4_:ContainerStorage = Tibia.s_GetContainerStorage();
-         var _loc5_:Player = Tibia.s_GetPlayer();
-         if(_loc2_ != null && Boolean(_loc2_.isGameRunning) && _loc3_ != null && _loc4_ != null && _loc5_ != null)
-         {
-            if(m_Absolute.x == 65535 && m_Absolute.y == 0)
-            {
-               if(_loc4_.getAvailableInventory(m_Type.ID,m_PositionOrData) < 1)
-               {
-                  return;
-               }
-               if(Boolean(m_Type.isMultiUse) && Boolean(SpellStorage.checkRune(m_Type.ID)) && _loc5_.getRuneUses(SpellStorage.getRune(m_Type.ID)) < 1)
-               {
-                  return;
-               }
-            }
-            if(m_Type.isContainer)
-            {
-               _loc6_ = 0;
-               if(m_Target == TARGET_NEW_WINDOW || m_Absolute.x < 65535 || m_Absolute.y >= BodyContainerView.FIRST_SLOT && m_Absolute.y <= BodyContainerView.LAST_SLOT)
-               {
-                  _loc6_ = _loc4_.getFreeContainerViewID();
-               }
-               else if(64 <= m_Absolute.y && m_Absolute.y < 64 + ContainerStorage.MAX_CONTAINER_VIEWS)
-               {
-                  _loc6_ = m_Absolute.y - 64;
-               }
-               SessiondumpHintActionsController.getInstance().actionPerformed(this);
-            }
-            else if(!m_Type.isMultiUse)
-            {
-               SessiondumpHintActionsController.getInstance().actionPerformed(this);
-            }
-            else if(m_Target != TARGET_SELF)
-            {
-               if(!(m_Target == TARGET_ATTACK && _loc3_.getAttackTarget() != null))
-               {
-                  if(m_Absolute.x < 65535)
-                  {
-                     _loc7_ = Tibia.s_GameActionFactory.createAutowalkAction(m_Absolute.x,m_Absolute.y,m_Absolute.z,false,false);
-                     _loc7_.perform();
-                  }
-                  if(concurrentMultiUse != null)
-                  {
-                     concurrentMultiUse.updateGlobalListeners(false);
-                     concurrentMultiUse.updateCursor(false);
-                     concurrentMultiUse = null;
-                  }
-                  updateGlobalListeners(true);
-                  updateCursor(true);
-                  concurrentMultiUse = this;
-               }
-            }
-         }
-      }
-      
-      override protected function onUsePerform(param1:MouseEvent) : void
-      {
-         var _loc11_:Creature = null;
-         param1.preventDefault();
-         param1.stopImmediatePropagation();
-         updateGlobalListeners(false);
-         updateCursor(false);
-         concurrentMultiUse = null;
-         var _loc2_:Communication = Tibia.s_GetCommunication();
-         var _loc3_:ContainerStorage = Tibia.s_GetContainerStorage();
-         var _loc4_:CreatureStorage = Tibia.s_GetCreatureStorage();
-         if(_loc2_ == null || !_loc2_.isGameRunning || _loc3_ == null || _loc4_ == null)
-         {
+    import flash.display.*;
+    import flash.events.*;
+    import flash.geom.*;
+    import shared.utility.*;
+    import tibia.appearances.*;
+    import tibia.container.*;
+    import tibia.creatures.*;
+    import tibia.game.*;
+    import tibia.input.gameaction.*;
+    import tibia.magic.*;
+    import tibia.network.*;
+    import tibia.sessiondump.controller.*;
+    import tibia.sessiondump.hints.condition.*;
+
+    public class SessiondumpHintsUseActionImpl extends UseActionImpl
+    {
+        private var m_DestinationAbsolute:Vector3D = null;
+        private var m_DestinationPosition:int = -1;
+        private var m_DestinationObjectID:int = -1;
+        static var concurrentMultiUse:SessiondumpHintsUseActionImpl = null;
+
+        public function SessiondumpHintsUseActionImpl(param1:Vector3D, param2, param3:int, param4:int = 0)
+        {
+            super(param1, param2, param3, param4);
             return;
-         }
-         var _loc5_:DisplayObject = param1.target as DisplayObject;
-         var _loc6_:Point = null;
-         if(_loc5_ != null)
-         {
-            _loc6_ = _loc5_.localToGlobal(new Point(param1.localX,param1.localY));
-         }
-         var _loc7_:IUseWidget = null;
-         while(_loc5_ != null && (_loc7_ = _loc5_ as IUseWidget) == null)
-         {
-            _loc5_ = _loc5_.parent;
-         }
-         var _loc8_:Vector3D = null;
-         var _loc9_:ObjectInstance = null;
-         var _loc10_:Object = null;
-         if(_loc7_ != null && _loc6_ != null && (_loc10_ = _loc7_.getMultiUseObjectUnderPoint(_loc6_)) != null && (_loc9_ = _loc10_.object as ObjectInstance) != null)
-         {
-            _loc11_ = null;
-            if(_loc9_.ID == AppearanceInstance.CREATURE)
+        }// end function
+
+        override public function perform(param1:Boolean = false) : void
+        {
+            var _loc_6:* = 0;
+            var _loc_7:* = null;
+            var _loc_2:* = Tibia.s_GetCommunication();
+            var _loc_3:* = Tibia.s_GetCreatureStorage();
+            var _loc_4:* = Tibia.s_GetContainerStorage();
+            var _loc_5:* = Tibia.s_GetPlayer();
+            if (_loc_2 != null && _loc_2.isGameRunning && _loc_3 != null && _loc_4 != null && _loc_5 != null)
             {
-               _loc11_ = _loc4_.getCreature(_loc9_.data);
+                if (m_Absolute.x == 65535 && m_Absolute.y == 0)
+                {
+                    if (_loc_4.getAvailableInventory(m_Type.ID, m_PositionOrData) < 1)
+                    {
+                        return;
+                    }
+                    if (m_Type.isMultiUse && SpellStorage.checkRune(m_Type.ID) && _loc_5.getRuneUses(SpellStorage.getRune(m_Type.ID)) < 1)
+                    {
+                        return;
+                    }
+                }
+                if (m_Type.isContainer)
+                {
+                    _loc_6 = 0;
+                    if (m_Target == TARGET_NEW_WINDOW || m_Absolute.x < 65535 || m_Absolute.y >= BodyContainerView.FIRST_SLOT && m_Absolute.y <= BodyContainerView.LAST_SLOT)
+                    {
+                        _loc_6 = _loc_4.getFreeContainerViewID();
+                    }
+                    else if (m_Absolute.y >= 64 && m_Absolute.y < 64 + ContainerStorage.MAX_CONTAINER_VIEWS)
+                    {
+                        _loc_6 = m_Absolute.y - 64;
+                    }
+                    SessiondumpHintActionsController.getInstance().actionPerformed(this);
+                }
+                else if (!m_Type.isMultiUse)
+                {
+                    SessiondumpHintActionsController.getInstance().actionPerformed(this);
+                }
+                else if (m_Target == TARGET_SELF)
+                {
+                }
+                else if (m_Target == TARGET_ATTACK && _loc_3.getAttackTarget() != null)
+                {
+                }
+                else
+                {
+                    if (m_Absolute.x < 65535)
+                    {
+                        _loc_7 = Tibia.s_GameActionFactory.createAutowalkAction(m_Absolute.x, m_Absolute.y, m_Absolute.z, false, false);
+                        _loc_7.perform();
+                    }
+                    if (concurrentMultiUse != null)
+                    {
+                        concurrentMultiUse.updateGlobalListeners(false);
+                        concurrentMultiUse.updateCursor(false);
+                        concurrentMultiUse = null;
+                    }
+                    updateGlobalListeners(true);
+                    updateCursor(true);
+                    concurrentMultiUse = this;
+                }
             }
-            if((_loc11_ == null || Boolean(_loc11_.isHuman)) && (_loc8_ = _loc10_.absolute as Vector3D) != null && int(_loc10_.position) > -1)
+            return;
+        }// end function
+
+        override protected function onUsePerform(event:MouseEvent) : void
+        {
+            var _loc_11:* = null;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            updateGlobalListeners(false);
+            updateCursor(false);
+            concurrentMultiUse = null;
+            var _loc_2:* = Tibia.s_GetCommunication();
+            var _loc_3:* = Tibia.s_GetContainerStorage();
+            var _loc_4:* = Tibia.s_GetCreatureStorage();
+            if (_loc_2 == null || !_loc_2.isGameRunning || _loc_3 == null || _loc_4 == null)
             {
-               this.m_DestinationAbsolute = _loc8_.clone();
-               this.m_DestinationObjectID = _loc9_.ID;
-               this.m_DestinationPosition = int(_loc10_.position);
-               SessiondumpHintActionsController.getInstance().actionPerformed(this);
+                return;
             }
-         }
-      }
-      
-      public function meetsCondition(param1:HintConditionUse) : Boolean
-      {
-         var _loc2_:Boolean = Boolean(param1.absolutePosition.equals(m_Absolute)) || param1.absolutePosition.x == m_Absolute.x && m_Absolute.y == 0 && m_Absolute.z == 0;
-         return Boolean(_loc2_) && param1.useTypeID == m_Type.ID && (param1.useTarget == m_Target || param1.useTarget == UseActionImpl.TARGET_AUTO) && param1.positionOrData == m_PositionOrData && (param1.multiuseTarget == null || Boolean(param1.multiuseTarget.equals(this.m_DestinationAbsolute)) && param1.multiuseObjectID == this.m_DestinationObjectID && param1.multiuseObjectPosition == this.m_DestinationPosition);
-      }
-   }
+            var _loc_5:* = event.target as DisplayObject;
+            var _loc_6:* = null;
+            if (_loc_5 != null)
+            {
+                _loc_6 = _loc_5.localToGlobal(new Point(event.localX, event.localY));
+            }
+            var _loc_7:* = null;
+            do
+            {
+                
+                _loc_5 = _loc_5.parent;
+                var _loc_12:* = _loc_5 as IUseWidget;
+                _loc_7 = _loc_5 as IUseWidget;
+            }while (_loc_5 != null && _loc_12 == null)
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            var _loc_10:* = null;
+            var _loc_12:* = _loc_7.getMultiUseObjectUnderPoint(_loc_6);
+            _loc_10 = _loc_7.getMultiUseObjectUnderPoint(_loc_6);
+            var _loc_12:* = _loc_10.object as ObjectInstance;
+            _loc_9 = _loc_10.object as ObjectInstance;
+            if (_loc_7 != null && _loc_6 != null && _loc_12 != null && _loc_12 != null)
+            {
+                _loc_11 = null;
+                if (_loc_9.ID == AppearanceInstance.CREATURE)
+                {
+                    _loc_11 = _loc_4.getCreature(_loc_9.data);
+                }
+                var _loc_12:* = _loc_10.absolute as Vector3D;
+                _loc_8 = _loc_10.absolute as Vector3D;
+                if ((_loc_11 == null || _loc_11.isHuman) && _loc_12 != null && int(_loc_10.position) > -1)
+                {
+                    this.m_DestinationAbsolute = _loc_8.clone();
+                    this.m_DestinationObjectID = _loc_9.ID;
+                    this.m_DestinationPosition = int(_loc_10.position);
+                    SessiondumpHintActionsController.getInstance().actionPerformed(this);
+                }
+            }
+            return;
+        }// end function
+
+        public function meetsCondition(param1:HintConditionUse) : Boolean
+        {
+            var _loc_2:* = param1.absolutePosition.equals(m_Absolute) || param1.absolutePosition.x == m_Absolute.x && m_Absolute.y == 0 && m_Absolute.z == 0;
+            return _loc_2 && param1.useTypeID == m_Type.ID && (param1.useTarget == m_Target || param1.useTarget == UseActionImpl.TARGET_AUTO) && param1.positionOrData == m_PositionOrData && (param1.multiuseTarget == null || param1.multiuseTarget.equals(this.m_DestinationAbsolute) && param1.multiuseObjectID == this.m_DestinationObjectID && param1.multiuseObjectPosition == this.m_DestinationPosition);
+        }// end function
+
+    }
 }

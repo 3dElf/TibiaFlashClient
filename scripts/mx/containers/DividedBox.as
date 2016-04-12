@@ -1,925 +1,978 @@
-package mx.containers
+﻿package mx.containers
 {
-   import mx.styles.StyleManager;
-   import mx.core.mx_internal;
-   import flash.events.Event;
-   import mx.core.UIComponent;
-   import mx.containers.dividedBoxClasses.BoxDivider;
-   import mx.core.IFlexDisplayObject;
-   import mx.managers.CursorManager;
-   import mx.core.IUIComponent;
-   import mx.core.EdgeMetrics;
-   import flash.events.MouseEvent;
-   import mx.events.DividerEvent;
-   import mx.events.ChildExistenceChangedEvent;
-   import flash.display.DisplayObject;
-   import mx.managers.CursorManagerPriority;
-   import flash.geom.Point;
-   import mx.core.IInvalidating;
-   
-   use namespace mx_internal;
-   
-   public class DividedBox extends Box
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static const PROXY_DIVIDER_INDEX:int = 999;
-      
-      private static var classInitialized:Boolean = false;
-       
-      private var postLayoutChanges:Array;
-      
-      private var minDelta:Number;
-      
-      private var layoutStyleChanged:Boolean = false;
-      
-      private var dbPreferredHeight:Number;
-      
-      private var dbMinWidth:Number;
-      
-      private var maxDelta:Number;
-      
-      private var activeDividerStartPosition:Number;
-      
-      mx_internal var activeDivider:BoxDivider;
-      
-      private var dbMinHeight:Number;
-      
-      private var dividerLayer:UIComponent = null;
-      
-      private var dragStartPosition:Number;
-      
-      public var liveDragging:Boolean = false;
-      
-      private var oldChildSizes:Array;
-      
-      protected var dividerClass:Class;
-      
-      private var dbPreferredWidth:Number;
-      
-      private var dragDelta:Number;
-      
-      private var activeDividerIndex:int = -1;
-      
-      private var _resizeToContent:Boolean = false;
-      
-      private var numLayoutChildren:int = 0;
-      
-      private var cursorID:int = 0;
-      
-      private var dontCoalesceDividers:Boolean;
-      
-      public function DividedBox()
-      {
-         dividerClass = BoxDivider;
-         super();
-         if(!classInitialized)
-         {
-            initializeClass();
-            classInitialized = true;
-         }
-         addEventListener(ChildExistenceChangedEvent.CHILD_ADD,childAddHandler);
-         addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE,childRemoveHandler);
-         showInAutomationHierarchy = true;
-      }
-      
-      private static function initializeClass() : void
-      {
-         StyleManager.registerSizeInvalidatingStyle("dividerAffordance");
-         StyleManager.registerSizeInvalidatingStyle("dividerThickness");
-      }
-      
-      public function set resizeToContent(param1:Boolean) : void
-      {
-         if(param1 != _resizeToContent)
-         {
-            _resizeToContent = param1;
-            if(param1)
+    import flash.display.*;
+    import flash.events.*;
+    import flash.geom.*;
+    import mx.containers.dividedBoxClasses.*;
+    import mx.core.*;
+    import mx.events.*;
+    import mx.managers.*;
+    import mx.styles.*;
+
+    public class DividedBox extends Box
+    {
+        private var postLayoutChanges:Array;
+        private var minDelta:Number;
+        private var layoutStyleChanged:Boolean = false;
+        private var dbPreferredHeight:Number;
+        private var dbMinWidth:Number;
+        private var maxDelta:Number;
+        private var activeDividerStartPosition:Number;
+        var activeDivider:BoxDivider;
+        private var dbMinHeight:Number;
+        private var dividerLayer:UIComponent = null;
+        private var dragStartPosition:Number;
+        public var liveDragging:Boolean = false;
+        private var oldChildSizes:Array;
+        protected var dividerClass:Class;
+        private var dbPreferredWidth:Number;
+        private var dragDelta:Number;
+        private var activeDividerIndex:int = -1;
+        private var _resizeToContent:Boolean = false;
+        private var numLayoutChildren:int = 0;
+        private var cursorID:int = 0;
+        private var dontCoalesceDividers:Boolean;
+        static const VERSION:String = "3.6.0.21751";
+        private static const PROXY_DIVIDER_INDEX:int = 999;
+        private static var classInitialized:Boolean = false;
+
+        public function DividedBox()
+        {
+            dividerClass = BoxDivider;
+            if (!classInitialized)
             {
-               invalidateSize();
+                initializeClass();
+                classInitialized = true;
             }
-         }
-      }
-      
-      private function child_includeInLayoutChangedHandler(param1:Event) : void
-      {
-         var _loc2_:UIComponent = UIComponent(param1.target);
-         if(Boolean(_loc2_.includeInLayout) && ++numLayoutChildren > 1)
-         {
-            createDivider(numLayoutChildren - 2);
-         }
-         else if(!_loc2_.includeInLayout && --numLayoutChildren > 0)
-         {
-            dividerLayer.removeChild(getDividerAt(numLayoutChildren - 1));
-         }
-         dbMinWidth = NaN;
-         dbMinHeight = NaN;
-         dbPreferredWidth = NaN;
-         dbPreferredHeight = NaN;
-         invalidateSize();
-      }
-      
-      private function createDivider(param1:int) : BoxDivider
-      {
-         if(!dividerLayer)
-         {
-            dividerLayer = UIComponent(rawChildren.addChild(new UIComponent()));
-         }
-         var _loc2_:BoxDivider = BoxDivider(new dividerClass());
-         dividerLayer.addChild(_loc2_);
-         if(param1 == PROXY_DIVIDER_INDEX)
-         {
-            rawChildren.setChildIndex(dividerLayer,rawChildren.numChildren - 1);
-         }
-         var _loc3_:IFlexDisplayObject = param1 == PROXY_DIVIDER_INDEX?getDividerAt(activeDividerIndex):this;
-         _loc2_.styleName = _loc3_;
-         _loc2_.owner = this;
-         return _loc2_;
-      }
-      
-      public function moveDivider(param1:int, param2:Number) : void
-      {
-         if(param1 < 0 || param1 >= numDividers)
-         {
+            addEventListener(ChildExistenceChangedEvent.CHILD_ADD, childAddHandler);
+            addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, childRemoveHandler);
+            showInAutomationHierarchy = true;
             return;
-         }
-         if(activeDividerIndex >= 0)
-         {
+        }// end function
+
+        public function set resizeToContent(param1:Boolean) : void
+        {
+            if (param1 != _resizeToContent)
+            {
+                _resizeToContent = param1;
+                if (param1)
+                {
+                    invalidateSize();
+                }
+            }
             return;
-         }
-         activeDividerIndex = param1;
-         cacheChildSizes();
-         computeMinAndMaxDelta();
-         dragDelta = limitDelta(param2);
-         adjustChildSizes();
-         invalidateSize();
-         invalidateDisplayList();
-         resetDividerTracking();
-      }
-      
-      mx_internal function restoreCursor() : void
-      {
-         if(cursorID != CursorManager.NO_CURSOR)
-         {
-            cursorManager.removeCursor(cursorID);
-            cursorID = CursorManager.NO_CURSOR;
-         }
-      }
-      
-      private function layoutDivider(param1:int, param2:Number, param3:Number, param4:IUIComponent, param5:IUIComponent) : void
-      {
-         var _loc12_:Number = NaN;
-         var _loc13_:Number = NaN;
-         var _loc6_:BoxDivider = BoxDivider(getDividerAt(param1));
-         var _loc7_:EdgeMetrics = viewMetrics;
-         var _loc8_:Number = getStyle("verticalGap");
-         var _loc9_:Number = getStyle("horizontalGap");
-         var _loc10_:Number = _loc6_.getStyle("dividerThickness");
-         var _loc11_:Number = _loc6_.getStyle("dividerAffordance");
-         if(isVertical())
-         {
-            _loc12_ = _loc11_;
-            if(_loc12_ < _loc10_)
+        }// end function
+
+        private function child_includeInLayoutChangedHandler(event:Event) : void
+        {
+            var _loc_2:* = UIComponent(event.target);
+            numLayoutChildren = (numLayoutChildren + 1);
+            if (_loc_2.includeInLayout && numLayoutChildren > 1)
             {
-               _loc12_ = _loc10_;
+                createDivider(numLayoutChildren - 2);
             }
-            if(_loc12_ > _loc8_)
+            else
             {
-               _loc12_ = _loc8_;
+                numLayoutChildren = (numLayoutChildren - 1);
+                if (!_loc_2.includeInLayout && numLayoutChildren > 0)
+                {
+                    dividerLayer.removeChild(getDividerAt((numLayoutChildren - 1)));
+                }
             }
-            _loc6_.setActualSize(param2 - _loc7_.left - _loc7_.right,_loc12_);
-            _loc6_.move(_loc7_.left,Math.round((param4.y + param4.height + param5.y - _loc12_) / 2));
-         }
-         else
-         {
-            _loc13_ = _loc11_;
-            if(_loc13_ < _loc10_)
+            dbMinWidth = NaN;
+            dbMinHeight = NaN;
+            dbPreferredWidth = NaN;
+            dbPreferredHeight = NaN;
+            invalidateSize();
+            return;
+        }// end function
+
+        private function createDivider(param1:int) : BoxDivider
+        {
+            if (!dividerLayer)
             {
-               _loc13_ = _loc10_;
+                dividerLayer = UIComponent(rawChildren.addChild(new UIComponent()));
             }
-            if(_loc13_ > _loc9_)
+            var _loc_2:* = BoxDivider(new dividerClass());
+            dividerLayer.addChild(_loc_2);
+            if (param1 == PROXY_DIVIDER_INDEX)
             {
-               _loc13_ = _loc9_;
+                rawChildren.setChildIndex(dividerLayer, (rawChildren.numChildren - 1));
             }
-            _loc6_.setActualSize(_loc13_,param3 - _loc7_.top - _loc7_.bottom);
-            _loc6_.move(Math.round((param4.x + param4.width + param5.x - _loc13_) / 2),_loc7_.top);
-         }
-         _loc6_.invalidateDisplayList();
-      }
-      
-      private function computeMinAndMaxDelta() : void
-      {
-         computeAllowableMovement(activeDividerIndex);
-      }
-      
-      mx_internal function stopDividerDrag(param1:BoxDivider, param2:MouseEvent) : void
-      {
-         if(param2)
-         {
-            dragDelta = limitDelta(getMousePosition(param2) - dragStartPosition);
-         }
-         var _loc3_:DividerEvent = new DividerEvent(DividerEvent.DIVIDER_RELEASE);
-         _loc3_.dividerIndex = activeDividerIndex;
-         _loc3_.delta = dragDelta;
-         dispatchEvent(_loc3_);
-         if(!liveDragging)
-         {
-            if(dragDelta == 0)
+            var _loc_3:* = param1 == PROXY_DIVIDER_INDEX ? (getDividerAt(activeDividerIndex)) : (this);
+            _loc_2.styleName = _loc_3;
+            _loc_2.owner = this;
+            return _loc_2;
+        }// end function
+
+        public function moveDivider(param1:int, param2:Number) : void
+        {
+            if (param1 < 0 || param1 >= numDividers)
             {
-               getDividerAt(activeDividerIndex).state = DividerState.OVER;
+                return;
             }
-            if(activeDivider)
+            if (activeDividerIndex >= 0)
             {
-               dividerLayer.removeChild(activeDivider);
+                return;
             }
-            activeDivider = null;
+            activeDividerIndex = param1;
+            cacheChildSizes();
+            computeMinAndMaxDelta();
+            dragDelta = limitDelta(param2);
             adjustChildSizes();
             invalidateSize();
             invalidateDisplayList();
-         }
-         resetDividerTracking();
-         systemManager.getSandboxRoot().removeEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler,true);
-         systemManager.deployMouseShields(false);
-      }
-      
-      private function postLayoutAdjustment() : void
-      {
-         var _loc3_:Object = null;
-         var _loc1_:int = postLayoutChanges.length;
-         var _loc2_:int = 0;
-         while(_loc2_ < _loc1_)
-         {
-            _loc3_ = postLayoutChanges[_loc2_];
-            if(_loc3_.percentWidth !== undefined)
-            {
-               _loc3_.child.percentWidth = _loc3_.percentWidth;
-            }
-            if(_loc3_.percentHeight !== undefined)
-            {
-               _loc3_.child.percentHeight = _loc3_.percentHeight;
-            }
-            if(_loc3_.explicitWidth !== undefined)
-            {
-               _loc3_.child.explicitWidth = _loc3_.explicitWidth;
-            }
-            if(_loc3_.explicitHeight !== undefined)
-            {
-               _loc3_.child.explicitHeight = _loc3_.explicitHeight;
-            }
-            _loc2_++;
-         }
-         postLayoutChanges = null;
-      }
-      
-      public function get numDividers() : int
-      {
-         if(dividerLayer)
-         {
-            if(!liveDragging && Boolean(activeDivider))
-            {
-               return dividerLayer.numChildren - 1;
-            }
-            return dividerLayer.numChildren;
-         }
-         return 0;
-      }
-      
-      private function resetDividerTracking() : void
-      {
-         activeDivider = null;
-         activeDividerIndex = -1;
-         activeDividerStartPosition = NaN;
-         dragStartPosition = NaN;
-         dragDelta = NaN;
-         oldChildSizes = null;
-         minDelta = NaN;
-         maxDelta = NaN;
-      }
-      
-      private function childAddHandler(param1:ChildExistenceChangedEvent) : void
-      {
-         var _loc2_:DisplayObject = param1.relatedObject;
-         _loc2_.addEventListener("includeInLayoutChanged",child_includeInLayoutChangedHandler);
-         if(!IUIComponent(_loc2_).includeInLayout)
-         {
+            resetDividerTracking();
             return;
-         }
-         numLayoutChildren++;
-         if(numLayoutChildren > 1)
-         {
-            createDivider(numLayoutChildren - 2);
-         }
-         dbMinWidth = NaN;
-         dbMinHeight = NaN;
-         dbPreferredWidth = NaN;
-         dbPreferredHeight = NaN;
-      }
-      
-      mx_internal function changeCursor(param1:BoxDivider) : void
-      {
-         var _loc2_:Class = null;
-         if(cursorID == CursorManager.NO_CURSOR)
-         {
-            _loc2_ = !!isVertical()?getStyle("verticalDividerCursor") as Class:getStyle("horizontalDividerCursor") as Class;
-            cursorID = cursorManager.setCursor(_loc2_,CursorManagerPriority.HIGH,0,0);
-         }
-      }
-      
-      private function mouseMoveHandler(param1:MouseEvent) : void
-      {
-         dragDelta = limitDelta(getMousePosition(param1) - dragStartPosition);
-         var _loc2_:DividerEvent = new DividerEvent(DividerEvent.DIVIDER_DRAG);
-         _loc2_.dividerIndex = activeDividerIndex;
-         _loc2_.delta = dragDelta;
-         dispatchEvent(_loc2_);
-         if(liveDragging)
-         {
+        }// end function
+
+        function restoreCursor() : void
+        {
+            if (cursorID != CursorManager.NO_CURSOR)
+            {
+                cursorManager.removeCursor(cursorID);
+                cursorID = CursorManager.NO_CURSOR;
+            }
+            return;
+        }// end function
+
+        private function layoutDivider(param1:int, param2:Number, param3:Number, param4:IUIComponent, param5:IUIComponent) : void
+        {
+            var _loc_12:* = NaN;
+            var _loc_13:* = NaN;
+            var _loc_6:* = BoxDivider(getDividerAt(param1));
+            var _loc_7:* = viewMetrics;
+            var _loc_8:* = getStyle("verticalGap");
+            var _loc_9:* = getStyle("horizontalGap");
+            var _loc_10:* = _loc_6.getStyle("dividerThickness");
+            var _loc_11:* = _loc_6.getStyle("dividerAffordance");
+            if (isVertical())
+            {
+                _loc_12 = _loc_11;
+                if (_loc_12 < _loc_10)
+                {
+                    _loc_12 = _loc_10;
+                }
+                if (_loc_12 > _loc_8)
+                {
+                    _loc_12 = _loc_8;
+                }
+                _loc_6.setActualSize(param2 - _loc_7.left - _loc_7.right, _loc_12);
+                _loc_6.move(_loc_7.left, Math.round((param4.y + param4.height + param5.y - _loc_12) / 2));
+            }
+            else
+            {
+                _loc_13 = _loc_11;
+                if (_loc_13 < _loc_10)
+                {
+                    _loc_13 = _loc_10;
+                }
+                if (_loc_13 > _loc_9)
+                {
+                    _loc_13 = _loc_9;
+                }
+                _loc_6.setActualSize(_loc_13, param3 - _loc_7.top - _loc_7.bottom);
+                _loc_6.move(Math.round((param4.x + param4.width + param5.x - _loc_13) / 2), _loc_7.top);
+            }
+            _loc_6.invalidateDisplayList();
+            return;
+        }// end function
+
+        private function computeMinAndMaxDelta() : void
+        {
+            computeAllowableMovement(activeDividerIndex);
+            return;
+        }// end function
+
+        function stopDividerDrag(param1:BoxDivider, param2:MouseEvent) : void
+        {
+            if (param2)
+            {
+                dragDelta = limitDelta(getMousePosition(param2) - dragStartPosition);
+            }
+            var _loc_3:* = new DividerEvent(DividerEvent.DIVIDER_RELEASE);
+            _loc_3.dividerIndex = activeDividerIndex;
+            _loc_3.delta = dragDelta;
+            dispatchEvent(_loc_3);
+            if (!liveDragging)
+            {
+                if (dragDelta == 0)
+                {
+                    getDividerAt(activeDividerIndex).state = DividerState.OVER;
+                }
+                if (activeDivider)
+                {
+                    dividerLayer.removeChild(activeDivider);
+                }
+                activeDivider = null;
+                adjustChildSizes();
+                invalidateSize();
+                invalidateDisplayList();
+            }
+            resetDividerTracking();
+            systemManager.getSandboxRoot().removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler, true);
+            systemManager.deployMouseShields(false);
+            return;
+        }// end function
+
+        private function postLayoutAdjustment() : void
+        {
+            var _loc_3:* = null;
+            var _loc_1:* = postLayoutChanges.length;
+            var _loc_2:* = 0;
+            while (_loc_2 < _loc_1)
+            {
+                
+                _loc_3 = postLayoutChanges[_loc_2];
+                if (_loc_3.percentWidth !== undefined)
+                {
+                    _loc_3.child.percentWidth = _loc_3.percentWidth;
+                }
+                if (_loc_3.percentHeight !== undefined)
+                {
+                    _loc_3.child.percentHeight = _loc_3.percentHeight;
+                }
+                if (_loc_3.explicitWidth !== undefined)
+                {
+                    _loc_3.child.explicitWidth = _loc_3.explicitWidth;
+                }
+                if (_loc_3.explicitHeight !== undefined)
+                {
+                    _loc_3.child.explicitHeight = _loc_3.explicitHeight;
+                }
+                _loc_2++;
+            }
+            postLayoutChanges = null;
+            return;
+        }// end function
+
+        public function get numDividers() : int
+        {
+            if (dividerLayer)
+            {
+                if (!liveDragging && activeDivider)
+                {
+                    return (dividerLayer.numChildren - 1);
+                }
+                return dividerLayer.numChildren;
+            }
+            else
+            {
+                return 0;
+            }
+        }// end function
+
+        private function resetDividerTracking() : void
+        {
+            activeDivider = null;
+            activeDividerIndex = -1;
+            activeDividerStartPosition = NaN;
+            dragStartPosition = NaN;
+            dragDelta = NaN;
+            oldChildSizes = null;
+            minDelta = NaN;
+            maxDelta = NaN;
+            return;
+        }// end function
+
+        private function childAddHandler(event:ChildExistenceChangedEvent) : void
+        {
+            var _loc_2:* = event.relatedObject;
+            _loc_2.addEventListener("includeInLayoutChanged", child_includeInLayoutChangedHandler);
+            if (!IUIComponent(_loc_2).includeInLayout)
+            {
+                return;
+            }
+            var _loc_4:* = numLayoutChildren + 1;
+            numLayoutChildren = _loc_4;
+            if (numLayoutChildren > 1)
+            {
+                createDivider(numLayoutChildren - 2);
+            }
+            dbMinWidth = NaN;
+            dbMinHeight = NaN;
+            dbPreferredWidth = NaN;
+            dbPreferredHeight = NaN;
+            return;
+        }// end function
+
+        function changeCursor(param1:BoxDivider) : void
+        {
+            var _loc_2:* = null;
+            if (cursorID == CursorManager.NO_CURSOR)
+            {
+                _loc_2 = isVertical() ? (getStyle("verticalDividerCursor") as Class) : (getStyle("horizontalDividerCursor") as Class);
+                cursorID = cursorManager.setCursor(_loc_2, CursorManagerPriority.HIGH, 0, 0);
+            }
+            return;
+        }// end function
+
+        private function mouseMoveHandler(event:MouseEvent) : void
+        {
+            dragDelta = limitDelta(getMousePosition(event) - dragStartPosition);
+            var _loc_2:* = new DividerEvent(DividerEvent.DIVIDER_DRAG);
+            _loc_2.dividerIndex = activeDividerIndex;
+            _loc_2.delta = dragDelta;
+            dispatchEvent(_loc_2);
+            if (liveDragging)
+            {
+                adjustChildSizes();
+                invalidateDisplayList();
+                updateDisplayList(unscaledWidth, unscaledHeight);
+            }
+            else if (isVertical())
+            {
+                activeDivider.move(0, activeDividerStartPosition + dragDelta);
+            }
+            else
+            {
+                activeDivider.move(activeDividerStartPosition + dragDelta, 0);
+            }
+            return;
+        }// end function
+
+        public function get resizeToContent() : Boolean
+        {
+            return _resizeToContent;
+        }// end function
+
+        function startDividerDrag(param1:BoxDivider, param2:MouseEvent) : void
+        {
+            if (activeDividerIndex >= 0)
+            {
+                return;
+            }
+            activeDividerIndex = getDividerIndex(param1);
+            var _loc_3:* = new DividerEvent(DividerEvent.DIVIDER_PRESS);
+            _loc_3.dividerIndex = activeDividerIndex;
+            dispatchEvent(_loc_3);
+            if (liveDragging)
+            {
+                activeDivider = param1;
+            }
+            else
+            {
+                activeDivider = createDivider(PROXY_DIVIDER_INDEX);
+                activeDivider.visible = false;
+                activeDivider.state = DividerState.DOWN;
+                activeDivider.setActualSize(param1.width, param1.height);
+                activeDivider.move(param1.x, param1.y);
+                activeDivider.visible = true;
+                param1.state = DividerState.UP;
+            }
+            if (isVertical())
+            {
+                activeDividerStartPosition = activeDivider.y;
+            }
+            else
+            {
+                activeDividerStartPosition = activeDivider.x;
+            }
+            dragStartPosition = getMousePosition(param2);
+            dragDelta = 0;
+            cacheChildSizes();
             adjustChildSizes();
-            invalidateDisplayList();
-            updateDisplayList(unscaledWidth,unscaledHeight);
-         }
-         else if(isVertical())
-         {
-            activeDivider.move(0,activeDividerStartPosition + dragDelta);
-         }
-         else
-         {
-            activeDivider.move(activeDividerStartPosition + dragDelta,0);
-         }
-      }
-      
-      public function get resizeToContent() : Boolean
-      {
-         return _resizeToContent;
-      }
-      
-      mx_internal function startDividerDrag(param1:BoxDivider, param2:MouseEvent) : void
-      {
-         if(activeDividerIndex >= 0)
-         {
+            computeMinAndMaxDelta();
+            systemManager.getSandboxRoot().addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler, true);
+            systemManager.deployMouseShields(true);
             return;
-         }
-         activeDividerIndex = getDividerIndex(param1);
-         var _loc3_:DividerEvent = new DividerEvent(DividerEvent.DIVIDER_PRESS);
-         _loc3_.dividerIndex = activeDividerIndex;
-         dispatchEvent(_loc3_);
-         if(liveDragging)
-         {
-            activeDivider = param1;
-         }
-         else
-         {
-            activeDivider = createDivider(PROXY_DIVIDER_INDEX);
-            activeDivider.visible = false;
-            activeDivider.state = DividerState.DOWN;
-            activeDivider.setActualSize(param1.width,param1.height);
-            activeDivider.move(param1.x,param1.y);
-            activeDivider.visible = true;
-            param1.state = DividerState.UP;
-         }
-         if(isVertical())
-         {
-            activeDividerStartPosition = activeDivider.y;
-         }
-         else
-         {
-            activeDividerStartPosition = activeDivider.x;
-         }
-         dragStartPosition = getMousePosition(param2);
-         dragDelta = 0;
-         cacheChildSizes();
-         adjustChildSizes();
-         computeMinAndMaxDelta();
-         systemManager.getSandboxRoot().addEventListener(MouseEvent.MOUSE_MOVE,mouseMoveHandler,true);
-         systemManager.deployMouseShields(true);
-      }
-      
-      mx_internal function getDividerIndex(param1:BoxDivider) : int
-      {
-         var _loc2_:int = numChildren;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_ - 1)
-         {
-            if(getDividerAt(_loc3_) == param1)
+        }// end function
+
+        function getDividerIndex(param1:BoxDivider) : int
+        {
+            var _loc_2:* = numChildren;
+            var _loc_3:* = 0;
+            while (_loc_3 < (_loc_2 - 1))
             {
-               return _loc3_;
+                
+                if (getDividerAt(_loc_3) == param1)
+                {
+                    return _loc_3;
+                }
+                _loc_3++;
             }
-            _loc3_++;
-         }
-         return -1;
-      }
-      
-      private function cacheSizes() : void
-      {
-         var _loc5_:IUIComponent = null;
-         var _loc6_:Number = NaN;
-         var _loc7_:Number = NaN;
-         var _loc8_:Number = NaN;
-         var _loc9_:Number = NaN;
-         var _loc10_:Number = NaN;
-         var _loc11_:Number = NaN;
-         oldChildSizes = [];
-         var _loc1_:Boolean = isVertical();
-         var _loc2_:Number = Number.MAX_VALUE;
-         var _loc3_:int = numChildren;
-         var _loc4_:int = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc5_ = IUIComponent(getChildAt(_loc4_));
-            if(_loc5_.includeInLayout)
+            return -1;
+        }// end function
+
+        private function cacheSizes() : void
+        {
+            var _loc_5:* = null;
+            var _loc_6:* = NaN;
+            var _loc_7:* = NaN;
+            var _loc_8:* = NaN;
+            var _loc_9:* = NaN;
+            var _loc_10:* = NaN;
+            var _loc_11:* = NaN;
+            oldChildSizes = [];
+            var _loc_1:* = isVertical();
+            var _loc_2:* = Number.MAX_VALUE;
+            var _loc_3:* = numChildren;
+            var _loc_4:* = 0;
+            while (_loc_4 < _loc_3)
             {
-               _loc6_ = !!_loc1_?Number(_loc5_.height):Number(_loc5_.width);
-               _loc7_ = !!_loc1_?Number(_loc5_.maxHeight):Number(_loc5_.maxWidth);
-               _loc8_ = !!_loc1_?Number(_loc5_.explicitMinHeight):Number(_loc5_.explicitMinWidth);
-               _loc9_ = !!isNaN(_loc8_)?Number(0):Number(_loc8_);
-               _loc10_ = Math.max(0,_loc6_ - _loc9_);
-               _loc11_ = Math.max(0,_loc7_ - _loc6_);
-               if(_loc6_ > 0 && _loc6_ < _loc2_)
-               {
-                  _loc2_ = _loc6_;
-               }
-               oldChildSizes.push(new ChildSizeInfo(_loc6_,_loc9_,_loc7_,_loc10_,_loc11_));
+                
+                _loc_5 = IUIComponent(getChildAt(_loc_4));
+                if (!_loc_5.includeInLayout)
+                {
+                }
+                else
+                {
+                    _loc_6 = _loc_1 ? (_loc_5.height) : (_loc_5.width);
+                    _loc_7 = _loc_1 ? (_loc_5.maxHeight) : (_loc_5.maxWidth);
+                    _loc_8 = _loc_1 ? (_loc_5.explicitMinHeight) : (_loc_5.explicitMinWidth);
+                    _loc_9 = isNaN(_loc_8) ? (0) : (_loc_8);
+                    _loc_10 = Math.max(0, _loc_6 - _loc_9);
+                    _loc_11 = Math.max(0, _loc_7 - _loc_6);
+                    if (_loc_6 > 0 && _loc_6 < _loc_2)
+                    {
+                        _loc_2 = _loc_6;
+                    }
+                    oldChildSizes.push(new ChildSizeInfo(_loc_6, _loc_9, _loc_7, _loc_10, _loc_11));
+                }
+                _loc_4++;
             }
-            _loc4_++;
-         }
-         oldChildSizes.push(new ChildSizeInfo(_loc2_ == Number.MAX_VALUE?Number(1):Number(_loc2_)));
-      }
-      
-      private function limitDelta(param1:Number) : Number
-      {
-         if(param1 < minDelta)
-         {
-            param1 = minDelta;
-         }
-         else if(param1 > maxDelta)
-         {
-            param1 = maxDelta;
-         }
-         param1 = Math.round(param1);
-         return param1;
-      }
-      
-      override public function styleChanged(param1:String) : void
-      {
-         var _loc2_:int = 0;
-         var _loc3_:int = 0;
-         super.styleChanged(param1);
-         if(dividerLayer)
-         {
-            _loc2_ = dividerLayer.numChildren;
-            _loc3_ = 0;
-            while(_loc3_ < _loc2_)
-            {
-               getDividerAt(_loc3_).styleChanged(param1);
-               _loc3_++;
-            }
-         }
-         if(StyleManager.isSizeInvalidatingStyle(param1))
-         {
-            layoutStyleChanged = true;
-         }
-      }
-      
-      private function getMousePosition(param1:MouseEvent) : Number
-      {
-         var _loc2_:Point = new Point(param1.stageX,param1.stageY);
-         _loc2_ = globalToLocal(_loc2_);
-         return !!isVertical()?Number(_loc2_.y):Number(_loc2_.x);
-      }
-      
-      private function adjustChildSizes() : void
-      {
-         distributeDelta();
-      }
-      
-      override protected function measure() : void
-      {
-         var _loc10_:IUIComponent = null;
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         var _loc13_:Number = NaN;
-         var _loc14_:Number = NaN;
-         var _loc15_:* = false;
-         var _loc16_:* = false;
-         var _loc17_:Number = NaN;
-         var _loc18_:Number = NaN;
-         super.measure();
-         if(!isNaN(dbPreferredWidth) && !_resizeToContent && !layoutStyleChanged)
-         {
-            measuredMinWidth = dbMinWidth;
-            measuredMinHeight = dbMinHeight;
-            measuredWidth = dbPreferredWidth;
-            measuredHeight = dbPreferredHeight;
+            oldChildSizes.push(new ChildSizeInfo(_loc_2 == Number.MAX_VALUE ? (1) : (_loc_2)));
             return;
-         }
-         layoutStyleChanged = false;
-         var _loc1_:Boolean = this.isVertical();
-         var _loc2_:Number = 0;
-         var _loc3_:Number = 0;
-         var _loc4_:Number = 0;
-         var _loc5_:Number = 0;
-         var _loc6_:int = numChildren;
-         var _loc7_:int = 0;
-         while(_loc7_ < _loc6_)
-         {
-            _loc10_ = IUIComponent(getChildAt(_loc7_));
-            if(_loc10_.includeInLayout)
+        }// end function
+
+        private function limitDelta(param1:Number) : Number
+        {
+            if (param1 < minDelta)
             {
-               _loc11_ = _loc10_.getExplicitOrMeasuredWidth();
-               _loc12_ = _loc10_.getExplicitOrMeasuredHeight();
-               _loc13_ = _loc10_.minWidth;
-               _loc14_ = _loc10_.minHeight;
-               _loc15_ = !isNaN(_loc10_.percentWidth);
-               _loc16_ = !isNaN(_loc10_.percentHeight);
-               _loc17_ = Math.min(_loc11_,_loc13_);
-               _loc18_ = Math.min(_loc12_,_loc14_);
-               if(_loc1_)
-               {
-                  _loc2_ = Math.max(!!_loc15_?Number(_loc13_):Number(_loc11_),_loc2_);
-                  _loc4_ = Math.max(_loc11_,_loc4_);
-                  _loc3_ = _loc3_ + (!!_loc16_?_loc18_:_loc12_);
-                  _loc5_ = _loc5_ + _loc12_;
-               }
-               else
-               {
-                  _loc2_ = _loc2_ + (!!_loc15_?_loc17_:_loc11_);
-                  _loc4_ = _loc4_ + _loc11_;
-                  _loc3_ = Math.max(!!_loc16_?Number(_loc14_):Number(_loc12_),_loc3_);
-                  _loc5_ = Math.max(_loc12_,_loc5_);
-               }
+                param1 = minDelta;
             }
-            _loc7_++;
-         }
-         var _loc8_:Number = layoutObject.widthPadding(numLayoutChildren);
-         var _loc9_:Number = layoutObject.heightPadding(numLayoutChildren);
-         measuredMinWidth = dbMinWidth = _loc2_ + _loc8_;
-         measuredMinHeight = dbMinHeight = _loc3_ + _loc9_;
-         measuredWidth = dbPreferredWidth = _loc4_ + _loc8_;
-         measuredHeight = dbPreferredHeight = _loc5_ + _loc9_;
-      }
-      
-      private function childRemoveHandler(param1:ChildExistenceChangedEvent) : void
-      {
-         var _loc2_:DisplayObject = param1.relatedObject;
-         _loc2_.removeEventListener("includeInLayoutChanged",child_includeInLayoutChangedHandler);
-         if(!IUIComponent(_loc2_).includeInLayout)
-         {
-            return;
-         }
-         numLayoutChildren--;
-         if(numLayoutChildren > 0)
-         {
-            dividerLayer.removeChild(getDividerAt(numLayoutChildren - 1));
-         }
-         dbMinWidth = NaN;
-         dbMinHeight = NaN;
-         dbPreferredWidth = NaN;
-         dbPreferredHeight = NaN;
-         invalidateSize();
-      }
-      
-      override protected function scrollChildren() : void
-      {
-         super.scrollChildren();
-         if(Boolean(contentPane) && Boolean(dividerLayer))
-         {
-            dividerLayer.scrollRect = contentPane.scrollRect;
-         }
-      }
-      
-      public function getDividerAt(param1:int) : BoxDivider
-      {
-         return BoxDivider(dividerLayer.getChildAt(param1));
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc8_:IUIComponent = null;
-         if(!liveDragging && Boolean(activeDivider))
-         {
-            _loc3_ = numChildren;
-            _loc4_ = 0;
-            while(_loc4_ < _loc3_)
+            else if (param1 > maxDelta)
             {
-               _loc8_ = IUIComponent(getChildAt(_loc4_));
-               if(_loc8_.includeInLayout)
-               {
-                  _loc8_.measuredMinWidth = 0;
-                  _loc8_.measuredMinHeight = 0;
-               }
-               _loc4_++;
+                param1 = maxDelta;
+            }
+            param1 = Math.round(param1);
+            return param1;
+        }// end function
+
+        override public function styleChanged(param1:String) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            super.styleChanged(param1);
+            if (dividerLayer)
+            {
+                _loc_2 = dividerLayer.numChildren;
+                _loc_3 = 0;
+                while (_loc_3 < _loc_2)
+                {
+                    
+                    getDividerAt(_loc_3).styleChanged(param1);
+                    _loc_3++;
+                }
+            }
+            if (StyleManager.isSizeInvalidatingStyle(param1))
+            {
+                layoutStyleChanged = true;
             }
             return;
-         }
-         preLayoutAdjustment();
-         super.updateDisplayList(param1,param2);
-         postLayoutAdjustment();
-         if(!dividerLayer)
-         {
+        }// end function
+
+        private function getMousePosition(event:MouseEvent) : Number
+        {
+            var _loc_2:* = new Point(event.stageX, event.stageY);
+            _loc_2 = globalToLocal(_loc_2);
+            return isVertical() ? (_loc_2.y) : (_loc_2.x);
+        }// end function
+
+        private function adjustChildSizes() : void
+        {
+            distributeDelta();
             return;
-         }
-         var _loc5_:EdgeMetrics = viewMetrics;
-         dividerLayer.x = _loc5_.left;
-         dividerLayer.y = _loc5_.top;
-         var _loc6_:IUIComponent = null;
-         var _loc7_:int = 0;
-         _loc3_ = numChildren;
-         _loc4_ = 0;
-         while(_loc4_ < _loc3_)
-         {
-            _loc8_ = UIComponent(getChildAt(_loc4_));
-            if(_loc8_.includeInLayout)
+        }// end function
+
+        override protected function measure() : void
+        {
+            var _loc_10:* = null;
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            var _loc_13:* = NaN;
+            var _loc_14:* = NaN;
+            var _loc_15:* = false;
+            var _loc_16:* = false;
+            var _loc_17:* = NaN;
+            var _loc_18:* = NaN;
+            super.measure();
+            if (!isNaN(dbPreferredWidth) && !_resizeToContent && !layoutStyleChanged)
             {
-               if(_loc6_)
-               {
-                  layoutDivider(_loc7_,param1,param2,_loc6_,_loc8_);
-                  _loc7_++;
-               }
-               _loc6_ = _loc8_;
+                measuredMinWidth = dbMinWidth;
+                measuredMinHeight = dbMinHeight;
+                measuredWidth = dbPreferredWidth;
+                measuredHeight = dbPreferredHeight;
+                return;
             }
-            _loc4_++;
-         }
-      }
-      
-      private function cacheChildSizes() : void
-      {
-         oldChildSizes = [];
-         cacheSizes();
-      }
-      
-      private function distributeDelta() : void
-      {
-         var _loc5_:int = 0;
-         var _loc6_:ChildSizeInfo = null;
-         var _loc7_:Number = NaN;
-         var _loc8_:Number = NaN;
-         var _loc9_:IUIComponent = null;
-         var _loc10_:Number = NaN;
-         if(!dragDelta)
-         {
+            layoutStyleChanged = false;
+            var _loc_1:* = this.isVertical();
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = numChildren;
+            var _loc_7:* = 0;
+            while (_loc_7 < _loc_6)
+            {
+                
+                _loc_10 = IUIComponent(getChildAt(_loc_7));
+                if (!_loc_10.includeInLayout)
+                {
+                }
+                else
+                {
+                    _loc_11 = _loc_10.getExplicitOrMeasuredWidth();
+                    _loc_12 = _loc_10.getExplicitOrMeasuredHeight();
+                    _loc_13 = _loc_10.minWidth;
+                    _loc_14 = _loc_10.minHeight;
+                    _loc_15 = !isNaN(_loc_10.percentWidth);
+                    _loc_16 = !isNaN(_loc_10.percentHeight);
+                    _loc_17 = Math.min(_loc_11, _loc_13);
+                    _loc_18 = Math.min(_loc_12, _loc_14);
+                    if (_loc_1)
+                    {
+                        _loc_2 = Math.max(_loc_15 ? (_loc_13) : (_loc_11), _loc_2);
+                        _loc_4 = Math.max(_loc_11, _loc_4);
+                        _loc_3 = _loc_3 + (_loc_16 ? (_loc_18) : (_loc_12));
+                        _loc_5 = _loc_5 + _loc_12;
+                    }
+                    else
+                    {
+                        _loc_2 = _loc_2 + (_loc_15 ? (_loc_17) : (_loc_11));
+                        _loc_4 = _loc_4 + _loc_11;
+                        _loc_3 = Math.max(_loc_16 ? (_loc_14) : (_loc_12), _loc_3);
+                        _loc_5 = Math.max(_loc_12, _loc_5);
+                    }
+                }
+                _loc_7++;
+            }
+            var _loc_8:* = layoutObject.widthPadding(numLayoutChildren);
+            var _loc_9:* = layoutObject.heightPadding(numLayoutChildren);
+            var _loc_19:* = _loc_2 + _loc_8;
+            dbMinWidth = _loc_2 + _loc_8;
+            measuredMinWidth = _loc_19;
+            var _loc_19:* = _loc_3 + _loc_9;
+            dbMinHeight = _loc_3 + _loc_9;
+            measuredMinHeight = _loc_19;
+            var _loc_19:* = _loc_4 + _loc_8;
+            dbPreferredWidth = _loc_4 + _loc_8;
+            measuredWidth = _loc_19;
+            var _loc_19:* = _loc_5 + _loc_9;
+            dbPreferredHeight = _loc_5 + _loc_9;
+            measuredHeight = _loc_19;
             return;
-         }
-         var _loc1_:Boolean = isVertical();
-         var _loc2_:int = numLayoutChildren;
-         var _loc3_:int = activeDividerIndex;
-         var _loc4_:Number = oldChildSizes[_loc2_].size - Math.abs(dragDelta);
-         if(_loc4_ <= 0 || Boolean(isNaN(_loc4_)))
-         {
-            _loc4_ = 1;
-         }
-         var _loc11_:int = -1;
-         var _loc12_:int = -1;
-         while(_loc12_ < activeDividerIndex)
-         {
-            if(UIComponent(getChildAt(++_loc11_)).includeInLayout)
+        }// end function
+
+        private function childRemoveHandler(event:ChildExistenceChangedEvent) : void
+        {
+            var _loc_2:* = event.relatedObject;
+            _loc_2.removeEventListener("includeInLayoutChanged", child_includeInLayoutChangedHandler);
+            if (!IUIComponent(_loc_2).includeInLayout)
             {
-               _loc12_++;
+                return;
             }
-         }
-         var _loc13_:int = _loc11_;
-         var _loc14_:Number = dragDelta;
-         _loc5_ = _loc3_;
-         while(_loc5_ >= 0)
-         {
-            _loc6_ = ChildSizeInfo(oldChildSizes[_loc5_]);
-            _loc7_ = _loc14_ < 0?Number(-Math.min(-_loc14_,_loc6_.deltaMin)):Number(Math.min(_loc14_,_loc6_.deltaMax));
-            _loc8_ = _loc6_.size + _loc7_;
-            _loc14_ = _loc14_ - _loc7_;
-            do
+            var _loc_4:* = numLayoutChildren - 1;
+            numLayoutChildren = _loc_4;
+            if (numLayoutChildren > 0)
             {
-               _loc9_ = IUIComponent(getChildAt(_loc13_--));
+                dividerLayer.removeChild(getDividerAt((numLayoutChildren - 1)));
             }
-            while(!_loc9_.includeInLayout);
-            
-            _loc10_ = _loc8_ / _loc4_ * 100;
-            if(_loc1_)
-            {
-               _loc9_.percentHeight = _loc10_;
-            }
-            else
-            {
-               _loc9_.percentWidth = _loc10_;
-            }
-            if(_loc9_ is IInvalidating)
-            {
-               IInvalidating(_loc9_).invalidateSize();
-            }
-            _loc5_--;
-         }
-         _loc13_ = _loc11_ + 1;
-         _loc14_ = dragDelta;
-         _loc5_ = _loc3_ + 1;
-         while(_loc5_ < _loc2_)
-         {
-            _loc6_ = ChildSizeInfo(oldChildSizes[_loc5_]);
-            _loc7_ = _loc14_ < 0?Number(Math.min(-_loc14_,_loc6_.deltaMax)):Number(-Math.min(_loc14_,_loc6_.deltaMin));
-            _loc8_ = _loc6_.size + _loc7_;
-            _loc14_ = _loc14_ + _loc7_;
-            do
-            {
-               _loc9_ = IUIComponent(getChildAt(_loc13_++));
-            }
-            while(!_loc9_.includeInLayout);
-            
-            _loc10_ = _loc8_ / _loc4_ * 100;
-            if(_loc1_)
-            {
-               _loc9_.percentHeight = _loc10_;
-            }
-            else
-            {
-               _loc9_.percentWidth = _loc10_;
-            }
-            if(_loc9_ is IInvalidating)
-            {
-               IInvalidating(_loc9_).invalidateSize();
-            }
-            _loc5_++;
-         }
-      }
-      
-      private function preLayoutAdjustment() : void
-      {
-         var _loc5_:int = 0;
-         var _loc6_:IUIComponent = null;
-         var _loc7_:Number = NaN;
-         var _loc8_:Object = null;
-         var _loc9_:Number = NaN;
-         var _loc1_:Boolean = isVertical();
-         var _loc2_:Number = 0;
-         var _loc3_:Number = 0;
-         var _loc4_:int = numChildren;
-         _loc5_ = 0;
-         while(_loc5_ < _loc4_)
-         {
-            _loc6_ = IUIComponent(getChildAt(_loc5_));
-            if(_loc6_.includeInLayout)
-            {
-               _loc6_.measuredMinWidth = 0;
-               _loc6_.measuredMinHeight = 0;
-               _loc7_ = !!_loc1_?Number(_loc6_.percentHeight):Number(_loc6_.percentWidth);
-               if(!isNaN(_loc7_))
-               {
-                  _loc2_ = _loc2_ + _loc7_;
-                  _loc3_++;
-               }
-            }
-            _loc5_++;
-         }
-         postLayoutChanges = [];
-         if(_loc2_ == 0 && _loc3_ == 0)
-         {
-            _loc5_ = _loc4_ - 1;
-            while(_loc5_ >= 0)
-            {
-               _loc6_ = UIComponent(getChildAt(_loc5_));
-               if(_loc6_.includeInLayout)
-               {
-                  _loc8_ = {"child":_loc6_};
-                  if(_loc1_)
-                  {
-                     if(_loc6_.explicitHeight)
-                     {
-                        _loc8_.explicitHeight = _loc6_.explicitHeight;
-                     }
-                     else
-                     {
-                        _loc8_.percentHeight = NaN;
-                     }
-                     _loc6_.percentHeight = 100;
-                  }
-                  else
-                  {
-                     if(_loc6_.explicitWidth)
-                     {
-                        _loc8_.explicitWidth = _loc6_.explicitWidth;
-                     }
-                     else if(_loc6_.percentWidth)
-                     {
-                        _loc8_.percentWidth = NaN;
-                     }
-                     _loc6_.percentWidth = 100;
-                  }
-                  postLayoutChanges.push(_loc8_);
-                  break;
-               }
-               _loc5_--;
-            }
-         }
-         else if(_loc2_ < 100)
-         {
-            _loc9_ = Math.ceil((100 - _loc2_) / _loc3_);
-            _loc5_ = 0;
-            while(_loc5_ < _loc4_)
-            {
-               _loc6_ = IUIComponent(getChildAt(_loc5_));
-               if(_loc6_.includeInLayout)
-               {
-                  _loc8_ = {"child":_loc6_};
-                  if(_loc1_)
-                  {
-                     _loc7_ = _loc6_.percentHeight;
-                     if(!isNaN(_loc7_))
-                     {
-                        _loc8_.percentHeight = _loc6_.percentHeight;
-                        postLayoutChanges.push(_loc8_);
-                        _loc6_.percentHeight = (_loc7_ + _loc9_) * unscaledHeight;
-                     }
-                  }
-                  else
-                  {
-                     _loc7_ = _loc6_.percentWidth;
-                     if(!isNaN(_loc7_))
-                     {
-                        _loc8_.percentWidth = _loc6_.percentWidth;
-                        postLayoutChanges.push(_loc8_);
-                        _loc6_.percentWidth = (_loc7_ + _loc9_) * unscaledWidth;
-                     }
-                  }
-               }
-               _loc5_++;
-            }
-         }
-      }
-      
-      private function computeAllowableMovement(param1:int) : void
-      {
-         var _loc7_:int = 0;
-         var _loc8_:ChildSizeInfo = null;
-         var _loc2_:Number = 0;
-         var _loc3_:Number = 0;
-         var _loc4_:Number = 0;
-         var _loc5_:Number = 0;
-         var _loc6_:int = numLayoutChildren;
-         if(param1 < 0)
-         {
+            dbMinWidth = NaN;
+            dbMinHeight = NaN;
+            dbPreferredWidth = NaN;
+            dbPreferredHeight = NaN;
+            invalidateSize();
             return;
-         }
-         _loc7_ = param1;
-         while(_loc7_ >= 0)
-         {
-            _loc8_ = ChildSizeInfo(oldChildSizes[_loc7_]);
-            _loc2_ = _loc2_ + (Boolean(dontCoalesceDividers) && Boolean(_loc2_)?0:_loc8_.deltaMin);
-            _loc3_ = _loc3_ + (Boolean(dontCoalesceDividers) && Boolean(_loc3_)?0:_loc8_.deltaMax);
-            _loc7_--;
-         }
-         _loc7_ = param1 + 1;
-         while(_loc7_ < _loc6_)
-         {
-            _loc8_ = ChildSizeInfo(oldChildSizes[_loc7_]);
-            _loc4_ = _loc4_ + (Boolean(dontCoalesceDividers) && Boolean(_loc4_)?0:_loc8_.deltaMin);
-            _loc5_ = _loc5_ + (Boolean(dontCoalesceDividers) && Boolean(_loc5_)?0:_loc8_.deltaMax);
-            _loc7_++;
-         }
-         var _loc9_:Number = Math.min(_loc2_,_loc5_);
-         var _loc10_:Number = Math.min(_loc4_,_loc3_);
-         minDelta = -_loc9_;
-         maxDelta = _loc10_;
-      }
-      
-      override public function set direction(param1:String) : void
-      {
-         var _loc2_:int = 0;
-         if(super.direction != param1)
-         {
-            super.direction = param1;
-            if(dividerLayer)
+        }// end function
+
+        override protected function scrollChildren() : void
+        {
+            super.scrollChildren();
+            if (contentPane && dividerLayer)
             {
-               _loc2_ = 0;
-               while(_loc2_ < dividerLayer.numChildren)
-               {
-                  getDividerAt(_loc2_).invalidateDisplayList();
-                  _loc2_++;
-               }
+                dividerLayer.scrollRect = contentPane.scrollRect;
             }
-         }
-      }
-   }
+            return;
+        }// end function
+
+        public function getDividerAt(param1:int) : BoxDivider
+        {
+            return BoxDivider(dividerLayer.getChildAt(param1));
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_8:* = null;
+            if (!liveDragging && activeDivider)
+            {
+                _loc_3 = numChildren;
+                _loc_4 = 0;
+                while (_loc_4 < _loc_3)
+                {
+                    
+                    _loc_8 = IUIComponent(getChildAt(_loc_4));
+                    if (!_loc_8.includeInLayout)
+                    {
+                    }
+                    else
+                    {
+                        _loc_8.measuredMinWidth = 0;
+                        _loc_8.measuredMinHeight = 0;
+                    }
+                    _loc_4++;
+                }
+                return;
+            }
+            preLayoutAdjustment();
+            super.updateDisplayList(param1, param2);
+            postLayoutAdjustment();
+            if (!dividerLayer)
+            {
+                return;
+            }
+            var _loc_5:* = viewMetrics;
+            dividerLayer.x = _loc_5.left;
+            dividerLayer.y = _loc_5.top;
+            var _loc_6:* = null;
+            var _loc_7:* = 0;
+            _loc_3 = numChildren;
+            _loc_4 = 0;
+            while (_loc_4 < _loc_3)
+            {
+                
+                _loc_8 = UIComponent(getChildAt(_loc_4));
+                if (_loc_8.includeInLayout)
+                {
+                    if (_loc_6)
+                    {
+                        layoutDivider(_loc_7, param1, param2, _loc_6, _loc_8);
+                        _loc_7++;
+                    }
+                    _loc_6 = _loc_8;
+                }
+                _loc_4++;
+            }
+            return;
+        }// end function
+
+        private function cacheChildSizes() : void
+        {
+            oldChildSizes = [];
+            cacheSizes();
+            return;
+        }// end function
+
+        private function distributeDelta() : void
+        {
+            var _loc_5:* = 0;
+            var _loc_6:* = null;
+            var _loc_7:* = NaN;
+            var _loc_8:* = NaN;
+            var _loc_9:* = null;
+            var _loc_10:* = NaN;
+            if (!dragDelta)
+            {
+                return;
+            }
+            var _loc_1:* = isVertical();
+            var _loc_2:* = numLayoutChildren;
+            var _loc_3:* = activeDividerIndex;
+            var _loc_4:* = oldChildSizes[_loc_2].size - Math.abs(dragDelta);
+            if (oldChildSizes[_loc_2].size - Math.abs(dragDelta) <= 0 || isNaN(_loc_4))
+            {
+                _loc_4 = 1;
+            }
+            var _loc_11:* = -1;
+            var _loc_12:* = -1;
+            while (_loc_12 < activeDividerIndex)
+            {
+                
+                if (UIComponent(getChildAt(++_loc_11)).includeInLayout)
+                {
+                    _loc_12++;
+                }
+            }
+            var _loc_13:* = _loc_11 + 1;
+            var _loc_14:* = dragDelta;
+            _loc_5 = _loc_3;
+            while (_loc_5 >= 0)
+            {
+                
+                _loc_6 = ChildSizeInfo(oldChildSizes[_loc_5]);
+                _loc_7 = _loc_14 < 0 ? (-Math.min(-_loc_14, _loc_6.deltaMin)) : (Math.min(_loc_14, _loc_6.deltaMax));
+                _loc_8 = _loc_6.size + _loc_7;
+                _loc_14 = _loc_14 - _loc_7;
+                do
+                {
+                    
+                    _loc_9 = IUIComponent(getChildAt(_loc_13--));
+                }while (!_loc_9.includeInLayout)
+                _loc_10 = _loc_8 / _loc_4 * 100;
+                if (_loc_1)
+                {
+                    _loc_9.percentHeight = _loc_10;
+                }
+                else
+                {
+                    _loc_9.percentWidth = _loc_10;
+                }
+                if (_loc_9 is IInvalidating)
+                {
+                    IInvalidating(_loc_9).invalidateSize();
+                }
+                _loc_5 = _loc_5 - 1;
+            }
+            _loc_13 = _loc_11 + 1;
+            _loc_14 = dragDelta;
+            _loc_5 = _loc_3 + 1;
+            while (_loc_5 < _loc_2)
+            {
+                
+                _loc_6 = ChildSizeInfo(oldChildSizes[_loc_5]);
+                _loc_7 = _loc_14 < 0 ? (Math.min(-_loc_14, _loc_6.deltaMax)) : (-Math.min(_loc_14, _loc_6.deltaMin));
+                _loc_8 = _loc_6.size + _loc_7;
+                _loc_14 = _loc_14 + _loc_7;
+                do
+                {
+                    
+                    _loc_9 = IUIComponent(getChildAt(_loc_13++));
+                }while (!_loc_9.includeInLayout)
+                _loc_10 = _loc_8 / _loc_4 * 100;
+                if (_loc_1)
+                {
+                    _loc_9.percentHeight = _loc_10;
+                }
+                else
+                {
+                    _loc_9.percentWidth = _loc_10;
+                }
+                if (_loc_9 is IInvalidating)
+                {
+                    IInvalidating(_loc_9).invalidateSize();
+                }
+                _loc_5++;
+            }
+            return;
+        }// end function
+
+        private function preLayoutAdjustment() : void
+        {
+            var _loc_5:* = 0;
+            var _loc_6:* = null;
+            var _loc_7:* = NaN;
+            var _loc_8:* = null;
+            var _loc_9:* = NaN;
+            var _loc_1:* = isVertical();
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = numChildren;
+            _loc_5 = 0;
+            while (_loc_5 < _loc_4)
+            {
+                
+                _loc_6 = IUIComponent(getChildAt(_loc_5));
+                if (!_loc_6.includeInLayout)
+                {
+                }
+                else
+                {
+                    _loc_6.measuredMinWidth = 0;
+                    _loc_6.measuredMinHeight = 0;
+                    _loc_7 = _loc_1 ? (_loc_6.percentHeight) : (_loc_6.percentWidth);
+                    if (!isNaN(_loc_7))
+                    {
+                        _loc_2 = _loc_2 + _loc_7;
+                        _loc_3 = _loc_3 + 1;
+                    }
+                }
+                _loc_5++;
+            }
+            postLayoutChanges = [];
+            if (_loc_2 == 0 && _loc_3 == 0)
+            {
+                _loc_5 = _loc_4 - 1;
+                while (_loc_5 >= 0)
+                {
+                    
+                    _loc_6 = UIComponent(getChildAt(_loc_5));
+                    if (_loc_6.includeInLayout)
+                    {
+                        _loc_8 = {child:_loc_6};
+                        if (_loc_1)
+                        {
+                            if (_loc_6.explicitHeight)
+                            {
+                                _loc_8.explicitHeight = _loc_6.explicitHeight;
+                            }
+                            else
+                            {
+                                _loc_8.percentHeight = NaN;
+                            }
+                            _loc_6.percentHeight = 100;
+                        }
+                        else
+                        {
+                            if (_loc_6.explicitWidth)
+                            {
+                                _loc_8.explicitWidth = _loc_6.explicitWidth;
+                            }
+                            else if (_loc_6.percentWidth)
+                            {
+                                _loc_8.percentWidth = NaN;
+                            }
+                            _loc_6.percentWidth = 100;
+                        }
+                        postLayoutChanges.push(_loc_8);
+                        break;
+                    }
+                    _loc_5 = _loc_5 - 1;
+                }
+            }
+            else if (_loc_2 < 100)
+            {
+                _loc_9 = Math.ceil((100 - _loc_2) / _loc_3);
+                _loc_5 = 0;
+                while (_loc_5 < _loc_4)
+                {
+                    
+                    _loc_6 = IUIComponent(getChildAt(_loc_5));
+                    if (!_loc_6.includeInLayout)
+                    {
+                    }
+                    else
+                    {
+                        _loc_8 = {child:_loc_6};
+                        if (_loc_1)
+                        {
+                            _loc_7 = _loc_6.percentHeight;
+                            if (!isNaN(_loc_7))
+                            {
+                                _loc_8.percentHeight = _loc_6.percentHeight;
+                                postLayoutChanges.push(_loc_8);
+                                _loc_6.percentHeight = (_loc_7 + _loc_9) * unscaledHeight;
+                            }
+                        }
+                        else
+                        {
+                            _loc_7 = _loc_6.percentWidth;
+                            if (!isNaN(_loc_7))
+                            {
+                                _loc_8.percentWidth = _loc_6.percentWidth;
+                                postLayoutChanges.push(_loc_8);
+                                _loc_6.percentWidth = (_loc_7 + _loc_9) * unscaledWidth;
+                            }
+                        }
+                    }
+                    _loc_5++;
+                }
+            }
+            return;
+        }// end function
+
+        private function computeAllowableMovement(param1:int) : void
+        {
+            var _loc_7:* = 0;
+            var _loc_8:* = null;
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = numLayoutChildren;
+            if (param1 < 0)
+            {
+                return;
+            }
+            _loc_7 = param1;
+            while (_loc_7 >= 0)
+            {
+                
+                _loc_8 = ChildSizeInfo(oldChildSizes[_loc_7]);
+                _loc_2 = _loc_2 + (dontCoalesceDividers && _loc_2 ? (0) : (_loc_8.deltaMin));
+                _loc_3 = _loc_3 + (dontCoalesceDividers && _loc_3 ? (0) : (_loc_8.deltaMax));
+                _loc_7 = _loc_7 - 1;
+            }
+            _loc_7 = param1 + 1;
+            while (_loc_7 < _loc_6)
+            {
+                
+                _loc_8 = ChildSizeInfo(oldChildSizes[_loc_7]);
+                _loc_4 = _loc_4 + (dontCoalesceDividers && _loc_4 ? (0) : (_loc_8.deltaMin));
+                _loc_5 = _loc_5 + (dontCoalesceDividers && _loc_5 ? (0) : (_loc_8.deltaMax));
+                _loc_7++;
+            }
+            var _loc_9:* = Math.min(_loc_2, _loc_5);
+            var _loc_10:* = Math.min(_loc_4, _loc_3);
+            minDelta = -_loc_9;
+            maxDelta = _loc_10;
+            return;
+        }// end function
+
+        override public function set direction(param1:String) : void
+        {
+            var _loc_2:* = 0;
+            if (super.direction != param1)
+            {
+                super.direction = param1;
+                if (dividerLayer)
+                {
+                    _loc_2 = 0;
+                    while (_loc_2 < dividerLayer.numChildren)
+                    {
+                        
+                        getDividerAt(_loc_2).invalidateDisplayList();
+                        _loc_2++;
+                    }
+                }
+            }
+            return;
+        }// end function
+
+        private static function initializeClass() : void
+        {
+            StyleManager.registerSizeInvalidatingStyle("dividerAffordance");
+            StyleManager.registerSizeInvalidatingStyle("dividerThickness");
+            return;
+        }// end function
+
+    }
 }
 
-class ChildSizeInfo
+import flash.display.*;
+
+import flash.events.*;
+
+import flash.geom.*;
+
+import mx.containers.dividedBoxClasses.*;
+
+import mx.core.*;
+
+import mx.events.*;
+
+import mx.managers.*;
+
+import mx.styles.*;
+
+class ChildSizeInfo extends Object
 {
-    
-   public var size:Number;
-   
-   public var min:Number;
-   
-   public var max:Number;
-   
-   public var deltaMin:Number;
-   
-   public var deltaMax:Number;
-   
-   function ChildSizeInfo(param1:Number, param2:Number = 0, param3:Number = 0, param4:Number = 0, param5:Number = 0)
-   {
-      super();
-      this.size = param1;
-      this.min = param2;
-      this.max = param3;
-      this.deltaMin = param4;
-      this.deltaMax = param5;
-   }
+    public var size:Number;
+    public var min:Number;
+    public var max:Number;
+    public var deltaMin:Number;
+    public var deltaMax:Number;
+
+    function ChildSizeInfo(param1:Number, param2:Number = 0, param3:Number = 0, param4:Number = 0, param5:Number = 0)
+    {
+        this.size = param1;
+        this.min = param2;
+        this.max = param3;
+        this.deltaMin = param4;
+        this.deltaMax = param5;
+        return;
+    }// end function
+
 }
+

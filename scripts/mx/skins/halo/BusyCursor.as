@@ -1,81 +1,74 @@
-package mx.skins.halo
+﻿package mx.skins.halo
 {
-   import mx.core.FlexSprite;
-   import mx.core.mx_internal;
-   import flash.display.Shape;
-   import flash.events.Event;
-   import flash.display.Graphics;
-   import mx.styles.StyleManager;
-   import mx.styles.CSSStyleDeclaration;
-   import flash.display.DisplayObject;
-   import flash.display.InteractiveObject;
-   import mx.core.FlexShape;
-   
-   use namespace mx_internal;
-   
-   public class BusyCursor extends FlexSprite
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var hourHand:Shape;
-      
-      private var minuteHand:Shape;
-      
-      public function BusyCursor()
-      {
-         var _loc6_:Graphics = null;
-         super();
-         var _loc1_:CSSStyleDeclaration = StyleManager.getStyleDeclaration("CursorManager");
-         var _loc2_:Class = _loc1_.getStyle("busyCursorBackground");
-         var _loc3_:DisplayObject = new _loc2_();
-         if(_loc3_ is InteractiveObject)
-         {
-            InteractiveObject(_loc3_).mouseEnabled = false;
-         }
-         addChild(_loc3_);
-         var _loc4_:Number = -0.5;
-         var _loc5_:Number = -0.5;
-         minuteHand = new FlexShape();
-         minuteHand.name = "minuteHand";
-         _loc6_ = minuteHand.graphics;
-         _loc6_.beginFill(0);
-         _loc6_.moveTo(_loc4_,_loc5_);
-         _loc6_.lineTo(1 + _loc4_,0 + _loc5_);
-         _loc6_.lineTo(1 + _loc4_,5 + _loc5_);
-         _loc6_.lineTo(0 + _loc4_,5 + _loc5_);
-         _loc6_.lineTo(0 + _loc4_,0 + _loc5_);
-         _loc6_.endFill();
-         addChild(minuteHand);
-         hourHand = new FlexShape();
-         hourHand.name = "hourHand";
-         _loc6_ = hourHand.graphics;
-         _loc6_.beginFill(0);
-         _loc6_.moveTo(_loc4_,_loc5_);
-         _loc6_.lineTo(4 + _loc4_,0 + _loc5_);
-         _loc6_.lineTo(4 + _loc4_,1 + _loc5_);
-         _loc6_.lineTo(0 + _loc4_,1 + _loc5_);
-         _loc6_.lineTo(0 + _loc4_,0 + _loc5_);
-         _loc6_.endFill();
-         addChild(hourHand);
-         addEventListener(Event.ADDED,handleAdded);
-         addEventListener(Event.REMOVED,handleRemoved);
-      }
-      
-      private function enterFrameHandler(param1:Event) : void
-      {
-         minuteHand.rotation = minuteHand.rotation + 12;
-         hourHand.rotation = hourHand.rotation + 1;
-      }
-      
-      private function handleAdded(param1:Event) : void
-      {
-         addEventListener(Event.ENTER_FRAME,enterFrameHandler);
-      }
-      
-      private function handleRemoved(param1:Event) : void
-      {
-         removeEventListener(Event.ENTER_FRAME,enterFrameHandler);
-      }
-   }
+    import flash.display.*;
+    import flash.events.*;
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class BusyCursor extends FlexSprite
+    {
+        private var hourHand:Shape;
+        private var minuteHand:Shape;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function BusyCursor()
+        {
+            var _loc_6:* = null;
+            var _loc_1:* = StyleManager.getStyleDeclaration("CursorManager");
+            var _loc_2:* = _loc_1.getStyle("busyCursorBackground");
+            var _loc_3:* = new _loc_2;
+            if (_loc_3 is InteractiveObject)
+            {
+                InteractiveObject(_loc_3).mouseEnabled = false;
+            }
+            addChild(_loc_3);
+            var _loc_4:* = -0.5;
+            var _loc_5:* = -0.5;
+            minuteHand = new FlexShape();
+            minuteHand.name = "minuteHand";
+            _loc_6 = minuteHand.graphics;
+            _loc_6.beginFill(0);
+            _loc_6.moveTo(_loc_4, _loc_5);
+            _loc_6.lineTo(1 + _loc_4, 0 + _loc_5);
+            _loc_6.lineTo(1 + _loc_4, 5 + _loc_5);
+            _loc_6.lineTo(0 + _loc_4, 5 + _loc_5);
+            _loc_6.lineTo(0 + _loc_4, 0 + _loc_5);
+            _loc_6.endFill();
+            addChild(minuteHand);
+            hourHand = new FlexShape();
+            hourHand.name = "hourHand";
+            _loc_6 = hourHand.graphics;
+            _loc_6.beginFill(0);
+            _loc_6.moveTo(_loc_4, _loc_5);
+            _loc_6.lineTo(4 + _loc_4, 0 + _loc_5);
+            _loc_6.lineTo(4 + _loc_4, 1 + _loc_5);
+            _loc_6.lineTo(0 + _loc_4, 1 + _loc_5);
+            _loc_6.lineTo(0 + _loc_4, 0 + _loc_5);
+            _loc_6.endFill();
+            addChild(hourHand);
+            addEventListener(Event.ADDED, handleAdded);
+            addEventListener(Event.REMOVED, handleRemoved);
+            return;
+        }// end function
+
+        private function enterFrameHandler(event:Event) : void
+        {
+            minuteHand.rotation = minuteHand.rotation + 12;
+            (hourHand.rotation + 1);
+            return;
+        }// end function
+
+        private function handleAdded(event:Event) : void
+        {
+            addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+            return;
+        }// end function
+
+        private function handleRemoved(event:Event) : void
+        {
+            removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
+            return;
+        }// end function
+
+    }
 }

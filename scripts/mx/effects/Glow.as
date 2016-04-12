@@ -1,63 +1,51 @@
-package mx.effects
+﻿package mx.effects
 {
-   import mx.core.mx_internal;
-   import mx.effects.effectClasses.GlowInstance;
-   
-   use namespace mx_internal;
-   
-   public class Glow extends TweenEffect
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static var AFFECTED_PROPERTIES:Array = ["filters"];
-       
-      public var knockout:Boolean;
-      
-      public var color:uint = 4.294967295E9;
-      
-      public var alphaFrom:Number;
-      
-      public var blurXTo:Number;
-      
-      public var blurYTo:Number;
-      
-      public var strength:Number;
-      
-      public var alphaTo:Number;
-      
-      public var blurXFrom:Number;
-      
-      public var blurYFrom:Number;
-      
-      public var inner:Boolean;
-      
-      public function Glow(param1:Object = null)
-      {
-         super(param1);
-         instanceClass = GlowInstance;
-      }
-      
-      override protected function initInstance(param1:IEffectInstance) : void
-      {
-         var _loc2_:GlowInstance = null;
-         super.initInstance(param1);
-         _loc2_ = GlowInstance(param1);
-         _loc2_.alphaFrom = alphaFrom;
-         _loc2_.alphaTo = alphaTo;
-         _loc2_.blurXFrom = blurXFrom;
-         _loc2_.blurXTo = blurXTo;
-         _loc2_.blurYFrom = blurYFrom;
-         _loc2_.blurYTo = blurYTo;
-         _loc2_.color = color;
-         _loc2_.inner = inner;
-         _loc2_.knockout = knockout;
-         _loc2_.strength = strength;
-      }
-      
-      override public function getAffectedProperties() : Array
-      {
-         return AFFECTED_PROPERTIES;
-      }
-   }
+    import mx.effects.effectClasses.*;
+
+    public class Glow extends TweenEffect
+    {
+        public var knockout:Boolean;
+        public var color:uint = 4.29497e+009;
+        public var alphaFrom:Number;
+        public var blurXTo:Number;
+        public var blurYTo:Number;
+        public var strength:Number;
+        public var alphaTo:Number;
+        public var blurXFrom:Number;
+        public var blurYFrom:Number;
+        public var inner:Boolean;
+        static const VERSION:String = "3.6.0.21751";
+        private static var AFFECTED_PROPERTIES:Array = ["filters"];
+
+        public function Glow(param1:Object = null)
+        {
+            super(param1);
+            instanceClass = GlowInstance;
+            return;
+        }// end function
+
+        override protected function initInstance(param1:IEffectInstance) : void
+        {
+            var _loc_2:* = null;
+            super.initInstance(param1);
+            _loc_2 = GlowInstance(param1);
+            _loc_2.alphaFrom = alphaFrom;
+            _loc_2.alphaTo = alphaTo;
+            _loc_2.blurXFrom = blurXFrom;
+            _loc_2.blurXTo = blurXTo;
+            _loc_2.blurYFrom = blurYFrom;
+            _loc_2.blurYTo = blurYTo;
+            _loc_2.color = color;
+            _loc_2.inner = inner;
+            _loc_2.knockout = knockout;
+            _loc_2.strength = strength;
+            return;
+        }// end function
+
+        override public function getAffectedProperties() : Array
+        {
+            return AFFECTED_PROPERTIES;
+        }// end function
+
+    }
 }

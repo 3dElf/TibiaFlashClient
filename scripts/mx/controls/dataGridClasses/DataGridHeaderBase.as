@@ -1,25 +1,23 @@
-package mx.controls.dataGridClasses
+﻿package mx.controls.dataGridClasses
 {
-   import mx.core.UIComponent;
-   import mx.core.mx_internal;
-   import flash.display.Sprite;
-   
-   public class DataGridHeaderBase extends UIComponent
-   {
-       
-      mx_internal var headerItemsChanged:Boolean = false;
-      
-      mx_internal var selectionLayer:Sprite;
-      
-      mx_internal var visibleColumns:Array;
-      
-      public function DataGridHeaderBase()
-      {
-         super();
-      }
-      
-      mx_internal function clearSelectionLayer() : void
-      {
-      }
-   }
+    import flash.display.*;
+    import mx.core.*;
+
+    public class DataGridHeaderBase extends UIComponent
+    {
+        var headerItemsChanged:Boolean = false;
+        var selectionLayer:Sprite;
+        var visibleColumns:Array;
+
+        public function DataGridHeaderBase()
+        {
+            return;
+        }// end function
+
+        function clearSelectionLayer() : void
+        {
+            return;
+        }// end function
+
+    }
 }

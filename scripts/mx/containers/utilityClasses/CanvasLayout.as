@@ -1,1668 +1,1714 @@
-package mx.containers.utilityClasses
+﻿package mx.containers.utilityClasses
 {
-   import mx.core.mx_internal;
-   import flash.geom.Rectangle;
-   import mx.core.IUIComponent;
-   import mx.core.Container;
-   import mx.core.EdgeMetrics;
-   import mx.events.MoveEvent;
-   import mx.core.IConstraintClient;
-   import mx.events.ChildExistenceChangedEvent;
-   import flash.display.DisplayObject;
-   import flash.utils.Dictionary;
-   import mx.core.FlexVersion;
-   import mx.containers.errors.ConstraintError;
-   
-   use namespace mx_internal;
-   
-   public class CanvasLayout extends Layout
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static var r:Rectangle = new Rectangle();
-       
-      private var colSpanChildren:Array;
-      
-      private var constraintRegionsInUse:Boolean = false;
-      
-      private var rowSpanChildren:Array;
-      
-      private var constraintCache:Dictionary;
-      
-      private var _contentArea:Rectangle;
-      
-      public function CanvasLayout()
-      {
-         colSpanChildren = [];
-         rowSpanChildren = [];
-         constraintCache = new Dictionary(true);
-         super();
-      }
-      
-      private function parseConstraints(param1:IUIComponent = null) : ChildConstraintInfo
-      {
-         var _loc3_:Number = NaN;
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:Number = NaN;
-         var _loc7_:Number = NaN;
-         var _loc8_:Number = NaN;
-         var _loc9_:Number = NaN;
-         var _loc10_:String = null;
-         var _loc11_:String = null;
-         var _loc12_:String = null;
-         var _loc13_:String = null;
-         var _loc14_:String = null;
-         var _loc15_:String = null;
-         var _loc16_:String = null;
-         var _loc17_:Array = null;
-         var _loc18_:int = 0;
-         var _loc30_:ConstraintColumn = null;
-         var _loc31_:Boolean = false;
-         var _loc32_:ConstraintRow = null;
-         var _loc2_:LayoutConstraints = getLayoutConstraints(param1);
-         if(!_loc2_)
-         {
-            return null;
-         }
-         _loc17_ = parseConstraintExp(_loc2_.left);
-         if(!_loc17_)
-         {
-            _loc3_ = NaN;
-         }
-         else if(_loc17_.length == 1)
-         {
-            _loc3_ = Number(_loc17_[0]);
-         }
-         else
-         {
-            _loc10_ = _loc17_[0];
-            _loc3_ = _loc17_[1];
-         }
-         _loc17_ = parseConstraintExp(_loc2_.right);
-         if(!_loc17_)
-         {
-            _loc4_ = NaN;
-         }
-         else if(_loc17_.length == 1)
-         {
-            _loc4_ = Number(_loc17_[0]);
-         }
-         else
-         {
-            _loc11_ = _loc17_[0];
-            _loc4_ = _loc17_[1];
-         }
-         _loc17_ = parseConstraintExp(_loc2_.horizontalCenter);
-         if(!_loc17_)
-         {
-            _loc5_ = NaN;
-         }
-         else if(_loc17_.length == 1)
-         {
-            _loc5_ = Number(_loc17_[0]);
-         }
-         else
-         {
-            _loc12_ = _loc17_[0];
-            _loc5_ = _loc17_[1];
-         }
-         _loc17_ = parseConstraintExp(_loc2_.top);
-         if(!_loc17_)
-         {
-            _loc6_ = NaN;
-         }
-         else if(_loc17_.length == 1)
-         {
-            _loc6_ = Number(_loc17_[0]);
-         }
-         else
-         {
-            _loc13_ = _loc17_[0];
-            _loc6_ = _loc17_[1];
-         }
-         _loc17_ = parseConstraintExp(_loc2_.bottom);
-         if(!_loc17_)
-         {
-            _loc7_ = NaN;
-         }
-         else if(_loc17_.length == 1)
-         {
-            _loc7_ = Number(_loc17_[0]);
-         }
-         else
-         {
-            _loc14_ = _loc17_[0];
-            _loc7_ = _loc17_[1];
-         }
-         _loc17_ = parseConstraintExp(_loc2_.verticalCenter);
-         if(!_loc17_)
-         {
-            _loc8_ = NaN;
-         }
-         else if(_loc17_.length == 1)
-         {
-            _loc8_ = Number(_loc17_[0]);
-         }
-         else
-         {
-            _loc15_ = _loc17_[0];
-            _loc8_ = _loc17_[1];
-         }
-         _loc17_ = parseConstraintExp(_loc2_.baseline);
-         if(!_loc17_)
-         {
-            _loc9_ = NaN;
-         }
-         else if(_loc17_.length == 1)
-         {
-            _loc9_ = Number(_loc17_[0]);
-         }
-         else
-         {
-            _loc16_ = _loc17_[0];
-            _loc9_ = _loc17_[1];
-         }
-         var _loc19_:ContentColumnChild = new ContentColumnChild();
-         var _loc20_:Boolean = false;
-         var _loc21_:Number = 0;
-         var _loc22_:Number = 0;
-         var _loc23_:Number = 0;
-         _loc18_ = 0;
-         while(_loc18_ < IConstraintLayout(target).constraintColumns.length)
-         {
-            _loc30_ = IConstraintLayout(target).constraintColumns[_loc18_];
-            if(_loc30_.mx_internal::contentSize)
-            {
-               if(_loc30_.id == _loc10_)
-               {
-                  _loc19_.leftCol = _loc30_;
-                  _loc19_.leftOffset = _loc3_;
-                  _loc19_.left = _loc21_ = _loc18_;
-                  _loc20_ = true;
-               }
-               if(_loc30_.id == _loc11_)
-               {
-                  _loc19_.rightCol = _loc30_;
-                  _loc19_.rightOffset = _loc4_;
-                  _loc19_.right = _loc22_ = _loc18_ + 1;
-                  _loc20_ = true;
-               }
-               if(_loc30_.id == _loc12_)
-               {
-                  _loc19_.hcCol = _loc30_;
-                  _loc19_.hcOffset = _loc5_;
-                  _loc19_.hc = _loc23_ = _loc18_ + 1;
-                  _loc20_ = true;
-               }
-            }
-            _loc18_++;
-         }
-         if(_loc20_)
-         {
-            _loc19_.child = param1;
-            if(Boolean(_loc19_.leftCol) && Boolean(!_loc19_.rightCol) || Boolean(_loc19_.rightCol) && Boolean(!_loc19_.leftCol) || Boolean(_loc19_.hcCol))
-            {
-               _loc19_.span = 1;
-            }
-            else
-            {
-               _loc19_.span = _loc22_ - _loc21_;
-            }
-            _loc31_ = false;
-            _loc18_ = 0;
-            while(_loc18_ < colSpanChildren.length)
-            {
-               if(_loc19_.child == colSpanChildren[_loc18_].child)
-               {
-                  _loc31_ = true;
-                  break;
-               }
-               _loc18_++;
-            }
-            if(!_loc31_)
-            {
-               colSpanChildren.push(_loc19_);
-            }
-         }
-         _loc20_ = false;
-         var _loc24_:ContentRowChild = new ContentRowChild();
-         var _loc25_:Number = 0;
-         var _loc26_:Number = 0;
-         var _loc27_:Number = 0;
-         var _loc28_:Number = 0;
-         _loc18_ = 0;
-         while(_loc18_ < IConstraintLayout(target).constraintRows.length)
-         {
-            _loc32_ = IConstraintLayout(target).constraintRows[_loc18_];
-            if(_loc32_.mx_internal::contentSize)
-            {
-               if(_loc32_.id == _loc13_)
-               {
-                  _loc24_.topRow = _loc32_;
-                  _loc24_.topOffset = _loc6_;
-                  _loc24_.top = _loc25_ = _loc18_;
-                  _loc20_ = true;
-               }
-               if(_loc32_.id == _loc14_)
-               {
-                  _loc24_.bottomRow = _loc32_;
-                  _loc24_.bottomOffset = _loc7_;
-                  _loc24_.bottom = _loc26_ = _loc18_ + 1;
-                  _loc20_ = true;
-               }
-               if(_loc32_.id == _loc15_)
-               {
-                  _loc24_.vcRow = _loc32_;
-                  _loc24_.vcOffset = _loc8_;
-                  _loc24_.vc = _loc27_ = _loc18_ + 1;
-                  _loc20_ = true;
-               }
-               if(_loc32_.id == _loc16_)
-               {
-                  _loc24_.baselineRow = _loc32_;
-                  _loc24_.baselineOffset = _loc9_;
-                  _loc24_.baseline = _loc28_ = _loc18_ + 1;
-                  _loc20_ = true;
-               }
-            }
-            _loc18_++;
-         }
-         if(_loc20_)
-         {
-            _loc24_.child = param1;
-            if(Boolean(_loc24_.topRow && !_loc24_.bottomRow || _loc24_.bottomRow && !_loc24_.topRow) || Boolean(_loc24_.vcRow) || Boolean(_loc24_.baselineRow))
-            {
-               _loc24_.span = 1;
-            }
-            else
-            {
-               _loc24_.span = _loc26_ - _loc25_;
-            }
-            _loc31_ = false;
-            _loc18_ = 0;
-            while(_loc18_ < rowSpanChildren.length)
-            {
-               if(_loc24_.child == rowSpanChildren[_loc18_].child)
-               {
-                  _loc31_ = true;
-                  break;
-               }
-               _loc18_++;
-            }
-            if(!_loc31_)
-            {
-               rowSpanChildren.push(_loc24_);
-            }
-         }
-         var _loc29_:ChildConstraintInfo = new ChildConstraintInfo(_loc3_,_loc4_,_loc5_,_loc6_,_loc7_,_loc8_,_loc9_,_loc10_,_loc11_,_loc12_,_loc13_,_loc14_,_loc15_,_loc16_);
-         constraintCache[param1] = _loc29_;
-         return _loc29_;
-      }
-      
-      private function bound(param1:Number, param2:Number, param3:Number) : Number
-      {
-         if(param1 < param2)
-         {
-            param1 = param2;
-         }
-         else if(param1 > param3)
-         {
-            param1 = param3;
-         }
-         else
-         {
-            param1 = Math.floor(param1);
-         }
-         return param1;
-      }
-      
-      private function shareRowSpace(param1:ContentRowChild, param2:Number) : Number
-      {
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         var _loc13_:Number = NaN;
-         var _loc3_:ConstraintRow = param1.topRow;
-         var _loc4_:ConstraintRow = param1.bottomRow;
-         var _loc5_:IUIComponent = param1.child;
-         var _loc6_:Number = 0;
-         var _loc7_:Number = 0;
-         var _loc8_:Number = !!param1.topOffset?Number(param1.topOffset):Number(0);
-         var _loc9_:Number = !!param1.bottomOffset?Number(param1.bottomOffset):Number(0);
-         if(Boolean(_loc3_) && Boolean(_loc3_.height))
-         {
-            _loc6_ = _loc6_ + _loc3_.height;
-         }
-         else if(Boolean(_loc4_) && !_loc3_)
-         {
-            _loc3_ = IConstraintLayout(target).constraintRows[param1.bottom - 2];
-            if(Boolean(_loc3_) && Boolean(_loc3_.height))
-            {
-               _loc6_ = _loc6_ + _loc3_.height;
-            }
-         }
-         if(Boolean(_loc4_) && Boolean(_loc4_.height))
-         {
-            _loc7_ = _loc7_ + _loc4_.height;
-         }
-         else if(Boolean(_loc3_) && !_loc4_)
-         {
-            _loc4_ = IConstraintLayout(target).constraintRows[param1.top + 1];
-            if(Boolean(_loc4_) && Boolean(_loc4_.height))
-            {
-               _loc7_ = _loc7_ + _loc4_.height;
-            }
-         }
-         if(Boolean(_loc3_) && Boolean(isNaN(_loc3_.height)))
-         {
-            _loc3_.setActualHeight(Math.max(0,_loc3_.maxHeight));
-         }
-         if(Boolean(_loc4_) && Boolean(isNaN(_loc4_.height)))
-         {
-            _loc4_.setActualHeight(Math.max(0,_loc4_.height));
-         }
-         var _loc10_:Number = _loc5_.getExplicitOrMeasuredHeight();
-         if(_loc10_)
-         {
-            if(!param1.topRow)
-            {
-               if(_loc10_ > _loc6_)
-               {
-                  _loc12_ = _loc10_ - _loc6_ + _loc9_;
-               }
-               else
-               {
-                  _loc12_ = _loc10_ + _loc9_;
-               }
-            }
-            if(!param1.bottomRow)
-            {
-               if(_loc10_ > _loc7_)
-               {
-                  _loc11_ = _loc10_ - _loc7_ + _loc8_;
-               }
-               else
-               {
-                  _loc11_ = _loc10_ + _loc8_;
-               }
-            }
-            if(Boolean(param1.topRow) && Boolean(param1.bottomRow))
-            {
-               _loc13_ = _loc10_ / Number(param1.span);
-               if(_loc13_ + _loc8_ < _loc6_)
-               {
-                  _loc11_ = _loc6_;
-                  _loc12_ = _loc10_ - (_loc6_ - _loc8_) + _loc9_;
-               }
-               else
-               {
-                  _loc11_ = _loc13_ + _loc8_;
-               }
-               if(_loc13_ + _loc9_ < _loc7_)
-               {
-                  _loc12_ = _loc7_;
-                  _loc11_ = _loc10_ - (_loc7_ - _loc9_) + _loc8_;
-               }
-               else
-               {
-                  _loc12_ = _loc13_ + _loc9_;
-               }
-            }
-            _loc12_ = bound(_loc12_,_loc4_.minHeight,_loc4_.maxHeight);
-            _loc4_.setActualHeight(_loc12_);
-            param2 = param2 - _loc12_;
-            _loc11_ = bound(_loc11_,_loc3_.minHeight,_loc3_.maxHeight);
-            _loc3_.setActualHeight(_loc11_);
-            param2 = param2 - _loc11_;
-         }
-         return param2;
-      }
-      
-      private function parseConstraintExp(param1:String) : Array
-      {
-         if(!param1)
-         {
-            return null;
-         }
-         var _loc2_:String = param1.replace(/:/g," ");
-         var _loc3_:Array = _loc2_.split(/\s+/);
-         return _loc3_;
-      }
-      
-      private function measureColumnsAndRows() : void
-      {
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc13_:ConstraintColumn = null;
-         var _loc14_:ConstraintRow = null;
-         var _loc15_:Number = NaN;
-         var _loc16_:Number = NaN;
-         var _loc17_:Number = NaN;
-         var _loc18_:Number = NaN;
-         var _loc19_:ContentColumnChild = null;
-         var _loc20_:ContentRowChild = null;
-         var _loc1_:Array = IConstraintLayout(target).constraintColumns;
-         var _loc2_:Array = IConstraintLayout(target).constraintRows;
-         if(!_loc2_.length > 0 && !_loc1_.length > 0)
-         {
-            constraintRegionsInUse = false;
+    import flash.display.*;
+    import flash.geom.*;
+    import flash.utils.*;
+    import mx.containers.errors.*;
+    import mx.core.*;
+    import mx.events.*;
+
+    public class CanvasLayout extends Layout
+    {
+        private var colSpanChildren:Array;
+        private var constraintRegionsInUse:Boolean = false;
+        private var rowSpanChildren:Array;
+        private var constraintCache:Dictionary;
+        private var _contentArea:Rectangle;
+        static const VERSION:String = "3.6.0.21751";
+        private static var r:Rectangle = new Rectangle();
+
+        public function CanvasLayout()
+        {
+            colSpanChildren = [];
+            rowSpanChildren = [];
+            constraintCache = new Dictionary(true);
             return;
-         }
-         constraintRegionsInUse = true;
-         var _loc5_:Number = 0;
-         var _loc6_:Number = 0;
-         var _loc7_:EdgeMetrics = Container(target).viewMetrics;
-         var _loc8_:Number = Container(target).width - _loc7_.left - _loc7_.right;
-         var _loc9_:Number = Container(target).height - _loc7_.top - _loc7_.bottom;
-         var _loc10_:Array = [];
-         var _loc11_:Array = [];
-         var _loc12_:Array = [];
-         if(_loc1_.length > 0)
-         {
-            _loc3_ = 0;
-            while(_loc3_ < _loc1_.length)
+        }// end function
+
+        private function parseConstraints(param1:IUIComponent = null) : ChildConstraintInfo
+        {
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = NaN;
+            var _loc_7:* = NaN;
+            var _loc_8:* = NaN;
+            var _loc_9:* = NaN;
+            var _loc_10:* = null;
+            var _loc_11:* = null;
+            var _loc_12:* = null;
+            var _loc_13:* = null;
+            var _loc_14:* = null;
+            var _loc_15:* = null;
+            var _loc_16:* = null;
+            var _loc_17:* = null;
+            var _loc_18:* = 0;
+            var _loc_30:* = null;
+            var _loc_31:* = false;
+            var _loc_32:* = null;
+            var _loc_2:* = getLayoutConstraints(param1);
+            if (!_loc_2)
             {
-               _loc13_ = _loc1_[_loc3_];
-               if(!isNaN(_loc13_.percentWidth))
-               {
-                  _loc11_.push(_loc13_);
-               }
-               else if(!isNaN(_loc13_.width) && !_loc13_.mx_internal::contentSize)
-               {
-                  _loc10_.push(_loc13_);
-               }
-               else
-               {
-                  _loc12_.push(_loc13_);
-                  _loc13_.mx_internal::contentSize = true;
-               }
-               _loc3_++;
+                return null;
             }
-            _loc3_ = 0;
-            while(_loc3_ < _loc10_.length)
+            while (true)
             {
-               _loc13_ = ConstraintColumn(_loc10_[_loc3_]);
-               _loc8_ = _loc8_ - _loc13_.width;
-               _loc3_++;
+                
+                _loc_17 = parseConstraintExp(_loc_2.left);
+                if (!_loc_17)
+                {
+                    _loc_3 = NaN;
+                }
+                else if (_loc_17.length == 1)
+                {
+                    _loc_3 = Number(_loc_17[0]);
+                }
+                else
+                {
+                    _loc_10 = _loc_17[0];
+                    _loc_3 = _loc_17[1];
+                }
+                _loc_17 = parseConstraintExp(_loc_2.right);
+                if (!_loc_17)
+                {
+                    _loc_4 = NaN;
+                }
+                else if (_loc_17.length == 1)
+                {
+                    _loc_4 = Number(_loc_17[0]);
+                }
+                else
+                {
+                    _loc_11 = _loc_17[0];
+                    _loc_4 = _loc_17[1];
+                }
+                _loc_17 = parseConstraintExp(_loc_2.horizontalCenter);
+                if (!_loc_17)
+                {
+                    _loc_5 = NaN;
+                }
+                else if (_loc_17.length == 1)
+                {
+                    _loc_5 = Number(_loc_17[0]);
+                }
+                else
+                {
+                    _loc_12 = _loc_17[0];
+                    _loc_5 = _loc_17[1];
+                }
+                _loc_17 = parseConstraintExp(_loc_2.top);
+                if (!_loc_17)
+                {
+                    _loc_6 = NaN;
+                }
+                else if (_loc_17.length == 1)
+                {
+                    _loc_6 = Number(_loc_17[0]);
+                }
+                else
+                {
+                    _loc_13 = _loc_17[0];
+                    _loc_6 = _loc_17[1];
+                }
+                _loc_17 = parseConstraintExp(_loc_2.bottom);
+                if (!_loc_17)
+                {
+                    _loc_7 = NaN;
+                }
+                else if (_loc_17.length == 1)
+                {
+                    _loc_7 = Number(_loc_17[0]);
+                }
+                else
+                {
+                    _loc_14 = _loc_17[0];
+                    _loc_7 = _loc_17[1];
+                }
+                _loc_17 = parseConstraintExp(_loc_2.verticalCenter);
+                if (!_loc_17)
+                {
+                    _loc_8 = NaN;
+                }
+                else if (_loc_17.length == 1)
+                {
+                    _loc_8 = Number(_loc_17[0]);
+                }
+                else
+                {
+                    _loc_15 = _loc_17[0];
+                    _loc_8 = _loc_17[1];
+                }
+                _loc_17 = parseConstraintExp(_loc_2.baseline);
+                if (!_loc_17)
+                {
+                    _loc_9 = NaN;
+                }
+                else if (_loc_17.length == 1)
+                {
+                    _loc_9 = Number(_loc_17[0]);
+                }
+                else
+                {
+                    _loc_16 = _loc_17[0];
+                    _loc_9 = _loc_17[1];
+                }
+                break;
             }
-            if(_loc12_.length > 0)
+            var _loc_19:* = new ContentColumnChild();
+            var _loc_20:* = false;
+            var _loc_21:* = 0;
+            var _loc_22:* = 0;
+            var _loc_23:* = 0;
+            _loc_18 = 0;
+            while (_loc_18 < IConstraintLayout(target).constraintColumns.length)
             {
-               if(colSpanChildren.length > 0)
-               {
-                  colSpanChildren.sortOn("span");
-                  _loc4_ = 0;
-                  while(_loc4_ < colSpanChildren.length)
-                  {
-                     _loc19_ = colSpanChildren[_loc4_];
-                     if(_loc19_.span == 1)
-                     {
-                        if(_loc19_.hcCol)
-                        {
-                           _loc13_ = ConstraintColumn(_loc1_[_loc1_.indexOf(_loc19_.hcCol)]);
-                        }
-                        else if(_loc19_.leftCol)
-                        {
-                           _loc13_ = ConstraintColumn(_loc1_[_loc1_.indexOf(_loc19_.leftCol)]);
-                        }
-                        else if(_loc19_.rightCol)
-                        {
-                           _loc13_ = ConstraintColumn(_loc1_[_loc1_.indexOf(_loc19_.rightCol)]);
-                        }
-                        _loc16_ = _loc19_.child.getExplicitOrMeasuredWidth();
-                        if(_loc19_.hcOffset)
-                        {
-                           _loc16_ = _loc16_ + _loc19_.hcOffset;
-                        }
-                        else
-                        {
-                           if(_loc19_.leftOffset)
-                           {
-                              _loc16_ = _loc16_ + _loc19_.leftOffset;
-                           }
-                           if(_loc19_.rightOffset)
-                           {
-                              _loc16_ = _loc16_ + _loc19_.rightOffset;
-                           }
-                        }
-                        if(!isNaN(_loc13_.width))
-                        {
-                           _loc16_ = Math.max(_loc13_.width,_loc16_);
-                        }
-                        _loc16_ = bound(_loc16_,_loc13_.minWidth,_loc13_.maxWidth);
-                        _loc13_.setActualWidth(_loc16_);
-                        _loc8_ = _loc8_ - _loc13_.width;
-                     }
-                     else
-                     {
-                        _loc8_ = shareColumnSpace(_loc19_,_loc8_);
-                     }
-                     _loc4_++;
-                  }
-                  colSpanChildren = [];
-               }
-               _loc3_ = 0;
-               while(_loc3_ < _loc12_.length)
-               {
-                  _loc13_ = _loc12_[_loc3_];
-                  if(!_loc13_.width)
-                  {
-                     _loc16_ = bound(0,_loc13_.minWidth,0);
-                     _loc13_.setActualWidth(_loc16_);
-                  }
-                  _loc3_++;
-               }
+                
+                _loc_30 = IConstraintLayout(target).constraintColumns[_loc_18];
+                if (mx_internal::contentSize)
+                {
+                    if (_loc_30.id == _loc_10)
+                    {
+                        _loc_19.leftCol = _loc_30;
+                        _loc_19.leftOffset = _loc_3;
+                        var _loc_33:* = _loc_18;
+                        _loc_21 = _loc_18;
+                        _loc_19.left = _loc_33;
+                        _loc_20 = true;
+                    }
+                    if (_loc_30.id == _loc_11)
+                    {
+                        _loc_19.rightCol = _loc_30;
+                        _loc_19.rightOffset = _loc_4;
+                        _loc_22 = _loc_18 + 1;
+                        _loc_19.right = _loc_18 + 1;
+                        _loc_20 = true;
+                    }
+                    if (_loc_30.id == _loc_12)
+                    {
+                        _loc_19.hcCol = _loc_30;
+                        _loc_19.hcOffset = _loc_5;
+                        _loc_23 = _loc_18 + 1;
+                        _loc_19.hc = _loc_18 + 1;
+                        _loc_20 = true;
+                    }
+                }
+                _loc_18++;
             }
-            _loc18_ = _loc8_;
-            _loc3_ = 0;
-            while(_loc3_ < _loc11_.length)
+            if (_loc_20)
             {
-               _loc13_ = ConstraintColumn(_loc11_[_loc3_]);
-               if(_loc18_ <= 0)
-               {
-                  _loc16_ = 0;
-               }
-               else
-               {
-                  _loc16_ = Math.round(_loc18_ * _loc13_.percentWidth / 100);
-               }
-               _loc16_ = bound(_loc16_,_loc13_.minWidth,_loc13_.maxWidth);
-               _loc13_.setActualWidth(_loc16_);
-               _loc8_ = _loc8_ - _loc16_;
-               _loc3_++;
+                _loc_19.child = param1;
+                if (_loc_19.leftCol && !_loc_19.rightCol || _loc_19.rightCol && !_loc_19.leftCol || _loc_19.hcCol)
+                {
+                    _loc_19.span = 1;
+                }
+                else
+                {
+                    _loc_19.span = _loc_22 - _loc_21;
+                }
+                _loc_31 = false;
+                _loc_18 = 0;
+                while (_loc_18 < colSpanChildren.length)
+                {
+                    
+                    if (_loc_19.child == colSpanChildren[_loc_18].child)
+                    {
+                        _loc_31 = true;
+                        break;
+                    }
+                    _loc_18++;
+                }
+                if (!_loc_31)
+                {
+                    colSpanChildren.push(_loc_19);
+                }
             }
-            _loc3_ = 0;
-            while(_loc3_ < _loc1_.length)
+            _loc_20 = false;
+            var _loc_24:* = new ContentRowChild();
+            var _loc_25:* = 0;
+            var _loc_26:* = 0;
+            var _loc_27:* = 0;
+            var _loc_28:* = 0;
+            _loc_18 = 0;
+            while (_loc_18 < IConstraintLayout(target).constraintRows.length)
             {
-               _loc13_ = ConstraintColumn(_loc1_[_loc3_]);
-               _loc13_.x = _loc5_;
-               _loc5_ = _loc5_ + _loc13_.width;
-               _loc3_++;
+                
+                _loc_32 = IConstraintLayout(target).constraintRows[_loc_18];
+                if (mx_internal::contentSize)
+                {
+                    if (_loc_32.id == _loc_13)
+                    {
+                        _loc_24.topRow = _loc_32;
+                        _loc_24.topOffset = _loc_6;
+                        var _loc_33:* = _loc_18;
+                        _loc_25 = _loc_18;
+                        _loc_24.top = _loc_33;
+                        _loc_20 = true;
+                    }
+                    if (_loc_32.id == _loc_14)
+                    {
+                        _loc_24.bottomRow = _loc_32;
+                        _loc_24.bottomOffset = _loc_7;
+                        _loc_26 = _loc_18 + 1;
+                        _loc_24.bottom = _loc_18 + 1;
+                        _loc_20 = true;
+                    }
+                    if (_loc_32.id == _loc_15)
+                    {
+                        _loc_24.vcRow = _loc_32;
+                        _loc_24.vcOffset = _loc_8;
+                        _loc_27 = _loc_18 + 1;
+                        _loc_24.vc = _loc_18 + 1;
+                        _loc_20 = true;
+                    }
+                    if (_loc_32.id == _loc_16)
+                    {
+                        _loc_24.baselineRow = _loc_32;
+                        _loc_24.baselineOffset = _loc_9;
+                        _loc_28 = _loc_18 + 1;
+                        _loc_24.baseline = _loc_18 + 1;
+                        _loc_20 = true;
+                    }
+                }
+                _loc_18++;
             }
-         }
-         _loc10_ = [];
-         _loc11_ = [];
-         _loc12_ = [];
-         if(_loc2_.length > 0)
-         {
-            _loc3_ = 0;
-            while(_loc3_ < _loc2_.length)
+            if (_loc_20)
             {
-               _loc14_ = _loc2_[_loc3_];
-               if(!isNaN(_loc14_.percentHeight))
-               {
-                  _loc11_.push(_loc14_);
-               }
-               else if(!isNaN(_loc14_.height) && !_loc14_.mx_internal::contentSize)
-               {
-                  _loc10_.push(_loc14_);
-               }
-               else
-               {
-                  _loc12_.push(_loc14_);
-                  _loc14_.mx_internal::contentSize = true;
-               }
-               _loc3_++;
+                _loc_24.child = param1;
+                if (_loc_24.topRow && !_loc_24.bottomRow || _loc_24.bottomRow && !_loc_24.topRow || _loc_24.vcRow || _loc_24.baselineRow)
+                {
+                    _loc_24.span = 1;
+                }
+                else
+                {
+                    _loc_24.span = _loc_26 - _loc_25;
+                }
+                _loc_31 = false;
+                _loc_18 = 0;
+                while (_loc_18 < rowSpanChildren.length)
+                {
+                    
+                    if (_loc_24.child == rowSpanChildren[_loc_18].child)
+                    {
+                        _loc_31 = true;
+                        break;
+                    }
+                    _loc_18++;
+                }
+                if (!_loc_31)
+                {
+                    rowSpanChildren.push(_loc_24);
+                }
             }
-            _loc3_ = 0;
-            while(_loc3_ < _loc10_.length)
+            var _loc_29:* = new ChildConstraintInfo(_loc_3, _loc_4, _loc_5, _loc_6, _loc_7, _loc_8, _loc_9, _loc_10, _loc_11, _loc_12, _loc_13, _loc_14, _loc_15, _loc_16);
+            constraintCache[param1] = _loc_29;
+            return _loc_29;
+        }// end function
+
+        private function bound(param1:Number, param2:Number, param3:Number) : Number
+        {
+            if (param1 < param2)
             {
-               _loc14_ = ConstraintRow(_loc10_[_loc3_]);
-               _loc9_ = _loc9_ - _loc14_.height;
-               _loc3_++;
+                param1 = param2;
             }
-            if(_loc12_.length > 0)
+            else if (param1 > param3)
             {
-               if(rowSpanChildren.length > 0)
-               {
-                  rowSpanChildren.sortOn("span");
-                  _loc4_ = 0;
-                  while(_loc4_ < rowSpanChildren.length)
-                  {
-                     _loc20_ = rowSpanChildren[_loc4_];
-                     if(_loc20_.span == 1)
-                     {
-                        if(_loc20_.vcRow)
-                        {
-                           _loc14_ = ConstraintRow(_loc2_[_loc2_.indexOf(_loc20_.vcRow)]);
-                        }
-                        else if(_loc20_.baselineRow)
-                        {
-                           _loc14_ = ConstraintRow(_loc2_[_loc2_.indexOf(_loc20_.baselineRow)]);
-                        }
-                        else if(_loc20_.topRow)
-                        {
-                           _loc14_ = ConstraintRow(_loc2_[_loc2_.indexOf(_loc20_.topRow)]);
-                        }
-                        else if(_loc20_.bottomRow)
-                        {
-                           _loc14_ = ConstraintRow(_loc2_[_loc2_.indexOf(_loc20_.bottomRow)]);
-                        }
-                        _loc17_ = _loc20_.child.getExplicitOrMeasuredHeight();
-                        if(_loc20_.baselineOffset)
-                        {
-                           _loc17_ = _loc17_ + _loc20_.baselineOffset;
-                        }
-                        else if(_loc20_.vcOffset)
-                        {
-                           _loc17_ = _loc17_ + _loc20_.vcOffset;
-                        }
-                        else
-                        {
-                           if(_loc20_.topOffset)
-                           {
-                              _loc17_ = _loc17_ + _loc20_.topOffset;
-                           }
-                           if(_loc20_.bottomOffset)
-                           {
-                              _loc17_ = _loc17_ + _loc20_.bottomOffset;
-                           }
-                        }
-                        if(!isNaN(_loc14_.height))
-                        {
-                           _loc17_ = Math.max(_loc14_.height,_loc17_);
-                        }
-                        _loc17_ = bound(_loc17_,_loc14_.minHeight,_loc14_.maxHeight);
-                        _loc14_.setActualHeight(_loc17_);
-                        _loc9_ = _loc9_ - _loc14_.height;
-                     }
-                     else
-                     {
-                        _loc9_ = shareRowSpace(_loc20_,_loc9_);
-                     }
-                     _loc4_++;
-                  }
-                  rowSpanChildren = [];
-               }
-               _loc3_ = 0;
-               while(_loc3_ < _loc12_.length)
-               {
-                  _loc14_ = ConstraintRow(_loc12_[_loc3_]);
-                  if(!_loc14_.height)
-                  {
-                     _loc17_ = bound(0,_loc14_.minHeight,0);
-                     _loc14_.setActualHeight(_loc17_);
-                  }
-                  _loc3_++;
-               }
-            }
-            _loc18_ = _loc9_;
-            _loc3_ = 0;
-            while(_loc3_ < _loc11_.length)
-            {
-               _loc14_ = ConstraintRow(_loc11_[_loc3_]);
-               if(_loc18_ <= 0)
-               {
-                  _loc17_ = 0;
-               }
-               else
-               {
-                  _loc17_ = Math.round(_loc18_ * _loc14_.percentHeight / 100);
-               }
-               _loc17_ = bound(_loc17_,_loc14_.minHeight,_loc14_.maxHeight);
-               _loc14_.setActualHeight(_loc17_);
-               _loc9_ = _loc9_ - _loc17_;
-               _loc3_++;
-            }
-            _loc3_ = 0;
-            while(_loc3_ < _loc2_.length)
-            {
-               _loc14_ = _loc2_[_loc3_];
-               _loc14_.y = _loc6_;
-               _loc6_ = _loc6_ + _loc14_.height;
-               _loc3_++;
-            }
-         }
-      }
-      
-      private function child_moveHandler(param1:MoveEvent) : void
-      {
-         if(param1.target is IUIComponent)
-         {
-            if(!IUIComponent(param1.target).includeInLayout)
-            {
-               return;
-            }
-         }
-         var _loc2_:Container = super.target;
-         if(_loc2_)
-         {
-            _loc2_.invalidateSize();
-            _loc2_.invalidateDisplayList();
-            _contentArea = null;
-         }
-      }
-      
-      private function applyAnchorStylesDuringMeasure(param1:IUIComponent, param2:Rectangle) : void
-      {
-         var _loc13_:int = 0;
-         var _loc3_:IConstraintClient = param1 as IConstraintClient;
-         if(!_loc3_)
-         {
-            return;
-         }
-         var _loc4_:ChildConstraintInfo = constraintCache[_loc3_];
-         if(!_loc4_)
-         {
-            _loc4_ = parseConstraints(param1);
-         }
-         var _loc5_:Number = _loc4_.left;
-         var _loc6_:Number = _loc4_.right;
-         var _loc7_:Number = _loc4_.hc;
-         var _loc8_:Number = _loc4_.top;
-         var _loc9_:Number = _loc4_.bottom;
-         var _loc10_:Number = _loc4_.vc;
-         var _loc11_:Array = IConstraintLayout(target).constraintColumns;
-         var _loc12_:Array = IConstraintLayout(target).constraintRows;
-         var _loc14_:Number = 0;
-         if(!_loc11_.length > 0)
-         {
-            if(!isNaN(_loc7_))
-            {
-               param2.x = Math.round((target.width - param1.width) / 2 + _loc7_);
-            }
-            else if(!isNaN(_loc5_) && !isNaN(_loc6_))
-            {
-               param2.x = _loc5_;
-               param2.width = param2.width + _loc6_;
-            }
-            else if(!isNaN(_loc5_))
-            {
-               param2.x = _loc5_;
-            }
-            else if(!isNaN(_loc6_))
-            {
-               param2.x = 0;
-               param2.width = param2.width + _loc6_;
-            }
-         }
-         else
-         {
-            param2.x = 0;
-            _loc13_ = 0;
-            while(_loc13_ < _loc11_.length)
-            {
-               _loc14_ = _loc14_ + ConstraintColumn(_loc11_[_loc13_]).width;
-               _loc13_++;
-            }
-            param2.width = _loc14_;
-         }
-         if(!_loc12_.length > 0)
-         {
-            if(!isNaN(_loc10_))
-            {
-               param2.y = Math.round((target.height - param1.height) / 2 + _loc10_);
-            }
-            else if(!isNaN(_loc8_) && !isNaN(_loc9_))
-            {
-               param2.y = _loc8_;
-               param2.height = param2.height + _loc9_;
-            }
-            else if(!isNaN(_loc8_))
-            {
-               param2.y = _loc8_;
-            }
-            else if(!isNaN(_loc9_))
-            {
-               param2.y = 0;
-               param2.height = param2.height + _loc9_;
-            }
-         }
-         else
-         {
-            _loc14_ = 0;
-            param2.y = 0;
-            _loc13_ = 0;
-            while(_loc13_ < _loc12_.length)
-            {
-               _loc14_ = _loc14_ + ConstraintRow(_loc12_[_loc13_]).height;
-               _loc13_++;
-            }
-            param2.height = _loc14_;
-         }
-      }
-      
-      override public function measure() : void
-      {
-         var _loc1_:Container = null;
-         var _loc5_:EdgeMetrics = null;
-         var _loc6_:Rectangle = null;
-         var _loc7_:IUIComponent = null;
-         var _loc8_:ConstraintColumn = null;
-         var _loc9_:ConstraintRow = null;
-         _loc1_ = super.target;
-         var _loc2_:Number = 0;
-         var _loc3_:Number = 0;
-         var _loc4_:Number = 0;
-         _loc5_ = _loc1_.viewMetrics;
-         _loc4_ = 0;
-         while(_loc4_ < _loc1_.numChildren)
-         {
-            _loc7_ = _loc1_.getChildAt(_loc4_) as IUIComponent;
-            parseConstraints(_loc7_);
-            _loc4_++;
-         }
-         _loc4_ = 0;
-         while(_loc4_ < IConstraintLayout(_loc1_).constraintColumns.length)
-         {
-            _loc8_ = IConstraintLayout(_loc1_).constraintColumns[_loc4_];
-            if(_loc8_.mx_internal::contentSize)
-            {
-               _loc8_.mx_internal::_width = NaN;
-            }
-            _loc4_++;
-         }
-         _loc4_ = 0;
-         while(_loc4_ < IConstraintLayout(_loc1_).constraintRows.length)
-         {
-            _loc9_ = IConstraintLayout(_loc1_).constraintRows[_loc4_];
-            if(_loc9_.mx_internal::contentSize)
-            {
-               _loc9_.mx_internal::_height = NaN;
-            }
-            _loc4_++;
-         }
-         measureColumnsAndRows();
-         _contentArea = null;
-         _loc6_ = measureContentArea();
-         _loc1_.measuredWidth = _loc6_.width + _loc5_.left + _loc5_.right;
-         _loc1_.measuredHeight = _loc6_.height + _loc5_.top + _loc5_.bottom;
-      }
-      
-      private function target_childRemoveHandler(param1:ChildExistenceChangedEvent) : void
-      {
-         DisplayObject(param1.relatedObject).removeEventListener(MoveEvent.MOVE,child_moveHandler);
-         delete constraintCache[param1.relatedObject];
-      }
-      
-      override public function set target(param1:Container) : void
-      {
-         var _loc3_:int = 0;
-         var _loc4_:int = 0;
-         var _loc2_:Container = super.target;
-         if(param1 != _loc2_)
-         {
-            if(_loc2_)
-            {
-               _loc2_.removeEventListener(ChildExistenceChangedEvent.CHILD_ADD,target_childAddHandler);
-               _loc2_.removeEventListener(ChildExistenceChangedEvent.CHILD_REMOVE,target_childRemoveHandler);
-               _loc4_ = _loc2_.numChildren;
-               _loc3_ = 0;
-               while(_loc3_ < _loc4_)
-               {
-                  DisplayObject(_loc2_.getChildAt(_loc3_)).removeEventListener(MoveEvent.MOVE,child_moveHandler);
-                  _loc3_++;
-               }
-            }
-            if(param1)
-            {
-               param1.addEventListener(ChildExistenceChangedEvent.CHILD_ADD,target_childAddHandler);
-               param1.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE,target_childRemoveHandler);
-               _loc4_ = param1.numChildren;
-               _loc3_ = 0;
-               while(_loc3_ < _loc4_)
-               {
-                  DisplayObject(param1.getChildAt(_loc3_)).addEventListener(MoveEvent.MOVE,child_moveHandler);
-                  _loc3_++;
-               }
-            }
-            super.target = param1;
-         }
-      }
-      
-      private function measureContentArea() : Rectangle
-      {
-         var _loc1_:int = 0;
-         var _loc3_:Array = null;
-         var _loc4_:Array = null;
-         var _loc5_:IUIComponent = null;
-         var _loc6_:LayoutConstraints = null;
-         var _loc7_:Number = NaN;
-         var _loc8_:Number = NaN;
-         var _loc9_:Number = NaN;
-         var _loc10_:Number = NaN;
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         if(_contentArea)
-         {
-            return _contentArea;
-         }
-         _contentArea = new Rectangle();
-         var _loc2_:int = target.numChildren;
-         if(_loc2_ == 0 && Boolean(constraintRegionsInUse))
-         {
-            _loc3_ = IConstraintLayout(target).constraintColumns;
-            _loc4_ = IConstraintLayout(target).constraintRows;
-            if(_loc3_.length > 0)
-            {
-               _contentArea.right = _loc3_[_loc3_.length - 1].x + _loc3_[_loc3_.length - 1].width;
+                param1 = param3;
             }
             else
             {
-               _contentArea.right = 0;
+                param1 = Math.floor(param1);
             }
-            if(_loc4_.length > 0)
+            return param1;
+        }// end function
+
+        private function shareRowSpace(param1:ContentRowChild, param2:Number) : Number
+        {
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            var _loc_13:* = NaN;
+            var _loc_3:* = param1.topRow;
+            var _loc_4:* = param1.bottomRow;
+            var _loc_5:* = param1.child;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_8:* = param1.topOffset ? (param1.topOffset) : (0);
+            var _loc_9:* = param1.bottomOffset ? (param1.bottomOffset) : (0);
+            if (_loc_3 && _loc_3.height)
             {
-               _contentArea.bottom = _loc4_[_loc4_.length - 1].y + _loc4_[_loc4_.length - 1].height;
+                _loc_6 = _loc_6 + _loc_3.height;
             }
-            else
+            else if (_loc_4 && !_loc_3)
             {
-               _contentArea.bottom = 0;
+                _loc_3 = IConstraintLayout(target).constraintRows[param1.bottom - 2];
+                if (_loc_3 && _loc_3.height)
+                {
+                    _loc_6 = _loc_6 + _loc_3.height;
+                }
             }
-         }
-         _loc1_ = 0;
-         while(_loc1_ < _loc2_)
-         {
-            _loc5_ = target.getChildAt(_loc1_) as IUIComponent;
-            _loc6_ = getLayoutConstraints(_loc5_);
-            if(_loc5_.includeInLayout)
+            if (_loc_4 && _loc_4.height)
             {
-               _loc7_ = _loc5_.x;
-               _loc8_ = _loc5_.y;
-               _loc9_ = _loc5_.getExplicitOrMeasuredWidth();
-               _loc10_ = _loc5_.getExplicitOrMeasuredHeight();
-               if(FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
-               {
-                  if(!isNaN(_loc5_.percentWidth) || Boolean(_loc6_ && !isNaN(_loc6_.left)) && Boolean(!isNaN(_loc6_.right)))
-                  {
-                     _loc9_ = _loc5_.minWidth;
-                  }
-               }
-               else if(!isNaN(_loc5_.percentWidth) || Boolean(_loc6_ && !isNaN(_loc6_.left) && !isNaN(_loc6_.right)) && Boolean(isNaN(_loc5_.explicitWidth)))
-               {
-                  _loc9_ = _loc5_.minWidth;
-               }
-               if(FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
-               {
-                  if(!isNaN(_loc5_.percentHeight) || Boolean(_loc6_ && !isNaN(_loc6_.top)) && Boolean(!isNaN(_loc6_.bottom)))
-                  {
-                     _loc10_ = _loc5_.minHeight;
-                  }
-               }
-               else if(!isNaN(_loc5_.percentHeight) || Boolean(_loc6_ && !isNaN(_loc6_.top) && !isNaN(_loc6_.bottom)) && Boolean(isNaN(_loc5_.explicitHeight)))
-               {
-                  _loc10_ = _loc5_.minHeight;
-               }
-               r.x = _loc7_;
-               r.y = _loc8_;
-               r.width = _loc9_;
-               r.height = _loc10_;
-               applyAnchorStylesDuringMeasure(_loc5_,r);
-               _loc7_ = r.x;
-               _loc8_ = r.y;
-               _loc9_ = r.width;
-               _loc10_ = r.height;
-               if(isNaN(_loc7_))
-               {
-                  _loc7_ = _loc5_.x;
-               }
-               if(isNaN(_loc8_))
-               {
-                  _loc8_ = _loc5_.y;
-               }
-               _loc11_ = _loc7_;
-               _loc12_ = _loc8_;
-               if(isNaN(_loc9_))
-               {
-                  _loc9_ = _loc5_.width;
-               }
-               if(isNaN(_loc10_))
-               {
-                  _loc10_ = _loc5_.height;
-               }
-               _loc11_ = _loc11_ + _loc9_;
-               _loc12_ = _loc12_ + _loc10_;
-               _contentArea.right = Math.max(_contentArea.right,_loc11_);
-               _contentArea.bottom = Math.max(_contentArea.bottom,_loc12_);
+                _loc_7 = _loc_7 + _loc_4.height;
             }
-            _loc1_++;
-         }
-         return _contentArea;
-      }
-      
-      private function shareColumnSpace(param1:ContentColumnChild, param2:Number) : Number
-      {
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         var _loc13_:Number = NaN;
-         var _loc3_:ConstraintColumn = param1.leftCol;
-         var _loc4_:ConstraintColumn = param1.rightCol;
-         var _loc5_:IUIComponent = param1.child;
-         var _loc6_:Number = 0;
-         var _loc7_:Number = 0;
-         var _loc8_:Number = !!param1.rightOffset?Number(param1.rightOffset):Number(0);
-         var _loc9_:Number = !!param1.leftOffset?Number(param1.leftOffset):Number(0);
-         if(Boolean(_loc3_) && Boolean(_loc3_.width))
-         {
-            _loc6_ = _loc6_ + _loc3_.width;
-         }
-         else if(Boolean(_loc4_) && !_loc3_)
-         {
-            _loc3_ = IConstraintLayout(target).constraintColumns[param1.right - 2];
-            if(Boolean(_loc3_) && Boolean(_loc3_.width))
+            else if (_loc_3 && !_loc_4)
             {
-               _loc6_ = _loc6_ + _loc3_.width;
+                _loc_4 = IConstraintLayout(target).constraintRows[(param1.top + 1)];
+                if (_loc_4 && _loc_4.height)
+                {
+                    _loc_7 = _loc_7 + _loc_4.height;
+                }
             }
-         }
-         if(Boolean(_loc4_) && Boolean(_loc4_.width))
-         {
-            _loc7_ = _loc7_ + _loc4_.width;
-         }
-         else if(Boolean(_loc3_) && !_loc4_)
-         {
-            _loc4_ = IConstraintLayout(target).constraintColumns[param1.left + 1];
-            if(Boolean(_loc4_) && Boolean(_loc4_.width))
+            if (_loc_3 && isNaN(_loc_3.height))
             {
-               _loc7_ = _loc7_ + _loc4_.width;
+                _loc_3.setActualHeight(Math.max(0, _loc_3.maxHeight));
             }
-         }
-         if(Boolean(_loc3_) && Boolean(isNaN(_loc3_.width)))
-         {
-            _loc3_.setActualWidth(Math.max(0,_loc3_.maxWidth));
-         }
-         if(Boolean(_loc4_) && Boolean(isNaN(_loc4_.width)))
-         {
-            _loc4_.setActualWidth(Math.max(0,_loc4_.maxWidth));
-         }
-         var _loc10_:Number = _loc5_.getExplicitOrMeasuredWidth();
-         if(_loc10_)
-         {
-            if(!param1.leftCol)
+            if (_loc_4 && isNaN(_loc_4.height))
             {
-               if(_loc10_ > _loc6_)
-               {
-                  _loc12_ = _loc10_ - _loc6_ + _loc8_;
-               }
-               else
-               {
-                  _loc12_ = _loc10_ + _loc8_;
-               }
+                _loc_4.setActualHeight(Math.max(0, _loc_4.height));
             }
-            if(!param1.rightCol)
+            var _loc_10:* = _loc_5.getExplicitOrMeasuredHeight();
+            if (_loc_5.getExplicitOrMeasuredHeight())
             {
-               if(_loc10_ > _loc7_)
-               {
-                  _loc11_ = _loc10_ - _loc7_ + _loc9_;
-               }
-               else
-               {
-                  _loc11_ = _loc10_ + _loc9_;
-               }
+                if (!param1.topRow)
+                {
+                    if (_loc_10 > _loc_6)
+                    {
+                        _loc_12 = _loc_10 - _loc_6 + _loc_9;
+                    }
+                    else
+                    {
+                        _loc_12 = _loc_10 + _loc_9;
+                    }
+                }
+                if (!param1.bottomRow)
+                {
+                    if (_loc_10 > _loc_7)
+                    {
+                        _loc_11 = _loc_10 - _loc_7 + _loc_8;
+                    }
+                    else
+                    {
+                        _loc_11 = _loc_10 + _loc_8;
+                    }
+                }
+                if (param1.topRow && param1.bottomRow)
+                {
+                    _loc_13 = _loc_10 / Number(param1.span);
+                    if (_loc_13 + _loc_8 < _loc_6)
+                    {
+                        _loc_11 = _loc_6;
+                        _loc_12 = _loc_10 - (_loc_6 - _loc_8) + _loc_9;
+                    }
+                    else
+                    {
+                        _loc_11 = _loc_13 + _loc_8;
+                    }
+                    if (_loc_13 + _loc_9 < _loc_7)
+                    {
+                        _loc_12 = _loc_7;
+                        _loc_11 = _loc_10 - (_loc_7 - _loc_9) + _loc_8;
+                    }
+                    else
+                    {
+                        _loc_12 = _loc_13 + _loc_9;
+                    }
+                }
+                _loc_12 = bound(_loc_12, _loc_4.minHeight, _loc_4.maxHeight);
+                _loc_4.setActualHeight(_loc_12);
+                param2 = param2 - _loc_12;
+                _loc_11 = bound(_loc_11, _loc_3.minHeight, _loc_3.maxHeight);
+                _loc_3.setActualHeight(_loc_11);
+                param2 = param2 - _loc_11;
             }
-            if(Boolean(param1.leftCol) && Boolean(param1.rightCol))
+            return param2;
+        }// end function
+
+        private function parseConstraintExp(param1:String) : Array
+        {
+            if (!param1)
             {
-               _loc13_ = _loc10_ / Number(param1.span);
-               if(_loc13_ + _loc9_ < _loc6_)
-               {
-                  _loc11_ = _loc6_;
-                  _loc12_ = _loc10_ - (_loc6_ - _loc9_) + _loc8_;
-               }
-               else
-               {
-                  _loc11_ = _loc13_ + _loc9_;
-               }
-               if(_loc13_ + _loc8_ < _loc7_)
-               {
-                  _loc12_ = _loc7_;
-                  _loc11_ = _loc10_ - (_loc7_ - _loc8_) + _loc9_;
-               }
-               else
-               {
-                  _loc12_ = _loc13_ + _loc8_;
-               }
+                return null;
             }
-            _loc11_ = bound(_loc11_,_loc3_.minWidth,_loc3_.maxWidth);
-            _loc3_.setActualWidth(_loc11_);
-            param2 = param2 - _loc11_;
-            _loc12_ = bound(_loc12_,_loc4_.minWidth,_loc4_.maxWidth);
-            _loc4_.setActualWidth(_loc12_);
-            param2 = param2 - _loc12_;
-         }
-         return param2;
-      }
-      
-      private function getLayoutConstraints(param1:IUIComponent) : LayoutConstraints
-      {
-         var _loc2_:IConstraintClient = param1 as IConstraintClient;
-         if(!_loc2_)
-         {
-            return null;
-         }
-         var _loc3_:LayoutConstraints = new LayoutConstraints();
-         _loc3_.baseline = _loc2_.getConstraintValue("baseline");
-         _loc3_.bottom = _loc2_.getConstraintValue("bottom");
-         _loc3_.horizontalCenter = _loc2_.getConstraintValue("horizontalCenter");
-         _loc3_.left = _loc2_.getConstraintValue("left");
-         _loc3_.right = _loc2_.getConstraintValue("right");
-         _loc3_.top = _loc2_.getConstraintValue("top");
-         _loc3_.verticalCenter = _loc2_.getConstraintValue("verticalCenter");
-         return _loc3_;
-      }
-      
-      override public function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc3_:int = 0;
-         var _loc4_:IUIComponent = null;
-         var _loc10_:ConstraintColumn = null;
-         var _loc11_:ConstraintRow = null;
-         var _loc5_:Container = super.target;
-         var _loc6_:int = _loc5_.numChildren;
-         _loc5_.mx_internal::doingLayout = false;
-         var _loc7_:EdgeMetrics = _loc5_.viewMetrics;
-         _loc5_.mx_internal::doingLayout = true;
-         var _loc8_:Number = param1 - _loc7_.left - _loc7_.right;
-         var _loc9_:Number = param2 - _loc7_.top - _loc7_.bottom;
-         if(IConstraintLayout(_loc5_).constraintColumns.length > 0 || IConstraintLayout(_loc5_).constraintRows.length > 0)
-         {
+            var _loc_2:* = param1.replace(/:/g, " ");
+            var _loc_3:* = _loc_2.split(/\s+/);
+            return _loc_3;
+        }// end function
+
+        private function measureColumnsAndRows() : void
+        {
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_13:* = null;
+            var _loc_14:* = null;
+            var _loc_15:* = NaN;
+            var _loc_16:* = NaN;
+            var _loc_17:* = NaN;
+            var _loc_18:* = NaN;
+            var _loc_19:* = null;
+            var _loc_20:* = null;
+            var _loc_1:* = IConstraintLayout(target).constraintColumns;
+            var _loc_2:* = IConstraintLayout(target).constraintRows;
+            if (!_loc_2.length > 0 && !_loc_1.length > 0)
+            {
+                constraintRegionsInUse = false;
+                return;
+            }
             constraintRegionsInUse = true;
-         }
-         if(constraintRegionsInUse)
-         {
-            _loc3_ = 0;
-            while(_loc3_ < _loc6_)
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = Container(target).viewMetrics;
+            var _loc_8:* = Container(target).width - _loc_7.left - _loc_7.right;
+            var _loc_9:* = Container(target).height - _loc_7.top - _loc_7.bottom;
+            var _loc_10:* = [];
+            var _loc_11:* = [];
+            var _loc_12:* = [];
+            if (_loc_1.length > 0)
             {
-               _loc4_ = _loc5_.getChildAt(_loc3_) as IUIComponent;
-               parseConstraints(_loc4_);
-               _loc3_++;
+                _loc_3 = 0;
+                while (_loc_3 < _loc_1.length)
+                {
+                    
+                    _loc_13 = _loc_1[_loc_3];
+                    if (!isNaN(_loc_13.percentWidth))
+                    {
+                        _loc_11.push(_loc_13);
+                    }
+                    else if (!isNaN(_loc_13.width) && !mx_internal::contentSize)
+                    {
+                        _loc_10.push(_loc_13);
+                    }
+                    else
+                    {
+                        _loc_12.push(_loc_13);
+                        mx_internal::contentSize = true;
+                    }
+                    _loc_3++;
+                }
+                _loc_3 = 0;
+                while (_loc_3 < _loc_10.length)
+                {
+                    
+                    _loc_13 = ConstraintColumn(_loc_10[_loc_3]);
+                    _loc_8 = _loc_8 - _loc_13.width;
+                    _loc_3++;
+                }
+                if (_loc_12.length > 0)
+                {
+                    if (colSpanChildren.length > 0)
+                    {
+                        colSpanChildren.sortOn("span");
+                        _loc_4 = 0;
+                        while (_loc_4 < colSpanChildren.length)
+                        {
+                            
+                            _loc_19 = colSpanChildren[_loc_4];
+                            if (_loc_19.span == 1)
+                            {
+                                if (_loc_19.hcCol)
+                                {
+                                    _loc_13 = ConstraintColumn(_loc_1[_loc_1.indexOf(_loc_19.hcCol)]);
+                                }
+                                else if (_loc_19.leftCol)
+                                {
+                                    _loc_13 = ConstraintColumn(_loc_1[_loc_1.indexOf(_loc_19.leftCol)]);
+                                }
+                                else if (_loc_19.rightCol)
+                                {
+                                    _loc_13 = ConstraintColumn(_loc_1[_loc_1.indexOf(_loc_19.rightCol)]);
+                                }
+                                _loc_16 = _loc_19.child.getExplicitOrMeasuredWidth();
+                                if (_loc_19.hcOffset)
+                                {
+                                    _loc_16 = _loc_16 + _loc_19.hcOffset;
+                                }
+                                else
+                                {
+                                    if (_loc_19.leftOffset)
+                                    {
+                                        _loc_16 = _loc_16 + _loc_19.leftOffset;
+                                    }
+                                    if (_loc_19.rightOffset)
+                                    {
+                                        _loc_16 = _loc_16 + _loc_19.rightOffset;
+                                    }
+                                }
+                                if (!isNaN(_loc_13.width))
+                                {
+                                    _loc_16 = Math.max(_loc_13.width, _loc_16);
+                                }
+                                _loc_16 = bound(_loc_16, _loc_13.minWidth, _loc_13.maxWidth);
+                                _loc_13.setActualWidth(_loc_16);
+                                _loc_8 = _loc_8 - _loc_13.width;
+                            }
+                            else
+                            {
+                                _loc_8 = shareColumnSpace(_loc_19, _loc_8);
+                            }
+                            _loc_4++;
+                        }
+                        colSpanChildren = [];
+                    }
+                    _loc_3 = 0;
+                    while (_loc_3 < _loc_12.length)
+                    {
+                        
+                        _loc_13 = _loc_12[_loc_3];
+                        if (!_loc_13.width)
+                        {
+                            _loc_16 = bound(0, _loc_13.minWidth, 0);
+                            _loc_13.setActualWidth(_loc_16);
+                        }
+                        _loc_3++;
+                    }
+                }
+                _loc_18 = _loc_8;
+                _loc_3 = 0;
+                while (_loc_3 < _loc_11.length)
+                {
+                    
+                    _loc_13 = ConstraintColumn(_loc_11[_loc_3]);
+                    if (_loc_18 <= 0)
+                    {
+                        _loc_16 = 0;
+                    }
+                    else
+                    {
+                        _loc_16 = Math.round(_loc_18 * _loc_13.percentWidth / 100);
+                    }
+                    _loc_16 = bound(_loc_16, _loc_13.minWidth, _loc_13.maxWidth);
+                    _loc_13.setActualWidth(_loc_16);
+                    _loc_8 = _loc_8 - _loc_16;
+                    _loc_3++;
+                }
+                _loc_3 = 0;
+                while (_loc_3 < _loc_1.length)
+                {
+                    
+                    _loc_13 = ConstraintColumn(_loc_1[_loc_3]);
+                    _loc_13.x = _loc_5;
+                    _loc_5 = _loc_5 + _loc_13.width;
+                    _loc_3++;
+                }
             }
-            _loc3_ = 0;
-            while(_loc3_ < IConstraintLayout(_loc5_).constraintColumns.length)
+            _loc_10 = [];
+            _loc_11 = [];
+            _loc_12 = [];
+            if (_loc_2.length > 0)
             {
-               _loc10_ = IConstraintLayout(_loc5_).constraintColumns[_loc3_];
-               if(_loc10_.mx_internal::contentSize)
-               {
-                  _loc10_.mx_internal::_width = NaN;
-               }
-               _loc3_++;
+                _loc_3 = 0;
+                while (_loc_3 < _loc_2.length)
+                {
+                    
+                    _loc_14 = _loc_2[_loc_3];
+                    if (!isNaN(_loc_14.percentHeight))
+                    {
+                        _loc_11.push(_loc_14);
+                    }
+                    else if (!isNaN(_loc_14.height) && !mx_internal::contentSize)
+                    {
+                        _loc_10.push(_loc_14);
+                    }
+                    else
+                    {
+                        _loc_12.push(_loc_14);
+                        mx_internal::contentSize = true;
+                    }
+                    _loc_3++;
+                }
+                _loc_3 = 0;
+                while (_loc_3 < _loc_10.length)
+                {
+                    
+                    _loc_14 = ConstraintRow(_loc_10[_loc_3]);
+                    _loc_9 = _loc_9 - _loc_14.height;
+                    _loc_3++;
+                }
+                if (_loc_12.length > 0)
+                {
+                    if (rowSpanChildren.length > 0)
+                    {
+                        rowSpanChildren.sortOn("span");
+                        _loc_4 = 0;
+                        while (_loc_4 < rowSpanChildren.length)
+                        {
+                            
+                            _loc_20 = rowSpanChildren[_loc_4];
+                            if (_loc_20.span == 1)
+                            {
+                                if (_loc_20.vcRow)
+                                {
+                                    _loc_14 = ConstraintRow(_loc_2[_loc_2.indexOf(_loc_20.vcRow)]);
+                                }
+                                else if (_loc_20.baselineRow)
+                                {
+                                    _loc_14 = ConstraintRow(_loc_2[_loc_2.indexOf(_loc_20.baselineRow)]);
+                                }
+                                else if (_loc_20.topRow)
+                                {
+                                    _loc_14 = ConstraintRow(_loc_2[_loc_2.indexOf(_loc_20.topRow)]);
+                                }
+                                else if (_loc_20.bottomRow)
+                                {
+                                    _loc_14 = ConstraintRow(_loc_2[_loc_2.indexOf(_loc_20.bottomRow)]);
+                                }
+                                _loc_17 = _loc_20.child.getExplicitOrMeasuredHeight();
+                                if (_loc_20.baselineOffset)
+                                {
+                                    _loc_17 = _loc_17 + _loc_20.baselineOffset;
+                                }
+                                else if (_loc_20.vcOffset)
+                                {
+                                    _loc_17 = _loc_17 + _loc_20.vcOffset;
+                                }
+                                else
+                                {
+                                    if (_loc_20.topOffset)
+                                    {
+                                        _loc_17 = _loc_17 + _loc_20.topOffset;
+                                    }
+                                    if (_loc_20.bottomOffset)
+                                    {
+                                        _loc_17 = _loc_17 + _loc_20.bottomOffset;
+                                    }
+                                }
+                                if (!isNaN(_loc_14.height))
+                                {
+                                    _loc_17 = Math.max(_loc_14.height, _loc_17);
+                                }
+                                _loc_17 = bound(_loc_17, _loc_14.minHeight, _loc_14.maxHeight);
+                                _loc_14.setActualHeight(_loc_17);
+                                _loc_9 = _loc_9 - _loc_14.height;
+                            }
+                            else
+                            {
+                                _loc_9 = shareRowSpace(_loc_20, _loc_9);
+                            }
+                            _loc_4++;
+                        }
+                        rowSpanChildren = [];
+                    }
+                    _loc_3 = 0;
+                    while (_loc_3 < _loc_12.length)
+                    {
+                        
+                        _loc_14 = ConstraintRow(_loc_12[_loc_3]);
+                        if (!_loc_14.height)
+                        {
+                            _loc_17 = bound(0, _loc_14.minHeight, 0);
+                            _loc_14.setActualHeight(_loc_17);
+                        }
+                        _loc_3++;
+                    }
+                }
+                _loc_18 = _loc_9;
+                _loc_3 = 0;
+                while (_loc_3 < _loc_11.length)
+                {
+                    
+                    _loc_14 = ConstraintRow(_loc_11[_loc_3]);
+                    if (_loc_18 <= 0)
+                    {
+                        _loc_17 = 0;
+                    }
+                    else
+                    {
+                        _loc_17 = Math.round(_loc_18 * _loc_14.percentHeight / 100);
+                    }
+                    _loc_17 = bound(_loc_17, _loc_14.minHeight, _loc_14.maxHeight);
+                    _loc_14.setActualHeight(_loc_17);
+                    _loc_9 = _loc_9 - _loc_17;
+                    _loc_3++;
+                }
+                _loc_3 = 0;
+                while (_loc_3 < _loc_2.length)
+                {
+                    
+                    _loc_14 = _loc_2[_loc_3];
+                    _loc_14.y = _loc_6;
+                    _loc_6 = _loc_6 + _loc_14.height;
+                    _loc_3++;
+                }
             }
-            _loc3_ = 0;
-            while(_loc3_ < IConstraintLayout(_loc5_).constraintRows.length)
+            return;
+        }// end function
+
+        private function child_moveHandler(event:MoveEvent) : void
+        {
+            if (event.target is IUIComponent)
             {
-               _loc11_ = IConstraintLayout(_loc5_).constraintRows[_loc3_];
-               if(_loc11_.mx_internal::contentSize)
-               {
-                  _loc11_.mx_internal::_height = NaN;
-               }
-               _loc3_++;
+                if (!IUIComponent(event.target).includeInLayout)
+                {
+                    return;
+                }
+            }
+            var _loc_2:* = super.target;
+            if (_loc_2)
+            {
+                _loc_2.invalidateSize();
+                _loc_2.invalidateDisplayList();
+                _contentArea = null;
+            }
+            return;
+        }// end function
+
+        private function applyAnchorStylesDuringMeasure(param1:IUIComponent, param2:Rectangle) : void
+        {
+            var _loc_13:* = 0;
+            var _loc_3:* = param1 as IConstraintClient;
+            if (!_loc_3)
+            {
+                return;
+            }
+            var _loc_4:* = constraintCache[_loc_3];
+            if (!constraintCache[_loc_3])
+            {
+                _loc_4 = parseConstraints(param1);
+            }
+            var _loc_5:* = _loc_4.left;
+            var _loc_6:* = _loc_4.right;
+            var _loc_7:* = _loc_4.hc;
+            var _loc_8:* = _loc_4.top;
+            var _loc_9:* = _loc_4.bottom;
+            var _loc_10:* = _loc_4.vc;
+            var _loc_11:* = IConstraintLayout(target).constraintColumns;
+            var _loc_12:* = IConstraintLayout(target).constraintRows;
+            var _loc_14:* = 0;
+            if (!_loc_11.length > 0)
+            {
+                if (!isNaN(_loc_7))
+                {
+                    param2.x = Math.round((target.width - param1.width) / 2 + _loc_7);
+                }
+                else if (!isNaN(_loc_5) && !isNaN(_loc_6))
+                {
+                    param2.x = _loc_5;
+                    param2.width = param2.width + _loc_6;
+                }
+                else if (!isNaN(_loc_5))
+                {
+                    param2.x = _loc_5;
+                }
+                else if (!isNaN(_loc_6))
+                {
+                    param2.x = 0;
+                    param2.width = param2.width + _loc_6;
+                }
+            }
+            else
+            {
+                param2.x = 0;
+                _loc_13 = 0;
+                while (_loc_13 < _loc_11.length)
+                {
+                    
+                    _loc_14 = _loc_14 + ConstraintColumn(_loc_11[_loc_13]).width;
+                    _loc_13++;
+                }
+                param2.width = _loc_14;
+            }
+            if (!_loc_12.length > 0)
+            {
+                if (!isNaN(_loc_10))
+                {
+                    param2.y = Math.round((target.height - param1.height) / 2 + _loc_10);
+                }
+                else if (!isNaN(_loc_8) && !isNaN(_loc_9))
+                {
+                    param2.y = _loc_8;
+                    param2.height = param2.height + _loc_9;
+                }
+                else if (!isNaN(_loc_8))
+                {
+                    param2.y = _loc_8;
+                }
+                else if (!isNaN(_loc_9))
+                {
+                    param2.y = 0;
+                    param2.height = param2.height + _loc_9;
+                }
+            }
+            else
+            {
+                _loc_14 = 0;
+                param2.y = 0;
+                _loc_13 = 0;
+                while (_loc_13 < _loc_12.length)
+                {
+                    
+                    _loc_14 = _loc_14 + ConstraintRow(_loc_12[_loc_13]).height;
+                    _loc_13++;
+                }
+                param2.height = _loc_14;
+            }
+            return;
+        }// end function
+
+        override public function measure() : void
+        {
+            var _loc_1:* = null;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            _loc_1 = super.target;
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            _loc_5 = _loc_1.viewMetrics;
+            _loc_4 = 0;
+            while (_loc_4 < _loc_1.numChildren)
+            {
+                
+                _loc_7 = _loc_1.getChildAt(_loc_4) as IUIComponent;
+                parseConstraints(_loc_7);
+                _loc_4 = _loc_4 + 1;
+            }
+            _loc_4 = 0;
+            while (_loc_4 < IConstraintLayout(_loc_1).constraintColumns.length)
+            {
+                
+                _loc_8 = IConstraintLayout(_loc_1).constraintColumns[_loc_4];
+                if (mx_internal::contentSize)
+                {
+                    mx_internal::_width = NaN;
+                }
+                _loc_4 = _loc_4 + 1;
+            }
+            _loc_4 = 0;
+            while (_loc_4 < IConstraintLayout(_loc_1).constraintRows.length)
+            {
+                
+                _loc_9 = IConstraintLayout(_loc_1).constraintRows[_loc_4];
+                if (mx_internal::contentSize)
+                {
+                    mx_internal::_height = NaN;
+                }
+                _loc_4 = _loc_4 + 1;
             }
             measureColumnsAndRows();
-         }
-         _loc3_ = 0;
-         while(_loc3_ < _loc6_)
-         {
-            _loc4_ = _loc5_.getChildAt(_loc3_) as IUIComponent;
-            applyAnchorStylesDuringUpdateDisplayList(_loc8_,_loc9_,_loc4_);
-            _loc3_++;
-         }
-      }
-      
-      private function applyAnchorStylesDuringUpdateDisplayList(param1:Number, param2:Number, param3:IUIComponent = null) : void
-      {
-         var _loc20_:int = 0;
-         var _loc21_:Number = NaN;
-         var _loc22_:Number = NaN;
-         var _loc23_:Number = NaN;
-         var _loc24_:Number = NaN;
-         var _loc25_:String = null;
-         var _loc34_:Number = NaN;
-         var _loc35_:Number = NaN;
-         var _loc36_:Number = NaN;
-         var _loc37_:Number = NaN;
-         var _loc38_:Number = NaN;
-         var _loc39_:Boolean = false;
-         var _loc40_:Boolean = false;
-         var _loc41_:Boolean = false;
-         var _loc42_:ConstraintColumn = null;
-         var _loc43_:Boolean = false;
-         var _loc44_:Boolean = false;
-         var _loc45_:Boolean = false;
-         var _loc46_:Boolean = false;
-         var _loc47_:ConstraintRow = null;
-         var _loc4_:IConstraintClient = param3 as IConstraintClient;
-         if(!_loc4_)
-         {
+            _contentArea = null;
+            _loc_6 = measureContentArea();
+            _loc_1.measuredWidth = _loc_6.width + _loc_5.left + _loc_5.right;
+            _loc_1.measuredHeight = _loc_6.height + _loc_5.top + _loc_5.bottom;
             return;
-         }
-         var _loc5_:ChildConstraintInfo = parseConstraints(param3);
-         var _loc6_:Number = _loc5_.left;
-         var _loc7_:Number = _loc5_.right;
-         var _loc8_:Number = _loc5_.hc;
-         var _loc9_:Number = _loc5_.top;
-         var _loc10_:Number = _loc5_.bottom;
-         var _loc11_:Number = _loc5_.vc;
-         var _loc12_:Number = _loc5_.baseline;
-         var _loc13_:String = _loc5_.leftBoundary;
-         var _loc14_:String = _loc5_.rightBoundary;
-         var _loc15_:String = _loc5_.hcBoundary;
-         var _loc16_:String = _loc5_.topBoundary;
-         var _loc17_:String = _loc5_.bottomBoundary;
-         var _loc18_:String = _loc5_.vcBoundary;
-         var _loc19_:String = _loc5_.baselineBoundary;
-         var _loc26_:Boolean = false;
-         var _loc27_:Boolean = false;
-         var _loc28_:Boolean = !_loc15_ && !_loc13_ && !_loc14_;
-         var _loc29_:Boolean = !_loc18_ && !_loc16_ && !_loc17_ && !_loc19_;
-         var _loc30_:Number = 0;
-         var _loc31_:Number = param1;
-         var _loc32_:Number = 0;
-         var _loc33_:Number = param2;
-         if(!_loc28_)
-         {
-            _loc39_ = !!_loc13_?true:false;
-            _loc40_ = !!_loc14_?true:false;
-            _loc41_ = !!_loc15_?true:false;
-            _loc20_ = 0;
-            while(_loc20_ < IConstraintLayout(target).constraintColumns.length)
+        }// end function
+
+        private function target_childRemoveHandler(event:ChildExistenceChangedEvent) : void
+        {
+            DisplayObject(event.relatedObject).removeEventListener(MoveEvent.MOVE, child_moveHandler);
+            delete constraintCache[event.relatedObject];
+            return;
+        }// end function
+
+        override public function set target(param1:Container) : void
+        {
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_2:* = super.target;
+            if (param1 != _loc_2)
             {
-               _loc42_ = ConstraintColumn(IConstraintLayout(target).constraintColumns[_loc20_]);
-               if(_loc39_)
-               {
-                  if(_loc13_ == _loc42_.id)
-                  {
-                     _loc30_ = _loc42_.x;
-                     _loc39_ = false;
-                  }
-               }
-               if(_loc40_)
-               {
-                  if(_loc14_ == _loc42_.id)
-                  {
-                     _loc31_ = _loc42_.x + _loc42_.width;
-                     _loc40_ = false;
-                  }
-               }
-               if(_loc41_)
-               {
-                  if(_loc15_ == _loc42_.id)
-                  {
-                     _loc35_ = _loc42_.width;
-                     _loc37_ = _loc42_.x;
-                     _loc41_ = false;
-                  }
-               }
-               _loc20_++;
+                if (_loc_2)
+                {
+                    _loc_2.removeEventListener(ChildExistenceChangedEvent.CHILD_ADD, target_childAddHandler);
+                    _loc_2.removeEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, target_childRemoveHandler);
+                    _loc_4 = _loc_2.numChildren;
+                    _loc_3 = 0;
+                    while (_loc_3 < _loc_4)
+                    {
+                        
+                        DisplayObject(_loc_2.getChildAt(_loc_3)).removeEventListener(MoveEvent.MOVE, child_moveHandler);
+                        _loc_3++;
+                    }
+                }
+                if (param1)
+                {
+                    param1.addEventListener(ChildExistenceChangedEvent.CHILD_ADD, target_childAddHandler);
+                    param1.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, target_childRemoveHandler);
+                    _loc_4 = param1.numChildren;
+                    _loc_3 = 0;
+                    while (_loc_3 < _loc_4)
+                    {
+                        
+                        DisplayObject(param1.getChildAt(_loc_3)).addEventListener(MoveEvent.MOVE, child_moveHandler);
+                        _loc_3++;
+                    }
+                }
+                super.target = param1;
             }
-            if(_loc39_)
+            return;
+        }// end function
+
+        private function measureContentArea() : Rectangle
+        {
+            var _loc_1:* = 0;
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = NaN;
+            var _loc_8:* = NaN;
+            var _loc_9:* = NaN;
+            var _loc_10:* = NaN;
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            if (_contentArea)
             {
-               _loc25_ = resourceManager.getString("containers","columnNotFound",[_loc13_]);
-               throw new ConstraintError(_loc25_);
+                return _contentArea;
             }
-            if(_loc40_)
+            _contentArea = new Rectangle();
+            var _loc_2:* = target.numChildren;
+            if (_loc_2 == 0 && constraintRegionsInUse)
             {
-               _loc25_ = resourceManager.getString("containers","columnNotFound",[_loc14_]);
-               throw new ConstraintError(_loc25_);
+                _loc_3 = IConstraintLayout(target).constraintColumns;
+                _loc_4 = IConstraintLayout(target).constraintRows;
+                if (_loc_3.length > 0)
+                {
+                    _contentArea.right = _loc_3[(_loc_3.length - 1)].x + _loc_3[(_loc_3.length - 1)].width;
+                }
+                else
+                {
+                    _contentArea.right = 0;
+                }
+                if (_loc_4.length > 0)
+                {
+                    _contentArea.bottom = _loc_4[(_loc_4.length - 1)].y + _loc_4[(_loc_4.length - 1)].height;
+                }
+                else
+                {
+                    _contentArea.bottom = 0;
+                }
             }
-            if(_loc41_)
+            _loc_1 = 0;
+            while (_loc_1 < _loc_2)
             {
-               _loc25_ = resourceManager.getString("containers","columnNotFound",[_loc15_]);
-               throw new ConstraintError(_loc25_);
+                
+                _loc_5 = target.getChildAt(_loc_1) as IUIComponent;
+                _loc_6 = getLayoutConstraints(_loc_5);
+                if (!_loc_5.includeInLayout)
+                {
+                }
+                else
+                {
+                    _loc_7 = _loc_5.x;
+                    _loc_8 = _loc_5.y;
+                    _loc_9 = _loc_5.getExplicitOrMeasuredWidth();
+                    _loc_10 = _loc_5.getExplicitOrMeasuredHeight();
+                    if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
+                    {
+                        if (!isNaN(_loc_5.percentWidth) || _loc_6 && !isNaN(_loc_6.left) && !isNaN(_loc_6.right))
+                        {
+                            _loc_9 = _loc_5.minWidth;
+                        }
+                    }
+                    else if (!isNaN(_loc_5.percentWidth) || _loc_6 && !isNaN(_loc_6.left) && !isNaN(_loc_6.right) && isNaN(_loc_5.explicitWidth))
+                    {
+                        _loc_9 = _loc_5.minWidth;
+                    }
+                    if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
+                    {
+                        if (!isNaN(_loc_5.percentHeight) || _loc_6 && !isNaN(_loc_6.top) && !isNaN(_loc_6.bottom))
+                        {
+                            _loc_10 = _loc_5.minHeight;
+                        }
+                    }
+                    else if (!isNaN(_loc_5.percentHeight) || _loc_6 && !isNaN(_loc_6.top) && !isNaN(_loc_6.bottom) && isNaN(_loc_5.explicitHeight))
+                    {
+                        _loc_10 = _loc_5.minHeight;
+                    }
+                    r.x = _loc_7;
+                    r.y = _loc_8;
+                    r.width = _loc_9;
+                    r.height = _loc_10;
+                    applyAnchorStylesDuringMeasure(_loc_5, r);
+                    _loc_7 = r.x;
+                    _loc_8 = r.y;
+                    _loc_9 = r.width;
+                    _loc_10 = r.height;
+                    if (isNaN(_loc_7))
+                    {
+                        _loc_7 = _loc_5.x;
+                    }
+                    if (isNaN(_loc_8))
+                    {
+                        _loc_8 = _loc_5.y;
+                    }
+                    _loc_11 = _loc_7;
+                    _loc_12 = _loc_8;
+                    if (isNaN(_loc_9))
+                    {
+                        _loc_9 = _loc_5.width;
+                    }
+                    if (isNaN(_loc_10))
+                    {
+                        _loc_10 = _loc_5.height;
+                    }
+                    _loc_11 = _loc_11 + _loc_9;
+                    _loc_12 = _loc_12 + _loc_10;
+                    _contentArea.right = Math.max(_contentArea.right, _loc_11);
+                    _contentArea.bottom = Math.max(_contentArea.bottom, _loc_12);
+                }
+                _loc_1++;
             }
-         }
-         else if(!_loc28_)
-         {
-            _loc25_ = resourceManager.getString("containers","noColumnsFound");
-            throw new ConstraintError(_loc25_);
-         }
-         param1 = Math.round(_loc31_ - _loc30_);
-         if(!isNaN(_loc6_) && !isNaN(_loc7_))
-         {
-            _loc21_ = param1 - _loc6_ - _loc7_;
-            if(_loc21_ < param3.minWidth)
+            return _contentArea;
+        }// end function
+
+        private function shareColumnSpace(param1:ContentColumnChild, param2:Number) : Number
+        {
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            var _loc_13:* = NaN;
+            var _loc_3:* = param1.leftCol;
+            var _loc_4:* = param1.rightCol;
+            var _loc_5:* = param1.child;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_8:* = param1.rightOffset ? (param1.rightOffset) : (0);
+            var _loc_9:* = param1.leftOffset ? (param1.leftOffset) : (0);
+            if (_loc_3 && _loc_3.width)
             {
-               _loc21_ = param3.minWidth;
+                _loc_6 = _loc_6 + _loc_3.width;
             }
-         }
-         else if(!isNaN(param3.percentWidth))
-         {
-            _loc21_ = param3.percentWidth / 100 * param1;
-            _loc21_ = bound(_loc21_,param3.minWidth,param3.maxWidth);
-            _loc26_ = true;
-         }
-         else
-         {
-            _loc21_ = param3.getExplicitOrMeasuredWidth();
-         }
-         if(!_loc29_ && IConstraintLayout(target).constraintRows.length > 0)
-         {
-            _loc43_ = !!_loc16_?true:false;
-            _loc44_ = !!_loc17_?true:false;
-            _loc45_ = !!_loc18_?true:false;
-            _loc46_ = !!_loc19_?true:false;
-            _loc20_ = 0;
-            while(_loc20_ < IConstraintLayout(target).constraintRows.length)
+            else if (_loc_4 && !_loc_3)
             {
-               _loc47_ = ConstraintRow(IConstraintLayout(target).constraintRows[_loc20_]);
-               if(_loc43_)
-               {
-                  if(_loc16_ == _loc47_.id)
-                  {
-                     _loc32_ = _loc47_.y;
-                     _loc43_ = false;
-                  }
-               }
-               if(_loc44_)
-               {
-                  if(_loc17_ == _loc47_.id)
-                  {
-                     _loc33_ = _loc47_.y + _loc47_.height;
-                     _loc44_ = false;
-                  }
-               }
-               if(_loc45_)
-               {
-                  if(_loc18_ == _loc47_.id)
-                  {
-                     _loc34_ = _loc47_.height;
-                     _loc36_ = _loc47_.y;
-                     _loc45_ = false;
-                  }
-               }
-               if(_loc46_)
-               {
-                  if(_loc19_ == _loc47_.id)
-                  {
-                     _loc38_ = _loc47_.y;
-                     _loc46_ = false;
-                  }
-               }
-               _loc20_++;
+                _loc_3 = IConstraintLayout(target).constraintColumns[param1.right - 2];
+                if (_loc_3 && _loc_3.width)
+                {
+                    _loc_6 = _loc_6 + _loc_3.width;
+                }
             }
-            if(_loc43_)
+            if (_loc_4 && _loc_4.width)
             {
-               _loc25_ = resourceManager.getString("containers","rowNotFound",[_loc16_]);
-               throw new ConstraintError(_loc25_);
+                _loc_7 = _loc_7 + _loc_4.width;
             }
-            if(_loc44_)
+            else if (_loc_3 && !_loc_4)
             {
-               _loc25_ = resourceManager.getString("containers","rowNotFound",[_loc17_]);
-               throw new ConstraintError(_loc25_);
+                _loc_4 = IConstraintLayout(target).constraintColumns[(param1.left + 1)];
+                if (_loc_4 && _loc_4.width)
+                {
+                    _loc_7 = _loc_7 + _loc_4.width;
+                }
             }
-            if(_loc45_)
+            if (_loc_3 && isNaN(_loc_3.width))
             {
-               _loc25_ = resourceManager.getString("containers","rowNotFound",[_loc18_]);
-               throw new ConstraintError(_loc25_);
+                _loc_3.setActualWidth(Math.max(0, _loc_3.maxWidth));
             }
-            if(_loc46_)
+            if (_loc_4 && isNaN(_loc_4.width))
             {
-               _loc25_ = resourceManager.getString("containers","rowNotFound",[_loc19_]);
-               throw new ConstraintError(_loc25_);
+                _loc_4.setActualWidth(Math.max(0, _loc_4.maxWidth));
             }
-         }
-         else if(!_loc29_ && IConstraintLayout(target).constraintRows.length <= 0)
-         {
-            _loc25_ = resourceManager.getString("containers","noRowsFound");
-            throw new ConstraintError(_loc25_);
-         }
-         param2 = Math.round(_loc33_ - _loc32_);
-         if(!isNaN(_loc9_) && !isNaN(_loc10_))
-         {
-            _loc22_ = param2 - _loc9_ - _loc10_;
-            if(_loc22_ < param3.minHeight)
+            var _loc_10:* = _loc_5.getExplicitOrMeasuredWidth();
+            if (_loc_5.getExplicitOrMeasuredWidth())
             {
-               _loc22_ = param3.minHeight;
+                if (!param1.leftCol)
+                {
+                    if (_loc_10 > _loc_6)
+                    {
+                        _loc_12 = _loc_10 - _loc_6 + _loc_8;
+                    }
+                    else
+                    {
+                        _loc_12 = _loc_10 + _loc_8;
+                    }
+                }
+                if (!param1.rightCol)
+                {
+                    if (_loc_10 > _loc_7)
+                    {
+                        _loc_11 = _loc_10 - _loc_7 + _loc_9;
+                    }
+                    else
+                    {
+                        _loc_11 = _loc_10 + _loc_9;
+                    }
+                }
+                if (param1.leftCol && param1.rightCol)
+                {
+                    _loc_13 = _loc_10 / Number(param1.span);
+                    if (_loc_13 + _loc_9 < _loc_6)
+                    {
+                        _loc_11 = _loc_6;
+                        _loc_12 = _loc_10 - (_loc_6 - _loc_9) + _loc_8;
+                    }
+                    else
+                    {
+                        _loc_11 = _loc_13 + _loc_9;
+                    }
+                    if (_loc_13 + _loc_8 < _loc_7)
+                    {
+                        _loc_12 = _loc_7;
+                        _loc_11 = _loc_10 - (_loc_7 - _loc_8) + _loc_9;
+                    }
+                    else
+                    {
+                        _loc_12 = _loc_13 + _loc_8;
+                    }
+                }
+                _loc_11 = bound(_loc_11, _loc_3.minWidth, _loc_3.maxWidth);
+                _loc_3.setActualWidth(_loc_11);
+                param2 = param2 - _loc_11;
+                _loc_12 = bound(_loc_12, _loc_4.minWidth, _loc_4.maxWidth);
+                _loc_4.setActualWidth(_loc_12);
+                param2 = param2 - _loc_12;
             }
-         }
-         else if(!isNaN(param3.percentHeight))
-         {
-            _loc22_ = param3.percentHeight / 100 * param2;
-            _loc22_ = bound(_loc22_,param3.minHeight,param3.maxHeight);
-            _loc27_ = true;
-         }
-         else
-         {
-            _loc22_ = param3.getExplicitOrMeasuredHeight();
-         }
-         if(!isNaN(_loc8_))
-         {
-            if(_loc15_)
+            return param2;
+        }// end function
+
+        private function getLayoutConstraints(param1:IUIComponent) : LayoutConstraints
+        {
+            var _loc_2:* = param1 as IConstraintClient;
+            if (!_loc_2)
             {
-               _loc23_ = Math.round((_loc35_ - _loc21_) / 2 + _loc8_ + _loc37_);
+                return null;
+            }
+            var _loc_3:* = new LayoutConstraints();
+            _loc_3.baseline = _loc_2.getConstraintValue("baseline");
+            _loc_3.bottom = _loc_2.getConstraintValue("bottom");
+            _loc_3.horizontalCenter = _loc_2.getConstraintValue("horizontalCenter");
+            _loc_3.left = _loc_2.getConstraintValue("left");
+            _loc_3.right = _loc_2.getConstraintValue("right");
+            _loc_3.top = _loc_2.getConstraintValue("top");
+            _loc_3.verticalCenter = _loc_2.getConstraintValue("verticalCenter");
+            return _loc_3;
+        }// end function
+
+        override public function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
+            var _loc_10:* = null;
+            var _loc_11:* = null;
+            var _loc_5:* = super.target;
+            var _loc_6:* = _loc_5.numChildren;
+            mx_internal::doingLayout = false;
+            var _loc_7:* = _loc_5.viewMetrics;
+            mx_internal::doingLayout = true;
+            var _loc_8:* = param1 - _loc_7.left - _loc_7.right;
+            var _loc_9:* = param2 - _loc_7.top - _loc_7.bottom;
+            if (IConstraintLayout(_loc_5).constraintColumns.length > 0 || IConstraintLayout(_loc_5).constraintRows.length > 0)
+            {
+                constraintRegionsInUse = true;
+            }
+            if (constraintRegionsInUse)
+            {
+                _loc_3 = 0;
+                while (_loc_3 < _loc_6)
+                {
+                    
+                    _loc_4 = _loc_5.getChildAt(_loc_3) as IUIComponent;
+                    parseConstraints(_loc_4);
+                    _loc_3++;
+                }
+                _loc_3 = 0;
+                while (_loc_3 < IConstraintLayout(_loc_5).constraintColumns.length)
+                {
+                    
+                    _loc_10 = IConstraintLayout(_loc_5).constraintColumns[_loc_3];
+                    if (mx_internal::contentSize)
+                    {
+                        mx_internal::_width = NaN;
+                    }
+                    _loc_3++;
+                }
+                _loc_3 = 0;
+                while (_loc_3 < IConstraintLayout(_loc_5).constraintRows.length)
+                {
+                    
+                    _loc_11 = IConstraintLayout(_loc_5).constraintRows[_loc_3];
+                    if (mx_internal::contentSize)
+                    {
+                        mx_internal::_height = NaN;
+                    }
+                    _loc_3++;
+                }
+                measureColumnsAndRows();
+            }
+            _loc_3 = 0;
+            while (_loc_3 < _loc_6)
+            {
+                
+                _loc_4 = _loc_5.getChildAt(_loc_3) as IUIComponent;
+                applyAnchorStylesDuringUpdateDisplayList(_loc_8, _loc_9, _loc_4);
+                _loc_3++;
+            }
+            return;
+        }// end function
+
+        private function applyAnchorStylesDuringUpdateDisplayList(param1:Number, param2:Number, param3:IUIComponent = null) : void
+        {
+            var _loc_20:* = 0;
+            var _loc_21:* = NaN;
+            var _loc_22:* = NaN;
+            var _loc_23:* = NaN;
+            var _loc_24:* = NaN;
+            var _loc_25:* = null;
+            var _loc_34:* = NaN;
+            var _loc_35:* = NaN;
+            var _loc_36:* = NaN;
+            var _loc_37:* = NaN;
+            var _loc_38:* = NaN;
+            var _loc_39:* = false;
+            var _loc_40:* = false;
+            var _loc_41:* = false;
+            var _loc_42:* = null;
+            var _loc_43:* = false;
+            var _loc_44:* = false;
+            var _loc_45:* = false;
+            var _loc_46:* = false;
+            var _loc_47:* = null;
+            var _loc_4:* = param3 as IConstraintClient;
+            if (!(param3 as IConstraintClient))
+            {
+                return;
+            }
+            var _loc_5:* = parseConstraints(param3);
+            var _loc_6:* = _loc_5.left;
+            var _loc_7:* = _loc_5.right;
+            var _loc_8:* = _loc_5.hc;
+            var _loc_9:* = _loc_5.top;
+            var _loc_10:* = _loc_5.bottom;
+            var _loc_11:* = _loc_5.vc;
+            var _loc_12:* = _loc_5.baseline;
+            var _loc_13:* = _loc_5.leftBoundary;
+            var _loc_14:* = _loc_5.rightBoundary;
+            var _loc_15:* = _loc_5.hcBoundary;
+            var _loc_16:* = _loc_5.topBoundary;
+            var _loc_17:* = _loc_5.bottomBoundary;
+            var _loc_18:* = _loc_5.vcBoundary;
+            var _loc_19:* = _loc_5.baselineBoundary;
+            var _loc_26:* = false;
+            var _loc_27:* = false;
+            var _loc_28:* = !_loc_15 && !_loc_13 && !_loc_14;
+            var _loc_29:* = !_loc_18 && !_loc_16 && !_loc_17 && !_loc_19;
+            var _loc_30:* = 0;
+            var _loc_31:* = param1;
+            var _loc_32:* = 0;
+            var _loc_33:* = param2;
+            if (!_loc_28)
+            {
+                _loc_39 = _loc_13 ? (true) : (false);
+                _loc_40 = _loc_14 ? (true) : (false);
+                _loc_41 = _loc_15 ? (true) : (false);
+                _loc_20 = 0;
+                while (_loc_20 < IConstraintLayout(target).constraintColumns.length)
+                {
+                    
+                    _loc_42 = ConstraintColumn(IConstraintLayout(target).constraintColumns[_loc_20]);
+                    if (_loc_39)
+                    {
+                        if (_loc_13 == _loc_42.id)
+                        {
+                            _loc_30 = _loc_42.x;
+                            _loc_39 = false;
+                        }
+                    }
+                    if (_loc_40)
+                    {
+                        if (_loc_14 == _loc_42.id)
+                        {
+                            _loc_31 = _loc_42.x + _loc_42.width;
+                            _loc_40 = false;
+                        }
+                    }
+                    if (_loc_41)
+                    {
+                        if (_loc_15 == _loc_42.id)
+                        {
+                            _loc_35 = _loc_42.width;
+                            _loc_37 = _loc_42.x;
+                            _loc_41 = false;
+                        }
+                    }
+                    _loc_20++;
+                }
+                if (_loc_39)
+                {
+                    _loc_25 = resourceManager.getString("containers", "columnNotFound", [_loc_13]);
+                    throw new ConstraintError(_loc_25);
+                }
+                if (_loc_40)
+                {
+                    _loc_25 = resourceManager.getString("containers", "columnNotFound", [_loc_14]);
+                    throw new ConstraintError(_loc_25);
+                }
+                if (_loc_41)
+                {
+                    _loc_25 = resourceManager.getString("containers", "columnNotFound", [_loc_15]);
+                    throw new ConstraintError(_loc_25);
+                }
+            }
+            else if (!_loc_28)
+            {
+                _loc_25 = resourceManager.getString("containers", "noColumnsFound");
+                throw new ConstraintError(_loc_25);
+            }
+            param1 = Math.round(_loc_31 - _loc_30);
+            if (!isNaN(_loc_6) && !isNaN(_loc_7))
+            {
+                _loc_21 = param1 - _loc_6 - _loc_7;
+                if (_loc_21 < param3.minWidth)
+                {
+                    _loc_21 = param3.minWidth;
+                }
+            }
+            else if (!isNaN(param3.percentWidth))
+            {
+                _loc_21 = param3.percentWidth / 100 * param1;
+                _loc_21 = bound(_loc_21, param3.minWidth, param3.maxWidth);
+                _loc_26 = true;
             }
             else
             {
-               _loc23_ = Math.round((param1 - _loc21_) / 2 + _loc8_);
+                _loc_21 = param3.getExplicitOrMeasuredWidth();
             }
-         }
-         else if(!isNaN(_loc6_))
-         {
-            if(_loc13_)
+            if (!_loc_29 && IConstraintLayout(target).constraintRows.length > 0)
             {
-               _loc23_ = _loc30_ + _loc6_;
+                _loc_43 = _loc_16 ? (true) : (false);
+                _loc_44 = _loc_17 ? (true) : (false);
+                _loc_45 = _loc_18 ? (true) : (false);
+                _loc_46 = _loc_19 ? (true) : (false);
+                _loc_20 = 0;
+                while (_loc_20 < IConstraintLayout(target).constraintRows.length)
+                {
+                    
+                    _loc_47 = ConstraintRow(IConstraintLayout(target).constraintRows[_loc_20]);
+                    if (_loc_43)
+                    {
+                        if (_loc_16 == _loc_47.id)
+                        {
+                            _loc_32 = _loc_47.y;
+                            _loc_43 = false;
+                        }
+                    }
+                    if (_loc_44)
+                    {
+                        if (_loc_17 == _loc_47.id)
+                        {
+                            _loc_33 = _loc_47.y + _loc_47.height;
+                            _loc_44 = false;
+                        }
+                    }
+                    if (_loc_45)
+                    {
+                        if (_loc_18 == _loc_47.id)
+                        {
+                            _loc_34 = _loc_47.height;
+                            _loc_36 = _loc_47.y;
+                            _loc_45 = false;
+                        }
+                    }
+                    if (_loc_46)
+                    {
+                        if (_loc_19 == _loc_47.id)
+                        {
+                            _loc_38 = _loc_47.y;
+                            _loc_46 = false;
+                        }
+                    }
+                    _loc_20++;
+                }
+                if (_loc_43)
+                {
+                    _loc_25 = resourceManager.getString("containers", "rowNotFound", [_loc_16]);
+                    throw new ConstraintError(_loc_25);
+                }
+                if (_loc_44)
+                {
+                    _loc_25 = resourceManager.getString("containers", "rowNotFound", [_loc_17]);
+                    throw new ConstraintError(_loc_25);
+                }
+                if (_loc_45)
+                {
+                    _loc_25 = resourceManager.getString("containers", "rowNotFound", [_loc_18]);
+                    throw new ConstraintError(_loc_25);
+                }
+                if (_loc_46)
+                {
+                    _loc_25 = resourceManager.getString("containers", "rowNotFound", [_loc_19]);
+                    throw new ConstraintError(_loc_25);
+                }
+            }
+            else if (!_loc_29 && IConstraintLayout(target).constraintRows.length <= 0)
+            {
+                _loc_25 = resourceManager.getString("containers", "noRowsFound");
+                throw new ConstraintError(_loc_25);
+            }
+            param2 = Math.round(_loc_33 - _loc_32);
+            if (!isNaN(_loc_9) && !isNaN(_loc_10))
+            {
+                _loc_22 = param2 - _loc_9 - _loc_10;
+                if (_loc_22 < param3.minHeight)
+                {
+                    _loc_22 = param3.minHeight;
+                }
+            }
+            else if (!isNaN(param3.percentHeight))
+            {
+                _loc_22 = param3.percentHeight / 100 * param2;
+                _loc_22 = bound(_loc_22, param3.minHeight, param3.maxHeight);
+                _loc_27 = true;
             }
             else
             {
-               _loc23_ = _loc6_;
+                _loc_22 = param3.getExplicitOrMeasuredHeight();
             }
-         }
-         else if(!isNaN(_loc7_))
-         {
-            if(_loc14_)
+            if (!isNaN(_loc_8))
             {
-               _loc23_ = _loc31_ - _loc7_ - _loc21_;
+                if (_loc_15)
+                {
+                    _loc_23 = Math.round((_loc_35 - _loc_21) / 2 + _loc_8 + _loc_37);
+                }
+                else
+                {
+                    _loc_23 = Math.round((param1 - _loc_21) / 2 + _loc_8);
+                }
             }
-            else
+            else if (!isNaN(_loc_6))
             {
-               _loc23_ = param1 - _loc7_ - _loc21_;
+                if (_loc_13)
+                {
+                    _loc_23 = _loc_30 + _loc_6;
+                }
+                else
+                {
+                    _loc_23 = _loc_6;
+                }
             }
-         }
-         if(!isNaN(_loc12_))
-         {
-            if(_loc19_)
+            else if (!isNaN(_loc_7))
             {
-               _loc24_ = _loc38_ - param3.baselinePosition + _loc12_;
+                if (_loc_14)
+                {
+                    _loc_23 = _loc_31 - _loc_7 - _loc_21;
+                }
+                else
+                {
+                    _loc_23 = param1 - _loc_7 - _loc_21;
+                }
             }
-            else
+            if (!isNaN(_loc_12))
             {
-               _loc24_ = _loc12_;
+                if (_loc_19)
+                {
+                    _loc_24 = _loc_38 - param3.baselinePosition + _loc_12;
+                }
+                else
+                {
+                    _loc_24 = _loc_12;
+                }
             }
-         }
-         if(!isNaN(_loc11_))
-         {
-            if(_loc18_)
+            if (!isNaN(_loc_11))
             {
-               _loc24_ = Math.round((_loc34_ - _loc22_) / 2 + _loc11_ + _loc36_);
+                if (_loc_18)
+                {
+                    _loc_24 = Math.round((_loc_34 - _loc_22) / 2 + _loc_11 + _loc_36);
+                }
+                else
+                {
+                    _loc_24 = Math.round((param2 - _loc_22) / 2 + _loc_11);
+                }
             }
-            else
+            else if (!isNaN(_loc_9))
             {
-               _loc24_ = Math.round((param2 - _loc22_) / 2 + _loc11_);
+                if (_loc_16)
+                {
+                    _loc_24 = _loc_32 + _loc_9;
+                }
+                else
+                {
+                    _loc_24 = _loc_9;
+                }
             }
-         }
-         else if(!isNaN(_loc9_))
-         {
-            if(_loc16_)
+            else if (!isNaN(_loc_10))
             {
-               _loc24_ = _loc32_ + _loc9_;
+                if (_loc_17)
+                {
+                    _loc_24 = _loc_33 - _loc_10 - _loc_22;
+                }
+                else
+                {
+                    _loc_24 = param2 - _loc_10 - _loc_22;
+                }
             }
-            else
+            _loc_23 = isNaN(_loc_23) ? (param3.x) : (_loc_23);
+            _loc_24 = isNaN(_loc_24) ? (param3.y) : (_loc_24);
+            param3.move(_loc_23, _loc_24);
+            if (_loc_26)
             {
-               _loc24_ = _loc9_;
+                if (_loc_23 + _loc_21 > param1)
+                {
+                    _loc_21 = Math.max(param1 - _loc_23, param3.minWidth);
+                }
             }
-         }
-         else if(!isNaN(_loc10_))
-         {
-            if(_loc17_)
+            if (_loc_27)
             {
-               _loc24_ = _loc33_ - _loc10_ - _loc22_;
+                if (_loc_24 + _loc_22 > param2)
+                {
+                    _loc_22 = Math.max(param2 - _loc_24, param3.minHeight);
+                }
             }
-            else
+            if (!isNaN(_loc_21) && !isNaN(_loc_22))
             {
-               _loc24_ = param2 - _loc10_ - _loc22_;
+                param3.setActualSize(_loc_21, _loc_22);
             }
-         }
-         _loc23_ = !!isNaN(_loc23_)?Number(param3.x):Number(_loc23_);
-         _loc24_ = !!isNaN(_loc24_)?Number(param3.y):Number(_loc24_);
-         param3.move(_loc23_,_loc24_);
-         if(_loc26_)
-         {
-            if(_loc23_ + _loc21_ > param1)
-            {
-               _loc21_ = Math.max(param1 - _loc23_,param3.minWidth);
-            }
-         }
-         if(_loc27_)
-         {
-            if(_loc24_ + _loc22_ > param2)
-            {
-               _loc22_ = Math.max(param2 - _loc24_,param3.minHeight);
-            }
-         }
-         if(!isNaN(_loc21_) && !isNaN(_loc22_))
-         {
-            param3.setActualSize(_loc21_,_loc22_);
-         }
-      }
-      
-      private function target_childAddHandler(param1:ChildExistenceChangedEvent) : void
-      {
-         DisplayObject(param1.relatedObject).addEventListener(MoveEvent.MOVE,child_moveHandler);
-      }
-   }
+            return;
+        }// end function
+
+        private function target_childAddHandler(event:ChildExistenceChangedEvent) : void
+        {
+            DisplayObject(event.relatedObject).addEventListener(MoveEvent.MOVE, child_moveHandler);
+            return;
+        }// end function
+
+    }
 }
 
-class LayoutConstraints
+import flash.display.*;
+
+import flash.geom.*;
+
+import flash.utils.*;
+
+import mx.containers.errors.*;
+
+import mx.core.*;
+
+import mx.events.*;
+
+class ChildConstraintInfo extends Object
 {
-    
-   public var baseline;
-   
-   public var left;
-   
-   public var bottom;
-   
-   public var top;
-   
-   public var horizontalCenter;
-   
-   public var verticalCenter;
-   
-   public var right;
-   
-   function LayoutConstraints()
-   {
-      super();
-   }
+    public var baseline:Number;
+    public var left:Number;
+    public var baselineBoundary:String;
+    public var leftBoundary:String;
+    public var hcBoundary:String;
+    public var top:Number;
+    public var right:Number;
+    public var topBoundary:String;
+    public var rightBoundary:String;
+    public var bottom:Number;
+    public var vc:Number;
+    public var bottomBoundary:String;
+    public var vcBoundary:String;
+    public var hc:Number;
+
+    function ChildConstraintInfo(param1:Number, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:Number, param8:String = null, param9:String = null, param10:String = null, param11:String = null, param12:String = null, param13:String = null, param14:String = null) : void
+    {
+        this.left = param1;
+        this.right = param2;
+        this.hc = param3;
+        this.top = param4;
+        this.bottom = param5;
+        this.vc = param6;
+        this.baseline = param7;
+        this.leftBoundary = param8;
+        this.rightBoundary = param9;
+        this.hcBoundary = param10;
+        this.topBoundary = param11;
+        this.bottomBoundary = param12;
+        this.vcBoundary = param13;
+        this.baselineBoundary = param14;
+        return;
+    }// end function
+
 }
 
-class ChildConstraintInfo
+
+import flash.display.*;
+
+import flash.geom.*;
+
+import flash.utils.*;
+
+import mx.containers.errors.*;
+
+import mx.core.*;
+
+import mx.events.*;
+
+class ContentColumnChild extends Object
 {
-    
-   public var baseline:Number;
-   
-   public var left:Number;
-   
-   public var baselineBoundary:String;
-   
-   public var leftBoundary:String;
-   
-   public var hcBoundary:String;
-   
-   public var top:Number;
-   
-   public var right:Number;
-   
-   public var topBoundary:String;
-   
-   public var rightBoundary:String;
-   
-   public var bottom:Number;
-   
-   public var vc:Number;
-   
-   public var bottomBoundary:String;
-   
-   public var vcBoundary:String;
-   
-   public var hc:Number;
-   
-   function ChildConstraintInfo(param1:Number, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:Number, param8:String = null, param9:String = null, param10:String = null, param11:String = null, param12:String = null, param13:String = null, param14:String = null)
-   {
-      super();
-      this.left = param1;
-      this.right = param2;
-      this.hc = param3;
-      this.top = param4;
-      this.bottom = param5;
-      this.vc = param6;
-      this.baseline = param7;
-      this.leftBoundary = param8;
-      this.rightBoundary = param9;
-      this.hcBoundary = param10;
-      this.topBoundary = param11;
-      this.bottomBoundary = param12;
-      this.vcBoundary = param13;
-      this.baselineBoundary = param14;
-   }
+    public var rightCol:ConstraintColumn;
+    public var hcCol:ConstraintColumn;
+    public var left:Number;
+    public var child:IUIComponent;
+    public var rightOffset:Number;
+    public var span:Number;
+    public var hcOffset:Number;
+    public var leftCol:ConstraintColumn;
+    public var leftOffset:Number;
+    public var hc:Number;
+    public var right:Number;
+
+    function ContentColumnChild() : void
+    {
+        return;
+    }// end function
+
 }
 
-import mx.containers.utilityClasses.ConstraintColumn;
-import mx.core.IUIComponent;
 
-class ContentColumnChild
+import flash.display.*;
+
+import flash.geom.*;
+
+import flash.utils.*;
+
+import mx.containers.errors.*;
+
+import mx.core.*;
+
+import mx.events.*;
+
+class ContentRowChild extends Object
 {
-    
-   public var rightCol:ConstraintColumn;
-   
-   public var hcCol:ConstraintColumn;
-   
-   public var left:Number;
-   
-   public var child:IUIComponent;
-   
-   public var rightOffset:Number;
-   
-   public var span:Number;
-   
-   public var hcOffset:Number;
-   
-   public var leftCol:ConstraintColumn;
-   
-   public var leftOffset:Number;
-   
-   public var hc:Number;
-   
-   public var right:Number;
-   
-   function ContentColumnChild()
-   {
-      super();
-   }
+    public var topRow:ConstraintRow;
+    public var topOffset:Number;
+    public var baseline:Number;
+    public var baselineRow:ConstraintRow;
+    public var span:Number;
+    public var top:Number;
+    public var vcOffset:Number;
+    public var child:IUIComponent;
+    public var bottomOffset:Number;
+    public var bottom:Number;
+    public var vc:Number;
+    public var bottomRow:ConstraintRow;
+    public var vcRow:ConstraintRow;
+    public var baselineOffset:Number;
+
+    function ContentRowChild() : void
+    {
+        return;
+    }// end function
+
 }
 
-import mx.containers.utilityClasses.ConstraintRow;
-import mx.core.IUIComponent;
 
-class ContentRowChild
+import flash.display.*;
+
+import flash.geom.*;
+
+import flash.utils.*;
+
+import mx.containers.errors.*;
+
+import mx.core.*;
+
+import mx.events.*;
+
+class LayoutConstraints extends Object
 {
-    
-   public var topRow:ConstraintRow;
-   
-   public var topOffset:Number;
-   
-   public var baseline:Number;
-   
-   public var baselineRow:ConstraintRow;
-   
-   public var span:Number;
-   
-   public var top:Number;
-   
-   public var vcOffset:Number;
-   
-   public var child:IUIComponent;
-   
-   public var bottomOffset:Number;
-   
-   public var bottom:Number;
-   
-   public var vc:Number;
-   
-   public var bottomRow:ConstraintRow;
-   
-   public var vcRow:ConstraintRow;
-   
-   public var baselineOffset:Number;
-   
-   function ContentRowChild()
-   {
-      super();
-   }
+    public var baseline:Object;
+    public var left:Object;
+    public var bottom:Object;
+    public var top:Object;
+    public var horizontalCenter:Object;
+    public var verticalCenter:Object;
+    public var right:Object;
+
+    function LayoutConstraints() : void
+    {
+        return;
+    }// end function
+
 }
+

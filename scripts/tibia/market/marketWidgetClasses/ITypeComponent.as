@@ -1,12 +1,15 @@
-package tibia.market.marketWidgetClasses
+﻿package tibia.market.marketWidgetClasses
 {
-   import tibia.appearances.AppearanceType;
-   
-   public interface ITypeComponent
-   {
-       
-      function set selectedType(param1:*) : void;
-      
-      function get selectedType() : AppearanceType;
-   }
+    import tibia.appearances.*;
+
+    public interface ITypeComponent
+    {
+
+        public function ITypeComponent();
+
+        function set selectedType(param1) : void;
+
+        function get selectedType() : AppearanceType;
+
+    }
 }

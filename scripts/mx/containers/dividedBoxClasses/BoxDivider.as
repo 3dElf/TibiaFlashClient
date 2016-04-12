@@ -1,210 +1,211 @@
-package mx.containers.dividedBoxClasses
+﻿package mx.containers.dividedBoxClasses
 {
-   import mx.core.UIComponent;
-   import mx.core.mx_internal;
-   import mx.containers.DividedBox;
-   import mx.containers.DividerState;
-   import flash.events.MouseEvent;
-   import flash.events.Event;
-   import flash.display.DisplayObject;
-   import mx.events.SandboxMouseEvent;
-   
-   use namespace mx_internal;
-   
-   public class BoxDivider extends UIComponent
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var isMouseOver:Boolean = false;
-      
-      private var _state:String = "up";
-      
-      private var knob:DisplayObject;
-      
-      public function BoxDivider()
-      {
-         super();
-         addEventListener(MouseEvent.MOUSE_OVER,mouseOverHandler);
-         addEventListener(MouseEvent.MOUSE_OUT,mouseOutHandler);
-         addEventListener(MouseEvent.MOUSE_DOWN,mouseDownHandler);
-      }
-      
-      mx_internal function set state(param1:String) : void
-      {
-         _state = param1;
-         invalidateDisplayList();
-      }
-      
-      override public function styleChanged(param1:String) : void
-      {
-         super.styleChanged(param1);
-         if(!param1 || param1 == "dividerSkin" || param1 == "styleName")
-         {
-            if(knob)
-            {
-               removeChild(knob);
-               knob = null;
-            }
-         }
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc3_:Number = NaN;
-         var _loc7_:Class = null;
-         var _loc8_:Number = NaN;
-         var _loc9_:Number = NaN;
-         var _loc10_:Number = NaN;
-         var _loc11_:Number = NaN;
-         if(Boolean(isNaN(width)) || Boolean(isNaN(height)))
-         {
+    import flash.display.*;
+    import flash.events.*;
+    import mx.containers.*;
+    import mx.core.*;
+    import mx.events.*;
+
+    public class BoxDivider extends UIComponent
+    {
+        private var isMouseOver:Boolean = false;
+        private var _state:String = "up";
+        private var knob:DisplayObject;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function BoxDivider()
+        {
+            addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
+            addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
+            addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
             return;
-         }
-         if(!parent)
-         {
+        }// end function
+
+        function set state(param1:String) : void
+        {
+            _state = param1;
+            invalidateDisplayList();
             return;
-         }
-         super.updateDisplayList(param1,param2);
-         graphics.clear();
-         graphics.beginFill(0,0);
-         graphics.drawRect(0,0,width,height);
-         graphics.endFill();
-         var _loc4_:Number = 1;
-         var _loc5_:Number = getStyle("dividerThickness");
-         var _loc6_:Number = !!DividedBox(owner).isVertical()?Number(DividedBox(owner).getStyle("verticalGap")):Number(DividedBox(owner).getStyle("horizontalGap"));
-         if(state != DividerState.DOWN)
-         {
-            if(_loc6_ >= 6)
+        }// end function
+
+        override public function styleChanged(param1:String) : void
+        {
+            super.styleChanged(param1);
+            if (!param1 || param1 == "dividerSkin" || param1 == "styleName")
             {
-               if(!knob)
-               {
-                  _loc7_ = Class(getStyle("dividerSkin"));
-                  if(_loc7_)
-                  {
-                     knob = new _loc7_();
-                  }
-                  if(knob)
-                  {
-                     addChild(knob);
-                  }
-               }
-               if(knob)
-               {
-                  if(DividedBox(owner).isVertical())
-                  {
-                     knob.scaleX = 1;
-                     knob.rotation = 0;
-                  }
-                  else
-                  {
-                     knob.scaleX = -1;
-                     knob.rotation = -90;
-                  }
-                  knob.x = Math.round((width - knob.width) / 2);
-                  knob.y = Math.round((height - knob.height) / 2);
-               }
+                if (knob)
+                {
+                    removeChild(knob);
+                    knob = null;
+                }
             }
             return;
-         }
-         _loc3_ = getStyle("dividerColor");
-         _loc4_ = getStyle("dividerAlpha");
-         graphics.beginFill(_loc3_,_loc4_);
-         if(DividedBox(owner).isVertical())
-         {
-            _loc8_ = _loc5_;
-            if(_loc8_ > _loc6_)
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_3:* = NaN;
+            var _loc_7:* = null;
+            var _loc_8:* = NaN;
+            var _loc_9:* = NaN;
+            var _loc_10:* = NaN;
+            var _loc_11:* = NaN;
+            if (isNaN(width) || isNaN(height))
             {
-               _loc8_ = _loc6_;
+                return;
             }
-            _loc9_ = (height - _loc8_) / 2;
-            graphics.drawRect(0,_loc9_,width,_loc8_);
-         }
-         else
-         {
-            _loc10_ = _loc5_;
-            if(_loc10_ > _loc6_)
+            if (!parent)
             {
-               _loc10_ = _loc6_;
+                return;
             }
-            _loc11_ = (width - _loc10_) / 2;
-            graphics.drawRect(_loc11_,0,_loc10_,height);
-         }
-         graphics.endFill();
-      }
-      
-      private function mouseOutHandler(param1:MouseEvent) : void
-      {
-         isMouseOver = false;
-         if(!DividedBox(owner).activeDivider)
-         {
-            state = DividerState.UP;
-            if(parent)
+            super.updateDisplayList(param1, param2);
+            graphics.clear();
+            graphics.beginFill(0, 0);
+            graphics.drawRect(0, 0, width, height);
+            graphics.endFill();
+            var _loc_4:* = 1;
+            var _loc_5:* = getStyle("dividerThickness");
+            var _loc_6:* = DividedBox(owner).isVertical() ? (DividedBox(owner).getStyle("verticalGap")) : (DividedBox(owner).getStyle("horizontalGap"));
+            if (state != DividerState.DOWN)
             {
-               DividedBox(owner).restoreCursor();
+                if (_loc_6 >= 6)
+                {
+                    if (!knob)
+                    {
+                        _loc_7 = Class(getStyle("dividerSkin"));
+                        if (_loc_7)
+                        {
+                            knob = new _loc_7;
+                        }
+                        if (knob)
+                        {
+                            addChild(knob);
+                        }
+                    }
+                    if (knob)
+                    {
+                        if (DividedBox(owner).isVertical())
+                        {
+                            knob.scaleX = 1;
+                            knob.rotation = 0;
+                        }
+                        else
+                        {
+                            knob.scaleX = -1;
+                            knob.rotation = -90;
+                        }
+                        knob.x = Math.round((width - knob.width) / 2);
+                        knob.y = Math.round((height - knob.height) / 2);
+                    }
+                }
+                return;
             }
-         }
-      }
-      
-      private function mouseUpHandler(param1:Event) : void
-      {
-         if(!isMouseOver)
-         {
-            DividedBox(owner).restoreCursor();
-         }
-         state = DividerState.OVER;
-         DividedBox(owner).stopDividerDrag(this,param1 as MouseEvent);
-         var _loc2_:DisplayObject = systemManager.getSandboxRoot();
-         _loc2_.removeEventListener(MouseEvent.MOUSE_UP,mouseUpHandler,true);
-         _loc2_.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,mouseUpHandler);
-      }
-      
-      override public function set x(param1:Number) : void
-      {
-         var _loc2_:Number = x;
-         super.x = param1;
-         if(!DividedBox(owner).isVertical())
-         {
-            DividedBox(owner).moveDivider(DividedBox(owner).getDividerIndex(this),param1 - _loc2_);
-         }
-      }
-      
-      mx_internal function get state() : String
-      {
-         return _state;
-      }
-      
-      private function mouseOverHandler(param1:MouseEvent) : void
-      {
-         if(param1.buttonDown)
-         {
+            _loc_3 = getStyle("dividerColor");
+            _loc_4 = getStyle("dividerAlpha");
+            graphics.beginFill(_loc_3, _loc_4);
+            if (DividedBox(owner).isVertical())
+            {
+                _loc_8 = _loc_5;
+                if (_loc_8 > _loc_6)
+                {
+                    _loc_8 = _loc_6;
+                }
+                _loc_9 = (height - _loc_8) / 2;
+                graphics.drawRect(0, _loc_9, width, _loc_8);
+            }
+            else
+            {
+                _loc_10 = _loc_5;
+                if (_loc_10 > _loc_6)
+                {
+                    _loc_10 = _loc_6;
+                }
+                _loc_11 = (width - _loc_10) / 2;
+                graphics.drawRect(_loc_11, 0, _loc_10, height);
+            }
+            graphics.endFill();
             return;
-         }
-         isMouseOver = true;
-         if(!DividedBox(owner).activeDivider)
-         {
+        }// end function
+
+        private function mouseOutHandler(event:MouseEvent) : void
+        {
+            isMouseOver = false;
+            if (!DividedBox(owner).activeDivider)
+            {
+                state = DividerState.UP;
+                if (parent)
+                {
+                    DividedBox(owner).restoreCursor();
+                }
+            }
+            return;
+        }// end function
+
+        private function mouseUpHandler(event:Event) : void
+        {
+            if (!isMouseOver)
+            {
+                DividedBox(owner).restoreCursor();
+            }
             state = DividerState.OVER;
+            DividedBox(owner).stopDividerDrag(this, event as MouseEvent);
+            var _loc_2:* = systemManager.getSandboxRoot();
+            _loc_2.removeEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, true);
+            _loc_2.removeEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, mouseUpHandler);
+            return;
+        }// end function
+
+        override public function set x(param1:Number) : void
+        {
+            var _loc_2:* = x;
+            super.x = param1;
+            if (!DividedBox(owner).isVertical())
+            {
+                DividedBox(owner).moveDivider(DividedBox(owner).getDividerIndex(this), param1 - _loc_2);
+            }
+            return;
+        }// end function
+
+        function get state() : String
+        {
+            return _state;
+        }// end function
+
+        private function mouseOverHandler(event:MouseEvent) : void
+        {
+            if (event.buttonDown)
+            {
+                return;
+            }
+            isMouseOver = true;
+            if (!DividedBox(owner).activeDivider)
+            {
+                state = DividerState.OVER;
+                DividedBox(owner).changeCursor(this);
+            }
+            return;
+        }// end function
+
+        override public function set y(param1:Number) : void
+        {
+            var _loc_2:* = y;
+            super.y = param1;
+            if (DividedBox(owner).isVertical())
+            {
+                DividedBox(owner).moveDivider(DividedBox(owner).getDividerIndex(this), param1 - _loc_2);
+            }
+            return;
+        }// end function
+
+        private function mouseDownHandler(event:MouseEvent) : void
+        {
             DividedBox(owner).changeCursor(this);
-         }
-      }
-      
-      override public function set y(param1:Number) : void
-      {
-         var _loc2_:Number = y;
-         super.y = param1;
-         if(DividedBox(owner).isVertical())
-         {
-            DividedBox(owner).moveDivider(DividedBox(owner).getDividerIndex(this),param1 - _loc2_);
-         }
-      }
-      
-      private function mouseDownHandler(param1:MouseEvent) : void
-      {
-         DividedBox(owner).changeCursor(this);
-         DividedBox(owner).startDividerDrag(this,param1);
-         var _loc2_:DisplayObject = systemManager.getSandboxRoot();
-         _loc2_.addEventListener(MouseEvent.MOUSE_UP,mouseUpHandler,true);
-         _loc2_.addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE,mouseUpHandler);
-      }
-   }
+            DividedBox(owner).startDividerDrag(this, event);
+            var _loc_2:* = systemManager.getSandboxRoot();
+            _loc_2.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, true);
+            _loc_2.addEventListener(SandboxMouseEvent.MOUSE_UP_SOMEWHERE, mouseUpHandler);
+            return;
+        }// end function
+
+    }
 }

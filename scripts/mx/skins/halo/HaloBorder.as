@@ -1,692 +1,575 @@
-package mx.skins.halo
+﻿package mx.skins.halo
 {
-   import mx.skins.RectangularBorder;
-   import mx.core.mx_internal;
-   import mx.core.IContainer;
-   import mx.core.EdgeMetrics;
-   import flash.display.Graphics;
-   import mx.utils.ColorUtil;
-   import mx.core.FlexVersion;
-   import mx.styles.IStyleClient;
-   import mx.styles.StyleManager;
-   import flash.display.GradientType;
-   import mx.graphics.RectangularDropShadow;
-   import mx.core.IUIComponent;
-   
-   use namespace mx_internal;
-   
-   public class HaloBorder extends RectangularBorder
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static var BORDER_WIDTHS:Object = {
-         "none":0,
-         "solid":1,
-         "inset":2,
-         "outset":2,
-         "alert":3,
-         "dropdown":2,
-         "menuBorder":1,
-         "comboNonEdit":2
-      };
-       
-      mx_internal var radiusObj:Object;
-      
-      mx_internal var backgroundHole:Object;
-      
-      mx_internal var radius:Number;
-      
-      mx_internal var bRoundedCorners:Boolean;
-      
-      mx_internal var backgroundColor:Object;
-      
-      private var dropShadow:RectangularDropShadow;
-      
-      protected var _borderMetrics:EdgeMetrics;
-      
-      mx_internal var backgroundAlphaName:String;
-      
-      public function HaloBorder()
-      {
-         super();
-         BORDER_WIDTHS["default"] = 3;
-      }
-      
-      override public function styleChanged(param1:String) : void
-      {
-         if(param1 == null || param1 == "styleName" || param1 == "borderStyle" || param1 == "borderThickness" || param1 == "borderSides")
-         {
-            _borderMetrics = null;
-         }
-         invalidateDisplayList();
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         if(Boolean(isNaN(param1)) || Boolean(isNaN(param2)))
-         {
+    import flash.display.*;
+    import mx.core.*;
+    import mx.graphics.*;
+    import mx.skins.*;
+    import mx.styles.*;
+    import mx.utils.*;
+
+    public class HaloBorder extends RectangularBorder
+    {
+        var radiusObj:Object;
+        var backgroundHole:Object;
+        var radius:Number;
+        var bRoundedCorners:Boolean;
+        var backgroundColor:Object;
+        private var dropShadow:RectangularDropShadow;
+        protected var _borderMetrics:EdgeMetrics;
+        var backgroundAlphaName:String;
+        static const VERSION:String = "3.6.0.21751";
+        private static var BORDER_WIDTHS:Object = {none:0, solid:1, inset:2, outset:2, alert:3, dropdown:2, menuBorder:1, comboNonEdit:2};
+
+        public function HaloBorder()
+        {
+            BORDER_WIDTHS["default"] = 3;
             return;
-         }
-         super.updateDisplayList(param1,param2);
-         backgroundColor = getBackgroundColor();
-         bRoundedCorners = false;
-         backgroundAlphaName = "backgroundAlpha";
-         backgroundHole = null;
-         radius = 0;
-         radiusObj = null;
-         drawBorder(param1,param2);
-         drawBackground(param1,param2);
-      }
-      
-      mx_internal function drawBorder(param1:Number, param2:Number) : void
-      {
-         var _loc5_:Number = NaN;
-         var _loc6_:uint = 0;
-         var _loc7_:uint = 0;
-         var _loc8_:String = null;
-         var _loc9_:Number = NaN;
-         var _loc10_:uint = 0;
-         var _loc11_:Boolean = false;
-         var _loc12_:uint = 0;
-         var _loc13_:Array = null;
-         var _loc14_:Array = null;
-         var _loc15_:uint = 0;
-         var _loc16_:uint = 0;
-         var _loc17_:uint = 0;
-         var _loc18_:uint = 0;
-         var _loc19_:Boolean = false;
-         var _loc20_:Object = null;
-         var _loc22_:Number = NaN;
-         var _loc23_:Number = NaN;
-         var _loc24_:Number = NaN;
-         var _loc25_:Object = null;
-         var _loc27_:Number = NaN;
-         var _loc28_:Number = NaN;
-         var _loc29_:IContainer = null;
-         var _loc30_:EdgeMetrics = null;
-         var _loc31_:* = false;
-         var _loc32_:Number = NaN;
-         var _loc33_:Array = null;
-         var _loc34_:uint = 0;
-         var _loc35_:Boolean = false;
-         var _loc36_:Number = NaN;
-         var _loc3_:String = getStyle("borderStyle");
-         var _loc4_:Array = getStyle("highlightAlphas");
-         var _loc21_:Boolean = false;
-         var _loc26_:Graphics = graphics;
-         _loc26_.clear();
-         if(_loc3_)
-         {
-            switch(_loc3_)
+        }// end function
+
+        override public function styleChanged(param1:String) : void
+        {
+            if (param1 == null || param1 == "styleName" || param1 == "borderStyle" || param1 == "borderThickness" || param1 == "borderSides")
             {
-               case "none":
-                  break;
-               case "inset":
-                  _loc7_ = getStyle("borderColor");
-                  _loc22_ = ColorUtil.adjustBrightness2(_loc7_,-40);
-                  _loc23_ = ColorUtil.adjustBrightness2(_loc7_,25);
-                  _loc24_ = ColorUtil.adjustBrightness2(_loc7_,40);
-                  _loc25_ = backgroundColor;
-                  if(_loc25_ === null || _loc25_ === "")
-                  {
-                     _loc25_ = _loc7_;
-                  }
-                  draw3dBorder(_loc23_,_loc22_,_loc24_,Number(_loc25_),Number(_loc25_),Number(_loc25_));
-                  break;
-               case "outset":
-                  _loc7_ = getStyle("borderColor");
-                  _loc22_ = ColorUtil.adjustBrightness2(_loc7_,-40);
-                  _loc23_ = ColorUtil.adjustBrightness2(_loc7_,-25);
-                  _loc24_ = ColorUtil.adjustBrightness2(_loc7_,40);
-                  _loc25_ = backgroundColor;
-                  if(_loc25_ === null || _loc25_ === "")
-                  {
-                     _loc25_ = _loc7_;
-                  }
-                  draw3dBorder(_loc23_,_loc24_,_loc22_,Number(_loc25_),Number(_loc25_),Number(_loc25_));
-                  break;
-               case "alert":
-               case "default":
-                  if(FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
-                  {
-                     _loc27_ = getStyle("backgroundAlpha");
-                     _loc5_ = getStyle("borderAlpha");
-                     backgroundAlphaName = "borderAlpha";
-                     radius = getStyle("cornerRadius");
-                     bRoundedCorners = getStyle("roundedBottomCorners").toString().toLowerCase() == "true";
-                     _loc28_ = !!bRoundedCorners?Number(radius):Number(0);
-                     drawDropShadow(0,0,param1,param2,radius,radius,_loc28_,_loc28_);
-                     if(!bRoundedCorners)
-                     {
-                        radiusObj = {};
-                     }
-                     _loc29_ = parent as IContainer;
-                     if(_loc29_)
-                     {
-                        _loc30_ = _loc29_.viewMetrics;
-                        backgroundHole = {
-                           "x":_loc30_.left,
-                           "y":_loc30_.top,
-                           "w":Math.max(0,param1 - _loc30_.left - _loc30_.right),
-                           "h":Math.max(0,param2 - _loc30_.top - _loc30_.bottom),
-                           "r":0
-                        };
-                        if(backgroundHole.w > 0 && backgroundHole.h > 0)
+                _borderMetrics = null;
+            }
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            if (isNaN(param1) || isNaN(param2))
+            {
+                return;
+            }
+            super.updateDisplayList(param1, param2);
+            backgroundColor = getBackgroundColor();
+            bRoundedCorners = false;
+            backgroundAlphaName = "backgroundAlpha";
+            backgroundHole = null;
+            radius = 0;
+            radiusObj = null;
+            drawBorder(param1, param2);
+            drawBackground(param1, param2);
+            return;
+        }// end function
+
+        function drawBorder(param1:Number, param2:Number) : void
+        {
+            var _loc_5:* = NaN;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_8:* = null;
+            var _loc_9:* = NaN;
+            var _loc_10:* = 0;
+            var _loc_11:* = false;
+            var _loc_12:* = 0;
+            var _loc_13:* = null;
+            var _loc_14:* = null;
+            var _loc_15:* = 0;
+            var _loc_16:* = 0;
+            var _loc_17:* = 0;
+            var _loc_18:* = 0;
+            var _loc_19:* = false;
+            var _loc_20:* = null;
+            var _loc_22:* = NaN;
+            var _loc_23:* = NaN;
+            var _loc_24:* = NaN;
+            var _loc_25:* = null;
+            var _loc_27:* = NaN;
+            var _loc_28:* = NaN;
+            var _loc_29:* = null;
+            var _loc_30:* = null;
+            var _loc_31:* = false;
+            var _loc_32:* = NaN;
+            var _loc_33:* = null;
+            var _loc_34:* = 0;
+            var _loc_35:* = false;
+            var _loc_36:* = NaN;
+            var _loc_3:* = getStyle("borderStyle");
+            var _loc_4:* = getStyle("highlightAlphas");
+            var _loc_21:* = false;
+            var _loc_26:* = graphics;
+            _loc_26.clear();
+            if (_loc_3)
+            {
+                switch(_loc_3)
+                {
+                    case "none":
+                    {
+                        break;
+                    }
+                    case "inset":
+                    {
+                        _loc_7 = getStyle("borderColor");
+                        _loc_22 = ColorUtil.adjustBrightness2(_loc_7, -40);
+                        _loc_23 = ColorUtil.adjustBrightness2(_loc_7, 25);
+                        _loc_24 = ColorUtil.adjustBrightness2(_loc_7, 40);
+                        _loc_25 = backgroundColor;
+                        if (_loc_25 === null || _loc_25 === "")
                         {
-                           if(_loc27_ != _loc5_)
-                           {
-                              drawDropShadow(backgroundHole.x,backgroundHole.y,backgroundHole.w,backgroundHole.h,0,0,0,0);
-                           }
-                           _loc26_.beginFill(Number(backgroundColor),_loc27_);
-                           _loc26_.drawRect(backgroundHole.x,backgroundHole.y,backgroundHole.w,backgroundHole.h);
-                           _loc26_.endFill();
+                            _loc_25 = _loc_7;
                         }
-                     }
-                     backgroundColor = getStyle("borderColor");
-                  }
-                  break;
-               case "dropdown":
-                  _loc12_ = getStyle("dropdownBorderColor");
-                  drawDropShadow(0,0,param1,param2,4,0,0,4);
-                  drawRoundRect(0,0,param1,param2,{
-                     "tl":4,
-                     "tr":0,
-                     "br":0,
-                     "bl":4
-                  },5068126,1);
-                  drawRoundRect(0,0,param1,param2,{
-                     "tl":4,
-                     "tr":0,
-                     "br":0,
-                     "bl":4
-                  },[16777215,16777215],[0.7,0],verticalGradientMatrix(0,0,param1,param2));
-                  drawRoundRect(1,1,param1 - 1,param2 - 2,{
-                     "tl":3,
-                     "tr":0,
-                     "br":0,
-                     "bl":3
-                  },16777215,1);
-                  drawRoundRect(1,2,param1 - 1,param2 - 3,{
-                     "tl":3,
-                     "tr":0,
-                     "br":0,
-                     "bl":3
-                  },[15658734,16777215],1,verticalGradientMatrix(0,0,param1 - 1,param2 - 3));
-                  if(!isNaN(_loc12_))
-                  {
-                     drawRoundRect(0,0,param1 + 1,param2,{
-                        "tl":4,
-                        "tr":0,
-                        "br":0,
-                        "bl":4
-                     },_loc12_,0.5);
-                     drawRoundRect(1,1,param1 - 1,param2 - 2,{
-                        "tl":3,
-                        "tr":0,
-                        "br":0,
-                        "bl":3
-                     },16777215,1);
-                     drawRoundRect(1,2,param1 - 1,param2 - 3,{
-                        "tl":3,
-                        "tr":0,
-                        "br":0,
-                        "bl":3
-                     },[15658734,16777215],1,verticalGradientMatrix(0,0,param1 - 1,param2 - 3));
-                  }
-                  backgroundColor = null;
-                  break;
-               case "menuBorder":
-                  _loc7_ = getStyle("borderColor");
-                  drawRoundRect(0,0,param1,param2,0,_loc7_,1);
-                  drawDropShadow(1,1,param1 - 2,param2 - 2,0,0,0,0);
-                  break;
-               case "comboNonEdit":
-                  break;
-               case "controlBar":
-                  if(param1 == 0 || param2 == 0)
-                  {
-                     backgroundColor = null;
-                     break;
-                  }
-                  _loc14_ = getStyle("footerColors");
-                  _loc31_ = _loc14_ != null;
-                  _loc32_ = getStyle("borderAlpha");
-                  if(_loc31_)
-                  {
-                     _loc26_.lineStyle(0,_loc14_.length > 0?uint(_loc14_[1]):uint(_loc14_[0]),_loc32_);
-                     _loc26_.moveTo(0,0);
-                     _loc26_.lineTo(param1,0);
-                     _loc26_.lineStyle(0,0,0);
-                     if(Boolean(parent) && Boolean(parent.parent) && parent.parent is IStyleClient)
-                     {
-                        radius = IStyleClient(parent.parent).getStyle("cornerRadius");
-                        _loc32_ = IStyleClient(parent.parent).getStyle("borderAlpha");
-                     }
-                     if(isNaN(radius))
-                     {
-                        radius = 0;
-                     }
-                     if(IStyleClient(parent.parent).getStyle("roundedBottomCorners").toString().toLowerCase() != "true")
-                     {
-                        radius = 0;
-                     }
-                     drawRoundRect(0,1,param1,param2 - 1,{
-                        "tl":0,
-                        "tr":0,
-                        "bl":radius,
-                        "br":radius
-                     },_loc14_,_loc32_,verticalGradientMatrix(0,0,param1,param2));
-                     if(_loc14_.length > 1 && _loc14_[0] != _loc14_[1])
-                     {
-                        drawRoundRect(0,1,param1,param2 - 1,{
-                           "tl":0,
-                           "tr":0,
-                           "bl":radius,
-                           "br":radius
-                        },[16777215,16777215],_loc4_,verticalGradientMatrix(0,0,param1,param2));
-                        drawRoundRect(1,2,param1 - 2,param2 - 3,{
-                           "tl":0,
-                           "tr":0,
-                           "bl":radius - 1,
-                           "br":radius - 1
-                        },_loc14_,_loc32_,verticalGradientMatrix(0,0,param1,param2));
-                     }
-                  }
-                  backgroundColor = null;
-                  break;
-               case "applicationControlBar":
-                  _loc13_ = getStyle("fillColors");
-                  _loc5_ = getStyle("backgroundAlpha");
-                  _loc4_ = getStyle("highlightAlphas");
-                  _loc33_ = getStyle("fillAlphas");
-                  _loc11_ = getStyle("docked");
-                  _loc34_ = uint(backgroundColor);
-                  radius = getStyle("cornerRadius");
-                  if(!radius)
-                  {
-                     radius = 0;
-                  }
-                  drawDropShadow(0,1,param1,param2 - 1,radius,radius,radius,radius);
-                  if(backgroundColor !== null && Boolean(StyleManager.isValidStyleValue(backgroundColor)))
-                  {
-                     drawRoundRect(0,1,param1,param2 - 1,radius,_loc34_,_loc5_,verticalGradientMatrix(0,0,param1,param2));
-                  }
-                  drawRoundRect(0,1,param1,param2 - 1,radius,_loc13_,_loc33_,verticalGradientMatrix(0,0,param1,param2));
-                  drawRoundRect(0,1,param1,param2 / 2 - 1,{
-                     "tl":radius,
-                     "tr":radius,
-                     "bl":0,
-                     "br":0
-                  },[16777215,16777215],_loc4_,verticalGradientMatrix(0,0,param1,param2 / 2 - 1));
-                  drawRoundRect(0,1,param1,param2 - 1,{
-                     "tl":radius,
-                     "tr":radius,
-                     "bl":0,
-                     "br":0
-                  },16777215,0.3,null,GradientType.LINEAR,null,{
-                     "x":0,
-                     "y":2,
-                     "w":param1,
-                     "h":param2 - 2,
-                     "r":{
-                        "tl":radius,
-                        "tr":radius,
-                        "bl":0,
-                        "br":0
-                     }
-                  });
-                  backgroundColor = null;
-                  break;
-               default:
-                  _loc7_ = getStyle("borderColor");
-                  _loc9_ = getStyle("borderThickness");
-                  _loc8_ = getStyle("borderSides");
-                  _loc35_ = true;
-                  radius = getStyle("cornerRadius");
-                  bRoundedCorners = getStyle("roundedBottomCorners").toString().toLowerCase() == "true";
-                  _loc36_ = Math.max(radius - _loc9_,0);
-                  _loc20_ = {
-                     "x":_loc9_,
-                     "y":_loc9_,
-                     "w":param1 - _loc9_ * 2,
-                     "h":param2 - _loc9_ * 2,
-                     "r":_loc36_
-                  };
-                  if(!bRoundedCorners)
-                  {
-                     radiusObj = {
-                        "tl":radius,
-                        "tr":radius,
-                        "bl":0,
-                        "br":0
-                     };
-                     _loc20_.r = {
-                        "tl":_loc36_,
-                        "tr":_loc36_,
-                        "bl":0,
-                        "br":0
-                     };
-                  }
-                  if(_loc8_ != "left top right bottom")
-                  {
-                     _loc20_.r = {
-                        "tl":_loc36_,
-                        "tr":_loc36_,
-                        "bl":(!!bRoundedCorners?_loc36_:0),
-                        "br":(!!bRoundedCorners?_loc36_:0)
-                     };
-                     radiusObj = {
-                        "tl":radius,
-                        "tr":radius,
-                        "bl":(!!bRoundedCorners?radius:0),
-                        "br":(!!bRoundedCorners?radius:0)
-                     };
-                     _loc8_ = _loc8_.toLowerCase();
-                     if(_loc8_.indexOf("left") == -1)
-                     {
-                        _loc20_.x = 0;
-                        _loc20_.w = _loc20_.w + _loc9_;
-                        _loc20_.r.tl = 0;
-                        _loc20_.r.bl = 0;
-                        radiusObj.tl = 0;
-                        radiusObj.bl = 0;
-                        _loc35_ = false;
-                     }
-                     if(_loc8_.indexOf("top") == -1)
-                     {
-                        _loc20_.y = 0;
-                        _loc20_.h = _loc20_.h + _loc9_;
-                        _loc20_.r.tl = 0;
-                        _loc20_.r.tr = 0;
-                        radiusObj.tl = 0;
-                        radiusObj.tr = 0;
-                        _loc35_ = false;
-                     }
-                     if(_loc8_.indexOf("right") == -1)
-                     {
-                        _loc20_.w = _loc20_.w + _loc9_;
-                        _loc20_.r.tr = 0;
-                        _loc20_.r.br = 0;
-                        radiusObj.tr = 0;
-                        radiusObj.br = 0;
-                        _loc35_ = false;
-                     }
-                     if(_loc8_.indexOf("bottom") == -1)
-                     {
-                        _loc20_.h = _loc20_.h + _loc9_;
-                        _loc20_.r.bl = 0;
-                        _loc20_.r.br = 0;
-                        radiusObj.bl = 0;
-                        radiusObj.br = 0;
-                        _loc35_ = false;
-                     }
-                  }
-                  if(radius == 0 && Boolean(_loc35_))
-                  {
-                     drawDropShadow(0,0,param1,param2,0,0,0,0);
-                     _loc26_.beginFill(_loc7_);
-                     _loc26_.drawRect(0,0,param1,param2);
-                     _loc26_.drawRect(_loc9_,_loc9_,param1 - 2 * _loc9_,param2 - 2 * _loc9_);
-                     _loc26_.endFill();
-                  }
-                  else if(radiusObj)
-                  {
-                     drawDropShadow(0,0,param1,param2,radiusObj.tl,radiusObj.tr,radiusObj.br,radiusObj.bl);
-                     drawRoundRect(0,0,param1,param2,radiusObj,_loc7_,1,null,null,null,_loc20_);
-                     radiusObj.tl = Math.max(radius - _loc9_,0);
-                     radiusObj.tr = Math.max(radius - _loc9_,0);
-                     radiusObj.bl = !!bRoundedCorners?Math.max(radius - _loc9_,0):0;
-                     radiusObj.br = !!bRoundedCorners?Math.max(radius - _loc9_,0):0;
-                  }
-                  else
-                  {
-                     drawDropShadow(0,0,param1,param2,radius,radius,radius,radius);
-                     drawRoundRect(0,0,param1,param2,radius,_loc7_,1,null,null,null,_loc20_);
-                     radius = Math.max(getStyle("cornerRadius") - _loc9_,0);
-                  }
+                        draw3dBorder(_loc_23, _loc_22, _loc_24, Number(_loc_25), Number(_loc_25), Number(_loc_25));
+                        break;
+                    }
+                    case "outset":
+                    {
+                        _loc_7 = getStyle("borderColor");
+                        _loc_22 = ColorUtil.adjustBrightness2(_loc_7, -40);
+                        _loc_23 = ColorUtil.adjustBrightness2(_loc_7, -25);
+                        _loc_24 = ColorUtil.adjustBrightness2(_loc_7, 40);
+                        _loc_25 = backgroundColor;
+                        if (_loc_25 === null || _loc_25 === "")
+                        {
+                            _loc_25 = _loc_7;
+                        }
+                        draw3dBorder(_loc_23, _loc_24, _loc_22, Number(_loc_25), Number(_loc_25), Number(_loc_25));
+                        break;
+                    }
+                    case "alert":
+                    case "default":
+                    {
+                        if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
+                        {
+                            _loc_27 = getStyle("backgroundAlpha");
+                            _loc_5 = getStyle("borderAlpha");
+                            backgroundAlphaName = "borderAlpha";
+                            radius = getStyle("cornerRadius");
+                            bRoundedCorners = getStyle("roundedBottomCorners").toString().toLowerCase() == "true";
+                            _loc_28 = bRoundedCorners ? (radius) : (0);
+                            drawDropShadow(0, 0, param1, param2, radius, radius, _loc_28, _loc_28);
+                            if (!bRoundedCorners)
+                            {
+                                radiusObj = {};
+                            }
+                            _loc_29 = parent as IContainer;
+                            if (_loc_29)
+                            {
+                                _loc_30 = _loc_29.viewMetrics;
+                                backgroundHole = {x:_loc_30.left, y:_loc_30.top, w:Math.max(0, param1 - _loc_30.left - _loc_30.right), h:Math.max(0, param2 - _loc_30.top - _loc_30.bottom), r:0};
+                                if (backgroundHole.w > 0 && backgroundHole.h > 0)
+                                {
+                                    if (_loc_27 != _loc_5)
+                                    {
+                                        drawDropShadow(backgroundHole.x, backgroundHole.y, backgroundHole.w, backgroundHole.h, 0, 0, 0, 0);
+                                    }
+                                    _loc_26.beginFill(Number(backgroundColor), _loc_27);
+                                    _loc_26.drawRect(backgroundHole.x, backgroundHole.y, backgroundHole.w, backgroundHole.h);
+                                    _loc_26.endFill();
+                                }
+                            }
+                            backgroundColor = getStyle("borderColor");
+                        }
+                        break;
+                    }
+                    case "dropdown":
+                    {
+                        _loc_12 = getStyle("dropdownBorderColor");
+                        drawDropShadow(0, 0, param1, param2, 4, 0, 0, 4);
+                        drawRoundRect(0, 0, param1, param2, {tl:4, tr:0, br:0, bl:4}, 5068126, 1);
+                        drawRoundRect(0, 0, param1, param2, {tl:4, tr:0, br:0, bl:4}, [16777215, 16777215], [0.7, 0], verticalGradientMatrix(0, 0, param1, param2));
+                        drawRoundRect(1, 1, (param1 - 1), param2 - 2, {tl:3, tr:0, br:0, bl:3}, 16777215, 1);
+                        drawRoundRect(1, 2, (param1 - 1), param2 - 3, {tl:3, tr:0, br:0, bl:3}, [15658734, 16777215], 1, verticalGradientMatrix(0, 0, (param1 - 1), param2 - 3));
+                        if (!isNaN(_loc_12))
+                        {
+                            drawRoundRect(0, 0, (param1 + 1), param2, {tl:4, tr:0, br:0, bl:4}, _loc_12, 0.5);
+                            drawRoundRect(1, 1, (param1 - 1), param2 - 2, {tl:3, tr:0, br:0, bl:3}, 16777215, 1);
+                            drawRoundRect(1, 2, (param1 - 1), param2 - 3, {tl:3, tr:0, br:0, bl:3}, [15658734, 16777215], 1, verticalGradientMatrix(0, 0, (param1 - 1), param2 - 3));
+                        }
+                        backgroundColor = null;
+                        break;
+                    }
+                    case "menuBorder":
+                    {
+                        _loc_7 = getStyle("borderColor");
+                        drawRoundRect(0, 0, param1, param2, 0, _loc_7, 1);
+                        drawDropShadow(1, 1, param1 - 2, param2 - 2, 0, 0, 0, 0);
+                        break;
+                    }
+                    case "comboNonEdit":
+                    {
+                        break;
+                    }
+                    case "controlBar":
+                    {
+                        if (param1 == 0 || param2 == 0)
+                        {
+                            backgroundColor = null;
+                            break;
+                        }
+                        _loc_14 = getStyle("footerColors");
+                        _loc_31 = _loc_14 != null;
+                        _loc_32 = getStyle("borderAlpha");
+                        if (_loc_31)
+                        {
+                            _loc_26.lineStyle(0, _loc_14.length > 0 ? (_loc_14[1]) : (_loc_14[0]), _loc_32);
+                            _loc_26.moveTo(0, 0);
+                            _loc_26.lineTo(param1, 0);
+                            _loc_26.lineStyle(0, 0, 0);
+                            if (parent && parent.parent && parent.parent is IStyleClient)
+                            {
+                                radius = IStyleClient(parent.parent).getStyle("cornerRadius");
+                                _loc_32 = IStyleClient(parent.parent).getStyle("borderAlpha");
+                            }
+                            if (isNaN(radius))
+                            {
+                                radius = 0;
+                            }
+                            if (IStyleClient(parent.parent).getStyle("roundedBottomCorners").toString().toLowerCase() != "true")
+                            {
+                                radius = 0;
+                            }
+                            drawRoundRect(0, 1, param1, (param2 - 1), {tl:0, tr:0, bl:radius, br:radius}, _loc_14, _loc_32, verticalGradientMatrix(0, 0, param1, param2));
+                            if (_loc_14.length > 1 && _loc_14[0] != _loc_14[1])
+                            {
+                                drawRoundRect(0, 1, param1, (param2 - 1), {tl:0, tr:0, bl:radius, br:radius}, [16777215, 16777215], _loc_4, verticalGradientMatrix(0, 0, param1, param2));
+                                drawRoundRect(1, 2, param1 - 2, param2 - 3, {tl:0, tr:0, bl:(radius - 1), br:(radius - 1)}, _loc_14, _loc_32, verticalGradientMatrix(0, 0, param1, param2));
+                            }
+                        }
+                        backgroundColor = null;
+                        break;
+                    }
+                    case "applicationControlBar":
+                    {
+                        _loc_13 = getStyle("fillColors");
+                        _loc_5 = getStyle("backgroundAlpha");
+                        _loc_4 = getStyle("highlightAlphas");
+                        _loc_33 = getStyle("fillAlphas");
+                        _loc_11 = getStyle("docked");
+                        _loc_34 = uint(backgroundColor);
+                        radius = getStyle("cornerRadius");
+                        if (!radius)
+                        {
+                            radius = 0;
+                        }
+                        drawDropShadow(0, 1, param1, (param2 - 1), radius, radius, radius, radius);
+                        if (backgroundColor !== null && StyleManager.isValidStyleValue(backgroundColor))
+                        {
+                            drawRoundRect(0, 1, param1, (param2 - 1), radius, _loc_34, _loc_5, verticalGradientMatrix(0, 0, param1, param2));
+                        }
+                        drawRoundRect(0, 1, param1, (param2 - 1), radius, _loc_13, _loc_33, verticalGradientMatrix(0, 0, param1, param2));
+                        drawRoundRect(0, 1, param1, param2 / 2 - 1, {tl:radius, tr:radius, bl:0, br:0}, [16777215, 16777215], _loc_4, verticalGradientMatrix(0, 0, param1, param2 / 2 - 1));
+                        drawRoundRect(0, 1, param1, (param2 - 1), {tl:radius, tr:radius, bl:0, br:0}, 16777215, 0.3, null, GradientType.LINEAR, null, {x:0, y:2, w:param1, h:param2 - 2, r:{tl:radius, tr:radius, bl:0, br:0}});
+                        backgroundColor = null;
+                        break;
+                    }
+                    default:
+                    {
+                        _loc_7 = getStyle("borderColor");
+                        _loc_9 = getStyle("borderThickness");
+                        _loc_8 = getStyle("borderSides");
+                        _loc_35 = true;
+                        radius = getStyle("cornerRadius");
+                        bRoundedCorners = getStyle("roundedBottomCorners").toString().toLowerCase() == "true";
+                        _loc_36 = Math.max(radius - _loc_9, 0);
+                        _loc_20 = {x:_loc_9, y:_loc_9, w:param1 - _loc_9 * 2, h:param2 - _loc_9 * 2, r:_loc_36};
+                        if (!bRoundedCorners)
+                        {
+                            radiusObj = {tl:radius, tr:radius, bl:0, br:0};
+                            _loc_20.r = {tl:_loc_36, tr:_loc_36, bl:0, br:0};
+                        }
+                        if (_loc_8 != "left top right bottom")
+                        {
+                            _loc_20.r = {tl:_loc_36, tr:_loc_36, bl:bRoundedCorners ? (_loc_36) : (0), br:bRoundedCorners ? (_loc_36) : (0)};
+                            radiusObj = {tl:radius, tr:radius, bl:bRoundedCorners ? (radius) : (0), br:bRoundedCorners ? (radius) : (0)};
+                            _loc_8 = _loc_8.toLowerCase();
+                            if (_loc_8.indexOf("left") == -1)
+                            {
+                                _loc_20.x = 0;
+                                _loc_20.w = _loc_20.w + _loc_9;
+                                _loc_20.r.tl = 0;
+                                _loc_20.r.bl = 0;
+                                radiusObj.tl = 0;
+                                radiusObj.bl = 0;
+                                _loc_35 = false;
+                            }
+                            if (_loc_8.indexOf("top") == -1)
+                            {
+                                _loc_20.y = 0;
+                                _loc_20.h = _loc_20.h + _loc_9;
+                                _loc_20.r.tl = 0;
+                                _loc_20.r.tr = 0;
+                                radiusObj.tl = 0;
+                                radiusObj.tr = 0;
+                                _loc_35 = false;
+                            }
+                            if (_loc_8.indexOf("right") == -1)
+                            {
+                                _loc_20.w = _loc_20.w + _loc_9;
+                                _loc_20.r.tr = 0;
+                                _loc_20.r.br = 0;
+                                radiusObj.tr = 0;
+                                radiusObj.br = 0;
+                                _loc_35 = false;
+                            }
+                            if (_loc_8.indexOf("bottom") == -1)
+                            {
+                                _loc_20.h = _loc_20.h + _loc_9;
+                                _loc_20.r.bl = 0;
+                                _loc_20.r.br = 0;
+                                radiusObj.bl = 0;
+                                radiusObj.br = 0;
+                                _loc_35 = false;
+                            }
+                        }
+                        if (radius == 0 && _loc_35)
+                        {
+                            drawDropShadow(0, 0, param1, param2, 0, 0, 0, 0);
+                            _loc_26.beginFill(_loc_7);
+                            _loc_26.drawRect(0, 0, param1, param2);
+                            _loc_26.drawRect(_loc_9, _loc_9, param1 - 2 * _loc_9, param2 - 2 * _loc_9);
+                            _loc_26.endFill();
+                        }
+                        else if (radiusObj)
+                        {
+                            drawDropShadow(0, 0, param1, param2, radiusObj.tl, radiusObj.tr, radiusObj.br, radiusObj.bl);
+                            drawRoundRect(0, 0, param1, param2, radiusObj, _loc_7, 1, null, null, null, _loc_20);
+                            radiusObj.tl = Math.max(radius - _loc_9, 0);
+                            radiusObj.tr = Math.max(radius - _loc_9, 0);
+                            radiusObj.bl = bRoundedCorners ? (Math.max(radius - _loc_9, 0)) : (0);
+                            radiusObj.br = bRoundedCorners ? (Math.max(radius - _loc_9, 0)) : (0);
+                        }
+                        else
+                        {
+                            drawDropShadow(0, 0, param1, param2, radius, radius, radius, radius);
+                            drawRoundRect(0, 0, param1, param2, radius, _loc_7, 1, null, null, null, _loc_20);
+                            radius = Math.max(getStyle("cornerRadius") - _loc_9, 0);
+                        }
+                        break;
+                    }
+                }
             }
-         }
-      }
-      
-      mx_internal function drawBackground(param1:Number, param2:Number) : void
-      {
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
-         var _loc6_:EdgeMetrics = null;
-         var _loc7_:Graphics = null;
-         var _loc8_:Number = NaN;
-         var _loc9_:Number = NaN;
-         var _loc10_:Number = NaN;
-         var _loc11_:Array = null;
-         var _loc12_:Number = NaN;
-         if(Boolean(backgroundColor !== null && backgroundColor !== "") || Boolean(getStyle("mouseShield")) || Boolean(getStyle("mouseShieldChildren")))
-         {
-            _loc4_ = Number(backgroundColor);
-            _loc5_ = 1;
-            _loc6_ = getBackgroundColorMetrics();
-            _loc7_ = graphics;
-            if(Boolean(isNaN(_loc4_)) || backgroundColor === "" || backgroundColor === null)
-            {
-               _loc5_ = 0;
-               _loc4_ = 16777215;
-            }
-            else
-            {
-               _loc5_ = getStyle(backgroundAlphaName);
-            }
-            if(radius != 0 || Boolean(backgroundHole))
-            {
-               _loc8_ = _loc6_.bottom;
-               if(radiusObj)
-               {
-                  _loc9_ = Math.max(radius - Math.max(_loc6_.top,_loc6_.left,_loc6_.right),0);
-                  _loc10_ = !!bRoundedCorners?Number(Math.max(radius - Math.max(_loc6_.bottom,_loc6_.left,_loc6_.right),0)):Number(0);
-                  radiusObj = {
-                     "tl":_loc9_,
-                     "tr":_loc9_,
-                     "bl":_loc10_,
-                     "br":_loc10_
-                  };
-                  drawRoundRect(_loc6_.left,_loc6_.top,width - (_loc6_.left + _loc6_.right),height - (_loc6_.top + _loc8_),radiusObj,_loc4_,_loc5_,null,GradientType.LINEAR,null,backgroundHole);
-               }
-               else
-               {
-                  drawRoundRect(_loc6_.left,_loc6_.top,width - (_loc6_.left + _loc6_.right),height - (_loc6_.top + _loc8_),radius,_loc4_,_loc5_,null,GradientType.LINEAR,null,backgroundHole);
-               }
-            }
-            else
-            {
-               _loc7_.beginFill(_loc4_,_loc5_);
-               _loc7_.drawRect(_loc6_.left,_loc6_.top,param1 - _loc6_.right - _loc6_.left,param2 - _loc6_.bottom - _loc6_.top);
-               _loc7_.endFill();
-            }
-         }
-         var _loc3_:String = getStyle("borderStyle");
-         if(FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0 && (_loc3_ == "alert" || _loc3_ == "default") && getStyle("headerColors") == null)
-         {
-            _loc11_ = getStyle("highlightAlphas");
-            _loc12_ = !!_loc11_?Number(_loc11_[0]):Number(0.3);
-            drawRoundRect(0,0,param1,param2,{
-               "tl":radius,
-               "tr":radius,
-               "bl":0,
-               "br":0
-            },16777215,_loc12_,null,GradientType.LINEAR,null,{
-               "x":0,
-               "y":1,
-               "w":param1,
-               "h":param2 - 1,
-               "r":{
-                  "tl":radius,
-                  "tr":radius,
-                  "bl":0,
-                  "br":0
-               }
-            });
-         }
-      }
-      
-      mx_internal function drawDropShadow(param1:Number, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:Number, param8:Number) : void
-      {
-         var _loc11_:Number = NaN;
-         var _loc12_:Boolean = false;
-         if(getStyle("dropShadowEnabled") == false || getStyle("dropShadowEnabled") == "false" || param3 == 0 || param4 == 0)
-         {
             return;
-         }
-         var _loc9_:Number = getStyle("shadowDistance");
-         var _loc10_:String = getStyle("shadowDirection");
-         if(getStyle("borderStyle") == "applicationControlBar")
-         {
-            _loc12_ = getStyle("docked");
-            _loc11_ = !!_loc12_?Number(90):Number(getDropShadowAngle(_loc9_,_loc10_));
-            _loc9_ = Math.abs(_loc9_);
-         }
-         else
-         {
-            _loc11_ = getDropShadowAngle(_loc9_,_loc10_);
-            _loc9_ = Math.abs(_loc9_) + 2;
-         }
-         if(!dropShadow)
-         {
-            dropShadow = new RectangularDropShadow();
-         }
-         dropShadow.distance = _loc9_;
-         dropShadow.angle = _loc11_;
-         dropShadow.color = getStyle("dropShadowColor");
-         dropShadow.alpha = 0.4;
-         dropShadow.tlRadius = param5;
-         dropShadow.trRadius = param6;
-         dropShadow.blRadius = param8;
-         dropShadow.brRadius = param7;
-         dropShadow.drawShadow(graphics,param1,param2,param3,param4);
-      }
-      
-      mx_internal function getBackgroundColor() : Object
-      {
-         var _loc2_:Object = null;
-         var _loc1_:IUIComponent = parent as IUIComponent;
-         if(Boolean(_loc1_) && !_loc1_.enabled)
-         {
-            _loc2_ = getStyle("backgroundDisabledColor");
-            if(_loc2_ !== null && Boolean(StyleManager.isValidStyleValue(_loc2_)))
+        }// end function
+
+        function drawBackground(param1:Number, param2:Number) : void
+        {
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            var _loc_8:* = NaN;
+            var _loc_9:* = NaN;
+            var _loc_10:* = NaN;
+            var _loc_11:* = null;
+            var _loc_12:* = NaN;
+            if (backgroundColor !== null && backgroundColor !== "" || getStyle("mouseShield") || getStyle("mouseShieldChildren"))
             {
-               return _loc2_;
+                _loc_4 = Number(backgroundColor);
+                _loc_5 = 1;
+                _loc_6 = getBackgroundColorMetrics();
+                _loc_7 = graphics;
+                if (isNaN(_loc_4) || backgroundColor === "" || backgroundColor === null)
+                {
+                    _loc_5 = 0;
+                    _loc_4 = 16777215;
+                }
+                else
+                {
+                    _loc_5 = getStyle(backgroundAlphaName);
+                }
+                if (radius != 0 || backgroundHole)
+                {
+                    _loc_8 = _loc_6.bottom;
+                    if (radiusObj)
+                    {
+                        _loc_9 = Math.max(radius - Math.max(_loc_6.top, _loc_6.left, _loc_6.right), 0);
+                        _loc_10 = bRoundedCorners ? (Math.max(radius - Math.max(_loc_6.bottom, _loc_6.left, _loc_6.right), 0)) : (0);
+                        radiusObj = {tl:_loc_9, tr:_loc_9, bl:_loc_10, br:_loc_10};
+                        drawRoundRect(_loc_6.left, _loc_6.top, width - (_loc_6.left + _loc_6.right), height - (_loc_6.top + _loc_8), radiusObj, _loc_4, _loc_5, null, GradientType.LINEAR, null, backgroundHole);
+                    }
+                    else
+                    {
+                        drawRoundRect(_loc_6.left, _loc_6.top, width - (_loc_6.left + _loc_6.right), height - (_loc_6.top + _loc_8), radius, _loc_4, _loc_5, null, GradientType.LINEAR, null, backgroundHole);
+                    }
+                }
+                else
+                {
+                    _loc_7.beginFill(_loc_4, _loc_5);
+                    _loc_7.drawRect(_loc_6.left, _loc_6.top, param1 - _loc_6.right - _loc_6.left, param2 - _loc_6.bottom - _loc_6.top);
+                    _loc_7.endFill();
+                }
             }
-         }
-         return getStyle("backgroundColor");
-      }
-      
-      mx_internal function draw3dBorder(param1:Number, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number) : void
-      {
-         var _loc7_:Number = width;
-         var _loc8_:Number = height;
-         drawDropShadow(0,0,width,height,0,0,0,0);
-         var _loc9_:Graphics = graphics;
-         _loc9_.beginFill(param1);
-         _loc9_.drawRect(0,0,_loc7_,_loc8_);
-         _loc9_.drawRect(1,0,_loc7_ - 2,_loc8_);
-         _loc9_.endFill();
-         _loc9_.beginFill(param2);
-         _loc9_.drawRect(1,0,_loc7_ - 2,1);
-         _loc9_.endFill();
-         _loc9_.beginFill(param3);
-         _loc9_.drawRect(1,_loc8_ - 1,_loc7_ - 2,1);
-         _loc9_.endFill();
-         _loc9_.beginFill(param4);
-         _loc9_.drawRect(1,1,_loc7_ - 2,1);
-         _loc9_.endFill();
-         _loc9_.beginFill(param5);
-         _loc9_.drawRect(1,_loc8_ - 2,_loc7_ - 2,1);
-         _loc9_.endFill();
-         _loc9_.beginFill(param6);
-         _loc9_.drawRect(1,2,_loc7_ - 2,_loc8_ - 4);
-         _loc9_.drawRect(2,2,_loc7_ - 4,_loc8_ - 4);
-         _loc9_.endFill();
-      }
-      
-      mx_internal function getBackgroundColorMetrics() : EdgeMetrics
-      {
-         return borderMetrics;
-      }
-      
-      mx_internal function getDropShadowAngle(param1:Number, param2:String) : Number
-      {
-         if(param2 == "left")
-         {
-            return param1 >= 0?Number(135):Number(225);
-         }
-         if(param2 == "right")
-         {
-            return param1 >= 0?Number(45):Number(315);
-         }
-         return param1 >= 0?Number(90):Number(270);
-      }
-      
-      override public function get borderMetrics() : EdgeMetrics
-      {
-         var _loc1_:Number = NaN;
-         var _loc3_:String = null;
-         if(_borderMetrics)
-         {
-            return _borderMetrics;
-         }
-         var _loc2_:String = getStyle("borderStyle");
-         if(_loc2_ == "default" || _loc2_ == "alert")
-         {
-            if(FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
+            var _loc_3:* = getStyle("borderStyle");
+            if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0 && (_loc_3 == "alert" || _loc_3 == "default") && getStyle("headerColors") == null)
             {
-               _borderMetrics = new EdgeMetrics(0,0,0,0);
+                _loc_11 = getStyle("highlightAlphas");
+                _loc_12 = _loc_11 ? (_loc_11[0]) : (0.3);
+                drawRoundRect(0, 0, param1, param2, {tl:radius, tr:radius, bl:0, br:0}, 16777215, _loc_12, null, GradientType.LINEAR, null, {x:0, y:1, w:param1, h:(param2 - 1), r:{tl:radius, tr:radius, bl:0, br:0}});
+            }
+            return;
+        }// end function
+
+        function drawDropShadow(param1:Number, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:Number, param8:Number) : void
+        {
+            var _loc_11:* = NaN;
+            var _loc_12:* = false;
+            if (getStyle("dropShadowEnabled") == false || getStyle("dropShadowEnabled") == "false" || param3 == 0 || param4 == 0)
+            {
+                return;
+            }
+            var _loc_9:* = getStyle("shadowDistance");
+            var _loc_10:* = getStyle("shadowDirection");
+            if (getStyle("borderStyle") == "applicationControlBar")
+            {
+                _loc_12 = getStyle("docked");
+                _loc_11 = _loc_12 ? (90) : (getDropShadowAngle(_loc_9, _loc_10));
+                _loc_9 = Math.abs(_loc_9);
             }
             else
             {
-               return EdgeMetrics.EMPTY;
+                _loc_11 = getDropShadowAngle(_loc_9, _loc_10);
+                _loc_9 = Math.abs(_loc_9) + 2;
             }
-         }
-         else if(_loc2_ == "controlBar" || _loc2_ == "applicationControlBar")
-         {
-            _borderMetrics = new EdgeMetrics(1,1,1,1);
-         }
-         else if(_loc2_ == "solid")
-         {
-            _loc1_ = getStyle("borderThickness");
-            if(isNaN(_loc1_))
+            if (!dropShadow)
             {
-               _loc1_ = 0;
+                dropShadow = new RectangularDropShadow();
             }
-            _borderMetrics = new EdgeMetrics(_loc1_,_loc1_,_loc1_,_loc1_);
-            _loc3_ = getStyle("borderSides");
-            if(_loc3_ != "left top right bottom")
+            dropShadow.distance = _loc_9;
+            dropShadow.angle = _loc_11;
+            dropShadow.color = getStyle("dropShadowColor");
+            dropShadow.alpha = 0.4;
+            dropShadow.tlRadius = param5;
+            dropShadow.trRadius = param6;
+            dropShadow.blRadius = param8;
+            dropShadow.brRadius = param7;
+            dropShadow.drawShadow(graphics, param1, param2, param3, param4);
+            return;
+        }// end function
+
+        function getBackgroundColor() : Object
+        {
+            var _loc_2:* = null;
+            var _loc_1:* = parent as IUIComponent;
+            if (_loc_1 && !_loc_1.enabled)
             {
-               if(_loc3_.indexOf("left") == -1)
-               {
-                  _borderMetrics.left = 0;
-               }
-               if(_loc3_.indexOf("top") == -1)
-               {
-                  _borderMetrics.top = 0;
-               }
-               if(_loc3_.indexOf("right") == -1)
-               {
-                  _borderMetrics.right = 0;
-               }
-               if(_loc3_.indexOf("bottom") == -1)
-               {
-                  _borderMetrics.bottom = 0;
-               }
+                _loc_2 = getStyle("backgroundDisabledColor");
+                if (_loc_2 !== null && StyleManager.isValidStyleValue(_loc_2))
+                {
+                    return _loc_2;
+                }
             }
-         }
-         else
-         {
-            _loc1_ = BORDER_WIDTHS[_loc2_];
-            if(isNaN(_loc1_))
+            return getStyle("backgroundColor");
+        }// end function
+
+        function draw3dBorder(param1:Number, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number) : void
+        {
+            var _loc_7:* = width;
+            var _loc_8:* = height;
+            drawDropShadow(0, 0, width, height, 0, 0, 0, 0);
+            var _loc_9:* = graphics;
+            _loc_9.beginFill(param1);
+            _loc_9.drawRect(0, 0, _loc_7, _loc_8);
+            _loc_9.drawRect(1, 0, _loc_7 - 2, _loc_8);
+            _loc_9.endFill();
+            _loc_9.beginFill(param2);
+            _loc_9.drawRect(1, 0, _loc_7 - 2, 1);
+            _loc_9.endFill();
+            _loc_9.beginFill(param3);
+            _loc_9.drawRect(1, (_loc_8 - 1), _loc_7 - 2, 1);
+            _loc_9.endFill();
+            _loc_9.beginFill(param4);
+            _loc_9.drawRect(1, 1, _loc_7 - 2, 1);
+            _loc_9.endFill();
+            _loc_9.beginFill(param5);
+            _loc_9.drawRect(1, _loc_8 - 2, _loc_7 - 2, 1);
+            _loc_9.endFill();
+            _loc_9.beginFill(param6);
+            _loc_9.drawRect(1, 2, _loc_7 - 2, _loc_8 - 4);
+            _loc_9.drawRect(2, 2, _loc_7 - 4, _loc_8 - 4);
+            _loc_9.endFill();
+            return;
+        }// end function
+
+        function getBackgroundColorMetrics() : EdgeMetrics
+        {
+            return borderMetrics;
+        }// end function
+
+        function getDropShadowAngle(param1:Number, param2:String) : Number
+        {
+            if (param2 == "left")
             {
-               _loc1_ = 0;
+                return param1 >= 0 ? (135) : (225);
             }
-            _borderMetrics = new EdgeMetrics(_loc1_,_loc1_,_loc1_,_loc1_);
-         }
-         return _borderMetrics;
-      }
-   }
+            else
+            {
+                if (param2 == "right")
+                {
+                    return param1 >= 0 ? (45) : (315);
+                }
+                else
+                {
+                    return param1 >= 0 ? (90) : (270);
+                }
+            }
+        }// end function
+
+        override public function get borderMetrics() : EdgeMetrics
+        {
+            var _loc_1:* = NaN;
+            var _loc_3:* = null;
+            if (_borderMetrics)
+            {
+                return _borderMetrics;
+            }
+            var _loc_2:* = getStyle("borderStyle");
+            if (_loc_2 == "default" || _loc_2 == "alert")
+            {
+                if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_3_0)
+                {
+                    _borderMetrics = new EdgeMetrics(0, 0, 0, 0);
+                }
+                else
+                {
+                    return EdgeMetrics.EMPTY;
+                }
+            }
+            else if (_loc_2 == "controlBar" || _loc_2 == "applicationControlBar")
+            {
+                _borderMetrics = new EdgeMetrics(1, 1, 1, 1);
+            }
+            else if (_loc_2 == "solid")
+            {
+                _loc_1 = getStyle("borderThickness");
+                if (isNaN(_loc_1))
+                {
+                    _loc_1 = 0;
+                }
+                _borderMetrics = new EdgeMetrics(_loc_1, _loc_1, _loc_1, _loc_1);
+                _loc_3 = getStyle("borderSides");
+                if (_loc_3 != "left top right bottom")
+                {
+                    if (_loc_3.indexOf("left") == -1)
+                    {
+                        _borderMetrics.left = 0;
+                    }
+                    if (_loc_3.indexOf("top") == -1)
+                    {
+                        _borderMetrics.top = 0;
+                    }
+                    if (_loc_3.indexOf("right") == -1)
+                    {
+                        _borderMetrics.right = 0;
+                    }
+                    if (_loc_3.indexOf("bottom") == -1)
+                    {
+                        _borderMetrics.bottom = 0;
+                    }
+                }
+            }
+            else
+            {
+                _loc_1 = BORDER_WIDTHS[_loc_2];
+                if (isNaN(_loc_1))
+                {
+                    _loc_1 = 0;
+                }
+                _borderMetrics = new EdgeMetrics(_loc_1, _loc_1, _loc_1, _loc_1);
+            }
+            return _borderMetrics;
+        }// end function
+
+    }
 }

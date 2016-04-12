@@ -1,8 +1,12 @@
-package mx.core
+﻿package mx.core
 {
-   public interface IRawChildrenContainer
-   {
-       
-      function get rawChildren() : IChildList;
-   }
+
+    public interface IRawChildrenContainer
+    {
+
+        public function IRawChildrenContainer();
+
+        function get rawChildren() : IChildList;
+
+    }
 }

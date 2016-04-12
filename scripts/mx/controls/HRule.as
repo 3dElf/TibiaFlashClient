@@ -1,74 +1,72 @@
-package mx.controls
+﻿package mx.controls
 {
-   import mx.core.UIComponent;
-   import mx.core.mx_internal;
-   import flash.display.Graphics;
-   
-   use namespace mx_internal;
-   
-   public class HRule extends UIComponent
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-      
-      private static const DEFAULT_PREFERRED_WIDTH:Number = 100;
-       
-      public function HRule()
-      {
-         super();
-      }
-      
-      override protected function measure() : void
-      {
-         super.measure();
-         measuredWidth = DEFAULT_PREFERRED_WIDTH;
-         measuredHeight = getStyle("strokeWidth");
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         super.updateDisplayList(param1,param2);
-         var _loc3_:Graphics = graphics;
-         _loc3_.clear();
-         var _loc4_:Number = getStyle("strokeColor");
-         var _loc5_:Number = getStyle("shadowColor");
-         var _loc6_:Number = getStyle("strokeWidth");
-         if(_loc6_ > param2)
-         {
-            _loc6_ = param2;
-         }
-         var _loc7_:Number = 0;
-         var _loc8_:Number = (param2 - _loc6_) / 2;
-         var _loc9_:Number = param1;
-         var _loc10_:Number = _loc8_ + _loc6_;
-         if(_loc6_ == 1)
-         {
-            _loc3_.beginFill(_loc4_);
-            _loc3_.drawRect(_loc7_,_loc8_,param1,_loc10_ - _loc8_);
-            _loc3_.endFill();
-         }
-         else if(_loc6_ == 2)
-         {
-            _loc3_.beginFill(_loc4_);
-            _loc3_.drawRect(_loc7_,_loc8_,param1,1);
-            _loc3_.endFill();
-            _loc3_.beginFill(_loc5_);
-            _loc3_.drawRect(_loc7_,_loc10_ - 1,param1,1);
-            _loc3_.endFill();
-         }
-         else if(_loc6_ > 2)
-         {
-            _loc3_.beginFill(_loc4_);
-            _loc3_.drawRect(_loc7_,_loc8_,param1 - 1,1);
-            _loc3_.endFill();
-            _loc3_.beginFill(_loc5_);
-            _loc3_.drawRect(_loc9_ - 1,_loc8_,1,_loc10_ - _loc8_ - 1);
-            _loc3_.drawRect(_loc7_,_loc10_ - 1,param1,1);
-            _loc3_.endFill();
-            _loc3_.beginFill(_loc4_);
-            _loc3_.drawRect(_loc7_,_loc8_ + 1,1,_loc10_ - _loc8_ - 2);
-            _loc3_.endFill();
-         }
-      }
-   }
+    import flash.display.*;
+    import mx.core.*;
+
+    public class HRule extends UIComponent
+    {
+        static const VERSION:String = "3.6.0.21751";
+        private static const DEFAULT_PREFERRED_WIDTH:Number = 100;
+
+        public function HRule()
+        {
+            return;
+        }// end function
+
+        override protected function measure() : void
+        {
+            super.measure();
+            measuredWidth = DEFAULT_PREFERRED_WIDTH;
+            measuredHeight = getStyle("strokeWidth");
+            return;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            super.updateDisplayList(param1, param2);
+            var _loc_3:* = graphics;
+            _loc_3.clear();
+            var _loc_4:* = getStyle("strokeColor");
+            var _loc_5:* = getStyle("shadowColor");
+            var _loc_6:* = getStyle("strokeWidth");
+            if (getStyle("strokeWidth") > param2)
+            {
+                _loc_6 = param2;
+            }
+            var _loc_7:* = 0;
+            var _loc_8:* = (param2 - _loc_6) / 2;
+            var _loc_9:* = param1;
+            var _loc_10:* = _loc_8 + _loc_6;
+            if (_loc_6 == 1)
+            {
+                _loc_3.beginFill(_loc_4);
+                _loc_3.drawRect(_loc_7, _loc_8, param1, _loc_10 - _loc_8);
+                _loc_3.endFill();
+            }
+            else if (_loc_6 == 2)
+            {
+                _loc_3.beginFill(_loc_4);
+                _loc_3.drawRect(_loc_7, _loc_8, param1, 1);
+                _loc_3.endFill();
+                _loc_3.beginFill(_loc_5);
+                _loc_3.drawRect(_loc_7, (_loc_10 - 1), param1, 1);
+                _loc_3.endFill();
+            }
+            else if (_loc_6 > 2)
+            {
+                _loc_3.beginFill(_loc_4);
+                _loc_3.drawRect(_loc_7, _loc_8, (param1 - 1), 1);
+                _loc_3.endFill();
+                _loc_3.beginFill(_loc_5);
+                _loc_3.drawRect((_loc_9 - 1), _loc_8, 1, _loc_10 - _loc_8 - 1);
+                _loc_3.drawRect(_loc_7, (_loc_10 - 1), param1, 1);
+                _loc_3.endFill();
+                _loc_3.beginFill(_loc_4);
+                _loc_3.drawRect(_loc_7, (_loc_8 + 1), 1, _loc_10 - _loc_8 - 2);
+                _loc_3.endFill();
+            }
+            return;
+        }// end function
+
+    }
 }

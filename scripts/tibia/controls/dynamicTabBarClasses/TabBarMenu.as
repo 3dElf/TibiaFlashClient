@@ -1,268 +1,279 @@
-package tibia.controls.dynamicTabBarClasses
+﻿package tibia.controls.dynamicTabBarClasses
 {
-   import mx.controls.Menu;
-   import flash.display.DisplayObjectContainer;
-   import mx.core.Application;
-   import flash.display.Sprite;
-   import mx.controls.listClasses.IListItemRenderer;
-   import mx.core.mx_internal;
-   import flash.display.Shape;
-   import flash.display.Graphics;
-   import mx.core.FlexSprite;
-   import mx.styles.StyleManager;
-   import mx.core.FlexShape;
-   import flash.events.Event;
-   import mx.controls.menuClasses.IMenuItemRenderer;
-   import mx.managers.PopUpManager;
-   import mx.controls.scrollClasses.ScrollBar;
-   
-   use namespace mx_internal;
-   
-   public class TabBarMenu extends Menu
-   {
-       
-      public function TabBarMenu()
-      {
-         super();
-         setStyle("openDuration",0);
-      }
-      
-      public static function s_CreateMenu(param1:DisplayObjectContainer, param2:Object, param3:Boolean = true) : TabBarMenu
-      {
-         var _loc4_:TabBarMenu = new TabBarMenu();
-         _loc4_.tabEnabled = false;
-         _loc4_.owner = DisplayObjectContainer(Application.application);
-         _loc4_.showRoot = param3;
-         Menu.popUpMenu(_loc4_,param1,param2);
-         return _loc4_;
-      }
-      
-      override protected function drawCaretIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
-      {
-         this.drawIndicator(param1,viewMetrics.left,param3,unscaledWidth - viewMetrics.left - viewMetrics.right,param5,getStyle("backgroundAlpha"),param6,param7,false);
-      }
-      
-      override protected function configureScrollBars() : void
-      {
-         var _loc2_:Number = NaN;
-         var _loc3_:int = 0;
-         var _loc1_:int = listItems.length;
-         if(_loc1_ == 0)
-         {
+    import flash.display.*;
+    import flash.events.*;
+    import mx.controls.*;
+    import mx.controls.listClasses.*;
+    import mx.controls.menuClasses.*;
+    import mx.controls.scrollClasses.*;
+    import mx.core.*;
+    import mx.managers.*;
+    import mx.styles.*;
+
+    public class TabBarMenu extends Menu
+    {
+
+        public function TabBarMenu()
+        {
+            setStyle("openDuration", 0);
             return;
-         }
-         var _loc4_:int = listItems.length;
-         while(_loc1_ > 1 && rowInfo[_loc4_ - 1].y + rowInfo[_loc4_ - 1].height > listContent.height - listContent.bottomOffset)
-         {
-            _loc1_--;
-            _loc4_--;
-         }
-         var _loc5_:int = verticalScrollPosition - lockedRowCount - 1;
-         var _loc6_:int = 0;
-         while(Boolean(_loc1_) && listItems[_loc1_ - 1].length == 0)
-         {
-            if(Boolean(collection) && _loc1_ + _loc5_ >= collection.length)
+        }// end function
+
+        override protected function drawCaretIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
+        {
+            this.drawIndicator(param1, viewMetrics.left, param3, unscaledWidth - viewMetrics.left - viewMetrics.right, param5, getStyle("backgroundAlpha"), param6, param7, false);
+            return;
+        }// end function
+
+        override protected function configureScrollBars() : void
+        {
+            var _loc_2:* = NaN;
+            var _loc_3:* = 0;
+            var _loc_1:* = listItems.length;
+            if (_loc_1 == 0)
             {
-               _loc1_--;
-               _loc6_++;
-               continue;
+                return;
             }
-            break;
-         }
-         if(listContent.topOffset)
-         {
-            _loc2_ = Math.abs(listContent.topOffset);
-            _loc3_ = 0;
-            while(rowInfo[_loc3_].y + rowInfo[_loc3_].height <= _loc2_)
+            var _loc_4:* = listItems.length;
+            while (_loc_1 > 1 && rowInfo[(_loc_4 - 1)].y + rowInfo[(_loc_4 - 1)].height > listContent.height - listContent.bottomOffset)
             {
-               _loc1_--;
-               _loc3_++;
-               if(_loc3_ == _loc1_)
-               {
-                  break;
-               }
+                
+                _loc_1 = _loc_1 - 1;
+                _loc_4 = _loc_4 - 1;
             }
-         }
-         var _loc7_:int = listItems[0].length;
-         var _loc8_:Object = horizontalScrollBar;
-         var _loc9_:Object = verticalScrollBar;
-         var _loc10_:int = Math.round(unscaledWidth);
-         var _loc11_:int = !!collection?int(collection.length - lockedRowCount):0;
-         var _loc12_:int = _loc1_ - lockedRowCount;
-         setScrollBarProperties(!!isNaN(_maxHorizontalScrollPosition)?int(Math.round(listContent.width)):int(Math.round(_maxHorizontalScrollPosition + _loc10_)),_loc10_,_loc11_,_loc12_);
-         maxVerticalScrollPosition = Math.max(_loc11_ - _loc12_,0);
-      }
-      
-      override public function get verticalScrollPolicy() : String
-      {
-         return _verticalScrollPolicy;
-      }
-      
-      override protected function drawRowBackgrounds() : void
-      {
-         var _loc1_:Sprite = null;
-         var _loc8_:Shape = null;
-         var _loc9_:uint = 0;
-         var _loc10_:Number = NaN;
-         var _loc11_:Number = NaN;
-         var _loc12_:Number = NaN;
-         var _loc13_:Number = NaN;
-         var _loc14_:Number = NaN;
-         var _loc15_:Graphics = null;
-         _loc1_ = Sprite(listContent.getChildByName("rowBGs"));
-         if(_loc1_ == null)
-         {
-            _loc1_ = new FlexSprite();
-            _loc1_.mouseChildren = false;
-            _loc1_.mouseEnabled = false;
-            _loc1_.name = "rowBGs";
-            listContent.addChildAt(_loc1_,0);
-         }
-         var _loc2_:int = _loc1_.numChildren;
-         var _loc3_:Array = getStyle("alternatingItemColors");
-         var _loc4_:Array = getStyle("alternatingItemAlphas");
-         if(_loc3_ == null || _loc3_.length == 0 || _loc4_ == null || _loc4_.length != _loc3_.length)
-         {
-            while(_loc2_ > 0)
+            var _loc_5:* = verticalScrollPosition - lockedRowCount - 1;
+            var _loc_6:* = 0;
+            while (_loc_1 && listItems[(_loc_1 - 1)].length == 0)
             {
-               _loc1_.removeChildAt(--_loc2_);
+                
+                if (collection && _loc_1 + _loc_5 >= collection.length)
+                {
+                    _loc_1 = _loc_1 - 1;
+                    _loc_6++;
+                    continue;
+                }
+                break;
+            }
+            if (listContent.topOffset)
+            {
+                _loc_2 = Math.abs(listContent.topOffset);
+                _loc_3 = 0;
+                while (rowInfo[_loc_3].y + rowInfo[_loc_3].height <= _loc_2)
+                {
+                    
+                    _loc_1 = _loc_1 - 1;
+                    _loc_3++;
+                    if (_loc_3 == _loc_1)
+                    {
+                        break;
+                    }
+                }
+            }
+            var _loc_7:* = listItems[0].length;
+            var _loc_8:* = horizontalScrollBar;
+            var _loc_9:* = verticalScrollBar;
+            var _loc_10:* = Math.round(unscaledWidth);
+            var _loc_11:* = collection ? (collection.length - lockedRowCount) : (0);
+            var _loc_12:* = _loc_1 - lockedRowCount;
+            setScrollBarProperties(isNaN(_maxHorizontalScrollPosition) ? (Math.round(listContent.width)) : (Math.round(_maxHorizontalScrollPosition + _loc_10)), _loc_10, _loc_11, _loc_12);
+            maxVerticalScrollPosition = Math.max(_loc_11 - _loc_12, 0);
+            return;
+        }// end function
+
+        override public function get verticalScrollPolicy() : String
+        {
+            return _verticalScrollPolicy;
+        }// end function
+
+        override protected function drawRowBackgrounds() : void
+        {
+            var _loc_1:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = 0;
+            var _loc_10:* = NaN;
+            var _loc_11:* = NaN;
+            var _loc_12:* = NaN;
+            var _loc_13:* = NaN;
+            var _loc_14:* = NaN;
+            var _loc_15:* = null;
+            _loc_1 = Sprite(listContent.getChildByName("rowBGs"));
+            if (_loc_1 == null)
+            {
+                _loc_1 = new FlexSprite();
+                _loc_1.mouseChildren = false;
+                _loc_1.mouseEnabled = false;
+                _loc_1.name = "rowBGs";
+                listContent.addChildAt(_loc_1, 0);
+            }
+            var _loc_2:* = _loc_1.numChildren;
+            var _loc_3:* = getStyle("alternatingItemColors");
+            var _loc_4:* = getStyle("alternatingItemAlphas");
+            if (_loc_3 == null || _loc_3.length == 0 || _loc_4 == null || _loc_4.length != _loc_3.length)
+            {
+                while (--_loc_2 > 0)
+                {
+                    
+                    _loc_1.removeChildAt(--_loc_2);
+                }
+                return;
+            }
+            StyleManager.getColorNames(_loc_3);
+            var _loc_5:* = 0;
+            var _loc_6:* = verticalScrollPosition;
+            var _loc_7:* = listItems.length;
+            while (_loc_5 < _loc_7)
+            {
+                
+                _loc_8 = null;
+                if (_loc_5 < _loc_1.numChildren)
+                {
+                    _loc_8 = Shape(_loc_1.getChildAt(_loc_5));
+                }
+                else
+                {
+                    _loc_8 = new FlexShape();
+                    _loc_8.name = "rowBackground";
+                    _loc_1.addChild(_loc_8);
+                }
+                _loc_9 = _loc_3[_loc_6 % _loc_3.length];
+                _loc_10 = _loc_4[_loc_6 % _loc_4.length];
+                _loc_11 = 0;
+                _loc_12 = rowInfo[_loc_5].y;
+                _loc_13 = Math.min(rowInfo[_loc_5].height, listContent.height - rowInfo[_loc_5].y);
+                _loc_14 = listContent.width;
+                _loc_15 = _loc_8.graphics;
+                _loc_15.clear();
+                _loc_15.beginFill(_loc_9, _loc_10);
+                _loc_15.drawRect(0, 0, _loc_14, _loc_13);
+                _loc_15.endFill();
+                _loc_8.x = _loc_11;
+                _loc_8.y = _loc_12;
+                _loc_5++;
+                _loc_6++;
+            }
+            do
+            {
+                
+                _loc_1.removeChildAt((_loc_2 - 1));
+                var _loc_16:* = _loc_1.numChildren;
+                _loc_2 = _loc_1.numChildren;
+            }while (_loc_16 > _loc_7)
+            return;
+        }// end function
+
+        override protected function drawSelectionIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
+        {
+            this.drawIndicator(param1, viewMetrics.left, param3, unscaledWidth - viewMetrics.left - viewMetrics.right, param5, getStyle("backgroundAlpha"), param6, param7, true);
+            return;
+        }// end function
+
+        override public function set verticalScrollPolicy(param1:String) : void
+        {
+            var _loc_2:* = null;
+            if (_verticalScrollPolicy != param1)
+            {
+                _verticalScrollPolicy = param1;
+                _loc_2 = new Event("verticalScrollPolicyChanged");
+                dispatchEvent(_loc_2);
+                invalidateDisplayList();
+                invalidateSize();
             }
             return;
-         }
-         StyleManager.getColorNames(_loc3_);
-         var _loc5_:int = 0;
-         var _loc6_:int = verticalScrollPosition;
-         var _loc7_:int = listItems.length;
-         while(_loc5_ < _loc7_)
-         {
-            _loc8_ = null;
-            if(_loc5_ < _loc1_.numChildren)
+        }// end function
+
+        private function drawIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:uint, param8:IListItemRenderer, param9:Boolean) : void
+        {
+            var _loc_10:* = param1.graphics;
+            _loc_10.clear();
+            if (param9)
             {
-               _loc8_ = Shape(_loc1_.getChildAt(_loc5_));
+                _loc_10.beginFill(param7, param6);
+                _loc_10.drawRect(0, 0, param4, param5);
+                _loc_10.endFill();
             }
             else
             {
-               _loc8_ = new FlexShape();
-               _loc8_.name = "rowBackground";
-               _loc1_.addChild(_loc8_);
+                _loc_10.lineStyle(1, param7, param6);
+                _loc_10.drawRect(0, 0, (param4 - 1), (param5 - 1));
             }
-            _loc9_ = _loc3_[_loc6_ % _loc3_.length];
-            _loc10_ = _loc4_[_loc6_ % _loc4_.length];
-            _loc11_ = 0;
-            _loc12_ = rowInfo[_loc5_].y;
-            _loc13_ = Math.min(rowInfo[_loc5_].height,listContent.height - rowInfo[_loc5_].y);
-            _loc14_ = listContent.width;
-            _loc15_ = _loc8_.graphics;
-            _loc15_.clear();
-            _loc15_.beginFill(_loc9_,_loc10_);
-            _loc15_.drawRect(0,0,_loc14_,_loc13_);
-            _loc15_.endFill();
-            _loc8_.x = _loc11_;
-            _loc8_.y = _loc12_;
-            _loc5_++;
-            _loc6_++;
-         }
-         while((_loc2_ = _loc1_.numChildren) > _loc7_)
-         {
-            _loc1_.removeChildAt(_loc2_ - 1);
-         }
-      }
-      
-      override protected function drawSelectionIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
-      {
-         this.drawIndicator(param1,viewMetrics.left,param3,unscaledWidth - viewMetrics.left - viewMetrics.right,param5,getStyle("backgroundAlpha"),param6,param7,true);
-      }
-      
-      override public function set verticalScrollPolicy(param1:String) : void
-      {
-         var _loc2_:Event = null;
-         if(_verticalScrollPolicy != param1)
-         {
-            _verticalScrollPolicy = param1;
-            _loc2_ = new Event("verticalScrollPolicyChanged");
-            dispatchEvent(_loc2_);
-            invalidateDisplayList();
-            invalidateSize();
-         }
-      }
-      
-      private function drawIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:Number, param7:uint, param8:IListItemRenderer, param9:Boolean) : void
-      {
-         var _loc10_:Graphics = param1.graphics;
-         _loc10_.clear();
-         if(param9)
-         {
-            _loc10_.beginFill(param7,param6);
-            _loc10_.drawRect(0,0,param4,param5);
-            _loc10_.endFill();
-         }
-         else
-         {
-            _loc10_.lineStyle(1,param7,param6);
-            _loc10_.drawRect(0,0,param4 - 1,param5 - 1);
-         }
-         param1.x = param2;
-         param1.y = param3;
-      }
-      
-      override mx_internal function openSubMenu(param1:IListItemRenderer) : void
-      {
-         var _loc3_:Menu = null;
-         var _loc2_:Menu = getRootMenu();
-         if(IMenuItemRenderer(param1).menu == null)
-         {
-            _loc3_ = new TabBarMenu();
-            _loc3_.maxHeight = maxHeight;
-            _loc3_.verticalScrollPolicy = this.verticalScrollPolicy;
-            _loc3_.parentMenu = this;
-            _loc3_.owner = this;
-            _loc3_.showRoot = showRoot;
-            _loc3_.dataDescriptor = _loc2_.dataDescriptor;
-            _loc3_.styleName = _loc2_;
-            _loc3_.labelField = _loc2_.labelField;
-            _loc3_.labelFunction = _loc2_.labelFunction;
-            _loc3_.iconField = _loc2_.iconField;
-            _loc3_.iconFunction = _loc2_.iconFunction;
-            _loc3_.itemRenderer = _loc2_.itemRenderer;
-            _loc3_.rowHeight = _loc2_.rowHeight;
-            _loc3_.scaleY = _loc2_.scaleY;
-            _loc3_.scaleX = _loc2_.scaleX;
-            if(Boolean(param1.data) && Boolean(_dataDescriptor.isBranch(param1.data)) && Boolean(_dataDescriptor.hasChildren(param1.data)))
+            param1.x = param2;
+            param1.y = param3;
+            return;
+        }// end function
+
+        public function openSubMenu(param1:IListItemRenderer) : void
+        {
+            var _loc_3:* = null;
+            var _loc_2:* = getRootMenu();
+            if (IMenuItemRenderer(param1).menu == null)
             {
-               _loc3_.dataProvider = _dataDescriptor.getChildren(param1.data);
+                _loc_3 = new TabBarMenu();
+                _loc_3.maxHeight = maxHeight;
+                _loc_3.verticalScrollPolicy = this.verticalScrollPolicy;
+                _loc_3.parentMenu = this;
+                _loc_3.owner = this;
+                _loc_3.showRoot = showRoot;
+                _loc_3.dataDescriptor = _loc_2.dataDescriptor;
+                _loc_3.styleName = _loc_2;
+                _loc_3.labelField = _loc_2.labelField;
+                _loc_3.labelFunction = _loc_2.labelFunction;
+                _loc_3.iconField = _loc_2.iconField;
+                _loc_3.iconFunction = _loc_2.iconFunction;
+                _loc_3.itemRenderer = _loc_2.itemRenderer;
+                _loc_3.rowHeight = _loc_2.rowHeight;
+                _loc_3.scaleY = _loc_2.scaleY;
+                _loc_3.scaleX = _loc_2.scaleX;
+                if (param1.data && _dataDescriptor.isBranch(param1.data) && _dataDescriptor.hasChildren(param1.data))
+                {
+                    _loc_3.dataProvider = _dataDescriptor.getChildren(param1.data);
+                }
+                _loc_3.sourceMenuBar = sourceMenuBar;
+                _loc_3.sourceMenuBarItem = sourceMenuBarItem;
+                IMenuItemRenderer(param1).menu = _loc_3;
+                PopUpManager.addPopUp(_loc_3, _loc_2, false);
             }
-            _loc3_.sourceMenuBar = sourceMenuBar;
-            _loc3_.sourceMenuBarItem = sourceMenuBarItem;
-            IMenuItemRenderer(param1).menu = _loc3_;
-            PopUpManager.addPopUp(_loc3_,_loc2_,false);
-         }
-         super.openSubMenu(param1);
-      }
-      
-      override public function show(param1:Object = null, param2:Object = null) : void
-      {
-         super.show(param1,param2);
-         if(stage != null && !isNaN(Number(param2)))
-         {
-            maxHeight = stage.stageHeight - Number(param2);
-         }
-      }
-      
-      override protected function measure() : void
-      {
-         super.measure();
-         if(!isNaN(maxHeight) && measuredHeight > maxHeight)
-         {
-            measuredHeight = maxHeight;
-            measuredMinHeight = Math.min(measuredMinHeight,maxHeight);
-            measuredWidth = measuredWidth + ScrollBar.THICKNESS;
-            measuredMinWidth = measuredMinWidth + ScrollBar.THICKNESS;
-         }
-      }
-      
-      override protected function drawHighlightIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
-      {
-         this.drawIndicator(param1,viewMetrics.left,param3,unscaledWidth - viewMetrics.left - viewMetrics.right,param5,getStyle("backgroundAlpha"),param6,param7,true);
-      }
-   }
+            super.openSubMenu(param1);
+            return;
+        }// end function
+
+        override public function show(param1:Object = null, param2:Object = null) : void
+        {
+            super.show(param1, param2);
+            if (stage != null && !isNaN(Number(param2)))
+            {
+                maxHeight = stage.stageHeight - Number(param2);
+            }
+            return;
+        }// end function
+
+        override protected function measure() : void
+        {
+            super.measure();
+            if (!isNaN(maxHeight) && measuredHeight > maxHeight)
+            {
+                measuredHeight = maxHeight;
+                measuredMinHeight = Math.min(measuredMinHeight, maxHeight);
+                measuredWidth = measuredWidth + ScrollBar.THICKNESS;
+                measuredMinWidth = measuredMinWidth + ScrollBar.THICKNESS;
+            }
+            return;
+        }// end function
+
+        override protected function drawHighlightIndicator(param1:Sprite, param2:Number, param3:Number, param4:Number, param5:Number, param6:uint, param7:IListItemRenderer) : void
+        {
+            this.drawIndicator(param1, viewMetrics.left, param3, unscaledWidth - viewMetrics.left - viewMetrics.right, param5, getStyle("backgroundAlpha"), param6, param7, true);
+            return;
+        }// end function
+
+        public static function s_CreateMenu(param1:DisplayObjectContainer, param2:Object, param3:Boolean = true) : TabBarMenu
+        {
+            var _loc_4:* = new TabBarMenu;
+            _loc_4.tabEnabled = false;
+            _loc_4.owner = DisplayObjectContainer(Application.application);
+            _loc_4.showRoot = param3;
+            Menu.popUpMenu(_loc_4, param1, param2);
+            return _loc_4;
+        }// end function
+
+    }
 }

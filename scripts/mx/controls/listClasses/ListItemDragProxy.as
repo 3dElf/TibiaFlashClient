@@ -1,77 +1,85 @@
-package mx.controls.listClasses
+﻿package mx.controls.listClasses
 {
-   import mx.core.UIComponent;
-   import mx.core.mx_internal;
-   import flash.display.DisplayObject;
-   
-   use namespace mx_internal;
-   
-   public class ListItemDragProxy extends UIComponent
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      public function ListItemDragProxy()
-      {
-         super();
-      }
-      
-      override protected function createChildren() : void
-      {
-         var _loc4_:IListItemRenderer = null;
-         var _loc5_:IListItemRenderer = null;
-         var _loc6_:ListBaseContentHolder = null;
-         var _loc7_:BaseListData = null;
-         super.createChildren();
-         var _loc1_:Array = ListBase(owner).selectedItems;
-         var _loc2_:int = _loc1_.length;
-         var _loc3_:int = 0;
-         while(_loc3_ < _loc2_)
-         {
-            _loc4_ = ListBase(owner).itemToItemRenderer(_loc1_[_loc3_]);
-            if(_loc4_)
+    import flash.display.*;
+    import mx.core.*;
+
+    public class ListItemDragProxy extends UIComponent
+    {
+        static const VERSION:String = "3.6.0.21751";
+
+        public function ListItemDragProxy()
+        {
+            return;
+        }// end function
+
+        override protected function createChildren() : void
+        {
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            super.createChildren();
+            var _loc_1:* = ListBase(owner).selectedItems;
+            var _loc_2:* = _loc_1.length;
+            var _loc_3:* = 0;
+            while (_loc_3 < _loc_2)
             {
-               _loc5_ = ListBase(owner).createItemRenderer(_loc1_[_loc3_]);
-               _loc5_.styleName = ListBase(owner);
-               addChild(DisplayObject(_loc5_));
-               if(_loc5_ is IDropInListItemRenderer)
-               {
-                  _loc7_ = IDropInListItemRenderer(_loc4_).listData;
-                  IDropInListItemRenderer(_loc5_).listData = !!_loc1_[_loc3_]?_loc7_:null;
-               }
-               _loc5_.data = _loc1_[_loc3_];
-               _loc5_.visible = true;
-               _loc6_ = _loc4_.parent as ListBaseContentHolder;
-               _loc5_.setActualSize(_loc4_.width,_loc4_.height);
-               _loc5_.x = _loc4_.x + _loc6_.leftOffset;
-               _loc5_.y = _loc4_.y + _loc6_.topOffset;
-               measuredHeight = Math.max(measuredHeight,_loc5_.y + _loc5_.height);
-               measuredWidth = Math.max(measuredWidth,_loc5_.x + _loc5_.width);
+                
+                _loc_4 = ListBase(owner).itemToItemRenderer(_loc_1[_loc_3]);
+                if (!_loc_4)
+                {
+                }
+                else
+                {
+                    _loc_5 = ListBase(owner).createItemRenderer(_loc_1[_loc_3]);
+                    _loc_5.styleName = ListBase(owner);
+                    addChild(DisplayObject(_loc_5));
+                    if (_loc_5 is IDropInListItemRenderer)
+                    {
+                        _loc_7 = IDropInListItemRenderer(_loc_4).listData;
+                        IDropInListItemRenderer(_loc_5).listData = _loc_1[_loc_3] ? (_loc_7) : (null);
+                    }
+                    _loc_5.data = _loc_1[_loc_3];
+                    _loc_5.visible = true;
+                    _loc_6 = _loc_4.parent as ListBaseContentHolder;
+                    _loc_5.setActualSize(_loc_4.width, _loc_4.height);
+                    _loc_5.x = _loc_4.x + _loc_6.leftOffset;
+                    _loc_5.y = _loc_4.y + _loc_6.topOffset;
+                    measuredHeight = Math.max(measuredHeight, _loc_5.y + _loc_5.height);
+                    measuredWidth = Math.max(measuredWidth, _loc_5.x + _loc_5.width);
+                }
+                _loc_3++;
             }
-            _loc3_++;
-         }
-         invalidateDisplayList();
-      }
-      
-      override protected function measure() : void
-      {
-         var _loc3_:IListItemRenderer = null;
-         super.measure();
-         var _loc1_:Number = 0;
-         var _loc2_:Number = 0;
-         var _loc4_:int = 0;
-         while(_loc4_ < numChildren)
-         {
-            _loc3_ = getChildAt(_loc4_) as IListItemRenderer;
-            if(_loc3_)
+            invalidateDisplayList();
+            return;
+        }// end function
+
+        override protected function measure() : void
+        {
+            var _loc_3:* = null;
+            super.measure();
+            var _loc_1:* = 0;
+            var _loc_2:* = 0;
+            var _loc_4:* = 0;
+            while (_loc_4 < numChildren)
             {
-               _loc1_ = Math.max(_loc1_,_loc3_.x + _loc3_.width);
-               _loc2_ = Math.max(_loc2_,_loc3_.y + _loc3_.height);
+                
+                _loc_3 = getChildAt(_loc_4) as IListItemRenderer;
+                if (_loc_3)
+                {
+                    _loc_1 = Math.max(_loc_1, _loc_3.x + _loc_3.width);
+                    _loc_2 = Math.max(_loc_2, _loc_3.y + _loc_3.height);
+                }
+                _loc_4++;
             }
-            _loc4_++;
-         }
-         measuredWidth = measuredMinWidth = _loc1_;
-         measuredHeight = measuredMinHeight = _loc2_;
-      }
-   }
+            var _loc_5:* = _loc_1;
+            measuredMinWidth = _loc_1;
+            measuredWidth = _loc_5;
+            var _loc_5:* = _loc_2;
+            measuredMinHeight = _loc_2;
+            measuredHeight = _loc_5;
+            return;
+        }// end function
+
+    }
 }

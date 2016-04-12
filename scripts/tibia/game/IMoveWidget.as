@@ -1,10 +1,14 @@
-package tibia.game
+﻿package tibia.game
 {
-   import flash.geom.Point;
-   
-   public interface IMoveWidget extends ICoordinateWidget
-   {
-       
-      function getMoveObjectUnderPoint(param1:Point) : Object;
-   }
+    import flash.geom.*;
+    import tibia.game.*;
+
+    public interface IMoveWidget extends ICoordinateWidget
+    {
+
+        public function IMoveWidget();
+
+        function getMoveObjectUnderPoint(param1:Point) : Object;
+
+    }
 }

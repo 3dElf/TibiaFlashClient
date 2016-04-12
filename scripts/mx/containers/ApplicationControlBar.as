@@ -1,73 +1,71 @@
-package mx.containers
+﻿package mx.containers
 {
-   import mx.core.mx_internal;
-   import flash.events.Event;
-   import mx.core.Application;
-   import mx.styles.IStyleClient;
-   
-   use namespace mx_internal;
-   
-   public class ApplicationControlBar extends ControlBar
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var dockChanged:Boolean = false;
-      
-      private var _dock:Boolean = false;
-      
-      public function ApplicationControlBar()
-      {
-         super();
-      }
-      
-      public function set dock(param1:Boolean) : void
-      {
-         if(_dock != param1)
-         {
-            _dock = param1;
-            dockChanged = true;
-            invalidateProperties();
-            dispatchEvent(new Event("dockChanged"));
-         }
-      }
-      
-      public function resetDock(param1:Boolean) : void
-      {
-         _dock = !param1;
-         dock = param1;
-      }
-      
-      [Bindable("dockChanged")]
-      public function get dock() : Boolean
-      {
-         return _dock;
-      }
-      
-      override protected function commitProperties() : void
-      {
-         super.commitProperties();
-         if(dockChanged)
-         {
-            dockChanged = false;
-            if(parent is Application)
+    import flash.events.*;
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class ApplicationControlBar extends ControlBar
+    {
+        private var dockChanged:Boolean = false;
+        private var _dock:Boolean = false;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function ApplicationControlBar()
+        {
+            return;
+        }// end function
+
+        public function set dock(param1:Boolean) : void
+        {
+            if (_dock != param1)
             {
-               Application(parent).dockControlBar(this,_dock);
+                _dock = param1;
+                dockChanged = true;
+                invalidateProperties();
+                dispatchEvent(new Event("dockChanged"));
             }
-         }
-      }
-      
-      override public function set enabled(param1:Boolean) : void
-      {
-         var _loc2_:Object = blocker;
-         super.enabled = param1;
-         if(Boolean(blocker) && blocker != _loc2_)
-         {
-            if(blocker is IStyleClient)
+            return;
+        }// end function
+
+        public function resetDock(param1:Boolean) : void
+        {
+            _dock = !param1;
+            dock = param1;
+            return;
+        }// end function
+
+        public function get dock() : Boolean
+        {
+            return _dock;
+        }// end function
+
+        override protected function commitProperties() : void
+        {
+            super.commitProperties();
+            if (dockChanged)
             {
-               IStyleClient(blocker).setStyle("borderStyle","applicationControlBar");
+                dockChanged = false;
+                if (parent is Application)
+                {
+                    Application(parent).dockControlBar(this, _dock);
+                }
             }
-         }
-      }
-   }
+            return;
+        }// end function
+
+        override public function set enabled(param1:Boolean) : void
+        {
+            var _loc_2:* = blocker;
+            super.enabled = param1;
+            if (blocker && blocker != _loc_2)
+            {
+                if (blocker is IStyleClient)
+                {
+                    IStyleClient(blocker).setStyle("borderStyle", "applicationControlBar");
+                }
+            }
+            return;
+        }// end function
+
+    }
 }

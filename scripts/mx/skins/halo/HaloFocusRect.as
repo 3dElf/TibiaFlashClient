@@ -1,183 +1,187 @@
-package mx.skins.halo
+﻿package mx.skins.halo
 {
-   import mx.skins.ProgrammaticSkin;
-   import mx.styles.IStyleClient;
-   import mx.core.mx_internal;
-   import mx.styles.CSSStyleDeclaration;
-   import flash.display.Graphics;
-   import mx.utils.GraphicsUtil;
-   
-   use namespace mx_internal;
-   
-   public class HaloFocusRect extends ProgrammaticSkin implements IStyleClient
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      private var _focusColor:Number;
-      
-      public function HaloFocusRect()
-      {
-         super();
-      }
-      
-      public function get inheritingStyles() : Object
-      {
-         return styleName.inheritingStyles;
-      }
-      
-      public function set inheritingStyles(param1:Object) : void
-      {
-      }
-      
-      public function notifyStyleChangeInChildren(param1:String, param2:Boolean) : void
-      {
-      }
-      
-      public function registerEffects(param1:Array) : void
-      {
-      }
-      
-      public function regenerateStyleCache(param1:Boolean) : void
-      {
-      }
-      
-      public function get styleDeclaration() : CSSStyleDeclaration
-      {
-         return CSSStyleDeclaration(styleName);
-      }
-      
-      public function getClassStyleDeclarations() : Array
-      {
-         return [];
-      }
-      
-      public function get className() : String
-      {
-         return "HaloFocusRect";
-      }
-      
-      public function clearStyle(param1:String) : void
-      {
-         if(param1 == "focusColor")
-         {
-            _focusColor = NaN;
-         }
-      }
-      
-      public function setStyle(param1:String, param2:*) : void
-      {
-         if(param1 == "focusColor")
-         {
-            _focusColor = param2;
-         }
-      }
-      
-      public function set nonInheritingStyles(param1:Object) : void
-      {
-      }
-      
-      public function get nonInheritingStyles() : Object
-      {
-         return styleName.nonInheritingStyles;
-      }
-      
-      override protected function updateDisplayList(param1:Number, param2:Number) : void
-      {
-         var _loc12_:Number = NaN;
-         var _loc13_:Number = NaN;
-         var _loc14_:Number = NaN;
-         var _loc15_:Number = NaN;
-         var _loc16_:Number = NaN;
-         var _loc17_:Number = NaN;
-         super.updateDisplayList(param1,param2);
-         var _loc3_:String = getStyle("focusBlendMode");
-         var _loc4_:Number = getStyle("focusAlpha");
-         var _loc5_:Number = getStyle("focusColor");
-         var _loc6_:Number = getStyle("cornerRadius");
-         var _loc7_:Number = getStyle("focusThickness");
-         var _loc8_:String = getStyle("focusRoundedCorners");
-         var _loc9_:Number = getStyle("themeColor");
-         var _loc10_:Number = _loc5_;
-         if(isNaN(_loc10_))
-         {
-            _loc10_ = _loc9_;
-         }
-         var _loc11_:Graphics = graphics;
-         _loc11_.clear();
-         if(_loc3_)
-         {
-            blendMode = _loc3_;
-         }
-         if(_loc8_ != "tl tr bl br" && _loc6_ > 0)
-         {
-            _loc12_ = 0;
-            _loc13_ = 0;
-            _loc14_ = 0;
-            _loc15_ = 0;
-            _loc16_ = _loc6_ + _loc7_;
-            if(_loc8_.indexOf("tl") >= 0)
+    import flash.display.*;
+    import mx.skins.*;
+    import mx.styles.*;
+    import mx.utils.*;
+
+    public class HaloFocusRect extends ProgrammaticSkin implements IStyleClient
+    {
+        private var _focusColor:Number;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function HaloFocusRect()
+        {
+            return;
+        }// end function
+
+        public function get inheritingStyles() : Object
+        {
+            return styleName.inheritingStyles;
+        }// end function
+
+        public function set inheritingStyles(param1:Object) : void
+        {
+            return;
+        }// end function
+
+        public function notifyStyleChangeInChildren(param1:String, param2:Boolean) : void
+        {
+            return;
+        }// end function
+
+        public function registerEffects(param1:Array) : void
+        {
+            return;
+        }// end function
+
+        public function regenerateStyleCache(param1:Boolean) : void
+        {
+            return;
+        }// end function
+
+        public function get styleDeclaration() : CSSStyleDeclaration
+        {
+            return CSSStyleDeclaration(styleName);
+        }// end function
+
+        public function getClassStyleDeclarations() : Array
+        {
+            return [];
+        }// end function
+
+        public function get className() : String
+        {
+            return "HaloFocusRect";
+        }// end function
+
+        public function clearStyle(param1:String) : void
+        {
+            if (param1 == "focusColor")
             {
-               _loc12_ = _loc16_;
+                _focusColor = NaN;
             }
-            if(_loc8_.indexOf("tr") >= 0)
+            return;
+        }// end function
+
+        public function setStyle(param1:String, param2) : void
+        {
+            if (param1 == "focusColor")
             {
-               _loc14_ = _loc16_;
+                _focusColor = param2;
             }
-            if(_loc8_.indexOf("bl") >= 0)
+            return;
+        }// end function
+
+        public function set nonInheritingStyles(param1:Object) : void
+        {
+            return;
+        }// end function
+
+        public function get nonInheritingStyles() : Object
+        {
+            return styleName.nonInheritingStyles;
+        }// end function
+
+        override protected function updateDisplayList(param1:Number, param2:Number) : void
+        {
+            var _loc_12:* = NaN;
+            var _loc_13:* = NaN;
+            var _loc_14:* = NaN;
+            var _loc_15:* = NaN;
+            var _loc_16:* = NaN;
+            var _loc_17:* = NaN;
+            super.updateDisplayList(param1, param2);
+            var _loc_3:* = getStyle("focusBlendMode");
+            var _loc_4:* = getStyle("focusAlpha");
+            var _loc_5:* = getStyle("focusColor");
+            var _loc_6:* = getStyle("cornerRadius");
+            var _loc_7:* = getStyle("focusThickness");
+            var _loc_8:* = getStyle("focusRoundedCorners");
+            var _loc_9:* = getStyle("themeColor");
+            var _loc_10:* = _loc_5;
+            if (isNaN(_loc_10))
             {
-               _loc13_ = _loc16_;
+                _loc_10 = _loc_9;
             }
-            if(_loc8_.indexOf("br") >= 0)
+            var _loc_11:* = graphics;
+            _loc_11.clear();
+            if (_loc_3)
             {
-               _loc15_ = _loc16_;
+                blendMode = _loc_3;
             }
-            _loc11_.beginFill(_loc10_,_loc4_);
-            GraphicsUtil.drawRoundRectComplex(_loc11_,0,0,param1,param2,_loc12_,_loc14_,_loc13_,_loc15_);
-            _loc12_ = !!_loc12_?Number(_loc6_):Number(0);
-            _loc14_ = !!_loc14_?Number(_loc6_):Number(0);
-            _loc13_ = !!_loc13_?Number(_loc6_):Number(0);
-            _loc15_ = !!_loc15_?Number(_loc6_):Number(0);
-            GraphicsUtil.drawRoundRectComplex(_loc11_,_loc7_,_loc7_,param1 - 2 * _loc7_,param2 - 2 * _loc7_,_loc12_,_loc14_,_loc13_,_loc15_);
-            _loc11_.endFill();
-            _loc16_ = _loc6_ + _loc7_ / 2;
-            _loc12_ = !!_loc12_?Number(_loc16_):Number(0);
-            _loc14_ = !!_loc14_?Number(_loc16_):Number(0);
-            _loc13_ = !!_loc13_?Number(_loc16_):Number(0);
-            _loc15_ = !!_loc15_?Number(_loc16_):Number(0);
-            _loc11_.beginFill(_loc10_,_loc4_);
-            GraphicsUtil.drawRoundRectComplex(_loc11_,_loc7_ / 2,_loc7_ / 2,param1 - _loc7_,param2 - _loc7_,_loc12_,_loc14_,_loc13_,_loc15_);
-            _loc12_ = !!_loc12_?Number(_loc6_):Number(0);
-            _loc14_ = !!_loc14_?Number(_loc6_):Number(0);
-            _loc13_ = !!_loc13_?Number(_loc6_):Number(0);
-            _loc15_ = !!_loc15_?Number(_loc6_):Number(0);
-            GraphicsUtil.drawRoundRectComplex(_loc11_,_loc7_,_loc7_,param1 - 2 * _loc7_,param2 - 2 * _loc7_,_loc12_,_loc14_,_loc13_,_loc15_);
-            _loc11_.endFill();
-         }
-         else
-         {
-            _loc11_.beginFill(_loc10_,_loc4_);
-            _loc17_ = (_loc6_ > 0?_loc6_ + _loc7_:0) * 2;
-            _loc11_.drawRoundRect(0,0,param1,param2,_loc17_,_loc17_);
-            _loc17_ = _loc6_ * 2;
-            _loc11_.drawRoundRect(_loc7_,_loc7_,param1 - 2 * _loc7_,param2 - 2 * _loc7_,_loc17_,_loc17_);
-            _loc11_.endFill();
-            _loc11_.beginFill(_loc10_,_loc4_);
-            _loc17_ = (_loc6_ > 0?_loc6_ + _loc7_ / 2:0) * 2;
-            _loc11_.drawRoundRect(_loc7_ / 2,_loc7_ / 2,param1 - _loc7_,param2 - _loc7_,_loc17_,_loc17_);
-            _loc17_ = _loc6_ * 2;
-            _loc11_.drawRoundRect(_loc7_,_loc7_,param1 - 2 * _loc7_,param2 - 2 * _loc7_,_loc17_,_loc17_);
-            _loc11_.endFill();
-         }
-      }
-      
-      override public function getStyle(param1:String) : *
-      {
-         return param1 == "focusColor"?_focusColor:super.getStyle(param1);
-      }
-      
-      public function set styleDeclaration(param1:CSSStyleDeclaration) : void
-      {
-      }
-   }
+            if (_loc_8 != "tl tr bl br" && _loc_6 > 0)
+            {
+                _loc_12 = 0;
+                _loc_13 = 0;
+                _loc_14 = 0;
+                _loc_15 = 0;
+                _loc_16 = _loc_6 + _loc_7;
+                if (_loc_8.indexOf("tl") >= 0)
+                {
+                    _loc_12 = _loc_16;
+                }
+                if (_loc_8.indexOf("tr") >= 0)
+                {
+                    _loc_14 = _loc_16;
+                }
+                if (_loc_8.indexOf("bl") >= 0)
+                {
+                    _loc_13 = _loc_16;
+                }
+                if (_loc_8.indexOf("br") >= 0)
+                {
+                    _loc_15 = _loc_16;
+                }
+                _loc_11.beginFill(_loc_10, _loc_4);
+                GraphicsUtil.drawRoundRectComplex(_loc_11, 0, 0, param1, param2, _loc_12, _loc_14, _loc_13, _loc_15);
+                _loc_12 = _loc_12 ? (_loc_6) : (0);
+                _loc_14 = _loc_14 ? (_loc_6) : (0);
+                _loc_13 = _loc_13 ? (_loc_6) : (0);
+                _loc_15 = _loc_15 ? (_loc_6) : (0);
+                GraphicsUtil.drawRoundRectComplex(_loc_11, _loc_7, _loc_7, param1 - 2 * _loc_7, param2 - 2 * _loc_7, _loc_12, _loc_14, _loc_13, _loc_15);
+                _loc_11.endFill();
+                _loc_16 = _loc_6 + _loc_7 / 2;
+                _loc_12 = _loc_12 ? (_loc_16) : (0);
+                _loc_14 = _loc_14 ? (_loc_16) : (0);
+                _loc_13 = _loc_13 ? (_loc_16) : (0);
+                _loc_15 = _loc_15 ? (_loc_16) : (0);
+                _loc_11.beginFill(_loc_10, _loc_4);
+                GraphicsUtil.drawRoundRectComplex(_loc_11, _loc_7 / 2, _loc_7 / 2, param1 - _loc_7, param2 - _loc_7, _loc_12, _loc_14, _loc_13, _loc_15);
+                _loc_12 = _loc_12 ? (_loc_6) : (0);
+                _loc_14 = _loc_14 ? (_loc_6) : (0);
+                _loc_13 = _loc_13 ? (_loc_6) : (0);
+                _loc_15 = _loc_15 ? (_loc_6) : (0);
+                GraphicsUtil.drawRoundRectComplex(_loc_11, _loc_7, _loc_7, param1 - 2 * _loc_7, param2 - 2 * _loc_7, _loc_12, _loc_14, _loc_13, _loc_15);
+                _loc_11.endFill();
+            }
+            else
+            {
+                _loc_11.beginFill(_loc_10, _loc_4);
+                _loc_17 = (_loc_6 > 0 ? (_loc_6 + _loc_7) : (0)) * 2;
+                _loc_11.drawRoundRect(0, 0, param1, param2, _loc_17, _loc_17);
+                _loc_17 = _loc_6 * 2;
+                _loc_11.drawRoundRect(_loc_7, _loc_7, param1 - 2 * _loc_7, param2 - 2 * _loc_7, _loc_17, _loc_17);
+                _loc_11.endFill();
+                _loc_11.beginFill(_loc_10, _loc_4);
+                _loc_17 = (_loc_6 > 0 ? (_loc_6 + _loc_7 / 2) : (0)) * 2;
+                _loc_11.drawRoundRect(_loc_7 / 2, _loc_7 / 2, param1 - _loc_7, param2 - _loc_7, _loc_17, _loc_17);
+                _loc_17 = _loc_6 * 2;
+                _loc_11.drawRoundRect(_loc_7, _loc_7, param1 - 2 * _loc_7, param2 - 2 * _loc_7, _loc_17, _loc_17);
+                _loc_11.endFill();
+            }
+            return;
+        }// end function
+
+        override public function getStyle(param1:String)
+        {
+            return param1 == "focusColor" ? (_focusColor) : (super.getStyle(param1));
+        }// end function
+
+        public function set styleDeclaration(param1:CSSStyleDeclaration) : void
+        {
+            return;
+        }// end function
+
+    }
 }

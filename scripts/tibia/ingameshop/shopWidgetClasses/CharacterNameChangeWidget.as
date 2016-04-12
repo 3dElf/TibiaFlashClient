@@ -1,60 +1,59 @@
-package tibia.ingameshop.shopWidgetClasses
+﻿package tibia.ingameshop.shopWidgetClasses
 {
-   import shared.controls.EmbeddedDialog;
-   import mx.controls.TextInput;
-   import mx.containers.HBox;
-   import mx.controls.Label;
-   import tibia.creatures.Creature;
-   import tibia.ingameshop.IngameShopWidget;
-   
-   public class CharacterNameChangeWidget extends EmbeddedDialog
-   {
-      
-      private static const BUNDLE:String = "IngameShopWidget";
-       
-      private var m_UIName:TextInput;
-      
-      private var m_OfferID:int;
-      
-      public function CharacterNameChangeWidget(param1:int)
-      {
-         super();
-         this.m_OfferID = param1;
-         title = resourceManager.getString(BUNDLE,"TITLE_NAME_CHANGE");
-         buttonFlags = EmbeddedDialog.OKAY | EmbeddedDialog.CANCEL;
-         width = IngameShopWidget.EMBEDDED_DIALOG_WIDTH;
-      }
-      
-      override public function setFocus() : void
-      {
-         super.setFocus();
-         this.m_UIName.setFocus();
-      }
-      
-      public function get offerID() : int
-      {
-         return this.m_OfferID;
-      }
-      
-      override protected function createChildren() : void
-      {
-         super.createChildren();
-         text = resourceManager.getString(BUNDLE,"LBL_CHARACTER_NAME_CHANGE");
-         var _loc1_:HBox = new HBox();
-         _loc1_.percentWidth = 100;
-         content.addChild(_loc1_);
-         var _loc2_:Label = new Label();
-         _loc2_.text = resourceManager.getString(BUNDLE,"LBL_CHARACTER_NAME_CHANGE_NEW_NAME");
-         _loc1_.addChild(_loc2_);
-         this.m_UIName = new TextInput();
-         this.m_UIName.percentWidth = 100;
-         this.m_UIName.maxChars = Creature.MAX_NAME_LENGHT;
-         _loc1_.addChild(this.m_UIName);
-      }
-      
-      public function get desiredName() : String
-      {
-         return this.m_UIName.text;
-      }
-   }
+    import mx.containers.*;
+    import mx.controls.*;
+    import shared.controls.*;
+    import tibia.creatures.*;
+    import tibia.ingameshop.*;
+
+    public class CharacterNameChangeWidget extends EmbeddedDialog
+    {
+        private var m_UIName:TextInput;
+        private var m_OfferID:int;
+        private static const BUNDLE:String = "IngameShopWidget";
+
+        public function CharacterNameChangeWidget(param1:int)
+        {
+            this.m_OfferID = param1;
+            title = resourceManager.getString(BUNDLE, "TITLE_NAME_CHANGE");
+            buttonFlags = EmbeddedDialog.OKAY | EmbeddedDialog.CANCEL;
+            width = IngameShopWidget.EMBEDDED_DIALOG_WIDTH;
+            return;
+        }// end function
+
+        override public function setFocus() : void
+        {
+            super.setFocus();
+            this.m_UIName.setFocus();
+            return;
+        }// end function
+
+        public function get offerID() : int
+        {
+            return this.m_OfferID;
+        }// end function
+
+        override protected function createChildren() : void
+        {
+            super.createChildren();
+            text = resourceManager.getString(BUNDLE, "LBL_CHARACTER_NAME_CHANGE");
+            var _loc_1:* = new HBox();
+            _loc_1.percentWidth = 100;
+            content.addChild(_loc_1);
+            var _loc_2:* = new Label();
+            _loc_2.text = resourceManager.getString(BUNDLE, "LBL_CHARACTER_NAME_CHANGE_NEW_NAME");
+            _loc_1.addChild(_loc_2);
+            this.m_UIName = new TextInput();
+            this.m_UIName.percentWidth = 100;
+            this.m_UIName.maxChars = Creature.MAX_NAME_LENGHT;
+            _loc_1.addChild(this.m_UIName);
+            return;
+        }// end function
+
+        public function get desiredName() : String
+        {
+            return this.m_UIName.text;
+        }// end function
+
+    }
 }

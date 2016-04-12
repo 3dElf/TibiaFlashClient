@@ -1,13 +1,14 @@
-package tibia.appearances
+﻿package tibia.appearances
 {
-   import mx.core.ByteArrayAsset;
-   
-   public class OutfitInstance_TIBIA_MASKS_SHADER_CLASS extends ByteArrayAsset
-   {
-       
-      public function OutfitInstance_TIBIA_MASKS_SHADER_CLASS()
-      {
-         super();
-      }
-   }
+    import mx.core.*;
+
+    public class OutfitInstance_TIBIA_MASKS_SHADER_CLASS extends ByteArrayAsset
+    {
+
+        public function OutfitInstance_TIBIA_MASKS_SHADER_CLASS()
+        {
+            return;
+        }// end function
+
+    }
 }

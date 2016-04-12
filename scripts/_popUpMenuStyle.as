@@ -1,34 +1,37 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   
-   public class _popUpMenuStyle
-   {
-       
-      public function _popUpMenuStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration(".popUpMenu");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration(".popUpMenu",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class _popUpMenuStyle extends Object
+    {
+
+        public function _popUpMenuStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration(".popUpMenu");
+            if (!style)
             {
-               _popUpMenuStyle.fontWeight = "normal";
-               _popUpMenuStyle.textAlign = "left";
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration(".popUpMenu", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.fontWeight = "normal";
+                this.textAlign = "left";
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }

@@ -1,30 +1,25 @@
-package mx.core
+﻿package mx.core
 {
-   use namespace mx_internal;
-   
-   public class UIComponentDescriptor extends ComponentDescriptor
-   {
-      
-      mx_internal static const VERSION:String = "3.6.0.21751";
-       
-      mx_internal var instanceIndices:Array;
-      
-      public var stylesFactory:Function;
-      
-      public var effects:Array;
-      
-      mx_internal var repeaters:Array;
-      
-      mx_internal var repeaterIndices:Array;
-      
-      public function UIComponentDescriptor(param1:Object)
-      {
-         super(param1);
-      }
-      
-      override public function toString() : String
-      {
-         return "UIComponentDescriptor_" + id;
-      }
-   }
+
+    public class UIComponentDescriptor extends ComponentDescriptor
+    {
+        var instanceIndices:Array;
+        public var stylesFactory:Function;
+        public var effects:Array;
+        var repeaters:Array;
+        var repeaterIndices:Array;
+        static const VERSION:String = "3.6.0.21751";
+
+        public function UIComponentDescriptor(param1:Object)
+        {
+            super(param1);
+            return;
+        }// end function
+
+        override public function toString() : String
+        {
+            return "UIComponentDescriptor_" + id;
+        }// end function
+
+    }
 }

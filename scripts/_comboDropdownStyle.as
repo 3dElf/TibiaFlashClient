@@ -1,42 +1,45 @@
-package
+﻿package 
 {
-   import mx.core.IFlexModuleFactory;
-   import mx.styles.CSSStyleDeclaration;
-   import mx.styles.StyleManager;
-   
-   public class _comboDropdownStyle
-   {
-       
-      public function _comboDropdownStyle()
-      {
-         super();
-      }
-      
-      public static function init(param1:IFlexModuleFactory) : void
-      {
-         var fbs:IFlexModuleFactory = param1;
-         var style:CSSStyleDeclaration = StyleManager.getStyleDeclaration(".comboDropdown");
-         if(!style)
-         {
-            style = new CSSStyleDeclaration();
-            StyleManager.setStyleDeclaration(".comboDropdown",style,false);
-         }
-         if(style.defaultFactory == null)
-         {
-            style.defaultFactory = function():void
+    import mx.core.*;
+    import mx.styles.*;
+
+    public class _comboDropdownStyle extends Object
+    {
+
+        public function _comboDropdownStyle()
+        {
+            return;
+        }// end function
+
+        public static function init(param1:IFlexModuleFactory) : void
+        {
+            var fbs:* = param1;
+            var style:* = StyleManager.getStyleDeclaration(".comboDropdown");
+            if (!style)
             {
-               _comboDropdownStyle.shadowDirection = "center";
-               _comboDropdownStyle.fontWeight = "normal";
-               _comboDropdownStyle.dropShadowEnabled = true;
-               _comboDropdownStyle.leading = 0;
-               _comboDropdownStyle.backgroundColor = 16777215;
-               _comboDropdownStyle.shadowDistance = 1;
-               _comboDropdownStyle.cornerRadius = 0;
-               _comboDropdownStyle.borderThickness = 0;
-               _comboDropdownStyle.paddingLeft = 5;
-               _comboDropdownStyle.paddingRight = 5;
-            };
-         }
-      }
-   }
+                style = new CSSStyleDeclaration();
+                StyleManager.setStyleDeclaration(".comboDropdown", style, false);
+            }
+            if (style.defaultFactory == null)
+            {
+                style.defaultFactory = function () : void
+            {
+                this.shadowDirection = "center";
+                this.fontWeight = "normal";
+                this.dropShadowEnabled = true;
+                this.leading = 0;
+                this.backgroundColor = 16777215;
+                this.shadowDistance = 1;
+                this.cornerRadius = 0;
+                this.borderThickness = 0;
+                this.paddingLeft = 5;
+                this.paddingRight = 5;
+                return;
+            }// end function
+            ;
+            }
+            return;
+        }// end function
+
+    }
 }
