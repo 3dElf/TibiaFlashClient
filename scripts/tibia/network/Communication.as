@@ -121,7 +121,7 @@
         static const PATH_EMPTY:int = 0;
         static const NPC_SPEECH_TRADER:uint = 2;
         static const CCANCEL:int = 190;
-        public static const CLIENT_VERSION:uint = 2244;
+        public static const CLIENT_VERSION:uint = 2253;
         static const SCLOSECONTAINER:int = 111;
         static const MAX_NAME_LENGTH:int = 29;
         static const SLEFTROW:int = 104;
@@ -259,7 +259,7 @@
         static const RISKINESS_NONE:int = 0;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1092;
+        public static const PROTOCOL_VERSION:int = 1093;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CEDITBUDDY:int = 222;
         static const CROTATEWEST:int = 114;
@@ -635,11 +635,12 @@
             var _loc_7:* = 0;
             var _loc_8:* = null;
             var _loc_9:* = null;
-            var _loc_10:* = null;
+            var _loc_10:* = 0;
             var _loc_11:* = null;
-            var _loc_12:* = 0;
+            var _loc_12:* = null;
             var _loc_13:* = 0;
-            var _loc_14:* = null;
+            var _loc_14:* = 0;
+            var _loc_15:* = null;
             _loc_2 = IngameShopManager.getInstance();
             _loc_3 = param1.readUnsignedByte() == 1;
             _loc_4 = Number.NaN;
@@ -657,19 +658,20 @@
                 
                 _loc_8 = StringHelper.s_ReadLongStringFromByteArray(param1);
                 _loc_9 = StringHelper.s_ReadLongStringFromByteArray(param1);
-                _loc_10 = new IngameShopCategory(_loc_8, _loc_9);
-                _loc_11 = new Vector.<String>;
-                _loc_12 = param1.readUnsignedByte();
-                _loc_13 = 0;
-                while (_loc_13 < _loc_12)
+                _loc_10 = param1.readUnsignedByte();
+                _loc_11 = new IngameShopCategory(_loc_8, _loc_9, _loc_10);
+                _loc_12 = new Vector.<String>;
+                _loc_13 = param1.readUnsignedByte();
+                _loc_14 = 0;
+                while (_loc_14 < _loc_13)
                 {
                     
-                    _loc_11.push(StringHelper.s_ReadLongStringFromByteArray(param1));
-                    _loc_13 = _loc_13 + 1;
+                    _loc_12.push(StringHelper.s_ReadLongStringFromByteArray(param1));
+                    _loc_14 = _loc_14 + 1;
                 }
-                _loc_10.iconIdentifiers = _loc_11;
-                _loc_14 = StringHelper.s_ReadLongStringFromByteArray(param1);
-                _loc_2.addCategory(_loc_10, _loc_14);
+                _loc_11.iconIdentifiers = _loc_12;
+                _loc_15 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                _loc_2.addCategory(_loc_11, _loc_15);
                 _loc_7 = _loc_7 + 1;
             }
             _loc_2.openShopWindow(false, IngameShopProduct.SERVICE_TYPE_UNKNOWN);
@@ -4805,8 +4807,12 @@
                 _loc_9 = StringHelper.s_ReadLongStringFromByteArray(param1);
                 _loc_10 = new IngameShopOffer(_loc_7, _loc_8, _loc_9);
                 _loc_10.price = param1.readUnsignedInt();
-                _loc_10.state = param1.readUnsignedByte();
-                _loc_10.disabled = param1.readUnsignedByte() == 1;
+                _loc_10.highlightState = param1.readUnsignedByte();
+                _loc_10.disabledState = param1.readUnsignedByte();
+                if (_loc_10.disabledState == IngameShopOffer.DISABLED_STATE_DISABLED)
+                {
+                    _loc_10.disabledReason = StringHelper.s_ReadLongStringFromByteArray(param1);
+                }
                 _loc_11 = new Vector.<String>;
                 _loc_12 = param1.readUnsignedByte();
                 _loc_13 = 0;
@@ -4839,7 +4845,10 @@
                     _loc_10.products.push(_loc_21);
                     _loc_13 = _loc_13 + 1;
                 }
-                _loc_3.push(_loc_10);
+                if (_loc_10.disabledState != IngameShopOffer.DISABLED_STATE_HIDDEN)
+                {
+                    _loc_3.push(_loc_10);
+                }
                 _loc_5 = _loc_5 + 1;
             }
             _loc_6 = IngameShopManager.getInstance().getCategory(_loc_2);

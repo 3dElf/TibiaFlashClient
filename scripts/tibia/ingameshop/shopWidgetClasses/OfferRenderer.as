@@ -17,10 +17,10 @@
         private var m_UIName:Label;
         private var m_UIIcon:SliderImage;
         private static const BUNDLE:String = "IngameShopWidget";
-        private static const ICON_SALE:BitmapData = Bitmap(new ICON_SALE_CLASS()).bitmapData;
+        public static const ICON_SALE:BitmapData = Bitmap(new ICON_SALE_CLASS()).bitmapData;
         private static const BLACK_WHITE_FILTER:Array = [0.3, 0.59, 0.11, 0, -10, 0.3, 0.59, 0.11, 0, -10, 0.3, 0.59, 0.11, 0, -10, 0, 0, 0, 1, 0];
-        private static const ICON_EXPIRING:BitmapData = Bitmap(new ICON_EXPIRING_CLASS()).bitmapData;
-        private static const ICON_NEW:BitmapData = Bitmap(new ICON_NEW_CLASS()).bitmapData;
+        public static const ICON_EXPIRING:BitmapData = Bitmap(new ICON_EXPIRING_CLASS()).bitmapData;
+        public static const ICON_NEW:BitmapData = Bitmap(new ICON_NEW_CLASS()).bitmapData;
         private static const ICON_NEW_CLASS:Class = OfferRenderer_ICON_NEW_CLASS;
         private static const ICON_SALE_CLASS:Class = OfferRenderer_ICON_SALE_CLASS;
         private static const SPECIAL_ICON_OFFSET:Point = new Point(1, 24);
@@ -113,7 +113,7 @@
                     this.m_UIIcon.setImageIdentifiers(_loc_1.iconIdentifiers);
                     this.m_UIPrice.coins = _loc_1.price;
                     this.setDisabledStyle(_loc_1.disabled);
-                    this.m_UIMainContainer.toolTip = _loc_1.disabled ? (resourceManager.getString(BUNDLE, "LBL_CANNOT_BUY_GENERIC") + "\n\n" + _loc_1.description) : (_loc_1.description);
+                    this.m_UIMainContainer.toolTip = _loc_1.disabled ? (resourceManager.getString(BUNDLE, "LBL_CANNOT_BUY_GENERIC") + "\n" + _loc_1.disabledReason + "\n" + _loc_1.description) : (_loc_1.description);
                     _loc_2 = this.m_UISpecialIcon.getChildAt(0) as Bitmap;
                     this.m_UISpecialIcon.visible = _loc_1.isSale() || _loc_1.isNew() || _loc_1.isTimed();
                     if (_loc_1.isSale())

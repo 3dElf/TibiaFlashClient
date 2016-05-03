@@ -42,7 +42,7 @@
         {
             if (this.m_ShopWindow != null)
             {
-                this.m_ShopWindow.mainView.setShowButtonBar(param1 != null && !param1.disabled);
+                this.m_ShopWindow.mainView.setShowButtonBar(param1 != null);
                 this.m_ShopWindow.mainView.detailsList.offer = param1;
             }
             return;
@@ -51,15 +51,6 @@
         protected function onOfferSelected(event:ListEvent) : void
         {
             var _loc_2:* = event.itemRenderer.data as IngameShopOffer;
-            if (_loc_2 != null && _loc_2.disabled)
-            {
-                selectedIndex = -1;
-                event.preventDefault();
-            }
-            if (selectedIndex == -1)
-            {
-                _loc_2 = null;
-            }
             this.updateUIOnOfferSelection(_loc_2);
             return;
         }// end function
@@ -104,17 +95,6 @@
         protected function onOfferClicked(event:ListEvent) : void
         {
             var _loc_2:* = event.itemRenderer.data as IngameShopOffer;
-            if (_loc_2 != null && _loc_2.disabled)
-            {
-                selectedIndex = -1;
-                event.preventDefault();
-                this.m_LastStoreEventOffer = 0;
-            }
-            if (selectedIndex == -1)
-            {
-                _loc_2 = null;
-                this.m_LastStoreEventOffer = 0;
-            }
             if (_loc_2 != null && this.m_LastStoreEventOffer != _loc_2.offerID)
             {
                 this.m_LastStoreEventOffer = _loc_2.offerID;
@@ -144,7 +124,7 @@
         {
             var _loc_3:* = null;
             var _loc_2:* = this.getSelectedOffer();
-            if (_loc_2 != null && !_loc_2.disabled)
+            if (_loc_2 != null)
             {
                 _loc_3 = new IngameShopEvent(IngameShopEvent.OFFER_ACTIVATED);
                 _loc_3.data = _loc_2;

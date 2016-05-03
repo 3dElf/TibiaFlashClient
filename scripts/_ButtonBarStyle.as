@@ -24,11 +24,11 @@
             {
                 style.defaultFactory = function () : void
             {
+                this.verticalAlign = "middle";
+                this.horizontalGap = 0;
                 this.textAlign = "center";
                 this.horizontalAlign = "center";
-                this.verticalAlign = "middle";
                 this.verticalGap = 0;
-                this.horizontalGap = 0;
                 return;
             }// end function
             ;

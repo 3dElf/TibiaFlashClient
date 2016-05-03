@@ -59,6 +59,7 @@
                 _loc_1 = this.m_UIOfferList.getSelectedOffer();
                 this.m_UIBuyButton.setVisible(_loc_1 != null && IngameShopManager.getInstance().getCreditBalance() >= _loc_1.price);
                 this.m_UIBuyButton.includeInLayout = this.m_UIBuyButton.visible;
+                this.m_UIBuyButton.enabled = _loc_1 != null && _loc_1.disabled == false;
                 this.m_UIGetCoinsButton.setVisible(!this.m_UIBuyButton.visible);
                 this.m_UIGetCoinsButton.includeInLayout = this.m_UIGetCoinsButton.visible;
             }

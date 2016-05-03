@@ -34,11 +34,12 @@
         override protected function measure() : void
         {
             var _loc_2:* = NaN;
+            var _loc_4:* = NaN;
             super.measure();
             var _loc_1:* = this.viewMetricsAndPadding;
             _loc_2 = getStyle("pickerSize");
             var _loc_3:* = getStyle("horizontalGap");
-            var _loc_4:* = getStyle("verticalGap");
+            _loc_4 = getStyle("verticalGap");
             var _loc_5:* = _loc_1.left + Colour.HSI_H_STEPS * (_loc_2 + _loc_3) - _loc_3 + _loc_1.right;
             measuredWidth = _loc_1.left + Colour.HSI_H_STEPS * (_loc_2 + _loc_3) - _loc_3 + _loc_1.right;
             measuredMinWidth = _loc_5;

@@ -78,11 +78,12 @@
 
         override protected function measure() : void
         {
+            var _loc_1:* = NaN;
             var _loc_2:* = NaN;
             var _loc_3:* = NaN;
             var _loc_4:* = NaN;
             super.measure();
-            var _loc_1:* = getStyle("rendererPaddingLeft") + getStyle("rendererPaddingRight");
+            _loc_1 = getStyle("rendererPaddingLeft") + getStyle("rendererPaddingRight");
             _loc_2 = getStyle("rendererPaddingTop") + getStyle("rendererPaddingBottom");
             _loc_3 = Math.max(this.m_UIObject.getExplicitOrMeasuredWidth(), this.m_UIName.getExplicitOrMeasuredHeight() + this.m_UIProperties.getExplicitOrMeasuredHeight());
             _loc_4 = this.m_UIObject.getExplicitOrMeasuredHeight() + getStyle("rendererHorizontalGap") + Math.max(this.m_UIName.getExplicitOrMeasuredWidth(), this.m_UIProperties.getExplicitOrMeasuredWidth());

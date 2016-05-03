@@ -27,18 +27,18 @@
         protected var m_Options:OptionsStorage = null;
         protected var m_UIOtherName:CheckBox = null;
         protected var m_UIOtherIcons:CheckBox = null;
-        protected var m_OtherStyle:int = 1;
+        protected var m_OtherStyle:int;
         protected var m_UIWidgetStyle:ComboBox = null;
         protected var m_UIBothPvPFrames:CheckBox = null;
         private var m_UncommittedOptions:Boolean = false;
-        protected var m_WidgetStyle:int = 1;
+        protected var m_WidgetStyle:int;
         protected var m_UIWidgetSkill:ComboBox = null;
         protected var m_UIOwnMana:CheckBox = null;
         private var m_UncommittedOtherStyle:Boolean = false;
         protected var m_UIOwnFlags:CheckBox = null;
         protected var m_WidgetSkill:int = 0;
         private var m_UncommittedOwnStyle:Boolean = false;
-        protected var m_OwnStyle:int = 1;
+        protected var m_OwnStyle:int;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
         static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
         static const PARTY_MAX_FLASHING_TIME:uint = 5000;
@@ -150,6 +150,9 @@
 
         public function StatusOptions()
         {
+            this.m_OwnStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+            this.m_OtherStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+            this.m_WidgetStyle = StatusWidget.STATUS_STYLE_DEFAULT;
             label = resourceManager.getString(ConfigurationWidget.BUNDLE, "STATUS_LABEL");
             return;
         }// end function

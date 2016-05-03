@@ -278,11 +278,13 @@
 
         override protected function measure() : void
         {
+            var _loc_3:* = NaN;
+            var _loc_5:* = null;
             var _loc_6:* = null;
             super.measure();
             var _loc_1:* = getStyle("verticalGap");
             var _loc_2:* = 0;
-            var _loc_3:* = -_loc_1;
+            _loc_3 = -_loc_1;
             var _loc_4:* = numChildren - 1;
             while (_loc_4 >= this.m_UIRawChildren)
             {
@@ -294,7 +296,7 @@
             }
             _loc_3 = Math.max(0, _loc_3);
             this.updateBorder();
-            var _loc_5:* = EdgeMetrics.EMPTY;
+            _loc_5 = EdgeMetrics.EMPTY;
             if (this.m_UIBorderInstance is IBorder)
             {
                 _loc_5 = IBorder(this.m_UIBorderInstance).borderMetrics;

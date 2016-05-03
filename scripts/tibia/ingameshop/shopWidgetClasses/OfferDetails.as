@@ -15,6 +15,7 @@
         private var m_Offer:IngameShopOffer;
         private var m_ShopWindow:IngameShopWidget;
         private static const BUNDLE:String = "IngameShopWidget";
+        private static const DISABLED_REASON_COLOR:String = 13843516.toString(16);
 
         public function OfferDetails()
         {
@@ -49,11 +50,13 @@
 
         override protected function commitProperties() : void
         {
+            var _loc_1:* = null;
             if (this.m_UncommittedOffer)
             {
                 if (this.m_Offer != null)
                 {
-                    this.m_UIDescriptionText.text = this.m_Offer.description;
+                    _loc_1 = this.m_Offer.disabled ? ("<p><font color=\"#" + DISABLED_REASON_COLOR + "\">" + resourceManager.getString(BUNDLE, "LBL_CANNOT_BUY_GENERIC") + "\n" + this.m_Offer.disabledReason + "</font></p>\n" + this.m_Offer.description) : (this.m_Offer.description);
+                    this.m_UIDescriptionText.htmlText = _loc_1;
                     this.m_UIBundleBox.setVisible(this.m_Offer.isBundle());
                     this.buildBundleGrid();
                 }

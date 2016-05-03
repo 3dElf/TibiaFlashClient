@@ -19,11 +19,12 @@
         override public function measure() : void
         {
             var _loc_1:* = null;
+            var _loc_2:* = NaN;
             var _loc_4:* = NaN;
             var _loc_5:* = NaN;
             var _loc_10:* = null;
             _loc_1 = target.viewMetricsAndPadding;
-            var _loc_2:* = 0;
+            _loc_2 = 0;
             var _loc_3:* = 0;
             _loc_4 = 0;
             _loc_5 = 0;

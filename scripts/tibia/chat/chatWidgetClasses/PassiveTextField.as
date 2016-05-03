@@ -150,9 +150,8 @@
 
         override protected function measure() : void
         {
-            var _loc_1:* = null;
             var _loc_2:* = null;
-            _loc_1 = this.viewMetricsAndPadding;
+            var _loc_1:* = this.viewMetricsAndPadding;
             _loc_2 = textField.getUITextFormat().measureText("gG");
             var _loc_3:* = _loc_2.width + 4 + _loc_1.left + _loc_1.right;
             measuredWidth = _loc_2.width + 4 + _loc_1.left + _loc_1.right;

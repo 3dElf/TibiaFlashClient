@@ -24,8 +24,8 @@
             {
                 style.defaultFactory = function () : void
             {
-                this.strokeColor = 12897484;
                 this.strokeWidth = 2;
+                this.strokeColor = 12897484;
                 return;
             }// end function
             ;
