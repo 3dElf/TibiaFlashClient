@@ -493,15 +493,30 @@
 
         function appendEffect(param1:AppearanceInstance) : void
         {
+            var _loc_2:* = 0;
             if (param1 == null)
             {
                 throw new ArgumentError("Field.appendEffect: Invalid effect.");
             }
-            this.m_Effects[this.m_EffectsCount] = param1;
-            this.m_Effects[this.m_EffectsCount].mapData = this.m_EffectsCount;
-            var _loc_2:* = this;
-            var _loc_3:* = this.m_EffectsCount + 1;
-            _loc_2.m_EffectsCount = _loc_3;
+            if (param1.type != null && param1.type.isTopEffect)
+            {
+                this.m_Effects.unshift(param1);
+                _loc_2 = 0;
+                while (_loc_2 < (this.m_EffectsCount + 1))
+                {
+                    
+                    this.m_Effects[_loc_2].mapData = _loc_2;
+                    _loc_2++;
+                }
+            }
+            else
+            {
+                this.m_Effects[this.m_EffectsCount] = param1;
+                this.m_Effects[this.m_EffectsCount].mapData = this.m_EffectsCount;
+            }
+            var _loc_3:* = this;
+            var _loc_4:* = this.m_EffectsCount + 1;
+            _loc_3.m_EffectsCount = _loc_4;
             return;
         }// end function
 

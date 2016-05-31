@@ -278,13 +278,12 @@
 
         override protected function measure() : void
         {
-            var _loc_3:* = NaN;
             var _loc_5:* = null;
             var _loc_6:* = null;
             super.measure();
             var _loc_1:* = getStyle("verticalGap");
             var _loc_2:* = 0;
-            _loc_3 = -_loc_1;
+            var _loc_3:* = -_loc_1;
             var _loc_4:* = numChildren - 1;
             while (_loc_4 >= this.m_UIRawChildren)
             {

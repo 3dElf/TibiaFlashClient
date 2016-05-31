@@ -52,6 +52,7 @@
         public static const FLAG_ANIMATEALWAYS:int = 28;
         public static const ANIMATION_DELAY_BEFORE_RESET:int = 1000;
         public static const FLAG_WRAPPABLE:int = 36;
+        public static const FLAG_TOP_EFFECT:int = 38;
         public static const FLAG_NOMOVEMENTANIMATION:int = 16;
         public static const PHASE_ASYNCHRONOUS:int = 255;
         public static const FLAG_UNSIGHT:int = 14;
@@ -803,6 +804,11 @@
                         _loc_6.marketNameLowerCase = _loc_6.marketName.toLowerCase();
                         _loc_6.marketRestrictProfession = param1.readUnsignedShort();
                         _loc_6.marketRestrictLevel = param1.readUnsignedShort();
+                        break;
+                    }
+                    case FLAG_TOP_EFFECT:
+                    {
+                        _loc_6.isTopEffect = true;
                         break;
                     }
                     case 255:

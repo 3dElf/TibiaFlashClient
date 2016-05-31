@@ -65,7 +65,7 @@
         static const PARTY_OTHER:int = 11;
         static const SKILL_EXPERIENCE:int = 0;
         static const GUILD_NONE:int = 0;
-        public static const STATE_DEFAULT:int = 0;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const CLOOKATCREATURE:int = 141;
         static const CJOINCHANNEL:int = 152;
         static const SKILL_FED:int = 15;
@@ -83,6 +83,7 @@
         static const NPC_SPEECH_QUEST:uint = 3;
         static const CCANCEL:int = 190;
         static const CGUILDMESSAGE:int = 155;
+        public static const STATE_DEFAULT:int = 0;
         static const TYPE_SUMMON_OTHERS:int = 4;
         static const CREMOVEBUDDY:int = 221;
         static const CCLOSECONTAINER:int = 135;
@@ -168,6 +169,7 @@
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const SNPCOFFER:int = 122;
         static const SCONTAINER:int = 110;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const CMARKETCANCEL:int = 247;
         static const SWORLDENTERED:int = 15;
         static const HEADER_POS:int = 0;
@@ -189,6 +191,7 @@
         static const SCOUNTEROFFER:int = 126;
         static const CFOLLOW:int = 162;
         static const STATE_POISONED:int = 0;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
         static const CANSWERMODALDIALOG:int = 249;
         static const STATE_BURNING:int = 1;
         static const CEXCLUDEFROMCHANNEL:int = 172;
@@ -209,7 +212,7 @@
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 1093;
+        public static const PROTOCOL_VERSION:int = 1094;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
@@ -217,12 +220,12 @@
         static const ERR_INVALID_SIZE:int = 1;
         static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
         static const STATE_PZ_BLOCK:int = 13;
-        private static const ERROR_INVALID_SESSIONDUMP:uint = 2;
         static const SLOGINCHALLENGE:int = 31;
         static const CLEAVECHANNEL:int = 153;
         static const PARTY_MEMBER:int = 2;
         static const SPLAYERSKILLS:int = 161;
         static const CTHANKYOU:int = 231;
+        private static const ERROR_INVALID_SESSIONDUMP:uint = 2;
         static const SCREATUREUNPASS:int = 146;
         static const RISKINESS_NONE:int = 0;
         static const SKILL_STAMINA:int = 17;
@@ -270,6 +273,7 @@
         static const SPLAYERINVENTORY:int = 245;
         static const CMOVEOBJECT:int = 120;
         static const CRULEVIOLATIONREPORT:int = 242;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         static const CJOINAGGRESSION:int = 142;
         static const SMOVECREATURE:int = 109;
         static const SSWITCHPRESET:int = 157;
@@ -301,7 +305,9 @@
         static const PROFESSION_PALADIN:int = 2;
         static const SINGAMESHOPERROR:int = 224;
         static const SCHANNELEVENT:int = 243;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SPVPSITUATIONS:int = 184;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const SLOGINADVICE:int = 21;
         static const PROFESSION_KNIGHT:int = 1;
         static const SKILL_FIGHTAXE:int = 12;

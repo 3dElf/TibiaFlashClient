@@ -99,9 +99,9 @@
         static const RISKINESS_DANGEROUS:int = 1;
         static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
         public static const COMBAT_SECURE_ON:int = 1;
-        static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
         static const RISKINESS_NONE:int = 0;
+        static const GUILD_NONE:int = 0;
         static const PARTY_MEMBER:int = 2;
         static const STATE_DRUNK:int = 3;
         static const PARTY_OTHER:int = 11;
@@ -113,6 +113,7 @@
         static const STATE_NONE:int = -1;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const SKILL_FIGHTSHIELD:int = 8;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SKILL_FIGHTDISTANCE:int = 9;
         static const PK_EXCPLAYERKILLER:int = 5;
         static const NUM_CREATURES:int = 1300;
@@ -138,15 +139,16 @@
         static const PARTY_LEADER:int = 1;
         static const STATE_PZ_ENTERED:int = 14;
         public static const COMBAT_SECURE_OFF:int = 0;
-        static const SKILL_CARRYSTRENGTH:int = 7;
         static const PK_ATTACKER:int = 1;
         static const STATE_ELECTRIFIED:int = 2;
         static const SKILL_FIGHTSWORD:int = 11;
+        static const SKILL_CARRYSTRENGTH:int = 7;
         static const GUILD_WAR_NEUTRAL:int = 3;
         static const STATE_DROWNING:int = 8;
-        public static const COMBAT_CHASE_ON:int = 1;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         private static const OPTION_GROUPS:Array = [{XMLName:"general", localName:"General"}, {XMLName:"renderer", localName:"Renderer"}, {XMLName:"combat", localName:"Combat"}, {XMLName:"status", localName:"Status"}, {XMLName:"npctrade", localName:"NPCTrade"}, {XMLName:"opponent", localName:"Opponent"}, {XMLName:"help", localName:"Help"}, {XMLName:"sidebarset", localName:"SideBarSet"}, {XMLName:"actionbarset", localName:"ActionBarSet"}, {XMLName:"mappingset", localName:"MappingSet"}, {XMLName:"mousemapping", localName:"MouseMapping"}, {XMLName:"messagefilterset", localName:"MessageFilterSet"}, {XMLName:"channelset", localName:"ChannelSet"}, {XMLName:"namefilterset", localName:"NameFilterSet"}, {XMLName:"market", localName:"Market"}];
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
+        public static const COMBAT_CHASE_ON:int = 1;
         static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
         static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
         static const GUILD_WAR_ALLY:int = 1;
@@ -154,6 +156,7 @@
         static const PROFESSION_SORCERER:int = 3;
         static const STATE_SLOW:int = 5;
         static const PARTY_NONE:int = 0;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SUMMON_OWN:int = 1;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const TYPE_SUMMON_OWN:int = 3;
@@ -164,12 +167,14 @@
         static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
         static const PROFESSION_PALADIN:int = 2;
         static const SKILL_FIGHTAXE:int = 12;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        static const BLESSING_NONE:int = 0;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const STATE_FAST:int = 6;
+        static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
         static const SKILL_HITPOINTS:int = 4;
@@ -183,6 +188,7 @@
         static const STATE_FREEZING:int = 9;
         static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
         static const STATE_POISONED:int = 0;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
         static const TYPE_MONSTER:int = 1;
         static const STATE_BURNING:int = 1;
         static const SKILL_FIGHTFIST:int = 13;
@@ -451,13 +457,13 @@
             return MessageFilterSet(this.removeListItem(this.m_MessageFilterSet, param1, "messageFilterSet"));
         }// end function
 
-        public function set rendererScaleMap(param1:Boolean) : void
+        public function set statusCreatureHealth(param1:Boolean) : void
         {
-            var _loc_2:* = this.rendererScaleMap;
+            var _loc_2:* = this.statusCreatureHealth;
             if (_loc_2 !== param1)
             {
-                this._1408018027rendererScaleMap = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "rendererScaleMap", _loc_2, param1));
+                this._1714951155statusCreatureHealth = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusCreatureHealth", _loc_2, param1));
             }
             return;
         }// end function
@@ -757,13 +763,13 @@
             return;
         }// end function
 
-        public function set statusCreaturePvpFrames(param1:Boolean) : void
+        public function set combatAttackMode(param1:int) : void
         {
-            var _loc_2:* = this.statusCreaturePvpFrames;
+            var _loc_2:* = this.combatAttackMode;
             if (_loc_2 !== param1)
             {
-                this._147163423statusCreaturePvpFrames = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusCreaturePvpFrames", _loc_2, param1));
+                this._251195935combatAttackMode = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "combatAttackMode", _loc_2, param1));
             }
             return;
         }// end function
@@ -805,13 +811,13 @@
             return;
         }// end function
 
-        public function set combatAttackMode(param1:int) : void
+        public function set statusCreaturePvpFrames(param1:Boolean) : void
         {
-            var _loc_2:* = this.combatAttackMode;
+            var _loc_2:* = this.statusCreaturePvpFrames;
             if (_loc_2 !== param1)
             {
-                this._251195935combatAttackMode = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "combatAttackMode", _loc_2, param1));
+                this._147163423statusCreaturePvpFrames = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusCreaturePvpFrames", _loc_2, param1));
             }
             return;
         }// end function
@@ -917,17 +923,6 @@
                         break;
                     }
                 }
-            }
-            return;
-        }// end function
-
-        public function set statusCreatureHealth(param1:Boolean) : void
-        {
-            var _loc_2:* = this.statusCreatureHealth;
-            if (_loc_2 !== param1)
-            {
-                this._1714951155statusCreatureHealth = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusCreatureHealth", _loc_2, param1));
             }
             return;
         }// end function
@@ -1044,6 +1039,17 @@
         public function get marketBrowserCategory() : int
         {
             return this.m_MarketBrowserCategory;
+        }// end function
+
+        public function set rendererScaleMap(param1:Boolean) : void
+        {
+            var _loc_2:* = this.rendererScaleMap;
+            if (_loc_2 !== param1)
+            {
+                this._1408018027rendererScaleMap = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "rendererScaleMap", _loc_2, param1));
+            }
+            return;
         }// end function
 
         private function set _789326636statusPlayerFlags(param1:Boolean) : void
@@ -1747,13 +1753,13 @@
             return;
         }// end function
 
-        public function set statusWidgetStyle(param1:int) : void
+        public function set marketBrowserCategory(param1:int) : void
         {
-            var _loc_2:* = this.statusWidgetStyle;
+            var _loc_2:* = this.marketBrowserCategory;
             if (_loc_2 !== param1)
             {
-                this._2037738107statusWidgetStyle = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusWidgetStyle", _loc_2, param1));
+                this._131184534marketBrowserCategory = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "marketBrowserCategory", _loc_2, param1));
             }
             return;
         }// end function
@@ -1779,6 +1785,17 @@
             {
                 this._1621507731rendererShowFrameRate = param1;
                 this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "rendererShowFrameRate", _loc_2, param1));
+            }
+            return;
+        }// end function
+
+        public function set statusWidgetStyle(param1:int) : void
+        {
+            var _loc_2:* = this.statusWidgetStyle;
+            if (_loc_2 !== param1)
+            {
+                this._2037738107statusWidgetStyle = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusWidgetStyle", _loc_2, param1));
             }
             return;
         }// end function
@@ -2022,17 +2039,6 @@
         public function get npcTradeSellKeepEquipped() : Boolean
         {
             return this.m_NPCTradeSellKeepEquipped;
-        }// end function
-
-        public function set marketBrowserCategory(param1:int) : void
-        {
-            var _loc_2:* = this.marketBrowserCategory;
-            if (_loc_2 !== param1)
-            {
-                this._131184534marketBrowserCategory = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "marketBrowserCategory", _loc_2, param1));
-            }
-            return;
         }// end function
 
         private function set _356338236marketSelectedView(param1:int) : void

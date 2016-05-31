@@ -163,7 +163,7 @@
             }
             var _loc_9:* = null;
             var _loc_10:* = /^#([sywbixc])\s+(.*)/i;
-            var _loc_11:* = /^([*@$])([^\1]+)\1\s*(.*)/;
+            var _loc_11:* = /^([*@$])([^\1]+?)\1\s*(.*)/;
             var _loc_12:* = null;
             var _loc_13:* = null;
             var _loc_14:* = _loc_10.exec(_loc_6);
@@ -418,6 +418,7 @@
                     case MessageMode.MESSAGE_DAMAGE_DEALED:
                     case MessageMode.MESSAGE_DAMAGE_RECEIVED:
                     case MessageMode.MESSAGE_HEAL:
+                    case MessageMode.MESSAGE_MANA:
                     case MessageMode.MESSAGE_EXP:
                     case MessageMode.MESSAGE_DAMAGE_OTHERS:
                     case MessageMode.MESSAGE_HEAL_OTHERS:

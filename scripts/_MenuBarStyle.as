@@ -25,9 +25,9 @@
             {
                 style.defaultFactory = function () : void
             {
-                this.translucent = false;
-                this.backgroundSkin = MenuBarBackgroundSkin;
                 this.itemSkin = ActivatorSkin;
+                this.backgroundSkin = MenuBarBackgroundSkin;
+                this.translucent = false;
                 return;
             }// end function
             ;

@@ -15,6 +15,7 @@
         public var displacementY:int = 0;
         public var isLiquidContainer:Boolean = false;
         public var clothSlot:int = 0;
+        public var isTopEffect:Boolean = false;
         public var isDisplaced:Boolean = false;
         public var marketRestrictProfession:uint = 0;
         public var isAnimateAlways:Boolean = false;
@@ -29,8 +30,8 @@
         public var lensHelp:int = 0;
         public var isHookSouth:Boolean = false;
         public var isCachable:Boolean = false;
-        public var marketShowAs:int = 0;
         public var isAvoid:Boolean = false;
+        public var marketShowAs:int = 0;
         public var isContainer:Boolean = false;
         public var automapColour:int = 0;
         public var FrameGroups:Object;

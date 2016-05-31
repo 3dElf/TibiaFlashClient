@@ -704,15 +704,13 @@
 
         override protected function updateDisplayList(param1:Number, param2:Number) : void
         {
-            var _loc_6:* = NaN;
-            var _loc_8:* = NaN;
             var _loc_10:* = NaN;
             var _loc_11:* = NaN;
             super.updateDisplayList(param1, param2);
             var _loc_3:* = Math.max(0, param2 - 2);
             var _loc_4:* = Math.max(0, param1 - 2);
             var _loc_5:* = MAP_HEIGHT * FIELD_SIZE;
-            _loc_6 = MAP_WIDTH * FIELD_SIZE;
+            var _loc_6:* = MAP_WIDTH * FIELD_SIZE;
             if (this.m_Options != null && this.m_Options.rendererScaleMap || _loc_3 < _loc_5 || _loc_4 < _loc_6)
             {
                 _loc_10 = Math.min(_loc_3 / _loc_5, _loc_4 / _loc_6);
@@ -720,7 +718,7 @@
                 _loc_6 = Math.floor(_loc_6 * _loc_10);
             }
             var _loc_7:* = Math.floor((param1 - _loc_6) / 2);
-            _loc_8 = Math.floor((param2 - _loc_5) / 2);
+            var _loc_8:* = Math.floor((param2 - _loc_5) / 2);
             this.m_UIBackdrop.x = _loc_7 - 1;
             this.m_UIBackdrop.y = _loc_8 - 1;
             var _loc_9:* = this.m_UIBackdrop.graphics;

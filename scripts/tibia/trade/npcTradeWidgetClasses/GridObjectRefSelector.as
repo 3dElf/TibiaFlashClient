@@ -218,7 +218,6 @@
         override protected function measure() : void
         {
             var _loc_3:* = NaN;
-            var _loc_4:* = NaN;
             var _loc_8:* = null;
             var _loc_9:* = NaN;
             var _loc_10:* = NaN;
@@ -226,7 +225,7 @@
             var _loc_1:* = 0;
             var _loc_2:* = 0;
             _loc_3 = 0;
-            _loc_4 = 0;
+            var _loc_4:* = 0;
             var _loc_5:* = numChildren - 1;
             while (_loc_5 >= 0)
             {

@@ -50,9 +50,9 @@
         static const RISKINESS_DANGEROUS:int = 1;
         static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
         public static const MAX_DESCRIPTION_LENGHT:int = 128;
-        static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
         static const RISKINESS_NONE:int = 0;
+        static const GUILD_NONE:int = 0;
         static const FIELD_HEIGHT:int = 24;
         static const PARTY_MEMBER:int = 2;
         static const STATE_DRUNK:int = 3;
@@ -66,6 +66,7 @@
         static const STATE_NONE:int = -1;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const SKILL_FIGHTSHIELD:int = 8;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const FIELD_SIZE:int = 32;
         private static var s_SpeedB:Number = 1;
         private static var s_SpeedA:Number = 0;
@@ -101,6 +102,7 @@
         static const MAP_MIN_Y:int = 24576;
         static const MAP_MIN_Z:int = 0;
         static const MAP_MIN_X:int = 24576;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
         static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
         static const MAP_WIDTH:int = 15;
@@ -113,6 +115,7 @@
         static const PROFESSION_SORCERER:int = 3;
         static const STATE_SLOW:int = 5;
         static const PARTY_NONE:int = 0;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SUMMON_OWN:int = 1;
         static const FIELD_ENTER_POSSIBLE:uint = 0;
         static const ONSCREEN_MESSAGE_WIDTH:int = 295;
@@ -130,6 +133,7 @@
         static const PROFESSION_PALADIN:int = 2;
         static const PLAYER_OFFSET_X:int = 8;
         static const SKILL_FIGHTAXE:int = 12;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const PLAYER_OFFSET_Y:int = 6;
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const MAP_MAX_X:int = MAP_MIN_X + ((1 << 14) - 1);
@@ -139,8 +143,9 @@
         static const NUM_ONSCREEN_MESSAGES:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        static const BLESSING_NONE:int = 0;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const STATE_FAST:int = 6;
+        static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
         static const SKILL_HITPOINTS:int = 4;
@@ -156,8 +161,9 @@
         private static const s_TempHealthColour:Colour = new Colour(0, 0, 0);
         static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
         static const NUM_FIELDS:int = 2016;
-        static const TYPE_MONSTER:int = 1;
         static const STATE_POISONED:int = 0;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
+        static const TYPE_MONSTER:int = 1;
         static const STATE_BURNING:int = 1;
         static const SKILL_FIGHTFIST:int = 13;
         static const PK_AGGRESSOR:int = 3;

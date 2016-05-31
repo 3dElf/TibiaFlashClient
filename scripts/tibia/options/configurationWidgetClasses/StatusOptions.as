@@ -31,7 +31,7 @@
         protected var m_UIWidgetStyle:ComboBox = null;
         protected var m_UIBothPvPFrames:CheckBox = null;
         private var m_UncommittedOptions:Boolean = false;
-        protected var m_WidgetStyle:int;
+        protected var m_WidgetStyle:int = 1;
         protected var m_UIWidgetSkill:ComboBox = null;
         protected var m_UIOwnMana:CheckBox = null;
         private var m_UncommittedOtherStyle:Boolean = false;
@@ -49,9 +49,9 @@
         static const NPC_SPEECH_TRAVEL:uint = 5;
         static const RISKINESS_DANGEROUS:int = 1;
         static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
-        static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
         static const RISKINESS_NONE:int = 0;
+        static const GUILD_NONE:int = 0;
         static const PARTY_MEMBER:int = 2;
         static const STATE_DRUNK:int = 3;
         static const PARTY_OTHER:int = 11;
@@ -63,6 +63,7 @@
         static const STATE_NONE:int = -1;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const SKILL_FIGHTSHIELD:int = 8;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SKILL_FIGHTDISTANCE:int = 9;
         static const PK_EXCPLAYERKILLER:int = 5;
         static const NUM_CREATURES:int = 1300;
@@ -92,6 +93,7 @@
         static const GUILD_WAR_NEUTRAL:int = 3;
         static const OWN_STATUS_STYLES:Array = [{value:RendererImpl.STATUS_STYLE_CLASSIC, label:"STATUS_RENDERER_STATUS_STYLE_CLASSIC"}, {value:RendererImpl.STATUS_STYLE_HUD, label:"STATUS_RENDERER_STATUS_STYLE_HUD"}, {value:RendererImpl.STATUS_STYLE_OFF, label:"STATUS_RENDERER_STATUS_STYLE_OFF"}];
         static const STATE_DROWNING:int = 8;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
         static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
         static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
@@ -100,6 +102,7 @@
         static const PROFESSION_SORCERER:int = 3;
         static const STATE_SLOW:int = 5;
         static const PARTY_NONE:int = 0;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const WIDGET_STATUS_STYLES:Array = [{value:StatusWidget.STATUS_STYLE_DEFAULT}, {value:StatusWidget.STATUS_STYLE_COMPACT}, {value:StatusWidget.STATUS_STYLE_PARALLEL}, {value:StatusWidget.STATUS_STYLE_FAT}, {value:StatusWidget.STATUS_STYLE_OFF}];
         static const SUMMON_OWN:int = 1;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
@@ -111,12 +114,14 @@
         static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
         static const PROFESSION_PALADIN:int = 2;
         static const SKILL_FIGHTAXE:int = 12;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        static const BLESSING_NONE:int = 0;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const STATE_FAST:int = 6;
+        static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
         static const SKILL_HITPOINTS:int = 4;
@@ -128,8 +133,9 @@
         static const BLESSING_ADVENTURER:int = 1;
         static const STATE_FREEZING:int = 9;
         static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
-        static const TYPE_MONSTER:int = 1;
         static const STATE_POISONED:int = 0;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
+        static const TYPE_MONSTER:int = 1;
         static const STATE_BURNING:int = 1;
         static const SKILL_FIGHTFIST:int = 13;
         static const PK_AGGRESSOR:int = 3;
@@ -152,7 +158,6 @@
         {
             this.m_OwnStyle = RendererImpl.STATUS_STYLE_CLASSIC;
             this.m_OtherStyle = RendererImpl.STATUS_STYLE_CLASSIC;
-            this.m_WidgetStyle = StatusWidget.STATUS_STYLE_DEFAULT;
             label = resourceManager.getString(ConfigurationWidget.BUNDLE, "STATUS_LABEL");
             return;
         }// end function

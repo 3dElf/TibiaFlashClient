@@ -123,8 +123,8 @@
 
         public function equals(param1:Object, param2:int = 0, param3:int = 0) : Boolean
         {
-            var _loc_4:* = param1 as ;
-            if (param1 as  != null)
+            var _loc_4:* = param1 as MiniMapSector;
+            if (param1 as MiniMapSector != null)
             {
                 return this.m_SectorX == _loc_4.m_SectorX && this.m_SectorY == _loc_4.m_SectorY && this.m_SectorZ == _loc_4.m_SectorZ;
             }
@@ -358,8 +358,8 @@
         static function s_GetSectorName(param1:Object, param2:int = 0, param3:int = 0) : String
         {
             var _loc_4:* = 0;
-            var _loc_5:* = param1 as ;
-            if (param1 as  != null)
+            var _loc_5:* = param1 as MiniMapSector;
+            if (param1 as MiniMapSector != null)
             {
                 _loc_4 = _loc_5.getSectorX();
                 param2 = _loc_5.getSectorY();

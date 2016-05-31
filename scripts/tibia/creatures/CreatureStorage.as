@@ -40,9 +40,9 @@
         static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
         private static const MARK_NUM_TOTAL:uint = MARK_TRAPPER + 1;
         private static const OPPONENTS_REFRESH:int = 1;
-        static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
         static const RISKINESS_NONE:int = 0;
+        static const GUILD_NONE:int = 0;
         static const FIELD_HEIGHT:int = 24;
         public static const FILTER_PLAYER:int = 1;
         static const PARTY_MEMBER:int = 2;
@@ -58,6 +58,7 @@
         static const STATE_NONE:int = -1;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const SKILL_FIGHTSHIELD:int = 8;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const FIELD_SIZE:int = 32;
         static const SKILL_FIGHTDISTANCE:int = 9;
         static const PK_EXCPLAYERKILLER:int = 5;
@@ -98,12 +99,13 @@
         static const MAP_MIN_Z:int = 0;
         public static const MARK_AIM_FOLLOW:uint = MARK_NUM_COLOURS + 3;
         static const MAP_MIN_X:int = 24576;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
         static const RENDERER_MIN_HEIGHT:Number = Math.round(MAP_HEIGHT * 2 / 3 * FIELD_SIZE);
         static const MAP_WIDTH:int = 15;
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
-        public static const SORT_KNOWN_SINCE_ASC:int = 0;
         static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
+        public static const SORT_KNOWN_SINCE_ASC:int = 0;
         static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
         static const GUILD_WAR_ALLY:int = 1;
         static const PK_NONE:int = 0;
@@ -111,6 +113,7 @@
         static const PROFESSION_SORCERER:int = 3;
         static const STATE_SLOW:int = 5;
         static const PARTY_NONE:int = 0;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SUMMON_OWN:int = 1;
         static const FIELD_ENTER_POSSIBLE:uint = 0;
         static const ONSCREEN_MESSAGE_WIDTH:int = 295;
@@ -129,8 +132,9 @@
         static const PROFESSION_PALADIN:int = 2;
         static const PLAYER_OFFSET_X:int = 8;
         static const SKILL_FIGHTAXE:int = 12;
-        public static const MARK_TRAPPER:uint = MARK_NUM_COLOURS + 6;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const PLAYER_OFFSET_Y:int = 6;
+        public static const MARK_TRAPPER:uint = MARK_NUM_COLOURS + 6;
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         private static const OPPONENTS_REBUILD:int = 2;
         static const MAP_MAX_X:int = MAP_MIN_X + ((1 << 14) - 1);
@@ -142,10 +146,11 @@
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
         public static const MARK_AIM_ATTACK:uint = MARK_NUM_COLOURS + 2;
-        static const BLESSING_NONE:int = 0;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         public static const STATE_FLAG_GAP:int = 2;
         static const STATE_FAST:int = 6;
         public static const MARK_FOLLOW:uint = MARK_NUM_COLOURS + 5;
+        static const BLESSING_NONE:int = 0;
         public static const FILTER_NPC:int = 2;
         static const GUILD_OTHER:int = 5;
         private static const SPEECH_FLAG_BITMAP:BitmapData = (new SPEECH_FLAG_CLASS() as BitmapAsset).bitmapData;
@@ -163,8 +168,9 @@
         static const STATE_FREEZING:int = 9;
         static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
         static const NUM_FIELDS:int = 2016;
-        static const TYPE_MONSTER:int = 1;
         static const STATE_POISONED:int = 0;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
+        static const TYPE_MONSTER:int = 1;
         public static const SORT_DISTANCE_DESC:int = 3;
         public static const SORT_KNOWN_SINCE_DESC:int = 1;
         private static const MARK_NUM_COLOURS:uint = 216;

@@ -24,9 +24,9 @@
         static const NPC_SPEECH_TRAVEL:uint = 5;
         static const RISKINESS_DANGEROUS:int = 1;
         static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
-        static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
         static const RISKINESS_NONE:int = 0;
+        static const GUILD_NONE:int = 0;
         static const PARTY_MEMBER:int = 2;
         static const STATE_DRUNK:int = 3;
         static const PARTY_OTHER:int = 11;
@@ -38,6 +38,7 @@
         static const STATE_NONE:int = -1;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const SKILL_FIGHTSHIELD:int = 8;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SKILL_FIGHTDISTANCE:int = 9;
         static const PK_EXCPLAYERKILLER:int = 5;
         static const NUM_CREATURES:int = 1300;
@@ -67,6 +68,7 @@
         static const GUILD_WAR_NEUTRAL:int = 3;
         static const STATE_DROWNING:int = 8;
         private static const UNJUST_BAR_GREEN_BITMAP:BitmapData = (new UNJUST_BAR_GREEN() as BitmapAsset).bitmapData;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         private static const UNJUST_BAR_GREEN:Class = UnjustPointsBarRenderer_UNJUST_BAR_GREEN;
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
         private static const UNJUST_BAR_RED:Class = UnjustPointsBarRenderer_UNJUST_BAR_RED;
@@ -80,6 +82,7 @@
         public static const SCALE_MONTH:uint = 2;
         static const STATE_SLOW:int = 5;
         static const PARTY_NONE:int = 0;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SUMMON_OWN:int = 1;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const TYPE_SUMMON_OWN:int = 3;
@@ -90,13 +93,15 @@
         static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
         static const PROFESSION_PALADIN:int = 2;
         static const SKILL_FIGHTAXE:int = 12;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         private static const UNJUST_BAR_YELLOW_BITMAP:BitmapData = (new UNJUST_BAR_YELLOW() as BitmapAsset).bitmapData;
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        static const BLESSING_NONE:int = 0;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const STATE_FAST:int = 6;
+        static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
         static const SKILL_HITPOINTS:int = 4;
@@ -108,8 +113,9 @@
         static const BLESSING_ADVENTURER:int = 1;
         static const STATE_FREEZING:int = 9;
         static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
-        static const TYPE_MONSTER:int = 1;
         static const STATE_POISONED:int = 0;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
+        static const TYPE_MONSTER:int = 1;
         private static const UNJUST_BAR_YELLOW:Class = UnjustPointsBarRenderer_UNJUST_BAR_YELLOW;
         private static var s_Trans:Matrix = new Matrix(1, 0, 0, 1);
         static const STATE_BURNING:int = 1;

@@ -18,9 +18,9 @@
         static const NPC_SPEECH_TRAVEL:uint = 5;
         static const RISKINESS_DANGEROUS:int = 1;
         static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
-        static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
         static const RISKINESS_NONE:int = 0;
+        static const GUILD_NONE:int = 0;
         static const GROUP_ATTACK:int = 1;
         static const PARTY_MEMBER:int = 2;
         static const STATE_DRUNK:int = 3;
@@ -33,6 +33,7 @@
         static const STATE_NONE:int = -1;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const SKILL_FIGHTSHIELD:int = 8;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SKILL_FIGHTDISTANCE:int = 9;
         static const PK_EXCPLAYERKILLER:int = 5;
         public static const RUNES:Array = [new Rune(3152, GROUP_HEALING, GROUP_NONE, 4, 15, 1, PROFESSION_MASK_ANY, 0, 1000, 1000, 0), new Rune(3160, GROUP_HEALING, GROUP_NONE, 5, 24, 4, PROFESSION_MASK_ANY, 0, 1000, 1000, 0), new Rune(3174, GROUP_ATTACK, GROUP_NONE, 7, 15, 0, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3198, GROUP_ATTACK, GROUP_NONE, 7, 25, 3, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3177, GROUP_SUPPORT, GROUP_NONE, 12, 16, 5, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3178, GROUP_SUPPORT, GROUP_NONE, 14, 27, 4, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3189, GROUP_ATTACK, GROUP_NONE, 15, 27, 4, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3191, GROUP_ATTACK, GROUP_NONE, 16, 30, 4, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3192, GROUP_ATTACK, GROUP_NONE, 17, 27, 5, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3200, GROUP_ATTACK, GROUP_NONE, 18, 31, 6, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3155, GROUP_ATTACK, GROUP_NONE, 21, 45, 15, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3188, GROUP_ATTACK, GROUP_NONE, 25, 15, 1, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3172, GROUP_ATTACK, GROUP_NONE, 26, 14, 0, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3164, GROUP_ATTACK, GROUP_NONE, 27, 18, 3, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3190, GROUP_ATTACK, GROUP_NONE, 28, 33, 6, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3148, GROUP_SUPPORT, GROUP_NONE, 30, 17, 3, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3153, GROUP_HEALING, GROUP_NONE, 31, 15, 0, PROFESSION_MASK_ANY, 0, 1000, 1000, 0), new Rune(3176, GROUP_ATTACK, GROUP_NONE, 32, 29, 5, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3166, GROUP_ATTACK, GROUP_NONE, 32, 41, 9, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3195, GROUP_ATTACK, GROUP_NONE, 50, 27, 7, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3165, GROUP_ATTACK, GROUP_NONE, 54, 54, 18, PROFESSION_MASK_ANY, 1400, 2000, 2000, 0), new Rune(3149, GROUP_ATTACK, GROUP_NONE, 55, 37, 10, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3179, GROUP_ATTACK, GROUP_NONE, 77, 24, 3, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3197, GROUP_SUPPORT, GROUP_NONE, 78, 21, 4, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3203, GROUP_SUPPORT, GROUP_NONE, 83, 27, 4, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3180, GROUP_ATTACK, GROUP_NONE, 86, 32, 9, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3173, GROUP_ATTACK, GROUP_NONE, 91, 25, 4, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3156, GROUP_ATTACK, GROUP_NONE, 94, 27, 8, PROFESSION_MASK_DRUID, 0, 2000, 2000, 0), new Rune(3158, GROUP_ATTACK, GROUP_NONE, 114, 28, 4, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3161, GROUP_ATTACK, GROUP_NONE, 115, 30, 4, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3175, GROUP_ATTACK, GROUP_NONE, 116, 28, 4, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3202, GROUP_ATTACK, GROUP_NONE, 117, 28, 4, PROFESSION_MASK_ANY, 0, 2000, 2000, 0), new Rune(3182, GROUP_ATTACK, GROUP_NONE, 130, 27, 4, PROFESSION_MASK_PALADIN, 0, 2000, 2000, 0), new Rune(17512, GROUP_ATTACK, GROUP_NONE, 168, 1, 0, PROFESSION_MASK_NONE, 0, 2000, 2000, 0), new Rune(21352, GROUP_ATTACK, GROUP_NONE, 179, 1, 0, PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER | PROFESSION_MASK_DRUID, 0, 2000, 2000, 0), new Rune(21351, GROUP_ATTACK, GROUP_NONE, 180, 1, 0, PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER | PROFESSION_MASK_DRUID, 0, 2000, 2000, 0)].sortOn("ID", Array.NUMERIC);
@@ -62,6 +63,7 @@
         static const SKILL_FIGHTSWORD:int = 11;
         static const GUILD_WAR_NEUTRAL:int = 3;
         static const STATE_DROWNING:int = 8;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         public static const MIN_SPELL_DELAY:int = 1000;
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
         static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
@@ -72,6 +74,7 @@
         static const PROFESSION_SORCERER:int = 3;
         static const STATE_SLOW:int = 5;
         static const PARTY_NONE:int = 0;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SUMMON_OWN:int = 1;
         static const GROUP_NONE:int = 0;
         static const TYPE_NONE:int = 0;
@@ -85,12 +88,14 @@
         static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
         static const PROFESSION_PALADIN:int = 2;
         static const SKILL_FIGHTAXE:int = 12;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        static const BLESSING_NONE:int = 0;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const STATE_FAST:int = 6;
+        static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
         static const SKILL_HITPOINTS:int = 4;
@@ -102,8 +107,9 @@
         static const BLESSING_ADVENTURER:int = 1;
         static const STATE_FREEZING:int = 9;
         static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
-        static const TYPE_MONSTER:int = 1;
         static const STATE_POISONED:int = 0;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
+        static const TYPE_MONSTER:int = 1;
         static const TYPE_INSTANT:int = 1;
         static const STATE_BURNING:int = 1;
         static const SKILL_FIGHTFIST:int = 13;

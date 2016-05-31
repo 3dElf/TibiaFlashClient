@@ -33,9 +33,9 @@
         static const NPC_SPEECH_TRAVEL:uint = 5;
         static const RISKINESS_DANGEROUS:int = 1;
         static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
-        static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
         static const RISKINESS_NONE:int = 0;
+        static const GUILD_NONE:int = 0;
         static const PARTY_MEMBER:int = 2;
         static const STATE_DRUNK:int = 3;
         static const PARTY_OTHER:int = 11;
@@ -47,6 +47,7 @@
         static const STATE_NONE:int = -1;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const SKILL_FIGHTSHIELD:int = 8;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SKILL_FIGHTDISTANCE:int = 9;
         static const PK_EXCPLAYERKILLER:int = 5;
         static const NUM_CREATURES:int = 1300;
@@ -74,6 +75,7 @@
         static const SKILL_FIGHTSWORD:int = 11;
         static const GUILD_WAR_NEUTRAL:int = 3;
         static const STATE_DROWNING:int = 8;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         private static const STATE_OPTIONS:Array = [{value:STATE_POISONED, styleProp:"iconStatePoisoned", toolTip:"TIP_STATE_POISONED"}, {value:STATE_BURNING, styleProp:"iconStateBurning", toolTip:"TIP_STATE_BURNING"}, {value:STATE_ELECTRIFIED, styleProp:"iconStateElectrified", toolTip:"TIP_STATE_ELECTRIFIED"}, {value:STATE_DRUNK, styleProp:"iconStateDrunk", toolTip:"TIP_STATE_DRUNK"}, {value:STATE_MANA_SHIELD, styleProp:"iconStateManaShield", toolTip:"TIP_STATE_MANA_SHIELD"}, {value:STATE_SLOW, styleProp:"iconStateSlow", toolTip:"TIP_STATE_SLOW"}, {value:STATE_FAST, styleProp:"iconStateFast", toolTip:"TIP_STATE_FAST"}, {value:STATE_FIGHTING, styleProp:"iconStateFighting", toolTip:"TIP_STATE_FIGHTING"}, {value:STATE_DROWNING, styleProp:"iconStateDrowning", toolTip:"TIP_STATE_DROWNING"}, {value:STATE_FREEZING, styleProp:"iconStateFreezing", toolTip:"TIP_STATE_FREEZING"}, {value:STATE_DAZZLED, styleProp:"iconStateDazzled", toolTip:"TIP_STATE_DAZZLED"}, {value:STATE_CURSED, styleProp:"iconStateCursed", toolTip:"TIP_STATE_CURSED"}, {value:STATE_STRENGTHENED, styleProp:"iconStateStrengthened", toolTip:"TIP_STATE_STRENGTHENED"}, {value:STATE_PZ_BLOCK, styleProp:"iconStatePZBlock", toolTip:"TIP_STATE_PZ_BLOCK"}, {value:STATE_PZ_ENTERED, styleProp:"iconStatePZEntered", toolTip:"TIP_STATE_PZ_ENTERED"}, {value:STATE_BLEEDING, styleProp:"iconStateBleeding", toolTip:"TIP_STATE_BLEEDING"}, {value:STATE_HUNGRY, styleProp:"iconStateHungry", toolTip:"TIP_STATE_HUNGRY"}];
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
         static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
@@ -83,6 +85,7 @@
         static const PROFESSION_SORCERER:int = 3;
         static const STATE_SLOW:int = 5;
         static const PARTY_NONE:int = 0;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SUMMON_OWN:int = 1;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const TYPE_SUMMON_OWN:int = 3;
@@ -93,14 +96,16 @@
         static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
         static const PROFESSION_PALADIN:int = 2;
         static const SKILL_FIGHTAXE:int = 12;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        static const BLESSING_NONE:int = 0;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const STATE_FAST:int = 6;
         private static var s_ChildWidth:Number = NaN;
         private static var s_ChildHeight:Number = NaN;
+        static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
         static const SKILL_HITPOINTS:int = 4;
@@ -112,8 +117,9 @@
         static const BLESSING_ADVENTURER:int = 1;
         static const STATE_FREEZING:int = 9;
         static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
-        static const TYPE_MONSTER:int = 1;
         static const STATE_POISONED:int = 0;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
+        static const TYPE_MONSTER:int = 1;
         static const STATE_BURNING:int = 1;
         static const SKILL_FIGHTFIST:int = 13;
         static const PK_AGGRESSOR:int = 3;

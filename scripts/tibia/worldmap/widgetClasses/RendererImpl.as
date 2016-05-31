@@ -96,9 +96,9 @@
         static const NPC_SPEECH_TRAVEL:uint = 5;
         private static const OBJECT_CURSOR_COLOR:uint = 16769335;
         public static const COLOUR_ABOVE_GROUND:Colour = new Colour(200, 200, 255);
-        static const GUILD_NONE:int = 0;
         static const PATH_COST_OBSTACLE:int = 255;
         static const RISKINESS_NONE:int = 0;
+        static const GUILD_NONE:int = 0;
         static const FIELD_HEIGHT:int = 24;
         private static var CREATURE_FLAGS_BITMAP_CACHE_SIZE:uint = 100;
         static const ONSCREEN_MESSAGE_HEIGHT:int = 195;
@@ -113,6 +113,7 @@
         static const FIELD_SIZE:int = 32;
         static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
         static const TYPE_SUMMON_OTHERS:int = 4;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const STATE_NONE:int = -1;
         static const SKILL_FIGHTDISTANCE:int = 9;
@@ -139,7 +140,6 @@
         static const PATH_EMPTY:int = 0;
         static const GUILD_MEMBER:int = 4;
         static const PATH_COST_UNDEFINED:int = 254;
-        static const HUD_ARC_ORIENTATION_RIGHT:int = 1;
         static const NPC_SPEECH_TRADER:uint = 2;
         static const MAX_NAME_LENGTH:int = 29;
         static const HUD_ARC_STYLE_HORIZONTAL:int = 1;
@@ -149,10 +149,11 @@
         static const PATH_ERROR_GO_UPSTAIRS:int = -2;
         static const PATH_COST_MAX:int = 250;
         private static var s_CreatureMarksView:MarksView = null;
-        static const STATE_PZ_ENTERED:int = 14;
+        static const HUD_ARC_ORIENTATION_RIGHT:int = 1;
         static const PATH_MAX_STEPS:int = 128;
         static const HUD_ARC_STYLE_POINTY:int = 0;
         static const SKILL_CARRYSTRENGTH:int = 7;
+        static const STATE_PZ_ENTERED:int = 14;
         static const PK_ATTACKER:int = 1;
         static const STATE_ELECTRIFIED:int = 2;
         static const SKILL_FIGHTSWORD:int = 11;
@@ -167,6 +168,7 @@
         static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
         static const MAP_WIDTH:int = 15;
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         static const HUD_ARC_LOWER_LIMIT:Number = 45;
         static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
         static const GUILD_WAR_ALLY:int = 1;
@@ -179,6 +181,7 @@
         static const PARTY_NONE:int = 0;
         static const PATH_SOUTH:int = 7;
         static const SUMMON_OWN:int = 1;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const ONSCREEN_MESSAGE_WIDTH:int = 295;
         static const FIELD_ENTER_POSSIBLE:uint = 0;
         public static const COLOUR_BELOW_GROUND:Colour = new Colour(255, 255, 255);
@@ -201,6 +204,7 @@
         static const PLAYER_OFFSET_X:int = 8;
         static const PLAYER_OFFSET_Y:int = 6;
         static const SKILL_FIGHTAXE:int = 12;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const MAP_MAX_X:int = MAP_MIN_X + ((1 << 14) - 1);
         static const MAP_MAX_Y:int = MAP_MIN_Y + ((1 << 14) - 1);
@@ -210,11 +214,12 @@
         static const NUM_ONSCREEN_MESSAGES:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const STATE_FAST:int = 6;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const PATH_NORTH_EAST:int = 2;
         static const SKILL_SOULPOINTS:int = 16;
-        static const BLESSING_NONE:int = 0;
         static const PATH_ERROR_TOO_FAR:int = -3;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+        static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
         static const SKILL_HITPOINTS:int = 4;
@@ -234,6 +239,7 @@
         static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
         static const NUM_FIELDS:int = 2016;
         static const PATH_EXISTS:int = 1;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
         static const TYPE_MONSTER:int = 1;
         static const HUD_ARC_RADIUS:Number = 75;
         static const HUD_ARC_UPPER_LIMIT:Number = -45;

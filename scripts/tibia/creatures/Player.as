@@ -695,7 +695,7 @@
 
         override public function resetSkills() : void
         {
-            m_Skills = new Vector.<Number>((SKILL_OFFLINETRAINING + 1) * 3, true);
+            m_Skills = new Vector.<Number>((SKILL_MANA_LEECH_AMOUNT + 1) * 3, true);
             var _loc_1:* = 0;
             while (_loc_1 < m_Skills.length)
             {

@@ -22,9 +22,9 @@
         static const NPC_SPEECH_TRAVEL:uint = 5;
         static const RISKINESS_DANGEROUS:int = 1;
         static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
-        static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
         static const RISKINESS_NONE:int = 0;
+        static const GUILD_NONE:int = 0;
         static const PARTY_MEMBER:int = 2;
         static const STATE_DRUNK:int = 3;
         static const PARTY_OTHER:int = 11;
@@ -36,6 +36,7 @@
         static const STATE_NONE:int = -1;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const SKILL_FIGHTSHIELD:int = 8;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SKILL_FIGHTDISTANCE:int = 9;
         static const PK_EXCPLAYERKILLER:int = 5;
         static const NUM_CREATURES:int = 1300;
@@ -63,6 +64,7 @@
         static const SKILL_FIGHTSWORD:int = 11;
         static const GUILD_WAR_NEUTRAL:int = 3;
         static const STATE_DROWNING:int = 8;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
         static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
         static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
@@ -71,6 +73,7 @@
         static const PROFESSION_SORCERER:int = 3;
         static const STATE_SLOW:int = 5;
         static const PARTY_NONE:int = 0;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SUMMON_OWN:int = 1;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const TYPE_SUMMON_OWN:int = 3;
@@ -81,12 +84,14 @@
         static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
         static const PROFESSION_PALADIN:int = 2;
         static const SKILL_FIGHTAXE:int = 12;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        static const BLESSING_NONE:int = 0;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const STATE_FAST:int = 6;
+        static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
         static const SKILL_HITPOINTS:int = 4;
@@ -98,8 +103,9 @@
         static const BLESSING_ADVENTURER:int = 1;
         static const STATE_FREEZING:int = 9;
         static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
-        static const TYPE_MONSTER:int = 1;
         static const STATE_POISONED:int = 0;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
+        static const TYPE_MONSTER:int = 1;
         static const STATE_BURNING:int = 1;
         static const SKILL_FIGHTFIST:int = 13;
         static const PK_AGGRESSOR:int = 3;
@@ -120,11 +126,11 @@
 
         public function CharacterProfileWidget()
         {
-            this.m_UISkills = [{skill:SKILL_LEVEL, label:"FORM_ITEM_LEVEL", renderer:null}, {skill:SKILL_EXPERIENCE, label:"FORM_ITEM_EXPERIENCE", renderer:null}, {skill:SKILL_HITPOINTS, label:"FORM_ITEM_HITPOINTS", renderer:null}, {skill:SKILL_MANA, label:"FORM_ITEM_MANA", renderer:null}, {skill:SKILL_CARRYSTRENGTH, label:"FORM_ITEM_CARRYSTRENGTH", renderer:null}, {skill:SKILL_SOULPOINTS, label:"FORM_ITEM_SOULPOINTS", renderer:null}, {skill:SKILL_STAMINA, label:"FORM_ITEM_STAMINA", renderer:null}, {skill:SKILL_OFFLINETRAINING, label:"FORM_ITEM_OFFLINETRAINING", renderer:null}, {skill:SKILL_MAGLEVEL, label:"FORM_ITEM_MAGLEVEL", renderer:null}, {skill:SKILL_FIGHTFIST, label:"FORM_ITEM_FIGHTFIST", renderer:null}, {skill:SKILL_FIGHTAXE, label:"FORM_ITEM_FIGHTAXE", renderer:null}, {skill:SKILL_FIGHTCLUB, label:"FORM_ITEM_FIGHTCLUB", renderer:null}, {skill:SKILL_FIGHTSWORD, label:"FORM_ITEM_FIGHTSWORD", renderer:null}, {skill:SKILL_FIGHTDISTANCE, label:"FORM_ITEM_FIGHTDISTANCE", renderer:null}, {skill:SKILL_FIGHTSHIELD, label:"FORM_ITEM_FIGHTSHIELD", renderer:null}, {skill:SKILL_FISHING, label:"FORM_ITEM_FISHING", renderer:null}, {skill:SKILL_GOSTRENGTH, label:"FORM_ITEM_GOSTRENGTH", renderer:null}, {skill:SKILL_FED, label:"FORM_ITEM_FED", renderer:null}];
+            this.m_UISkills = [{skill:SKILL_LEVEL, label:"FORM_ITEM_LEVEL", renderer:null, leftSide:true}, {skill:SKILL_EXPERIENCE, label:"FORM_ITEM_EXPERIENCE", renderer:null, leftSide:true}, {skill:SKILL_HITPOINTS, label:"FORM_ITEM_HITPOINTS", renderer:null, leftSide:true}, {skill:SKILL_MANA, label:"FORM_ITEM_MANA", renderer:null, leftSide:true}, {skill:SKILL_CARRYSTRENGTH, label:"FORM_ITEM_CARRYSTRENGTH", renderer:null, leftSide:true}, {skill:SKILL_SOULPOINTS, label:"FORM_ITEM_SOULPOINTS", renderer:null, leftSide:true}, {skill:SKILL_STAMINA, label:"FORM_ITEM_STAMINA", renderer:null, leftSide:true}, {skill:SKILL_OFFLINETRAINING, label:"FORM_ITEM_OFFLINETRAINING", renderer:null, leftSide:true}, {skill:SKILL_GOSTRENGTH, label:"FORM_ITEM_GOSTRENGTH", renderer:null, leftSide:true}, {skill:SKILL_FED, label:"FORM_ITEM_FED", renderer:null, leftSide:true}, {skill:SKILL_MAGLEVEL, label:"FORM_ITEM_MAGLEVEL", renderer:null, leftSide:false}, {skill:SKILL_FIGHTFIST, label:"FORM_ITEM_FIGHTFIST", renderer:null, leftSide:false}, {skill:SKILL_FIGHTAXE, label:"FORM_ITEM_FIGHTAXE", renderer:null, leftSide:false}, {skill:SKILL_FIGHTCLUB, label:"FORM_ITEM_FIGHTCLUB", renderer:null, leftSide:false}, {skill:SKILL_FIGHTSWORD, label:"FORM_ITEM_FIGHTSWORD", renderer:null, leftSide:false}, {skill:SKILL_FIGHTDISTANCE, label:"FORM_ITEM_FIGHTDISTANCE", renderer:null, leftSide:false}, {skill:SKILL_FIGHTSHIELD, label:"FORM_ITEM_FIGHTSHIELD", renderer:null, leftSide:false}, {skill:SKILL_FISHING, label:"FORM_ITEM_FISHING", renderer:null, leftSide:false}, {skill:SKILL_CRITICAL_HIT_CHANCE, label:"FORM_ITEM_CRITICAL_HIT_CHANCE", renderer:null, leftSide:false}, {skill:SKILL_CRITICAL_HIT_DAMAGE, label:"FORM_ITEM_CRITICAL_HIT_DAMAGE", renderer:null, leftSide:false}, {skill:SKILL_LIFE_LEECH_CHANCE, label:"FORM_ITEM_LIFE_LEECH_CHANCE", renderer:null, leftSide:false}, {skill:SKILL_LIFE_LEECH_AMOUNT, label:"FORM_ITEM_LIFE_LEECH_AMOUNT", renderer:null, leftSide:false}, {skill:SKILL_MANA_LEECH_CHANCE, label:"FORM_ITEM_MANA_LEECH_CHANCE", renderer:null, leftSide:false}, {skill:SKILL_MANA_LEECH_AMOUNT, label:"FORM_ITEM_MANA_LEECH_AMOUNT", renderer:null, leftSide:false}];
             buttonFlags = PopUpBase.BUTTON_CLOSE;
             keyboardFlags = PopUpBase.KEY_ESCAPE;
             title = resourceManager.getString(BUNDLE, "TITLE");
-            width = 512;
+            width = 570;
             this.player = Tibia.s_GetPlayer();
             return;
         }// end function
@@ -249,38 +255,52 @@
 
         override protected function createChildren() : void
         {
-            var _loc_3:* = null;
+            var _loc_5:* = null;
             super.createChildren();
-            var _loc_1:* = new Form();
+            var _loc_1:* = new HBox();
             _loc_1.percentHeight = 100;
             _loc_1.percentWidth = 100;
+            _loc_1.setStyle("horizontalGap", 2);
+            addChild(_loc_1);
+            var _loc_2:* = new Form();
+            _loc_2.percentHeight = 100;
+            _loc_2.percentWidth = 50;
+            var _loc_3:* = new Form();
+            _loc_3.percentHeight = 100;
+            _loc_3.percentWidth = 50;
             this.m_UIName = new Label();
             this.m_UIName.setStyle("fontWeight", "bold");
-            var _loc_2:* = new FormItem();
-            _loc_2.label = resourceManager.getString(BUNDLE, "FORM_ITEM_NAME");
-            _loc_2.addChild(this.m_UIName);
-            _loc_1.addChild(_loc_2);
+            var _loc_4:* = new FormItem();
+            _loc_4.label = resourceManager.getString(BUNDLE, "FORM_ITEM_NAME");
+            _loc_4.addChild(this.m_UIName);
+            _loc_2.addChild(_loc_4);
             this.m_UIProfession = new Label();
             this.m_UIProfession.setStyle("fontWeight", "bold");
-            _loc_2 = new FormItem();
-            _loc_2.label = resourceManager.getString(BUNDLE, "FORM_ITEM_PROFESSION");
-            _loc_2.addChild(this.m_UIProfession);
-            _loc_1.addChild(_loc_2);
-            for each (_loc_3 in this.m_UISkills)
+            _loc_4 = new FormItem();
+            _loc_4.label = resourceManager.getString(BUNDLE, "FORM_ITEM_PROFESSION");
+            _loc_4.addChild(this.m_UIProfession);
+            _loc_2.addChild(_loc_4);
+            for each (_loc_5 in this.m_UISkills)
             {
                 
-                if (_loc_3.renderer == null)
+                if (_loc_5.renderer == null)
                 {
-                    _loc_3.renderer = new Label();
-                    _loc_3.renderer.data = _loc_3.skill;
-                    _loc_3.renderer.setStyle("fontWeight", "bold");
-                    _loc_2 = new FormItem();
-                    _loc_2.label = resourceManager.getString(BUNDLE, _loc_3.label);
-                    _loc_2.addChild(_loc_3.renderer);
-                    _loc_1.addChild(_loc_2);
+                    _loc_5.renderer = new Label();
+                    _loc_5.renderer.data = _loc_5.skill;
+                    _loc_5.renderer.setStyle("fontWeight", "bold");
+                    _loc_4 = new FormItem();
+                    _loc_4.label = resourceManager.getString(BUNDLE, _loc_5.label);
+                    _loc_4.addChild(_loc_5.renderer);
+                    if (_loc_5.leftSide)
+                    {
+                        _loc_2.addChild(_loc_4);
+                        continue;
+                    }
+                    _loc_3.addChild(_loc_4);
                 }
             }
-            addChild(_loc_1);
+            _loc_1.addChild(_loc_2);
+            _loc_1.addChild(_loc_3);
             return;
         }// end function
 
@@ -317,6 +337,11 @@
                 if (param2 == SKILL_EXPERIENCE || param2 == SKILL_LEVEL || param2 == SKILL_SOULPOINTS)
                 {
                     return String(_loc_3);
+                }
+                if (param2 == SKILL_CRITICAL_HIT_CHANCE || param2 == SKILL_CRITICAL_HIT_DAMAGE || param2 == SKILL_LIFE_LEECH_CHANCE || param2 == SKILL_LIFE_LEECH_AMOUNT || param2 == SKILL_MANA_LEECH_CHANCE || param2 == SKILL_MANA_LEECH_AMOUNT)
+                {
+                    _loc_5 = _loc_3 - _loc_4;
+                    return String(_loc_5) + "%";
                 }
                 _loc_5 = _loc_3 - _loc_4;
                 return String(_loc_4) + (_loc_5 >= 0 ? (" +") : (" ")) + String(_loc_5);

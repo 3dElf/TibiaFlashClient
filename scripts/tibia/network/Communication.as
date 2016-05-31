@@ -55,12 +55,12 @@
         static const SBUDDYSTATUSCHANGE:int = 211;
         static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
         static const CGONORTHWEST:int = 109;
+        static const SCREATURETYPE:int = 149;
         static const SOUTFIT:int = 200;
         static const SKILL_FIGHTCLUB:int = 10;
         static const NPC_SPEECH_TRAVEL:uint = 5;
         static const RISKINESS_DANGEROUS:int = 1;
         static const CPERFORMANCEMETRICS:int = 31;
-        static const CADDBUDDY:int = 220;
         static const CSETTACTICS:int = 160;
         static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
@@ -87,11 +87,12 @@
         static const FIELD_SIZE:int = 32;
         static const CROTATENORTH:int = 111;
         static const TYPE_SUMMON_OTHERS:int = 4;
-        static const CENTERWORLD:int = 15;
+        static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SLOGINSUCCESS:int = 23;
         static const SWAIT:int = 182;
         static const PATH_NORTH:int = 3;
         static const CLOOKATCREATURE:int = 141;
+        static const CENTERWORLD:int = 15;
         static const CJOINCHANNEL:int = 152;
         static const SKILL_FED:int = 15;
         static const CROTATEEAST:int = 112;
@@ -103,7 +104,7 @@
         static const SBUDDYDATA:int = 210;
         static const CHECKSUM_POS:int = 2;
         static const SCREDITBALANCE:int = 223;
-        static const CONNECTION_STATE_PENDING:int = 3;
+        static const CADDBUDDY:int = 220;
         static const SKILL_HITPOINTS_PERCENT:int = 3;
         static const SCREATUREPARTY:int = 145;
         static const CGUILDMESSAGE:int = 155;
@@ -121,8 +122,8 @@
         static const PATH_EMPTY:int = 0;
         static const NPC_SPEECH_TRADER:uint = 2;
         static const CCANCEL:int = 190;
-        public static const CLIENT_VERSION:uint = 2253;
         static const SCLOSECONTAINER:int = 111;
+        static const CONNECTION_STATE_PENDING:int = 3;
         static const MAX_NAME_LENGTH:int = 29;
         static const SLEFTROW:int = 104;
         static const SFULLMAP:int = 100;
@@ -162,7 +163,6 @@
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
         static const SREQUESTPURCHASEDATA:int = 225;
         static const CREVOKEINVITATION:int = 165;
-        static const SCREATURESKULL:int = 144;
         static const CLOGIN:int = 10;
         static const STRAPPERS:int = 135;
         static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
@@ -170,13 +170,13 @@
         static const SUNJUSTIFIEDPOINTS:int = 183;
         static const CCLOSECONTAINER:int = 135;
         static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
-        static const CGETQUESTLINE:int = 241;
+        static const SCREATURESKULL:int = 144;
         static const SSNAPBACK:int = 181;
+        static const CGETCHANNELS:int = 151;
         static const SOBJECTINFO:int = 244;
         static const NUM_EFFECTS:int = 200;
         static const PROFESSION_SORCERER:int = 3;
         static const STATE_SLOW:int = 5;
-        static const CGETCHANNELS:int = 151;
         static const PARTY_NONE:int = 0;
         static const PATH_SOUTH:int = 7;
         static const CROTATESOUTH:int = 113;
@@ -185,8 +185,10 @@
         static const FIELD_ENTER_POSSIBLE:uint = 0;
         static const PATH_NORTH_WEST:int = 4;
         static const ERR_CONNECTION_LOST:int = 6;
+        static const CGETQUESTLINE:int = 241;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const SCHANNELS:int = 171;
+        public static const CLIENT_VERSION:uint = 2263;
         static const TYPE_SUMMON_OWN:int = 3;
         static const NPC_SPEECH_QUESTTRADER:uint = 4;
         static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
@@ -212,6 +214,7 @@
         static const CTRADEOBJECT:int = 125;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const SCONTAINER:int = 110;
+        static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const SNPCOFFER:int = 122;
         static const SWORLDENTERED:int = 15;
         static const PAYLOAD_POS:int = 6;
@@ -238,6 +241,7 @@
         static const CFOLLOW:int = 162;
         static const STATE_POISONED:int = 0;
         static const PATH_EXISTS:int = 1;
+        static const SKILL_LIFE_LEECH_CHANCE:int = 21;
         static const CMARKETCANCEL:int = 247;
         static const STATE_BURNING:int = 1;
         static const HEADER_POS:int = 0;
@@ -259,7 +263,7 @@
         static const RISKINESS_NONE:int = 0;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1093;
+        public static const PROTOCOL_VERSION:int = 1094;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CEDITBUDDY:int = 222;
         static const CROTATEWEST:int = 114;
@@ -320,23 +324,25 @@
         static const CMOVEOBJECT:int = 120;
         static const SPLAYERINVENTORY:int = 245;
         static const CRULEVIOLATIONREPORT:int = 242;
+        static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         static const CJOINAGGRESSION:int = 142;
-        static const SMOVECREATURE:int = 109;
         static const SSWITCHPRESET:int = 157;
         static const CGOEAST:int = 102;
+        static const SMOVECREATURE:int = 109;
         static const CEDITLIST:int = 138;
         static const CTOGGLEWRAPSTATE:int = 139;
         static const CJOINPARTY:int = 164;
         static const SEDITLIST:int = 151;
         static const PK_NONE:int = 0;
         static const SCLOSETRADE:int = 127;
+        static const CONNECTION_STATE_GAME:int = 4;
         static const SMULTIUSEDELAY:int = 166;
         static const CSTOREEVENT:int = 233;
         static const SSETINVENTORY:int = 120;
         static const SUMMON_OWN:int = 1;
+        static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SCHANGEONMAP:int = 107;
         static const CGOPATH:int = 100;
-        static const CLEAVEPARTY:int = 167;
         static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
         static const CEQUIPOBJECT:int = 119;
         static const CGOSOUTHEAST:int = 107;
@@ -355,11 +361,12 @@
         static const PLAYER_OFFSET_X:int = 8;
         static const PLAYER_OFFSET_Y:int = 6;
         static const SKILL_FIGHTAXE:int = 12;
+        static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
         static const SLOGINADVICE:int = 21;
         static const SCHANNELEVENT:int = 243;
         static const SPVPSITUATIONS:int = 184;
-        static const CONNECTION_STATE_GAME:int = 4;
         static const PARTY_LEADER_SEXP_OFF:int = 4;
+        static const CLEAVEPARTY:int = 167;
         static const MAP_MAX_X:int = MAP_MIN_X + ((1 << 14) - 1);
         static const MAP_MAX_Y:int = MAP_MIN_Y + ((1 << 14) - 1);
         static const MAP_MAX_Z:int = 15;
@@ -382,8 +389,8 @@
         static const RENDERER_DEFAULT_WIDTH:Number = 480;
         static const SRIGHTROW:int = 102;
         static const SKILL_MANA:int = 5;
-        static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
         static const SGRAPHICALEFFECT:int = 131;
+        static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
         static const SOPENOWNCHANNEL:int = 178;
         static const SPENDINGSTATEENTERED:int = 10;
         public static const PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:uint = 2;
@@ -398,12 +405,11 @@
         static const COPENTRANSACTIONHISTORY:int = 253;
         static const SCLEARTARGET:int = 163;
         static const CSHAREEXPERIENCE:int = 168;
-        static const SCREATURETYPE:int = 149;
+        static const PK_AGGRESSOR:int = 3;
         static const MAPSIZE_W:int = 10;
         static const MAPSIZE_X:int = 18;
         static const MAPSIZE_Y:int = 14;
         static const MAPSIZE_Z:int = 8;
-        static const PK_AGGRESSOR:int = 3;
         static const STATE_HUNGRY:int = 31;
         static const SKILL_LEVEL:int = 1;
         static const PATH_EAST:int = 1;
@@ -1546,26 +1552,36 @@
 
         protected function readSPLAYERSKILLS(param1:ByteArray) : void
         {
+            var _loc_2:* = 0;
             var _loc_3:* = 0;
-            var _loc_4:* = NaN;
-            var _loc_5:* = NaN;
-            var _loc_6:* = NaN;
-            var _loc_2:* = [SKILL_FIGHTFIST, SKILL_FIGHTCLUB, SKILL_FIGHTSWORD, SKILL_FIGHTAXE, SKILL_FIGHTDISTANCE, SKILL_FIGHTSHIELD, SKILL_FISHING];
-            for each (_loc_3 in _loc_2)
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = [SKILL_FIGHTFIST, SKILL_FIGHTCLUB, SKILL_FIGHTSWORD, SKILL_FIGHTAXE, SKILL_FIGHTDISTANCE, SKILL_FIGHTSHIELD, SKILL_FISHING];
+            var _loc_7:* = [SKILL_CRITICAL_HIT_CHANCE, SKILL_CRITICAL_HIT_DAMAGE, SKILL_LIFE_LEECH_CHANCE, SKILL_LIFE_LEECH_AMOUNT, SKILL_MANA_LEECH_CHANCE, SKILL_MANA_LEECH_AMOUNT];
+            for each (_loc_2 in _loc_6)
             {
                 
+                _loc_3 = param1.readUnsignedShort();
                 _loc_4 = param1.readUnsignedShort();
-                _loc_5 = param1.readUnsignedShort();
-                _loc_6 = param1.readUnsignedByte();
-                this.m_Player.setSkill(_loc_3, _loc_4, _loc_5, _loc_6);
+                _loc_5 = param1.readUnsignedByte();
+                this.m_Player.setSkill(_loc_2, _loc_3, _loc_4, _loc_5);
+            }
+            for each (_loc_2 in _loc_7)
+            {
+                
+                _loc_3 = param1.readUnsignedShort();
+                _loc_4 = param1.readUnsignedShort();
+                this.m_Player.setSkill(_loc_2, _loc_3, _loc_4, 0);
             }
             return;
         }// end function
 
         protected function readSCLEARTARGET(param1:ByteArray) : void
         {
-            var _loc_2:* = param1.readUnsignedInt();
+            var _loc_2:* = 0;
             var _loc_3:* = null;
+            _loc_2 = param1.readUnsignedInt();
+            _loc_3 = null;
             var _loc_4:* = this.m_CreatureStorage.getAttackTarget();
             _loc_3 = this.m_CreatureStorage.getAttackTarget();
             if (_loc_4 != null && _loc_2 == _loc_3.ID)
@@ -1866,7 +1882,8 @@
 
         protected function readSPLAYERSTATE(param1:ByteArray) : void
         {
-            var _loc_2:* = param1.readUnsignedShort();
+            var _loc_2:* = 0;
+            _loc_2 = param1.readUnsignedShort();
             this.m_Player.stateFlags = _loc_2;
             return;
         }// end function
@@ -5528,6 +5545,7 @@
                         break;
                     }
                     case MessageMode.MESSAGE_HEAL:
+                    case MessageMode.MESSAGE_MANA:
                     case MessageMode.MESSAGE_EXP:
                     case MessageMode.MESSAGE_HEAL_OTHERS:
                     case MessageMode.MESSAGE_EXP_OTHERS:
