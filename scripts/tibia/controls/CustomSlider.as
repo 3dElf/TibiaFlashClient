@@ -86,7 +86,7 @@
                 this.m_UISlider.allowTrackClick = false;
                 this.m_UISlider.minHeight = NaN;
                 this.m_UISlider.minWidth = 10;
-                this.m_UISlider.sliderThumbClass = SliderThumbNoKeyboard;
+                this.m_UISlider.sliderThumbClass = ;
                 this.m_UISlider.styleName = new StyleProxy(this, SLIDER_STYLE_FILTER);
                 this.m_UISlider.addEventListener(MouseEvent.CLICK, this.onTrackDown);
                 addChild(this.m_UISlider);
