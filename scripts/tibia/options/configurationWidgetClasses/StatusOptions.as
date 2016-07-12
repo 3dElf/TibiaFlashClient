@@ -31,7 +31,7 @@
         protected var m_UIWidgetStyle:ComboBox = null;
         protected var m_UIBothPvPFrames:CheckBox = null;
         private var m_UncommittedOptions:Boolean = false;
-        protected var m_WidgetStyle:int = 1;
+        protected var m_WidgetStyle:int;
         protected var m_UIWidgetSkill:ComboBox = null;
         protected var m_UIOwnMana:CheckBox = null;
         private var m_UncommittedOtherStyle:Boolean = false;
@@ -158,6 +158,7 @@
         {
             this.m_OwnStyle = RendererImpl.STATUS_STYLE_CLASSIC;
             this.m_OtherStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+            this.m_WidgetStyle = StatusWidget.STATUS_STYLE_DEFAULT;
             label = resourceManager.getString(ConfigurationWidget.BUNDLE, "STATUS_LABEL");
             return;
         }// end function

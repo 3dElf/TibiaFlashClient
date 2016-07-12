@@ -32,9 +32,9 @@
             {
                 return MARK_UNMARKED;
             }
-            if (this.m_CurrentMarks[param1] as MarkBase != null)
+            if (this.m_CurrentMarks[param1] as  != null)
             {
-                return (this.m_CurrentMarks[param1] as MarkBase).m_MarkColor;
+                return (this.m_CurrentMarks[param1] as ).m_MarkColor;
             }
             return MARK_UNMARKED;
         }// end function
@@ -77,9 +77,9 @@
             {
                 return false;
             }
-            if (this.m_CurrentMarks[param1] as MarkBase != null)
+            if (this.m_CurrentMarks[param1] as  != null)
             {
-                return (this.m_CurrentMarks[param1] as MarkBase).isSet;
+                return (this.m_CurrentMarks[param1] as ).isSet;
             }
             return false;
         }// end function
@@ -143,7 +143,7 @@
             var _loc_3:* = this.getMarkColor(param1);
             if (this.isMarkSet(param1) == false || this.getMarkColor(param1) != param2)
             {
-                (this.m_CurrentMarks[param1] as MarkBase).set(param2);
+                (this.m_CurrentMarks[param1] as ).set(param2);
                 _loc_4 = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
                 _loc_4.kind = PropertyChangeEventKind.UPDATE;
                 _loc_4.property = "marks";
@@ -182,7 +182,7 @@ class MarkBase extends Object
 
     public function get isSet() : Boolean
     {
-        return this.m_MarkColor != Marks.MARK_UNMARKED;
+        return this.m_MarkColor != this.MARK_UNMARKED;
     }// end function
 
 }
