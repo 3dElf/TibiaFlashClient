@@ -15,11 +15,12 @@
     {
         private var m_UncommittedHistory:Boolean = false;
         private var m_UINextButton:Button;
+        private var m_UncommittedDisplayMode:Boolean = true;
         private var m_UIPreviousButton:Button;
         private var m_DisplayMode:int = 0;
+        private var m_UITransactionPageText:Label;
         private var m_HistoryData:ArrayCollection;
         private var m_ShopWindow:IngameShopWidget;
-        private var m_UncommittedDisplayMode:Boolean = true;
         private var m_UncommittedButtons:Boolean = false;
         private static const BUNDLE:String = "IngameShopWidget";
         private static const DISPLAY_MODE_ERROR:int = 1;
@@ -73,20 +74,27 @@
             return;
         }// end function
 
-        public function set shopWidget(param1:IngameShopWidget) : void
+        public function setControlledButtonsAndLabel(param1:Button, param2:Button, param3:Label) : void
         {
-            if (this.m_ShopWindow != null)
+            if (this.m_UIPreviousButton != null)
             {
-                throw new IllegalOperationError("IngameShopOfferList.shopWidget: Attempted to set reference twice");
+                this.m_UIPreviousButton.removeEventListener(MouseEvent.CLICK, this.onPreviousClicked);
             }
-            this.m_ShopWindow = param1;
-            return;
-        }// end function
-
-        protected function onHistoryChanged(event:IngameShopEvent) : void
-        {
-            this.displayMode = DISPLAY_MODE_REGULAR;
-            this.m_UncommittedHistory = true;
+            if (this.m_UINextButton != null)
+            {
+                this.m_UINextButton.removeEventListener(MouseEvent.CLICK, this.onNextClicked);
+            }
+            this.m_UIPreviousButton = param1;
+            this.m_UINextButton = param2;
+            this.m_UITransactionPageText = param3;
+            if (this.m_UIPreviousButton != null)
+            {
+                this.m_UIPreviousButton.addEventListener(MouseEvent.CLICK, this.onPreviousClicked);
+            }
+            if (this.m_UINextButton != null)
+            {
+                this.m_UINextButton.addEventListener(MouseEvent.CLICK, this.onNextClicked);
+            }
             this.m_UncommittedButtons = true;
             invalidateProperties();
             return;
@@ -102,6 +110,17 @@
         {
             var _loc_2:* = IngameShopManager.getInstance().getHistoryPage() + 1;
             IngameShopManager.getInstance().pageTransactionHistory(_loc_2, TransactionHistory.HISTORY_ENTRIES_PER_PAGE);
+            this.m_UINextButton.enabled = false;
+            this.m_UIPreviousButton.enabled = false;
+            return;
+        }// end function
+
+        protected function onHistoryChanged(event:IngameShopEvent) : void
+        {
+            this.displayMode = DISPLAY_MODE_REGULAR;
+            this.m_UncommittedHistory = true;
+            this.m_UncommittedButtons = true;
+            invalidateProperties();
             return;
         }// end function
 
@@ -132,7 +151,7 @@
             if (this.m_UncommittedButtons)
             {
                 _loc_4 = IngameShopManager.getInstance().getHistoryPage() > 0;
-                _loc_5 = IngameShopManager.getInstance().canRequestNextHistoryPage();
+                _loc_5 = IngameShopManager.getInstance().getHistoryPage() < (IngameShopManager.getInstance().getNumberOfHistoryPages() - 1);
                 if (this.m_UINextButton != null)
                 {
                     this.m_UINextButton.enabled = _loc_5;
@@ -141,6 +160,8 @@
                 {
                     this.m_UIPreviousButton.enabled = _loc_4;
                 }
+                this.m_UITransactionPageText.setVisible(IngameShopManager.getInstance().getNumberOfHistoryPages() > 1);
+                this.m_UITransactionPageText.text = resourceManager.getString(BUNDLE, "LBL_TRANSACTION_HISTORY_PAGES", [(IngameShopManager.getInstance().getHistoryPage() + 1), IngameShopManager.getInstance().getNumberOfHistoryPages()]);
                 this.m_UncommittedButtons = false;
             }
             if (this.m_UncommittedDisplayMode)
@@ -159,35 +180,12 @@
             return;
         }// end function
 
-        public function setControlledButton(param1:Button, param2:Button) : void
-        {
-            if (this.m_UIPreviousButton != null)
-            {
-                this.m_UIPreviousButton.removeEventListener(MouseEvent.CLICK, this.onPreviousClicked);
-            }
-            if (this.m_UINextButton != null)
-            {
-                this.m_UINextButton.removeEventListener(MouseEvent.CLICK, this.onNextClicked);
-            }
-            this.m_UIPreviousButton = param1;
-            this.m_UINextButton = param2;
-            if (this.m_UIPreviousButton != null)
-            {
-                this.m_UIPreviousButton.addEventListener(MouseEvent.CLICK, this.onPreviousClicked);
-            }
-            if (this.m_UINextButton != null)
-            {
-                this.m_UINextButton.addEventListener(MouseEvent.CLICK, this.onNextClicked);
-            }
-            this.m_UncommittedButtons = true;
-            invalidateProperties();
-            return;
-        }// end function
-
         protected function onPreviousClicked(event:MouseEvent) : void
         {
             var _loc_2:* = Math.max(0, (IngameShopManager.getInstance().getHistoryPage() - 1));
             IngameShopManager.getInstance().pageTransactionHistory(_loc_2, TransactionHistory.HISTORY_ENTRIES_PER_PAGE);
+            this.m_UINextButton.enabled = false;
+            this.m_UIPreviousButton.enabled = false;
             return;
         }// end function
 
@@ -195,6 +193,16 @@
         {
             IngameShopManager.getInstance().removeEventListener(IngameShopEvent.HISTORY_CHANGED, this.onHistoryChanged);
             this.m_ShopWindow = null;
+            return;
+        }// end function
+
+        public function set shopWidget(param1:IngameShopWidget) : void
+        {
+            if (this.m_ShopWindow != null)
+            {
+                throw new IllegalOperationError("IngameShopOfferList.shopWidget: Attempted to set reference twice");
+            }
+            this.m_ShopWindow = param1;
             return;
         }// end function
 

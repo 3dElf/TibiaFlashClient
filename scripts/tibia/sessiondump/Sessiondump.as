@@ -27,9 +27,8 @@
         static const CMARKETACCEPT:int = 248;
         static const CONNECTION_STATE_PENDING:int = 3;
         static const CGONORTHWEST:int = 109;
-        static const CMARKETCREATE:int = 246;
-        static const PARTY_MAX_FLASHING_TIME:uint = 5000;
         static const PK_MAX_FLASHING_TIME:uint = 5000;
+        static const PARTY_MAX_FLASHING_TIME:uint = 5000;
         static const PK_REVENGE:int = 6;
         static const SOUTFIT:int = 200;
         static const SKILL_FIGHTCLUB:int = 10;
@@ -39,6 +38,7 @@
         static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
         static const CADDBUDDY:int = 220;
         static const RISKINESS_DANGEROUS:int = 1;
+        static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
         static const ERR_COULD_NOT_CONNECT:int = 5;
         static const NPC_SPEECH_TRAVEL:uint = 5;
@@ -64,7 +64,6 @@
         static const SLOGINSUCCESS:int = 23;
         static const PARTY_OTHER:int = 11;
         static const SKILL_EXPERIENCE:int = 0;
-        static const GUILD_NONE:int = 0;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const CLOOKATCREATURE:int = 141;
         static const CJOINCHANNEL:int = 152;
@@ -83,14 +82,14 @@
         static const NPC_SPEECH_QUEST:uint = 3;
         static const CCANCEL:int = 190;
         static const CGUILDMESSAGE:int = 155;
+        static const CREMOVEBUDDY:int = 221;
         public static const STATE_DEFAULT:int = 0;
         static const TYPE_SUMMON_OTHERS:int = 4;
-        static const CREMOVEBUDDY:int = 221;
-        static const CCLOSECONTAINER:int = 135;
         static const SKILL_NONE:int = -1;
-        static const SFIELDDATA:int = 105;
-        private static const KEYFRAME_STATE_PROCESS:uint = 1;
+        static const CCLOSECONTAINER:int = 135;
         static const GUILD_MEMBER:int = 4;
+        static const SFIELDDATA:int = 105;
+        static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
         static const SKILL_HITPOINTS_PERCENT:int = 3;
         static const SCLOSECONTAINER:int = 111;
         static const MAX_NAME_LENGTH:int = 29;
@@ -152,10 +151,11 @@
         static const SPRIVATECHANNEL:int = 173;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const SBLESSINGS:int = 156;
-        static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
         static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
         static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
+        private static const KEYFRAME_STATE_PROCESS:uint = 1;
         static const SINGAMESHOPSUCCESS:int = 254;
+        static const SSTOREBUTTONINDICATORS:int = 25;
         static const CPRIVATECHANNEL:int = 154;
         static const PAYLOADLENGTH_POS:int = 6;
         static const SLOGINWAIT:int = 22;
@@ -167,8 +167,8 @@
         static const ERR_INVALID_CHECKSUM:int = 2;
         public static const SKEYFRAMEBEGIN:int = 1;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
-        static const SNPCOFFER:int = 122;
         static const SCONTAINER:int = 110;
+        static const SNPCOFFER:int = 122;
         static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const CMARKETCANCEL:int = 247;
         static const SWORLDENTERED:int = 15;
@@ -212,7 +212,7 @@
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 1096;
+        public static const PROTOCOL_VERSION:int = 1097;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
@@ -297,6 +297,7 @@
         static const CEQUIPOBJECT:int = 119;
         static const SCREATUREPVPHELPERS:int = 148;
         static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
+        static const SKILL_EXPERIENCE_GAIN:int = -2;
         static const COPENCHANNEL:int = 170;
         static const SDEAD:int = 40;
         static const SCHANGEINCONTAINER:int = 113;
@@ -348,17 +349,19 @@
         public static const STATE_LOADED:int = 2;
         static const PK_AGGRESSOR:int = 3;
         static const STATE_HUNGRY:int = 31;
-        static const SBUDDYSTATUSCHANGE:int = 211;
         static const SKILL_LEVEL:int = 1;
         static const SCLOSECHANNEL:int = 179;
         static const PROFESSION_DRUID:int = 4;
         static const CSETOUTFIT:int = 211;
+        static const PACKETLENGTH_POS:int = 0;
+        static const SBUDDYSTATUSCHANGE:int = 211;
         static const SUMMON_NONE:int = 0;
         static const SAUTOMAPFLAG:int = 221;
         static const SOWNOFFER:int = 125;
-        static const PACKETLENGTH_POS:int = 0;
-        static const SKILL_GOSTRENGTH:int = 6;
         static const PAYLOAD_POS:int = 6;
+        static const SKILL_GOSTRENGTH:int = 6;
+        static const SSETSTOREDEEPLINK:int = 168;
+        static const CMARKETCREATE:int = 246;
         static const SPLAYERSTATE:int = 162;
 
         public function Sessiondump(param1:SessiondumpControllerBase)

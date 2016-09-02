@@ -3,6 +3,7 @@
     import flash.errors.*;
     import mx.containers.*;
     import mx.controls.*;
+    import shared.utility.i18n.*;
     import tibia.ingameshop.*;
     import tibia.ingameshop.shopWidgetClasses.*;
 
@@ -42,6 +43,34 @@
             return;
         }// end function
 
+        private function formatTimeLeftString(param1:Number) : String
+        {
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_2:* = param1 - Math.floor(new Date().time / 1000);
+            if (_loc_2 > 0)
+            {
+                _loc_3 = _loc_2 / 86400;
+                _loc_4 = _loc_2 % 86400 / (60 * 60);
+                if (_loc_3 > 0)
+                {
+                    return resourceManager.getString(BUNDLE, _loc_3 == 1 ? ("TEXT_SALE_DURATION_DAY") : ("TEXT_SALE_DURATION_DAYS"), [_loc_3]);
+                }
+                else if (_loc_4 > 0)
+                {
+                    return resourceManager.getString(BUNDLE, _loc_4 == 1 ? ("TEXT_SALE_DURATION_HOUR") : ("TEXT_SALE_DURATION_HOURS"), [_loc_4]);
+                }
+                else
+                {
+                    return resourceManager.getString(BUNDLE, "TEXT_SALE_DURATION_MINUTES");
+                }
+            }
+            else
+            {
+            }
+            return resourceManager.getString(BUNDLE, "TEXT_SALE_DURATION_MINUTES");
+        }// end function
+
         public function dispose() : void
         {
             this.m_ShopWindow = null;
@@ -55,7 +84,20 @@
             {
                 if (this.m_Offer != null)
                 {
-                    _loc_1 = this.m_Offer.disabled ? ("<p><font color=\"#" + DISABLED_REASON_COLOR + "\">" + resourceManager.getString(BUNDLE, "LBL_CANNOT_BUY_GENERIC") + "\n" + this.m_Offer.disabledReason + "</font></p>\n" + this.m_Offer.description) : (this.m_Offer.description);
+                    _loc_1 = "";
+                    if (this.m_Offer.disabled)
+                    {
+                        _loc_1 = _loc_1 + ("<p><font color=\"#" + DISABLED_REASON_COLOR + "\">");
+                        _loc_1 = _loc_1 + (resourceManager.getString(BUNDLE, "LBL_CANNOT_BUY_GENERIC") + "\n" + this.m_Offer.disabledReason);
+                        _loc_1 = _loc_1 + "</font></p>\n";
+                    }
+                    if (this.m_Offer.isSale())
+                    {
+                        _loc_1 = _loc_1 + "<p>";
+                        _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TEXT_SALE_DESCRIPTION", [i18nFormatDate(new Date(this.m_Offer.saleValidUntilTimestamp * 1000)), this.formatTimeLeftString(this.m_Offer.saleValidUntilTimestamp), resourceManager.getString(BUNDLE, this.m_Offer.price == 1 ? ("LBL_CREDITS_LONG_SINGULAR") : ("LBL_CREDITS_LONG_PLURAL"), [this.m_Offer.price]), (this.m_Offer.priceReductionPercent() * 100).toFixed(0), resourceManager.getString(BUNDLE, this.m_Offer.basePrice == 1 ? ("LBL_CREDITS_LONG_SINGULAR") : ("LBL_CREDITS_LONG_PLURAL"), [this.m_Offer.basePrice])]);
+                        _loc_1 = _loc_1 + "</p>\n";
+                    }
+                    _loc_1 = _loc_1 + this.m_Offer.description;
                     this.m_UIDescriptionText.htmlText = _loc_1;
                     this.m_UIBundleBox.setVisible(this.m_Offer.isBundle());
                     this.buildBundleGrid();

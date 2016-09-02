@@ -119,6 +119,7 @@
         private static const ACTION_TALK:int = 9;
         static const SUMMON_OWN:int = 1;
         private static const ACTION_LOOK:int = 6;
+        static const SKILL_EXPERIENCE_GAIN:int = -2;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const TYPE_SUMMON_OWN:int = 3;
         static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
@@ -135,10 +136,10 @@
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+        static const STATE_FAST:int = 6;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
         static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         private static const ACTION_CONTEXT_MENU:int = 5;
-        static const STATE_FAST:int = 6;
         private static const VALID_ACTIONS:Vector.<uint> = BodyContainerViewWidgetView.Vector.<uint>([ACTION_USE, ACTION_OPEN, ACTION_LOOK, ACTION_CONTEXT_MENU]);
         static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;

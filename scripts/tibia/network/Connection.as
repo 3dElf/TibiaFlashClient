@@ -61,7 +61,7 @@
         static const CCLOSENPCCHANNEL:int = 158;
         static const CHECKSUM_POS:int = 2;
         static const CBUYOBJECT:int = 122;
-        public static const CLIENT_VERSION:uint = 2279;
+        public static const CLIENT_VERSION:uint = 2309;
         static const SPING:int = 29;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
         static const SWAIT:int = 182;
@@ -85,12 +85,12 @@
         private static const BUNDLE:String = "Connection";
         static const CCLOSECONTAINER:int = 135;
         static const SFIELDDATA:int = 105;
-        static const CPASSLEADERSHIP:int = 166;
         static const SCLOSECONTAINER:int = 111;
         static const SLEFTROW:int = 104;
         static const SFULLMAP:int = 100;
         static const SMISSILEEFFECT:int = 133;
         static const CGOWEST:int = 104;
+        static const CPASSLEADERSHIP:int = 166;
         static const SSPELLGROUPDELAY:int = 165;
         static const SBOTTOMROW:int = 103;
         static const CGETOBJECTINFO:int = 243;
@@ -123,6 +123,7 @@
         static const SPRIVATECHANNEL:int = 173;
         static const SBLESSINGS:int = 156;
         static const SINGAMESHOPSUCCESS:int = 254;
+        static const SSTOREBUTTONINDICATORS:int = 25;
         static const CPRIVATECHANNEL:int = 154;
         static const CGETTRANSACTIONHISTORY:int = 254;
         static const SLOGINWAIT:int = 22;
@@ -134,8 +135,8 @@
         static const ERR_INVALID_CHECKSUM:int = 2;
         static const SCONTAINER:int = 110;
         static const SNPCOFFER:int = 122;
-        static const SWORLDENTERED:int = 15;
         static const CMARKETCANCEL:int = 247;
+        static const SWORLDENTERED:int = 15;
         static const CEXCLUDEFROMCHANNEL:int = 172;
         static const STRANSACTIONHISTORY:int = 253;
         static const SPREMIUMSHOPOFFERS:int = 252;
@@ -162,7 +163,7 @@
         static const CROTATEWEST:int = 114;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1096;
+        public static const PROTOCOL_VERSION:int = 1097;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const SLOGINCHALLENGE:int = 31;
@@ -211,10 +212,10 @@
         static const CJOINPARTY:int = 164;
         static const SEDITLIST:int = 151;
         static const SCLOSETRADE:int = 127;
-        static const CONNECTION_STATE_GAME:int = 4;
         static const SMULTIUSEDELAY:int = 166;
-        static const SSETINVENTORY:int = 120;
+        static const CONNECTION_STATE_GAME:int = 4;
         static const CSTOREEVENT:int = 233;
+        static const SSETINVENTORY:int = 120;
         static const CGOPATH:int = 100;
         static const CLEAVEPARTY:int = 167;
         static const SCHANGEONMAP:int = 107;
@@ -263,6 +264,7 @@
         static const SAUTOMAPFLAG:int = 221;
         static const SOWNOFFER:int = 125;
         static const PAYLOAD_POS:int = 6;
+        static const SSETSTOREDEEPLINK:int = 168;
         static const CMARKETCREATE:int = 246;
         static const SPLAYERSTATE:int = 162;
 

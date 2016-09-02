@@ -6,16 +6,16 @@
 
     final public class IngameShopManager extends EventDispatcher
     {
+        private var m_CreditPackageSize:Number = 25;
         private var m_ImageManager:DynamicImageManager;
         private var m_CreditsAreFinal:Boolean = false;
         private var m_CurrentlyFeaturedServiceType:int = 0;
         private var m_Categories:Vector.<IngameShopCategory>;
-        private var m_CanRequestNextTransactionHistoryPage:Boolean = false;
         private var m_History:Vector.<IngameShopHistoryEntry>;
         private var m_CreditBalance:Number = NaN;
         private var m_CurrentTransactionHistoryPage:int = 0;
         private var m_ConfirmedCreditBalance:Number = NaN;
-        private var m_CreditPackageSize:Number = 25;
+        private var m_NumberOfTransactionHistoryPages:int = 0;
         private static var s_Instance:IngameShopManager = null;
         public static const STORE_EVENT_SELECT_OFFER:int = 0;
         public static const TIBIA_COINS_APPEARANCE_TYPE_ID:int = 22118;
@@ -25,11 +25,6 @@
             this.m_Categories = new Vector.<IngameShopCategory>;
             this.m_History = new Vector.<IngameShopHistoryEntry>;
             return;
-        }// end function
-
-        public function canRequestNextHistoryPage() : Boolean
-        {
-            return this.m_CanRequestNextTransactionHistoryPage;
         }// end function
 
         public function purchaseRegularOffer(param1:int) : void
@@ -66,27 +61,12 @@
             return OfferList.length > 0 ? (OfferList[0]) : (null);
         }// end function
 
-        public function creditsAreFinal() : Boolean
-        {
-            return this.m_CreditsAreFinal;
-        }// end function
-
         public function pageTransactionHistory(param1:int, param2:int) : void
         {
             var _loc_3:* = Tibia.s_GetCommunication();
             if (_loc_3 != null && _loc_3.isGameRunning)
             {
                 _loc_3.sendCGETTRANSACTIONHISTORY(param1, param2);
-            }
-            return;
-        }// end function
-
-        public function setCreditBalanceUpdating(param1:Boolean) : void
-        {
-            if (this.m_CreditsAreFinal != param1)
-            {
-                this.m_CreditsAreFinal = param1;
-                dispatchEvent(new IngameShopEvent(IngameShopEvent.CREDIT_BALANCE_CHANGED));
             }
             return;
         }// end function
@@ -111,16 +91,36 @@
             return;
         }// end function
 
+        public function getCreditPackageSize() : Number
+        {
+            return this.m_CreditPackageSize;
+        }// end function
+
         public function refreshTransactionHistory(param1:int) : void
         {
             if (this.getHistory().length > 0)
             {
-                this.setHistory(0, false, new Vector.<IngameShopHistoryEntry>);
+                this.setHistory(0, 0, new Vector.<IngameShopHistoryEntry>);
             }
             var _loc_2:* = Tibia.s_GetCommunication();
             if (_loc_2 != null && _loc_2.isGameRunning)
             {
                 _loc_2.sendCOPENTRANSACTIONHISTORY(param1);
+            }
+            return;
+        }// end function
+
+        public function get imageManager() : DynamicImageManager
+        {
+            return this.m_ImageManager;
+        }// end function
+
+        public function setCreditBalanceUpdating(param1:Boolean) : void
+        {
+            if (this.m_CreditsAreFinal != param1)
+            {
+                this.m_CreditsAreFinal = param1;
+                dispatchEvent(new IngameShopEvent(IngameShopEvent.CREDIT_BALANCE_CHANGED));
             }
             return;
         }// end function
@@ -140,9 +140,14 @@
             return;
         }// end function
 
-        public function get imageManager() : DynamicImageManager
+        public function setHistory(param1:int, param2:int, param3:Vector.<IngameShopHistoryEntry>) : void
         {
-            return this.m_ImageManager;
+            this.m_History = param3;
+            this.m_CurrentTransactionHistoryPage = param1;
+            this.m_NumberOfTransactionHistoryPages = param2;
+            var _loc_4:* = new IngameShopEvent(IngameShopEvent.HISTORY_CHANGED);
+            dispatchEvent(_loc_4);
+            return;
         }// end function
 
         public function getRootCategories() : Vector.<IngameShopCategory>
@@ -164,13 +169,14 @@
             return;
         }// end function
 
-        public function setHistory(param1:int, param2:Boolean, param3:Vector.<IngameShopHistoryEntry>) : void
+        public function setCreditBalance(param1:Number, param2:Number) : void
         {
-            this.m_History = param3;
-            this.m_CurrentTransactionHistoryPage = param1;
-            this.m_CanRequestNextTransactionHistoryPage = param2;
-            var _loc_4:* = new IngameShopEvent(IngameShopEvent.HISTORY_CHANGED);
-            dispatchEvent(_loc_4);
+            if (this.m_CreditBalance != param1)
+            {
+                this.m_CreditBalance = param1;
+                this.m_ConfirmedCreditBalance = param2;
+                dispatchEvent(new IngameShopEvent(IngameShopEvent.CREDIT_BALANCE_CHANGED));
+            }
             return;
         }// end function
 
@@ -187,6 +193,11 @@
         public function getHistoryPage() : int
         {
             return this.m_CurrentTransactionHistoryPage;
+        }// end function
+
+        public function getNumberOfHistoryPages() : int
+        {
+            return this.m_NumberOfTransactionHistoryPages;
         }// end function
 
         private function recursiveSearchCategory(param1:String, param2:Vector.<IngameShopCategory>) : IngameShopCategory
@@ -210,17 +221,6 @@
                 }
             }
             return null;
-        }// end function
-
-        public function setCreditBalance(param1:Number, param2:Number) : void
-        {
-            if (this.m_CreditBalance != param1)
-            {
-                this.m_CreditBalance = param1;
-                this.m_ConfirmedCreditBalance = param2;
-                dispatchEvent(new IngameShopEvent(IngameShopEvent.CREDIT_BALANCE_CHANGED));
-            }
-            return;
         }// end function
 
         public function requestNameForNameChange(param1:int) : void
@@ -278,6 +278,11 @@
             return this.recursiveSearchCategory(param1, this.m_Categories);
         }// end function
 
+        public function creditsAreFinal() : Boolean
+        {
+            return this.m_CreditsAreFinal;
+        }// end function
+
         public function getConfirmedCreditBalance() : Number
         {
             return this.m_ConfirmedCreditBalance;
@@ -286,11 +291,6 @@
         public function get currentlyFeaturedServiceType() : int
         {
             return this.m_CurrentlyFeaturedServiceType;
-        }// end function
-
-        public function getCreditPackageSize() : Number
-        {
-            return this.m_CreditPackageSize;
         }// end function
 
         public function addCategory(param1:IngameShopCategory, param2:String) : void

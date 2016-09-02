@@ -88,6 +88,7 @@
         static const PARTY_NONE:int = 0;
         static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SUMMON_OWN:int = 1;
+        static const SKILL_EXPERIENCE_GAIN:int = -2;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const TYPE_SUMMON_OWN:int = 3;
         static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
@@ -101,9 +102,9 @@
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+        static const STATE_FAST:int = 6;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
         static const SKILL_MANA_LEECH_AMOUNT:int = 24;
-        static const STATE_FAST:int = 6;
         static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
@@ -244,8 +245,9 @@
 
         override protected function measure() : void
         {
+            var _loc_1:* = null;
             super.measure();
-            var _loc_1:* = viewMetricsAndPadding;
+            _loc_1 = viewMetricsAndPadding;
             var _loc_2:* = _loc_1.left + WIDGET_VIEW_WIDTH + _loc_1.right;
             measuredWidth = _loc_1.left + WIDGET_VIEW_WIDTH + _loc_1.right;
             measuredMinWidth = _loc_2;
@@ -278,9 +280,8 @@
 
         private function createProgressBars() : void
         {
-            var _loc_1:* = null;
             var _loc_3:* = null;
-            _loc_1 = viewMetricsAndPadding;
+            var _loc_1:* = viewMetricsAndPadding;
             this.m_UIOpenSituationLabel = new Label();
             this.m_UIOpenSituationLabel.toolTip = resourceManager.getString(BUNDLE, "TOOLTIP_OPEN_SITUATIONS");
             this.updateOpenPvPSituations();

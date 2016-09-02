@@ -10,6 +10,7 @@
         private var m_IconIdentifiers:Vector.<String>;
         public static const SERVICE_TYPE_PREMIUM:int = 2;
         public static const SERVICE_TYPE_UNKNOWN:int = 0;
+        public static const SERVICE_TYPE_XPBOOST:int = 6;
         public static const SERVICE_TYPE_BLESSINGS:int = 5;
         public static const SERVICE_TYPE_CHARACTER_NAME_CHANGE:int = 1;
         public static const SERVICE_TYPE_MOUNTS:int = 4;

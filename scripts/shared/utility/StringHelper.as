@@ -40,20 +40,21 @@
             return param1;
         }// end function
 
-        public static function s_MillisecondsToTimeString(param1:uint, param2:Boolean = true) : String
+        public static function s_MillisecondsToTimeString(param1:uint, param2:Boolean = true, param3:Boolean = false) : String
         {
-            var _loc_3:* = 0;
             var _loc_4:* = 0;
-            _loc_3 = param1 / 1000;
-            _loc_4 = _loc_3 / 60;
-            var _loc_5:* = _loc_4 / 60;
-            var _loc_6:* = "";
-            _loc_6 = _loc_5 + ":" + s_PadWithChars(String(_loc_4 % 60), "00") + ":" + s_PadWithChars(String(_loc_3 % 60), "00");
+            var _loc_5:* = 0;
+            _loc_4 = param1 / 1000;
+            _loc_5 = _loc_4 / 60;
+            var _loc_6:* = _loc_5 / 60;
+            var _loc_7:* = param3 ? (s_PadWithChars(String(_loc_6), "00")) : (String(_loc_6));
+            var _loc_8:* = "";
+            _loc_8 = _loc_7 + ":" + s_PadWithChars(String(_loc_5 % 60), "00") + ":" + s_PadWithChars(String(_loc_4 % 60), "00");
             if (param2)
             {
-                _loc_6 = _loc_6 + ("." + s_PadWithChars(String(param1 % 1000), "000"));
+                _loc_8 = _loc_8 + ("." + s_PadWithChars(String(param1 % 1000), "000"));
             }
-            return _loc_6;
+            return _loc_8;
         }// end function
 
         public static function s_StripNewline(param1:String) : String

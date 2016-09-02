@@ -190,6 +190,7 @@
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
         public static const STATUS_STYLE_HUD:int = 2;
+        static const SKILL_EXPERIENCE_GAIN:int = -2;
         static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
         static const UNDERGROUND_LAYER:int = 2;
         static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;

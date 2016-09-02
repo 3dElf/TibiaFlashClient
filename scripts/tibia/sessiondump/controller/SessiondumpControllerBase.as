@@ -28,7 +28,6 @@
         static const CMARKETACCEPT:int = 248;
         static const CONNECTION_STATE_PENDING:int = 3;
         static const CGONORTHWEST:int = 109;
-        static const CMARKETCREATE:int = 246;
         static const SOUTFIT:int = 200;
         static const CSETTACTICS:int = 160;
         static const CPERFORMANCEMETRICS:int = 31;
@@ -102,6 +101,7 @@
         static const SPRIVATECHANNEL:int = 173;
         static const SBLESSINGS:int = 156;
         static const SINGAMESHOPSUCCESS:int = 254;
+        static const SSTOREBUTTONINDICATORS:int = 25;
         static const CPRIVATECHANNEL:int = 154;
         static const PAYLOADLENGTH_POS:int = 6;
         static const SLOGINWAIT:int = 22;
@@ -110,8 +110,8 @@
         static const CTRADEOBJECT:int = 125;
         static const CLOOK:int = 140;
         static const ERR_INVALID_CHECKSUM:int = 2;
-        static const SNPCOFFER:int = 122;
         static const SCONTAINER:int = 110;
+        static const SNPCOFFER:int = 122;
         static const CMARKETCANCEL:int = 247;
         static const SWORLDENTERED:int = 15;
         static const HEADER_POS:int = 0;
@@ -137,7 +137,7 @@
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 1096;
+        public static const PROTOCOL_VERSION:int = 1097;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SAMBIENTE:int = 130;
@@ -228,13 +228,15 @@
         static const SCLEARTARGET:int = 163;
         static const SCREATURETYPE:int = 149;
         static const CGETOUTFIT:int = 210;
-        static const SBUDDYSTATUSCHANGE:int = 211;
         static const SCLOSECHANNEL:int = 179;
         static const CSETOUTFIT:int = 211;
+        static const PACKETLENGTH_POS:int = 0;
+        static const SBUDDYSTATUSCHANGE:int = 211;
         static const SAUTOMAPFLAG:int = 221;
         static const SOWNOFFER:int = 125;
-        static const PACKETLENGTH_POS:int = 0;
         static const PAYLOAD_POS:int = 6;
+        static const SSETSTOREDEEPLINK:int = 168;
+        static const CMARKETCREATE:int = 246;
         static const SPLAYERSTATE:int = 162;
 
         public function SessiondumpControllerBase()

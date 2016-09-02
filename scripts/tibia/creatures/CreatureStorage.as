@@ -117,6 +117,7 @@
         static const SUMMON_OWN:int = 1;
         static const FIELD_ENTER_POSSIBLE:uint = 0;
         static const ONSCREEN_MESSAGE_WIDTH:int = 295;
+        static const SKILL_EXPERIENCE_GAIN:int = -2;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
         static const TYPE_SUMMON_OWN:int = 3;
@@ -144,11 +145,11 @@
         static const SKILL_SOULPOINTS:int = 16;
         static const NUM_ONSCREEN_MESSAGES:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+        static const STATE_FAST:int = 6;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
         public static const MARK_AIM_ATTACK:uint = MARK_NUM_COLOURS + 2;
         static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         public static const STATE_FLAG_GAP:int = 2;
-        static const STATE_FAST:int = 6;
         public static const MARK_FOLLOW:uint = MARK_NUM_COLOURS + 5;
         static const BLESSING_NONE:int = 0;
         public static const FILTER_NPC:int = 2;

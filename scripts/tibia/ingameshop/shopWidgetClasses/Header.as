@@ -92,6 +92,7 @@
                 {
                     this.m_UILabelHeader.text = _loc_2.name;
                     this.m_UILabelPrice.coins = _loc_2.price;
+                    this.m_UILabelPrice.baseCoins = _loc_2.basePrice;
                     this.m_UIIcon.setImageIdentifiers(_loc_2.iconIdentifiers);
                     this.m_UIDetailsStack.selectedIndex = VIEW_OFFER;
                 }

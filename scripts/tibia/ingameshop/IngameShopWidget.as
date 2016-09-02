@@ -59,7 +59,8 @@
 
         public function showGetCoinsConfirmationDialog() : void
         {
-            var _loc_1:* = new EmbeddedDialog();
+            var _loc_1:* = null;
+            _loc_1 = new EmbeddedDialog();
             _loc_1.width = IngameShopWidget.EMBEDDED_DIALOG_WIDTH;
             _loc_1.title = resourceManager.getString(BUNDLE, "TITLE_GET_COINS");
             _loc_1.text = resourceManager.getString(BUNDLE, "LBL_GET_COINS");

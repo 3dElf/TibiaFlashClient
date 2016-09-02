@@ -199,10 +199,9 @@
             return;
         }// end function
 
-        public function updatePremiumMessages(param1:Vector.<uint>, param2:int) : void
+        public function updatePremiumMessages(param1:Vector.<uint>) : void
         {
             var a_MessageIds:* = param1;
-            var a_FeaturedServiceType:* = param2;
             this.m_PremiumMessages.length = 0;
             a_MessageIds.forEach(function (param1:uint, param2:int, param3:Vector.<uint>) : void
             {
@@ -212,7 +211,6 @@
             );
             var Event:* = new PremiumEvent(PremiumEvent.TRIGGER);
             Event.messages = this.m_PremiumMessages;
-            Event.featuredStoreServiceType = a_FeaturedServiceType;
             Event.highlightExpiry = HIGHLIGHT_TIMEOUT;
             dispatchEvent(Event);
             return;

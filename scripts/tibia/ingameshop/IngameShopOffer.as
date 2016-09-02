@@ -6,11 +6,12 @@
     {
         private var m_DisabledState:int;
         private var m_OfferID:int;
+        private var m_BasePrice:Number;
         private var m_Description:String;
         private var m_Products:Vector.<IngameShopProduct>;
         private var m_DisabledReason:String;
         private var m_ActualPrice:Number;
-        private var m_Disabled:Boolean;
+        private var m_SalidValidUntilTimestamp:Number;
         private var m_HighlightState:int;
         private var m_Name:String;
         private var m_IconIdentifiers:Vector.<String>;
@@ -30,9 +31,11 @@
             this.m_Products = new Vector.<IngameShopProduct>;
             this.m_IconIdentifiers = new Vector.<String>;
             this.m_ActualPrice = 0;
+            this.m_BasePrice = NaN;
             this.m_HighlightState = HIGHLIGHT_STATE_NONE;
             this.m_DisabledState = DISABLED_STATE_ACTIVE;
             this.m_DisabledReason = "";
+            this.m_SalidValidUntilTimestamp = 0;
             return;
         }// end function
 
@@ -67,6 +70,11 @@
         public function get name() : String
         {
             return this.m_Name;
+        }// end function
+
+        public function isTimed() : Boolean
+        {
+            return this.m_HighlightState == HIGHLIGHT_STATE_TIMED;
         }// end function
 
         public function isBundle() : Boolean
@@ -110,7 +118,7 @@
         {
             var Clone:* = new IngameShopOffer(this.m_OfferID, this.m_Name, this.m_Description);
             Clone.m_ActualPrice = this.m_ActualPrice;
-            Clone.m_Disabled = this.m_Disabled;
+            Clone.m_BasePrice = this.m_BasePrice;
             Clone.m_HighlightState = this.m_HighlightState;
             Clone.m_Products = this.m_Products.map(function (param1:IngameShopProduct) : IngameShopProduct
             {
@@ -118,6 +126,9 @@
             }// end function
             );
             Clone.m_IconIdentifiers = this.m_IconIdentifiers;
+            Clone.m_DisabledReason = this.m_DisabledReason;
+            Clone.m_DisabledState = this.m_DisabledState;
+            Clone.m_SalidValidUntilTimestamp = this.m_SalidValidUntilTimestamp;
             return Clone;
         }// end function
 
@@ -136,14 +147,26 @@
             return this.m_Products;
         }// end function
 
-        public function isTimed() : Boolean
+        public function set basePrice(param1:Number) : void
         {
-            return this.m_HighlightState == HIGHLIGHT_STATE_TIMED;
+            this.m_BasePrice = param1;
+            return;
         }// end function
 
         public function get iconIdentifiers() : Vector.<String>
         {
             return this.m_IconIdentifiers;
+        }// end function
+
+        public function set saleValidUntilTimestamp(param1:Number) : void
+        {
+            this.m_SalidValidUntilTimestamp = param1;
+            return;
+        }// end function
+
+        public function get saleValidUntilTimestamp() : Number
+        {
+            return this.m_SalidValidUntilTimestamp;
         }// end function
 
         public function get disabled() : Boolean
@@ -154,6 +177,22 @@
         public function get offerID() : int
         {
             return this.m_OfferID;
+        }// end function
+
+        public function get basePrice() : Number
+        {
+            return this.m_BasePrice;
+        }// end function
+
+        public function priceReductionPercent() : Number
+        {
+            var _loc_1:* = NaN;
+            if (!isNaN(this.m_BasePrice) && this.m_BasePrice > 0 && this.m_BasePrice > this.m_ActualPrice)
+            {
+                _loc_1 = this.m_ActualPrice / this.m_BasePrice;
+                return 1 - _loc_1;
+            }
+            return 0;
         }// end function
 
         public function get description() : String

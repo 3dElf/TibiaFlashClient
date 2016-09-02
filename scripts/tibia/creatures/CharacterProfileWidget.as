@@ -75,6 +75,7 @@
         static const PARTY_NONE:int = 0;
         static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SUMMON_OWN:int = 1;
+        static const SKILL_EXPERIENCE_GAIN:int = -2;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const TYPE_SUMMON_OWN:int = 3;
         static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
@@ -88,9 +89,9 @@
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+        static const STATE_FAST:int = 6;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
         static const SKILL_MANA_LEECH_AMOUNT:int = 24;
-        static const STATE_FAST:int = 6;
         static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
@@ -126,7 +127,7 @@
 
         public function CharacterProfileWidget()
         {
-            this.m_UISkills = [{skill:SKILL_LEVEL, label:"FORM_ITEM_LEVEL", renderer:null, leftSide:true}, {skill:SKILL_EXPERIENCE, label:"FORM_ITEM_EXPERIENCE", renderer:null, leftSide:true}, {skill:SKILL_HITPOINTS, label:"FORM_ITEM_HITPOINTS", renderer:null, leftSide:true}, {skill:SKILL_MANA, label:"FORM_ITEM_MANA", renderer:null, leftSide:true}, {skill:SKILL_CARRYSTRENGTH, label:"FORM_ITEM_CARRYSTRENGTH", renderer:null, leftSide:true}, {skill:SKILL_SOULPOINTS, label:"FORM_ITEM_SOULPOINTS", renderer:null, leftSide:true}, {skill:SKILL_STAMINA, label:"FORM_ITEM_STAMINA", renderer:null, leftSide:true}, {skill:SKILL_OFFLINETRAINING, label:"FORM_ITEM_OFFLINETRAINING", renderer:null, leftSide:true}, {skill:SKILL_GOSTRENGTH, label:"FORM_ITEM_GOSTRENGTH", renderer:null, leftSide:true}, {skill:SKILL_FED, label:"FORM_ITEM_FED", renderer:null, leftSide:true}, {skill:SKILL_MAGLEVEL, label:"FORM_ITEM_MAGLEVEL", renderer:null, leftSide:false}, {skill:SKILL_FIGHTFIST, label:"FORM_ITEM_FIGHTFIST", renderer:null, leftSide:false}, {skill:SKILL_FIGHTAXE, label:"FORM_ITEM_FIGHTAXE", renderer:null, leftSide:false}, {skill:SKILL_FIGHTCLUB, label:"FORM_ITEM_FIGHTCLUB", renderer:null, leftSide:false}, {skill:SKILL_FIGHTSWORD, label:"FORM_ITEM_FIGHTSWORD", renderer:null, leftSide:false}, {skill:SKILL_FIGHTDISTANCE, label:"FORM_ITEM_FIGHTDISTANCE", renderer:null, leftSide:false}, {skill:SKILL_FIGHTSHIELD, label:"FORM_ITEM_FIGHTSHIELD", renderer:null, leftSide:false}, {skill:SKILL_FISHING, label:"FORM_ITEM_FISHING", renderer:null, leftSide:false}, {skill:SKILL_CRITICAL_HIT_CHANCE, label:"FORM_ITEM_CRITICAL_HIT_CHANCE", renderer:null, leftSide:false}, {skill:SKILL_CRITICAL_HIT_DAMAGE, label:"FORM_ITEM_CRITICAL_HIT_DAMAGE", renderer:null, leftSide:false}, {skill:SKILL_LIFE_LEECH_CHANCE, label:"FORM_ITEM_LIFE_LEECH_CHANCE", renderer:null, leftSide:false}, {skill:SKILL_LIFE_LEECH_AMOUNT, label:"FORM_ITEM_LIFE_LEECH_AMOUNT", renderer:null, leftSide:false}, {skill:SKILL_MANA_LEECH_CHANCE, label:"FORM_ITEM_MANA_LEECH_CHANCE", renderer:null, leftSide:false}, {skill:SKILL_MANA_LEECH_AMOUNT, label:"FORM_ITEM_MANA_LEECH_AMOUNT", renderer:null, leftSide:false}];
+            this.m_UISkills = [{skill:SKILL_LEVEL, label:"FORM_ITEM_LEVEL", renderer:null, leftSide:true}, {skill:SKILL_EXPERIENCE, label:"FORM_ITEM_EXPERIENCE", renderer:null, leftSide:true}, {skill:SKILL_EXPERIENCE_GAIN, label:"FORM_ITEM_EXPERIENCEGAIN", renderer:null, leftSide:true}, {skill:SKILL_HITPOINTS, label:"FORM_ITEM_HITPOINTS", renderer:null, leftSide:true}, {skill:SKILL_MANA, label:"FORM_ITEM_MANA", renderer:null, leftSide:true}, {skill:SKILL_CARRYSTRENGTH, label:"FORM_ITEM_CARRYSTRENGTH", renderer:null, leftSide:true}, {skill:SKILL_SOULPOINTS, label:"FORM_ITEM_SOULPOINTS", renderer:null, leftSide:true}, {skill:SKILL_STAMINA, label:"FORM_ITEM_STAMINA", renderer:null, leftSide:true}, {skill:SKILL_OFFLINETRAINING, label:"FORM_ITEM_OFFLINETRAINING", renderer:null, leftSide:true}, {skill:SKILL_GOSTRENGTH, label:"FORM_ITEM_GOSTRENGTH", renderer:null, leftSide:true}, {skill:SKILL_FED, label:"FORM_ITEM_FED", renderer:null, leftSide:true}, {skill:SKILL_MAGLEVEL, label:"FORM_ITEM_MAGLEVEL", renderer:null, leftSide:false}, {skill:SKILL_FIGHTFIST, label:"FORM_ITEM_FIGHTFIST", renderer:null, leftSide:false}, {skill:SKILL_FIGHTAXE, label:"FORM_ITEM_FIGHTAXE", renderer:null, leftSide:false}, {skill:SKILL_FIGHTCLUB, label:"FORM_ITEM_FIGHTCLUB", renderer:null, leftSide:false}, {skill:SKILL_FIGHTSWORD, label:"FORM_ITEM_FIGHTSWORD", renderer:null, leftSide:false}, {skill:SKILL_FIGHTDISTANCE, label:"FORM_ITEM_FIGHTDISTANCE", renderer:null, leftSide:false}, {skill:SKILL_FIGHTSHIELD, label:"FORM_ITEM_FIGHTSHIELD", renderer:null, leftSide:false}, {skill:SKILL_FISHING, label:"FORM_ITEM_FISHING", renderer:null, leftSide:false}, {skill:SKILL_CRITICAL_HIT_CHANCE, label:"FORM_ITEM_CRITICAL_HIT_CHANCE", renderer:null, leftSide:false}, {skill:SKILL_CRITICAL_HIT_DAMAGE, label:"FORM_ITEM_CRITICAL_HIT_DAMAGE", renderer:null, leftSide:false}, {skill:SKILL_LIFE_LEECH_CHANCE, label:"FORM_ITEM_LIFE_LEECH_CHANCE", renderer:null, leftSide:false}, {skill:SKILL_LIFE_LEECH_AMOUNT, label:"FORM_ITEM_LIFE_LEECH_AMOUNT", renderer:null, leftSide:false}, {skill:SKILL_MANA_LEECH_CHANCE, label:"FORM_ITEM_MANA_LEECH_CHANCE", renderer:null, leftSide:false}, {skill:SKILL_MANA_LEECH_AMOUNT, label:"FORM_ITEM_MANA_LEECH_AMOUNT", renderer:null, leftSide:false}];
             buttonFlags = PopUpBase.BUTTON_CLOSE;
             keyboardFlags = PopUpBase.KEY_ESCAPE;
             title = resourceManager.getString(BUNDLE, "TITLE");
@@ -151,7 +152,12 @@
                 _loc_1 = _loc_2.renderer as Label;
                 if (_loc_5 != null)
                 {
-                    _loc_1.htmlText = this.formatSkill(this.m_Player, _loc_2.skill);
+                    if (_loc_2.skill != SKILL_EXPERIENCE_GAIN)
+                    {
+                        _loc_1.htmlText = this.formatSkill(this.m_Player, _loc_2.skill);
+                        continue;
+                    }
+                    _loc_1.htmlText = (this.m_Player.experienceGainInfo.computeXpGainModifier() * 100).toFixed(0) + "%";
                 }
             }
             return;
@@ -242,7 +248,7 @@
             {
                 this.m_UIName.htmlText = this.player.name;
             }
-            else if (event.property == "skill")
+            else if (event.property == "skill" || event.property == "xpGain")
             {
                 this.updateSkills();
             }

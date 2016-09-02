@@ -1,6 +1,7 @@
 ﻿package tibia.creatures.statusWidgetClasses
 {
     import flash.display.*;
+    import flash.events.*;
     import flash.filters.*;
     import flash.geom.*;
     import flash.text.*;
@@ -11,6 +12,7 @@
     import shared.controls.*;
     import shared.utility.*;
     import tibia.creatures.*;
+    import tibia.ingameshop.*;
 
     public class SkillProgressBar extends HBox
     {
@@ -25,6 +27,7 @@
         private var m_UIProgress:BitmapProgressBar = null;
         private var m_UILabel:Bitmap = null;
         private var m_Character:Player = null;
+        private var m_UIBuyXpBoostButton:CustomButton = null;
         private var m_UIIcon:ShapeWrapper = null;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
         static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
@@ -90,6 +93,7 @@
         static const PARTY_NONE:int = 0;
         static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SUMMON_OWN:int = 1;
+        static const SKILL_EXPERIENCE_GAIN:int = -2;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const TYPE_SUMMON_OWN:int = 3;
         static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
@@ -103,9 +107,9 @@
         static const PARTY_LEADER_SEXP_OFF:int = 4;
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+        static const STATE_FAST:int = 6;
         static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
         static const SKILL_MANA_LEECH_AMOUNT:int = 24;
-        static const STATE_FAST:int = 6;
         static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
         static const TYPE_PLAYER:int = 0;
@@ -194,10 +198,10 @@
                 {
                     _loc_7.text = resourceManager.getString(BUNDLE, "TIP_SKILL_TEXT_SIMPLE", [_loc_6, _loc_2, _loc_4, _loc_5]);
                 }
-                _loc_8 = this.character.experienceBonus * 100;
-                if (this.skill == SKILL_LEVEL && _loc_8 > 0)
+                _loc_8 = this.character.experienceGainInfo.computeXpGainModifier() * 100;
+                if (this.skill == SKILL_LEVEL)
                 {
-                    _loc_7.text = _loc_7.text + resourceManager.getString(BUNDLE, "TIP_SKILL_TEXT_EXP_BONUS", [_loc_8]);
+                    _loc_7.text = _loc_7.text + ("\n" + this.generateExperienceGainTooltip());
                 }
                 if (_loc_7 is IInvalidating)
                 {
@@ -218,14 +222,43 @@
             return;
         }// end function
 
-        protected function set skillLabel(param1:String) : void
+        public function locationChanged(param1:int) : void
         {
-            if (this.m_SkillLabel != param1)
+            if (param1 == StatusWidget.LOCATION_LEFT || param1 == StatusWidget.LOCATION_RIGHT)
             {
-                this.m_SkillLabel = param1;
-                this.m_UncommittedSkillLabel = true;
-                invalidateProperties();
+                this.m_UIBuyXpBoostButton.label = "";
             }
+            else
+            {
+                this.m_UIBuyXpBoostButton.label = resourceManager.getString(BUNDLE, "BTN_XPGAIN_BUY");
+            }
+            return;
+        }// end function
+
+        override protected function createChildren() : void
+        {
+            super.createChildren();
+            this.m_UIIcon = new ShapeWrapper();
+            this.m_UIIcon.styleName = getStyle("iconStyleName");
+            addChild(this.m_UIIcon);
+            this.m_UILabel = new Bitmap();
+            this.m_UILabelWrapper = new ShapeWrapper();
+            this.m_UILabelWrapper.addChild(this.m_UILabel);
+            addChild(this.m_UILabelWrapper);
+            this.m_UIProgress = new BitmapProgressBar();
+            this.m_UIProgress.labelEnabled = false;
+            this.m_UIProgress.labelFormat = "{1}%";
+            this.m_UIProgress.percentWidth = 100;
+            this.m_UIProgress.styleName = getStyle("progressBarStyleName");
+            this.m_UIProgress.tickValues = [25, 50, 75];
+            addChild(this.m_UIProgress);
+            this.m_UIBuyXpBoostButton = new CustomButton();
+            this.m_UIBuyXpBoostButton.label = resourceManager.getString(BUNDLE, "BTN_XPGAIN_BUY");
+            this.m_UIBuyXpBoostButton.labelPlacement = "right";
+            this.m_UIBuyXpBoostButton.styleName = "buttonDialogOpenStoreButton";
+            this.m_UIBuyXpBoostButton.toolTip = resourceManager.getString(BUNDLE, "TIP_XPGAIN_BUY_BUTTON");
+            this.m_UIBuyXpBoostButton.addEventListener(MouseEvent.CLICK, this.onBuyXpBoostClicked);
+            addChild(this.m_UIBuyXpBoostButton);
             return;
         }// end function
 
@@ -278,9 +311,31 @@
             return;
         }// end function
 
+        private function onXpBoostAvailabilityChange(event:PropertyChangeEvent) : void
+        {
+            if (event.property == "storeXpBoost")
+            {
+                this.updateBuyXpButtonEnabledState();
+            }
+            return;
+        }// end function
+
         public function get skill() : int
         {
             return this.m_Skill;
+        }// end function
+
+        private function updateBuyXpButtonEnabledState() : void
+        {
+            if (this.m_Character != null)
+            {
+                this.m_UIBuyXpBoostButton.enabled = this.m_Character.experienceGainInfo.canCurrentlyBuyXpBoost && this.m_Character.experienceGainInfo.remaingStoreXpBoostSeconds == 0;
+            }
+            else
+            {
+                this.m_UIBuyXpBoostButton.enabled = false;
+            }
+            return;
         }// end function
 
         public function set character(param1:Player) : void
@@ -290,6 +345,7 @@
                 if (this.m_Character != null)
                 {
                     this.m_Character.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, this.onCharacterChange);
+                    this.m_Character.experienceGainInfo.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, this.onXpBoostAvailabilityChange);
                 }
                 this.m_Character = param1;
                 this.m_UncommittedCharacter = true;
@@ -297,6 +353,7 @@
                 if (this.m_Character != null)
                 {
                     this.m_Character.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, this.onCharacterChange);
+                    this.m_Character.experienceGainInfo.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, this.onXpBoostAvailabilityChange);
                 }
             }
             return;
@@ -304,7 +361,7 @@
 
         private function onCharacterChange(event:PropertyChangeEvent) : void
         {
-            if ((event.property == "skill" || event.property == "*") && this.skill != SKILL_NONE)
+            if ((event.property == "skill" || event.property == "xpGain" || event.property == "*") && this.skill != SKILL_NONE)
             {
                 this.skillLabel = String(this.character.getSkillValue(this.skill));
                 this.m_UIProgress.value = this.character.getSkillProgress(this.skill);
@@ -313,13 +370,84 @@
             return;
         }// end function
 
+        private function generateExperienceGainTooltip() : String
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_1:* = resourceManager.getString(BUNDLE, "TIP_XPGAIN_BASE", [(this.m_Character.experienceGainInfo.computeXpGainModifier() * 100).toFixed(0), (this.m_Character.experienceGainInfo.baseXpGain * 100).toFixed(0)]);
+            if (this.m_Character.experienceGainInfo.grindingAddend > 0)
+            {
+                _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_GRINDING", [(this.m_Character.experienceGainInfo.grindingAddend * 100).toFixed(0)]);
+            }
+            if (this.m_Character.experienceGainInfo.remaingStoreXpBoostSeconds > 0)
+            {
+                _loc_2 = this.m_Character.experienceGainInfo.remaingStoreXpBoostSeconds % 60;
+                _loc_3 = this.m_Character.experienceGainInfo.remaingStoreXpBoostSeconds;
+                if (_loc_2 > 0)
+                {
+                    _loc_3 = _loc_3 + (60 - _loc_2);
+                }
+                if (this.m_Character.experienceGainInfo.storeBoostAddend > 0)
+                {
+                    _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_XPBOOST", [(this.m_Character.experienceGainInfo.storeBoostAddend * 100).toFixed(0), StringHelper.s_MillisecondsToTimeString(_loc_3 * 1000, false, true).substring(0, 5)]);
+                }
+                else
+                {
+                    _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_XPBOOST_PAUSED", [(this.m_Character.experienceGainInfo.storeBoostAddend * 100).toFixed(0)]);
+                }
+            }
+            if (this.m_Character.experienceGainInfo.voucherAddend > 0)
+            {
+                _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_VOUCHER", [(this.m_Character.experienceGainInfo.voucherAddend * 100).toFixed(0)]);
+            }
+            if (this.m_Character.experienceGainInfo.huntingBoostFactor > 1)
+            {
+                _loc_4 = this.m_Character.getSkillValue(SKILL_STAMINA);
+                _loc_5 = Math.max(0, Math.max(0, this.m_Character.getSkillValue(SKILL_STAMINA) - this.m_Character.getSkillBase(SKILL_STAMINA)) - 40 * 60 * 60 * 1000);
+                _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_HUNTINGBONUS", [this.m_Character.experienceGainInfo.huntingBoostFactor.toFixed(1), StringHelper.s_MillisecondsToTimeString(_loc_5, false, true).substring(0, 5)]);
+            }
+            else if (this.m_Character.experienceGainInfo.huntingBoostFactor < 1)
+            {
+                _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_HUNTINGMALUS", [this.m_Character.experienceGainInfo.huntingBoostFactor.toFixed(1)]);
+            }
+            return _loc_1;
+        }// end function
+
+        protected function set skillLabel(param1:String) : void
+        {
+            if (this.m_SkillLabel != param1)
+            {
+                this.m_SkillLabel = param1;
+                this.m_UncommittedSkillLabel = true;
+                invalidateProperties();
+            }
+            return;
+        }// end function
+
         private function updateExperienceBarStyle() : void
         {
             if (this.m_UIProgress != null)
             {
-                if (this.m_Character != null && this.m_Character.experienceBonus > 0)
+                if (this.skill == SKILL_LEVEL)
                 {
-                    this.m_UIProgress.styleName = getStyle("progressBarBonusStyleName");
+                    if (this.m_Character != null && this.m_Character.experienceGainInfo.computeXpGainModifier() > 1)
+                    {
+                        this.m_UIProgress.styleName = getStyle("progressBarBonusStyleName");
+                    }
+                    else if (this.m_Character != null && this.m_Character.experienceGainInfo.computeXpGainModifier() == 0)
+                    {
+                        this.m_UIProgress.styleName = getStyle("progressBarZeroStyleName");
+                    }
+                    else if (this.m_Character != null && this.m_Character.experienceGainInfo.computeXpGainModifier() < 1)
+                    {
+                        this.m_UIProgress.styleName = getStyle("progressBarMalusStyleName");
+                    }
+                    else
+                    {
+                        this.m_UIProgress.styleName = getStyle("progressBarStyleName");
+                    }
                 }
                 else
                 {
@@ -386,6 +514,7 @@
                     this.skillLabel = String(this.character.getSkillValue(this.skill));
                     this.m_UIProgress.value = this.character.getSkillProgress(this.skill);
                 }
+                this.updateBuyXpButtonEnabledState();
                 this.m_UncommittedCharacter = false;
             }
             if (this.m_UncommittedSkill)
@@ -413,6 +542,7 @@
                     visible = false;
                 }
                 this.updateExperienceBarStyle();
+                this.updateBuyXpButtonEnabledState();
                 this.m_UncommittedSkill = false;
             }
             if (this.m_UncommittedSkillLabel)
@@ -420,6 +550,12 @@
                 this.updateSkillLabel(this.skillLabel);
                 this.m_UncommittedSkillLabel = false;
             }
+            return;
+        }// end function
+
+        private function onBuyXpBoostClicked(event:MouseEvent) : void
+        {
+            IngameShopManager.getInstance().openShopWindow(true, IngameShopProduct.SERVICE_TYPE_XPBOOST);
             return;
         }// end function
 
@@ -433,26 +569,6 @@
             this.updateExperienceBarStyle();
             this.m_UncommittedSkillLabel = true;
             invalidateProperties();
-            return;
-        }// end function
-
-        override protected function createChildren() : void
-        {
-            super.createChildren();
-            this.m_UIIcon = new ShapeWrapper();
-            this.m_UIIcon.styleName = getStyle("iconStyleName");
-            addChild(this.m_UIIcon);
-            this.m_UILabel = new Bitmap();
-            this.m_UILabelWrapper = new ShapeWrapper();
-            this.m_UILabelWrapper.addChild(this.m_UILabel);
-            addChild(this.m_UILabelWrapper);
-            this.m_UIProgress = new BitmapProgressBar();
-            this.m_UIProgress.labelEnabled = false;
-            this.m_UIProgress.labelFormat = "{1}%";
-            this.m_UIProgress.percentWidth = 100;
-            this.m_UIProgress.styleName = getStyle("progressBarStyleName");
-            this.m_UIProgress.tickValues = [25, 50, 75];
-            addChild(this.m_UIProgress);
             return;
         }// end function
 

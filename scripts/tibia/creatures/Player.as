@@ -12,6 +12,7 @@
     public class Player extends Creature
     {
         protected var m_AutowalkPathDelta:Vector3D;
+        private var m_ExperienceGainInfo:ExperienceGainInfo;
         private var m_StateFlags:uint = 4.29497e+009;
         private var m_Profession:int = 0;
         protected var m_AutowalkTargetDiagonal:Boolean = false;
@@ -20,7 +21,6 @@
         private var m_OpenPvPSituations:uint = 0;
         private var m_Blessings:uint = 0;
         protected var m_AutowalkTarget:Vector3D;
-        protected var m_ExperienceBonus:Number = 0;
         protected var m_AutowalkTargetExact:Boolean = false;
         private var m_Premium:Boolean = false;
         protected var m_AutowalkPathSteps:Array;
@@ -55,12 +55,14 @@
         public function Player()
         {
             this.m_ExperienceCounter = new SkillCounter();
+            this.m_ExperienceGainInfo = new ExperienceGainInfo();
             this.m_AutowalkPathDelta = new Vector3D(0, 0, 0);
             this.m_AutowalkPathSteps = [];
             this.m_AutowalkTarget = new Vector3D(-1, -1, -1);
             this.m_KnownSpells = [];
             this.m_UnjustPoints = new UnjustPointsInfo(0, 0, 0, 0, 0, 0, 0);
             super(0, TYPE_PLAYER, null);
+            this.m_ExperienceGainInfo.addEventListener(PropertyChangeEventKind.UPDATE, this.onExperienceGainChanged);
             return;
         }// end function
 
@@ -124,6 +126,12 @@
         public function get level() : uint
         {
             return uint(getSkillValue(SKILL_LEVEL));
+        }// end function
+
+        protected function onExperienceGainChanged(event:PropertyChangeEvent) : void
+        {
+            dispatchEvent(event);
+            return;
         }// end function
 
         public function set profession(param1:int) : void
@@ -198,6 +206,13 @@
                     break;
                 }
             }
+            return;
+        }// end function
+
+        public function resetAutowalk() : void
+        {
+            this.stopAutowalk(true);
+            this.abortAutowalk(2);
             return;
         }// end function
 
@@ -367,12 +382,6 @@
                 return getSkillValue(SKILL_HITPOINTS) * 100 / _loc_1;
             }
             return 100;
-        }// end function
-
-        public function set experienceBonus(param1:Number) : void
-        {
-            this.m_ExperienceBonus = param1;
-            return;
         }// end function
 
         public function set premium(param1:Boolean) : void
@@ -546,24 +555,26 @@
             return getSkillBase(SKILL_SOULPOINTS);
         }// end function
 
-        override public function reset() : void
+        public function get experienceGainInfo() : ExperienceGainInfo
         {
-            var _loc_1:* = m_ID;
-            super.reset();
-            this.resetAutowalk();
-            this.resetFlags();
-            this.resetSkills();
-            m_ID = _loc_1;
-            this.m_KnownSpells.length = 0;
-            this.m_Premium = false;
-            this.m_PremiumUntil = 0;
-            this.m_Blessings = BLESSING_NONE;
-            this.m_Profession = PROFESSION_NONE;
-            m_Type = TYPE_PLAYER;
-            var _loc_2:* = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-            _loc_2.kind = PropertyChangeEventKind.UPDATE;
-            _loc_2.property = "*";
-            dispatchEvent(_loc_2);
+            return this.m_ExperienceGainInfo;
+        }// end function
+
+        public function set knownSpells(param1:Array) : void
+        {
+            var _loc_2:* = null;
+            if (param1 == null)
+            {
+                param1 = [];
+            }
+            if (this.m_KnownSpells != param1)
+            {
+                this.m_KnownSpells = param1.sort(Array.NUMERIC);
+                _loc_2 = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+                _loc_2.kind = PropertyChangeEventKind.UPDATE;
+                _loc_2.property = "knownSpells";
+                dispatchEvent(_loc_2);
+            }
             return;
         }// end function
 
@@ -638,10 +649,24 @@
             return;
         }// end function
 
-        public function resetAutowalk() : void
+        override public function reset() : void
         {
-            this.stopAutowalk(true);
-            this.abortAutowalk(2);
+            var _loc_1:* = m_ID;
+            super.reset();
+            this.resetAutowalk();
+            this.resetFlags();
+            this.resetSkills();
+            m_ID = _loc_1;
+            this.m_KnownSpells.length = 0;
+            this.m_Premium = false;
+            this.m_PremiumUntil = 0;
+            this.m_Blessings = BLESSING_NONE;
+            this.m_Profession = PROFESSION_NONE;
+            m_Type = TYPE_PLAYER;
+            var _loc_2:* = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc_2.kind = PropertyChangeEventKind.UPDATE;
+            _loc_2.property = "*";
+            dispatchEvent(_loc_2);
             return;
         }// end function
 
@@ -659,33 +684,10 @@
             return;
         }// end function
 
-        public function set knownSpells(param1:Array) : void
-        {
-            var _loc_2:* = null;
-            if (param1 == null)
-            {
-                param1 = [];
-            }
-            if (this.m_KnownSpells != param1)
-            {
-                this.m_KnownSpells = param1.sort(Array.NUMERIC);
-                _loc_2 = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-                _loc_2.kind = PropertyChangeEventKind.UPDATE;
-                _loc_2.property = "knownSpells";
-                dispatchEvent(_loc_2);
-            }
-            return;
-        }// end function
-
         public function set stateFlags(param1:uint) : void
         {
             this.updateStateFlags(param1);
             return;
-        }// end function
-
-        public function get experienceBonus() : Number
-        {
-            return this.m_ExperienceBonus;
         }// end function
 
         public function get knownSpells() : Array
@@ -706,6 +708,7 @@
                 _loc_1 = _loc_1 + 3;
             }
             this.m_ExperienceCounter.reset();
+            this.m_ExperienceGainInfo.reset();
             return;
         }// end function
 

@@ -76,7 +76,7 @@
         static const STATE_DRUNK:int = 3;
         static const PARTY_OTHER:int = 11;
         static const SKILL_EXPERIENCE:int = 0;
-        static const PACKETLENGTH_SIZE:int = 2;
+        static const CGETOUTFIT:int = 210;
         static const SSETTACTICS:int = 167;
         static const SKILL_GOSTRENGTH:int = 6;
         static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
@@ -188,7 +188,7 @@
         static const CGETQUESTLINE:int = 241;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const SCHANNELS:int = 171;
-        public static const CLIENT_VERSION:uint = 2279;
+        public static const CLIENT_VERSION:uint = 2309;
         static const TYPE_SUMMON_OWN:int = 3;
         static const NPC_SPEECH_QUESTTRADER:uint = 4;
         static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
@@ -202,21 +202,23 @@
         static const STOPFLOOR:int = 190;
         static const PATH_ERROR_UNREACHABLE:int = -4;
         static const CGETTRANSACTIONHISTORY:int = 254;
-        static const SLOGINWAIT:int = 22;
+        static const SSTOREBUTTONINDICATORS:int = 25;
         static const SCREATEONMAP:int = 106;
         static const CPRIVATECHANNEL:int = 154;
-        static const SINGAMESHOPSUCCESS:int = 254;
+        static const SLOGINWAIT:int = 22;
         public static const PREVIEW_STATE_REGULAR:uint = 0;
         static const PATH_SOUTH_WEST:int = 6;
         static const PAYLOADLENGTH_POS:int = 6;
         static const CLOOK:int = 140;
-        static const ERR_INVALID_CHECKSUM:int = 2;
+        static const SINGAMESHOPSUCCESS:int = 254;
         static const CTRADEOBJECT:int = 125;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
+        static const ERR_INVALID_CHECKSUM:int = 2;
         static const SCONTAINER:int = 110;
         static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const SNPCOFFER:int = 122;
         static const SWORLDENTERED:int = 15;
+        static const PACKETLENGTH_SIZE:int = 2;
         static const PAYLOAD_POS:int = 6;
         static const CEXCLUDEFROMCHANNEL:int = 172;
         static const SKILL_HITPOINTS:int = 4;
@@ -249,12 +251,12 @@
         static const SKILL_FIGHTFIST:int = 13;
         static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
         static const GUILD_WAR_ENEMY:int = 2;
-        static const SCREATURESPEED:int = 143;
         static const CREQUESTSHOPOFFERS:int = 251;
         static const PROFESSION_MASK_ANY:int = PROFESSION_MASK_DRUID | PROFESSION_MASK_KNIGHT | PROFESSION_MASK_PALADIN | PROFESSION_MASK_SORCERER;
         static const STATE_FIGHTING:int = 7;
         static const CANSWERMODALDIALOG:int = 249;
         static const NPC_SPEECH_NORMAL:uint = 1;
+        static const SCREATURESPEED:int = 143;
         static const SSPELLDELAY:int = 164;
         static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
         static const SDELETEONMAP:int = 108;
@@ -263,7 +265,7 @@
         static const RISKINESS_NONE:int = 0;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1096;
+        public static const PROTOCOL_VERSION:int = 1097;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CEDITBUDDY:int = 222;
         static const CROTATEWEST:int = 114;
@@ -343,6 +345,7 @@
         static const SKILL_CRITICAL_HIT_CHANCE:int = 19;
         static const SCHANGEONMAP:int = 107;
         static const CGOPATH:int = 100;
+        static const SKILL_EXPERIENCE_GAIN:int = -2;
         static const FIELD_ENTER_NOT_POSSIBLE:uint = 2;
         static const CEQUIPOBJECT:int = 119;
         static const CGOSOUTHEAST:int = 107;
@@ -424,7 +427,7 @@
         static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
         static const PAYLOADDATA_POSITION:int = 8;
         static const NPC_SPEECH_NONE:uint = 0;
-        static const CGETOUTFIT:int = 210;
+        static const SSETSTOREDEEPLINK:int = 168;
         static const PATH_MATRIX_CENTER:int = 110;
         static const PK_MAX_FLASHING_TIME:uint = 5000;
         static const SPLAYERSTATE:int = 162;
@@ -1112,16 +1115,14 @@
                 _loc_2.push(param1.readUnsignedByte());
                 _loc_3 = _loc_3 - 1;
             }
-            var _loc_4:* = param1.readUnsignedByte();
-            Tibia.s_GetPremiumManager().updatePremiumMessages(_loc_2, _loc_4);
-            IngameShopManager.getInstance().currentlyFeaturedServiceType = _loc_4;
+            Tibia.s_GetPremiumManager().updatePremiumMessages(_loc_2);
             return;
         }// end function
 
         protected function readSTRANSACTIONHISTORY(param1:ByteArray) : void
         {
             var _loc_2:* = 0;
-            var _loc_3:* = false;
+            var _loc_3:* = 0;
             var _loc_4:* = 0;
             var _loc_5:* = null;
             var _loc_6:* = 0;
@@ -1129,8 +1130,8 @@
             var _loc_8:* = 0;
             var _loc_9:* = NaN;
             var _loc_10:* = null;
-            _loc_2 = param1.readUnsignedShort();
-            _loc_3 = param1.readUnsignedByte() == 1;
+            _loc_2 = param1.readUnsignedInt();
+            _loc_3 = param1.readUnsignedInt();
             _loc_4 = param1.readUnsignedByte();
             _loc_5 = new Vector.<IngameShopHistoryEntry>;
             _loc_6 = 0;
@@ -1553,11 +1554,17 @@
         protected function readSPLAYERSKILLS(param1:ByteArray) : void
         {
             var _loc_2:* = 0;
-            var _loc_3:* = 0;
-            var _loc_4:* = 0;
-            var _loc_5:* = 0;
-            var _loc_6:* = [SKILL_FIGHTFIST, SKILL_FIGHTCLUB, SKILL_FIGHTSWORD, SKILL_FIGHTAXE, SKILL_FIGHTDISTANCE, SKILL_FIGHTSHIELD, SKILL_FISHING];
-            var _loc_7:* = [SKILL_CRITICAL_HIT_CHANCE, SKILL_CRITICAL_HIT_DAMAGE, SKILL_LIFE_LEECH_CHANCE, SKILL_LIFE_LEECH_AMOUNT, SKILL_MANA_LEECH_CHANCE, SKILL_MANA_LEECH_AMOUNT];
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            _loc_2 = 0;
+            _loc_3 = 0;
+            _loc_4 = 0;
+            _loc_5 = 0;
+            _loc_6 = [SKILL_FIGHTFIST, SKILL_FIGHTCLUB, SKILL_FIGHTSWORD, SKILL_FIGHTAXE, SKILL_FIGHTDISTANCE, SKILL_FIGHTSHIELD, SKILL_FISHING];
+            _loc_7 = [SKILL_CRITICAL_HIT_CHANCE, SKILL_CRITICAL_HIT_DAMAGE, SKILL_LIFE_LEECH_CHANCE, SKILL_LIFE_LEECH_AMOUNT, SKILL_MANA_LEECH_CHANCE, SKILL_MANA_LEECH_AMOUNT];
             for each (_loc_2 in _loc_6)
             {
                 
@@ -1576,27 +1583,10 @@
             return;
         }// end function
 
-        protected function readSCLEARTARGET(param1:ByteArray) : void
+        protected function readSSTOREBUTTONINDICATORS(param1:ByteArray) : void
         {
-            var _loc_2:* = 0;
-            var _loc_3:* = null;
-            _loc_2 = param1.readUnsignedInt();
-            _loc_3 = null;
-            var _loc_4:* = this.m_CreatureStorage.getAttackTarget();
-            _loc_3 = this.m_CreatureStorage.getAttackTarget();
-            if (_loc_4 != null && _loc_2 == _loc_3.ID)
-            {
-                this.m_CreatureStorage.setAttackTarget(null, false);
-            }
-            else
-            {
-                var _loc_4:* = this.m_CreatureStorage.getFollowTarget();
-                _loc_3 = this.m_CreatureStorage.getFollowTarget();
-                if (_loc_4 != null && _loc_2 == _loc_3.ID)
-                {
-                    this.m_CreatureStorage.setFollowTarget(null, false);
-                }
-            }
+            var _loc_2:* = param1.readBoolean();
+            var _loc_3:* = param1.readBoolean();
             return;
         }// end function
 
@@ -1624,6 +1614,30 @@
             catch (e:Error)
             {
                 handleSendError(CEDITLIST, e);
+            }
+            return;
+        }// end function
+
+        protected function readSCLEARTARGET(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = null;
+            _loc_2 = param1.readUnsignedInt();
+            _loc_3 = null;
+            var _loc_4:* = this.m_CreatureStorage.getAttackTarget();
+            _loc_3 = this.m_CreatureStorage.getAttackTarget();
+            if (_loc_4 != null && _loc_2 == _loc_3.ID)
+            {
+                this.m_CreatureStorage.setAttackTarget(null, false);
+            }
+            else
+            {
+                var _loc_4:* = this.m_CreatureStorage.getFollowTarget();
+                _loc_3 = this.m_CreatureStorage.getFollowTarget();
+                if (_loc_4 != null && _loc_2 == _loc_3.ID)
+                {
+                    this.m_CreatureStorage.setFollowTarget(null, false);
+                }
             }
             return;
         }// end function
@@ -2244,8 +2258,8 @@
             {
                 b = this.m_ServerConnection.messageWriter.createMessage();
                 b.writeByte(CGETTRANSACTIONHISTORY);
-                b.writeShort(a_CurrentPage);
-                b.writeUnsignedInt(a_EntriesPerPage);
+                b.writeUnsignedInt(a_CurrentPage);
+                b.writeByte(a_EntriesPerPage);
                 this.m_ServerConnection.messageWriter.finishMessage();
             }
             catch (e:Error)
@@ -2732,7 +2746,12 @@
             _loc_4 = 1;
             _loc_5 = param1.readUnsignedByte();
             this.m_Player.setSkill(SKILL_LEVEL, _loc_3, _loc_4, _loc_5);
-            this.m_Player.experienceBonus = this.readDouble(param1);
+            var _loc_6:* = param1.readUnsignedShort() / 100;
+            var _loc_7:* = param1.readUnsignedShort() / 100;
+            var _loc_8:* = param1.readUnsignedShort() / 100;
+            var _loc_9:* = param1.readUnsignedShort() / 100;
+            var _loc_10:* = param1.readUnsignedShort() / 100;
+            this.m_Player.experienceGainInfo.updateGainInfo(_loc_6, _loc_7, _loc_8, _loc_9, _loc_10);
             _loc_3 = Math.max(0, param1.readShort());
             _loc_4 = Math.max(0, param1.readShort());
             _loc_5 = 0;
@@ -2761,6 +2780,9 @@
             _loc_4 = _loc_2;
             _loc_5 = 0;
             this.m_Player.setSkill(SKILL_OFFLINETRAINING, _loc_3, _loc_4, _loc_5);
+            var _loc_11:* = param1.readUnsignedShort();
+            var _loc_12:* = param1.readBoolean();
+            this.m_Player.experienceGainInfo.updateStoreXpBoost(_loc_11, _loc_12);
             return;
         }// end function
 
@@ -2943,6 +2965,14 @@
             {
                 handleSendError(CCLOSENPCTRADE, e);
             }
+            return;
+        }// end function
+
+        protected function readSSETSTOREDEEPLINK(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            _loc_2 = param1.readUnsignedByte();
+            IngameShopManager.getInstance().currentlyFeaturedServiceType = _loc_2;
             return;
         }// end function
 
@@ -3871,6 +3901,12 @@
                         a_MessageReader.finishMessage();
                         break;
                     }
+                    case SSTOREBUTTONINDICATORS:
+                    {
+                        this.readSSTOREBUTTONINDICATORS(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
                     case SDEAD:
                     {
                         this.readSDEAD(CommunicationData);
@@ -4180,6 +4216,12 @@
                     case SSETTACTICS:
                     {
                         this.readSSETTACTICS(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SSETSTOREDEEPLINK:
+                    {
+                        this.readSSETSTOREDEEPLINK(CommunicationData);
                         a_MessageReader.finishMessage();
                         break;
                     }
@@ -4825,6 +4867,11 @@
                 _loc_10 = new IngameShopOffer(_loc_7, _loc_8, _loc_9);
                 _loc_10.price = param1.readUnsignedInt();
                 _loc_10.highlightState = param1.readUnsignedByte();
+                if (_loc_10.highlightState == IngameShopOffer.HIGHLIGHT_STATE_SALE)
+                {
+                    _loc_10.saleValidUntilTimestamp = param1.readUnsignedInt();
+                    _loc_10.basePrice = param1.readUnsignedInt();
+                }
                 _loc_10.disabledState = param1.readUnsignedByte();
                 if (_loc_10.disabledState == IngameShopOffer.DISABLED_STATE_DISABLED)
                 {
@@ -5463,8 +5510,8 @@
                     {
                         ChannelID = a_Bytes.readUnsignedShort();
                         Text = StringHelper.s_ReadLongStringFromByteArray(a_Bytes);
-                        SpeakerMatch = Text.match(/^(.+?) invites you to |^You have been excluded from ([^']+)'s channel\./);
-                        Speaker = SpeakerMatch != null ? (SpeakerMatch[1] != undefined ? (SpeakerMatch[1]) : (SpeakerMatch[3])) : (null);
+                        SpeakerMatch = Text.match(/^(.+?) invites you to |^You have been excluded from the channel ([^']+)'s Channel\.$/);
+                        Speaker = SpeakerMatch != null ? (SpeakerMatch[1] != undefined ? (SpeakerMatch[1]) : (SpeakerMatch[2])) : (null);
                         NameFilter = Tibia.s_GetOptions().getNameFilterSet(NameFilterSet.DEFAULT_SET);
                         if (NameFilter != null && NameFilter.acceptMessage(Mode, Speaker, Text))
                         {
