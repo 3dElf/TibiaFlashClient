@@ -61,7 +61,7 @@
         static const CCLOSENPCCHANNEL:int = 158;
         static const CHECKSUM_POS:int = 2;
         static const CBUYOBJECT:int = 122;
-        public static const CLIENT_VERSION:uint = 2309;
+        public static const CLIENT_VERSION:uint = 2357;
         static const SPING:int = 29;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
         static const SWAIT:int = 182;
@@ -163,7 +163,7 @@
         static const CROTATEWEST:int = 114;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1097;
+        public static const PROTOCOL_VERSION:int = 1099;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const SLOGINCHALLENGE:int = 31;

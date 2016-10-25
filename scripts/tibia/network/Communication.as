@@ -188,7 +188,7 @@
         static const CGETQUESTLINE:int = 241;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const SCHANNELS:int = 171;
-        public static const CLIENT_VERSION:uint = 2309;
+        public static const CLIENT_VERSION:uint = 2357;
         static const TYPE_SUMMON_OWN:int = 3;
         static const NPC_SPEECH_QUESTTRADER:uint = 4;
         static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
@@ -265,7 +265,7 @@
         static const RISKINESS_NONE:int = 0;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1097;
+        public static const PROTOCOL_VERSION:int = 1099;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CEDITBUDDY:int = 222;
         static const CROTATEWEST:int = 114;

@@ -406,6 +406,7 @@
         protected var m_TutorialData:Object;
         private var _embed_css_images_Button_Maximize_pressed_png_1415129086:Class;
         private var _embed_css_images_ChatTab_tileable_idle_png_627868017:Class;
+        protected var m_EnableFocusNotifier:Boolean = true;
         protected var m_CurrentOptionsUploading:Boolean = false;
         private var _embed_css_images_Icons_CombatControls_WhiteHandOff_over_png_814885792:Class;
         private var _embed_css_images_Icons_ProgressBars_SwordFighting_png_726197318:Class;
@@ -474,7 +475,7 @@
         private static const SHAREDOBJECT_NAME:String = "options";
         static const CONNECTION_STATE_PENDING:int = 3;
         public static const BUGGY_FLASH_PLAYER_VERSION:String = "21,0,0,182";
-        public static const PROTOCOL_VERSION:int = 1097;
+        public static const PROTOCOL_VERSION:int = 1099;
         public static var s_FrameTibiaTimestamp:Number = 0;
         public static var s_FrameRealTimestamp:Number = 0;
         static const ERR_INVALID_SIZE:int = 1;
@@ -485,7 +486,7 @@
         static const PACKETLENGTH_SIZE:int = 2;
         private static var s_LastTibiaFactorChangeRealTimestamp:int = 0;
         static const CHECKSUM_POS:int = 2;
-        public static const CLIENT_VERSION:uint = 2309;
+        public static const CLIENT_VERSION:uint = 2357;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
         static const PAYLOADLENGTH_POS:int = 6;
         static const CONNECTION_STATE_DISCONNECTED:int = 0;
@@ -1479,13 +1480,16 @@
             if (this.m_IsActive != param1)
             {
                 this.m_IsActive = param1;
-                if (this.m_IsActive == true)
+                if (this.m_EnableFocusNotifier)
                 {
-                    FocusNotifier.getInstance().hide();
-                }
-                else
-                {
-                    FocusNotifier.getInstance().show();
+                    if (this.m_IsActive == true)
+                    {
+                        FocusNotifier.getInstance().hide();
+                    }
+                    else
+                    {
+                        FocusNotifier.getInstance().show();
+                    }
                 }
             }
             return;
@@ -9621,7 +9625,7 @@
                 this.m_UICenterColumn.getDividerAt(0).doubleClickEnabled = true;
                 this.m_UICenterColumn.getDividerAt(0).addEventListener(MouseEvent.DOUBLE_CLICK, this.onGameWindowAutofit);
             }
-            if (this.isActive == false)
+            if (this.m_EnableFocusNotifier && this.isActive == false)
             {
                 FocusNotifier.getInstance().captureMouse = true;
                 FocusNotifier.getInstance().show();
@@ -9734,6 +9738,11 @@
         {
             this.autofitGameWindow();
             return;
+        }// end function
+
+        public function get isFocusNotifierEnabled() : Boolean
+        {
+            return this.m_EnableFocusNotifier;
         }// end function
 
         private function setCurrentOptionsFromAssets(param1:IAssetProvider) : void
@@ -10511,6 +10520,19 @@
         public function get m_UIBottomContainer() : HBox
         {
             return this._967396880m_UIBottomContainer;
+        }// end function
+
+        public function set isFocusNotifierEnabled(param1:Boolean) : void
+        {
+            if (param1 != this.m_EnableFocusNotifier)
+            {
+                this.m_EnableFocusNotifier = param1;
+                if (!this.m_EnableFocusNotifier)
+                {
+                    FocusNotifier.getInstance().hide();
+                }
+            }
+            return;
         }// end function
 
         private function onConnectionLoginError(event:ConnectionEvent) : void
