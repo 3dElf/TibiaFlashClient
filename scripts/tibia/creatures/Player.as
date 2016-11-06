@@ -12,9 +12,11 @@
     public class Player extends Creature
     {
         protected var m_AutowalkPathDelta:Vector3D;
+        private var m_BankGoldBalance:Number = NaN;
         private var m_ExperienceGainInfo:ExperienceGainInfo;
-        private var m_StateFlags:uint = 4.29497e+009;
+        private var m_InventoryGoldBalance:Number = NaN;
         private var m_Profession:int = 0;
+        private var m_StateFlags:uint = 4.29497e+009;
         protected var m_AutowalkTargetDiagonal:Boolean = false;
         protected var m_ExperienceCounter:SkillCounter;
         protected var m_AutowalkPathAborting:Boolean = false;
@@ -23,6 +25,7 @@
         protected var m_AutowalkTarget:Vector3D;
         protected var m_AutowalkTargetExact:Boolean = false;
         private var m_Premium:Boolean = false;
+        private var m_HasReachedMain:Boolean = false;
         protected var m_AutowalkPathSteps:Array;
         private var m_PremiumUntil:uint = 0;
         private var m_UnjustPoints:UnjustPointsInfo;
@@ -157,6 +160,35 @@
             return this.m_Profession;
         }// end function
 
+        public function get bankGoldBalance() : Number
+        {
+            return this.m_BankGoldBalance;
+        }// end function
+
+        override public function resetSkills() : void
+        {
+            m_Skills = new Vector.<Number>((SKILL_MANA_LEECH_AMOUNT + 1) * 3, true);
+            var _loc_1:* = 0;
+            while (_loc_1 < m_Skills.length)
+            {
+                
+                m_Skills[_loc_1 + 0] = 0;
+                m_Skills[(_loc_1 + 1)] = 0;
+                m_Skills[_loc_1 + 2] = 0;
+                _loc_1 = _loc_1 + 3;
+            }
+            this.m_ExperienceCounter.reset();
+            this.m_ExperienceGainInfo.reset();
+            return;
+        }// end function
+
+        public function resetAutowalk() : void
+        {
+            this.stopAutowalk(true);
+            this.abortAutowalk(2);
+            return;
+        }// end function
+
         public function set premiumUntil(param1:uint) : void
         {
             var _loc_2:* = null;
@@ -209,13 +241,6 @@
             return;
         }// end function
 
-        public function resetAutowalk() : void
-        {
-            this.stopAutowalk(true);
-            this.abortAutowalk(2);
-            return;
-        }// end function
-
         public function set unjustPoints(param1:UnjustPointsInfo) : void
         {
             var _loc_2:* = null;
@@ -253,11 +278,6 @@
             return;
         }// end function
 
-        public function get isFighting() : Boolean
-        {
-            return (this.m_StateFlags & 1 << STATE_FIGHTING) > 0;
-        }// end function
-
         public function get manaMax() : Number
         {
             return getSkillBase(SKILL_MANA);
@@ -284,6 +304,21 @@
                 dispatchEvent(_loc_4);
             }
             return;
+        }// end function
+
+        public function set bankGoldBalance(param1:Number) : void
+        {
+            this.m_BankGoldBalance = param1;
+            var _loc_2:* = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc_2.kind = PropertyChangeEventKind.UPDATE;
+            _loc_2.property = "bankGoldBalance";
+            dispatchEvent(_loc_2);
+            return;
+        }// end function
+
+        public function get isFighting() : Boolean
+        {
+            return (this.m_StateFlags & 1 << STATE_FIGHTING) > 0;
         }// end function
 
         public function get levelPercent() : uint
@@ -329,6 +364,20 @@
             return;
         }// end function
 
+        public function set openPvpSituations(param1:uint) : void
+        {
+            var _loc_2:* = null;
+            if (this.m_OpenPvPSituations != param1)
+            {
+                this.m_OpenPvPSituations = param1;
+                _loc_2 = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+                _loc_2.kind = PropertyChangeEventKind.UPDATE;
+                _loc_2.property = "openPvpSituations";
+                dispatchEvent(_loc_2);
+            }
+            return;
+        }// end function
+
         public function getRuneUses(param1:Rune) : int
         {
             if (param1 == null || param1.restrictLevel > getSkillValue(SKILL_LEVEL) || param1.restrictMagicLevel > getSkillValue(SKILL_MAGLEVEL) || (param1.restrictProfession & 1 << this.profession) == 0)
@@ -343,6 +392,11 @@
             {
                 return 0;
             }
+        }// end function
+
+        public function get hasReachedMain() : Boolean
+        {
+            return this.m_HasReachedMain;
         }// end function
 
         public function stopAutowalk(param1:Boolean) : void
@@ -360,17 +414,13 @@
             return;
         }// end function
 
-        public function set openPvpSituations(param1:uint) : void
+        public function set premium(param1:Boolean) : void
         {
-            var _loc_2:* = null;
-            if (this.m_OpenPvPSituations != param1)
-            {
-                this.m_OpenPvPSituations = param1;
-                _loc_2 = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-                _loc_2.kind = PropertyChangeEventKind.UPDATE;
-                _loc_2.property = "openPvpSituations";
-                dispatchEvent(_loc_2);
-            }
+            this.m_Premium = param1;
+            var _loc_2:* = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc_2.kind = PropertyChangeEventKind.UPDATE;
+            _loc_2.property = "premium";
+            dispatchEvent(_loc_2);
             return;
         }// end function
 
@@ -382,16 +432,6 @@
                 return getSkillValue(SKILL_HITPOINTS) * 100 / _loc_1;
             }
             return 100;
-        }// end function
-
-        public function set premium(param1:Boolean) : void
-        {
-            this.m_Premium = param1;
-            var _loc_2:* = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-            _loc_2.kind = PropertyChangeEventKind.UPDATE;
-            _loc_2.property = "premium";
-            dispatchEvent(_loc_2);
-            return;
         }// end function
 
         public function get soulPointPercent() : Number
@@ -418,11 +458,6 @@
                     break;
                 }
             }
-        }// end function
-
-        public function get soulPoints() : Number
-        {
-            return getSkillValue(SKILL_SOULPOINTS);
         }// end function
 
         public function animateMovement(param1:Number) : void
@@ -464,28 +499,9 @@
             }
         }// end function
 
-        public function isSpellKnown(param1:Spell) : Boolean
+        public function get soulPoints() : Number
         {
-            var _loc_2:* = 0;
-            var _loc_3:* = 0;
-            var _loc_4:* = this.knownSpells.length - 1;
-            while (_loc_3 <= _loc_4)
-            {
-                
-                _loc_2 = _loc_3 + _loc_4 >>> 1;
-                if (param1.ID < this.knownSpells[_loc_2])
-                {
-                    _loc_4 = _loc_2 - 1;
-                    continue;
-                }
-                if (param1.ID > this.knownSpells[_loc_2])
-                {
-                    _loc_3 = _loc_2 + 1;
-                    continue;
-                }
-                return true;
-            }
-            return false;
+            return getSkillValue(SKILL_SOULPOINTS);
         }// end function
 
         override public function get mana() : Number
@@ -522,6 +538,30 @@
             return;
         }// end function
 
+        public function isSpellKnown(param1:Spell) : Boolean
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = this.knownSpells.length - 1;
+            while (_loc_3 <= _loc_4)
+            {
+                
+                _loc_2 = _loc_3 + _loc_4 >>> 1;
+                if (param1.ID < this.knownSpells[_loc_2])
+                {
+                    _loc_4 = _loc_2 - 1;
+                    continue;
+                }
+                if (param1.ID > this.knownSpells[_loc_2])
+                {
+                    _loc_3 = _loc_2 + 1;
+                    continue;
+                }
+                return true;
+            }
+            return false;
+        }// end function
+
         public function get openPvpSituations() : uint
         {
             return this.m_OpenPvPSituations;
@@ -541,6 +581,16 @@
             return this.m_Premium;
         }// end function
 
+        public function set inventoryGoldBalance(param1:Number) : void
+        {
+            this.m_InventoryGoldBalance = param1;
+            var _loc_2:* = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+            _loc_2.kind = PropertyChangeEventKind.UPDATE;
+            _loc_2.property = "inventoryGoldBalance";
+            dispatchEvent(_loc_2);
+            return;
+        }// end function
+
         public function hasBlessing(param1:uint) : Boolean
         {
             if (param1 == BLESSING_NONE)
@@ -558,6 +608,20 @@
         public function get experienceGainInfo() : ExperienceGainInfo
         {
             return this.m_ExperienceGainInfo;
+        }// end function
+
+        public function set hasReachedMain(param1:Boolean) : void
+        {
+            var _loc_2:* = null;
+            if (this.m_HasReachedMain != param1)
+            {
+                this.m_HasReachedMain = param1;
+                _loc_2 = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
+                _loc_2.kind = PropertyChangeEventKind.UPDATE;
+                _loc_2.property = "hasReachedMain";
+                dispatchEvent(_loc_2);
+            }
+            return;
         }// end function
 
         public function set knownSpells(param1:Array) : void
@@ -649,6 +713,22 @@
             return;
         }// end function
 
+        public function get inventoryGoldBalance() : Number
+        {
+            return this.m_InventoryGoldBalance;
+        }// end function
+
+        public function set stateFlags(param1:uint) : void
+        {
+            this.updateStateFlags(param1);
+            return;
+        }// end function
+
+        public function get knownSpells() : Array
+        {
+            return this.m_KnownSpells;
+        }// end function
+
         override public function reset() : void
         {
             var _loc_1:* = m_ID;
@@ -660,9 +740,12 @@
             this.m_KnownSpells.length = 0;
             this.m_Premium = false;
             this.m_PremiumUntil = 0;
+            this.m_HasReachedMain = false;
             this.m_Blessings = BLESSING_NONE;
             this.m_Profession = PROFESSION_NONE;
             m_Type = TYPE_PLAYER;
+            this.m_BankGoldBalance = NaN;
+            this.m_InventoryGoldBalance = NaN;
             var _loc_2:* = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
             _loc_2.kind = PropertyChangeEventKind.UPDATE;
             _loc_2.property = "*";
@@ -681,34 +764,6 @@
                 stopMovementAnimation();
                 this.startAutowalkInternal();
             }
-            return;
-        }// end function
-
-        public function set stateFlags(param1:uint) : void
-        {
-            this.updateStateFlags(param1);
-            return;
-        }// end function
-
-        public function get knownSpells() : Array
-        {
-            return this.m_KnownSpells;
-        }// end function
-
-        override public function resetSkills() : void
-        {
-            m_Skills = new Vector.<Number>((SKILL_MANA_LEECH_AMOUNT + 1) * 3, true);
-            var _loc_1:* = 0;
-            while (_loc_1 < m_Skills.length)
-            {
-                
-                m_Skills[_loc_1 + 0] = 0;
-                m_Skills[(_loc_1 + 1)] = 0;
-                m_Skills[_loc_1 + 2] = 0;
-                _loc_1 = _loc_1 + 3;
-            }
-            this.m_ExperienceCounter.reset();
-            this.m_ExperienceGainInfo.reset();
             return;
         }// end function
 

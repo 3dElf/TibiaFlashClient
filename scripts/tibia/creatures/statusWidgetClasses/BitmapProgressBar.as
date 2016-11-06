@@ -174,7 +174,23 @@
             graphics.endFill();
             this.cacheBarLabel();
             this.m_UILabel.visible = this.m_LabelEnabled;
-            this.m_UILabel.x = this.direction == DIRECTION_RIGHT_TO_LEFT ? (param1 - _loc_4.right - this.m_UILabel.width) : (_loc_4.left);
+            var _loc_10:* = getStyle("labelHorizontalAlign");
+            if (getStyle("labelHorizontalAlign") == "center")
+            {
+                this.m_UILabel.x = (param1 - _loc_4.right) / 2 - this.m_UILabel.width / 2;
+            }
+            else if (_loc_10 == "left")
+            {
+                this.m_UILabel.x = _loc_4.left;
+            }
+            else if (_loc_10 == "right")
+            {
+                this.m_UILabel.x = param1 - _loc_4.right - this.m_UILabel.width;
+            }
+            else
+            {
+                this.m_UILabel.x = this.direction == DIRECTION_RIGHT_TO_LEFT ? (param1 - _loc_4.right - this.m_UILabel.width) : (_loc_4.left);
+            }
             this.m_UILabel.y = _loc_4.top + (param2 - _loc_4.top - _loc_4.bottom - this.m_UILabel.height) / 2;
             return;
         }// end function

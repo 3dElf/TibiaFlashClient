@@ -50,6 +50,7 @@
         public static const CATEGORY_TOOLS:int = 14;
         public static const OFFER_MAX_AMOUNT_CUMULATIVE:int = 64000;
         public static const CATEGORY_VALUABLES:int = 15;
+        public static const DETAIL_FIELD_IMBUEMENT_SLOTS:int = 15;
         public static const DETAIL_FIELD_EXPIRE:int = 5;
         public static const OFFER_MAX_ACTIVE:int = 100;
         public static const DETAIL_FIELD_RESTRICT_LEVEL:int = 7;

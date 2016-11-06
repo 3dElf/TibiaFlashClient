@@ -14,6 +14,7 @@
         public static const SERVICE_TYPE_BLESSINGS:int = 5;
         public static const SERVICE_TYPE_CHARACTER_NAME_CHANGE:int = 1;
         public static const SERVICE_TYPE_MOUNTS:int = 4;
+        public static const SERVICE_TYPE_PREY:int = 7;
         public static const SERVICE_TYPE_OUTFITS:int = 3;
 
         public function IngameShopProduct(param1:String, param2:String, param3:String)

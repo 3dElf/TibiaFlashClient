@@ -526,6 +526,12 @@
                 return;
             }// end function
             );
+                createTextItem(resourceManager.getString(BUNDLE, "CTX_PLAYER_OPEN_PREY_DIALOG"), function (param1) : void
+            {
+                StaticActionList.MISC_SHOW_PREY_DIALOG.perform();
+                return;
+            }// end function
+            );
                 if (_Player.isPartyLeader && !_Player.isFighting)
                 {
                     if (_Player.isPartySharedExperienceActive)

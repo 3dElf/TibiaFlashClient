@@ -14,7 +14,7 @@
 
         override protected function getContent() : Object
         {
-            var _loc_1:* = {TIP_UNJUSTPOINTS:"Unjustified Points", TIP_BODY:"Inventory", TIP_BATTLELIST:"Battle List", TIP_GENERAL:"General Controls", TIP_TRADE:"Trades", TIP_MINIMAP:"Minimap", TIP_CONTAINER:"Containers", TIP_BUDDYLIST:"VIP List", TIP_COMBAT:"Combat Controls"};
+            var _loc_1:* = {TIP_UNJUSTPOINTS:"Unjustified Points", TIP_BODY:"Inventory", TIP_BATTLELIST:"Battle List", TIP_GENERAL:"General Controls", TIP_TRADE:"Trades", TIP_MINIMAP:"Minimap", TIP_CONTAINER:"Containers", TIP_BUDDYLIST:"VIP List", TIP_COMBAT:"Combat Controls", TIP_PREY:"Prey"};
             return _loc_1;
         }// end function
 

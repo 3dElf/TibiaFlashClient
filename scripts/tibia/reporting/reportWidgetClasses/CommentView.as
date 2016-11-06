@@ -53,8 +53,9 @@
 
         override protected function commitProperties() : void
         {
-            super.commitProperties();
             var _loc_1:* = 0;
+            super.commitProperties();
+            _loc_1 = 0;
             if (this.m_UncommittedComment)
             {
                 this.m_UIComment.text = this.m_Comment;

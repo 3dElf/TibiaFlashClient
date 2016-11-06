@@ -13,12 +13,14 @@
     import tibia.game.*;
     import tibia.game.serverModalDialogClasses.*;
     import tibia.help.*;
+    import tibia.imbuing.*;
     import tibia.ingameshop.*;
     import tibia.magic.*;
     import tibia.market.*;
     import tibia.minimap.*;
     import tibia.network.*;
     import tibia.options.*;
+    import tibia.prey.*;
     import tibia.questlog.*;
     import tibia.reporting.*;
     import tibia.reporting.reportType.*;
@@ -44,6 +46,7 @@
         private var m_SnapbackCount:int = 0;
         private var m_PendingQuestLog:Boolean = false;
         private var m_PendingQuestLine:int = -1;
+        public static const RESOURCETYPE_PREY_BONUS_REROLLS:int = 10;
         static const RENDERER_DEFAULT_HEIGHT:Number = 480;
         static const CUPCONTAINER:int = 136;
         static const CQUITGAME:int = 20;
@@ -77,6 +80,7 @@
         static const PARTY_OTHER:int = 11;
         static const SKILL_EXPERIENCE:int = 0;
         static const CGETOUTFIT:int = 210;
+        static const SPREYDATA:int = 232;
         static const SSETTACTICS:int = 167;
         static const SKILL_GOSTRENGTH:int = 6;
         static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
@@ -111,12 +115,12 @@
         static const GROUND_LAYER:int = 7;
         static const CGETQUESTLOG:int = 240;
         static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
-        static const ERR_INTERNAL:int = 0;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
         static const SUMMON_OTHERS:int = 2;
         static const SQUESTLOG:int = 240;
         static const CBROWSEFIELD:int = 203;
         static const SKILL_NONE:int = -1;
+        static const CAPPLYIMBUEMENT:int = 213;
         static const GUILD_MEMBER:int = 4;
         static const SFIELDDATA:int = 105;
         static const PATH_EMPTY:int = 0;
@@ -128,6 +132,7 @@
         static const SLEFTROW:int = 104;
         static const SFULLMAP:int = 100;
         static const PARTY_LEADER:int = 1;
+        static const SPREYTIMELEFT:int = 231;
         static const SMISSILEEFFECT:int = 133;
         static const PATH_MATRIX_SIZE:int = 221;
         static const CGOWEST:int = 104;
@@ -135,7 +140,7 @@
         static const PATH_ERROR_GO_UPSTAIRS:int = -2;
         static const PATH_COST_MAX:int = 250;
         static const SKILL_CARRYSTRENGTH:int = 7;
-        static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
+        public static const RESULTDIALOG_IMBUEMENT_ERROR:int = 1;
         static const STATE_PZ_ENTERED:int = 14;
         static const CPASSLEADERSHIP:int = 166;
         static const PATH_MAX_STEPS:int = 128;
@@ -143,7 +148,6 @@
         static const CCLOSENPCCHANNEL:int = 158;
         static const SBOTTOMROW:int = 103;
         static const CGETOBJECTINFO:int = 243;
-        static const CSEEKINCONTAINER:int = 204;
         static const GUILD_WAR_NEUTRAL:int = 3;
         static const STATE_DROWNING:int = 8;
         static const MAP_MIN_X:int = 24576;
@@ -155,8 +159,11 @@
         static const SLOGINERROR:int = 20;
         static const CREMOVEBUDDY:int = 221;
         private static const BUNDLE:String = "Communication";
+        static const CSEEKINCONTAINER:int = 204;
         static const SCREATUREMARKS:int = 147;
         static const RENDERER_MIN_WIDTH:Number = Math.round(MAP_WIDTH * 2 / 3 * FIELD_SIZE);
+        static const SPREYFREELISTREROLLAVAILABILITY:int = 230;
+        static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
         static const CREJECTTRADE:int = 128;
         static const MAP_WIDTH:int = 15;
         static const SQUESTLINE:int = 241;
@@ -164,7 +171,9 @@
         static const SREQUESTPURCHASEDATA:int = 225;
         static const CREVOKEINVITATION:int = 165;
         static const CLOGIN:int = 10;
+        static const CPREYACTION:int = 235;
         static const STRAPPERS:int = 135;
+        public static const RESULTDIALOG_CLEARING_CHARM_ERROR:int = 11;
         static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
         static const GUILD_WAR_ALLY:int = 1;
         static const SUNJUSTIFIEDPOINTS:int = 183;
@@ -179,16 +188,16 @@
         static const STATE_SLOW:int = 5;
         static const PARTY_NONE:int = 0;
         static const PATH_SOUTH:int = 7;
+        static const CREQUESTRESOURCEBALANCE:int = 237;
         static const CROTATESOUTH:int = 113;
         static const CACCEPTTRADE:int = 127;
         static const ONSCREEN_MESSAGE_WIDTH:int = 295;
         static const FIELD_ENTER_POSSIBLE:uint = 0;
+        static const ERR_INTERNAL:int = 0;
         static const PATH_NORTH_WEST:int = 4;
-        static const ERR_CONNECTION_LOST:int = 6;
         static const CGETQUESTLINE:int = 241;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
         static const SCHANNELS:int = 171;
-        public static const CLIENT_VERSION:uint = 2357;
         static const TYPE_SUMMON_OWN:int = 3;
         static const NPC_SPEECH_QUESTTRADER:uint = 4;
         static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
@@ -203,11 +212,13 @@
         static const PATH_ERROR_UNREACHABLE:int = -4;
         static const CGETTRANSACTIONHISTORY:int = 254;
         static const SSTOREBUTTONINDICATORS:int = 25;
+        public static const RESOURCETYPE_BANK_GOLD:int = 0;
         static const SCREATEONMAP:int = 106;
-        static const CPRIVATECHANNEL:int = 154;
+        static const SPREYREROLLPRICE:int = 233;
         static const SLOGINWAIT:int = 22;
         public static const PREVIEW_STATE_REGULAR:uint = 0;
         static const PATH_SOUTH_WEST:int = 6;
+        public static const RESULTDIALOG_CLEARING_CHARM_SUCCESS:int = 10;
         static const PAYLOADLENGTH_POS:int = 6;
         static const CLOOK:int = 140;
         static const SINGAMESHOPSUCCESS:int = 254;
@@ -215,27 +226,31 @@
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const ERR_INVALID_CHECKSUM:int = 2;
         static const SCONTAINER:int = 110;
+        static const ERR_CONNECTION_LOST:int = 6;
         static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const SNPCOFFER:int = 122;
         static const SWORLDENTERED:int = 15;
-        static const PACKETLENGTH_SIZE:int = 2;
+        static const SSHOWRESULTDIALOG:int = 237;
         static const PAYLOAD_POS:int = 6;
         static const CEXCLUDEFROMCHANNEL:int = 172;
         static const SKILL_HITPOINTS:int = 4;
         static const PATH_WEST:int = 5;
         static const MAP_HEIGHT:int = 11;
+        public static const CLIENT_VERSION:uint = 2370;
         static const SKILL_OFFLINETRAINING:int = 18;
         static const SPREMIUMSHOPOFFERS:int = 252;
         static const STATE_MANA_SHIELD:int = 4;
-        static const CMOUNT:int = 212;
+        static const CPRIVATECHANNEL:int = 154;
         static const STRANSACTIONHISTORY:int = 253;
         static const SMARKETBROWSE:int = 249;
         static const BLESSING_ADVENTURER:int = 1;
         static const CSELLOBJECT:int = 123;
         static const STATE_FREEZING:int = 9;
+        static const CMOUNT:int = 212;
         static const STATE_CURSED:int = 11;
         static const PARTY_LEADER_SEXP_INACTIVE_INNOCENT:int = 10;
         static const CMARKETBROWSE:int = 245;
+        public static const RESULTDIALOG_IMBUEMENT_SUCCESS:int = 0;
         static const SMARKETLEAVE:int = 247;
         static const CCLOSENPCTRADE:int = 124;
         static const NUM_FIELDS:int = 2016;
@@ -256,16 +271,18 @@
         static const STATE_FIGHTING:int = 7;
         static const CANSWERMODALDIALOG:int = 249;
         static const NPC_SPEECH_NORMAL:uint = 1;
+        static const CCLOSEDIMBUINGDIALOG:int = 215;
         static const SCREATURESPEED:int = 143;
         static const SSPELLDELAY:int = 164;
         static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
         static const SDELETEONMAP:int = 108;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
         static const STATE_PZ_BLOCK:int = 13;
+        public static const RESULTDIALOG_IMBUING_STATION_NOT_FOUND:int = 3;
         static const RISKINESS_NONE:int = 0;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1099;
+        public static const PROTOCOL_VERSION:int = 10990;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CEDITBUDDY:int = 222;
         static const CROTATEWEST:int = 114;
@@ -280,11 +297,13 @@
         static const SCREATUREUNPASS:int = 146;
         static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
         static const SKILL_STAMINA:int = 17;
+        static const SRESOURCEBALANCE:int = 238;
         static const SSHOWMODALDIALOG:int = 250;
         static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
         static const CONNECTION_STATE_DISCONNECTED:int = 0;
         static const SKILL_FIGHTSHIELD:int = 8;
         static const STATE_NONE:int = -1;
+        static const PACKETLENGTH_SIZE:int = 2;
         static const SKILL_FIGHTDISTANCE:int = 9;
         static const PK_EXCPLAYERKILLER:int = 5;
         static const NUM_CREATURES:int = 1300;
@@ -295,7 +314,6 @@
         static const CGONORTHEAST:int = 106;
         static const PK_PLAYERKILLER:int = 4;
         static const CERRORFILEENTRY:int = 232;
-        static const HEADER_SIZE:int = 6;
         static const CINSPECTNPCTRADE:int = 121;
         static const SCREATUREHEALTH:int = 140;
         static const STATE_BLEEDING:int = 15;
@@ -303,13 +321,15 @@
         static const SBOTTOMFLOOR:int = 191;
         static const CTURNOBJECT:int = 133;
         static const STATE_DAZZLED:int = 10;
+        public static const RESULTDIALOG_IMBUEMENT_ROLL_FAILED:int = 2;
+        static const HEADER_SIZE:int = 6;
         static const CHECKSUM_SIZE:int = 4;
-        static const ERR_INVALID_MESSAGE:int = 3;
         static const CUSEOBJECT:int = 130;
         static const CINVITETOCHANNEL:int = 171;
         static const CUSETWOOBJECTS:int = 131;
         static const PATH_ERROR_INTERNAL:int = -5;
         static const COPENPREMIUMSHOP:int = 250;
+        public static const RESOURCETYPE_INVENTORY_GOLD:int = 1;
         static const PATH_COST_UNDEFINED:int = 254;
         static const SPREMIUMTRIGGER:int = 158;
         static const ERR_INVALID_STATE:int = 4;
@@ -317,6 +337,7 @@
         static const CINVITETOPARTY:int = 163;
         static const CPINGBACK:int = 30;
         static const SPINGBACK:int = 30;
+        static const ERR_INVALID_MESSAGE:int = 3;
         static const PK_ATTACKER:int = 1;
         static const STATE_ELECTRIFIED:int = 2;
         static const SKILL_FIGHTSWORD:int = 11;
@@ -358,6 +379,7 @@
         static const SCREATUREPVPHELPERS:int = 148;
         public static const CLIENT_TYPE:uint = 3;
         static const SDELETEINVENTORY:int = 121;
+        static const SIMBUINGDIALOGREFRESH:int = 235;
         static const CTRANSFERCURRENCY:int = 239;
         static const PROFESSION_PALADIN:int = 2;
         static const SINGAMESHOPERROR:int = 224;
@@ -373,6 +395,7 @@
         static const MAP_MAX_X:int = MAP_MIN_X + ((1 << 14) - 1);
         static const MAP_MAX_Y:int = MAP_MIN_Y + ((1 << 14) - 1);
         static const MAP_MAX_Z:int = 15;
+        static const CAPPLYCLEARINGCHARM:int = 214;
         static const SMARKETDETAIL:int = 248;
         static const CGONORTH:int = 101;
         static const NUM_ONSCREEN_MESSAGES:int = 16;
@@ -408,6 +431,7 @@
         static const COPENTRANSACTIONHISTORY:int = 253;
         static const SCLEARTARGET:int = 163;
         static const CSHAREEXPERIENCE:int = 168;
+        static const SCLOSEIMBUINGDIALOG:int = 236;
         static const PK_AGGRESSOR:int = 3;
         static const MAPSIZE_W:int = 10;
         static const MAPSIZE_X:int = 18;
@@ -863,6 +887,24 @@
                 }
             }
             return new Offer(new OfferID(_loc_4, _loc_5), param2, _loc_6, _loc_7, _loc_8, _loc_9, _loc_10);
+        }// end function
+
+        public function sendCREQUESTRESOURCEBALANCE(param1:int) : void
+        {
+            var b:ByteArray;
+            var a_ResourceType:* = param1;
+            try
+            {
+                b = this.m_ServerConnection.messageWriter.createMessage();
+                b.writeByte(CREQUESTRESOURCEBALANCE);
+                b.writeByte(a_ResourceType);
+                this.m_ServerConnection.messageWriter.finishMessage();
+            }
+            catch (e:Error)
+            {
+                handleSendError(CSTOREEVENT, e);
+            }
+            return;
         }// end function
 
         public function dispose() : void
@@ -1517,37 +1559,9 @@
             return;
         }// end function
 
-        protected function readSMARKETENTER(param1:ByteArray) : void
+        protected function readSCLOSEIMBUINGDIALOG(param1:ByteArray) : void
         {
-            var _loc_2:* = NaN;
-            var _loc_3:* = 0;
-            var _loc_4:* = null;
-            var _loc_5:* = 0;
-            var _loc_6:* = null;
-            var _loc_7:* = 0;
-            var _loc_8:* = 0;
-            _loc_2 = this.readSigned64BitValue(param1);
-            _loc_3 = param1.readUnsignedByte();
-            _loc_4 = [];
-            _loc_5 = param1.readUnsignedShort() - 1;
-            while (_loc_5 >= 0)
-            {
-                
-                _loc_7 = param1.readUnsignedShort();
-                _loc_8 = param1.readUnsignedShort();
-                _loc_4.push(new InventoryTypeInfo(_loc_7, 0, _loc_8));
-                _loc_5 = _loc_5 - 1;
-            }
-            _loc_6 = PopUpBase.getCurrent() as MarketWidget;
-            if (_loc_6 == null)
-            {
-                _loc_6 = new MarketWidget();
-                _loc_6.show();
-            }
-            _loc_6.serverResponsePending = false;
-            _loc_6.accountBalance = _loc_2;
-            _loc_6.activeOffers = _loc_3;
-            _loc_6.depotContent = _loc_4;
+            ImbuingManager.getInstance().closeImbuingWindow();
             return;
         }// end function
 
@@ -1671,6 +1685,40 @@
             {
                 handleSendError(CGETCHANNELS, e);
             }
+            return;
+        }// end function
+
+        protected function readSMARKETENTER(param1:ByteArray) : void
+        {
+            var _loc_2:* = NaN;
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
+            var _loc_5:* = 0;
+            var _loc_6:* = null;
+            var _loc_7:* = 0;
+            var _loc_8:* = 0;
+            _loc_2 = this.readSigned64BitValue(param1);
+            _loc_3 = param1.readUnsignedByte();
+            _loc_4 = [];
+            _loc_5 = param1.readUnsignedShort() - 1;
+            while (_loc_5 >= 0)
+            {
+                
+                _loc_7 = param1.readUnsignedShort();
+                _loc_8 = param1.readUnsignedShort();
+                _loc_4.push(new InventoryTypeInfo(_loc_7, 0, _loc_8));
+                _loc_5 = _loc_5 - 1;
+            }
+            _loc_6 = PopUpBase.getCurrent() as MarketWidget;
+            if (_loc_6 == null)
+            {
+                _loc_6 = new MarketWidget();
+                _loc_6.show();
+            }
+            _loc_6.serverResponsePending = false;
+            _loc_6.accountBalance = _loc_2;
+            _loc_6.activeOffers = _loc_3;
+            _loc_6.depotContent = _loc_4;
             return;
         }// end function
 
@@ -1875,6 +1923,26 @@
             {
                 _loc_5.addObject(_loc_3, _loc_4);
             }
+            return;
+        }// end function
+
+        protected function readSPREYTIMELEFT(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = NaN;
+            _loc_2 = param1.readUnsignedByte();
+            _loc_3 = param1.readUnsignedShort();
+            PreyManager.getInstance().setPreyTimeLeft(_loc_2, _loc_3);
+            return;
+        }// end function
+
+        protected function readSPREYFREELISTREROLLAVAILABILITY(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = NaN;
+            _loc_2 = param1.readUnsignedByte();
+            _loc_3 = param1.readUnsignedShort();
+            PreyManager.getInstance().setTimeUntilFreeListReroll(_loc_2, _loc_3);
             return;
         }// end function
 
@@ -2128,6 +2196,19 @@
             return;
         }// end function
 
+        protected function readSSHOWRESULTDIALOG(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = null;
+            _loc_2 = param1.readUnsignedByte();
+            _loc_3 = StringHelper.s_ReadLongStringFromByteArray(param1);
+            if (_loc_2 == RESULTDIALOG_IMBUEMENT_SUCCESS || _loc_2 == RESULTDIALOG_IMBUEMENT_ERROR || _loc_2 == RESULTDIALOG_IMBUEMENT_ROLL_FAILED || _loc_2 == RESULTDIALOG_IMBUING_STATION_NOT_FOUND || _loc_2 == RESULTDIALOG_CLEARING_CHARM_SUCCESS || _loc_2 == RESULTDIALOG_CLEARING_CHARM_ERROR)
+            {
+                ImbuingManager.getInstance().showImbuingResultDialog(_loc_3);
+            }
+            return;
+        }// end function
+
         public function sendCBUYPREMIUMOFFER(param1:int, param2:int, ... args) : void
         {
             args = new activation;
@@ -2246,6 +2327,24 @@
         {
             var _loc_3:* = param2 != null ? (param2.errorID) : (-1);
             this.handleConnectionError(256 + param1, _loc_3, param2);
+            return;
+        }// end function
+
+        public function sendCAPPLYCLEARINGCHARM(param1:uint) : void
+        {
+            var b:ByteArray;
+            var a_SlotNumber:* = param1;
+            try
+            {
+                b = this.m_ServerConnection.messageWriter.createMessage();
+                b.writeByte(CAPPLYCLEARINGCHARM);
+                b.writeByte(a_SlotNumber);
+                this.m_ServerConnection.messageWriter.finishMessage();
+            }
+            catch (e:Error)
+            {
+                handleSendError(CAPPLYCLEARINGCHARM, e);
+            }
             return;
         }// end function
 
@@ -2410,6 +2509,12 @@
             return;
         }// end function
 
+        protected function readSPREYREROLLPRICE(param1:ByteArray) : void
+        {
+            PreyManager.getInstance().listRerollPrice = param1.readUnsignedInt();
+            return;
+        }// end function
+
         public function sendCTALK(param1:int, ... args) : void
         {
             args = new activation;
@@ -2555,6 +2660,62 @@
                 handleSendError(CEXCLUDEFROMCHANNEL, e);
             }
             return;
+        }// end function
+
+        protected function readImbuementData(param1:ByteArray) : ImbuementData
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = null;
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            var _loc_6:* = 0;
+            var _loc_7:* = 0;
+            var _loc_8:* = false;
+            var _loc_9:* = 0;
+            var _loc_10:* = null;
+            var _loc_11:* = 0;
+            var _loc_12:* = 0;
+            var _loc_13:* = 0;
+            var _loc_14:* = 0;
+            var _loc_15:* = null;
+            var _loc_16:* = 0;
+            var _loc_17:* = null;
+            var _loc_18:* = 0;
+            var _loc_19:* = null;
+            _loc_2 = param1.readUnsignedInt();
+            _loc_3 = StringHelper.s_ReadLongStringFromByteArray(param1);
+            _loc_4 = StringHelper.s_ReadLongStringFromByteArray(param1);
+            _loc_5 = StringHelper.s_ReadLongStringFromByteArray(param1);
+            _loc_6 = param1.readUnsignedShort();
+            _loc_7 = param1.readUnsignedInt();
+            _loc_8 = param1.readUnsignedByte() != 0;
+            _loc_9 = param1.readUnsignedByte();
+            _loc_10 = new Vector.<AstralSource>;
+            _loc_11 = 0;
+            while (_loc_11 < _loc_9)
+            {
+                
+                _loc_16 = param1.readUnsignedShort();
+                _loc_17 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                _loc_18 = param1.readUnsignedShort();
+                _loc_19 = new AstralSource(_loc_16, _loc_18, _loc_17);
+                _loc_10.push(_loc_19);
+                _loc_11 = _loc_11 + 1;
+            }
+            _loc_12 = param1.readUnsignedInt();
+            _loc_13 = param1.readUnsignedByte();
+            _loc_14 = param1.readUnsignedInt();
+            _loc_15 = new ImbuementData(_loc_2, _loc_3);
+            _loc_15.description = _loc_4;
+            _loc_15.category = _loc_5;
+            _loc_15.iconID = _loc_6;
+            _loc_15.durationInSeconds = _loc_7;
+            _loc_15.premiumOnly = _loc_8;
+            _loc_15.goldCost = _loc_12;
+            _loc_15.protectionGoldCost = _loc_14;
+            _loc_15.successRatePercent = _loc_13;
+            _loc_15.astralSources = _loc_10;
+            return _loc_15;
         }// end function
 
         public function sendCMARKETBROWSE(param1:int) : void
@@ -2726,10 +2887,16 @@
 
         protected function readSPLAYERDATACURRENT(param1:ByteArray) : void
         {
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_10:* = NaN;
+            var _loc_11:* = 0;
+            var _loc_12:* = false;
             var _loc_2:* = Tibia.s_FrameTibiaTimestamp;
-            var _loc_3:* = 0;
-            var _loc_4:* = 0;
-            var _loc_5:* = 0;
+            _loc_3 = 0;
+            _loc_4 = 0;
+            _loc_5 = 0;
             _loc_3 = Math.max(0, param1.readShort());
             _loc_4 = Math.max(0, param1.readShort());
             _loc_5 = 0;
@@ -2750,7 +2917,7 @@
             var _loc_7:* = param1.readUnsignedShort() / 100;
             var _loc_8:* = param1.readUnsignedShort() / 100;
             var _loc_9:* = param1.readUnsignedShort() / 100;
-            var _loc_10:* = param1.readUnsignedShort() / 100;
+            _loc_10 = param1.readUnsignedShort() / 100;
             this.m_Player.experienceGainInfo.updateGainInfo(_loc_6, _loc_7, _loc_8, _loc_9, _loc_10);
             _loc_3 = Math.max(0, param1.readShort());
             _loc_4 = Math.max(0, param1.readShort());
@@ -2780,8 +2947,8 @@
             _loc_4 = _loc_2;
             _loc_5 = 0;
             this.m_Player.setSkill(SKILL_OFFLINETRAINING, _loc_3, _loc_4, _loc_5);
-            var _loc_11:* = param1.readUnsignedShort();
-            var _loc_12:* = param1.readBoolean();
+            _loc_11 = param1.readUnsignedShort();
+            _loc_12 = param1.readBoolean();
             this.m_Player.experienceGainInfo.updateStoreXpBoost(_loc_11, _loc_12);
             return;
         }// end function
@@ -3462,6 +3629,74 @@
             return;
         }// end function
 
+        protected function readSPREYDATA(param1:ByteArray) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = null;
+            var _loc_6:* = null;
+            var _loc_7:* = 0;
+            var _loc_8:* = 0;
+            var _loc_9:* = 0;
+            var _loc_10:* = null;
+            var _loc_11:* = 0;
+            _loc_2 = PreyManager.getInstance();
+            _loc_3 = param1.readUnsignedByte();
+            _loc_4 = param1.readUnsignedByte();
+            if (_loc_4 == PreyData.STATE_LOCKED)
+            {
+                _loc_2.changeStateToLocked(_loc_3, param1.readUnsignedByte());
+            }
+            else if (_loc_4 == PreyData.STATE_INACTIVE)
+            {
+                _loc_2.changeStateToInactive(_loc_3);
+            }
+            else if (_loc_4 == PreyData.STATE_ACTIVE)
+            {
+                _loc_5 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                _loc_6 = this.readCreatureOutfit(param1, null);
+                _loc_7 = param1.readUnsignedByte();
+                _loc_8 = param1.readUnsignedShort();
+                _loc_2.changeStateToActive(_loc_3, _loc_7, _loc_8, new PreyMonsterInformation(_loc_5, _loc_6));
+                _loc_2.setPreyTimeLeft(_loc_3, param1.readUnsignedShort());
+            }
+            else if (_loc_4 == PreyData.STATE_SELECTION)
+            {
+                _loc_9 = param1.readUnsignedByte();
+                _loc_10 = new Vector.<PreyMonsterInformation>;
+                _loc_11 = 0;
+                while (_loc_11 < _loc_9)
+                {
+                    
+                    _loc_5 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                    _loc_6 = this.readCreatureOutfit(param1, null);
+                    _loc_10.push(new PreyMonsterInformation(_loc_5, _loc_6));
+                    _loc_11 = _loc_11 + 1;
+                }
+                _loc_2.changeStateToSelection(_loc_3, _loc_10);
+            }
+            else if (_loc_4 == PreyData.STATE_SELECTION_CHANGE_MONSTER)
+            {
+                _loc_7 = param1.readUnsignedByte();
+                _loc_8 = param1.readUnsignedShort();
+                _loc_9 = param1.readUnsignedByte();
+                _loc_10 = new Vector.<PreyMonsterInformation>;
+                _loc_11 = 0;
+                while (_loc_11 < _loc_9)
+                {
+                    
+                    _loc_5 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                    _loc_6 = this.readCreatureOutfit(param1, null);
+                    _loc_10.push(new PreyMonsterInformation(_loc_5, _loc_6));
+                    _loc_11 = _loc_11 + 1;
+                }
+                _loc_2.changeStateToSelectionChangeMonster(_loc_3, _loc_7, _loc_8, _loc_10);
+            }
+            _loc_2.setTimeUntilFreeListReroll(_loc_3, param1.readUnsignedShort());
+            return;
+        }// end function
+
         public function sendCGETOUTFIT() : void
         {
             var b:ByteArray;
@@ -3502,6 +3737,78 @@
             var _loc_2:* = false;
             _loc_2 = param1.readUnsignedByte() == 1;
             IngameShopManager.getInstance().setCreditBalanceUpdating(_loc_2);
+            return;
+        }// end function
+
+        protected function readSIMBUINGDIALOGREFRESH(param1:ByteArray) : void
+        {
+            var _loc_2:* = null;
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = null;
+            var _loc_7:* = 0;
+            var _loc_8:* = null;
+            var _loc_9:* = 0;
+            var _loc_10:* = 0;
+            var _loc_11:* = null;
+            var _loc_12:* = 0;
+            var _loc_13:* = 0;
+            var _loc_14:* = null;
+            var _loc_15:* = false;
+            var _loc_16:* = 0;
+            var _loc_17:* = 0;
+            var _loc_18:* = 0;
+            var _loc_19:* = 0;
+            var _loc_20:* = null;
+            _loc_2 = ImbuingManager.getInstance();
+            _loc_3 = null;
+            _loc_4 = param1.readUnsignedShort();
+            _loc_5 = param1.readUnsignedByte();
+            _loc_6 = new Vector.<ExistingImbuement>;
+            _loc_7 = 0;
+            while (_loc_7 < _loc_5)
+            {
+                
+                _loc_15 = param1.readUnsignedByte() != 0;
+                if (_loc_15)
+                {
+                    _loc_3 = this.readImbuementData(param1);
+                    _loc_16 = param1.readUnsignedInt();
+                    _loc_17 = param1.readUnsignedInt();
+                    _loc_14 = new ExistingImbuement(_loc_3, _loc_16, _loc_17);
+                }
+                else
+                {
+                    _loc_14 = new ExistingImbuement();
+                }
+                _loc_6.push(_loc_14);
+                _loc_7 = _loc_7 + 1;
+            }
+            _loc_8 = new Vector.<ImbuementData>;
+            _loc_9 = param1.readUnsignedShort();
+            _loc_10 = 0;
+            while (_loc_10 < _loc_9)
+            {
+                
+                _loc_3 = this.readImbuementData(param1);
+                _loc_8.push(_loc_3);
+                _loc_10 = _loc_10 + 1;
+            }
+            _loc_11 = new Vector.<AstralSource>;
+            _loc_12 = param1.readUnsignedInt();
+            _loc_13 = 0;
+            while (_loc_13 < _loc_12)
+            {
+                
+                _loc_18 = param1.readUnsignedShort();
+                _loc_19 = param1.readUnsignedShort();
+                _loc_20 = new AstralSource(_loc_18, _loc_19);
+                _loc_11.push(_loc_20);
+                _loc_13 = _loc_13 + 1;
+            }
+            _loc_2.openImbuingWindow();
+            _loc_2.refreshImbuingData(_loc_4, _loc_6, _loc_8, _loc_11);
             return;
         }// end function
 
@@ -3662,6 +3969,22 @@
             catch (e:Error)
             {
                 handleSendError(CPRIVATECHANNEL, e);
+            }
+            return;
+        }// end function
+
+        public function sendCCLOSEDIMBUINGDIALOG() : void
+        {
+            var b:ByteArray;
+            try
+            {
+                b = this.m_ServerConnection.messageWriter.createMessage();
+                b.writeByte(CCLOSEDIMBUINGDIALOG);
+                this.m_ServerConnection.messageWriter.finishMessage();
+            }
+            catch (e:Error)
+            {
+                handleSendError(CCLOSEDIMBUINGDIALOG, e);
             }
             return;
         }// end function
@@ -4357,6 +4680,54 @@
                         a_MessageReader.finishMessage();
                         break;
                     }
+                    case SPREYFREELISTREROLLAVAILABILITY:
+                    {
+                        this.readSPREYFREELISTREROLLAVAILABILITY(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SPREYTIMELEFT:
+                    {
+                        this.readSPREYTIMELEFT(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SPREYDATA:
+                    {
+                        this.readSPREYDATA(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SPREYREROLLPRICE:
+                    {
+                        this.readSPREYREROLLPRICE(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SIMBUINGDIALOGREFRESH:
+                    {
+                        this.readSIMBUINGDIALOGREFRESH(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SSHOWRESULTDIALOG:
+                    {
+                        this.readSSHOWRESULTDIALOG(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SCLOSEIMBUINGDIALOG:
+                    {
+                        this.readSCLOSEIMBUINGDIALOG(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SRESOURCEBALANCE:
+                    {
+                        this.readSRESOURCEBALANCE(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
                     case SQUESTLOG:
                     {
                         this.readSQUESTLOG(CommunicationData);
@@ -4531,7 +4902,7 @@
             _loc_3 = [];
             _loc_4 = 0;
             _loc_4 = 0;
-            while (_loc_4 <= MarketWidget.DETAIL_FIELD_WEIGHT)
+            while (_loc_4 <= MarketWidget.DETAIL_FIELD_IMBUEMENT_SLOTS)
             {
                 
                 _loc_13 = StringHelper.s_ReadLongStringFromByteArray(param1);
@@ -5235,6 +5606,7 @@
             this.m_Player.premiumUntil = param1.readUnsignedInt();
             this.m_Player.premium = _loc_2;
             this.m_Player.profession = param1.readUnsignedByte();
+            this.m_Player.hasReachedMain = param1.readBoolean();
             var _loc_3:* = [];
             var _loc_4:* = param1.readUnsignedShort() - 1;
             while (_loc_4 >= 0)
@@ -5725,6 +6097,27 @@
             return;
         }// end function
 
+        protected function readSRESOURCEBALANCE(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = NaN;
+            _loc_2 = param1.readUnsignedByte();
+            _loc_3 = this.readSigned64BitValue(param1);
+            if (_loc_2 == RESOURCETYPE_BANK_GOLD)
+            {
+                this.m_Player.bankGoldBalance = _loc_3;
+            }
+            else if (_loc_2 == RESOURCETYPE_INVENTORY_GOLD)
+            {
+                this.m_Player.inventoryGoldBalance = _loc_3;
+            }
+            else if (_loc_2 == RESOURCETYPE_PREY_BONUS_REROLLS)
+            {
+                PreyManager.getInstance().bonusRerollAmount = _loc_3;
+            }
+            return;
+        }// end function
+
         public function get isGameRunning() : Boolean
         {
             return this.m_ServerConnection.isGameRunning;
@@ -5789,6 +6182,118 @@
             {
                 _loc_4.isUnpassable = _loc_3;
                 ;
+            }
+            return;
+        }// end function
+
+        public function sendCPREYACTION(param1:int, param2:int, param3:int) : void
+        {
+            var b:ByteArray;
+            var a_PreyID:* = param1;
+            var a_PreyAction:* = param2;
+            var a_MonsterIndex:* = param3;
+            try
+            {
+                b = this.m_ServerConnection.messageWriter.createMessage();
+                b.writeByte(CPREYACTION);
+                b.writeByte(a_PreyID);
+                b.writeByte(a_PreyAction);
+                if (a_PreyAction == 2)
+                {
+                    b.writeByte(a_MonsterIndex);
+                }
+                this.m_ServerConnection.messageWriter.finishMessage();
+            }
+            catch (e:Error)
+            {
+                handleSendError(CSTOREEVENT, e);
+            }
+            return;
+        }// end function
+
+        protected function readSCREATUREMARKS(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            _loc_2 = param1.readUnsignedInt();
+            var _loc_3:* = param1.readUnsignedByte();
+            var _loc_4:* = param1.readUnsignedByte();
+            var _loc_5:* = this.m_CreatureStorage.getCreature(_loc_2);
+            if (this.m_CreatureStorage.getCreature(_loc_2) != null)
+            {
+                if (_loc_3 == 1)
+                {
+                    _loc_5.marks.setMark(Marks.MARK_TYPE_ONE_SECOND_TEMP, _loc_4);
+                }
+                else
+                {
+                    _loc_5.marks.setMark(Marks.MARK_TYPE_PERMANENT, _loc_4);
+                }
+                ;
+            }
+            this.m_CreatureStorage.invalidateOpponents();
+            return;
+        }// end function
+
+        protected function readSBUDDYSTATUSCHANGE(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
+            var _loc_5:* = null;
+            _loc_2 = param1.readUnsignedInt();
+            _loc_3 = param1.readByte();
+            _loc_4 = Tibia.s_GetOptions();
+            _loc_5 = null;
+            var _loc_6:* = _loc_4.getBuddySet(BuddySet.DEFAULT_SET);
+            _loc_5 = _loc_4.getBuddySet(BuddySet.DEFAULT_SET);
+            if (_loc_4 != null && _loc_6 != null)
+            {
+                _loc_5.updateBuddy(_loc_2, _loc_3);
+            }
+            return;
+        }// end function
+
+        public function sendCGUILDMESSAGE() : void
+        {
+            var b:ByteArray;
+            try
+            {
+                b = this.m_ServerConnection.messageWriter.createMessage();
+                b.writeByte(CGUILDMESSAGE);
+                this.m_ServerConnection.messageWriter.finishMessage();
+            }
+            catch (e:Error)
+            {
+                handleSendError(CPRIVATECHANNEL, e);
+            }
+            return;
+        }// end function
+
+        public function sendCUSEONCREATURE(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int) : void
+        {
+            var b:ByteArray;
+            var a_X:* = param1;
+            var a_Y:* = param2;
+            var a_Z:* = param3;
+            var a_TypeID:* = param4;
+            var a_PositionOrData:* = param5;
+            var a_CreatureID:* = param6;
+            try
+            {
+                this.m_Player.stopAutowalk(false);
+                b = this.m_ServerConnection.messageWriter.createMessage();
+                b.writeByte(CUSEONCREATURE);
+                b.writeShort(a_X);
+                b.writeShort(a_Y);
+                b.writeByte(a_Z);
+                b.writeShort(a_TypeID);
+                b.writeByte(a_PositionOrData);
+                b.writeUnsignedInt(a_CreatureID);
+                this.m_ServerConnection.messageWriter.finishMessage();
+            }
+            catch (e:Error)
+            {
+                handleSendError(CUSEONCREATURE, e);
             }
             return;
         }// end function
@@ -5859,70 +6364,6 @@
             return;
         }// end function
 
-        protected function readSBUDDYSTATUSCHANGE(param1:ByteArray) : void
-        {
-            var _loc_2:* = 0;
-            var _loc_3:* = 0;
-            var _loc_4:* = null;
-            var _loc_5:* = null;
-            _loc_2 = param1.readUnsignedInt();
-            _loc_3 = param1.readByte();
-            _loc_4 = Tibia.s_GetOptions();
-            _loc_5 = null;
-            var _loc_6:* = _loc_4.getBuddySet(BuddySet.DEFAULT_SET);
-            _loc_5 = _loc_4.getBuddySet(BuddySet.DEFAULT_SET);
-            if (_loc_4 != null && _loc_6 != null)
-            {
-                _loc_5.updateBuddy(_loc_2, _loc_3);
-            }
-            return;
-        }// end function
-
-        public function sendCGUILDMESSAGE() : void
-        {
-            var b:ByteArray;
-            try
-            {
-                b = this.m_ServerConnection.messageWriter.createMessage();
-                b.writeByte(CGUILDMESSAGE);
-                this.m_ServerConnection.messageWriter.finishMessage();
-            }
-            catch (e:Error)
-            {
-                handleSendError(CPRIVATECHANNEL, e);
-            }
-            return;
-        }// end function
-
-        public function sendCUSEONCREATURE(param1:int, param2:int, param3:int, param4:int, param5:int, param6:int) : void
-        {
-            var b:ByteArray;
-            var a_X:* = param1;
-            var a_Y:* = param2;
-            var a_Z:* = param3;
-            var a_TypeID:* = param4;
-            var a_PositionOrData:* = param5;
-            var a_CreatureID:* = param6;
-            try
-            {
-                this.m_Player.stopAutowalk(false);
-                b = this.m_ServerConnection.messageWriter.createMessage();
-                b.writeByte(CUSEONCREATURE);
-                b.writeShort(a_X);
-                b.writeShort(a_Y);
-                b.writeByte(a_Z);
-                b.writeShort(a_TypeID);
-                b.writeByte(a_PositionOrData);
-                b.writeUnsignedInt(a_CreatureID);
-                this.m_ServerConnection.messageWriter.finishMessage();
-            }
-            catch (e:Error)
-            {
-                handleSendError(CUSEONCREATURE, e);
-            }
-            return;
-        }// end function
-
         public function sendCBROWSEFIELD(param1:int, param2:int, param3:int) : void
         {
             var b:ByteArray;
@@ -5986,26 +6427,25 @@
             return;
         }// end function
 
-        protected function readSCREATUREMARKS(param1:ByteArray) : void
+        public function sendCAPPLYIMBUEMENT(param1:uint, param2:uint, param3:Boolean) : void
         {
-            var _loc_2:* = 0;
-            _loc_2 = param1.readUnsignedInt();
-            var _loc_3:* = param1.readUnsignedByte();
-            var _loc_4:* = param1.readUnsignedByte();
-            var _loc_5:* = this.m_CreatureStorage.getCreature(_loc_2);
-            if (this.m_CreatureStorage.getCreature(_loc_2) != null)
+            var b:ByteArray;
+            var a_SlotNumber:* = param1;
+            var a_ImbuementID:* = param2;
+            var a_UseProtectionCharm:* = param3;
+            try
             {
-                if (_loc_3 == 1)
-                {
-                    _loc_5.marks.setMark(Marks.MARK_TYPE_ONE_SECOND_TEMP, _loc_4);
-                }
-                else
-                {
-                    _loc_5.marks.setMark(Marks.MARK_TYPE_PERMANENT, _loc_4);
-                }
-                ;
+                b = this.m_ServerConnection.messageWriter.createMessage();
+                b.writeByte(CAPPLYIMBUEMENT);
+                b.writeByte(a_SlotNumber);
+                b.writeUnsignedInt(a_ImbuementID);
+                b.writeBoolean(a_UseProtectionCharm);
+                this.m_ServerConnection.messageWriter.finishMessage();
             }
-            this.m_CreatureStorage.invalidateOpponents();
+            catch (e:Error)
+            {
+                handleSendError(CAPPLYIMBUEMENT, e);
+            }
             return;
         }// end function
 

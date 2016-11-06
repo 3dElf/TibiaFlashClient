@@ -265,6 +265,7 @@
                 this.m_UILevel.setStyle("fontSize", 9);
                 this.m_UILevel.setStyle("paddingLeft", 0);
                 this.m_UILevel.setStyle("paddingRight", 0);
+                this.m_UILevel.percentWidth = 50;
                 _Box.addChild(this.m_UILevel);
                 this.m_UIProfession = new CustomButton();
                 this.m_UIProfession.label = resourceManager.getString(BUNDLE, "RESTRICT_PROFESSION_LABEL");
@@ -279,6 +280,7 @@
                 this.m_UIProfession.setStyle("fontSize", 9);
                 this.m_UIProfession.setStyle("paddingLeft", 0);
                 this.m_UIProfession.setStyle("paddingRight", 0);
+                this.m_UIProfession.percentWidth = 50;
                 _Box.addChild(this.m_UIProfession);
                 this.m_UIBodyPosition = new ComboBox();
                 this.m_UIBodyPosition.dataProvider = [{value:-1, label:resourceManager.getString(BUNDLE, "RESTRICT_ANY_HAND_LABEL")}, {value:BodyContainerView.LEFT_HAND, label:resourceManager.getString(BUNDLE, "RESTRICT_ONE_HANDED_LABEL")}, {value:BodyContainerView.BOTH_HANDS, label:resourceManager.getString(BUNDLE, "RESTRICT_TWO_HANDED_LABEL")}];

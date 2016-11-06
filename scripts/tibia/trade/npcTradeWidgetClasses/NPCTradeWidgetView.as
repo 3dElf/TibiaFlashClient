@@ -8,6 +8,7 @@
     import mx.events.*;
     import mx.styles.*;
     import shared.controls.*;
+    import shared.utility.i18n.*;
     import tibia.appearances.*;
     import tibia.container.*;
     import tibia.creatures.*;
@@ -85,6 +86,7 @@
         static const SKILL_FED:int = 15;
         static const SKILL_MAGLEVEL:int = 2;
         static const SKILL_FISHING:int = 14;
+        private static const BUNDLE_TIBIA:String = "Tibia";
         static const SKILL_HITPOINTS_PERCENT:int = 3;
         static const STATE_BLEEDING:int = 15;
         static const PK_PLAYERKILLER:int = 4;
@@ -93,13 +95,13 @@
         static const SUMMON_OTHERS:int = 2;
         static const SKILL_NONE:int = -1;
         static const NPC_SPEECH_TRADER:uint = 2;
-        public static const MODE_SELL:int = 1;
         private static const BUNDLE:String = "NPCTradeWidget";
         static const GUILD_MEMBER:int = 4;
         static const PROFESSION_NONE:int = 0;
         static const MAX_NAME_LENGTH:int = 29;
         static const PARTY_LEADER:int = 1;
         static const STATE_PZ_ENTERED:int = 14;
+        public static const MODE_SELL:int = 1;
         static const SKILL_CARRYSTRENGTH:int = 7;
         static const PK_ATTACKER:int = 1;
         static const STATE_ELECTRIFIED:int = 2;
@@ -243,72 +245,80 @@
 
         private function updateObjectSummary() : void
         {
-            var _loc_6:* = 0;
-            var _loc_7:* = 0;
             var _loc_8:* = 0;
-            var _loc_9:* = NaN;
-            var _loc_10:* = null;
-            var _loc_11:* = null;
-            var _loc_12:* = 0;
-            var _loc_13:* = 0;
+            var _loc_9:* = 0;
+            var _loc_10:* = 0;
+            var _loc_11:* = NaN;
+            var _loc_12:* = null;
+            var _loc_13:* = null;
+            var _loc_14:* = 0;
+            var _loc_15:* = 0;
             var _loc_1:* = 0;
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            if (this.m_Player != null)
+            {
+                _loc_2 = Tibia.s_GetPlayer().inventoryGoldBalance;
+                _loc_3 = Tibia.s_GetPlayer().bankGoldBalance;
+            }
             if (this.m_ContainerStorage != null)
             {
                 _loc_1 = this.m_ContainerStorage.getPlayerMoney();
-                this.m_UILabelBudget.text = resourceManager.getString(BUNDLE, "LBL_MONEY_FORMAT", [_loc_1.toFixed(0)]);
+                this.m_UILabelBudget.text = resourceManager.getString(BUNDLE, "LBL_MONEY_FORMAT", [_loc_1]);
+                this.m_UILabelBudget.toolTip = resourceManager.getString(BUNDLE_TIBIA, "TOOLTIP_CURRENCY_GOLD_BALANCE", [i18nFormatNumber(_loc_2), i18nFormatNumber(_loc_3)]);
             }
             else
             {
                 this.m_UILabelBudget.text = null;
             }
-            var _loc_2:* = NaN;
+            var _loc_4:* = NaN;
             if (this.m_Player != null)
             {
-                _loc_2 = this.m_Player.getSkillValue(SKILL_CARRYSTRENGTH);
-                this.m_UILabelCapacity.text = resourceManager.getString(BUNDLE, "LBL_WEIGHT_FORMAT", [(_loc_2 / 100).toFixed(2)]);
+                _loc_4 = this.m_Player.getSkillValue(SKILL_CARRYSTRENGTH);
+                this.m_UILabelCapacity.text = resourceManager.getString(BUNDLE, "LBL_WEIGHT_FORMAT", [(_loc_4 / 100).toFixed(2)]);
             }
             else
             {
                 this.m_UILabelCapacity.text = null;
             }
-            var _loc_3:* = this.m_TradeMode == MODE_BUY;
-            var _loc_4:* = getStyle("color");
-            var _loc_5:* = getStyle("errorColor");
+            var _loc_5:* = this.m_TradeMode == MODE_BUY;
+            var _loc_6:* = getStyle("color");
+            var _loc_7:* = getStyle("errorColor");
             if (this.m_TradeObject != null)
             {
-                _loc_6 = Math.max(1, this.m_TradeAmount);
-                _loc_7 = Math.max(1, this.m_TradeObject.amount);
-                _loc_8 = 0;
-                _loc_9 = 0;
-                if (_loc_3 && (options == null || options.npcTradeBuyWithBackpacks))
+                _loc_8 = Math.max(1, this.m_TradeAmount);
+                _loc_9 = Math.max(1, this.m_TradeObject.amount);
+                _loc_10 = 0;
+                _loc_11 = 0;
+                if (_loc_5 && (options == null || options.npcTradeBuyWithBackpacks))
                 {
-                    _loc_10 = Tibia.s_GetAppearanceStorage();
-                    _loc_11 = null;
-                    _loc_12 = _loc_6;
-                    var _loc_14:* = _loc_10.getObjectType(this.m_TradeObject.ID);
-                    _loc_11 = _loc_10.getObjectType(this.m_TradeObject.ID);
-                    if (_loc_10 != null && _loc_14 != null && _loc_11.isCumulative)
+                    _loc_12 = Tibia.s_GetAppearanceStorage();
+                    _loc_13 = null;
+                    _loc_14 = _loc_8;
+                    var _loc_16:* = _loc_12.getObjectType(this.m_TradeObject.ID);
+                    _loc_13 = _loc_12.getObjectType(this.m_TradeObject.ID);
+                    if (_loc_12 != null && _loc_16 != null && _loc_13.isCumulative)
                     {
-                        _loc_12 = Math.ceil(_loc_6 / 100);
+                        _loc_14 = Math.ceil(_loc_8 / 100);
                     }
-                    _loc_13 = Math.ceil(_loc_12 / NPCTradeWidget.TRADE_BACKPACK_CAPACITY);
-                    _loc_8 = _loc_13 * NPCTradeWidget.TRADE_BACKPACK_PRICE + _loc_6 * this.m_TradeObject.price;
-                    _loc_9 = _loc_13 * NPCTradeWidget.TRADE_BACKPACK_WEIGHT + _loc_6 * this.m_TradeObject.weight;
+                    _loc_15 = Math.ceil(_loc_14 / NPCTradeWidget.TRADE_BACKPACK_CAPACITY);
+                    _loc_10 = _loc_15 * NPCTradeWidget.TRADE_BACKPACK_PRICE + _loc_8 * this.m_TradeObject.price;
+                    _loc_11 = _loc_15 * NPCTradeWidget.TRADE_BACKPACK_WEIGHT + _loc_8 * this.m_TradeObject.weight;
                 }
                 else
                 {
-                    _loc_8 = _loc_6 * this.m_TradeObject.price;
-                    _loc_9 = _loc_6 * this.m_TradeObject.weight;
+                    _loc_10 = _loc_8 * this.m_TradeObject.price;
+                    _loc_11 = _loc_8 * this.m_TradeObject.weight;
                 }
                 this.m_UIAmountSelector.minimum = 1;
-                this.m_UIAmountSelector.maximum = _loc_7;
-                this.m_UIAmountSelector.value = _loc_6;
+                this.m_UIAmountSelector.maximum = _loc_9;
+                this.m_UIAmountSelector.value = _loc_8;
                 this.m_UIButtonCommit.enabled = this.m_TradeAmount > 0 && this.m_TradeAmount <= this.m_TradeObject.amount;
-                this.m_UIButtonCommit.label = resourceManager.getString(BUNDLE, _loc_3 ? ("TRADE_MODE_BUY") : ("TRADE_MODE_SELL"));
-                this.m_UILabelPrice.text = resourceManager.getString(BUNDLE, "LBL_MONEY_FORMAT", [_loc_8]);
-                this.m_UILabelPrice.setStyle("color", _loc_3 && _loc_8 > _loc_1 ? (_loc_5) : (_loc_4));
-                this.m_UILabelWeight.text = resourceManager.getString(BUNDLE, "LBL_WEIGHT_FORMAT", [(_loc_9 / 100).toFixed(2)]);
-                this.m_UILabelWeight.setStyle("color", _loc_3 && _loc_9 > _loc_2 ? (_loc_5) : (_loc_4));
+                this.m_UIButtonCommit.label = resourceManager.getString(BUNDLE, _loc_5 ? ("TRADE_MODE_BUY") : ("TRADE_MODE_SELL"));
+                this.m_UILabelPrice.text = resourceManager.getString(BUNDLE, "LBL_MONEY_FORMAT", [_loc_10]);
+                this.m_UILabelPrice.setStyle("color", _loc_5 && _loc_10 > _loc_1 ? (_loc_7) : (_loc_6));
+                this.m_UILabelWeight.text = resourceManager.getString(BUNDLE, "LBL_WEIGHT_FORMAT", [(_loc_11 / 100).toFixed(2)]);
+                this.m_UILabelWeight.setStyle("color", _loc_5 && _loc_11 > _loc_4 ? (_loc_7) : (_loc_6));
             }
             else
             {
@@ -316,11 +326,11 @@
                 this.m_UIAmountSelector.maximum = 1;
                 this.m_UIAmountSelector.value = 1;
                 this.m_UIButtonCommit.enabled = false;
-                this.m_UIButtonCommit.label = resourceManager.getString(BUNDLE, _loc_3 ? ("TRADE_MODE_BUY") : ("TRADE_MODE_SELL"));
+                this.m_UIButtonCommit.label = resourceManager.getString(BUNDLE, _loc_5 ? ("TRADE_MODE_BUY") : ("TRADE_MODE_SELL"));
                 this.m_UILabelPrice.text = null;
-                this.m_UILabelPrice.setStyle("color", _loc_4);
+                this.m_UILabelPrice.setStyle("color", _loc_6);
                 this.m_UILabelWeight.text = null;
-                this.m_UILabelWeight.setStyle("color", _loc_4);
+                this.m_UILabelWeight.setStyle("color", _loc_6);
             }
             return;
         }// end function

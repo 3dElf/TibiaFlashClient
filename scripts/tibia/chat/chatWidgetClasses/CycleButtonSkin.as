@@ -2,7 +2,7 @@
 {
     import shared.skins.*;
 
-    public class CycleButtonSkin extends BitmapButtonSkin
+    public class CycleButtonSkin extends StyleSizedBitmapButtonSkin
     {
 
         public function CycleButtonSkin()

@@ -16,6 +16,8 @@
     import tibia.options.*;
     import tibia.premium.*;
     import tibia.premium.premiumWidgetClasses.*;
+    import tibia.prey.*;
+    import tibia.prey.preyWidgetClasses.*;
     import tibia.sidebar.sideBarWidgetClasses.*;
     import tibia.trade.*;
     import tibia.trade.npcTradeWidgetClasses.*;
@@ -35,16 +37,17 @@
         public static const TYPE_GENERALBUTTONS:int = 3;
         public static const TYPE_BODY:int = 4;
         static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
-        public static const TYPES_BEYONDLAST:int = 12;
+        public static const TYPES_BEYONDLAST:int = 13;
         public static const TYPE_UNJUSTPOINTS:int = 11;
         public static const EVENT_CLOSE:String = "close";
         public static const TYPE_NPCTRADE:int = 7;
-        public static const EVENT_OPTIONS_CHANGE:String = "optionsChange";
         public static const TYPE_SAFETRADE:int = 8;
         static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
         public static const TYPE_CONTAINER:int = 2;
-        private static const TYPE_DATA:Array = [{type:TYPE_BATTLELIST, unique:true, restorable:true, closable:true, collapsible:true, resizable:true, viewClass:BattlelistWidgetView}, {type:TYPE_BUDDYLIST, unique:true, restorable:true, closable:true, collapsible:true, resizable:true, viewClass:BuddylistWidgetView}, {type:TYPE_CONTAINER, unique:false, restorable:false, closable:true, collapsible:true, resizable:true, viewClass:ContainerViewWidgetView}, {type:TYPE_GENERALBUTTONS, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:GeneralButtonsWidgetView}, {type:TYPE_BODY, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:BodyContainerViewWidgetView}, {type:TYPE_MINIMAP, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:MiniMapWidgetView}, {type:TYPE_COMBATCONTROL, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:CombatControlWidgetView}, {type:TYPE_NPCTRADE, unique:false, restorable:false, closable:true, collapsible:true, resizable:true, viewClass:NPCTradeWidgetView}, {type:TYPE_SAFETRADE, unique:false, restorable:false, closable:true, collapsible:true, resizable:true, viewClass:SafeTradeWidgetView}, {type:TYPE_SPELLLIST, unique:true, restorable:true, closable:true, collapsible:true, resizable:true, viewClass:SpellListWidgetView}, {type:TYPE_PREMIUM, unique:true, restorable:false, closable:false, collapsible:true, resizable:false, viewClass:PremiumWidgetView}, {type:TYPE_UNJUSTPOINTS, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:UnjustPointsWidgetView}];
+        private static const TYPE_DATA:Array = [{type:TYPE_BATTLELIST, unique:true, restorable:true, closable:true, collapsible:true, resizable:true, viewClass:BattlelistWidgetView}, {type:TYPE_BUDDYLIST, unique:true, restorable:true, closable:true, collapsible:true, resizable:true, viewClass:BuddylistWidgetView}, {type:TYPE_CONTAINER, unique:false, restorable:false, closable:true, collapsible:true, resizable:true, viewClass:ContainerViewWidgetView}, {type:TYPE_GENERALBUTTONS, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:GeneralButtonsWidgetView}, {type:TYPE_BODY, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:BodyContainerViewWidgetView}, {type:TYPE_MINIMAP, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:MiniMapWidgetView}, {type:TYPE_COMBATCONTROL, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:CombatControlWidgetView}, {type:TYPE_NPCTRADE, unique:false, restorable:false, closable:true, collapsible:true, resizable:true, viewClass:NPCTradeWidgetView}, {type:TYPE_SAFETRADE, unique:false, restorable:false, closable:true, collapsible:true, resizable:true, viewClass:SafeTradeWidgetView}, {type:TYPE_SPELLLIST, unique:true, restorable:true, closable:true, collapsible:true, resizable:true, viewClass:SpellListWidgetView}, {type:TYPE_PREMIUM, unique:true, restorable:false, closable:false, collapsible:true, resizable:false, viewClass:PremiumWidgetView}, {type:TYPE_UNJUSTPOINTS, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:UnjustPointsWidgetView}, {type:TYPE_PREY, unique:true, restorable:true, closable:true, collapsible:true, resizable:false, viewClass:PreySidebarView}];
         public static const TYPE_SPELLLIST:int = 9;
+        public static const EVENT_OPTIONS_CHANGE:String = "optionsChange";
+        public static const TYPE_PREY:int = 12;
         public static const TYPE_PREMIUM:int = 10;
         public static const TYPE_BATTLELIST:int = 0;
         public static const TYPE_BUDDYLIST:int = 1;
@@ -291,6 +294,15 @@
             return;
         }// end function
 
+        public static function s_GetRestorable(param1:int) : int
+        {
+            if (!Widget.s_CheckType(param1))
+            {
+                throw new ArgumentError("Widget.s_GetLimit: Invalid type.");
+            }
+            return TYPE_DATA[param1].restorable;
+        }// end function
+
         static function s_CreateInstance(param1:int, param2:int) : Widget
         {
             if (!Widget.s_CheckType(param1))
@@ -360,6 +372,11 @@
                     _loc_3 = new UnjustPointsWidget();
                     break;
                 }
+                case TYPE_PREY:
+                {
+                    _loc_3 = new PreySidebarWidget();
+                    break;
+                }
                 default:
                 {
                     break;
@@ -392,15 +409,6 @@
                 throw new ArgumentError("Widget.s_GetLimit: Invalid type.");
             }
             return TYPE_DATA[param1].unique;
-        }// end function
-
-        public static function s_GetRestorable(param1:int) : int
-        {
-            if (!Widget.s_CheckType(param1))
-            {
-                throw new ArgumentError("Widget.s_GetLimit: Invalid type.");
-            }
-            return TYPE_DATA[param1].restorable;
         }// end function
 
         public static function s_Unmarshall(param1:XML, param2:int) : Widget

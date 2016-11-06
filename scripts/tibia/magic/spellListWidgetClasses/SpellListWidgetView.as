@@ -211,32 +211,29 @@
                 }
                 return -1;
             }
-            else
+            else if (param1 == GROUP_HEALING)
             {
-                if (param1 == GROUP_HEALING)
+                if (param2 == GROUP_ATTACK)
                 {
-                    if (param2 == GROUP_ATTACK)
-                    {
-                        return 1;
-                    }
-                    if (param2 == GROUP_HEALING)
-                    {
-                        return 0;
-                    }
-                    return -1;
+                    return 1;
                 }
-                else
+                if (param2 == GROUP_HEALING)
                 {
-                    if (param2 == GROUP_ATTACK)
-                    {
-                        return 1;
-                    }
-                    if (param2 == GROUP_HEALING)
-                    {
-                        return 1;
-                    }
                     return 0;
                 }
+                return -1;
+            }
+            else
+            {
+                if (param2 == GROUP_ATTACK)
+                {
+                    return 1;
+                }
+                if (param2 == GROUP_HEALING)
+                {
+                    return 1;
+                }
+                return 0;
             }
         }// end function
 
