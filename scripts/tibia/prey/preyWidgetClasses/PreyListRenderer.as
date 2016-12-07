@@ -154,7 +154,7 @@
                     this.m_UIBonusImage.height = _loc_2.height;
                     if (_loc_1.state == PreyData.STATE_ACTIVE)
                     {
-                        toolTip = resourceManager.getString(BUNDLE, "TOOLTIP_PREY_ACTIVE", [_loc_1.monster.monsterName, StringHelper.s_MillisecondsToTimeString(_loc_1.preyTimeLeft * 60 * 1000, false).slice(0, -3), _loc_1.bonusValue, _loc_1.generateBonusString(), _loc_1.generateBonusDescription()]);
+                        toolTip = resourceManager.getString(BUNDLE, "TOOLTIP_PREY_ACTIVE", [_loc_1.monster.monsterName, StringHelper.s_MillisecondsToTimeString(_loc_1.preyTimeLeft * 60 * 1000, false).slice(0, -3), _loc_1.bonusGrade, PreyData.PREY_MAXIMUM_GRADE, _loc_1.generateBonusString(), _loc_1.generateBonusDescription()]);
                     }
                     else
                     {

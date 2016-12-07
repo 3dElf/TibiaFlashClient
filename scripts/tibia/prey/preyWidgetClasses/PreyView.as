@@ -265,7 +265,7 @@
             {
                 this.m_UncommittedState = true;
             }
-            else if (event.property == "bonusType" || event.property == "bonusValue")
+            else if (event.property == "bonusType" || event.property == "bonusValue" || event.property == "bonusGrade")
             {
                 this.m_UncommittedBonus = true;
             }
@@ -342,7 +342,7 @@
 
         protected function updatePreyBonus() : void
         {
-            this.m_UIMonsterDisplay.setBonus(this.prey.bonusType, this.prey.bonusValue);
+            this.m_UIMonsterDisplay.setBonus(this.prey.bonusType, this.prey.bonusValue, this.prey.bonusGrade);
             return;
         }// end function
 
@@ -379,6 +379,7 @@
             this.m_UILockedSpacer.includeInLayout = this.m_UIUnlockWithCoinsButton.visible;
             this.m_UILockedSpacer.visible = _loc_3;
             this.updateTitleString();
+            this.updateResourceDisplayElements();
             this.m_UIRerollMonsterListButton.styleName = !this.isInactive ? ("preyRerollListButton") : ("preyRerollListButtonReactivate");
             this.m_UIRerollMonsterListButtonSmall.styleName = !this.isInactive ? ("preyRerollListButtonSmall") : ("preyRerollListButtonReactivateSmall");
             return;
@@ -525,7 +526,7 @@
                 }
                 else
                 {
-                    _loc_2 = resourceManager.getString(BUNDLE, "HELP_PREYDESCRIPTION", [this.prey.monster.monsterName, StringHelper.s_MillisecondsToTimeString(this.prey.preyTimeLeft * 60 * 1000, false).slice(0, -3), this.prey.bonusValue, this.prey.generateBonusString(), this.prey.generateBonusDescription()]);
+                    _loc_2 = resourceManager.getString(BUNDLE, "HELP_PREYDESCRIPTION", [this.prey.monster.monsterName, StringHelper.s_MillisecondsToTimeString(this.prey.preyTimeLeft * 60 * 1000, false).slice(0, -3), this.prey.generateBonusGradeString(), this.prey.generateBonusString(), this.prey.generateBonusDescription()]);
                 }
             }
             else if (event.currentTarget == this.m_UIUnlockWithCoinsButton)

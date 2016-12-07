@@ -36,6 +36,16 @@
             return;
         }// end function
 
+        protected function onPreyManagerDataChanged(event:PropertyChangeEvent) : void
+        {
+            if (event.property == "*" || event.property == "bonusRerollAmount")
+            {
+                this.m_UncommittedResources = true;
+                invalidateProperties();
+            }
+            return;
+        }// end function
+
         override public function hide(param1:Boolean = false) : void
         {
             var _loc_2:* = null;
@@ -82,13 +92,14 @@
             return;
         }// end function
 
-        protected function onPreyManagerDataChanged(event:PropertyChangeEvent) : void
+        public function showMessageDialog(param1:String) : void
         {
-            if (event.property == "*" || event.property == "bonusRerollAmount")
-            {
-                this.m_UncommittedResources = true;
-                invalidateProperties();
-            }
+            var _loc_2:* = null;
+            _loc_2 = new EmbeddedDialog();
+            _loc_2.title = resourceManager.getString(BUNDLE, "PREY_TITLE");
+            _loc_2.text = param1;
+            _loc_2.buttonFlags = EmbeddedDialog.OKAY;
+            embeddedDialog = _loc_2;
             return;
         }// end function
 

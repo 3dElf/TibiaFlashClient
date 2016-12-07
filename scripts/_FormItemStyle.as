@@ -5,7 +5,7 @@
 
     public class _FormItemStyle extends Object
     {
-        private static var _embed_css_Assets_swf_mx_containers_FormItem_Required_916996704:Class = _FormItemStyle__embed_css_Assets_swf_mx_containers_FormItem_Required_916996704;
+        private static var _embed_css_Assets_swf_mx_containers_FormItem_Required_1757197398:Class = _FormItemStyle__embed_css_Assets_swf_mx_containers_FormItem_Required_1757197398;
 
         public function _FormItemStyle()
         {
@@ -25,7 +25,7 @@
             {
                 style.defaultFactory = function () : void
             {
-                this.indicatorSkin = _embed_css_Assets_swf_mx_containers_FormItem_Required_916996704;
+                this.indicatorSkin = _embed_css_Assets_swf_mx_containers_FormItem_Required_1757197398;
                 return;
             }// end function
             ;

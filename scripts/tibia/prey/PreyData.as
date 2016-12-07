@@ -15,6 +15,7 @@
         private var m_State:uint = 1;
         private var m_MonsterList:Vector.<PreyMonsterInformation>;
         private var m_Monster:PreyMonsterInformation = null;
+        private var m_BonusGrade:uint = 0;
         private var m_SecondsLeftRunning:Number = 0;
         public static const BONUS_DAMAGE_REDUCTION:uint = 1;
         public static const UNLOCK_STORE:uint = 1;
@@ -25,6 +26,7 @@
         public static const STATE_SELECTION:uint = 3;
         public static const STATE_LOCKED:uint = 0;
         public static const STATE_SELECTION_CHANGE_MONSTER:uint = 4;
+        public static const PREY_MAXIMUM_GRADE:uint = 10;
         public static const BONUS_DAMAGE_BOOST:uint = 0;
         public static const BONUS_XP_BONUS:uint = 2;
         public static const STATE_INACTIVE:uint = 1;
@@ -53,14 +55,15 @@
             return;
         }// end function
 
-        public function changeStateToActive(param1:uint, param2:uint, param3:PreyMonsterInformation) : void
+        public function changeStateToActive(param1:uint, param2:uint, param3:uint, param4:PreyMonsterInformation) : void
         {
             if (param1 != BONUS_NONE)
             {
                 this.clear();
                 this.bonusType = param1;
                 this.bonusValue = param2;
-                this.monster = param3;
+                this.bonusGrade = param3;
+                this.monster = param4;
                 this.state = STATE_ACTIVE;
             }
             else
@@ -68,6 +71,21 @@
                 this.changeStateToInactive();
             }
             return;
+        }// end function
+
+        public function generateBonusGradeString() : String
+        {
+            var _loc_1:* = "☆";
+            var _loc_2:* = "★";
+            var _loc_3:* = "";
+            var _loc_4:* = 0;
+            while (_loc_4 < PREY_MAXIMUM_GRADE)
+            {
+                
+                _loc_3 = _loc_3 + (_loc_4 < this.bonusGrade ? (_loc_2) : (_loc_1));
+                _loc_4 = _loc_4 + 1;
+            }
+            return _loc_3;
         }// end function
 
         public function changeStateToLocked(param1:uint) : void
@@ -95,14 +113,31 @@
             return this.m_State;
         }// end function
 
-        public function set preyTimeLeft(param1:Number) : void
+        public function generateBonusDescription() : String
         {
-            if (this.m_SecondsLeftRunning != param1)
+            var _loc_1:* = "PreyWidget";
+            var _loc_2:* = ResourceManager.getInstance();
+            if (_loc_2 == null)
             {
-                this.m_SecondsLeftRunning = param1;
-                this.dispatchChangeEvent("preyTimeLeft");
+                return "";
             }
-            return;
+            if (this.m_BonusType == PreyData.BONUS_DAMAGE_BOOST)
+            {
+                return _loc_2.getString(_loc_1, "BONUS_DESCRIPTION_DAMAGE_BOOST", [this.m_BonusValue]);
+            }
+            if (this.m_BonusType == PreyData.BONUS_DAMAGE_REDUCTION)
+            {
+                return _loc_2.getString(_loc_1, "BONUS_DESCRIPTION_DAMAGE_REDUCTION", [this.m_BonusValue]);
+            }
+            if (this.m_BonusType == PreyData.BONUS_IMPROVED_LOOT)
+            {
+                return _loc_2.getString(_loc_1, "BONUS_DESCRIPTION_IMPROVED_LOOT", [this.m_BonusValue]);
+            }
+            if (this.m_BonusType == PreyData.BONUS_XP_BONUS)
+            {
+                return _loc_2.getString(_loc_1, "BONUS_DESCRIPTION_XP_BONUS", [this.m_BonusValue]);
+            }
+            return "";
         }// end function
 
         public function changeStateToSelection(param1:Vector.<PreyMonsterInformation>) : void
@@ -140,6 +175,7 @@
             this.unlockOption = UNLOCK_NONE;
             this.bonusType = BONUS_NONE;
             this.bonusValue = 0;
+            this.bonusGrade = 0;
             this.monster = null;
             this.monsterList = new Vector.<PreyMonsterInformation>;
             this.preyTimeLeft = 0;
@@ -157,6 +193,16 @@
             {
                 this.m_State = param1;
                 this.dispatchChangeEvent("state");
+            }
+            return;
+        }// end function
+
+        public function set preyTimeLeft(param1:Number) : void
+        {
+            if (this.m_SecondsLeftRunning != param1)
+            {
+                this.m_SecondsLeftRunning = param1;
+                this.dispatchChangeEvent("preyTimeLeft");
             }
             return;
         }// end function
@@ -181,6 +227,86 @@
         public function get monster() : PreyMonsterInformation
         {
             return this.m_Monster;
+        }// end function
+
+        public function set timeUntilFreeListReroll(param1:Number) : void
+        {
+            if (this.m_MinutesUntilFreeListReroll != param1)
+            {
+                this.m_MinutesUntilFreeListReroll = param1;
+                this.dispatchChangeEvent("timeUntilFreeListReroll");
+            }
+            return;
+        }// end function
+
+        public function set bonusGrade(param1:uint) : void
+        {
+            if (this.m_BonusGrade != param1)
+            {
+                this.m_BonusGrade = param1;
+                this.dispatchChangeEvent("bonusGrade");
+            }
+            return;
+        }// end function
+
+        public function set unlockOption(param1:uint) : void
+        {
+            if (param1 != this.m_UnlockOption)
+            {
+                this.m_UnlockOption = param1;
+                this.dispatchChangeEvent("unlockOption");
+            }
+            return;
+        }// end function
+
+        public function set monster(param1:PreyMonsterInformation) : void
+        {
+            if (param1 != null && !param1.equals(this.m_Monster) || param1 == null && this.m_Monster != null)
+            {
+                this.m_Monster = param1;
+                this.dispatchChangeEvent("monster");
+            }
+            return;
+        }// end function
+
+        public function set monsterList(param1:Vector.<PreyMonsterInformation>) : void
+        {
+            this.m_MonsterList = param1;
+            this.dispatchChangeEvent("monsterList");
+            return;
+        }// end function
+
+        public function get bonusGrade() : uint
+        {
+            return this.m_BonusGrade;
+        }// end function
+
+        public function get bonusType() : uint
+        {
+            return this.m_BonusType;
+        }// end function
+
+        public function get timeUntilFreeListReroll() : Number
+        {
+            return this.m_MinutesUntilFreeListReroll;
+        }// end function
+
+        public function changeStateToSelectionChangeMonster(param1:uint, param2:uint, param3:uint, param4:Vector.<PreyMonsterInformation>) : void
+        {
+            if (param4.length > 0)
+            {
+                this.clear();
+                this.bonusType = param1;
+                this.bonusValue = param2;
+                this.bonusGrade = param3;
+                this.monsterList = param4;
+                this.state = STATE_SELECTION_CHANGE_MONSTER;
+            }
+            else
+            {
+                this.changeStateToInactive();
+            }
+            return;
         }// end function
 
         public function generateBonusString() : String
@@ -210,103 +336,12 @@
             return _loc_2.getString(_loc_1, "BONUS_NONE");
         }// end function
 
-        public function set timeUntilFreeListReroll(param1:Number) : void
-        {
-            if (this.m_MinutesUntilFreeListReroll != param1)
-            {
-                this.m_MinutesUntilFreeListReroll = param1;
-                this.dispatchChangeEvent("timeUntilFreeListReroll");
-            }
-            return;
-        }// end function
-
-        public function set monsterList(param1:Vector.<PreyMonsterInformation>) : void
-        {
-            this.m_MonsterList = param1;
-            this.dispatchChangeEvent("monsterList");
-            return;
-        }// end function
-
-        public function set unlockOption(param1:uint) : void
-        {
-            if (param1 != this.m_UnlockOption)
-            {
-                this.m_UnlockOption = param1;
-                this.dispatchChangeEvent("unlockOption");
-            }
-            return;
-        }// end function
-
-        public function set monster(param1:PreyMonsterInformation) : void
-        {
-            if (param1 != null && !param1.equals(this.m_Monster) || param1 == null && this.m_Monster != null)
-            {
-                this.m_Monster = param1;
-                this.dispatchChangeEvent("monster");
-            }
-            return;
-        }// end function
-
         private function dispatchChangeEvent(param1:String) : void
         {
             var _loc_2:* = new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
             _loc_2.kind = PropertyChangeEventKind.UPDATE;
             _loc_2.property = param1;
             dispatchEvent(_loc_2);
-            return;
-        }// end function
-
-        public function generateBonusDescription() : String
-        {
-            var _loc_1:* = "PreyWidget";
-            var _loc_2:* = ResourceManager.getInstance();
-            if (_loc_2 == null)
-            {
-                return "";
-            }
-            if (this.m_BonusType == PreyData.BONUS_DAMAGE_BOOST)
-            {
-                return _loc_2.getString(_loc_1, "BONUS_DESCRIPTION_DAMAGE_BOOST", [this.m_BonusValue]);
-            }
-            if (this.m_BonusType == PreyData.BONUS_DAMAGE_REDUCTION)
-            {
-                return _loc_2.getString(_loc_1, "BONUS_DESCRIPTION_DAMAGE_REDUCTION", [this.m_BonusValue]);
-            }
-            if (this.m_BonusType == PreyData.BONUS_IMPROVED_LOOT)
-            {
-                return _loc_2.getString(_loc_1, "BONUS_DESCRIPTION_IMPROVED_LOOT", [this.m_BonusValue]);
-            }
-            if (this.m_BonusType == PreyData.BONUS_XP_BONUS)
-            {
-                return _loc_2.getString(_loc_1, "BONUS_DESCRIPTION_XP_BONUS", [this.m_BonusValue]);
-            }
-            return "";
-        }// end function
-
-        public function get bonusType() : uint
-        {
-            return this.m_BonusType;
-        }// end function
-
-        public function get timeUntilFreeListReroll() : Number
-        {
-            return this.m_MinutesUntilFreeListReroll;
-        }// end function
-
-        public function changeStateToSelectionChangeMonster(param1:uint, param2:uint, param3:Vector.<PreyMonsterInformation>) : void
-        {
-            if (param3.length > 0)
-            {
-                this.clear();
-                this.bonusType = param1;
-                this.bonusValue = param2;
-                this.monsterList = param3;
-                this.state = STATE_SELECTION_CHANGE_MONSTER;
-            }
-            else
-            {
-                this.changeStateToInactive();
-            }
             return;
         }// end function
 

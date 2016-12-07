@@ -59,18 +59,16 @@
 
         protected function updateEmptySlotImbuingInfos() : void
         {
-            var _loc_2:* = null;
-            var _loc_3:* = false;
-            var _loc_4:* = 0;
+            var _loc_2:* = false;
+            var _loc_3:* = 0;
+            var _loc_4:* = null;
             var _loc_5:* = null;
-            var _loc_6:* = null;
-            var _loc_7:* = 0;
+            var _loc_6:* = 0;
             var _loc_1:* = ImbuingManager.getInstance();
             this.m_UITitleLabel.text = resourceManager.getString(BUNDLE, "LBL_IMBUE_EMPTY_SLOT");
             if (this.m_ImbuementData != null)
             {
-                _loc_2 = resourceManager.getString(BUNDLE, "LBL_IMBUEMENT_DURATION", [i18nFormatMinutesToCompactDayHourMinutesTimeString(this.m_ImbuementData.durationInSeconds / 60)]);
-                this.m_UIDescriptionLabel.text = this.m_ImbuementData.description + "\n" + _loc_2;
+                this.m_UIDescriptionLabel.text = this.m_ImbuementData.description;
                 this.m_UIDescriptionLabel.toolTip = this.m_UIDescriptionLabel.text;
                 if (this.m_ImbuementData.protectionGoldCost > this.m_CurrentBalance)
                 {
@@ -83,27 +81,27 @@
                     this.m_UIProtectionCharmButton.currencyView.notEnoughCurrency = false;
                 }
                 this.m_UIProtectionCharmButton.currencyView.currentCurrency = this.m_ImbuementData.protectionGoldCost;
-                _loc_3 = true;
-                _loc_4 = 0;
-                while (_loc_4 < this.m_UIAstralSourceAmountWidgets.length)
+                _loc_2 = true;
+                _loc_3 = 0;
+                while (_loc_3 < this.m_UIAstralSourceAmountWidgets.length)
                 {
                     
-                    if (_loc_4 < this.m_ImbuementData.astralSources.length)
+                    if (_loc_3 < this.m_ImbuementData.astralSources.length)
                     {
-                        _loc_5 = this.m_ImbuementData.astralSources[_loc_4];
-                        _loc_6 = _loc_1.getAvailableAstralSource(_loc_5.apperanceTypeID);
-                        _loc_7 = _loc_6 == null ? (0) : (_loc_6.objectCount);
-                        if (_loc_7 < _loc_5.objectCount)
+                        _loc_4 = this.m_ImbuementData.astralSources[_loc_3];
+                        _loc_5 = _loc_1.getAvailableAstralSource(_loc_4.apperanceTypeID);
+                        _loc_6 = _loc_5 == null ? (0) : (_loc_5.objectCount);
+                        if (_loc_6 < _loc_4.objectCount)
                         {
-                            _loc_3 = false;
+                            _loc_2 = false;
                         }
-                        this.m_UIAstralSourceAmountWidgets[_loc_4].refreshData(_loc_5.apperanceTypeID, _loc_7, _loc_5.objectCount);
+                        this.m_UIAstralSourceAmountWidgets[_loc_3].refreshData(_loc_4.apperanceTypeID, _loc_6, _loc_4.objectCount);
                     }
                     else
                     {
-                        this.m_UIAstralSourceAmountWidgets[_loc_4].clear();
+                        this.m_UIAstralSourceAmountWidgets[_loc_3].clear();
                     }
-                    _loc_4 = _loc_4 + 1;
+                    _loc_3 = _loc_3 + 1;
                 }
                 this.m_UISuccessRate.text = resourceManager.getString(BUNDLE, "SUCCESS_RATE_VALUE", [this.successRatePercent]);
                 if (this.successRatePercent == 100)
@@ -118,7 +116,9 @@
                 {
                     this.m_UISuccessRate.styleName = "successRate";
                 }
-                this.m_UIImbueButton.button.enabled = this.m_CurrentBalance >= this.completeGoldCost && _loc_3 && (this.m_ImbuementData.premiumOnly == false || this.m_ImbuementData.premiumOnly == true && this.playerIsPremium);
+                this.m_UIImbueButton.visible = true;
+                this.m_UIImbueButton.includeInLayout = true;
+                this.m_UIImbueButton.button.enabled = this.m_CurrentBalance >= this.completeGoldCost && _loc_2 && (this.m_ImbuementData.premiumOnly == false || this.m_ImbuementData.premiumOnly == true && this.playerIsPremium);
                 this.m_UIImbueButton.currencyView.notEnoughCurrency = this.completeGoldCost > this.m_CurrentBalance;
                 this.m_UIImbueButton.currencyView.currentCurrency = this.completeGoldCost;
                 this.m_UIPremiumOnly.visible = this.m_ImbuementData.premiumOnly;
@@ -209,31 +209,39 @@
             var _loc_2:* = null;
             var _loc_3:* = null;
             var _loc_4:* = null;
-            if (this.m_ExistingImbuement == null || this.m_ExistingImbuement.empty)
-            {
-                _loc_1 = ImbuingManager.getInstance();
-                _loc_2 = _loc_1.imbuementCategories;
-                _loc_3 = [];
-                for each (_loc_4 in _loc_2)
-                {
-                    
-                    _loc_3.push({value:_loc_4, label:_loc_4});
-                }
-                this.m_UICategorySelection.dataProvider = _loc_3;
-                if (this.m_ImbuementData != null)
-                {
-                    this.selectItemInComboBoxes(this.m_ImbuementData);
-                }
-                else
-                {
-                    this.updateImbuementsForCategory(_loc_2[0]);
-                    this.updateViewWithSelectedImbuement();
-                }
-            }
-            else
+            if (this.m_ExistingImbuement != null && this.m_ExistingImbuement.empty == false)
             {
                 this.m_UICategorySelection.dataProvider = [{value:this.m_ExistingImbuement.imbuementData.category, label:this.m_ExistingImbuement.imbuementData.category}];
                 this.m_UIImbuementSelection.dataProvider = [{value:this.m_ExistingImbuement.imbuementData.imbuementID, label:this.m_ExistingImbuement.imbuementData.name}];
+            }
+            else
+            {
+                _loc_1 = ImbuingManager.getInstance();
+                _loc_2 = _loc_1.imbuementCategories;
+                if (_loc_2.length == 0)
+                {
+                    this.m_UICategorySelection.dataProvider = [{value:"-", label:"-"}];
+                    this.m_UIImbuementSelection.dataProvider = [{value:0, label:"-"}];
+                }
+                else
+                {
+                    _loc_3 = [];
+                    for each (_loc_4 in _loc_2)
+                    {
+                        
+                        _loc_3.push({value:_loc_4, label:_loc_4});
+                    }
+                    this.m_UICategorySelection.dataProvider = _loc_3;
+                    if (this.m_ImbuementData != null)
+                    {
+                        this.selectItemInComboBoxes(this.m_ImbuementData);
+                    }
+                    else
+                    {
+                        this.updateImbuementsForCategory(_loc_2[0]);
+                    }
+                    this.updateViewWithSelectedImbuement();
+                }
             }
             return;
         }// end function
@@ -498,9 +506,13 @@
             {
                 this.m_ImbuementData = _loc_1.getAvailableImbuementWithID(uint(this.m_UIImbuementSelection.selectedItem.value));
                 this.m_UIProtectionCharmButton.button.selected = false;
-                this.m_UncommittedImbuementData = true;
-                invalidateProperties();
             }
+            else
+            {
+                this.m_ImbuementData = null;
+            }
+            this.m_UncommittedImbuementData = true;
+            invalidateProperties();
             return;
         }// end function
 
@@ -540,6 +552,11 @@
                     
                     if (event.currentTarget == this.m_UIAstralSourceAmountWidgets[_loc_3])
                     {
+                        if (this.m_ImbuementData == null)
+                        {
+                            this.sendTooltipEvent(null);
+                            return;
+                        }
                         if (_loc_3 < this.m_ImbuementData.astralSources.length)
                         {
                             _loc_4 = this.m_ImbuementData.astralSources[_loc_3];
@@ -622,6 +639,26 @@
             return;
         }// end function
 
+        protected function updateNoImbuementImbuingInfos() : void
+        {
+            this.m_UITitleLabel.text = resourceManager.getString(BUNDLE, "LBL_IMBUE_EMPTY_SLOT");
+            this.m_UIDescriptionLabel.text = resourceManager.getString(BUNDLE, "NO_IMBUEMENT_AVAILABLE");
+            this.m_UIDescriptionLabel.toolTip = "";
+            this.m_UIPremiumOnly.visible = false;
+            this.m_UICategorySelection.enabled = false;
+            this.m_UIImbuementSelection.enabled = false;
+            this.m_UIAstralSourcesBox.visible = false;
+            this.m_UIAstralSourcesBox.includeInLayout = false;
+            this.m_UIArrowImageBox.visible = false;
+            this.m_UIProgressBarBox.visible = false;
+            this.m_UIProgressBarBox.includeInLayout = false;
+            this.m_UIImbueButton.visible = false;
+            this.m_UIImbueButton.includeInLayout = false;
+            this.m_UILeftTitleLabel.visible = false;
+            this.m_UIRightTitleLabel.visible = false;
+            return;
+        }// end function
+
         protected function updateImbuementsForCategory(param1:String) : void
         {
             var _loc_2:* = null;
@@ -688,13 +725,17 @@
             super.commitProperties();
             if (this.m_UncommittedImbuementData)
             {
-                if (this.m_ExistingImbuement == null || this.m_ExistingImbuement.imbuementData == null)
+                if (this.m_ExistingImbuement != null && this.m_ExistingImbuement.imbuementData != null)
+                {
+                    this.updateImbuedSlotImbuingInfos();
+                }
+                else if (this.m_ImbuementData != null)
                 {
                     this.updateEmptySlotImbuingInfos();
                 }
                 else
                 {
-                    this.updateImbuedSlotImbuingInfos();
+                    this.updateNoImbuementImbuingInfos();
                 }
             }
             if (this.m_UncommittedCurrentCurrency)
@@ -733,12 +774,13 @@
         {
             var _loc_1:* = ImbuingManager.getInstance();
             this.m_UITitleLabel.text = resourceManager.getString(BUNDLE, "LBL_CLEAR_IMBUED_SLOT", [this.m_ExistingImbuement.imbuementData.name]);
-            var _loc_2:* = resourceManager.getString(BUNDLE, "LBL_IMBUEMENT_DURATION", [i18nFormatMinutesToCompactDayHourMinutesTimeString(this.m_ExistingImbuement.imbuementData.durationInSeconds / 60)]);
-            this.m_UIDescriptionLabel.text = this.m_ExistingImbuement.imbuementData.description + "\n" + _loc_2;
+            this.m_UIDescriptionLabel.text = this.m_ExistingImbuement.imbuementData.description;
             this.m_UIDescriptionLabel.toolTip = this.m_UIDescriptionLabel.text;
             this.m_UIPremiumOnly.visible = false;
             this.m_UICategorySelection.enabled = false;
             this.m_UIImbuementSelection.enabled = false;
+            this.m_UIImbueButton.visible = true;
+            this.m_UIImbueButton.includeInLayout = true;
             this.m_UIImbueButton.currencyView.currentCurrency = this.m_ExistingImbuement.clearingGoldCost;
             if (this.m_UIImbueButton.currencyView.currentCurrency > this.m_CurrentBalance)
             {
