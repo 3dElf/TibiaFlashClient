@@ -35,6 +35,7 @@
         private var m_PingTimeout:uint = 0;
         private var m_Socket:Socket = null;
         private var m_InputBuffer:ByteArray = null;
+        private var m_WorldName:String = null;
         private var m_PingSent:uint = 0;
         private var m_CharacterName:String = null;
         private var m_MessageWriter:NetworkMessageWriter = null;
@@ -62,7 +63,7 @@
         static const CENTERWORLD:int = 15;
         static const CHECKSUM_POS:int = 2;
         static const CBUYOBJECT:int = 122;
-        public static const CLIENT_VERSION:uint = 2388;
+        public static const CLIENT_VERSION:uint = 2399;
         static const SPING:int = 29;
         static const CCLOSENPCCHANNEL:int = 158;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
@@ -178,7 +179,7 @@
         public static const LATENCY_MEDIUM:Number = 500;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1100;
+        public static const PROTOCOL_VERSION:int = 1101;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const SLOGINCHALLENGE:int = 31;
@@ -322,22 +323,6 @@
             return this.m_ConnectionState == CONNECTION_STATE_PENDING;
         }// end function
 
-        protected function sendCPINGBACK() : void
-        {
-            var b:ByteArray;
-            try
-            {
-                b = this.m_MessageWriter.createMessage();
-                b.writeByte(CPINGBACK);
-                this.m_MessageWriter.finishMessage();
-            }
-            catch (e:Error)
-            {
-                handleSendError(CPINGBACK, e);
-            }
-            return;
-        }// end function
-
         private function handleSendError(param1:int, param2:Error) : void
         {
             var _loc_3:* = param2 != null ? (param2.errorID) : (-1);
@@ -363,6 +348,22 @@
                 param1.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, this.onSocketError);
                 _loc_2 = Tibia.s_GetSecondaryTimer();
                 _loc_2.removeEventListener(TimerEvent.TIMER, this.onSecondaryTimer);
+            }
+            return;
+        }// end function
+
+        protected function sendCPINGBACK() : void
+        {
+            var b:ByteArray;
+            try
+            {
+                b = this.m_MessageWriter.createMessage();
+                b.writeByte(CPINGBACK);
+                this.m_MessageWriter.finishMessage();
+            }
+            catch (e:Error)
+            {
+                handleSendError(CPINGBACK, e);
             }
             return;
         }// end function
@@ -405,12 +406,27 @@
             {
                 this.handleConnectionError(ERR_INVALID_STATE, 1, event);
             }
+            else
+            {
+                this.sendProxyWorldNameIdentification();
+            }
             return;
         }// end function
 
         public function get connectionState() : uint
         {
             return this.m_ConnectionState;
+        }// end function
+
+        private function sendProxyWorldNameIdentification() : void
+        {
+            var _loc_1:* = null;
+            if (this.m_WorldName != null)
+            {
+                _loc_1 = this.m_WorldName + "\n";
+                this.m_Socket.writeUTFBytes(_loc_1);
+            }
+            return;
         }// end function
 
         public function get messageWriter() : IMessageWriter
@@ -604,6 +620,7 @@
             this.m_CharacterName = null;
             this.m_Address = null;
             this.m_Port = int.MAX_VALUE;
+            this.m_WorldName = null;
             this.m_PingEarliestTime = 0;
             this.m_PingLatestTime = 0;
             this.m_PingTimeout = 0;
@@ -825,6 +842,8 @@
             param1.position = param1.position + param1.bytesAvailable;
             this.sendCLOGIN(_loc_2, _loc_3);
             this.setConnectionState(CONNECTION_STATE_CONNECTING_STAGE2, false);
+            var _loc_4:* = new ConnectionEvent(ConnectionEvent.LOGINCHALLENGE);
+            dispatchEvent(_loc_4);
             return;
         }// end function
 
@@ -964,6 +983,7 @@
             this.m_CharacterName = _loc_2.name;
             this.m_Address = _loc_2.address;
             this.m_Port = _loc_2.port;
+            this.m_WorldName = _loc_2.world;
             this.m_ConnectedSince = 0;
             this.setConnectionState(CONNECTION_STATE_CONNECTING_STAGE1);
             this.m_PingEarliestTime = 0;

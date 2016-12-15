@@ -14,6 +14,7 @@
         public static const CREATED:String = "CREATED";
         public static const DEATH_REGULAR:int = 0;
         public static const DEATH_BLESSED:int = 2;
+        public static const LOGINCHALLENGE:String = "LOGINCHALLENGE";
         public static const DEATH_NOPENALTY:int = 3;
         public static const DEATH_UNFAIR:int = 1;
         public static const CONNECTION_LOST:String = "CONNECTION_LOST";

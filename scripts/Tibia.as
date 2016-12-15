@@ -165,6 +165,7 @@
         private var _embed_css_images_Arrow_ScrollHotkeys_over_png_585745991:Class;
         private var _embed_css_images_Button_MaximizePremium_over_png_267955669:Class;
         private var _embed_css_images_Icons_Conditions_Hungry_png_758019275:Class;
+        private var m_ConnectionEstablishedAndPacketReceived:Boolean = false;
         private var _embed_css_images_Icons_WidgetMenu_Containers_idle_over_png_1806477361:Class;
         private var _embed_css_images_Widget_Footer_tileable_png_2102878075:Class;
         private var _embed_css_images_Icons_ProgressBars_MagicLevel_png_1093895878:Class;
@@ -265,12 +266,12 @@
         private var _embed_css_images_Arrow_WidgetToggle_pressed_png_948994267:Class;
         private var _embed_css_images_Icons_BattleList_PartyMembers_over_png_79143632:Class;
         private var _embed_css_images_Icons_CombatControls_Unmounted_over_png_1144518310:Class;
-        private var _embed_css_images_custombutton_Button_Border_tileable_tc_pressed_png_491469499:Class;
         private var _embed_css_images_custombutton_Button_Standard_tileable_bl_over_png_1316684489:Class;
         private var _embed_css_images_Button_ChatTabIgnore_pressed_png_922258679:Class;
         private var _embed_css_images_slot_container_highlighted_png_1302039720:Class;
         private var _embed_css_images_Scrollbar_tileable_png_1885091563:Class;
         private var _embed_css_images_Button_Combat_Stop_pressed_png_1195446471:Class;
+        private var _embed_css_images_custombutton_Button_Border_tileable_tc_pressed_png_491469499:Class;
         private var _embed_css_images_Slot_InventoryLegs_protected_png_516995939:Class;
         private var _embed_css_images_Icons_CombatControls_DoveOff_over_png_893524756:Class;
         protected var m_PremiumManager:PremiumManager = null;
@@ -556,7 +557,7 @@
         private static const SHAREDOBJECT_NAME:String = "options";
         static const CONNECTION_STATE_PENDING:int = 3;
         public static const BUGGY_FLASH_PLAYER_VERSION:String = "21,0,0,182";
-        public static const PROTOCOL_VERSION:int = 1100;
+        public static const PROTOCOL_VERSION:int = 1101;
         public static var s_FrameTibiaTimestamp:Number = 0;
         public static var s_FrameRealTimestamp:Number = 0;
         static const ERR_INVALID_SIZE:int = 1;
@@ -567,7 +568,7 @@
         static const PACKETLENGTH_SIZE:int = 2;
         private static var s_LastTibiaFactorChangeRealTimestamp:int = 0;
         static const CHECKSUM_POS:int = 2;
-        public static const CLIENT_VERSION:uint = 2388;
+        public static const CLIENT_VERSION:uint = 2399;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
         static const PAYLOADLENGTH_POS:int = 6;
         static const CONNECTION_STATE_DISCONNECTED:int = 0;
@@ -1255,15 +1256,6 @@
             return;
         }// end function
 
-        public function saveLocalData() : void
-        {
-            if (!(this.m_Connection is Sessiondump))
-            {
-                this.m_MiniMapStorage.saveSectors(true);
-            }
-            return;
-        }// end function
-
         private function onConnectionPending(event:ConnectionEvent) : void
         {
             var _loc_2:* = 0;
@@ -1315,6 +1307,15 @@
             return;
         }// end function
 
+        public function saveLocalData() : void
+        {
+            if (!(this.m_Connection is Sessiondump))
+            {
+                this.m_MiniMapStorage.saveSectors(true);
+            }
+            return;
+        }// end function
+
         public function get isActive() : Boolean
         {
             return this.m_IsActive;
@@ -1355,6 +1356,7 @@
                 }
                 this.m_Connection = new Sessiondump(_loc_3);
             }
+            this.m_ConnectionEstablishedAndPacketReceived = false;
             this.m_Connection.addEventListener(ConnectionEvent.PENDING, this.onConnectionPending);
             this.m_Connection.addEventListener(ConnectionEvent.GAME, this.onConnectionGame);
             this.m_Connection.addEventListener(ConnectionEvent.CONNECTING, this.onConnectionConnecting);
@@ -1363,6 +1365,7 @@
             this.m_Connection.addEventListener(ConnectionEvent.DEAD, this.onConnectionDeath);
             this.m_Connection.addEventListener(ConnectionEvent.DISCONNECTED, this.onConnectionDisconnected);
             this.m_Connection.addEventListener(ConnectionEvent.ERROR, this.onConnectionError);
+            this.m_Connection.addEventListener(ConnectionEvent.LOGINCHALLENGE, this.onConnectionLoginChallenge);
             this.m_Connection.addEventListener(ConnectionEvent.LOGINADVICE, this.onConnectionLoginAdvice);
             this.m_Connection.addEventListener(ConnectionEvent.LOGINERROR, this.onConnectionLoginError);
             this.m_Connection.addEventListener(ConnectionEvent.LOGINWAIT, this.onConnectionLoginWait);
@@ -11423,6 +11426,11 @@
         private function onConnectionDisconnected(event:ConnectionEvent) : void
         {
             visible = false;
+            if (!this.m_ConnectionEstablishedAndPacketReceived && this.m_FailedConnectionRescheduler.shouldAttemptReconnect())
+            {
+                this.onConnectionLoginWait(this.m_FailedConnectionRescheduler.buildEventForReconnectionAndIncreaseRetries());
+                return;
+            }
             this.saveLocalData();
             this.saveOptions();
             if (this.m_TutorialMode)
@@ -11667,6 +11675,7 @@
         {
             if (event.errorType == ERR_COULD_NOT_CONNECT && this.m_FailedConnectionRescheduler.shouldAttemptReconnect())
             {
+                this.m_ConnectionEstablishedAndPacketReceived = true;
                 this.onConnectionLoginWait(this.m_FailedConnectionRescheduler.buildEventForReconnectionAndIncreaseRetries());
                 return;
             }
@@ -11800,11 +11809,13 @@
                 this.m_Connection.removeEventListener(ConnectionEvent.DEAD, this.onConnectionDeath);
                 this.m_Connection.removeEventListener(ConnectionEvent.DISCONNECTED, this.onConnectionDisconnected);
                 this.m_Connection.removeEventListener(ConnectionEvent.ERROR, this.onConnectionError);
+                this.m_Connection.removeEventListener(ConnectionEvent.LOGINCHALLENGE, this.onConnectionLoginChallenge);
                 this.m_Connection.removeEventListener(ConnectionEvent.LOGINADVICE, this.onConnectionLoginAdvice);
                 this.m_Connection.removeEventListener(ConnectionEvent.LOGINERROR, this.onConnectionLoginError);
                 this.m_Connection.removeEventListener(ConnectionEvent.LOGINWAIT, this.onConnectionLoginWait);
                 this.m_Connection.disconnect(false);
                 this.m_Connection = null;
+                this.m_ConnectionEstablishedAndPacketReceived = false;
             }
             return;
         }// end function
@@ -11898,6 +11909,12 @@
         public function ___Tibia_Application1_preinitialize(event:FlexEvent) : void
         {
             this.onPreinitialise(event);
+            return;
+        }// end function
+
+        private function onConnectionLoginChallenge(event:ConnectionEvent) : void
+        {
+            this.m_ConnectionEstablishedAndPacketReceived = true;
             return;
         }// end function
 

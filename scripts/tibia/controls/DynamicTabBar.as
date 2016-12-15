@@ -1415,11 +1415,12 @@
 
         override protected function updateDisplayList(param1:Number, param2:Number) : void
         {
+            var _loc_4:* = NaN;
             var _loc_20:* = NaN;
             var _loc_21:* = false;
             super.updateDisplayList(param1, param2);
             var _loc_3:* = getStyle("paddingLeft");
-            var _loc_4:* = param1;
+            _loc_4 = param1;
             var _loc_5:* = getStyle("paddingTop");
             var _loc_6:* = param1 - _loc_3 - getStyle("paddingRight");
             var _loc_7:* = param2 - _loc_5 - getStyle("paddingBottom");
