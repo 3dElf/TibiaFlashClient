@@ -376,10 +376,10 @@
             var _loc_3:* = 0;
             var _loc_4:* = 0;
             var _loc_5:* = 0;
-            var _loc_1:* = resourceManager.getString(BUNDLE, "TIP_XPGAIN_BASE", [(this.m_Character.experienceGainInfo.computeXpGainModifier() * 100).toFixed(0), (this.m_Character.experienceGainInfo.baseXpGain * 100).toFixed(0)]);
+            var _loc_1:* = resourceManager.getString(BUNDLE, "TIP_XPGAIN_BASE", [Math.floor(this.m_Character.experienceGainInfo.computeXpGainModifier() * 100).toFixed(0), Math.floor(this.m_Character.experienceGainInfo.baseXpGain * 100 + 0.5).toFixed(0)]);
             if (this.m_Character.experienceGainInfo.grindingAddend > 0)
             {
-                _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_GRINDING", [(this.m_Character.experienceGainInfo.grindingAddend * 100).toFixed(0)]);
+                _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_GRINDING", [Math.floor(this.m_Character.experienceGainInfo.grindingAddend * 100 + 0.5).toFixed(0)]);
             }
             if (this.m_Character.experienceGainInfo.remaingStoreXpBoostSeconds > 0)
             {
@@ -395,12 +395,12 @@
                 }
                 else
                 {
-                    _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_XPBOOST_PAUSED", [(this.m_Character.experienceGainInfo.storeBoostAddend * 100).toFixed(0)]);
+                    _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_XPBOOST_PAUSED", [Math.floor(this.m_Character.experienceGainInfo.storeBoostAddend * 100 + 0.5).toFixed(0)]);
                 }
             }
             if (this.m_Character.experienceGainInfo.voucherAddend > 0)
             {
-                _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_VOUCHER", [(this.m_Character.experienceGainInfo.voucherAddend * 100).toFixed(0)]);
+                _loc_1 = _loc_1 + resourceManager.getString(BUNDLE, "TIP_XPGAIN_VOUCHER", [Math.floor(this.m_Character.experienceGainInfo.voucherAddend * 100 + 0.5).toFixed(0)]);
             }
             if (this.m_Character.experienceGainInfo.huntingBoostFactor > 1)
             {
