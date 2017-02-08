@@ -10,7 +10,7 @@
         private var m_Port:int = 0;
         private var m_SessionKey:String = null;
         private var m_Name:String = null;
-        public static const CLIENT_VERSION:uint = 2409;
+        public static const CLIENT_VERSION:uint = 2416;
         public static const CLIENT_PREVIEW_STATE:uint = 0;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
         public static const PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:uint = 2;

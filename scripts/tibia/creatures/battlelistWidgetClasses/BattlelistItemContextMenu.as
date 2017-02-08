@@ -328,6 +328,13 @@
                         }
                     }
                 }
+                createTextItem(resourceManager.getString(BUNDLE, "CTX_INSPECT_CHARACTER", [this.m_Creature.name]), function (param1) : void
+            {
+                var _loc_2:* = new Tibia11NagWidget();
+                _loc_2.show();
+                return;
+            }// end function
+            );
                 createSeparatorItem();
             }
             if (this.m_Creature != null)

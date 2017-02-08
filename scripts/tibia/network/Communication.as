@@ -132,6 +132,7 @@
         static const FIELD_ENTER_POSSIBLE:uint = 0;
         static const PATH_NORTH_WEST:int = 4;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
+        static const CLOOKTRADE:int = 126;
         static const SCHANNELS:int = 171;
         static const SOPENCHANNEL:int = 172;
         public static const MESSAGEDIALOG_PREY_MESSAGE:int = 20;
@@ -160,6 +161,7 @@
         static const SMARKETLEAVE:int = 247;
         static const NUM_FIELDS:int = 2016;
         static const CFOLLOW:int = 162;
+        static const SBUDDYGROUPDATA:int = 212;
         static const SKILL_LIFE_LEECH_CHANCE:int = 21;
         static const SMARKETENTER:int = 246;
         static const SKILL_FIGHTFIST:int = 13;
@@ -186,6 +188,7 @@
         static const CERRORFILEENTRY:int = 232;
         static const HEADER_SIZE:int = 6;
         static const STATE_BLEEDING:int = 15;
+        static const CINSPECTPLAYER:int = 206;
         static const STATE_DAZZLED:int = 10;
         static const CUSEOBJECT:int = 130;
         static const ERR_INVALID_MESSAGE:int = 3;
@@ -199,6 +202,8 @@
         static const PK_ATTACKER:int = 1;
         static const STATE_ELECTRIFIED:int = 2;
         static const SPLAYERGOODS:int = 123;
+        static const SINSPECTIONSTATE:int = 119;
+        static const CINSPECTOBJECT:int = 205;
         static const CMOVEOBJECT:int = 120;
         public static const MESSAGEDIALOG_CLEARING_CHARM_ERROR:int = 11;
         static const CGOEAST:int = 102;
@@ -213,6 +218,7 @@
         static const SCHANGEONMAP:int = 107;
         static const CGOSOUTHEAST:int = 107;
         static const CLEAVEPARTY:int = 167;
+        static const SINSPECTIONLIST:int = 118;
         static const CEQUIPOBJECT:int = 119;
         static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
         static const UNDERGROUND_LAYER:int = 2;
@@ -258,9 +264,9 @@
         static const STATE_HUNGRY:int = 31;
         static const MAPSIZE_X:int = 18;
         static const SCLOSECHANNEL:int = 179;
-        static const PAYLOAD_POS:int = 6;
-        static const SOWNOFFER:int = 125;
         static const NPC_SPEECH_QUEST:uint = 3;
+        static const SOWNOFFER:int = 125;
+        static const PAYLOAD_POS:int = 6;
         static const SKILL_GOSTRENGTH:int = 6;
         static const SSETSTOREDEEPLINK:int = 168;
         static const PATH_ERROR_GO_DOWNSTAIRS:int = -1;
@@ -286,7 +292,7 @@
         static const STATE_DRUNK:int = 3;
         static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
         static const TYPE_SUMMON_OTHERS:int = 4;
-        public static const CLIENT_VERSION:uint = 2409;
+        public static const CLIENT_VERSION:uint = 2416;
         static const CATTACK:int = 161;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SLOGINSUCCESS:int = 23;
@@ -375,15 +381,15 @@
         static const STATE_PZ_BLOCK:int = 13;
         static const CROTATEWEST:int = 114;
         static const SEDITGUILDMESSAGE:int = 174;
-        public static const PROTOCOL_VERSION:int = 1101;
+        public static const PROTOCOL_VERSION:int = 1110;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const CLEAVECHANNEL:int = 153;
         static const PARTY_MEMBER:int = 2;
         static const SCREATUREUNPASS:int = 146;
         static const SKILL_STAMINA:int = 17;
-        static const CONNECTION_STATE_DISCONNECTED:int = 0;
         static const SKILL_FIGHTSHIELD:int = 8;
+        static const CONNECTION_STATE_DISCONNECTED:int = 0;
         static const SKILL_FIGHTDISTANCE:int = 9;
         static const PK_EXCPLAYERKILLER:int = 5;
         static const NUM_CREATURES:int = 1300;
@@ -391,12 +397,12 @@
         static const CGONORTHEAST:int = 106;
         public static const RESOURCETYPE_INVENTORY_GOLD:int = 1;
         static const PK_PLAYERKILLER:int = 4;
-        static const CINSPECTNPCTRADE:int = 121;
         static const SBOTTOMFLOOR:int = 191;
         static const STOPROW:int = 101;
         static const CHECKSUM_SIZE:int = 4;
         static const CTURNOBJECT:int = 133;
         static const CINVITETOCHANNEL:int = 171;
+        static const CLOOKNPCTRADE:int = 121;
         static const PATH_ERROR_INTERNAL:int = -5;
         static const SPREMIUMTRIGGER:int = 158;
         static const SCREATURELIGHT:int = 141;
@@ -440,7 +446,6 @@
         static const RENDERER_DEFAULT_WIDTH:Number = 480;
         static const SRIGHTROW:int = 102;
         static const SGRAPHICALEFFECT:int = 131;
-        static const CINSPECTTRADE:int = 126;
         static const CBUGREPORT:int = 230;
         static const PATH_SOUTH_EAST:int = 8;
         static const TYPE_MONSTER:int = 1;
@@ -1363,6 +1368,7 @@
                 _loc_3 = _loc_3 - 1;
             }
             _loc_2.addItem({ID:ChatStorage.NPC_CHANNEL_ID, name:ChatStorage.NPC_CHANNEL_LABEL});
+            _loc_2.addItem({ID:ChatStorage.LOOT_CHANNEL_ID, name:ChatStorage.LOOT_CHANNEL_LABEL});
             _loc_4 = new ChannelSelectionWidget();
             _loc_4.channels = _loc_2;
             _loc_4.show();
@@ -1589,35 +1595,10 @@
             return;
         }// end function
 
-        protected function readSPLAYERSKILLS(param1:ByteArray) : void
+        protected function readSINSPECTIONSTATE(param1:ByteArray) : void
         {
-            var _loc_2:* = 0;
-            var _loc_3:* = NaN;
-            var _loc_4:* = NaN;
-            var _loc_5:* = NaN;
-            var _loc_6:* = null;
-            var _loc_7:* = null;
-            _loc_2 = 0;
-            _loc_3 = 0;
-            _loc_4 = 0;
-            _loc_5 = 0;
-            _loc_6 = [SKILL_FIGHTFIST, SKILL_FIGHTCLUB, SKILL_FIGHTSWORD, SKILL_FIGHTAXE, SKILL_FIGHTDISTANCE, SKILL_FIGHTSHIELD, SKILL_FISHING];
-            _loc_7 = [SKILL_CRITICAL_HIT_CHANCE, SKILL_CRITICAL_HIT_DAMAGE, SKILL_LIFE_LEECH_CHANCE, SKILL_LIFE_LEECH_AMOUNT, SKILL_MANA_LEECH_CHANCE, SKILL_MANA_LEECH_AMOUNT];
-            for each (_loc_2 in _loc_6)
-            {
-                
-                _loc_3 = param1.readUnsignedShort();
-                _loc_4 = param1.readUnsignedShort();
-                _loc_5 = param1.readUnsignedByte();
-                this.m_Player.setSkill(_loc_2, _loc_3, _loc_4, _loc_5);
-            }
-            for each (_loc_2 in _loc_7)
-            {
-                
-                _loc_3 = param1.readUnsignedShort();
-                _loc_4 = param1.readUnsignedShort();
-                this.m_Player.setSkill(_loc_2, _loc_3, _loc_4, 0);
-            }
+            param1.readUnsignedInt();
+            param1.readUnsignedByte();
             return;
         }// end function
 
@@ -1652,6 +1633,38 @@
             catch (e:Error)
             {
                 handleSendError(CEDITLIST, e);
+            }
+            return;
+        }// end function
+
+        protected function readSPLAYERSKILLS(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            _loc_2 = 0;
+            _loc_3 = 0;
+            _loc_4 = 0;
+            _loc_5 = 0;
+            _loc_6 = [SKILL_FIGHTFIST, SKILL_FIGHTCLUB, SKILL_FIGHTSWORD, SKILL_FIGHTAXE, SKILL_FIGHTDISTANCE, SKILL_FIGHTSHIELD, SKILL_FISHING];
+            _loc_7 = [SKILL_CRITICAL_HIT_CHANCE, SKILL_CRITICAL_HIT_DAMAGE, SKILL_LIFE_LEECH_CHANCE, SKILL_LIFE_LEECH_AMOUNT, SKILL_MANA_LEECH_CHANCE, SKILL_MANA_LEECH_AMOUNT];
+            for each (_loc_2 in _loc_6)
+            {
+                
+                _loc_3 = param1.readUnsignedShort();
+                _loc_4 = param1.readUnsignedShort();
+                _loc_5 = param1.readUnsignedByte();
+                this.m_Player.setSkill(_loc_2, _loc_3, _loc_4, _loc_5);
+            }
+            for each (_loc_2 in _loc_7)
+            {
+                
+                _loc_3 = param1.readUnsignedShort();
+                _loc_4 = param1.readUnsignedShort();
+                this.m_Player.setSkill(_loc_2, _loc_3, _loc_4, 0);
             }
             return;
         }// end function
@@ -1760,21 +1773,31 @@
             var _loc_5:* = 0;
             var _loc_6:* = false;
             var _loc_7:* = 0;
-            var _loc_8:* = null;
-            var _loc_9:* = null;
+            var _loc_8:* = 0;
+            var _loc_9:* = 0;
+            var _loc_10:* = null;
+            var _loc_11:* = null;
             _loc_2 = param1.readUnsignedInt();
             _loc_3 = StringHelper.s_ReadLongStringFromByteArray(param1, Creature.MAX_NAME_LENGHT);
             _loc_4 = StringHelper.s_ReadLongStringFromByteArray(param1, Creature.MAX_DESCRIPTION_LENGHT);
             _loc_5 = param1.readUnsignedInt();
             _loc_6 = param1.readBoolean();
             _loc_7 = param1.readByte();
-            _loc_8 = Tibia.s_GetOptions();
-            _loc_9 = null;
-            var _loc_10:* = _loc_8.getBuddySet(BuddySet.DEFAULT_SET);
-            _loc_9 = _loc_8.getBuddySet(BuddySet.DEFAULT_SET);
-            if (_loc_8 != null && _loc_10 != null)
+            _loc_8 = param1.readByte();
+            _loc_9 = 0;
+            while (_loc_9 < _loc_8)
             {
-                _loc_9.updateBuddy(_loc_2, _loc_3, _loc_4, _loc_5, _loc_6, _loc_7);
+                
+                param1.readByte();
+                _loc_9++;
+            }
+            _loc_10 = Tibia.s_GetOptions();
+            _loc_11 = null;
+            var _loc_12:* = _loc_10.getBuddySet(BuddySet.DEFAULT_SET);
+            _loc_11 = _loc_10.getBuddySet(BuddySet.DEFAULT_SET);
+            if (_loc_10 != null && _loc_12 != null)
+            {
+                _loc_11.updateBuddy(_loc_2, _loc_3, _loc_4, _loc_5, _loc_6, _loc_7);
             }
             return;
         }// end function
@@ -2466,14 +2489,9 @@
             return;
         }// end function
 
-        protected function readSINGAMESHOPERROR(param1:ByteArray) : void
+        protected function readSINSPECTIONLIST(param1:ByteArray) : void
         {
-            var _loc_2:* = 0;
-            var _loc_3:* = null;
-            _loc_2 = param1.readUnsignedByte();
-            _loc_3 = StringHelper.s_ReadLongStringFromByteArray(param1);
-            IngameShopManager.getInstance().propagateError(_loc_3, _loc_2);
-            return;
+            throw new Error("Connection.readSINSPECTIONLIST: Invalid Message for Flash-Client.");
         }// end function
 
         protected function readSQUESTLINE(param1:ByteArray) : void
@@ -2606,6 +2624,16 @@
                 ;
             }
             this.m_CreatureStorage.invalidateOpponents();
+            return;
+        }// end function
+
+        protected function readSINGAMESHOPERROR(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = null;
+            _loc_2 = param1.readUnsignedByte();
+            _loc_3 = StringHelper.s_ReadLongStringFromByteArray(param1);
+            IngameShopManager.getInstance().propagateError(_loc_3, _loc_2);
             return;
         }// end function
 
@@ -2814,14 +2842,14 @@
             try
             {
                 b = this.m_ServerConnection.messageWriter.createMessage();
-                b.writeByte(CINSPECTTRADE);
+                b.writeByte(CLOOKTRADE);
                 b.writeByte(a_Side);
                 b.writeByte(a_Position);
                 this.m_ServerConnection.messageWriter.finishMessage();
             }
             catch (e:Error)
             {
-                handleSendError(CINSPECTTRADE, e);
+                handleSendError(CLOOKTRADE, e);
             }
             return;
         }// end function
@@ -2901,6 +2929,8 @@
             var _loc_3:* = NaN;
             var _loc_4:* = NaN;
             var _loc_5:* = NaN;
+            var _loc_6:* = NaN;
+            var _loc_7:* = NaN;
             var _loc_8:* = NaN;
             var _loc_9:* = NaN;
             var _loc_10:* = NaN;
@@ -2926,8 +2956,8 @@
             _loc_4 = 1;
             _loc_5 = param1.readUnsignedByte();
             this.m_Player.setSkill(SKILL_LEVEL, _loc_3, _loc_4, _loc_5);
-            var _loc_6:* = param1.readUnsignedShort() / 100;
-            var _loc_7:* = param1.readUnsignedShort() / 100;
+            _loc_6 = param1.readUnsignedShort() / 100;
+            _loc_7 = param1.readUnsignedShort() / 100;
             _loc_8 = param1.readUnsignedShort() / 100;
             _loc_9 = param1.readUnsignedShort() / 100;
             _loc_10 = param1.readUnsignedShort() / 100;
@@ -3729,6 +3759,24 @@
             return;
         }// end function
 
+        protected function readSBUDDYGROUPDATA(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            _loc_2 = param1.readByte();
+            _loc_3 = 0;
+            while (_loc_3 < _loc_2)
+            {
+                
+                param1.readByte();
+                StringHelper.s_ReadLongStringFromByteArray(param1);
+                param1.readBoolean();
+                _loc_3++;
+            }
+            param1.readByte();
+            return;
+        }// end function
+
         public function sendCREQUESTSHOPOFFERS(param1:String) : void
         {
             var b:ByteArray;
@@ -4342,6 +4390,18 @@
                         a_MessageReader.finishMessage();
                         break;
                     }
+                    case SINSPECTIONLIST:
+                    {
+                        this.readSINSPECTIONLIST(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SINSPECTIONSTATE:
+                    {
+                        this.readSINSPECTIONSTATE(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
                     case SSETINVENTORY:
                     {
                         this.readSSETINVENTORY(CommunicationData);
@@ -4663,6 +4723,12 @@
                     case SBUDDYSTATUSCHANGE:
                     {
                         this.readSBUDDYSTATUSCHANGE(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SBUDDYGROUPDATA:
+                    {
+                        this.readSBUDDYGROUPDATA(CommunicationData);
                         a_MessageReader.finishMessage();
                         break;
                     }
@@ -5084,6 +5150,7 @@
                         _loc_7.type = param1.readUnsignedByte();
                         _loc_7.speechCategory = param1.readUnsignedByte();
                         _loc_7.marks.setMark(Marks.MARK_TYPE_PERMANENT, param1.readUnsignedByte());
+                        param1.readUnsignedByte();
                         _loc_7.numberOfPVPHelpers = param1.readUnsignedShort();
                         _loc_7.isUnpassable = param1.readUnsignedByte() != 0;
                     }
@@ -5111,6 +5178,7 @@
                         _loc_7.type = param1.readUnsignedByte();
                         _loc_7.speechCategory = param1.readUnsignedByte();
                         _loc_7.marks.setMark(Marks.MARK_TYPE_PERMANENT, param1.readUnsignedByte());
+                        param1.readUnsignedByte();
                         _loc_7.numberOfPVPHelpers = param1.readUnsignedShort();
                         _loc_7.isUnpassable = param1.readUnsignedByte() != 0;
                     }
@@ -5709,6 +5777,10 @@
                 {
                     Pos = this.readCoordinate(a_Bytes);
                     ChannelID;
+                    break;
+                }
+                case MessageMode.MESSAGE_GAME:
+                {
                     break;
                 }
                 default:
@@ -6470,14 +6542,14 @@
             try
             {
                 b = this.m_ServerConnection.messageWriter.createMessage();
-                b.writeByte(CINSPECTNPCTRADE);
+                b.writeByte(CLOOKNPCTRADE);
                 b.writeShort(a_Type);
                 b.writeByte(a_Data);
                 this.m_ServerConnection.messageWriter.finishMessage();
             }
             catch (e:Error)
             {
-                handleSendError(CINSPECTNPCTRADE, e);
+                handleSendError(CLOOKNPCTRADE, e);
             }
             return;
         }// end function

@@ -94,6 +94,13 @@
                 return;
             }// end function
             );
+                createTextItem(resourceManager.getString(BUNDLE, "CTX_SHOW_GROUPED"), function (param1) : void
+            {
+                var _loc_2:* = new Tibia11NagWidget();
+                _loc_2.show();
+                return;
+            }// end function
+            );
             }
             createSeparatorItem();
             if (this.m_Buddy != null && this.m_Buddy.isReportTypeAllowed(Type.REPORT_NAME))

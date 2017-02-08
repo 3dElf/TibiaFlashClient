@@ -9,6 +9,7 @@
     import mx.resources.*;
     import shared.utility.*;
     import tibia.creatures.*;
+    import tibia.game.*;
     import tibia.network.*;
     import tibia.options.*;
     import tibia.reporting.reportType.*;
@@ -27,6 +28,7 @@
         private static const CHANNEL_ACTIVATION_TIMEOUT:int = 500;
         public static const LAST_PARTY_CHANNEL_ID:int = 65533;
         public static const LAST_PRIVATE_CHANNEL_ID:int = 9999;
+        public static const LOOT_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE, "LBL_LOOT_CHANNEL");
         public static const NPC_CHANNEL_ID:int = 65534;
         public static const FIRST_GUILD_CHANNEL_ID:int = 10000;
         public static const ROOK_ADVERTISING_CHANNEL_ID:int = 6;
@@ -38,11 +40,12 @@
         public static const MAIN_ADVERTISING_CHANNEL_ID:int = 5;
         public static const FIRST_PRIVATE_CHANNEL_ID:int = 10;
         public static const SESSIONDUMP_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE, "LBL_SESSIONDUMP_CHANNEL");
-        private static const MSG_CHANNEL_CLOSED:String = ResourceManager.getInstance().getString(BUNDLE, "MSG_CHANNEL_CLOSED");
+        public static const FIRST_PARTY_CHANNEL_ID:int = 20000;
         public static const LOCAL_CHANNEL_ID:int = 131071;
         public static const LAST_GUILD_CHANNEL_ID:int = 19999;
-        public static const FIRST_PARTY_CHANNEL_ID:int = 20000;
+        public static const LOOT_CHANNEL_ID:int = 131067;
         public static const SERVER_CHANNEL_ID:int = 131070;
+        private static const MSG_CHANNEL_CLOSED:String = ResourceManager.getInstance().getString(BUNDLE, "MSG_CHANNEL_CLOSED");
         public static const NPC_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE, "LBL_NPC_CHANNEL");
         public static const SESSIONDUMP_CHANNEL_ID:int = 131068;
         public static const SERVER_CHANNEL_LABEL:String = ResourceManager.getInstance().getString(BUNDLE, "LBL_SERVER_CHANNEL");
@@ -743,6 +746,7 @@
         {
             var _loc_3:* = null;
             var _loc_4:* = null;
+            var _loc_5:* = null;
             var _loc_2:* = Tibia.s_GetCommunication();
             if (_loc_2 != null && _loc_2.isGameRunning)
             {
@@ -774,6 +778,11 @@
                     {
                         _loc_2.sendCPRIVATECHANNEL(String(_loc_3));
                     }
+                }
+                else if (_loc_3 is int && int(_loc_3) == LOOT_CHANNEL_ID)
+                {
+                    _loc_5 = new Tibia11NagWidget();
+                    _loc_5.show();
                 }
             }
             return;
