@@ -292,7 +292,7 @@
         static const STATE_DRUNK:int = 3;
         static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
         static const TYPE_SUMMON_OTHERS:int = 4;
-        public static const CLIENT_VERSION:uint = 2416;
+        public static const CLIENT_VERSION:uint = 2420;
         static const CATTACK:int = 161;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SLOGINSUCCESS:int = 23;

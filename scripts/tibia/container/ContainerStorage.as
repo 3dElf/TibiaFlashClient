@@ -18,7 +18,7 @@
         protected var m_PlayerMoney:Number = 0;
         protected var m_ContainerViews:Vector.<ContainerView> = null;
         protected var m_ContainerViewWidgets:Vector.<int> = null;
-        public static const MAX_CONTAINER_VIEWS:int = 16;
+        public static const MAX_CONTAINER_VIEWS:int = 32;
         public static const MIN_MULTI_USE_DELAY:int = 1000;
         public static const INVENTORY_ANY:Vector3D = new Vector3D(65535, 0, 0);
         public static const MIN_USE_DELAY:int = 100;
