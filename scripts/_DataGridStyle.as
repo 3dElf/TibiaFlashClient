@@ -6,7 +6,7 @@
 
     public class _DataGridStyle extends Object
     {
-        private static var _embed_css_Assets_swf_cursorStretch_2132883076:Class = _DataGridStyle__embed_css_Assets_swf_cursorStretch_2132883076;
+        private static var _embed_css_Assets_swf_cursorStretch_939146190:Class = _DataGridStyle__embed_css_Assets_swf_cursorStretch_939146190;
 
         public function _DataGridStyle()
         {
@@ -34,7 +34,7 @@
                 this.headerStyleName = "dataGridStyles";
                 this.columnDropIndicatorSkin = DataGridColumnDropIndicator;
                 this.headerSeparatorSkin = DataGridHeaderSeparator;
-                this.stretchCursor = _embed_css_Assets_swf_cursorStretch_2132883076;
+                this.stretchCursor = _embed_css_Assets_swf_cursorStretch_939146190;
                 this.columnResizeSkin = DataGridColumnResizeSkin;
                 this.headerBackgroundSkin = DataGridHeaderBackgroundSkin;
                 return;

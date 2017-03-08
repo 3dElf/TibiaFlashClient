@@ -1,10 +1,11 @@
 ﻿package tibia.sessiondump.hints.condition
 {
     import shared.utility.*;
+    import tibia.input.gameaction.*;
 
     public class HintConditionUse extends HintConditionBase
     {
-        protected var m_UseTarget:int = 0;
+        protected var m_UseTarget:int;
         protected var m_MultiuseObjectPosition:int = 0;
         protected var m_Absolute:Vector3D = null;
         protected var m_UseTypeID:int = 0;
@@ -57,6 +58,7 @@
 
         public function HintConditionUse()
         {
+            this.m_UseTarget = UseActionImpl.TARGET_AUTO;
             m_Type = TYPE;
             return;
         }// end function

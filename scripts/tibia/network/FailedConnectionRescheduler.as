@@ -56,7 +56,8 @@
 
         public function shouldAttemptReconnect() : Boolean
         {
-            return this.m_AttemptedReconnects < (MAXIMUM_ATTEMPTED_RETRIES - 1);
+            var _loc_1:* = Tibia.s_GetConnection();
+            return (_loc_1 == null || _loc_1 is Connection) && this.m_AttemptedReconnects < (MAXIMUM_ATTEMPTED_RETRIES - 1);
         }// end function
 
         public function reset() : void
