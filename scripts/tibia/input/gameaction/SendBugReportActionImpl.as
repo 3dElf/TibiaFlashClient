@@ -10,7 +10,7 @@
 
     public class SendBugReportActionImpl extends Object implements IActionImpl
     {
-        protected var m_BugCategory:int = 3;
+        protected var m_BugCategory:int;
         protected var m_SystemMessage:Object = null;
         protected var m_UserMessage:String = null;
         protected var m_Callback:Function = null;
@@ -18,6 +18,7 @@
 
         public function SendBugReportActionImpl(param1:String = null, param2 = null, param3:Function = null, param4:int = -1)
         {
+            this.m_BugCategory = BugReportWidget.BUG_CATEGORY_OTHER;
             this.m_UserMessage = param1;
             this.m_SystemMessage = param2;
             this.m_Callback = param3;

@@ -35,10 +35,9 @@
 
         override protected function createChildren() : void
         {
-            var _loc_1:* = null;
             super.createChildren();
             text = resourceManager.getString(BUNDLE, "LBL_CHARACTER_NAME_CHANGE");
-            _loc_1 = new HBox();
+            var _loc_1:* = new HBox();
             _loc_1.percentWidth = 100;
             content.addChild(_loc_1);
             var _loc_2:* = new Label();

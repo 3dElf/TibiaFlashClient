@@ -61,9 +61,8 @@
         static const SPREYDATA:int = 232;
         static const CGETQUESTLOG:int = 240;
         static const CENTERWORLD:int = 15;
-        static const CHECKSUM_POS:int = 2;
         static const CBUYOBJECT:int = 122;
-        public static const CLIENT_VERSION:uint = 2424;
+        public static const CLIENT_VERSION:uint = 2431;
         static const SPING:int = 29;
         static const CCLOSENPCCHANNEL:int = 158;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
@@ -181,7 +180,7 @@
         public static const LATENCY_MEDIUM:Number = 500;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 11100;
+        public static const PROTOCOL_VERSION:int = 1111;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const SLOGINCHALLENGE:int = 31;
@@ -207,7 +206,6 @@
         static const COPENPREMIUMSHOP:int = 250;
         static const CINSPECTPLAYER:int = 206;
         static const CUSEOBJECT:int = 130;
-        static const CHECKSUM_SIZE:int = 4;
         static const CLOOKNPCTRADE:int = 121;
         static const CINVITETOCHANNEL:int = 171;
         static const CUSETWOOBJECTS:int = 131;
@@ -266,6 +264,7 @@
         public static const MESSAGEDIALOG_IMBUEMENT_SUCCESS:int = 0;
         static const CTALK:int = 150;
         static const SPREMIUMSHOP:int = 251;
+        static const SEQUENCE_NUMBER_POS:int = 2;
         static const STALK:int = 170;
         static const CEDITTEXT:int = 137;
         static const SCLOSENPCTRADE:int = 124;
@@ -281,6 +280,7 @@
         static const PAYLOADDATA_POSITION:int = 8;
         static const SCLOSEIMBUINGDIALOG:int = 236;
         static const CMARKETLEAVE:int = 244;
+        static const SEQUENCE_NUMBER_SIZE:int = 4;
         static const COPENTRANSACTIONHISTORY:int = 253;
         static const CSHAREEXPERIENCE:int = 168;
         static const SCLEARTARGET:int = 163;

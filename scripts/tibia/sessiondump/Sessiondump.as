@@ -51,10 +51,10 @@
         static const CPING:int = 29;
         static const STATE_DRUNK:int = 3;
         static const SCREDITBALANCE:int = 223;
-        static const CHECKSUM_POS:int = 2;
         static const SPREYDATA:int = 232;
         static const CGETQUESTLOG:int = 240;
         static const CENTERWORLD:int = 15;
+        static const SKILL_EXPERIENCE:int = 0;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const CBUYOBJECT:int = 122;
         static const SPING:int = 29;
@@ -63,7 +63,6 @@
         static const CATTACK:int = 161;
         static const SLOGINSUCCESS:int = 23;
         static const CCLOSENPCCHANNEL:int = 158;
-        static const SKILL_EXPERIENCE:int = 0;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const CLOOKATCREATURE:int = 141;
         static const CJOINCHANNEL:int = 152;
@@ -93,6 +92,7 @@
         static const CCLOSECONTAINER:int = 135;
         static const SKILL_NONE:int = -1;
         static const SFIELDDATA:int = 105;
+        private static const KEYFRAME_STATE_PROCESS:uint = 1;
         static const GUILD_MEMBER:int = 4;
         static const SKILL_HITPOINTS_PERCENT:int = 3;
         static const SCLOSECONTAINER:int = 111;
@@ -128,15 +128,16 @@
         static const CREJECTTRADE:int = 128;
         static const SREQUESTPURCHASEDATA:int = 225;
         static const CREVOKEINVITATION:int = 165;
-        static const SCREATURESKULL:int = 144;
+        static const ERR_CONNECTION_LOST:int = 6;
         static const CLOGIN:int = 10;
         public static const MESSAGEDIALOG_PREY_ERROR:int = 21;
-        static const ERR_CONNECTION_LOST:int = 6;
+        static const SCREATURESKULL:int = 144;
         static const SUNJUSTIFIEDPOINTS:int = 183;
         static const PARTY_MEMBER_SEXP_INACTIVE_INNOCENT:int = 9;
         static const SPLAYERDATACURRENT:int = 160;
         static const STRAPPERS:int = 135;
         static const SOBJECTINFO:int = 244;
+        static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
         static const CGETQUESTLINE:int = 241;
         static const SSNAPBACK:int = 181;
         static const CGETCHANNELS:int = 151;
@@ -144,7 +145,6 @@
         public static const SCREATUREDATA:int = 3;
         static const CROTATESOUTH:int = 113;
         static const GUILD_WAR_ALLY:int = 1;
-        static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
         static const STATE_SLOW:int = 5;
         static const CACCEPTTRADE:int = 127;
         static const PARTY_NONE:int = 0;
@@ -163,7 +163,6 @@
         private static const HEADER_MAGIC_BYTES_SIZE:uint = 3;
         static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
         static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
-        private static const KEYFRAME_STATE_PROCESS:uint = 1;
         static const SINGAMESHOPSUCCESS:int = 254;
         static const SSTOREBUTTONINDICATORS:int = 25;
         static const CPRIVATECHANNEL:int = 154;
@@ -229,7 +228,7 @@
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 11100;
+        public static const PROTOCOL_VERSION:int = 1111;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
@@ -264,14 +263,13 @@
         static const HEADER_SIZE:int = 6;
         static const SCREATUREHEALTH:int = 140;
         static const STOPROW:int = 101;
-        static const CHECKSUM_SIZE:int = 4;
+        static const SBOTTOMFLOOR:int = 191;
         static const CTURNOBJECT:int = 133;
         static const COPENPREMIUMSHOP:int = 250;
         static const CINSPECTPLAYER:int = 206;
         private static const ERROR_SESSIONDUMP_CONNECTION_ERROR:uint = 1;
         static const CUSEOBJECT:int = 130;
         static const ERR_INVALID_MESSAGE:int = 3;
-        static const SBOTTOMFLOOR:int = 191;
         static const CINVITETOCHANNEL:int = 171;
         static const CLOOKNPCTRADE:int = 121;
         static const STATE_BLEEDING:int = 15;
@@ -350,6 +348,7 @@
         static const PAYLOADDATA_POSITION:int = 8;
         static const STATE_FAST:int = 6;
         static const SPREMIUMSHOP:int = 251;
+        static const SEQUENCE_NUMBER_POS:int = 2;
         static const STALK:int = 170;
         static const CEDITTEXT:int = 137;
         static const GUILD_OTHER:int = 5;
@@ -368,6 +367,7 @@
         static const SCLOSEIMBUINGDIALOG:int = 236;
         static const TYPE_MONSTER:int = 1;
         static const CMARKETLEAVE:int = 244;
+        static const SEQUENCE_NUMBER_SIZE:int = 4;
         static const COPENTRANSACTIONHISTORY:int = 253;
         static const CSHAREEXPERIENCE:int = 168;
         static const SCLEARTARGET:int = 163;

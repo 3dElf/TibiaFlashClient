@@ -14,7 +14,7 @@
         static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
         static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
         static const ERR_INVALID_STATE:int = 4;
-        public static const PROTOCOL_VERSION:int = 11100;
+        public static const PROTOCOL_VERSION:int = 1111;
         static const PAYLOADLENGTH_SIZE:int = 2;
         static const PAYLOADLENGTH_POS:int = 6;
         static const ERR_INVALID_SIZE:int = 1;
@@ -22,13 +22,13 @@
         static const ERR_COULD_NOT_CONNECT:int = 5;
         static const PACKETLENGTH_POS:int = 0;
         static const ERR_CONNECTION_LOST:int = 6;
+        static const PAYLOADDATA_POSITION:int = 8;
         static const PACKETLENGTH_SIZE:int = 2;
         static const HEADER_SIZE:int = 6;
         static const ERR_INTERNAL:int = 0;
-        static const CHECKSUM_POS:int = 2;
+        static const SEQUENCE_NUMBER_SIZE:int = 4;
         static const PAYLOAD_POS:int = 6;
-        static const CHECKSUM_SIZE:int = 4;
-        static const PAYLOADDATA_POSITION:int = 8;
+        static const SEQUENCE_NUMBER_POS:int = 2;
 
         public function DummyMessageWriter()
         {

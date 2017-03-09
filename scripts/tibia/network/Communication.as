@@ -77,7 +77,6 @@
         static const SCREDITBALANCE:int = 223;
         static const CJOINCHANNEL:int = 152;
         static const SKILL_FED:int = 15;
-        static const CHECKSUM_POS:int = 2;
         static const CROTATEEAST:int = 112;
         static const SKILL_MAGLEVEL:int = 2;
         static const CUSEONCREATURE:int = 132;
@@ -242,6 +241,7 @@
         static const PATH_NORTH_EAST:int = 2;
         static const CEDITTEXT:int = 137;
         static const PATH_ERROR_TOO_FAR:int = -3;
+        static const SEQUENCE_NUMBER_POS:int = 2;
         static const STALK:int = 170;
         static const GUILD_OTHER:int = 5;
         static const PROFESSION_MASK_PALADIN:int = 1 << PROFESSION_PALADIN;
@@ -252,6 +252,7 @@
         static const PAYLOADLENGTH_SIZE:int = 2;
         public static const CLIENT_PREVIEW_STATE:uint = 0;
         static const SCLOSEIMBUINGDIALOG:int = 236;
+        static const SEQUENCE_NUMBER_SIZE:int = 4;
         static const CMARKETLEAVE:int = 244;
         static const COPENTRANSACTIONHISTORY:int = 253;
         static const CSHAREEXPERIENCE:int = 168;
@@ -292,7 +293,7 @@
         static const STATE_DRUNK:int = 3;
         static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
         static const TYPE_SUMMON_OTHERS:int = 4;
-        public static const CLIENT_VERSION:uint = 2424;
+        public static const CLIENT_VERSION:uint = 2431;
         static const CATTACK:int = 161;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SLOGINSUCCESS:int = 23;
@@ -381,7 +382,7 @@
         static const STATE_PZ_BLOCK:int = 13;
         static const CROTATEWEST:int = 114;
         static const SEDITGUILDMESSAGE:int = 174;
-        public static const PROTOCOL_VERSION:int = 11100;
+        public static const PROTOCOL_VERSION:int = 1111;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const CLEAVECHANNEL:int = 153;
@@ -399,7 +400,6 @@
         static const PK_PLAYERKILLER:int = 4;
         static const SBOTTOMFLOOR:int = 191;
         static const STOPROW:int = 101;
-        static const CHECKSUM_SIZE:int = 4;
         static const CTURNOBJECT:int = 133;
         static const CINVITETOCHANNEL:int = 171;
         static const CLOOKNPCTRADE:int = 121;

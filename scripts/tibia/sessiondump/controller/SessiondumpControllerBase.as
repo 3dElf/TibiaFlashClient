@@ -41,7 +41,6 @@
         static const SMESSAGE:int = 180;
         static const CPING:int = 29;
         static const SCREDITBALANCE:int = 223;
-        static const CHECKSUM_POS:int = 2;
         static const SPREYDATA:int = 232;
         static const CGETQUESTLOG:int = 240;
         static const CENTERWORLD:int = 15;
@@ -90,10 +89,10 @@
         static const CREJECTTRADE:int = 128;
         static const SREQUESTPURCHASEDATA:int = 225;
         static const CREVOKEINVITATION:int = 165;
-        static const SCREATURESKULL:int = 144;
+        static const ERR_CONNECTION_LOST:int = 6;
         static const CLOGIN:int = 10;
         public static const MESSAGEDIALOG_PREY_ERROR:int = 21;
-        static const ERR_CONNECTION_LOST:int = 6;
+        static const SCREATURESKULL:int = 144;
         static const SUNJUSTIFIEDPOINTS:int = 183;
         static const SPLAYERDATACURRENT:int = 160;
         static const STRAPPERS:int = 135;
@@ -154,7 +153,7 @@
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 11100;
+        public static const PROTOCOL_VERSION:int = 1111;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SAMBIENTE:int = 130;
@@ -175,13 +174,12 @@
         static const HEADER_SIZE:int = 6;
         static const SCREATUREHEALTH:int = 140;
         static const STOPROW:int = 101;
-        static const CHECKSUM_SIZE:int = 4;
+        static const SBOTTOMFLOOR:int = 191;
         static const CTURNOBJECT:int = 133;
         static const COPENPREMIUMSHOP:int = 250;
         static const CINSPECTPLAYER:int = 206;
         static const CUSEOBJECT:int = 130;
         static const ERR_INVALID_MESSAGE:int = 3;
-        static const SBOTTOMFLOOR:int = 191;
         static const CINVITETOCHANNEL:int = 171;
         static const CLOOKNPCTRADE:int = 121;
         static const ERR_INVALID_STATE:int = 4;
@@ -238,6 +236,7 @@
         static const CTALK:int = 150;
         static const PAYLOADDATA_POSITION:int = 8;
         static const SPREMIUMSHOP:int = 251;
+        static const SEQUENCE_NUMBER_POS:int = 2;
         static const STALK:int = 170;
         static const CEDITTEXT:int = 137;
         static const SCLOSENPCTRADE:int = 124;
@@ -251,6 +250,7 @@
         static const SCLOSEIMBUINGDIALOG:int = 236;
         private static const CALCULATED_PLAYSPEED_FACTOR_SAMPLE_SIZE:uint = 3;
         static const CMARKETLEAVE:int = 244;
+        static const SEQUENCE_NUMBER_SIZE:int = 4;
         static const COPENTRANSACTIONHISTORY:int = 253;
         static const CSHAREEXPERIENCE:int = 168;
         static const SCLEARTARGET:int = 163;
