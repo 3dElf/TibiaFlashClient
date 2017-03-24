@@ -62,7 +62,7 @@
         static const CGETQUESTLOG:int = 240;
         static const CENTERWORLD:int = 15;
         static const CBUYOBJECT:int = 122;
-        public static const CLIENT_VERSION:uint = 2431;
+        public static const CLIENT_VERSION:uint = 2443;
         static const SPING:int = 29;
         static const CCLOSENPCCHANNEL:int = 158;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
@@ -180,7 +180,7 @@
         public static const LATENCY_MEDIUM:Number = 500;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1111;
+        public static const PROTOCOL_VERSION:int = 1120;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const SLOGINCHALLENGE:int = 31;

@@ -557,7 +557,7 @@
         private static const SHAREDOBJECT_NAME:String = "options";
         static const CONNECTION_STATE_PENDING:int = 3;
         public static const BUGGY_FLASH_PLAYER_VERSION:String = "21,0,0,182";
-        public static const PROTOCOL_VERSION:int = 1111;
+        public static const PROTOCOL_VERSION:int = 1120;
         public static var s_FrameTibiaTimestamp:Number = 0;
         public static var s_FrameRealTimestamp:Number = 0;
         static const ERR_INVALID_SIZE:int = 1;
@@ -567,7 +567,7 @@
         private static var _watcherSetupUtil:IWatcherSetupUtil;
         static const PACKETLENGTH_SIZE:int = 2;
         private static var s_LastTibiaFactorChangeRealTimestamp:int = 0;
-        public static const CLIENT_VERSION:uint = 2431;
+        public static const CLIENT_VERSION:uint = 2443;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
         static const PAYLOADLENGTH_POS:int = 6;
         static const CONNECTION_STATE_DISCONNECTED:int = 0;
