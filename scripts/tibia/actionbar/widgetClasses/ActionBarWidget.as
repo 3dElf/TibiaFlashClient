@@ -30,7 +30,7 @@
         protected var m_Direction:int = 0;
         protected var m_MaxChildHeight:Number = 0;
         protected var m_MaxChildWidth:Number = 0;
-        protected var m_MaxScrollPosition:int;
+        protected var m_MaxScrollPosition:int = 29;
         protected var m_Options:OptionsStorage = null;
         protected var m_ScrollPosition:int = 0;
         private var m_UncommittedCurrentState:Boolean = false;
@@ -60,7 +60,6 @@
 
         public function ActionBarWidget(param1:int = 0)
         {
-            this.m_MaxScrollPosition = ActionBar.NUM_ACTIONS - 1;
             this.m_Direction = param1;
             horizontalScrollPolicy = ScrollPolicy.OFF;
             verticalScrollPolicy = ScrollPolicy.OFF;

@@ -6,7 +6,7 @@
 
     public class _CursorManagerStyle extends Object
     {
-        private static var _embed_css_Assets_swf_mx_skins_cursor_BusyCursor_502657655:Class = _CursorManagerStyle__embed_css_Assets_swf_mx_skins_cursor_BusyCursor_502657655;
+        private static var _embed_css_Assets_swf_mx_skins_cursor_BusyCursor_1272652271:Class = _CursorManagerStyle__embed_css_Assets_swf_mx_skins_cursor_BusyCursor_1272652271;
 
         public function _CursorManagerStyle()
         {
@@ -27,7 +27,7 @@
                 style.defaultFactory = function () : void
             {
                 this.busyCursor = BusyCursor;
-                this.busyCursorBackground = _embed_css_Assets_swf_mx_skins_cursor_BusyCursor_502657655;
+                this.busyCursorBackground = _embed_css_Assets_swf_mx_skins_cursor_BusyCursor_1272652271;
                 return;
             }// end function
             ;

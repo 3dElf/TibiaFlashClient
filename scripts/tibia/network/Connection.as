@@ -62,7 +62,7 @@
         static const CGETQUESTLOG:int = 240;
         static const CENTERWORLD:int = 15;
         static const CBUYOBJECT:int = 122;
-        public static const CLIENT_VERSION:uint = 2443;
+        public static const CLIENT_VERSION:uint = 2456;
         static const SPING:int = 29;
         static const CCLOSENPCCHANNEL:int = 158;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
@@ -166,6 +166,7 @@
         public static const MESSAGEDIALOG_IMBUING_STATION_NOT_FOUND:int = 3;
         static const HEADER_POS:int = 0;
         static const SMARKETENTER:int = 246;
+        static const SCLIENTCHECK:int = 99;
         static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
         static const SCREATURESPEED:int = 143;
         static const CREQUESTSHOPOFFERS:int = 251;
@@ -180,7 +181,7 @@
         public static const LATENCY_MEDIUM:Number = 500;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1120;
+        public static const PROTOCOL_VERSION:int = 1121;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const SLOGINCHALLENGE:int = 31;

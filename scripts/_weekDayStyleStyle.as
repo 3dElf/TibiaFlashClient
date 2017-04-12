@@ -24,8 +24,8 @@
             {
                 style.defaultFactory = function () : void
             {
-                this.textAlign = "center";
                 this.fontWeight = "bold";
+                this.textAlign = "center";
                 return;
             }// end function
             ;

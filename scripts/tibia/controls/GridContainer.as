@@ -20,13 +20,13 @@
             return;
         }// end function
 
-        public function set center(param1:IUIComponent) : void
+        public function set top(param1:IUIComponent) : void
         {
-            var _loc_2:* = this.center;
+            var _loc_2:* = this.top;
             if (_loc_2 !== param1)
             {
-                this._1364013995center = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "center", _loc_2, param1));
+                this._115029top = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "top", _loc_2, param1));
             }
             return;
         }// end function
@@ -34,17 +34,6 @@
         public function get top() : IUIComponent
         {
             return this.m_Child[CHILD_TOP];
-        }// end function
-
-        public function set bottom(param1:IUIComponent) : void
-        {
-            var _loc_2:* = this.bottom;
-            if (_loc_2 !== param1)
-            {
-                this._1383228885bottom = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "bottom", _loc_2, param1));
-            }
-            return;
         }// end function
 
         private function getExplicitOrMeasuredMinHeight(param1:IUIComponent) : Number
@@ -96,6 +85,17 @@
         private function set _115029top(param1:IUIComponent) : void
         {
             this.setChild(CHILD_TOP, param1);
+            return;
+        }// end function
+
+        public function set left(param1:IUIComponent) : void
+        {
+            var _loc_2:* = this.left;
+            if (_loc_2 !== param1)
+            {
+                this._3317767left = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "left", _loc_2, param1));
+            }
             return;
         }// end function
 
@@ -180,13 +180,13 @@
             return;
         }// end function
 
-        public function set top(param1:IUIComponent) : void
+        public function set center(param1:IUIComponent) : void
         {
-            var _loc_2:* = this.top;
+            var _loc_2:* = this.center;
             if (_loc_2 !== param1)
             {
-                this._115029top = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "top", _loc_2, param1));
+                this._1364013995center = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "center", _loc_2, param1));
             }
             return;
         }// end function
@@ -228,13 +228,13 @@
             return this.m_Child[CHILD_RIGHT];
         }// end function
 
-        public function set left(param1:IUIComponent) : void
+        public function set bottom(param1:IUIComponent) : void
         {
-            var _loc_2:* = this.left;
+            var _loc_2:* = this.bottom;
             if (_loc_2 !== param1)
             {
-                this._3317767left = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "left", _loc_2, param1));
+                this._1383228885bottom = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "bottom", _loc_2, param1));
             }
             return;
         }// end function

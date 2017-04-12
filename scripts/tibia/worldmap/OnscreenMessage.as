@@ -10,7 +10,7 @@
     {
         protected var m_TTL:Number = NaN;
         protected var m_Speaker:String = null;
-        protected var m_Mode:int = 0;
+        protected var m_Mode:int;
         protected var m_CacheText:String = null;
         protected var m_Text:String = null;
         protected var m_VisibleSince:Number = NaN;
@@ -53,6 +53,7 @@
 
         public function OnscreenMessage(param1:int, param2:String, param3:int, param4:int, param5:String)
         {
+            this.m_Mode = MessageMode.MESSAGE_NONE;
             if (param1 <= 0)
             {
                 s_NextID = (s_NextID - 1);

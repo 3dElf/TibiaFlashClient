@@ -142,6 +142,7 @@
         static const CEXCLUDEFROMCHANNEL:int = 172;
         public static const MESSAGEDIALOG_IMBUING_STATION_NOT_FOUND:int = 3;
         static const SMARKETENTER:int = 246;
+        static const SCLIENTCHECK:int = 99;
         static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
         static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
         static const SCREATURESPEED:int = 143;
@@ -153,7 +154,7 @@
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 1120;
+        public static const PROTOCOL_VERSION:int = 1121;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SAMBIENTE:int = 130;

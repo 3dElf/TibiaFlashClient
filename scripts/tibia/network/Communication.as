@@ -163,6 +163,7 @@
         static const SBUDDYGROUPDATA:int = 212;
         static const SKILL_LIFE_LEECH_CHANCE:int = 21;
         static const SMARKETENTER:int = 246;
+        static const SCLIENTCHECK:int = 99;
         static const SKILL_FIGHTFIST:int = 13;
         static const SCREATURESPEED:int = 143;
         static const STATE_FIGHTING:int = 7;
@@ -293,7 +294,7 @@
         static const STATE_DRUNK:int = 3;
         static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
         static const TYPE_SUMMON_OTHERS:int = 4;
-        public static const CLIENT_VERSION:uint = 2443;
+        public static const CLIENT_VERSION:uint = 2456;
         static const CATTACK:int = 161;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SLOGINSUCCESS:int = 23;
@@ -382,7 +383,7 @@
         static const STATE_PZ_BLOCK:int = 13;
         static const CROTATEWEST:int = 114;
         static const SEDITGUILDMESSAGE:int = 174;
-        public static const PROTOCOL_VERSION:int = 1120;
+        public static const PROTOCOL_VERSION:int = 1121;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const CLEAVECHANNEL:int = 153;
@@ -1595,10 +1596,35 @@
             return;
         }// end function
 
-        protected function readSINSPECTIONSTATE(param1:ByteArray) : void
+        protected function readSPLAYERSKILLS(param1:ByteArray) : void
         {
-            param1.readUnsignedInt();
-            param1.readUnsignedByte();
+            var _loc_2:* = 0;
+            var _loc_3:* = NaN;
+            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
+            var _loc_6:* = null;
+            var _loc_7:* = null;
+            _loc_2 = 0;
+            _loc_3 = 0;
+            _loc_4 = 0;
+            _loc_5 = 0;
+            _loc_6 = [SKILL_FIGHTFIST, SKILL_FIGHTCLUB, SKILL_FIGHTSWORD, SKILL_FIGHTAXE, SKILL_FIGHTDISTANCE, SKILL_FIGHTSHIELD, SKILL_FISHING];
+            _loc_7 = [SKILL_CRITICAL_HIT_CHANCE, SKILL_CRITICAL_HIT_DAMAGE, SKILL_LIFE_LEECH_CHANCE, SKILL_LIFE_LEECH_AMOUNT, SKILL_MANA_LEECH_CHANCE, SKILL_MANA_LEECH_AMOUNT];
+            for each (_loc_2 in _loc_6)
+            {
+                
+                _loc_3 = param1.readUnsignedShort();
+                _loc_4 = param1.readUnsignedShort();
+                _loc_5 = param1.readUnsignedByte();
+                this.m_Player.setSkill(_loc_2, _loc_3, _loc_4, _loc_5);
+            }
+            for each (_loc_2 in _loc_7)
+            {
+                
+                _loc_3 = param1.readUnsignedShort();
+                _loc_4 = param1.readUnsignedShort();
+                this.m_Player.setSkill(_loc_2, _loc_3, _loc_4, 0);
+            }
             return;
         }// end function
 
@@ -1637,35 +1663,11 @@
             return;
         }// end function
 
-        protected function readSPLAYERSKILLS(param1:ByteArray) : void
+        protected function readSCLIENTCHECK(param1:ByteArray) : void
         {
-            var _loc_2:* = 0;
-            var _loc_3:* = NaN;
-            var _loc_4:* = NaN;
-            var _loc_5:* = NaN;
-            var _loc_6:* = null;
-            var _loc_7:* = null;
-            _loc_2 = 0;
-            _loc_3 = 0;
-            _loc_4 = 0;
-            _loc_5 = 0;
-            _loc_6 = [SKILL_FIGHTFIST, SKILL_FIGHTCLUB, SKILL_FIGHTSWORD, SKILL_FIGHTAXE, SKILL_FIGHTDISTANCE, SKILL_FIGHTSHIELD, SKILL_FISHING];
-            _loc_7 = [SKILL_CRITICAL_HIT_CHANCE, SKILL_CRITICAL_HIT_DAMAGE, SKILL_LIFE_LEECH_CHANCE, SKILL_LIFE_LEECH_AMOUNT, SKILL_MANA_LEECH_CHANCE, SKILL_MANA_LEECH_AMOUNT];
-            for each (_loc_2 in _loc_6)
-            {
-                
-                _loc_3 = param1.readUnsignedShort();
-                _loc_4 = param1.readUnsignedShort();
-                _loc_5 = param1.readUnsignedByte();
-                this.m_Player.setSkill(_loc_2, _loc_3, _loc_4, _loc_5);
-            }
-            for each (_loc_2 in _loc_7)
-            {
-                
-                _loc_3 = param1.readUnsignedShort();
-                _loc_4 = param1.readUnsignedShort();
-                this.m_Player.setSkill(_loc_2, _loc_3, _loc_4, 0);
-            }
+            var _loc_2:* = param1.readUnsignedInt();
+            var _loc_3:* = new ByteArray();
+            param1.readBytes(_loc_3, 0, _loc_2);
             return;
         }// end function
 
@@ -1756,6 +1758,13 @@
             _loc_6.accountBalance = _loc_2;
             _loc_6.activeOffers = _loc_3;
             _loc_6.depotContent = _loc_4;
+            return;
+        }// end function
+
+        protected function readSINSPECTIONSTATE(param1:ByteArray) : void
+        {
+            param1.readUnsignedInt();
+            param1.readUnsignedByte();
             return;
         }// end function
 
@@ -4297,6 +4306,12 @@
                     case SDEAD:
                     {
                         this.readSDEAD(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SCLIENTCHECK:
+                    {
+                        this.readSCLIENTCHECK(CommunicationData);
                         a_MessageReader.finishMessage();
                         break;
                     }
