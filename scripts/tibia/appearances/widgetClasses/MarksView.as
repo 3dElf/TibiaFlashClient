@@ -62,7 +62,7 @@
                 throw new Error("MarksView.MarksView: Invalid marks start size.");
             }
             this.m_MarksStartSize = param1;
-            this.m_MarksViewInformations = new Vector.<MarksViewInformation>;
+            this.m_MarksViewInformations = new Vector.<>;
             return;
         }// end function
 

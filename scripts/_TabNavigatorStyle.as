@@ -24,13 +24,13 @@
             {
                 style.defaultFactory = function () : void
             {
-                this.borderStyle = "solid";
-                this.paddingTop = 10;
-                this.borderColor = 11187123;
                 this.backgroundColor = 16777215;
-                this.horizontalAlign = "left";
+                this.borderColor = 11187123;
                 this.horizontalGap = -1;
+                this.horizontalAlign = "left";
+                this.paddingTop = 10;
                 this.tabOffset = 0;
+                this.borderStyle = "solid";
                 return;
             }// end function
             ;

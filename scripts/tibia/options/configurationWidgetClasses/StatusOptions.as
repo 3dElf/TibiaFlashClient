@@ -27,18 +27,18 @@
         protected var m_Options:OptionsStorage = null;
         protected var m_UIOtherName:CheckBox = null;
         protected var m_UIOtherIcons:CheckBox = null;
-        protected var m_OtherStyle:int = 1;
+        protected var m_OtherStyle:int;
         protected var m_UIWidgetStyle:ComboBox = null;
         protected var m_UIBothPvPFrames:CheckBox = null;
         private var m_UncommittedOptions:Boolean = false;
-        protected var m_WidgetStyle:int = 1;
+        protected var m_WidgetStyle:int;
         protected var m_UIWidgetSkill:ComboBox = null;
         protected var m_UIOwnMana:CheckBox = null;
         private var m_UncommittedOtherStyle:Boolean = false;
         protected var m_UIOwnFlags:CheckBox = null;
         protected var m_WidgetSkill:int = 0;
         private var m_UncommittedOwnStyle:Boolean = false;
-        protected var m_OwnStyle:int = 1;
+        protected var m_OwnStyle:int;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
         static const PARTY_LEADER_SEXP_ACTIVE:int = 6;
         static const PARTY_MAX_FLASHING_TIME:uint = 5000;
@@ -56,10 +56,9 @@
         static const STATE_DRUNK:int = 3;
         static const PARTY_OTHER:int = 11;
         static const SKILL_EXPERIENCE:int = 0;
-        static const TYPE_SUMMON_OTHERS:int = 4;
-        static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
-        static const SKILL_STAMINA:int = 17;
         static const TYPE_NPC:int = 2;
+        static const BLESSING_FIRE_OF_SUNS:int = BLESSING_SPARK_OF_PHOENIX << 1;
+        static const SKILL_STAMINA:int = 17;
         static const STATE_NONE:int = -1;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const SKILL_FIGHTSHIELD:int = 8;
@@ -82,10 +81,11 @@
         static const NPC_SPEECH_TRADER:uint = 2;
         static const GUILD_MEMBER:int = 4;
         static const PROFESSION_NONE:int = 0;
+        static const BLESSING_BLOOD_OF_THE_MOUNTAIN:int = BLESSING_HEART_OF_THE_MOUNTAIN << 1;
         static const MAX_NAME_LENGTH:int = 29;
         static const PARTY_LEADER:int = 1;
-        static const STATE_PZ_ENTERED:int = 14;
         static const SKILL_CARRYSTRENGTH:int = 7;
+        static const STATE_PZ_ENTERED:int = 14;
         static const PK_ATTACKER:int = 1;
         static const STATE_ELECTRIFIED:int = 2;
         static const SKILL_FIGHTSWORD:int = 11;
@@ -93,6 +93,7 @@
         static const GUILD_WAR_NEUTRAL:int = 3;
         static const OWN_STATUS_STYLES:Array = [{value:RendererImpl.STATUS_STYLE_CLASSIC, label:"STATUS_RENDERER_STATUS_STYLE_CLASSIC"}, {value:RendererImpl.STATUS_STYLE_HUD, label:"STATUS_RENDERER_STATUS_STYLE_HUD"}, {value:RendererImpl.STATUS_STYLE_OFF, label:"STATUS_RENDERER_STATUS_STYLE_OFF"}];
         static const STATE_DROWNING:int = 8;
+        static const BLESSING_HEART_OF_THE_MOUNTAIN:int = BLESSING_EMBRACE_OF_TIBIA << 1;
         static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
         static const PROFESSION_MASK_DRUID:int = 1 << PROFESSION_DRUID;
@@ -107,12 +108,11 @@
         static const SUMMON_OWN:int = 1;
         static const SKILL_EXPERIENCE_GAIN:int = -2;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
-        static const TYPE_SUMMON_OWN:int = 3;
         static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
         static const PROFESSION_KNIGHT:int = 1;
         static const NPC_SPEECH_QUESTTRADER:uint = 4;
         static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
-        static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+        static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_TWIST_OF_FATE << 1;
         static const PROFESSION_PALADIN:int = 2;
         static const SKILL_FIGHTAXE:int = 12;
         static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
@@ -120,7 +120,7 @@
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const STATE_FAST:int = 6;
-        static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+        static const BLESSING_TWIST_OF_FATE:int = BLESSING_ADVENTURER << 1;
         static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
@@ -150,13 +150,17 @@
         static const STATE_FIGHTING:int = 7;
         static const NPC_SPEECH_QUEST:uint = 3;
         static const NPC_SPEECH_NORMAL:uint = 1;
-        static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
+        static const TYPE_PLAYERSUMMON:int = 3;
+        static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_FIRE_OF_SUNS << 1;
         static const NPC_SPEECH_NONE:uint = 0;
         static const PK_MAX_FLASHING_TIME:uint = 5000;
         static const SKILL_GOSTRENGTH:int = 6;
 
         public function StatusOptions()
         {
+            this.m_OwnStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+            this.m_OtherStyle = RendererImpl.STATUS_STYLE_CLASSIC;
+            this.m_WidgetStyle = StatusWidget.STATUS_STYLE_DEFAULT;
             label = resourceManager.getString(ConfigurationWidget.BUNDLE, "STATUS_LABEL");
             return;
         }// end function

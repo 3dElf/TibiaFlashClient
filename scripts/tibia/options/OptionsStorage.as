@@ -107,9 +107,8 @@
         static const PARTY_OTHER:int = 11;
         static const SKILL_EXPERIENCE:int = 0;
         static const TYPE_NPC:int = 2;
-        static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
+        static const BLESSING_FIRE_OF_SUNS:int = BLESSING_SPARK_OF_PHOENIX << 1;
         static const SKILL_STAMINA:int = 17;
-        static const TYPE_SUMMON_OTHERS:int = 4;
         static const STATE_NONE:int = -1;
         static const PARTY_MEMBER_SEXP_INACTIVE_GUILTY:int = 7;
         static const SKILL_FIGHTSHIELD:int = 8;
@@ -135,16 +134,18 @@
         static const GUILD_MEMBER:int = 4;
         static const PROFESSION_NONE:int = 0;
         public static const COMBAT_PVP_MODE_DOVE:uint = 0;
+        static const BLESSING_BLOOD_OF_THE_MOUNTAIN:int = BLESSING_HEART_OF_THE_MOUNTAIN << 1;
         static const MAX_NAME_LENGTH:int = 29;
         static const PARTY_LEADER:int = 1;
         static const STATE_PZ_ENTERED:int = 14;
         public static const COMBAT_SECURE_OFF:int = 0;
+        static const SKILL_CARRYSTRENGTH:int = 7;
         static const PK_ATTACKER:int = 1;
         static const STATE_ELECTRIFIED:int = 2;
         static const SKILL_FIGHTSWORD:int = 11;
-        static const SKILL_CARRYSTRENGTH:int = 7;
         static const GUILD_WAR_NEUTRAL:int = 3;
         static const STATE_DROWNING:int = 8;
+        static const BLESSING_HEART_OF_THE_MOUNTAIN:int = BLESSING_EMBRACE_OF_TIBIA << 1;
         static const SKILL_LIFE_LEECH_AMOUNT:int = 22;
         private static const OPTION_GROUPS:Array = [{XMLName:"general", localName:"General"}, {XMLName:"renderer", localName:"Renderer"}, {XMLName:"combat", localName:"Combat"}, {XMLName:"status", localName:"Status"}, {XMLName:"npctrade", localName:"NPCTrade"}, {XMLName:"opponent", localName:"Opponent"}, {XMLName:"help", localName:"Help"}, {XMLName:"sidebarset", localName:"SideBarSet"}, {XMLName:"actionbarset", localName:"ActionBarSet"}, {XMLName:"mappingset", localName:"MappingSet"}, {XMLName:"mousemapping", localName:"MouseMapping"}, {XMLName:"messagefilterset", localName:"MessageFilterSet"}, {XMLName:"channelset", localName:"ChannelSet"}, {XMLName:"namefilterset", localName:"NameFilterSet"}, {XMLName:"market", localName:"Market"}];
         static const PARTY_MEMBER_SEXP_OFF:int = 3;
@@ -160,12 +161,11 @@
         static const SUMMON_OWN:int = 1;
         static const SKILL_EXPERIENCE_GAIN:int = -2;
         static const PROFESSION_MASK_NONE:int = 1 << PROFESSION_NONE;
-        static const TYPE_SUMMON_OWN:int = 3;
         static const PROFESSION_MASK_SORCERER:int = 1 << PROFESSION_SORCERER;
         static const PROFESSION_KNIGHT:int = 1;
         static const NPC_SPEECH_QUESTTRADER:uint = 4;
         static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
-        static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+        static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_TWIST_OF_FATE << 1;
         static const PROFESSION_PALADIN:int = 2;
         static const SKILL_FIGHTAXE:int = 12;
         static const SKILL_CRITICAL_HIT_DAMAGE:int = 20;
@@ -173,7 +173,7 @@
         static const SKILL_SOULPOINTS:int = 16;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const STATE_FAST:int = 6;
-        static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+        static const BLESSING_TWIST_OF_FATE:int = BLESSING_ADVENTURER << 1;
         static const SKILL_MANA_LEECH_AMOUNT:int = 24;
         static const BLESSING_NONE:int = 0;
         static const GUILD_OTHER:int = 5;
@@ -205,8 +205,9 @@
         static const STATE_FIGHTING:int = 7;
         static const NPC_SPEECH_QUEST:uint = 3;
         static const NPC_SPEECH_NORMAL:uint = 1;
+        static const TYPE_PLAYERSUMMON:int = 3;
         public static const COMBAT_ATTACK_BALANCED:int = 2;
-        static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
+        static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_FIRE_OF_SUNS << 1;
         static const NPC_SPEECH_NONE:uint = 0;
         static const PK_MAX_FLASHING_TIME:uint = 5000;
         static const SKILL_GOSTRENGTH:int = 6;
@@ -458,13 +459,13 @@
             return MessageFilterSet(this.removeListItem(this.m_MessageFilterSet, param1, "messageFilterSet"));
         }// end function
 
-        public function set statusCreatureHealth(param1:Boolean) : void
+        public function set rendererScaleMap(param1:Boolean) : void
         {
-            var _loc_2:* = this.statusCreatureHealth;
+            var _loc_2:* = this.rendererScaleMap;
             if (_loc_2 !== param1)
             {
-                this._1714951155statusCreatureHealth = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusCreatureHealth", _loc_2, param1));
+                this._1408018027rendererScaleMap = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "rendererScaleMap", _loc_2, param1));
             }
             return;
         }// end function
@@ -764,13 +765,13 @@
             return;
         }// end function
 
-        public function set combatAttackMode(param1:int) : void
+        public function set statusCreaturePvpFrames(param1:Boolean) : void
         {
-            var _loc_2:* = this.combatAttackMode;
+            var _loc_2:* = this.statusCreaturePvpFrames;
             if (_loc_2 !== param1)
             {
-                this._251195935combatAttackMode = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "combatAttackMode", _loc_2, param1));
+                this._147163423statusCreaturePvpFrames = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusCreaturePvpFrames", _loc_2, param1));
             }
             return;
         }// end function
@@ -812,13 +813,13 @@
             return;
         }// end function
 
-        public function set statusCreaturePvpFrames(param1:Boolean) : void
+        public function set combatAttackMode(param1:int) : void
         {
-            var _loc_2:* = this.statusCreaturePvpFrames;
+            var _loc_2:* = this.combatAttackMode;
             if (_loc_2 !== param1)
             {
-                this._147163423statusCreaturePvpFrames = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusCreaturePvpFrames", _loc_2, param1));
+                this._251195935combatAttackMode = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "combatAttackMode", _loc_2, param1));
             }
             return;
         }// end function
@@ -924,6 +925,17 @@
                         break;
                     }
                 }
+            }
+            return;
+        }// end function
+
+        public function set statusCreatureHealth(param1:Boolean) : void
+        {
+            var _loc_2:* = this.statusCreatureHealth;
+            if (_loc_2 !== param1)
+            {
+                this._1714951155statusCreatureHealth = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusCreatureHealth", _loc_2, param1));
             }
             return;
         }// end function
@@ -1040,17 +1052,6 @@
         public function get marketBrowserCategory() : int
         {
             return this.m_MarketBrowserCategory;
-        }// end function
-
-        public function set rendererScaleMap(param1:Boolean) : void
-        {
-            var _loc_2:* = this.rendererScaleMap;
-            if (_loc_2 !== param1)
-            {
-                this._1408018027rendererScaleMap = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "rendererScaleMap", _loc_2, param1));
-            }
-            return;
         }// end function
 
         private function set _789326636statusPlayerFlags(param1:Boolean) : void
@@ -1754,13 +1755,13 @@
             return;
         }// end function
 
-        public function set marketBrowserCategory(param1:int) : void
+        public function set statusWidgetStyle(param1:int) : void
         {
-            var _loc_2:* = this.marketBrowserCategory;
+            var _loc_2:* = this.statusWidgetStyle;
             if (_loc_2 !== param1)
             {
-                this._131184534marketBrowserCategory = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "marketBrowserCategory", _loc_2, param1));
+                this._2037738107statusWidgetStyle = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusWidgetStyle", _loc_2, param1));
             }
             return;
         }// end function
@@ -1786,17 +1787,6 @@
             {
                 this._1621507731rendererShowFrameRate = param1;
                 this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "rendererShowFrameRate", _loc_2, param1));
-            }
-            return;
-        }// end function
-
-        public function set statusWidgetStyle(param1:int) : void
-        {
-            var _loc_2:* = this.statusWidgetStyle;
-            if (_loc_2 !== param1)
-            {
-                this._2037738107statusWidgetStyle = param1;
-                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "statusWidgetStyle", _loc_2, param1));
             }
             return;
         }// end function
@@ -2040,6 +2030,17 @@
         public function get npcTradeSellKeepEquipped() : Boolean
         {
             return this.m_NPCTradeSellKeepEquipped;
+        }// end function
+
+        public function set marketBrowserCategory(param1:int) : void
+        {
+            var _loc_2:* = this.marketBrowserCategory;
+            if (_loc_2 !== param1)
+            {
+                this._131184534marketBrowserCategory = param1;
+                this.dispatchEvent(PropertyChangeEvent.createUpdateEvent(this, "marketBrowserCategory", _loc_2, param1));
+            }
+            return;
         }// end function
 
         private function set _356338236marketSelectedView(param1:int) : void

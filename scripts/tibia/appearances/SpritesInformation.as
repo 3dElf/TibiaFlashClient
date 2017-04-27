@@ -55,7 +55,7 @@
             var a_SpritesAssets:* = param1;
             this.m_TempRectangle = new Rectangle();
             var i:uint;
-            this.m_SpriteAssetInformations = new Vector.<>;
+            this.m_SpriteAssetInformations = new Vector.<SpriteAssetInformation>;
             var _loc_3:* = 0;
             var _loc_4:* = a_SpritesAssets;
             while (_loc_4 in _loc_3)

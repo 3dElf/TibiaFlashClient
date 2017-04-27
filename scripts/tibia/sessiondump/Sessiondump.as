@@ -74,7 +74,7 @@
         static const SKILL_MAGLEVEL:int = 2;
         static const CUSEONCREATURE:int = 132;
         static const TYPE_NPC:int = 2;
-        static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
+        static const BLESSING_FIRE_OF_SUNS:int = BLESSING_SPARK_OF_PHOENIX << 1;
         static const CBROWSEFIELD:int = 203;
         static const CPREYACTION:int = 235;
         static const SCREATUREPARTY:int = 145;
@@ -87,7 +87,6 @@
         static const SPREYTIMELEFT:int = 231;
         public static const STATE_DEFAULT:int = 0;
         static const CAPPLYIMBUEMENT:int = 213;
-        static const TYPE_SUMMON_OTHERS:int = 4;
         static const CREMOVEBUDDY:int = 221;
         static const CCLOSECONTAINER:int = 135;
         static const SKILL_NONE:int = -1;
@@ -105,6 +104,7 @@
         public static const MESSAGEDIALOG_IMBUEMENT_ERROR:int = 1;
         static const CGOWEST:int = 104;
         static const PROFESSION_NONE:int = 0;
+        static const NPC_SPEECH_TRADER:uint = 2;
         static const STATE_PZ_ENTERED:int = 14;
         static const CPASSLEADERSHIP:int = 166;
         public static const STATE_ERROR:int = -1;
@@ -121,9 +121,8 @@
         static const PARTY_LEADER:int = 1;
         static const CGOSOUTHWEST:int = 108;
         static const SLOGINERROR:int = 20;
-        static const NPC_SPEECH_TRADER:uint = 2;
         static const SCREATUREMARKS:int = 147;
-        private static const KEYFRAME_STATE_NONE:uint = 0;
+        static const BLESSING_HEART_OF_THE_MOUNTAIN:int = BLESSING_EMBRACE_OF_TIBIA << 1;
         static const SPREYFREELISTREROLLAVAILABILITY:int = 230;
         static const CREJECTTRADE:int = 128;
         static const SREQUESTPURCHASEDATA:int = 225;
@@ -152,7 +151,6 @@
         static const SOPENCHANNEL:int = 172;
         static const STOPFLOOR:int = 190;
         static const PROFESSION_SORCERER:int = 3;
-        static const TYPE_SUMMON_OWN:int = 3;
         public static const MESSAGEDIALOG_PREY_MESSAGE:int = 20;
         static const CBUYPREMIUMOFFER:int = 252;
         static const CLOOKTRADE:int = 126;
@@ -161,7 +159,7 @@
         static const SBLESSINGS:int = 156;
         static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
         private static const HEADER_MAGIC_BYTES_SIZE:uint = 3;
-        static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+        static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_TWIST_OF_FATE << 1;
         static const PARTY_LEADER_SEXP_INACTIVE_GUILTY:int = 8;
         static const SINGAMESHOPSUCCESS:int = 254;
         static const SSTOREBUTTONINDICATORS:int = 25;
@@ -195,6 +193,7 @@
         static const CCLOSENPCTRADE:int = 124;
         static const SMARKETBROWSE:int = 249;
         static const CSELLOBJECT:int = 123;
+        private static const KEYFRAME_STATE_NONE:uint = 0;
         static const CMARKETBROWSE:int = 245;
         static const STATE_CURSED:int = 11;
         static const STATE_FREEZING:int = 9;
@@ -212,6 +211,7 @@
         static const SMARKETENTER:int = 246;
         static const SCLIENTCHECK:int = 99;
         static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
+        static const CBLESSINGSDIALOG:int = 207;
         static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
         static const GUILD_WAR_ENEMY:int = 2;
         static const SCREATURESPEED:int = 143;
@@ -223,13 +223,13 @@
         static const STATE_FIGHTING:int = 7;
         static const SKILL_FIGHTFIST:int = 13;
         static const SSPELLDELAY:int = 164;
-        static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
+        static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_FIRE_OF_SUNS << 1;
         static const CEDITBUDDY:int = 222;
         private static const HEADER_HEADER_LENGTH_SIZE:uint = 2;
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 1121;
+        public static const PROTOCOL_VERSION:int = 1130;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
@@ -273,6 +273,7 @@
         static const ERR_INVALID_MESSAGE:int = 3;
         static const CINVITETOCHANNEL:int = 171;
         static const CLOOKNPCTRADE:int = 121;
+        static const BLESSING_BLOOD_OF_THE_MOUNTAIN:int = BLESSING_HEART_OF_THE_MOUNTAIN << 1;
         static const STATE_BLEEDING:int = 15;
         static const ERR_INVALID_STATE:int = 4;
         static const CUSETWOOBJECTS:int = 131;
@@ -344,7 +345,7 @@
         static const SMARKETDETAIL:int = 248;
         static const SKILL_SOULPOINTS:int = 16;
         public static const MESSAGEDIALOG_IMBUEMENT_SUCCESS:int = 0;
-        static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+        static const BLESSING_TWIST_OF_FATE:int = BLESSING_ADVENTURER << 1;
         static const CTALK:int = 150;
         static const PAYLOADDATA_POSITION:int = 8;
         static const STATE_FAST:int = 6;
@@ -369,6 +370,7 @@
         static const TYPE_MONSTER:int = 1;
         static const CMARKETLEAVE:int = 244;
         static const SEQUENCE_NUMBER_SIZE:int = 4;
+        static const SBLESSINGSDIALOG:int = 155;
         static const COPENTRANSACTIONHISTORY:int = 253;
         static const CSHAREEXPERIENCE:int = 168;
         static const SCLEARTARGET:int = 163;
@@ -386,6 +388,7 @@
         static const SBUDDYSTATUSCHANGE:int = 211;
         static const SUMMON_NONE:int = 0;
         static const SAUTOMAPFLAG:int = 221;
+        static const TYPE_PLAYERSUMMON:int = 3;
         static const SOWNOFFER:int = 125;
         static const PAYLOAD_POS:int = 6;
         public static const RESOURCETYPE_PREY_BONUS_REROLLS:int = 10;

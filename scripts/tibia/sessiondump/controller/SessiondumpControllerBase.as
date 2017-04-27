@@ -144,6 +144,7 @@
         static const SMARKETENTER:int = 246;
         static const SCLIENTCHECK:int = 99;
         static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
+        static const CBLESSINGSDIALOG:int = 207;
         static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
         static const SCREATURESPEED:int = 143;
         static const CREQUESTSHOPOFFERS:int = 251;
@@ -154,7 +155,7 @@
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 1121;
+        public static const PROTOCOL_VERSION:int = 1130;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SAMBIENTE:int = 130;
@@ -252,6 +253,7 @@
         private static const CALCULATED_PLAYSPEED_FACTOR_SAMPLE_SIZE:uint = 3;
         static const CMARKETLEAVE:int = 244;
         static const SEQUENCE_NUMBER_SIZE:int = 4;
+        static const SBLESSINGSDIALOG:int = 155;
         static const COPENTRANSACTIONHISTORY:int = 253;
         static const CSHAREEXPERIENCE:int = 168;
         static const SCLEARTARGET:int = 163;

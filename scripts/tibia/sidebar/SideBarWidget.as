@@ -231,13 +231,13 @@
 
         override protected function updateDisplayList(param1:Number, param2:Number) : void
         {
-            var _loc_13:* = null;
+            var _loc_7:* = NaN;
             layoutChrome(param1, unscaledHeight);
             var _loc_3:* = viewMetricsAndPadding;
             var _loc_4:* = Math.max(0, getStyle("verticalGap"));
             var _loc_5:* = 0;
             var _loc_6:* = 0;
-            var _loc_7:* = 0;
+            _loc_7 = 0;
             var _loc_8:* = 0;
             var _loc_9:* = getStyle("paddingLeft");
             var _loc_10:* = 0;
@@ -252,7 +252,7 @@
                 _loc_10 = _loc_7;
             }
             var _loc_12:* = 0;
-            _loc_13 = null;
+            var _loc_13:* = null;
             var _loc_14:* = param2 - _loc_10 - _loc_3.top - _loc_3.bottom;
             var _loc_15:* = -_loc_4;
             if (!visible)

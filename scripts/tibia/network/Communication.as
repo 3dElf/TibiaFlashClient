@@ -86,12 +86,12 @@
         static const CGUILDMESSAGE:int = 155;
         static const PROFESSION_MASK_KNIGHT:int = 1 << PROFESSION_KNIGHT;
         static const ERR_INTERNAL:int = 0;
+        static const CREMOVEBUDDY:int = 221;
         static const SUMMON_OTHERS:int = 2;
         static const CAPPLYIMBUEMENT:int = 213;
         static const NPC_SPEECH_TRADER:uint = 2;
         static const SFIELDDATA:int = 105;
         static const CCLOSECONTAINER:int = 135;
-        static const CREMOVEBUDDY:int = 221;
         static const CPASSLEADERSHIP:int = 166;
         static const PROFESSION_NONE:int = 0;
         static const MAX_NAME_LENGTH:int = 29;
@@ -100,9 +100,9 @@
         static const PARTY_LEADER:int = 1;
         static const PATH_MATRIX_SIZE:int = 221;
         static const PATH_COST_MAX:int = 250;
-        static const SKILL_CARRYSTRENGTH:int = 7;
         static const STATE_PZ_ENTERED:int = 14;
         static const PATH_MAX_STEPS:int = 128;
+        static const SKILL_CARRYSTRENGTH:int = 7;
         static const SBOTTOMROW:int = 103;
         static const STATE_DROWNING:int = 8;
         static const CGETOBJECTINFO:int = 243;
@@ -165,11 +165,12 @@
         static const SMARKETENTER:int = 246;
         static const SCLIENTCHECK:int = 99;
         static const SKILL_FIGHTFIST:int = 13;
+        static const CBLESSINGSDIALOG:int = 207;
         static const SCREATURESPEED:int = 143;
         static const STATE_FIGHTING:int = 7;
         static const NPC_SPEECH_NORMAL:uint = 1;
         static const SSPELLDELAY:int = 164;
-        static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_ADVENTURER << 1;
+        static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_FIRE_OF_SUNS << 1;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
         static const RISKINESS_NONE:int = 0;
         static const SCREATUREOUTFIT:int = 142;
@@ -194,6 +195,7 @@
         static const ERR_INVALID_MESSAGE:int = 3;
         static const COPENPREMIUMSHOP:int = 250;
         static const CUSETWOOBJECTS:int = 131;
+        static const BLESSING_BLOOD_OF_THE_MOUNTAIN:int = BLESSING_HEART_OF_THE_MOUNTAIN << 1;
         static const ERR_INVALID_STATE:int = 4;
         static const PATH_COST_UNDEFINED:int = 254;
         static const CINVITETOPARTY:int = 163;
@@ -292,9 +294,8 @@
         static const SPREYDATA:int = 232;
         static const CGETQUESTLOG:int = 240;
         static const STATE_DRUNK:int = 3;
-        static const BLESSING_FIRE_OF_SUNS:int = BLESSING_EMBRACE_OF_TIBIA << 1;
-        static const TYPE_SUMMON_OTHERS:int = 4;
-        public static const CLIENT_VERSION:uint = 2456;
+        static const BLESSING_FIRE_OF_SUNS:int = BLESSING_SPARK_OF_PHOENIX << 1;
+        public static const CLIENT_VERSION:uint = 2460;
         static const CATTACK:int = 161;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SLOGINSUCCESS:int = 23;
@@ -323,6 +324,7 @@
         static const CSEEKINCONTAINER:int = 204;
         static const SQUESTLINE:int = 241;
         static const GUILD_WAR_NEUTRAL:int = 3;
+        static const BLESSING_HEART_OF_THE_MOUNTAIN:int = BLESSING_EMBRACE_OF_TIBIA << 1;
         static const SLOGINERROR:int = 20;
         static const SCREATUREMARKS:int = 147;
         static const CREJECTTRADE:int = 128;
@@ -339,12 +341,11 @@
         static const STATE_SLOW:int = 5;
         static const CACCEPTTRADE:int = 127;
         static const STOPFLOOR:int = 190;
-        static const TYPE_SUMMON_OWN:int = 3;
         static const CBUYPREMIUMOFFER:int = 252;
         static const NPC_SPEECH_QUESTTRADER:uint = 4;
         static const SPRIVATECHANNEL:int = 173;
         static const SBLESSINGS:int = 156;
-        static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_FIRE_OF_SUNS << 1;
+        static const BLESSING_WISDOM_OF_SOLITUDE:int = BLESSING_TWIST_OF_FATE << 1;
         static const SSTOREBUTTONINDICATORS:int = 25;
         static const PAYLOADLENGTH_POS:int = 6;
         public static const RESOURCETYPE_BANK_GOLD:int = 0;
@@ -383,7 +384,7 @@
         static const STATE_PZ_BLOCK:int = 13;
         static const CROTATEWEST:int = 114;
         static const SEDITGUILDMESSAGE:int = 174;
-        public static const PROTOCOL_VERSION:int = 1121;
+        public static const PROTOCOL_VERSION:int = 1130;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const CLEAVECHANNEL:int = 153;
@@ -438,7 +439,7 @@
         static const CGONORTH:int = 101;
         static const SKILL_SOULPOINTS:int = 16;
         static const NUM_ONSCREEN_MESSAGES:int = 16;
-        static const BLESSING_TWIST_OF_FATE:int = BLESSING_SPARK_OF_PHOENIX << 1;
+        static const BLESSING_TWIST_OF_FATE:int = BLESSING_ADVENTURER << 1;
         static const PAYLOADDATA_POSITION:int = 8;
         static const SPREMIUMSHOP:int = 251;
         static const TYPE_PLAYER:int = 0;
@@ -450,15 +451,17 @@
         static const CBUGREPORT:int = 230;
         static const PATH_SOUTH_EAST:int = 8;
         static const TYPE_MONSTER:int = 1;
+        static const SBLESSINGSDIALOG:int = 155;
         static const SCREATURETYPE:int = 149;
         static const SBUDDYSTATUSCHANGE:int = 211;
         static const SKILL_LEVEL:int = 1;
         static const PATH_EAST:int = 1;
-        static const SUMMON_NONE:int = 0;
         static const STATE_STRENGTHENED:int = 12;
         static const PROFESSION_DRUID:int = 4;
         static const PACKETLENGTH_POS:int = 0;
+        static const SUMMON_NONE:int = 0;
         static const SAUTOMAPFLAG:int = 221;
+        static const TYPE_PLAYERSUMMON:int = 3;
         static const CSETOUTFIT:int = 211;
         public static const RESOURCETYPE_PREY_BONUS_REROLLS:int = 10;
         static const PATH_MATRIX_CENTER:int = 110;
@@ -1179,8 +1182,10 @@
 
         protected function readSPREMIUMTRIGGER(param1:ByteArray) : void
         {
-            var _loc_2:* = new Vector.<uint>;
-            var _loc_3:* = param1.readUnsignedByte() - 1;
+            var _loc_2:* = null;
+            var _loc_3:* = 0;
+            _loc_2 = new Vector.<uint>;
+            _loc_3 = param1.readUnsignedByte() - 1;
             while (_loc_3 >= 0)
             {
                 
@@ -2881,8 +2886,10 @@
 
         protected function readSSWITCHPRESET(param1:ByteArray) : void
         {
-            var _loc_2:* = param1.readUnsignedInt();
-            var _loc_3:* = Tibia.s_GetOptions();
+            var _loc_2:* = 0;
+            var _loc_3:* = null;
+            _loc_2 = param1.readUnsignedInt();
+            _loc_3 = Tibia.s_GetOptions();
             if (_loc_3 != null)
             {
                 switch(_loc_2)
@@ -2935,6 +2942,7 @@
 
         protected function readSPLAYERDATACURRENT(param1:ByteArray) : void
         {
+            var _loc_2:* = NaN;
             var _loc_3:* = NaN;
             var _loc_4:* = NaN;
             var _loc_5:* = NaN;
@@ -2945,7 +2953,7 @@
             var _loc_10:* = NaN;
             var _loc_11:* = 0;
             var _loc_12:* = false;
-            var _loc_2:* = Tibia.s_FrameTibiaTimestamp;
+            _loc_2 = Tibia.s_FrameTibiaTimestamp;
             _loc_3 = 0;
             _loc_4 = 0;
             _loc_5 = 0;
@@ -3639,10 +3647,53 @@
 
         protected function readSBLESSINGS(param1:ByteArray) : void
         {
-            var _loc_2:* = param1.readUnsignedShort();
+            var _loc_2:* = 0;
+            _loc_2 = param1.readUnsignedShort();
             if (this.m_Player != null)
             {
                 this.m_Player.blessings = _loc_2;
+            }
+            var _loc_3:* = param1.readUnsignedByte();
+            return;
+        }// end function
+
+        protected function readSBLESSINGSDIALOG(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_13:* = 0;
+            var _loc_14:* = 0;
+            var _loc_15:* = 0;
+            var _loc_16:* = 0;
+            var _loc_17:* = 0;
+            var _loc_18:* = null;
+            _loc_2 = param1.readUnsignedByte();
+            _loc_3 = 0;
+            while (_loc_3 < _loc_2)
+            {
+                
+                _loc_14 = param1.readUnsignedShort();
+                _loc_15 = param1.readUnsignedByte();
+                _loc_3 = _loc_3 + 1;
+            }
+            var _loc_4:* = param1.readBoolean();
+            var _loc_5:* = param1.readUnsignedByte();
+            var _loc_6:* = param1.readUnsignedByte();
+            var _loc_7:* = param1.readUnsignedByte();
+            var _loc_8:* = param1.readUnsignedByte();
+            var _loc_9:* = param1.readUnsignedByte();
+            var _loc_10:* = param1.readUnsignedByte();
+            var _loc_11:* = param1.readBoolean();
+            var _loc_12:* = param1.readBoolean();
+            _loc_13 = param1.readUnsignedByte();
+            _loc_3 = 0;
+            while (_loc_3 < _loc_13)
+            {
+                
+                _loc_16 = param1.readUnsignedInt();
+                _loc_17 = param1.readUnsignedByte();
+                _loc_18 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                _loc_3 = _loc_3 + 1;
             }
             return;
         }// end function
@@ -3917,16 +3968,16 @@
 
         protected function readSDEAD(param1:ByteArray) : void
         {
-            var _loc_4:* = NaN;
+            var _loc_5:* = NaN;
             var _loc_2:* = new ConnectionEvent(ConnectionEvent.DEAD);
             _loc_2.message = null;
             var _loc_3:* = param1.readUnsignedByte();
             if (_loc_3 == 0)
             {
-                _loc_4 = param1.readUnsignedByte();
-                if (_loc_4 < 100)
+                _loc_5 = param1.readUnsignedByte();
+                if (_loc_5 < 100)
                 {
-                    _loc_2.data = {type:ConnectionEvent.DEATH_UNFAIR, fairFightFactor:_loc_4};
+                    _loc_2.data = {type:ConnectionEvent.DEATH_UNFAIR, fairFightFactor:_loc_5};
                 }
                 else
                 {
@@ -3945,6 +3996,7 @@
             {
                 throw new Error("Connection.readSDEAD: Invalid death type " + _loc_3);
             }
+            var _loc_4:* = param1.readUnsignedByte();
             this.m_ServerConnection.dispatchEvent(_loc_2);
             return;
         }// end function
@@ -4561,6 +4613,12 @@
                         a_MessageReader.finishMessage();
                         break;
                     }
+                    case SBLESSINGSDIALOG:
+                    {
+                        this.readSBLESSINGSDIALOG(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
                     case SBLESSINGS:
                     {
                         this.readSBLESSINGS(CommunicationData);
@@ -5151,6 +5209,10 @@
                     if (_loc_7 != null)
                     {
                         _loc_7.type = _loc_6;
+                        if (_loc_7.isSummon)
+                        {
+                            _loc_7.summonerCreatureID = param1.readUnsignedInt();
+                        }
                         _loc_7.name = StringHelper.s_ReadLongStringFromByteArray(param1, Creature.MAX_NAME_LENGHT);
                         _loc_7.setSkillValue(SKILL_HITPOINTS_PERCENT, param1.readUnsignedByte());
                         _loc_7.direction = param1.readUnsignedByte();
@@ -5163,6 +5225,10 @@
                         _loc_7.setPartyFlag(param1.readUnsignedByte());
                         _loc_7.guildFlag = param1.readUnsignedByte();
                         _loc_7.type = param1.readUnsignedByte();
+                        if (_loc_7.isSummon)
+                        {
+                            _loc_7.summonerCreatureID = param1.readUnsignedInt();
+                        }
                         _loc_7.speechCategory = param1.readUnsignedByte();
                         _loc_7.marks.setMark(Marks.MARK_TYPE_PERMANENT, param1.readUnsignedByte());
                         param1.readUnsignedByte();
@@ -5191,6 +5257,10 @@
                         _loc_7.setPKFlag(param1.readUnsignedByte());
                         _loc_7.setPartyFlag(param1.readUnsignedByte());
                         _loc_7.type = param1.readUnsignedByte();
+                        if (_loc_7.isSummon)
+                        {
+                            _loc_7.summonerCreatureID = param1.readUnsignedInt();
+                        }
                         _loc_7.speechCategory = param1.readUnsignedByte();
                         _loc_7.marks.setMark(Marks.MARK_TYPE_PERMANENT, param1.readUnsignedByte());
                         param1.readUnsignedByte();
@@ -5698,13 +5768,16 @@
 
         protected function readSPLAYERDATABASIC(param1:ByteArray) : void
         {
-            var _loc_2:* = param1.readBoolean();
+            var _loc_2:* = false;
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            _loc_2 = param1.readBoolean();
             this.m_Player.premiumUntil = param1.readUnsignedInt();
             this.m_Player.premium = _loc_2;
             this.m_Player.profession = param1.readUnsignedByte();
             this.m_Player.hasReachedMain = param1.readBoolean();
-            var _loc_3:* = [];
-            var _loc_4:* = param1.readUnsignedShort() - 1;
+            _loc_3 = [];
+            _loc_4 = param1.readUnsignedShort() - 1;
             while (_loc_4 >= 0)
             {
                 
@@ -6495,6 +6568,10 @@
             if (this.m_CreatureStorage.getCreature(_loc_2) != null)
             {
                 _loc_4.type = _loc_3;
+                if (_loc_4.isSummon)
+                {
+                    _loc_4.summonerCreatureID = param1.readUnsignedInt();
+                }
                 ;
             }
             this.m_CreatureStorage.invalidateOpponents();
