@@ -4,7 +4,7 @@
     public class OfferStatistics extends Object
     {
         private var m_Timestamp:uint = 0;
-        private var m_Kind:int;
+        private var m_Kind:int = 0;
         private var m_TotalTransactions:uint = 0;
         private var m_MinimumPrice:uint = 0;
         private var m_TotalPrice:uint = 0;
@@ -13,7 +13,6 @@
 
         public function OfferStatistics(param1:uint, param2:int, param3:uint, param4:uint, param5:uint, param6:uint)
         {
-            this.m_Kind = Offer.BUY_OFFER;
             this.m_Timestamp = Math.floor(param1 / SECONDS_PER_DAY) * SECONDS_PER_DAY;
             if (param2 != Offer.BUY_OFFER && param2 != Offer.SELL_OFFER)
             {

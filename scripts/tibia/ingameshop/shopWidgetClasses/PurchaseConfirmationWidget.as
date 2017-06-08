@@ -28,10 +28,9 @@
 
         override protected function createChildren() : void
         {
-            var _loc_1:* = null;
             var _loc_2:* = null;
             super.createChildren();
-            _loc_1 = new OfferDisplayBlock();
+            var _loc_1:* = new OfferDisplayBlock();
             _loc_1.percentWidth = 100;
             _loc_1.offer = this.m_Offer;
             text = resourceManager.getString(BUNDLE, "LBL_PURCHASE_CONFIRMATION", [this.m_Offer.name]);
