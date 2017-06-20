@@ -155,7 +155,7 @@
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 1130;
+        public static const PROTOCOL_VERSION:int = 1132;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SAMBIENTE:int = 130;
@@ -245,6 +245,7 @@
         static const SPENDINGSTATEENTERED:int = 10;
         static const PAYLOADLENGTH_SIZE:int = 2;
         static const SRIGHTROW:int = 102;
+        static const SSHOWGAMENEWS:int = 152;
         static const SEDITTEXT:int = 150;
         static const SOPENOWNCHANNEL:int = 178;
         static const SGRAPHICALEFFECT:int = 131;

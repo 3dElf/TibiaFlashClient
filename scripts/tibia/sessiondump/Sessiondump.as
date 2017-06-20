@@ -229,7 +229,7 @@
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 1130;
+        public static const PROTOCOL_VERSION:int = 1132;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
@@ -359,9 +359,10 @@
         static const PAYLOADLENGTH_SIZE:int = 2;
         static const TYPE_PLAYER:int = 0;
         static const SRIGHTROW:int = 102;
-        static const SKILL_MANA:int = 5;
+        static const SSHOWGAMENEWS:int = 152;
         static const SEDITTEXT:int = 150;
         static const SOPENOWNCHANNEL:int = 178;
+        static const SKILL_MANA:int = 5;
         static const SGRAPHICALEFFECT:int = 131;
         static const CBUGREPORT:int = 230;
         static const BLESSING_NONE:int = 0;

@@ -295,7 +295,7 @@
         static const CGETQUESTLOG:int = 240;
         static const STATE_DRUNK:int = 3;
         static const BLESSING_FIRE_OF_SUNS:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        public static const CLIENT_VERSION:uint = 2468;
+        public static const CLIENT_VERSION:uint = 2469;
         static const CATTACK:int = 161;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SLOGINSUCCESS:int = 23;
@@ -384,7 +384,7 @@
         static const STATE_PZ_BLOCK:int = 13;
         static const CROTATEWEST:int = 114;
         static const SEDITGUILDMESSAGE:int = 174;
-        public static const PROTOCOL_VERSION:int = 1130;
+        public static const PROTOCOL_VERSION:int = 1132;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const CLEAVECHANNEL:int = 153;
@@ -447,6 +447,7 @@
         static const SPENDINGSTATEENTERED:int = 10;
         static const RENDERER_DEFAULT_WIDTH:Number = 480;
         static const SRIGHTROW:int = 102;
+        static const SSHOWGAMENEWS:int = 152;
         static const SGRAPHICALEFFECT:int = 131;
         static const CBUGREPORT:int = 230;
         static const PATH_SOUTH_EAST:int = 8;
@@ -4613,6 +4614,12 @@
                         a_MessageReader.finishMessage();
                         break;
                     }
+                    case SSHOWGAMENEWS:
+                    {
+                        this.readSSHOWGAMENEWS(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
                     case SBLESSINGSDIALOG:
                     {
                         this.readSBLESSINGSDIALOG(CommunicationData);
@@ -5639,19 +5646,10 @@
             return;
         }// end function
 
-        public function sendCCLOSENPCCHANNEL() : void
+        protected function readSSHOWGAMENEWS(param1:ByteArray) : void
         {
-            var b:ByteArray;
-            try
-            {
-                b = this.m_ServerConnection.messageWriter.createMessage();
-                b.writeByte(CCLOSENPCCHANNEL);
-                this.m_ServerConnection.messageWriter.finishMessage();
-            }
-            catch (e:Error)
-            {
-                handleSendError(CCLOSENPCCHANNEL, e);
-            }
+            param1.readUnsignedInt();
+            param1.readUnsignedByte();
             return;
         }// end function
 
@@ -5766,25 +5764,19 @@
             return;
         }// end function
 
-        protected function readSPLAYERDATABASIC(param1:ByteArray) : void
+        public function sendCCLOSENPCCHANNEL() : void
         {
-            var _loc_2:* = false;
-            var _loc_3:* = null;
-            var _loc_4:* = 0;
-            _loc_2 = param1.readBoolean();
-            this.m_Player.premiumUntil = param1.readUnsignedInt();
-            this.m_Player.premium = _loc_2;
-            this.m_Player.profession = param1.readUnsignedByte();
-            this.m_Player.hasReachedMain = param1.readBoolean();
-            _loc_3 = [];
-            _loc_4 = param1.readUnsignedShort() - 1;
-            while (_loc_4 >= 0)
+            var b:ByteArray;
+            try
             {
-                
-                _loc_3.push(param1.readUnsignedByte());
-                _loc_4 = _loc_4 - 1;
+                b = this.m_ServerConnection.messageWriter.createMessage();
+                b.writeByte(CCLOSENPCCHANNEL);
+                this.m_ServerConnection.messageWriter.finishMessage();
             }
-            this.m_Player.knownSpells = _loc_3;
+            catch (e:Error)
+            {
+                handleSendError(CCLOSENPCCHANNEL, e);
+            }
             return;
         }// end function
 
@@ -5902,6 +5894,28 @@
             {
                 handleSendError(CLOOKATCREATURE, e);
             }
+            return;
+        }// end function
+
+        protected function readSPLAYERDATABASIC(param1:ByteArray) : void
+        {
+            var _loc_2:* = false;
+            var _loc_3:* = null;
+            var _loc_4:* = 0;
+            _loc_2 = param1.readBoolean();
+            this.m_Player.premiumUntil = param1.readUnsignedInt();
+            this.m_Player.premium = _loc_2;
+            this.m_Player.profession = param1.readUnsignedByte();
+            this.m_Player.hasReachedMain = param1.readBoolean();
+            _loc_3 = [];
+            _loc_4 = param1.readUnsignedShort() - 1;
+            while (_loc_4 >= 0)
+            {
+                
+                _loc_3.push(param1.readUnsignedByte());
+                _loc_4 = _loc_4 - 1;
+            }
+            this.m_Player.knownSpells = _loc_3;
             return;
         }// end function
 
