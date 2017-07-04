@@ -295,7 +295,7 @@
         static const CGETQUESTLOG:int = 240;
         static const STATE_DRUNK:int = 3;
         static const BLESSING_FIRE_OF_SUNS:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        public static const CLIENT_VERSION:uint = 2469;
+        public static const CLIENT_VERSION:uint = 2474;
         static const CATTACK:int = 161;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SLOGINSUCCESS:int = 23;
@@ -3997,7 +3997,7 @@
             {
                 throw new Error("Connection.readSDEAD: Invalid death type " + _loc_3);
             }
-            var _loc_4:* = param1.readUnsignedByte();
+            var _loc_4:* = param1.readBoolean();
             this.m_ServerConnection.dispatchEvent(_loc_2);
             return;
         }// end function
