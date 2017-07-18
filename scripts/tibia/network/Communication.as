@@ -295,7 +295,7 @@
         static const CGETQUESTLOG:int = 240;
         static const STATE_DRUNK:int = 3;
         static const BLESSING_FIRE_OF_SUNS:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        public static const CLIENT_VERSION:uint = 2474;
+        public static const CLIENT_VERSION:uint = 2477;
         static const CATTACK:int = 161;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SLOGINSUCCESS:int = 23;
