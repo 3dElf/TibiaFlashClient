@@ -567,7 +567,7 @@
         private static var _watcherSetupUtil:IWatcherSetupUtil;
         static const PACKETLENGTH_SIZE:int = 2;
         private static var s_LastTibiaFactorChangeRealTimestamp:int = 0;
-        public static const CLIENT_VERSION:uint = 2477;
+        public static const CLIENT_VERSION:uint = 2480;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
         static const PAYLOADLENGTH_POS:int = 6;
         static const CONNECTION_STATE_DISCONNECTED:int = 0;
