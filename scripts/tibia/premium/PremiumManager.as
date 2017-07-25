@@ -12,27 +12,31 @@
     {
         protected var m_PremiumMessages:Vector.<PremiumMessage> = null;
         protected var m_Player:Player = null;
+        static const PREMIUM_TRIGGER_DAILY_REWARD:uint = 18;
+        static const PREMIUM_TRIGGER_PREY:uint = 16;
+        static const PREMIUM_TRIGGER_CYCLOPEDIA:uint = 19;
+        static const PREMIUM_TRIGGER_DEATH_PENALTY:uint = 7;
+        public static const HIGHLIGHT_TIMEOUT:int = 600000;
+        static const PREMIUM_TRIGGER_ACCESS_ARENAS:uint = 15;
+        static const PREMIUM_TRIGGER_CLASS_PROMOTION:uint = 13;
         public static const PREMIUM_BUTTON_GENERAL_CONTROLS:int = 0;
+        static const PREMIUM_TRIGGER_ALL_AREAS:uint = 0;
+        static const PREMIUM_TRIGGER_IMBUING:uint = 17;
         static const PREMIUM_TRIGGER_ALL_OUTFITS:uint = 5;
-        static const PREMIUM_TRIGGER_RENEW_PREMIUM:uint = 14;
         static const PREMIUM_EXPIRY_THRESHOLD:uint = 3;
-        static const PREMIUM_TRIGGER_RIDE_MOUNTS:uint = 4;
         static const PREMIUM_TRIGGER_XP_BOOST:uint = 6;
         static const PREMIUM_TRIGGER_DEPOT_SPACE:uint = 11;
-        static const PREMIUM_TRIGGER_DEATH_PENALTY:uint = 7;
-        static const PREMIUM_TRIGGER_ACCESS_ARENAS:uint = 15;
-        public static const HIGHLIGHT_TIMEOUT:int = 600000;
+        static const PREMIUM_TRIGGER_INVITE_PRIVCHAT:uint = 12;
+        static const PREMIUM_URL:String = "/account/index.php?subtopic=redirectlogin&clienttarget=payment&clientselection=FC";
         static const PREMIUM_TRIGGER_ALL_SPELLS:uint = 2;
         static const PREMIUM_TRIGGER_MARKET:uint = 8;
         public static const PREMIUM_BUTTON_SHOP:int = 2;
         static const PREMIUM_TRIGGER_TRAVEL_FASTER:uint = 3;
-        static const PREMIUM_TRIGGER_INVITE_PRIVCHAT:uint = 12;
         public static const PREMIUM_BUTTON_WIDGET:int = 1;
         static const PREMIUM_TRIGGER_RENT_HOUSES:uint = 9;
         static const PREMIUM_TRIGGER_VIP_LIST:uint = 10;
-        static const PREMIUM_URL:String = "/account/index.php?subtopic=redirectlogin&clienttarget=payment&clientselection=FC";
-        static const PREMIUM_TRIGGER_ALL_AREAS:uint = 0;
-        static const PREMIUM_TRIGGER_CLASS_PROMOTION:uint = 13;
+        static const PREMIUM_TRIGGER_RIDE_MOUNTS:uint = 4;
+        static const PREMIUM_TRIGGER_RENEW_PREMIUM:uint = 14;
         static const PREMIUM_TRIGGER_TRAIN_OFFLINE:uint = 1;
 
         public function PremiumManager(param1:Player)
@@ -205,7 +209,16 @@
             this.m_PremiumMessages.length = 0;
             a_MessageIds.forEach(function (param1:uint, param2:int, param3:Vector.<uint>) : void
             {
-                m_PremiumMessages.push(translateMessageId(param1));
+                var a_MessageID:* = param1;
+                var a_Index:* = param2;
+                var a_Vector:* = param3;
+                try
+                {
+                    m_PremiumMessages.push(translateMessageId(a_MessageID));
+                }
+                catch (_Error:ArgumentError)
+                {
+                }
                 return;
             }// end function
             );

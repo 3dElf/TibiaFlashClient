@@ -62,7 +62,7 @@
         static const CGETQUESTLOG:int = 240;
         static const CENTERWORLD:int = 15;
         static const CBUYOBJECT:int = 122;
-        public static const CLIENT_VERSION:uint = 2480;
+        public static const CLIENT_VERSION:uint = 2483;
         static const SPING:int = 29;
         static const CCLOSENPCCHANNEL:int = 158;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
@@ -91,6 +91,7 @@
         static const CCLOSECONTAINER:int = 135;
         static const SFIELDDATA:int = 105;
         static const SCLOSECONTAINER:int = 111;
+        static const SCLOSEREWARDWALL:int = 227;
         static const SLEFTROW:int = 104;
         static const SFULLMAP:int = 100;
         static const CREQUESTRESOURCEBALANCE:int = 237;
@@ -98,6 +99,7 @@
         public static const MESSAGEDIALOG_IMBUEMENT_ERROR:int = 1;
         static const CGOWEST:int = 104;
         static const CPASSLEADERSHIP:int = 166;
+        static const SMARKETSTATISTICS:int = 205;
         static const SSPELLGROUPDELAY:int = 165;
         static const SBOTTOMROW:int = 103;
         static const CGETOBJECTINFO:int = 243;
@@ -116,6 +118,7 @@
         public static const MESSAGEDIALOG_PREY_ERROR:int = 21;
         static const CGETCHANNELS:int = 151;
         static const SUNJUSTIFIEDPOINTS:int = 183;
+        static const SDAILYREWARDBASIC:int = 228;
         static const SPLAYERDATACURRENT:int = 160;
         static const STRAPPERS:int = 135;
         static const SOBJECTINFO:int = 244;
@@ -123,6 +126,7 @@
         static const SSNAPBACK:int = 181;
         static const ERR_CONNECTION_LOST:int = 6;
         static const CROTATESOUTH:int = 113;
+        static const SIMPACTTRACKING:int = 204;
         static const CACCEPTTRADE:int = 127;
         static const SCHANNELS:int = 171;
         static const SOPENCHANNEL:int = 172;
@@ -150,6 +154,7 @@
         static const SCONTAINER:int = 110;
         static const SNPCOFFER:int = 122;
         static const CMARKETCANCEL:int = 247;
+        static const STRACKEDQUESTFLAGS:int = 208;
         static const SWORLDENTERED:int = 15;
         static const CEXCLUDEFROMCHANNEL:int = 172;
         static const STRANSACTIONHISTORY:int = 253;
@@ -174,7 +179,7 @@
         static const CANSWERMODALDIALOG:int = 249;
         static const CCLOSEDIMBUINGDIALOG:int = 215;
         static const SSPELLDELAY:int = 164;
-        static const CEDITBUDDY:int = 222;
+        static const SITEMWASTED:int = 206;
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
@@ -182,20 +187,23 @@
         public static const LATENCY_MEDIUM:Number = 500;
         static const SEDITGUILDMESSAGE:int = 174;
         static const SCREATUREOUTFIT:int = 142;
-        public static const PROTOCOL_VERSION:int = 1132;
+        public static const PROTOCOL_VERSION:int = 1140;
+        static const CEDITBUDDY:int = 222;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
+        public static const RESOURCETYPE_COLLECTION_TOKENS:int = 20;
         static const SLOGINCHALLENGE:int = 31;
-        static const CLEAVECHANNEL:int = 153;
         private static const PING_LATENCY_INTERVAL:uint = 15;
         static const SPLAYERSKILLS:int = 161;
         static const CTHANKYOU:int = 231;
         static const SRESOURCEBALANCE:int = 238;
         static const SCREATUREUNPASS:int = 146;
-        static const SSHOWMODALDIALOG:int = 250;
+        static const CLEAVECHANNEL:int = 153;
         static const CONNECTION_STATE_DISCONNECTED:int = 0;
+        static const SOPENREWARDWALL:int = 226;
         static const CGONORTHEAST:int = 106;
         static const RECONNECT_DELAY:int = 3000;
+        static const SSHOWMODALDIALOG:int = 250;
         static const SDELETEINCONTAINER:int = 114;
         public static const RESOURCETYPE_INVENTORY_GOLD:int = 1;
         static const SCREATEINCONTAINER:int = 112;
@@ -214,10 +222,13 @@
         static const ERR_INVALID_STATE:int = 4;
         static const SPREMIUMTRIGGER:int = 158;
         static const ERR_INVALID_MESSAGE:int = 3;
-        static const CINVITETOPARTY:int = 163;
+        static const SDAILYREWARDHISTORY:int = 229;
         static const SCREATURELIGHT:int = 141;
+        static const CINVITETOPARTY:int = 163;
+        static const SRESTINGAREASTATE:int = 169;
         static const CPINGBACK:int = 30;
         static const SPINGBACK:int = 30;
+        static const SITEMLOOTED:int = 207;
         static const STUTORIALHINT:int = 220;
         static const SPLAYERGOODS:int = 123;
         static const CSTOP:int = 105;
@@ -266,9 +277,9 @@
         public static const MESSAGEDIALOG_IMBUEMENT_SUCCESS:int = 0;
         static const CTALK:int = 150;
         static const SPREMIUMSHOP:int = 251;
-        static const SEQUENCE_NUMBER_POS:int = 2;
         static const STALK:int = 170;
         static const CEDITTEXT:int = 137;
+        static const SEQUENCE_NUMBER_POS:int = 2;
         static const SCLOSENPCTRADE:int = 124;
         static const SPENDINGSTATEENTERED:int = 10;
         public static const PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:uint = 2;
@@ -277,6 +288,7 @@
         static const SEDITTEXT:int = 150;
         static const SOPENOWNCHANNEL:int = 178;
         static const PAYLOADLENGTH_SIZE:int = 2;
+        static const STIBIATIME:int = 239;
         static const SGRAPHICALEFFECT:int = 131;
         static const CBUGREPORT:int = 230;
         public static const CLIENT_PREVIEW_STATE:uint = 0;
@@ -284,6 +296,7 @@
         static const SCLOSEIMBUINGDIALOG:int = 236;
         static const CMARKETLEAVE:int = 244;
         static const SEQUENCE_NUMBER_SIZE:int = 4;
+        static const SDAILYREWARDCOLLECTIONSTATE:int = 222;
         static const SBLESSINGSDIALOG:int = 155;
         static const COPENTRANSACTIONHISTORY:int = 253;
         static const CSHAREEXPERIENCE:int = 168;
@@ -295,6 +308,7 @@
         static const CSETOUTFIT:int = 211;
         static const PACKETLENGTH_POS:int = 0;
         static const SAUTOMAPFLAG:int = 221;
+        static const SKILLTRACKING:int = 209;
         static const SOWNOFFER:int = 125;
         static const PAYLOAD_POS:int = 6;
         public static const RESOURCETYPE_PREY_BONUS_REROLLS:int = 10;

@@ -24,7 +24,7 @@
         static const CONNECTION_STATE_CONNECTING_STAGE1:int = 1;
         static const CONNECTION_STATE_CONNECTING_STAGE2:int = 2;
         static const ERR_INVALID_STATE:int = 4;
-        public static const PROTOCOL_VERSION:int = 1132;
+        public static const PROTOCOL_VERSION:int = 1140;
         static const PAYLOADLENGTH_SIZE:int = 2;
         static const PAYLOADLENGTH_POS:int = 6;
         static const ERR_INVALID_SIZE:int = 1;

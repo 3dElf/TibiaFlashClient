@@ -52,9 +52,9 @@
         static const CMARKETACCEPT:int = 248;
         static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
         static const PARTY_MEMBER_SEXP_ACTIVE:int = 5;
+        static const CONNECTION_STATE_PENDING:int = 3;
         static const SKILL_FIGHTCLUB:int = 10;
         static const RISKINESS_DANGEROUS:int = 1;
-        static const CONNECTION_STATE_PENDING:int = 3;
         static const CGOSOUTH:int = 103;
         static const GUILD_NONE:int = 0;
         static const PK_PARTYMODE:int = 2;
@@ -170,11 +170,13 @@
         static const STATE_FIGHTING:int = 7;
         static const NPC_SPEECH_NORMAL:uint = 1;
         static const SSPELLDELAY:int = 164;
+        static const SITEMWASTED:int = 206;
         static const BLESSING_SPIRITUAL_SHIELDING:int = BLESSING_FIRE_OF_SUNS << 1;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
         static const RISKINESS_NONE:int = 0;
         static const SCREATUREOUTFIT:int = 142;
         static const NUM_PVP_HELPERS_FOR_RISKINESS_DANGEROUS:uint = 5;
+        public static const RESOURCETYPE_COLLECTION_TOKENS:int = 20;
         static const SLOGINCHALLENGE:int = 31;
         static const SPLAYERSKILLS:int = 161;
         static const CTHANKYOU:int = 231;
@@ -182,6 +184,7 @@
         static const SSHOWMODALDIALOG:int = 250;
         static const FIELD_ENTER_POSSIBLE_NO_ANIMATION:uint = 1;
         static const STATE_NONE:int = -1;
+        static const SOPENREWARDWALL:int = 226;
         static const SDELETEINCONTAINER:int = 114;
         static const PATH_MAX_DISTANCE:int = 110;
         static const SCREATEINCONTAINER:int = 112;
@@ -198,9 +201,12 @@
         static const BLESSING_BLOOD_OF_THE_MOUNTAIN:int = BLESSING_HEART_OF_THE_MOUNTAIN << 1;
         static const ERR_INVALID_STATE:int = 4;
         static const PATH_COST_UNDEFINED:int = 254;
-        static const CINVITETOPARTY:int = 163;
+        static const SDAILYREWARDHISTORY:int = 229;
         static const CPINGBACK:int = 30;
+        static const CINVITETOPARTY:int = 163;
+        static const SRESTINGAREASTATE:int = 169;
         static const SPINGBACK:int = 30;
+        static const SITEMLOOTED:int = 207;
         static const PK_ATTACKER:int = 1;
         static const STATE_ELECTRIFIED:int = 2;
         static const SPLAYERGOODS:int = 123;
@@ -252,10 +258,12 @@
         static const SEDITTEXT:int = 150;
         static const SOPENOWNCHANNEL:int = 178;
         public static const PREVIEW_STATE_PREVIEW_WITH_ACTIVE_CHANGE:uint = 2;
+        static const STIBIATIME:int = 239;
         static const PAYLOADLENGTH_SIZE:int = 2;
         public static const CLIENT_PREVIEW_STATE:uint = 0;
         static const SCLOSEIMBUINGDIALOG:int = 236;
         static const SEQUENCE_NUMBER_SIZE:int = 4;
+        static const SDAILYREWARDCOLLECTIONSTATE:int = 222;
         static const CMARKETLEAVE:int = 244;
         static const COPENTRANSACTIONHISTORY:int = 253;
         static const CSHAREEXPERIENCE:int = 168;
@@ -295,7 +303,7 @@
         static const CGETQUESTLOG:int = 240;
         static const STATE_DRUNK:int = 3;
         static const BLESSING_FIRE_OF_SUNS:int = BLESSING_SPARK_OF_PHOENIX << 1;
-        public static const CLIENT_VERSION:uint = 2480;
+        public static const CLIENT_VERSION:uint = 2483;
         static const CATTACK:int = 161;
         static const SKILL_MANA_LEECH_CHANCE:int = 23;
         static const SLOGINSUCCESS:int = 23;
@@ -316,10 +324,12 @@
         static const PATH_EMPTY:int = 0;
         static const SFULLMAP:int = 100;
         static const SCLOSECONTAINER:int = 111;
+        static const SCLOSEREWARDWALL:int = 227;
         static const CREQUESTRESOURCEBALANCE:int = 237;
         static const SMISSILEEFFECT:int = 133;
         public static const MESSAGEDIALOG_IMBUEMENT_ERROR:int = 1;
         static const PATH_ERROR_GO_UPSTAIRS:int = -2;
+        static const SMARKETSTATISTICS:int = 205;
         static const SSPELLGROUPDELAY:int = 165;
         static const CSEEKINCONTAINER:int = 204;
         static const SQUESTLINE:int = 241;
@@ -337,8 +347,10 @@
         static const SUNJUSTIFIEDPOINTS:int = 183;
         static const CGETQUESTLINE:int = 241;
         static const SSNAPBACK:int = 181;
+        static const SDAILYREWARDBASIC:int = 228;
         static const NUM_EFFECTS:int = 200;
         static const STATE_SLOW:int = 5;
+        static const SIMPACTTRACKING:int = 204;
         static const CACCEPTTRADE:int = 127;
         static const STOPFLOOR:int = 190;
         static const CBUYPREMIUMOFFER:int = 252;
@@ -357,6 +369,7 @@
         static const CLOOK:int = 140;
         static const BLESSING_EMBRACE_OF_TIBIA:int = BLESSING_SPIRITUAL_SHIELDING << 1;
         static const SWORLDENTERED:int = 15;
+        static const STRACKEDQUESTFLAGS:int = 208;
         static const HEADER_POS:int = 0;
         static const PATH_WEST:int = 5;
         static const MAP_HEIGHT:int = 11;
@@ -384,7 +397,7 @@
         static const STATE_PZ_BLOCK:int = 13;
         static const CROTATEWEST:int = 114;
         static const SEDITGUILDMESSAGE:int = 174;
-        public static const PROTOCOL_VERSION:int = 1132;
+        public static const PROTOCOL_VERSION:int = 1140;
         static const SAMBIENTE:int = 130;
         static const ERR_INVALID_SIZE:int = 1;
         static const CLEAVECHANNEL:int = 153;
@@ -463,6 +476,7 @@
         static const SUMMON_NONE:int = 0;
         static const SAUTOMAPFLAG:int = 221;
         static const TYPE_PLAYERSUMMON:int = 3;
+        static const SKILLTRACKING:int = 209;
         static const CSETOUTFIT:int = 211;
         public static const RESOURCETYPE_PREY_BONUS_REROLLS:int = 10;
         static const PATH_MATRIX_CENTER:int = 110;
@@ -522,6 +536,24 @@
             this.m_SnapbackCount = 0;
             this.m_PendingQuestLog = false;
             this.m_PendingQuestLine = -1;
+            return;
+        }// end function
+
+        protected function readSOPENREWARDWALL(param1:ByteArray) : void
+        {
+            var _loc_5:* = 0;
+            var _loc_9:* = null;
+            var _loc_2:* = param1.readBoolean();
+            var _loc_3:* = param1.readUnsignedInt();
+            var _loc_4:* = param1.readUnsignedByte();
+            _loc_5 = param1.readUnsignedByte();
+            if (_loc_5 != 0)
+            {
+                _loc_9 = StringHelper.s_ReadLongStringFromByteArray(param1);
+            }
+            var _loc_6:* = param1.readUnsignedInt();
+            var _loc_7:* = param1.readUnsignedShort();
+            var _loc_8:* = param1.readUnsignedShort();
             return;
         }// end function
 
@@ -737,6 +769,24 @@
             catch (e:Error)
             {
                 handleSendError(CPASSLEADERSHIP, e);
+            }
+            return;
+        }// end function
+
+        protected function readSKILLTRACKING(param1:ByteArray) : void
+        {
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = null;
+            var _loc_2:* = StringHelper.s_ReadLongStringFromByteArray(param1);
+            var _loc_3:* = this.readCreatureOutfit(param1, null);
+            _loc_4 = param1.readUnsignedByte();
+            _loc_5 = 0;
+            while (_loc_5 < _loc_4)
+            {
+                
+                _loc_6 = this.readObjectInstance(param1);
+                _loc_5 = _loc_5 + 1;
             }
             return;
         }// end function
@@ -962,6 +1012,35 @@
             return;
         }// end function
 
+        protected function readSDAILYREWARDBASIC(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_6:* = null;
+            var _loc_7:* = 0;
+            _loc_2 = param1.readUnsignedByte();
+            _loc_3 = 0;
+            while (_loc_3 < _loc_2)
+            {
+                
+                this.readDailyReward(param1);
+                this.readDailyReward(param1);
+                _loc_3 = _loc_3 + 1;
+            }
+            _loc_4 = param1.readUnsignedByte();
+            _loc_3 = 0;
+            while (_loc_3 < _loc_4)
+            {
+                
+                _loc_6 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                _loc_7 = param1.readUnsignedByte();
+                _loc_3 = _loc_3 + 1;
+            }
+            var _loc_5:* = param1.readUnsignedByte();
+            return;
+        }// end function
+
         protected function readSEDITLIST(param1:ByteArray) : void
         {
             var _loc_2:* = new EditListWidget();
@@ -1125,6 +1204,11 @@
             this.m_WorldMapStorage.setPosition(_loc_2.x, _loc_2.y, _loc_2.z);
             this.readArea(param1, 0, 0, (MAPSIZE_X - 1), (MAPSIZE_Y - 1));
             this.m_WorldMapStorage.valid = true;
+            return;
+        }// end function
+
+        protected function readSCLOSEREWARDWALL(param1:ByteArray) : void
+        {
             return;
         }// end function
 
@@ -1385,6 +1469,28 @@
         protected function readSSPELLGROUPDELAY(param1:ByteArray) : void
         {
             this.m_SpellStorage.setSpellGroupDelay(param1.readUnsignedByte(), param1.readUnsignedInt());
+            return;
+        }// end function
+
+        protected function readSDAILYREWARDHISTORYA(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = null;
+            var _loc_7:* = 0;
+            _loc_2 = param1.readUnsignedByte();
+            _loc_3 = 0;
+            while (_loc_3 < _loc_2)
+            {
+                
+                _loc_4 = param1.readUnsignedInt();
+                _loc_5 = param1.readUnsignedByte();
+                _loc_6 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                _loc_7 = param1.readUnsignedShort();
+                _loc_3 = _loc_3 + 1;
+            }
             return;
         }// end function
 
@@ -1933,6 +2039,12 @@
             return;
         }// end function
 
+        protected function readSDAILYREWARDCOLLECTIONSTATE(param1:ByteArray) : void
+        {
+            var _loc_2:* = param1.readUnsignedByte();
+            return;
+        }// end function
+
         public function sendCJOINPARTY(param1:int) : void
         {
             var b:ByteArray;
@@ -2027,7 +2139,7 @@
         protected function readSPLAYERSTATE(param1:ByteArray) : void
         {
             var _loc_2:* = 0;
-            _loc_2 = param1.readUnsignedShort();
+            _loc_2 = param1.readUnsignedInt();
             this.m_Player.stateFlags = _loc_2;
             return;
         }// end function
@@ -2161,6 +2273,12 @@
                 _loc_15.sellObjects = _loc_4;
                 _loc_15.categories = null;
             }
+            return;
+        }// end function
+
+        protected function readSITEMWASTED(param1:ByteArray) : void
+        {
+            var _loc_2:* = param1.readUnsignedShort();
             return;
         }// end function
 
@@ -2325,6 +2443,13 @@
             {
                 handleSendError(CTRANSFERCURRENCY, e);
             }
+            return;
+        }// end function
+
+        protected function readSIMPACTTRACKING(param1:ByteArray) : void
+        {
+            var _loc_2:* = param1.readBoolean();
+            var _loc_3:* = param1.readUnsignedInt();
             return;
         }// end function
 
@@ -2515,9 +2640,10 @@
             var _loc_3:* = 0;
             var _loc_4:* = null;
             var _loc_5:* = 0;
-            var _loc_6:* = null;
+            var _loc_6:* = 0;
             var _loc_7:* = null;
             var _loc_8:* = null;
+            var _loc_9:* = null;
             _loc_2 = param1.readUnsignedShort();
             _loc_3 = param1.readUnsignedByte();
             _loc_4 = new Array();
@@ -2525,17 +2651,18 @@
             while (_loc_5 < _loc_3)
             {
                 
-                _loc_6 = StringHelper.s_ReadLongStringFromByteArray(param1, QuestFlag.MAX_NAME_LENGTH);
-                _loc_7 = StringHelper.s_ReadLongStringFromByteArray(param1, QuestFlag.MAX_DESCRIPTION_LENGTH);
-                _loc_4.push(new QuestFlag(_loc_6, _loc_7));
+                _loc_6 = param1.readUnsignedShort();
+                _loc_7 = StringHelper.s_ReadLongStringFromByteArray(param1, QuestFlag.MAX_NAME_LENGTH);
+                _loc_8 = StringHelper.s_ReadLongStringFromByteArray(param1, QuestFlag.MAX_DESCRIPTION_LENGTH);
+                _loc_4.push(new QuestFlag(_loc_7, _loc_8));
                 _loc_5++;
             }
             if (this.m_PendingQuestLine == _loc_2)
             {
-                _loc_8 = PopUpBase.getCurrent() as QuestLogWidget;
-                if (_loc_8 != null)
+                _loc_9 = PopUpBase.getCurrent() as QuestLogWidget;
+                if (_loc_9 != null)
                 {
-                    _loc_8.questFlags = _loc_4;
+                    _loc_9.questFlags = _loc_4;
                 }
                 this.m_PendingQuestLine = -1;
             }
@@ -3408,6 +3535,62 @@
             return;
         }// end function
 
+        protected function readDailyReward(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = null;
+            var _loc_8:* = 0;
+            var _loc_9:* = 0;
+            var _loc_10:* = 0;
+            var _loc_11:* = 0;
+            var _loc_12:* = 0;
+            _loc_2 = param1.readUnsignedByte();
+            if (_loc_2 == 1)
+            {
+                _loc_3 = param1.readUnsignedByte();
+                _loc_4 = param1.readUnsignedByte();
+                _loc_5 = 0;
+                while (_loc_5 < _loc_4)
+                {
+                    
+                    _loc_6 = param1.readUnsignedShort();
+                    _loc_7 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                    _loc_8 = param1.readUnsignedInt();
+                    _loc_5 = _loc_5 + 1;
+                }
+            }
+            else if (_loc_2 == 2)
+            {
+                _loc_9 = param1.readUnsignedByte();
+                _loc_5 = 0;
+                while (_loc_5 < _loc_9)
+                {
+                    
+                    _loc_10 = param1.readUnsignedByte();
+                    if (_loc_10 == 1)
+                    {
+                        _loc_6 = param1.readUnsignedShort();
+                        _loc_7 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                        _loc_11 = param1.readUnsignedByte();
+                    }
+                    else if (_loc_10 == 2)
+                    {
+                        _loc_11 = param1.readUnsignedByte();
+                    }
+                    else if (_loc_10 == 3)
+                    {
+                        _loc_12 = param1.readUnsignedShort();
+                    }
+                    _loc_5 = _loc_5 + 1;
+                }
+            }
+            return;
+        }// end function
+
         protected function readSSETINVENTORY(param1:ByteArray) : void
         {
             var _loc_2:* = param1.readUnsignedByte();
@@ -3934,6 +4117,13 @@
             }
             _loc_2.openImbuingWindow();
             _loc_2.refreshImbuingData(_loc_4, _loc_6, _loc_8, _loc_11);
+            return;
+        }// end function
+
+        protected function readSITEMLOOTED(param1:ByteArray) : void
+        {
+            var _loc_2:* = this.readObjectInstance(param1);
+            var _loc_3:* = StringHelper.s_ReadLongStringFromByteArray(param1);
             return;
         }// end function
 
@@ -4704,6 +4894,12 @@
                         a_MessageReader.finishMessage();
                         break;
                     }
+                    case SRESTINGAREASTATE:
+                    {
+                        this.readSRESTINGAREASTATE(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
                     case STALK:
                     {
                         this.readSTALK(CommunicationData);
@@ -4794,6 +4990,42 @@
                         a_MessageReader.finishMessage();
                         break;
                     }
+                    case SIMPACTTRACKING:
+                    {
+                        this.readSIMPACTTRACKING(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SMARKETSTATISTICS:
+                    {
+                        this.readSMARKETSTATISTICS(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SITEMWASTED:
+                    {
+                        this.readSITEMWASTED(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SITEMLOOTED:
+                    {
+                        this.readSITEMLOOTED(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case STRACKEDQUESTFLAGS:
+                    {
+                        this.readSTRACKEDQUESTFLAGS(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SKILLTRACKING:
+                    {
+                        this.readSKILLTRACKING(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
                     case SBUDDYDATA:
                     {
                         this.readSBUDDYDATA(CommunicationData);
@@ -4824,6 +5056,12 @@
                         a_MessageReader.finishMessage();
                         break;
                     }
+                    case SDAILYREWARDCOLLECTIONSTATE:
+                    {
+                        this.readSDAILYREWARDCOLLECTIONSTATE(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
                     case SCREDITBALANCE:
                     {
                         this.readSCREDITBALANCE(CommunicationData);
@@ -4839,6 +5077,30 @@
                     case SREQUESTPURCHASEDATA:
                     {
                         this.readSREQUESTPURCHASEDATA(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SOPENREWARDWALL:
+                    {
+                        this.readSOPENREWARDWALL(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SCLOSEREWARDWALL:
+                    {
+                        this.readSCLOSEREWARDWALL(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SDAILYREWARDBASIC:
+                    {
+                        this.readSDAILYREWARDBASIC(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case SDAILYREWARDHISTORY:
+                    {
+                        this.readSDAILYREWARDHISTORYA(CommunicationData);
                         a_MessageReader.finishMessage();
                         break;
                     }
@@ -4887,6 +5149,12 @@
                     case SRESOURCEBALANCE:
                     {
                         this.readSRESOURCEBALANCE(CommunicationData);
+                        a_MessageReader.finishMessage();
+                        break;
+                    }
+                    case STIBIATIME:
+                    {
+                        this.readSTIBIATIME(CommunicationData);
                         a_MessageReader.finishMessage();
                         break;
                     }
@@ -4991,6 +5259,41 @@
             {
                 handleReadError(Type, _Error);
                 return;
+            }
+            return;
+        }// end function
+
+        protected function readSTRACKEDQUESTFLAGS(param1:ByteArray) : void
+        {
+            var _loc_2:* = false;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            var _loc_6:* = 0;
+            var _loc_7:* = null;
+            var _loc_8:* = null;
+            var _loc_9:* = null;
+            _loc_2 = param1.readBoolean();
+            if (_loc_2)
+            {
+                _loc_3 = param1.readUnsignedByte();
+                _loc_4 = param1.readUnsignedByte();
+                _loc_5 = 0;
+                while (_loc_5 < _loc_4)
+                {
+                    
+                    _loc_6 = param1.readUnsignedShort();
+                    _loc_7 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                    _loc_8 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                    _loc_9 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                    _loc_5 = _loc_5 + 1;
+                }
+            }
+            else
+            {
+                _loc_6 = param1.readUnsignedShort();
+                _loc_8 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                _loc_9 = StringHelper.s_ReadLongStringFromByteArray(param1);
             }
             return;
         }// end function
@@ -5363,19 +5666,10 @@
             return;
         }// end function
 
-        public function sendCENTERWORLD() : void
+        protected function readSTIBIATIME(param1:ByteArray) : void
         {
-            var b:ByteArray;
-            try
-            {
-                b = this.m_ServerConnection.messageWriter.createMessage();
-                b.writeByte(CENTERWORLD);
-                this.m_ServerConnection.messageWriter.finishMessage();
-            }
-            catch (e:Error)
-            {
-                handleSendError(CENTERWORLD, e);
-            }
+            var _loc_2:* = param1.readUnsignedByte();
+            var _loc_3:* = param1.readUnsignedByte();
             return;
         }// end function
 
@@ -5410,7 +5704,7 @@
                 
                 _loc_7 = param1.readUnsignedInt();
                 _loc_8 = StringHelper.s_ReadLongStringFromByteArray(param1);
-                _loc_9 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                _loc_9 = IngameShopOffer.s_ReplacePlaceholderTextInStoreDescription(StringHelper.s_ReadLongStringFromByteArray(param1));
                 _loc_10 = new IngameShopOffer(_loc_7, _loc_8, _loc_9);
                 _loc_10.price = param1.readUnsignedInt();
                 _loc_10.highlightState = param1.readUnsignedByte();
@@ -5440,7 +5734,7 @@
                 {
                     
                     _loc_15 = StringHelper.s_ReadLongStringFromByteArray(param1);
-                    _loc_16 = StringHelper.s_ReadLongStringFromByteArray(param1);
+                    _loc_16 = IngameShopOffer.s_ReplacePlaceholderTextInStoreDescription(StringHelper.s_ReadLongStringFromByteArray(param1));
                     _loc_17 = new Vector.<String>;
                     _loc_18 = param1.readUnsignedByte();
                     _loc_19 = 0;
@@ -5760,6 +6054,22 @@
             catch (e:Error)
             {
                 handleSendError(CATTACK, e);
+            }
+            return;
+        }// end function
+
+        public function sendCENTERWORLD() : void
+        {
+            var b:ByteArray;
+            try
+            {
+                b = this.m_ServerConnection.messageWriter.createMessage();
+                b.writeByte(CENTERWORLD);
+                this.m_ServerConnection.messageWriter.finishMessage();
+            }
+            catch (e:Error)
+            {
+                handleSendError(CENTERWORLD, e);
             }
             return;
         }// end function
@@ -6181,6 +6491,14 @@
             return;
         }// end function
 
+        protected function readSRESTINGAREASTATE(param1:ByteArray) : void
+        {
+            var _loc_2:* = param1.readBoolean();
+            var _loc_3:* = param1.readBoolean();
+            var _loc_4:* = StringHelper.s_ReadLongStringFromByteArray(param1, Creature.MAX_NAME_LENGHT);
+            return;
+        }// end function
+
         protected function readSSHOWMODALDIALOG(param1:ByteArray) : void
         {
             var _loc_2:* = 0;
@@ -6233,6 +6551,24 @@
             _loc_13.priority = PopUpBase.DEFAULT_PRIORITY + (_loc_12 ? (1) : (0));
             _loc_13.title = _loc_3;
             _loc_13.show();
+            return;
+        }// end function
+
+        protected function readSMARKETSTATISTICS(param1:ByteArray) : void
+        {
+            var _loc_2:* = 0;
+            var _loc_3:* = 0;
+            var _loc_4:* = 0;
+            var _loc_5:* = 0;
+            _loc_2 = param1.readUnsignedShort();
+            _loc_3 = 0;
+            while (_loc_3 < _loc_2)
+            {
+                
+                _loc_4 = param1.readUnsignedShort();
+                _loc_5 = param1.readUnsignedInt();
+                _loc_3 = _loc_3 + 1;
+            }
             return;
         }// end function
 
@@ -6301,6 +6637,9 @@
             else if (_loc_2 == RESOURCETYPE_PREY_BONUS_REROLLS)
             {
                 PreyManager.getInstance().bonusRerollAmount = _loc_3;
+            }
+            else if (_loc_2 == RESOURCETYPE_COLLECTION_TOKENS)
+            {
             }
             return;
         }// end function
