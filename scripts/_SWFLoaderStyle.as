@@ -6,7 +6,7 @@
 
     public class _SWFLoaderStyle extends Object
     {
-        private static var _embed_css_Assets_swf___brokenImage_783978175:Class = _SWFLoaderStyle__embed_css_Assets_swf___brokenImage_783978175;
+        private static var _embed_css_Assets_swf___brokenImage_1752454015:Class = _SWFLoaderStyle__embed_css_Assets_swf___brokenImage_1752454015;
 
         public function _SWFLoaderStyle()
         {
@@ -26,9 +26,9 @@
             {
                 style.defaultFactory = function () : void
             {
-                this.brokenImageBorderSkin = BrokenImageBorderSkin;
-                this.brokenImageSkin = _embed_css_Assets_swf___brokenImage_783978175;
                 this.borderStyle = "none";
+                this.brokenImageSkin = _embed_css_Assets_swf___brokenImage_1752454015;
+                this.brokenImageBorderSkin = BrokenImageBorderSkin;
                 return;
             }// end function
             ;

@@ -24,10 +24,10 @@
             {
                 style.defaultFactory = function () : void
             {
-                this.fontSize = 12;
-                this.borderStyle = "none";
-                this.verticalGap = 16;
                 this.fontWeight = "bold";
+                this.borderStyle = "none";
+                this.fontSize = 12;
+                this.verticalGap = 16;
                 return;
             }// end function
             ;
