@@ -139,9 +139,10 @@
 
         override protected function measure() : void
         {
+            var _loc_1:* = null;
             var _loc_3:* = NaN;
             super.measure();
-            var _loc_1:* = this.viewMetricsAndPadding;
+            _loc_1 = this.viewMetricsAndPadding;
             var _loc_2:* = BuddyIconRenderer.ICON_WIDTH + getStyle("horizontalGap") + s_NameCache.slotWidth;
             _loc_3 = Math.max(BuddyIconRenderer.ICON_HEIGHT, s_NameCache.slotHeight);
             var _loc_4:* = _loc_1.left + _loc_2 + _loc_1.right;

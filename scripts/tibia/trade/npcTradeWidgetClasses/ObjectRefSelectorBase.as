@@ -17,7 +17,7 @@
         private var m_UncommittedSelectedIndex:Boolean = false;
         private var m_UncommittedDataProvider:Boolean = false;
         protected var m_DataProvider:IList = null;
-        protected var m_TradeMode:int = 0;
+        protected var m_TradeMode:int;
         private var m_UncommittedSortOrder:Boolean = true;
         private static const ACTION_UNSET:int = -1;
         private static const MOUSE_BUTTON_LEFT:int = 1;
@@ -44,6 +44,7 @@
 
         public function ObjectRefSelectorBase()
         {
+            this.m_TradeMode = NPCTradeWidgetView.MODE_BUY;
             addEventListener(MouseEvent.CLICK, this.onMouseClick);
             addEventListener(MouseEvent.MIDDLE_CLICK, this.onMouseClick);
             addEventListener(MouseEvent.RIGHT_CLICK, this.onMouseClick);
