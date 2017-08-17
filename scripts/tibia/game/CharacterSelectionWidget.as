@@ -20,7 +20,7 @@
         private var m_Timeout:Timer = null;
         private var m_UIConstructed:Boolean = false;
         private var m_UncommittedSelectedCharacter:Boolean = false;
-        public static const CLIENT_VERSION:uint = 2489;
+        public static const CLIENT_VERSION:uint = 2491;
         public static const CLIENT_PREVIEW_STATE:uint = 0;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
         private static const BUNDLE:String = "CharacterSelectionWidget";

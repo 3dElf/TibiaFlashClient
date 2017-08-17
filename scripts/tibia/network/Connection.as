@@ -62,7 +62,7 @@
         static const CGETQUESTLOG:int = 240;
         static const CENTERWORLD:int = 15;
         static const CBUYOBJECT:int = 122;
-        public static const CLIENT_VERSION:uint = 2489;
+        public static const CLIENT_VERSION:uint = 2491;
         static const SPING:int = 29;
         static const CCLOSENPCCHANNEL:int = 158;
         public static const PREVIEW_STATE_PREVIEW_NO_ACTIVE_CHANGE:uint = 1;
