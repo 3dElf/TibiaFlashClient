@@ -202,7 +202,10 @@
 
         public static function s_ReplacePlaceholderTextInStoreDescription(param1:String) : String
         {
-            return param1.replace(/\{1\}/g, "\nNote that decoration kits and the objects they contain are not tradable. A decoration kit can only be unwrapped in a house of which the purchasing character is the owner. If the character loses this house or gives it to another character, the purchased decoration will be wrapped back and sent to the character\'s inbox.");
+            var _loc_2:* = param1.replace(/\{1\}/g, "\nNote that decoration kits and the objects they contain are not tradable. A decoration kit can only be unwrapped in a house of which the purchasing character is the owner. If the character loses this house or gives it to another character, the purchased decoration will be wrapped back and sent to the character\'s inbox.");
+            _loc_2 = param1.replace(/\{2\}/g, "\nGive your character a new look by getting it a new Outfit.If you settle for the Basic Outfit, you can later enhance your look by purchasing Addons.Once you have purchased the Basic Outfit, you will no longer be able to buy the Full Outfit at the reduced package price.\nNote: The Outfit will only be received by the character who purchased it in the Store.");
+            _loc_2 = param1.replace(/\{3\}/g, "Each Outfit can be upgraded further by activating so - called Addons.Addons are additional accessories which you can buy to enhance your Basic Outfit.\nNote that Addons are only available if you have purchased the Basic Outfit beforehand.\nNote: You will purchase the addon only for the character on which you are playing during the purchase in the Store.");
+            return _loc_2;
         }// end function
 
     }
