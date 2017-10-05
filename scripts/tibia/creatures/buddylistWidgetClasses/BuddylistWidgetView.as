@@ -15,7 +15,7 @@
     public class BuddylistWidgetView extends WidgetView
     {
         private var m_UncommittedShowOffline:Boolean = false;
-        private var m_SortOrder:int;
+        private var m_SortOrder:int = 0;
         private var m_UIList:SmoothList = null;
         private var m_UncommittedBuddySet:Boolean = false;
         private var m_BuddySet:BuddySet = null;
@@ -27,7 +27,6 @@
 
         public function BuddylistWidgetView()
         {
-            this.m_SortOrder = BuddylistWidget.SORT_BY_NAME;
             titleText = resourceManager.getString(BUNDLE, "TITLE");
             verticalScrollPolicy = ScrollPolicy.OFF;
             horizontalScrollPolicy = ScrollPolicy.OFF;

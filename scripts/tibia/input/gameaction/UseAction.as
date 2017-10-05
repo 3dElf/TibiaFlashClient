@@ -17,9 +17,9 @@
         static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
         static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
         private static const BUNDLE:String = "StaticAction";
-        public static const TARGET_SELF:int = UseActionImpl.TARGET_SELF;
-        public static const TARGET_CROSSHAIR:int = UseActionImpl.TARGET_CROSSHAIR;
-        public static const TARGET_ATTACK:int = UseActionImpl.TARGET_ATTACK;
+        public static const TARGET_SELF:int = 2;
+        public static const TARGET_CROSSHAIR:int = 4;
+        public static const TARGET_ATTACK:int = 3;
 
         public function UseAction(param1, param2:int, param3:int)
         {

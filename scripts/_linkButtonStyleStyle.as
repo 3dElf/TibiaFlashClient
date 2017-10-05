@@ -24,10 +24,10 @@
             {
                 style.defaultFactory = function () : void
             {
-                this.paddingBottom = 2;
-                this.paddingRight = 2;
                 this.paddingTop = 2;
                 this.paddingLeft = 2;
+                this.paddingBottom = 2;
+                this.paddingRight = 2;
                 return;
             }// end function
             ;

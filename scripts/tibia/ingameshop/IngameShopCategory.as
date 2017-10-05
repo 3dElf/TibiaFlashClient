@@ -7,7 +7,7 @@
     {
         private var m_Offers:Vector.<IngameShopOffer> = null;
         private var m_Subcategories:Vector.<IngameShopCategory> = null;
-        private var m_CategoryHighlightState:int = 0;
+        private var m_CategoryHighlightState:int;
         private var m_Description:String = null;
         private var m_Name:String = null;
         private var m_IconIdentifiers:Vector.<String>;
@@ -16,6 +16,7 @@
 
         public function IngameShopCategory(param1:String, param2:String, param3:int)
         {
+            this.m_CategoryHighlightState = IngameShopOffer.HIGHLIGHT_STATE_NONE;
             if (param1 == null)
             {
                 throw new ArgumentError("IngameShopCategory: Name is null");

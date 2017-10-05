@@ -233,7 +233,7 @@
         static const SDELETEONMAP:int = 108;
         static const CEDITGUILDMESSAGE:int = 156;
         static const CROTATEWEST:int = 114;
-        public static const PROTOCOL_VERSION:int = 1145;
+        public static const PROTOCOL_VERSION:int = 1148;
         static const SCREATUREOUTFIT:int = 142;
         static const SEDITGUILDMESSAGE:int = 174;
         static const BLESSING_SPARK_OF_PHOENIX:int = BLESSING_WISDOM_OF_SOLITUDE << 1;
@@ -925,8 +925,13 @@
                 _loc_5.setPartyFlag(param1.readUnsignedByte());
                 _loc_5.guildFlag = param1.readUnsignedByte();
                 _loc_5.type = param1.readUnsignedByte();
+                if (_loc_5.isSummon)
+                {
+                    _loc_5.summonerCreatureID = param1.readUnsignedInt();
+                }
                 _loc_5.speechCategory = param1.readUnsignedByte();
                 _loc_5.marks.setMark(Marks.MARK_TYPE_PERMANENT, param1.readUnsignedByte());
+                param1.readUnsignedByte();
                 _loc_5.numberOfPVPHelpers = param1.readUnsignedShort();
                 _loc_5.isUnpassable = param1.readUnsignedByte() != 0;
             }

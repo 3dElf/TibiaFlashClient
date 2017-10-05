@@ -24,8 +24,8 @@
             {
                 style.defaultFactory = function () : void
             {
-                this.textAlign = "left";
                 this.fontWeight = "normal";
+                this.textAlign = "left";
                 return;
             }// end function
             ;

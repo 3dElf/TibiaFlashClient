@@ -14,7 +14,7 @@
         static const OPTIONS_MAX_COMPATIBLE_VERSION:Number = 5;
         private static const BUNDLE:String = "StaticAction";
         static const OPTIONS_MIN_COMPATIBLE_VERSION:Number = 2;
-        public static const TARGET_AUTO:int = UseActionImpl.TARGET_CROSSHAIR + 1;
+        public static const TARGET_AUTO:int = 5;
 
         public function EquipAction(param1, param2:int, param3:int)
         {
