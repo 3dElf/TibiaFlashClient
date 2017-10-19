@@ -25,18 +25,18 @@
             {
                 style.defaultFactory = function () : void
             {
-                this.thumbOffset = 0;
-                this.paddingTop = 0;
+                this.thumbSkin = ScrollThumbSkin;
                 this.borderColor = 12040892;
-                this.trackColors = [9738651, 15198183];
+                this.paddingBottom = 0;
+                this.thumbOffset = 0;
+                this.paddingRight = 0;
                 this.trackSkin = ScrollTrackSkin;
                 this.downArrowSkin = ScrollArrowSkin;
-                this.cornerRadius = 4;
                 this.upArrowSkin = ScrollArrowSkin;
+                this.paddingTop = 0;
                 this.paddingLeft = 0;
-                this.paddingBottom = 0;
-                this.thumbSkin = ScrollThumbSkin;
-                this.paddingRight = 0;
+                this.trackColors = [9738651, 15198183];
+                this.cornerRadius = 4;
                 return;
             }// end function
             ;

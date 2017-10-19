@@ -25,8 +25,8 @@
         protected var m_UIButtonBalanced:Button = null;
         protected var m_UIButtonWhiteHand:Button = null;
         private var m_UncommittedSecureMode:Boolean = true;
-        protected var m_ChaseMode:int;
-        protected var m_AttackMode:int;
+        protected var m_ChaseMode:int = 0;
+        protected var m_AttackMode:int = 1;
         protected var m_UIButtonOffensive:Button = null;
         private var m_UncommittedMountMode:Boolean = true;
         private var m_UncommittedPlayer:Boolean = false;
@@ -35,8 +35,8 @@
         protected var m_UIButtonChase:Button = null;
         private var m_UncommittedExpertMode:Boolean = true;
         protected var m_MountMode:Boolean = false;
-        protected var m_SecureMode:int;
-        protected var m_PVPMode:uint;
+        protected var m_SecureMode:int = 0;
+        protected var m_PVPMode:uint = 1;
         private var m_UncommittedAttackMode:Boolean = true;
         protected var m_UIButtonRedFist:Button = null;
         private static const BUNDLE:String = "CombatControlWidget";
@@ -49,10 +49,6 @@
 
         public function CombatControlWidgetView()
         {
-            this.m_AttackMode = OptionsStorage.COMBAT_ATTACK_OFFENSIVE;
-            this.m_ChaseMode = OptionsStorage.COMBAT_CHASE_OFF;
-            this.m_PVPMode = OptionsStorage.COMBAT_PVP_MODE_WHITE_HAND;
-            this.m_SecureMode = OptionsStorage.COMBAT_SECURE_OFF;
             titleText = resourceManager.getString(BUNDLE, "TITLE");
             direction = BoxDirection.HORIZONTAL;
             horizontalScrollPolicy = ScrollPolicy.OFF;

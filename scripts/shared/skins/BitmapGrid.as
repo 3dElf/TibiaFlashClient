@@ -712,7 +712,7 @@ import shared.utility.*;
 class BitmapGridCell extends Object
 {
     private var m_Bitmap:Bitmap = null;
-    private var m_ID:int;
+    private var m_ID:int = -2;
     private var m_Matrix:Matrix = null;
     private var m_Width:Number = 0;
     private var m_Height:Number = 0;
@@ -720,7 +720,6 @@ class BitmapGridCell extends Object
     function BitmapGridCell(param1:int, param2)
     {
         var _loc_3:* = null;
-        this.m_ID = EBitmap.NONE;
         this.m_ID = param1;
         if (param2 is Bitmap)
         {

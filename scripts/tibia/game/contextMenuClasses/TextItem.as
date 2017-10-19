@@ -141,13 +141,11 @@
 
         override protected function measure() : void
         {
-            var _loc_3:* = NaN;
-            var _loc_4:* = NaN;
             super.measure();
             var _loc_1:* = !isNaN(this.m_UICaption.explicitMinWidth) ? (this.m_UICaption.explicitMinWidth) : (this.m_UICaption.measuredMinWidth);
             var _loc_2:* = this.m_UICaption.getExplicitOrMeasuredWidth();
-            _loc_3 = !isNaN(this.m_UICaption.explicitMinHeight) ? (this.m_UICaption.explicitMinHeight) : (this.m_UICaption.measuredMinHeight);
-            _loc_4 = this.m_UICaption.getExplicitOrMeasuredHeight();
+            var _loc_3:* = !isNaN(this.m_UICaption.explicitMinHeight) ? (this.m_UICaption.explicitMinHeight) : (this.m_UICaption.measuredMinHeight);
+            var _loc_4:* = this.m_UICaption.getExplicitOrMeasuredHeight();
             if (this.m_UIIcon != null)
             {
                 this.measuredIconWidth = this.m_UIIcon.getExplicitOrMeasuredWidth();
